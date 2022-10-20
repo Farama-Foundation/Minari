@@ -30,9 +30,7 @@ def get_version():
     raise RuntimeError("bad version data in __init__.py")
 
 
-extras = {
-    "robotics": ["gymnasium-robotics==1.0.1"]
-}
+extras = {"robotics": ["gymnasium-robotics==1.0.1"]}
 
 extras["all"] = (
     extras["atari"]
@@ -59,8 +57,7 @@ setup(
     long_description_content_type="text/markdown",
     keywords=["Reinforcement Learning", "game", "RL", "AI", "gymnasium"],
     python_requires=">=3.7, <3.11",
-    packages=["kabuki"]
-    + ["kabuki." + pkg for pkg in find_packages("kabuki")],
+    packages=["kabuki"] + ["kabuki." + pkg for pkg in find_packages("kabuki")],
     include_package_data=True,
     install_requires=["numpy>=1.18.0", "gymnasium>=0.26.0"],
     classifiers=[
