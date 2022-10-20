@@ -19,11 +19,8 @@ jobs:
       - name: Install dependencies
         run: pip install -r docs/requirements.txt
       
-      - name: Install PettingZoo
+      - name: Install Kabuki
         run: pip install .
-      
-      - name: Generate environment docs
-        run: python docs/_scripts/gen_envs_mds.py
       
       - name: Build
         run: sphinx-build -b dirhtml -v docs _build
