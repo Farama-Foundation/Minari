@@ -17,14 +17,14 @@
 # -- Project information -----------------------------------------------------
 from typing import Any, Dict
 
-#import kabuki
+# import kabuki
 
 project = "Kabuki"
 copyright = "2022"
 author = "Farama Foundation"
 
 # The full version, including alpha/beta/rc tags
-release = "0.0.1"  #kabuki.__version__
+release = "0.0.1"  # kabuki.__version__
 
 
 # -- General configuration ---------------------------------------------------
