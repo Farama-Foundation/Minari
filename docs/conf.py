@@ -65,8 +65,8 @@ html_baseurl = "https://kabuki.farama.org"
 html_copy_source = False
 html_favicon = "_static/img/favicon.png"
 html_theme_options = {
-    "light_logo": "img/PettingZoo.svg",
-    "dark_logo": "img/PettingZoo_White.svg",
+    "light_logo": "img/Kabuki.svg",
+    "dark_logo": "img/Kabuki_White.svg",
     "gtag": "G-Q4EGMJ3R24",
 }
 html_context: Dict[str, Any] = {}
