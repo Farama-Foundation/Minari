@@ -33,13 +33,7 @@ def get_version():
 extras = {"robotics": ["gymnasium-robotics==1.0.1"]}
 
 extras["all"] = (
-    extras["atari"]
-    + extras["classic"]
-    + extras["butterfly"]
-    + extras["mpe"]
-    + extras["sisl"]
-    + extras["other"]
-    + extras["tests"]
+    extras["robotics"]
 )
 
 version = get_version()
@@ -61,7 +55,7 @@ setup(
     include_package_data=True,
     install_requires=["numpy>=1.18.0", "gymnasium>=0.26.0"],
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 2 - Pre-Alpha",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
