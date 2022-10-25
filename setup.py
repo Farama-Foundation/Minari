@@ -1,6 +1,26 @@
 """Sets up the Kabuki module."""
 
-from setuptools import find_packages, setup
+import os
+from setuptools import find_packages, setup, Extension
+from numpy import get_include
+from Cython.Build import cythonize
+
+
+os.environ['CFLAGS'] = '-std=c++11'
+
+# setup Cython build
+ext = Extension('kabuki.dataset',
+                sources=['kabuki/datastructure/dataset.pyx'],
+                include_dirs=[get_include(), 'kabuki/datastructure/cpp/include'],
+                language='c++',
+                extra_compile_args=["-std=c++11", "-O3", "-ffast-math"],
+                extra_link_args=["-std=c++11"])
+
+ext_modules = cythonize([ext],
+                        compiler_directives={
+                            'linetrace': True,
+                            'binding': True
+                        })
 
 
 def get_description():
@@ -33,13 +53,7 @@ def get_version():
 extras = {"robotics": ["gymnasium-robotics==1.0.1"]}
 
 extras["all"] = (
-    extras["atari"]
-    + extras["classic"]
-    + extras["butterfly"]
-    + extras["mpe"]
-    + extras["sisl"]
-    + extras["other"]
-    + extras["tests"]
+    extras["robotics"]
 )
 
 version = get_version()
@@ -61,7 +75,7 @@ setup(
     include_package_data=True,
     install_requires=["numpy>=1.18.0", "gymnasium>=0.26.0"],
     classifiers=[
-        "Development Status :: 5 - Production/Stable",
+        "Development Status :: 2 - Pre-Alpha",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
@@ -69,4 +83,10 @@ setup(
         "Programming Language :: Python :: 3.10",
     ],
     extras_require=extras,
+    package_data={'d3rlpy': ['*.pyx',
+                             '*.pxd',
+                             '*.h',
+                             '*.pyi',
+                             'py.typed']},
+    ext_modules=ext_modules
 )
