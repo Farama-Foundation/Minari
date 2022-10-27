@@ -1,0 +1,7 @@
+-f https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
+jax[cuda]
+dm-acme[jax,tf] @ git+https://github.com/deepmind/acme.git
+envlogger
+gym[mujoco]==0.25.1
+dm-control
+mujoco
