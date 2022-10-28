@@ -5,7 +5,7 @@ name: Tutorial tests
 
 on:
   push:
-    branches: [master]
+    branches: [master, WD/MDPDataset]
   pull_request:
     branches: [master]
 
