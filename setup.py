@@ -1,48 +1,48 @@
 import os
 
-from setuptools import setup, Extension, find_packages
+from setuptools import Extension, find_packages, setup
 
-os.environ['CFLAGS'] = '-std=c++11'
+os.environ["CFLAGS"] = "-std=c++11"
 
 if __name__ == "__main__":
-    from numpy import get_include
     from Cython.Build import cythonize
+    from numpy import get_include
 
     # setup Cython build
-    ext = Extension('kabuki.datastructure.dataset',
-                    sources=['kabuki/datastructure/dataset.pyx'],
-                    include_dirs=[get_include(), 'kabuki/datastructure/cpp/include'],
-                    language='c++',
-                    extra_compile_args=["-std=c++11", "-O3", "-ffast-math"],
-                    extra_link_args=["-std=c++11"])
+    ext = Extension(
+        "kabuki.dataset",
+        sources=["kabuki/dataset.pyx"],
+        include_dirs=[get_include(), "kabuki/cpp/include"],
+        language="c++",
+        extra_compile_args=["-std=c++11", "-O3", "-ffast-math"],
+        extra_link_args=["-std=c++11"],
+    )
 
-    ext_modules = cythonize([ext],
-                            compiler_directives={
-                                'linetrace': True,
-                                'binding': True
-                            })
+    ext_modules = cythonize(
+        [ext], compiler_directives={"linetrace": True, "binding": True}
+    )
 
     # main setup
-    setup(name="kabuki",
-          version="0.0.1",
-          description="An offline deep reinforcement learning library",
-          long_description=open("README.md").read(),
-          long_description_content_type="text/markdown",
-          url="https://github.com/takuseno/d3rlpy",
-          author="Takuma Seno",
-          author_email="takuma.seno@gmail.com",
-          license="MIT License",
-          classifiers=["Development Status :: 2 - Pre-Alpha",
-                       "Programming Language :: Python :: 3.6",
-                       "Programming Language :: Python :: 3.7",
-                       "Programming Language :: Python :: 3.8",
-                       "Programming Language :: Python :: Implementation :: CPython"],
-          install_requires=["numpy>=1.18.0"],
-          packages=find_packages(exclude=["tests*"]),
-          python_requires=">=3.7.0",
-          package_data={'d3rlpy': ['*.pyx',
-                                   '*.pxd',
-                                   '*.h',
-                                   '*.pyi',
-                                   'py.typed']},
-          ext_modules=ext_modules)
+    setup(
+        name="kabuki",
+        version="0.0.1",
+        description="An offline deep reinforcement learning library",
+        long_description=open("README.md").read(),
+        long_description_content_type="text/markdown",
+        url="https://github.com/takuseno/d3rlpy",
+        author="Takuma Seno",
+        author_email="takuma.seno@gmail.com",
+        license="MIT License",
+        classifiers=[
+            "Development Status :: 2 - Pre-Alpha",
+            "Programming Language :: Python :: 3.6",
+            "Programming Language :: Python :: 3.7",
+            "Programming Language :: Python :: 3.8",
+            "Programming Language :: Python :: Implementation :: CPython",
+        ],
+        install_requires=["numpy>=1.18.0"],
+        packages=find_packages(exclude=["tests*"]),
+        python_requires=">=3.7.0",
+        package_data={"d3rlpy": ["*.pyx", "*.pxd", "*.h", "*.pyi", "py.typed"]},
+        ext_modules=ext_modules,
+    )

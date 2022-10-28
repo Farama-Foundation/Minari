@@ -1,4 +1,3 @@
-import copy
 import warnings
 
 import numpy as np
@@ -7,15 +6,13 @@ cimport numpy as np
 
 import cython
 import h5py
-
-from cython cimport view
-
 from cython.parallel import prange
 
-from dataset cimport CTransition
 from libc.string cimport memcpy, memset
 from libcpp cimport bool, nullptr
 from libcpp.memory cimport make_shared, shared_ptr
+
+from kabuki.dataset cimport CTransition
 
 from .logger import LOG
 
