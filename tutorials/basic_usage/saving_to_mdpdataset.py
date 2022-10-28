@@ -4,7 +4,7 @@ import numpy as np
 
 num_episodes = 10
 
-env = gym.make("LunarLander-v2", render_mode="human")
+env = gym.make("LunarLander-v2", render_mode="rgb_array")
 observation, info = env.reset(seed=42)
 
 replay_buffer = {
