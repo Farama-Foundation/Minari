@@ -5,17 +5,18 @@ from ..utils.assert_name_spec import test_and_return_name
 from .. import dataset
 
 
-def upload_dataset(dataset_path: str):
+def upload_dataset(dataset_path: str, root_dir: str = ".datasets"):
     project_id = "dogwood-envoy-367012"
     bucket_name = "kabuki-datasets"
     filename = test_and_return_name(dataset_path)
+    path = os.path.join(root_dir, filename)
 
     storage_client = storage.Client(project_id)
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(dataset_path)
 
     blob.upload_from_filename(
-        f"{filename}.hdf5"
+        f"{path}.hdf5"
     )  # See https://github.com/googleapis/python-storage/issues/27 for discussion on progress bars
 
     print(f"File {filename}.hdf5 uploaded!")
