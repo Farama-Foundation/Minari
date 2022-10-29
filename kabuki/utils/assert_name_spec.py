@@ -2,22 +2,20 @@ import re
 
 
 def test_and_return_name(dataset_path):
-    _assert_hdf5(dataset_path)
-    _assert_name_spec(dataset_path)
-    return _get_dataset_name(dataset_path)
-
-
-def _get_dataset_name(dataset_path):
-    return re.match(r"/[^\\/]+?(?=\.\w+$)/", dataset_path).group(0)
-
-
-def _assert_name_spec(dataset_path):
-    # https://stackoverflow.com/a/58412900
-    filename = _get_dataset_name(dataset_path)
-
+    parsed = re.match(
+        r"(\\*|\/*)([\w\-]*)\.*(\w*)$", dataset_path
+    )  # https://regex101.com/r/cg5fK7/1
+    if not parsed:
+        raise ValueError(
+            f"Invalid dataset path {dataset_path}. Please raise an issue on GitHub."
+        )
+    filename = parsed.group(2)
+    extension = parsed.group(3)
+    assert (
+        extension == "hdf5"
+    ), f"File extension must be .hdf5, not {extension}. (Are you trying to use a period in your dataset name?)"
     if not re.match(r"\w+-v\d-\w+", filename):
-        raise ValueError(f"Invalid dataset name {filename}")
-
-
-def _assert_hdf5(dataset_path):
-    assert dataset_path.endswith(".hdf5"), "Dataset must be in HDF5 format"
+        raise ValueError(
+            f"Invalid dataset name {filename}. Must be in the format <environment_name>-v<environment_version>-<description>."
+        )
+    return filename

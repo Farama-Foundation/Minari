@@ -46,7 +46,7 @@ if __name__ == "__main__":
             "structlog==22.1.0",
             "tensorboardX==2.4",
             "typing_extensions==4.4.0",
-            "google-cloud-storage==4.4.0",
+            "google-cloud-storage==2.5.0",
             "protobuf==3.20.1",
         ],
         packages=find_packages(exclude=["tests*"]),
