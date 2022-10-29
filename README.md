@@ -17,8 +17,11 @@ import kabuki
 dataset = kabuki.retrieve_dataset("LunarLander-v2-test_dataset.hdf5")
 ```
 
-or
-
+## Uploading datasets
+```python
+import kabuki
+dataset = kabuki.upload_dataset("LunarLander-v2-test_dataset.hdf5")
+```
 
 
 ## Saving to MDPDatasets

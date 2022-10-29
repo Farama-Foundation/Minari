@@ -46,12 +46,12 @@ ds = MDPDataset(
 
 from google.cloud import storage
 
-dataset = kabuki.retrieve_dataset("LunarLander-v2-test_dataset.hdf5")
+dataset = kabuki.retrieve_dataset("LunarLander-v2-test_dataset")
 print(f"retrieved dataset: {dataset}, with attrs: {dataset.__dir__()}")
 
 
 ds.dump(
     ".datasets/LunarLander-v2-test_dataset.hdf5"
 )  # todo: abstract away parent directory
-kabuki.upload_dataset("LunarLander-v2-test_dataset.hdf5")
-kabuki.retrieve_dataset("LunarLander-v2-test_dataset.hdf5")
+kabuki.upload_dataset("LunarLander-v2-test_dataset")
+kabuki.retrieve_dataset("LunarLander-v2-test_dataset")
