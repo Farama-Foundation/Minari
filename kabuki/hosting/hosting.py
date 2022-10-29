@@ -13,17 +13,23 @@ def upload_dataset(dataset_path: str):
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(dataset_path)
 
-    blob.upload_from_filename(f"{filename}.hdf5")
+    blob.upload_from_filename(
+        f"{filename}.hdf5"
+    )  # See https://github.com/googleapis/python-storage/issues/27 for discussion on progress bars
 
     print(f"File {filename}.hdf5 uploaded!")
 
 
-def retrieve_dataset(source_blob_name: str, download=True, return_dataset=True):
+def retrieve_dataset(source_blob_name: str, return_dataset=True):
+    filename = test_and_return_name(source_blob_name)
+
     if os.path.isfile(source_blob_name):
-        print("Dataset found locally.")
+        print(f"Dataset {source_blob_name} found locally.")
         return source_blob_name
     else:
-        print("Dataset not found locally. Downloading from Farama servers...")
+        print(
+            f"Dataset not found locally. Downloading {filename} from Farama servers..."
+        )
         project_id = "dogwood-envoy-367012"
         bucket_name = "kabuki-datasets"
         storage_client = storage.Client(project=project_id)
@@ -34,13 +40,17 @@ def retrieve_dataset(source_blob_name: str, download=True, return_dataset=True):
         # Note `Bucket.blob` differs from `Bucket.get_blob` as it doesn't retrieve
         # any content from Google Cloud Storage. As we don't need additional data,
         # using `Bucket.blob` is preferred here.
-        blob = bucket.blob(source_blob_name)
+        blob = bucket.blob(f"{filename}.hdf5")
 
-        if download:
-            blob.download_to_filename(source_blob_name)
-            print(f"Dataset {source_blob_name} downloaded!")
+        blob.download_to_filename(
+            source_blob_name
+        )  # See https://github.com/googleapis/python-storage/issues/27 for discussion on progress bars
+        print(f"Dataset {source_blob_name} downloaded!")
+
         if return_dataset:
-            return blob
+            from .. import dataset
+
+            return dataset.MDPDataset.load(source_blob_name)
 
 
 def list_datasets():

@@ -43,11 +43,13 @@ ds = MDPDataset(
     terminals=replay_buffer["done"],
 )
 
-ds.dump("LunarLander-v2-test_dataset.hdf5")
-
 
 from google.cloud import storage
 
+dataset = kabuki.retrieve_dataset("LunarLander-v2-test_dataset.hdf5")
+print(f"retrieved dataset: {dataset}, with attrs: {dataset.__dir__()}")
 
+
+ds.dump("LunarLander-v2-test_dataset.hdf5")
 kabuki.upload_dataset("LunarLander-v2-test_dataset.hdf5")
 kabuki.retrieve_dataset("LunarLander-v2-test_dataset.hdf5")

@@ -6,6 +6,17 @@ Kabuki is intended to be a Python library for conducting research in offline rei
 We have a public discord server (which we also use to coordinate development work) that you can join here: https://discord.gg/jfERDCSw if you're interested in it.
 
 
+## Installation
+`pip install numpy cython`
+
+`pip install git+https://github.com/Farama-Foundation/Kabuki.git@WD/MDPDataset`
+
+## Downloading datasets
+```python
+import kabuki
+dataset = kabuki.retrieve_dataset("LunarLander-v2-test_dataset.hdf5")
+```
+
 ## Saving to MDPDatasets
 It is not the aim of Kabuki to insist that you use a certain buffer implementation. However, in order to maintain standardisation across the library, we have a standardised format, the `MDPDataset` class, for saving replay buffers to file. 
 
