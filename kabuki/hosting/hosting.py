@@ -20,6 +20,7 @@ def upload_dataset(dataset_path: str):
 
 def retrieve_dataset(source_blob_name: str, download=True, return_dataset=True):
     if os.path.isfile(source_blob_name):
+        print("Dataset found locally.")
         return source_blob_name
     else:
         print("Dataset not found locally. Downloading from Farama servers...")
