@@ -57,7 +57,6 @@ def upload_blob(
     # The path to your file to upload
     # source_file_name = "local/path/to/file"
     # The ID of your GCS object
-    # destination_blob_name = "storage-object-name"
 
     storage_client = storage.Client(project_id)
     bucket = storage_client.bucket(bucket_name)
@@ -75,7 +74,6 @@ print("Uploaded to GCS")
 
 def download_blob(
     source_blob_name,
-    destination_file_name,
     project_id="dogwood-envoy-367012",
     bucket_name="kabuki-datasets",
 ):
@@ -87,7 +85,6 @@ def download_blob(
     # source_blob_name = "storage-object-name"
 
     # The path to which the file should be downloaded
-    # destination_file_name = "local/path/to/file"
 
     storage_client = storage.Client(project=project_id)
 
