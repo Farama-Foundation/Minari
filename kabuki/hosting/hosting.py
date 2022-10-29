@@ -2,6 +2,7 @@ import os.path
 
 from google.cloud import storage
 from ..utils.assert_name_spec import test_and_return_name
+from .. import dataset
 
 
 def upload_dataset(dataset_path: str):
@@ -20,12 +21,15 @@ def upload_dataset(dataset_path: str):
     print(f"File {filename}.hdf5 uploaded!")
 
 
-def retrieve_dataset(source_blob_name: str, return_dataset=True):
-    filename = test_and_return_name(source_blob_name)
+def retrieve_dataset(dataset_name: str, root_dir: str = ".datasets"):
+    filename = test_and_return_name(dataset_name)
+    path = os.path.join(root_dir, filename)
 
-    if os.path.isfile(source_blob_name):
-        print(f"Dataset {source_blob_name} found locally.")
-        return source_blob_name
+    if not os.path.isdir(root_dir):
+        os.mkdir(root_dir)
+
+    if os.path.isfile(path):
+        print(f"Dataset {dataset_name} found locally in {path}/")
     else:
         print(
             f"Dataset not found locally. Downloading {filename} from Farama servers..."
@@ -43,14 +47,11 @@ def retrieve_dataset(source_blob_name: str, return_dataset=True):
         blob = bucket.blob(f"{filename}.hdf5")
 
         blob.download_to_filename(
-            source_blob_name
+            f"{path}.hdf5"
         )  # See https://github.com/googleapis/python-storage/issues/27 for discussion on progress bars
-        print(f"Dataset {source_blob_name} downloaded!")
+        print(f"Dataset {dataset_name} downloaded to {path}/")
 
-        if return_dataset:
-            from .. import dataset
-
-            return dataset.MDPDataset.load(source_blob_name)
+    return dataset.MDPDataset.load(f"{path}.hdf5")
 
 
 def list_datasets():
