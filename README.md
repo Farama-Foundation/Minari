@@ -14,16 +14,33 @@ We have a public discord server (which we also use to coordinate development wor
 ## Downloading datasets
 ```python
 import kabuki
-dataset = kabuki.retrieve_dataset("LunarLander-v2-test_dataset.hdf5")
+dataset = kabuki.retrieve_dataset("LunarLander-v2-test_dataset")
 ```
 
 ## Uploading datasets
 ```python
-import kabuki
-dataset = kabuki.upload_dataset("LunarLander-v2-test_dataset.hdf5")
+dataset.dump(
+    ".datasets/LunarLander-v2-test_dataset.hdf5"
+)  # todo: abstract away parent directory and hdf5 extension
+dataset = kabuki.upload_dataset("LunarLander-v2-test_dataset")
 ```
 
 
-## Saving to MDPDatasets
+## Saving to dataset format
 It is not the aim of Kabuki to insist that you use a certain buffer implementation. However, in order to maintain standardisation across the library, we have a standardised format, the `MDPDataset` class, for saving replay buffers to file. 
+
+This converter will have tests to ensure formatting standards
+
+## Checking available remote datasets
+```python
+import kabuki
+kabuki.list_datasets()
+```
+
+## Checking available local datasets
+```python
+import kabuki
+kabuki.list_local_datasets()  # todo: implement
+```
+Datasets are stored in the `.datasets` directory in your project directory.
 
