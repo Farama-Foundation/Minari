@@ -1,17 +1,19 @@
 from google.cloud import storage
+from ..utils.assert_name_spec import test_and_return_name
 
 
 def upload_dataset(dataset_path: str):
     project_id = "dogwood-envoy-367012"
     bucket_name = "kabuki-datasets"
+    filename = test_and_return_name(dataset_path)
 
     storage_client = storage.Client(project_id)
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(dataset_path)
 
-    blob.upload_from_filename(dataset_path)
+    blob.upload_from_filename(f"{filename}.hdf5")
 
-    print(f"File {dataset_path} uploaded!")
+    print(f"File {filename}.hdf5 uploaded!")
 
 
 def retrieve_dataset(source_blob_name: str, download=True, return_dataset=True):
