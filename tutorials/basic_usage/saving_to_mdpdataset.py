@@ -12,7 +12,8 @@ replay_buffer = {
     "observation": np.array([]),
     "action": np.array([]),
     "reward": np.array([]),
-    "done": np.array([]),
+    "terminated": np.array([]),
+    "truncated": np.array([]),
 }
 
 for episode in range(num_episodes):
@@ -26,15 +27,18 @@ for episode in range(num_episodes):
         np.append(replay_buffer["observation"], observation)
         np.append(replay_buffer["action"], action)
         np.append(replay_buffer["reward"], reward)
-        np.append(replay_buffer["done"], terminated)
+        np.append(replay_buffer["terminated"], terminated)
+        np.append(replay_buffer["truncated"], truncated)
 
 env.close()
 
 ds = KabukiDataset(
+    dataset_name="LunarLander-v2-test_dataset",
     observations=replay_buffer["observation"],
     actions=replay_buffer["action"],
     rewards=replay_buffer["reward"],
-    terminals=replay_buffer["done"],
+    terminations=replay_buffer["terminated"],
+    truncations=replay_buffer["truncated"],
 )
 
 ds.dump("test_dataset.hdf5")
