@@ -15,7 +15,8 @@ namespace kabuki {
     float reward;
     unsigned char* next_observation_i;
     float* next_observation_f;
-    float terminal;
+    float termination;
+    float truncation;
     shared_ptr<CTransition> prev_transition;
     shared_ptr<CTransition> next_transition;
   };

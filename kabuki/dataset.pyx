@@ -44,20 +44,22 @@ def _to_episodes(
     observations,
     actions,
     rewards,
-    terminals,
+    terminations,
+    truncations,
     episode_terminals,
 ):
     rets = []
     head_index = 0
     for i in range(_safe_size(observations)):
-        if episode_terminals[i]:
+        if episode_terminals[i]:  # todo: check
             episode = Episode(
                 observation_shape=observation_shape,
                 action_size=action_size,
                 observations=observations[head_index:i + 1],
                 actions=actions[head_index:i + 1],
                 rewards=rewards[head_index:i + 1],
-                terminal=terminals[i],
+                terminations=terminations[i],
+                truncations=truncations[i]
             )
             rets.append(episode)
             head_index = i + 1
@@ -70,7 +72,8 @@ def _to_transitions(
     observations,
     actions,
     rewards,
-    terminal,
+    termination,
+    truncation,
 ):
     rets = []
     num_data = _safe_size(observations)
@@ -80,8 +83,8 @@ def _to_transitions(
         action = actions[i]
         reward = rewards[i]
 
-        if i == num_data - 1:
-            if terminal:
+        if not truncation:
+            if termination:
                 # dummy observation
                 next_observation = np.zeros_like(observation)
             else:
@@ -90,8 +93,6 @@ def _to_transitions(
         else:
             next_observation = observations[i + 1]
 
-        env_terminal = terminal if i == num_data - 1 else 0.0
-
         transition = Transition(
             observation_shape=observation_shape,
             action_size=action_size,
@@ -99,7 +100,8 @@ def _to_transitions(
             action=action,
             reward=reward,
             next_observation=next_observation,
-            terminal=env_terminal,
+            termination=termination,
+            truncation=truncation,
             prev_transition=prev_transition
         )
 
@@ -183,7 +185,8 @@ class KabukiDataset:
         observations,
         actions,
         rewards,
-        terminals,
+        terminations,
+        truncations,
         episode_terminals=None,
         discrete_action=None,
     ):
@@ -201,15 +204,17 @@ class KabukiDataset:
         assert np.all(np.logical_not(np.isnan(observations)))
         assert np.all(np.logical_not(np.isnan(actions)))
         assert np.all(np.logical_not(np.isnan(rewards)))
-        assert np.all(np.logical_not(np.isnan(terminals)))
+        assert np.all(np.logical_not(np.isnan(terminations)))
+        assert np.all(np.logical_not(np.isnan(truncations)))
 
         self._observations = observations
         self._rewards = np.asarray(rewards, dtype=np.float32).reshape(-1)
-        self._terminals = np.asarray(terminals, dtype=np.float32).reshape(-1)
+        self._terminations = np.asarray(terminations, dtype=np.float32).reshape(-1)
+        self._truncations = np.asarray(truncations, dtype=np.float32).reshape(-1)
 
         if episode_terminals is None:
             # if None, episode terminals match the environment terminals
-            self._episode_terminals = self._terminals
+            self._episode_terminals = self._terminations
         else:
             self._episode_terminals = np.asarray(
                 episode_terminals, dtype=np.float32).reshape(-1)
@@ -257,15 +262,24 @@ class KabukiDataset:
         return self._rewards
 
     @property
-    def terminals(self):
-        """ Returns the terminal flags.
+    def terminations(self):
+        """ Returns the terminations flags.
 
         Returns:
             numpy.ndarray: array of terminal flags.
 
         """
-        return self._terminals
+        return self._terminations
 
+    @property
+    def truncations(self):
+        """ Returns the terminations flags.
+
+        Returns:
+            numpy.ndarray: array of terminal flags.
+
+        """
+        return self._truncations
     @property
     def episode_terminals(self):
         """ Returns the episode terminal flags.
@@ -423,7 +437,8 @@ class KabukiDataset:
         observations,
         actions,
         rewards,
-        terminals,
+        terminations,
+        truncations,
         episode_terminals=None
     ):
         """ Appends new data.
@@ -460,9 +475,9 @@ class KabukiDataset:
 
         # append rests
         self._rewards = np.hstack([self._rewards, rewards])
-        self._terminals = np.hstack([self._terminals, terminals])
+        self._terminations = np.hstack([self._terminations, terminations])
         if episode_terminals is None:
-            episode_terminals = terminals
+            episode_terminals = terminations or truncations  # todo: check this (not sure it's refactored correctly)
         self._episode_terminals = np.hstack(
             [self._episode_terminals, episode_terminals]
         )
@@ -475,7 +490,8 @@ class KabukiDataset:
             observations=self._observations,
             actions=self._actions,
             rewards=self._rewards,
-            terminals=self._terminals,
+            terminations=self._terminations,
+            truncations=self._truncations,
             episode_terminals=self._episode_terminals,
         )
 
@@ -497,7 +513,8 @@ class KabukiDataset:
             dataset.observations,
             dataset.actions,
             dataset.rewards,
-            dataset.terminals,
+            dataset.terminations,
+            dataset.truncations,
             dataset.episode_terminals
         )
 
@@ -512,7 +529,8 @@ class KabukiDataset:
             f.create_dataset('observations', data=self._observations)
             f.create_dataset('actions', data=self._actions)
             f.create_dataset('rewards', data=self._rewards)
-            f.create_dataset('terminals', data=self._terminals)
+            f.create_dataset('terminations', data=self._terminations)
+            f.create_dataset('truncations', data=self._truncations)
             f.create_dataset('episode_terminals', data=self._episode_terminals)
             f.create_dataset('discrete_action', data=self.discrete_action)
             f.create_dataset('version', data='1.0')
@@ -546,7 +564,8 @@ class KabukiDataset:
             observations = f['observations'][()]
             actions = f['actions'][()]
             rewards = f['rewards'][()]
-            terminals = f['terminals'][()]
+            terminations = f['terminations'][()]
+            truncations = f['truncations'][()]
             discrete_action = f['discrete_action'][()]
 
             # for backward compatibility
@@ -562,7 +581,8 @@ class KabukiDataset:
             observations=observations,
             actions=actions,
             rewards=rewards,
-            terminals=terminals,
+            terminations=terminations,
+            truncations=truncations,
             episode_terminals=episode_terminals,
             discrete_action=discrete_action,
         )
@@ -582,7 +602,8 @@ class KabukiDataset:
             observations=self._observations,
             actions=self._actions,
             rewards=self._rewards,
-            terminals=self._terminals,
+            terminations=self._terminations,
+            truncations=self.truncations,
             episode_terminals=self._episode_terminals,
         )
 
@@ -635,7 +656,8 @@ class Episode:
         observations,
         actions,
         rewards,
-        terminal=True,
+        termination=True,
+        truncation=True,
     ):
         # validation
         assert isinstance(observations, np.ndarray),\
@@ -658,7 +680,8 @@ class Episode:
         self._observations = observations
         self._actions = actions
         self._rewards = np.asarray(rewards, dtype=np.float32)
-        self._terminal = terminal
+        self._termination = termination
+        self._truncation = truncation
         self._transitions = None
 
     @property
@@ -692,14 +715,24 @@ class Episode:
         return self._rewards
 
     @property
-    def terminal(self):
-        """ Returns the terminal flag.
+    def termination(self):
+        """ Returns the termination flag.
 
         Returns:
             bool: the terminal flag.
 
         """
-        return self._terminal
+        return self._termination
+
+    @property
+    def truncation(self):
+        """ Returns the truncation flag.
+
+        Returns:
+            bool: the terminal flag.
+
+        """
+        return self._truncation
 
     @property
     def transitions(self):
@@ -727,7 +760,8 @@ class Episode:
             observations=self._observations,
             actions=self._actions,
             rewards=self._rewards,
-            terminal=self._terminal,
+            termination=self._termination,
+            truncation=self._truncation,
         )
 
     def size(self):
@@ -823,7 +857,8 @@ cdef class Transition:
         action not None,
         float reward,
         np.ndarray next_observation,
-        float terminal,
+        float termination,
+        float truncation,
         Transition prev_transition=None,
         Transition next_transition=None
     ):
@@ -853,7 +888,8 @@ cdef class Transition:
         self._thisptr.get().observation_shape = observation_shape
         self._thisptr.get().action_size = action_size
         self._thisptr.get().reward = reward
-        self._thisptr.get().terminal = terminal
+        self._thisptr.get().termination = termination
+        self._thisptr.get().truncation = truncation
         self._thisptr.get().prev_transition = prev_ptr
         self._thisptr.get().next_transition = next_ptr
 
@@ -957,14 +993,24 @@ cdef class Transition:
         return self._next_observation
 
     @property
-    def terminal(self):
-        """ Returns terminal flag at `t+1`.
+    def termination(self):
+        """ Returns termination flag at `t+1`.
 
         Returns:
-            int: terminal flag at `t+1`.
+            int: termination flag at `t+1`.
 
         """
-        return self._thisptr.get().terminal
+        return self._thisptr.get().termination
+
+    @property
+    def truncation(self):
+        """ Returns truncation flag at `t+1`.
+
+        Returns:
+            int: truncation flag at `t+1`.
+
+        """
+        return self._thisptr.get().truncation
 
     @property
     def prev_transition(self):
@@ -1060,7 +1106,7 @@ cdef void _stack_frames(
     cdef int image_size = c * h * w
 
     # fill terminal observation with zeros
-    if stack_next and transition.get().terminal:
+    if stack_next and (transition.get().termination or transition.get().truncation):  # todo: check if correct??
         memset(stack, 0, image_size * n_frames)
         return
 
@@ -1130,7 +1176,8 @@ cdef class TransitionMiniBatch:
     cdef np.ndarray _actions
     cdef np.ndarray _rewards
     cdef np.ndarray _next_observations
-    cdef np.ndarray _terminals
+    cdef np.ndarray _terminations
+    cdef np.ndarray _truncations
     cdef np.ndarray _n_steps
 
     def __cinit__(
@@ -1168,7 +1215,8 @@ cdef class TransitionMiniBatch:
         self._next_observations = np.empty(
             (size,) + observation_shape, dtype=observation_dtype
         )
-        self._terminals = np.empty((size, 1), dtype=np.float32)
+        self._terminations = np.empty((size, 1), dtype=np.float32)
+        self._truncations = np.empty((size, 1), dtype=np.float32)
         self._n_steps = np.empty((size, 1), dtype=np.float32)
 
         # determine flags
@@ -1182,7 +1230,8 @@ cdef class TransitionMiniBatch:
         cdef void* actions_ptr = self._actions.data
         cdef FLOAT_t* rewards_ptr = <FLOAT_t*> self._rewards.data
         cdef void* next_observations_ptr = self._next_observations.data
-        cdef FLOAT_t* terminals_ptr = <FLOAT_t*> self._terminals.data
+        cdef FLOAT_t* terminations_ptr = <FLOAT_t*> self._terminations.data
+        cdef FLOAT_t* truncations_ptr = <FLOAT_t*> self._truncations.data
         cdef FLOAT_t* n_steps_ptr = <FLOAT_t*> self._n_steps.data
 
         # get pointers to transitions
@@ -1204,7 +1253,8 @@ cdef class TransitionMiniBatch:
                 actions_ptr=actions_ptr,
                 rewards_ptr=rewards_ptr,
                 next_observations_ptr=next_observations_ptr,
-                terminals_ptr=terminals_ptr,
+                terminations_ptr=terminations_ptr,
+                truncations_ptr=truncations_ptr,
                 n_steps_ptr=n_steps_ptr,
                 n_frames=n_frames,
                 n_steps=n_steps,
@@ -1288,7 +1338,8 @@ cdef class TransitionMiniBatch:
         void* actions_ptr,
         float* rewards_ptr,
         void* next_observations_ptr,
-        float* terminals_ptr,
+        float* terminations_ptr,
+        float* truncations_ptr,
         float* n_steps_ptr,
         int n_frames,
         int n_steps,
@@ -1335,7 +1386,8 @@ cdef class TransitionMiniBatch:
             is_image=is_image,
             is_next=True
         )
-        terminals_ptr[batch_index] = next_ptr.get().terminal
+        terminations_ptr[batch_index] = next_ptr.get().termination
+        truncations_ptr[batch_index] = next_ptr.get().truncation  # todo: check if this is needed (I assume it is)
         n_steps_ptr[batch_index] = i + 1
 
     @property
@@ -1379,14 +1431,24 @@ cdef class TransitionMiniBatch:
         return self._next_observations
 
     @property
-    def terminals(self):
+    def terminations(self):
         """ Returns mini-batch of terminal flags at `t+n`.
 
         Returns:
             numpy.ndarray: terminal flags at `t+n`.
 
         """
-        return self._terminals
+        return self._terminations
+
+    @property
+    def truncations(self):
+        """ Returns mini-batch of terminal flags at `t+n`.
+
+        Returns:
+            numpy.ndarray: terminal flags at `t+n`.
+
+        """
+        return self._truncations
 
     @property
     def n_steps(self):

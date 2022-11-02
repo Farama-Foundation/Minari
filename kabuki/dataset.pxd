@@ -14,6 +14,7 @@ cdef extern from "kabuki/dataset.h" namespace "kabuki" nogil:
         float reward
         np.uint8_t* next_observation_i
         np.float32_t* next_observation_f
-        float terminal
+        float termination
+        float truncation
         shared_ptr[CTransition] prev_transition
         shared_ptr[CTransition] next_transition
