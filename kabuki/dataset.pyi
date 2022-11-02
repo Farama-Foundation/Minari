@@ -108,6 +108,7 @@ class Episode:
 class KabukiDataset:
     def __init__(
         self,
+        dataset_name: str,
         observations: np.ndarray,
         actions: np.ndarray,
         rewards: np.ndarray,
@@ -116,6 +117,8 @@ class KabukiDataset:
         episode_terminals: Optional[np.ndarray] = ...,
         discrete_action: Optional[bool] = ...,
     ): ...
+    @property
+    def dataset_name(self) -> str: ...
     @property
     def observations(self) -> np.ndarray: ...
     @property

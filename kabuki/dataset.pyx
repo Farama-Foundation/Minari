@@ -182,6 +182,7 @@ class KabukiDataset:
     """
     def __init__(
         self,
+        dataset_name,
         observations,
         actions,
         rewards,
@@ -190,6 +191,8 @@ class KabukiDataset:
         episode_terminals=None,
         discrete_action=None,
     ):
+        self._dataset_name = dataset_name
+
         # validation
         assert isinstance(observations, np.ndarray),\
             'Observations must be numpy array.'
@@ -230,6 +233,10 @@ class KabukiDataset:
             self._actions = np.asarray(actions, dtype=np.float32)
 
         self._episodes = None
+
+    @property
+    def dataset_name(self):
+        return self._dataset_name
 
     @property
     def observations(self):
@@ -526,6 +533,7 @@ class KabukiDataset:
 
         """
         with h5py.File(fname, 'w') as f:
+            f.create_dataset('dataset_name', data=self._dataset_name)
             f.create_dataset('observations', data=self._observations)
             f.create_dataset('actions', data=self._actions)
             f.create_dataset('rewards', data=self._rewards)
@@ -561,6 +569,7 @@ class KabukiDataset:
 
         """
         with h5py.File(fname, 'r') as f:
+            dataset_name = f['dataset_name'][()]
             observations = f['observations'][()]
             actions = f['actions'][()]
             rewards = f['rewards'][()]
@@ -578,6 +587,7 @@ class KabukiDataset:
                 LOG.warning("The dataset structure might be incompatible.")
 
         dataset = cls(
+            dataset_name=dataset_name,
             observations=observations,
             actions=actions,
             rewards=rewards,

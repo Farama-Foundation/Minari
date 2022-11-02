@@ -39,6 +39,7 @@ for episode in range(num_episodes):
 env.close()
 
 ds = KabukiDataset(
+    dataset_name="LunarLander-v2",
     observations=replay_buffer["observation"],
     actions=replay_buffer["action"],
     rewards=replay_buffer["reward"],
@@ -49,13 +50,15 @@ ds = KabukiDataset(
 
 from google.cloud import storage
 
-# dataset = kabuki.retrieve_dataset("LunarLander-v2-test_dataset")
-# print(f"retrieved dataset: {dataset}, with attrs: {dataset.__dir__()}")
-
-
 ds.dump(
     ".datasets/LunarLander-v2-test_dataset.hdf5"
 )  # todo: abstract away parent directory and hdf5 extension
+
+# upload and download datasets
 kabuki.upload_dataset("LunarLander-v2-test_dataset")
+ds = kabuki.retrieve_dataset("LunarLander-v2-test_dataset")
+
+# list datasets on server
 kabuki.list_datasets()
-kabuki.retrieve_dataset("LunarLander-v2-test_dataset")
+
+print(ds.dataset_name)
