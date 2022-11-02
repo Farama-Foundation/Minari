@@ -50,7 +50,7 @@ ds = KabukiDataset(
 
 from google.cloud import storage
 
-ds.dump(
+ds.save(
     ".datasets/LunarLander-v2-test_dataset.hdf5"
 )  # todo: abstract away parent directory and hdf5 extension
 

@@ -18,8 +18,9 @@ dataset = kabuki.retrieve_dataset("LunarLander-v2-test_dataset")
 ```
 
 ## Uploading datasets
+
 ```python
-dataset.dump(
+dataset.save(
     ".datasets/LunarLander-v2-test_dataset.hdf5"
 )  # todo: abstract away parent directory and hdf5 extension
 dataset = kabuki.upload_dataset("LunarLander-v2-test_dataset")

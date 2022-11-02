@@ -41,4 +41,4 @@ ds = KabukiDataset(
     truncations=replay_buffer["truncated"],
 )
 
-ds.dump()
+ds.save()

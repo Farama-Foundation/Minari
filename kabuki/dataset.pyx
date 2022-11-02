@@ -527,7 +527,7 @@ class KabukiDataset:
             dataset.episode_terminals
         )
 
-    def dump(self, path=''):
+    def save(self, path=''):
         """ Saves dataset as HDF5.
 
         Args:
