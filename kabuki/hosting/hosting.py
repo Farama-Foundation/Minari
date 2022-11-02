@@ -9,17 +9,17 @@ def upload_dataset(dataset_path: str, root_dir: str = ".datasets"):
     project_id = "dogwood-envoy-367012"
     bucket_name = "kabuki-datasets"
     filename = test_and_return_name(dataset_path)
-    path = os.path.join(root_dir, filename)
+    path = os.path.join(root_dir, f"{filename}.hdf5")
 
     storage_client = storage.Client(project_id)
     bucket = storage_client.bucket(bucket_name)
-    blob = bucket.blob(dataset_path)
+    blob = bucket.blob(f"{dataset_path}.hdf5")
 
     blob.upload_from_filename(
-        f"{path}.hdf5"
+        path
     )  # See https://github.com/googleapis/python-storage/issues/27 for discussion on progress bars
 
-    print(f"File {filename}.hdf5 uploaded!")
+    print(f"Dataset {filename} uploaded!")
 
 
 def retrieve_dataset(dataset_name: str, root_dir: str = ".datasets"):
@@ -63,5 +63,6 @@ def list_datasets():
     bucket = storage_client.bucket(bucket_name)
     blobs = bucket.list_blobs()
 
+    print(f"Found datasets:")
     for blob in blobs:
         print(blob.name)
