@@ -27,7 +27,7 @@ dataset = kabuki.upload_dataset("LunarLander-v2-test_dataset")
 
 
 ## Saving to dataset format
-It is not the aim of Kabuki to insist that you use a certain buffer implementation. However, in order to maintain standardisation across the library, we have a standardised format, the `MDPDataset` class, for saving replay buffers to file. 
+It is not the aim of Kabuki to insist that you use a certain buffer implementation. However, in order to maintain standardisation across the library, we have a standardised format, the `KabukiDataset` class, for saving replay buffers to file. 
 
 This converter will have tests to ensure formatting standards
 

@@ -1,5 +1,5 @@
 import gymnasium as gym
-from kabuki.dataset import MDPDataset
+from kabuki.dataset import KabukiDataset
 import numpy as np
 import requests
 import os
@@ -36,7 +36,7 @@ for episode in range(num_episodes):
 
 env.close()
 
-ds = MDPDataset(
+ds = KabukiDataset(
     observations=replay_buffer["observation"],
     actions=replay_buffer["action"],
     rewards=replay_buffer["reward"],

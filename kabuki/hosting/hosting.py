@@ -52,7 +52,7 @@ def retrieve_dataset(dataset_name: str, root_dir: str = ".datasets"):
         )  # See https://github.com/googleapis/python-storage/issues/27 for discussion on progress bars
         print(f"Dataset {dataset_name} downloaded to {path}/")
 
-    return dataset.MDPDataset.load(f"{path}.hdf5")
+    return dataset.KabukiDataset.load(f"{path}.hdf5")
 
 
 def list_datasets():

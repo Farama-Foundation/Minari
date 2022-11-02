@@ -119,15 +119,15 @@ def _check_discrete_action(actions):
     return np.all(float_actions == int_actions)
 
 
-class MDPDataset:
+class KabukiDataset:
     """ Markov-Decision Process Dataset class.
 
-    MDPDataset is deisnged for reinforcement learning datasets to use them like
+    KabukiDataset is deisnged for reinforcement learning datasets to use them like
     supervised learning datasets.
 
     .. code-block:: python
 
-        from d3rlpy.dataset import MDPDataset
+        from kabuki.dataset import KabukiDataset
 
         # 1000 steps of observations with shape of (100,)
         observations = np.random.random((1000, 100))
@@ -138,11 +138,11 @@ class MDPDataset:
         # 1000 steps of terminal flags
         terminals = np.random.randint(2, size=1000)
 
-        dataset = MDPDataset(observations, actions, rewards, terminals)
+        dataset = KabukiDataset(observations, actions, rewards, terminals)
 
-    The MDPDataset object automatically splits the given data into list of
-    :class:`d3rlpy.dataset.Episode` objects.
-    Furthermore, the MDPDataset object behaves like a list in order to use with
+    The KabukiDataset object automatically splits the given data into list of
+    :class:`kabuki.dataset.Episode` objects.
+    Furthermore, the KabukiDataset object behaves like a list in order to use with
     scikit-learn utilities.
 
     .. code-block:: python
@@ -281,8 +281,8 @@ class MDPDataset:
         """ Returns the episodes.
 
         Returns:
-            list(d3rlpy.dataset.Episode):
-                list of :class:`d3rlpy.dataset.Episode` objects.
+            list(kabuki.dataset.Episode):
+                list of :class:`kabuki.dataset.Episode` objects.
 
         """
         if self._episodes is None:
@@ -485,7 +485,7 @@ class MDPDataset:
         """ Extend dataset by another dataset.
 
         Args:
-            dataset (d3rlpy.dataset.MDPDataset): dataset.
+            dataset (kabuki.dataset.KabukiDataset): dataset.
 
         """
         assert self.is_action_discrete() == dataset.is_action_discrete(),\
@@ -525,9 +525,9 @@ class MDPDataset:
         .. code-block:: python
 
             import numpy as np
-            from d3rlpy.dataset import MDPDataset
+            from kabuki.dataset import KabukiDataset
 
-            dataset = MDPDataset(np.random.random(10, 4),
+            dataset = KabukiDataset(np.random.random(10, 4),
                                  np.random.random(10, 2),
                                  np.random.random(10),
                                  np.random.randint(2, size=10))
@@ -536,7 +536,7 @@ class MDPDataset:
             dataset.dump('dataset.h5')
 
             # load from HDF5
-            new_dataset = MDPDataset.load('dataset.h5')
+            new_dataset = KabukiDataset.load('dataset.h5')
 
         Args:
             fname (str): file path.
@@ -602,7 +602,7 @@ class Episode:
     This class is designed to hold data collected in a single episode.
 
     Episode object automatically splits data into list of
-    :class:`d3rlpy.dataset.Transition` objects.
+    :class:`kabuki.dataset.Transition` objects.
     Also Episode object behaves like a list object for ease of access to
     transitions.
 
@@ -706,8 +706,8 @@ class Episode:
         """ Returns the transitions.
 
         Returns:
-            list(d3rlpy.dataset.Transition):
-                list of :class:`d3rlpy.dataset.Transition` objects.
+            list(kabuki.dataset.Transition):
+                list of :class:`kabuki.dataset.Transition` objects.
 
         """
         if self._transitions is None:
@@ -800,9 +800,9 @@ cdef class Transition:
         reward (float): reward at `t`.
         next_observation (numpy.ndarray): observation at `t+1`.
         terminal (int): terminal flag at `t+1`.
-        prev_transition (d3rlpy.dataset.Transition):
+        prev_transition (kabuki.dataset.Transition):
             pointer to the previous transition.
-        next_transition (d3rlpy.dataset.Transition):
+        next_transition (kabuki.dataset.Transition):
             pointer to the next transition.
 
     """
@@ -973,7 +973,7 @@ cdef class Transition:
         If this is the first transition, this method should return ``None``.
 
         Returns:
-            d3rlpy.dataset.Transition: previous transition.
+            kabuki.dataset.Transition: previous transition.
 
         """
         return self._prev_transition
@@ -983,7 +983,7 @@ cdef class Transition:
         """ Sets transition to ``prev_transition``.
 
         Args:
-            d3rlpy.dataset.Transition: previous transition.
+            kabuki.dataset.Transition: previous transition.
 
         """
         assert isinstance(transition, Transition)
@@ -999,7 +999,7 @@ cdef class Transition:
         If this is the last transition, this method should return ``None``.
 
         Returns:
-            d3rlpy.dataset.Transition: next transition.
+            kabuki.dataset.Transition: next transition.
 
         """
         return self._next_transition
@@ -1009,7 +1009,7 @@ cdef class Transition:
         """ Sets transition to ``next_transition``.
 
         Args:
-            d3rlpy.dataset.Dataset: next transition.
+            kabuki.dataset.Dataset: next transition.
 
         """
         assert isinstance(transition, Transition)
@@ -1034,7 +1034,7 @@ def trace_back_and_clear(transition):
     """ Traces transitions and clear all links.
 
     Args:
-        transition (d3rlpy.dataset.Transition): transition.
+        transition (kabuki.dataset.Transition): transition.
 
     """
     while True:
@@ -1096,7 +1096,7 @@ cdef void _stack_frames(
 cdef class TransitionMiniBatch:
     """ mini-batch of Transition objects.
 
-    This class is designed to hold :class:`d3rlpy.dataset.Transition` objects
+    This class is designed to hold :class:`kabuki.dataset.Transition` objects
     for being passed to algorithms during fitting.
 
     If the observation is image, you can stack arbitrary frames via
@@ -1118,7 +1118,7 @@ cdef class TransitionMiniBatch:
     ``prev_transition`` property.
 
     Args:
-        transitions (list(d3rlpy.dataset.Transition)):
+        transitions (list(kabuki.dataset.Transition)):
             mini-batch of transitions.
         n_frames (int): the number of frames to stack for image observation.
         n_steps (int): length of N-step sampling.
@@ -1406,7 +1406,7 @@ cdef class TransitionMiniBatch:
         """ Returns transitions.
 
         Returns:
-            d3rlpy.dataset.Transition: list of transitions.
+            kabuki.dataset.Transition: list of transitions.
 
         """
         return self._transitions

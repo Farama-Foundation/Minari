@@ -51,6 +51,6 @@ if __name__ == "__main__":
         ],
         packages=find_packages(exclude=["tests*"]),
         python_requires=">=3.7.0",
-        package_data={"d3rlpy": ["*.pyx", "*.pxd", "*.h", "*.pyi", "py.typed"]},
+        package_data={"kabuki": ["*.pyx", "*.pxd", "*.h", "*.pyi", "py.typed"]},
         ext_modules=ext_modules,
     )
