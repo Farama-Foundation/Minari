@@ -1,4 +1,6 @@
+import os
 import warnings
+from pathlib import Path
 
 import numpy as np
 
@@ -525,14 +527,16 @@ class KabukiDataset:
             dataset.episode_terminals
         )
 
-    def dump(self, fname):
+    def dump(self, path=''):
         """ Saves dataset as HDF5.
 
         Args:
             fname (str): file path.
 
         """
-        with h5py.File(fname, 'w') as f:
+        full_path = Path(path, '.datasets', f'{self._dataset_name}.hdf5')
+        full_path.parent.mkdir(parents=True, exist_ok=True)
+        with h5py.File(full_path, 'w') as f:
             f.create_dataset('dataset_name', data=self._dataset_name)
             f.create_dataset('observations', data=self._observations)
             f.create_dataset('actions', data=self._actions)

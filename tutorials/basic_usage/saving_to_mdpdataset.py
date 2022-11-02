@@ -41,4 +41,4 @@ ds = KabukiDataset(
     truncations=replay_buffer["truncated"],
 )
 
-ds.dump("test_dataset.hdf5")
+ds.dump()
