@@ -109,6 +109,7 @@ class KabukiDataset:
     def __init__(
         self,
         dataset_name: str,
+        algorithm_name: str,
         observations: np.ndarray,
         actions: np.ndarray,
         rewards: np.ndarray,
@@ -119,6 +120,8 @@ class KabukiDataset:
     ): ...
     @property
     def dataset_name(self) -> str: ...
+    @property
+    def algorithm_name(self) -> str: ...
     @property
     def observations(self) -> np.ndarray: ...
     @property

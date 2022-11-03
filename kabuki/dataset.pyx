@@ -185,6 +185,7 @@ class KabukiDataset:
     def __init__(
         self,
         dataset_name,
+        algorithm_name,
         observations,
         actions,
         rewards,
@@ -194,6 +195,7 @@ class KabukiDataset:
         discrete_action=None,
     ):
         self._dataset_name = dataset_name
+        self._algorithm_name = algorithm_name
 
         # validation
         assert isinstance(observations, np.ndarray),\
@@ -239,6 +241,10 @@ class KabukiDataset:
     @property
     def dataset_name(self):
         return self._dataset_name
+
+    @property
+    def dataset_name(self):
+        return self._algorithm_name
 
     @property
     def observations(self):
@@ -545,6 +551,7 @@ class KabukiDataset:
 
         with h5py.File(file_path, 'w') as f:
             f.create_dataset('dataset_name', data=self._dataset_name)
+            f.create_dataset('algorithm_name', data=self._algorithm_name)
             f.create_dataset('observations', data=self._observations)
             f.create_dataset('actions', data=self._actions)
             f.create_dataset('rewards', data=self._rewards)
@@ -581,6 +588,7 @@ class KabukiDataset:
         """
         with h5py.File(fname, 'r') as f:
             dataset_name = f['dataset_name'][()]
+            algorithm_name = f['algorithm_name'][()]
             observations = f['observations'][()]
             actions = f['actions'][()]
             rewards = f['rewards'][()]
@@ -599,6 +607,7 @@ class KabukiDataset:
 
         dataset = cls(
             dataset_name=dataset_name,
+            algorithm_name=algorithm_name,
             observations=observations,
             actions=actions,
             rewards=rewards,

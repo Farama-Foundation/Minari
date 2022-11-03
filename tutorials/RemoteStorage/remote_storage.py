@@ -50,6 +50,7 @@ def generate_dataset(dataset_name: str):
 
     ds = KabukiDataset(
         dataset_name=dataset_name,
+        algorithm_name="random_policy",
         observations=replay_buffer["observation"],
         actions=replay_buffer["action"],
         rewards=replay_buffer["reward"],
