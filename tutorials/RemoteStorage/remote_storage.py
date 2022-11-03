@@ -24,29 +24,55 @@ def generate_dataset(dataset_name: str):
     observation, info = env.reset(seed=42)
 
     replay_buffer = {
-        "episode": np.array([]),
-        "observation": np.array([]),
-        "action": np.array([]),
-        "reward": np.array([]),
-        "terminated": np.array([]),
-        "truncated": np.array([]),
+        "episode": np.array(
+            [[0]] * env.spec.max_episode_steps * num_episodes, dtype=np.int32
+        ),
+        "observation": np.array(
+            [[0] * env.observation_space.shape[0]]
+            * env.spec.max_episode_steps
+            * num_episodes,
+            dtype=np.float32,
+        ),
+        "action": np.array(
+            [[0] * 2] * env.spec.max_episode_steps * num_episodes, dtype=np.float32
+        ),
+        "reward": np.array(
+            [[0]] * env.spec.max_episode_steps * num_episodes, dtype=np.float32
+        ),
+        "terminated": np.array(
+            [[0]] * env.spec.max_episode_steps * num_episodes, dtype=np.bool
+        ),
+        "truncated": np.array(
+            [[0]] * env.spec.max_episode_steps * num_episodes, dtype=np.bool
+        ),
     }
 
+    total_steps = 0
     for episode in range(num_episodes):
+        episode_step = 0
         observation, info = env.reset()
         terminated = False
         truncated = False
         while not terminated and not truncated:
             action = env.action_space.sample()  # User-defined policy function
             observation, reward, terminated, truncated, info = env.step(action)
-            np.append(replay_buffer["episode"], episode)
-            np.append(replay_buffer["observation"], observation)
-            np.append(replay_buffer["action"], action)
-            np.append(replay_buffer["reward"], reward)
-            np.append(replay_buffer["terminated"], terminated)
-            np.append(replay_buffer["truncated"], truncated)
+            replay_buffer["episode"][total_steps] = np.array(episode)
+            replay_buffer["observation"][total_steps] = np.array(observation)
+            replay_buffer["action"][total_steps] = np.array(action)
+            replay_buffer["reward"][total_steps] = np.array(reward)
+            replay_buffer["terminated"][total_steps] = np.array(terminated)
+            replay_buffer["truncated"][total_steps] = np.array(truncated)
+            episode_step += 1
+            total_steps += 1
 
     env.close()
+
+    replay_buffer["episode"] = replay_buffer["episode"][:total_steps]
+    replay_buffer["observation"] = replay_buffer["observation"][:total_steps]
+    replay_buffer["action"] = replay_buffer["action"][:total_steps]
+    replay_buffer["reward"] = replay_buffer["reward"][:total_steps]
+    replay_buffer["terminated"] = replay_buffer["terminated"][:total_steps]
+    replay_buffer["truncated"] = replay_buffer["truncated"][:total_steps]
 
     ds = KabukiDataset(
         dataset_name=dataset_name,

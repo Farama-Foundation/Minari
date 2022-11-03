@@ -46,8 +46,6 @@ def generate_dataset(dataset_name: str):
             observation, reward, terminated, truncated, info = env.step(action)
             replay_buffer["episode"][total_steps] = np.array(episode)
             replay_buffer["observation"][total_steps] = np.array(observation)
-            print(np.array(observation))
-            print(replay_buffer["observation"][total_steps])
             replay_buffer["action"][total_steps] = np.array(action)
             replay_buffer["reward"][total_steps] = np.array(reward)
             replay_buffer["terminated"][total_steps] = np.array(terminated)
