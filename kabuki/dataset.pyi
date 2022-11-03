@@ -110,6 +110,10 @@ class KabukiDataset:
         self,
         dataset_name: str,
         algorithm_name: str,
+        seed_used: int,
+        code_permalink: str,
+        author: str,
+        author_email: str,
         observations: np.ndarray,
         actions: np.ndarray,
         rewards: np.ndarray,
@@ -122,6 +126,14 @@ class KabukiDataset:
     def dataset_name(self) -> str: ...
     @property
     def algorithm_name(self) -> str: ...
+    @property
+    def seed_used(self) -> int: ...
+    @property
+    def code_permalink(self) -> str: ...
+    @property
+    def author(self) -> str: ...
+    @property
+    def author_email(self) -> str: ...
     @property
     def observations(self) -> np.ndarray: ...
     @property

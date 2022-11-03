@@ -186,6 +186,10 @@ class KabukiDataset:
         self,
         dataset_name,
         algorithm_name,
+        seed_used,
+        code_permalink,
+        author,
+        author_email,
         observations,
         actions,
         rewards,
@@ -196,6 +200,10 @@ class KabukiDataset:
     ):
         self._dataset_name = dataset_name
         self._algorithm_name = algorithm_name
+        self._seed_used = seed_used
+        self._code_permalink = code_permalink
+        self._author = author
+        self._author_email = author_email
 
         # validation
         assert isinstance(observations, np.ndarray),\
@@ -243,8 +251,24 @@ class KabukiDataset:
         return self._dataset_name
 
     @property
-    def dataset_name(self):
+    def algorithm_name(self):
         return self._algorithm_name
+
+    @property
+    def seed_used(self):
+        return self._seed_used
+
+    @property
+    def code_permalink(self):
+        return self._code_permalink
+
+    @property
+    def author(self):
+        return self._author
+
+    @property
+    def author_email(self):
+        return self._author_email
 
     @property
     def observations(self):
@@ -552,6 +576,10 @@ class KabukiDataset:
         with h5py.File(file_path, 'w') as f:
             f.create_dataset('dataset_name', data=self._dataset_name)
             f.create_dataset('algorithm_name', data=self._algorithm_name)
+            f.create_dataset('seed_used', data=self._seed_used)
+            f.create_dataset('code_permalink', data=self._code_permalink)
+            f.create_dataset('author', data=self._author)
+            f.create_dataset('author_email', data=self._author_email)
             f.create_dataset('observations', data=self._observations)
             f.create_dataset('actions', data=self._actions)
             f.create_dataset('rewards', data=self._rewards)
@@ -589,6 +617,10 @@ class KabukiDataset:
         with h5py.File(fname, 'r') as f:
             dataset_name = f['dataset_name'][()]
             algorithm_name = f['algorithm_name'][()]
+            seed_used = f['seed_used'][()]
+            code_permalink = f['code_permalink'][()]
+            author = f['author'][()]
+            author_email = f['author_email'][()]
             observations = f['observations'][()]
             actions = f['actions'][()]
             rewards = f['rewards'][()]
@@ -608,6 +640,10 @@ class KabukiDataset:
         dataset = cls(
             dataset_name=dataset_name,
             algorithm_name=algorithm_name,
+            seed_used=seed_used,
+            code_permalink=code_permalink,
+            author=author,
+            author_email=author_email,
             observations=observations,
             actions=actions,
             rewards=rewards,
