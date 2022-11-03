@@ -10,11 +10,7 @@ import kabuki
 
 GCP_DATASET_ADMIN = os.environ["GCP_DATASET_ADMIN"]
 
-credentials_json = (
-    base64.b64decode(open("encoded_service_acc_key.txt", "r").read())
-    .decode("utf8")
-    .replace("'", '"')
-)
+credentials_json = base64.b64decode(GCP_DATASET_ADMIN).decode("utf8").replace("'", '"')
 with open("credentials.json", "w") as f:
     f.write(credentials_json)
 

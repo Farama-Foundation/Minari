@@ -19,7 +19,7 @@ jobs:
       fail-fast: false
       matrix:
         python-version: ['3.7', '3.8', '3.9', '3.10']
-        tutorial: ['basic_usage']
+        tutorial: ['basic_usage', 'downloading_and_uploading']
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
@@ -27,6 +27,8 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies and run tutorials
+        env:
+          GCP_DATASET_ADMIN: ${{ secrets.GCP_DATASET_ADMIN }}
         run: |
           cd tutorials/${{ matrix.tutorial }}
           pip install -r requirements.txt
