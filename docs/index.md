@@ -21,8 +21,14 @@ lastpage:
 
 api/local_storage
 api/remote_storage
-api/dataset_usage
+```
+
+```{toctree}
+:hidden:
+:caption: Tutorials
+
 api/dataset_creation
+api/dataset_usage
 ```
 
 ```{toctree}
