@@ -28,10 +28,10 @@ def generate_dataset(dataset_name: str):
             [[0]] * env.spec.max_episode_steps * num_episodes, dtype=np.float32
         ),
         "terminated": np.array(
-            [[0]] * env.spec.max_episode_steps * num_episodes, dtype=np.bool
+            [[0]] * env.spec.max_episode_steps * num_episodes, dtype=bool
         ),
         "truncated": np.array(
-            [[0]] * env.spec.max_episode_steps * num_episodes, dtype=np.bool
+            [[0]] * env.spec.max_episode_steps * num_episodes, dtype=bool
         ),
     }
 
