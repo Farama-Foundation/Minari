@@ -1,4 +1,6 @@
 import gymnasium as gym
+
+import kabuki
 from kabuki.dataset import KabukiDataset
 import numpy as np
 
@@ -42,3 +44,5 @@ ds = KabukiDataset(
 )
 
 ds.save()
+
+ds = kabuki.load_dataset("LunarLander-v2-test_dataset")

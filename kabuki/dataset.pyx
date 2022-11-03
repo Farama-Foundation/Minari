@@ -527,16 +527,23 @@ class KabukiDataset:
             dataset.episode_terminals
         )
 
-    def save(self, datasets_path=''):
+    def save(self):
         """ Saves dataset as HDF5.
 
         Args:
             fname (str): file path.
 
         """
-        full_path = Path(datasets_path, '.datasets', f'{self._dataset_name}.hdf5')
-        full_path.parent.mkdir(parents=True, exist_ok=True)
-        with h5py.File(full_path, 'w') as f:
+        datasets_path = os.environ.get('KABUKI_DATASETS_PATH')
+        if datasets_path is not None:
+            file_path = os.path.join(datasets_path, f'{self._dataset_name}.hdf5')
+        else:
+            datasets_path = os.path.join(os.path.expanduser('~'), '.kabuki', 'datasets')
+            file_path = os.path.join(datasets_path, f'{self._dataset_name}.hdf5')
+
+        os.makedirs(datasets_path, exist_ok=True)
+
+        with h5py.File(file_path, 'w') as f:
             f.create_dataset('dataset_name', data=self._dataset_name)
             f.create_dataset('observations', data=self._observations)
             f.create_dataset('actions', data=self._actions)
