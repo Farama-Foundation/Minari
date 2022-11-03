@@ -410,35 +410,35 @@
 <section id="api-overview">
 <h2>API Overview<a class="headerlink" href="#api-overview" title="Permalink to this heading">#</a></h2>
 <p>Kabuki’s API easily lets you list datasets available to download, and download datasets to local storage. With permissions, it is also easy to upload your own datasets.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+<span class="kn">from</span> <span class="nn">google.cloud</span> <span class="kn">import</span> <span class="n">storage</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">dataset_name</span> <span class="o">=</span> <span class="s2">&quot;LunarLander-v2-remote_test_dataset&quot;</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Generate dataset as standard&quot;</span><span class="p">)</span>
     <span class="n">generated_dataset</span> <span class="o">=</span> <span class="n">generate_dataset</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Save dataset to local storage&quot;</span><span class="p">)</span>
-    <span class="n">generated_dataset</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-
+<span class="hll">    <span class="n">generated_dataset</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</span>
     <span class="nb">print</span><span class="p">(</span>
-        <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Upload dataset to Google Cloud Storage (here naming checks are done, enforcing dataset naming conventions)&quot;</span>
-<span class="hll">    <span class="p">)</span>
-</span>    <span class="n">kabuki</span><span class="o">.</span><span class="n">upload_dataset</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
+<span class="hll">        <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Upload dataset to Google Cloud Storage (here naming checks are done, enforcing dataset naming conventions)&quot;</span>
+</span>    <span class="p">)</span>
+    <span class="n">kabuki</span><span class="o">.</span><span class="n">upload_dataset</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
 
-<span class="hll">    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">List all datasets in remote storage&quot;</span><span class="p">)</span>
-</span>    <span class="n">kabuki</span><span class="o">.</span><span class="n">list_remote_datasets</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">List all datasets in remote storage&quot;</span><span class="p">)</span>
+    <span class="n">kabuki</span><span class="o">.</span><span class="n">list_remote_datasets</span><span class="p">()</span>
 
     <span class="nb">print</span><span class="p">(</span>
         <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Delete dataset from local storage, list all datasets in local storage to confirm&quot;</span>
-    <span class="p">)</span>
-    <span class="n">kabuki</span><span class="o">.</span><span class="n">delete_dataset</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
+<span class="hll">    <span class="p">)</span>
+</span>    <span class="n">kabuki</span><span class="o">.</span><span class="n">delete_dataset</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
     <span class="n">kabuki</span><span class="o">.</span><span class="n">list_local_datasets</span><span class="p">()</span>
 
-<span class="hll">    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Download dataset from Google Cloud Storage&quot;</span><span class="p">)</span>
-</span>    <span class="n">kabuki</span><span class="o">.</span><span class="n">download_dataset</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
-
-    <span class="nb">print</span><span class="p">(</span>
-        <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Listing datasets in local storage, we should see the dataset we just downloaded&quot;</span>
-    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Download dataset from Google Cloud Storage&quot;</span><span class="p">)</span>
+    <span class="n">kabuki</span><span class="o">.</span><span class="n">download_dataset</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -514,6 +514,10 @@ google-cloud-storage
     <span class="n">ds</span> <span class="o">=</span> <span class="n">KabukiDataset</span><span class="p">(</span>
         <span class="n">dataset_name</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">,</span>
         <span class="n">algorithm_name</span><span class="o">=</span><span class="s2">&quot;random_policy&quot;</span><span class="p">,</span>
+        <span class="n">seed_used</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>  <span class="c1"># For the simplicity of this example, we&#39;re not actually using a seed.</span>
+        <span class="n">code_permalink</span><span class="o">=</span><span class="s2">&quot;https://github.com/Farama-Foundation/Kabuki/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py&quot;</span><span class="p">,</span>
+        <span class="n">author</span><span class="o">=</span><span class="s2">&quot;WillDudley&quot;</span><span class="p">,</span>
+        <span class="n">author_email</span><span class="o">=</span><span class="s2">&quot;wdudley@farama.org&quot;</span><span class="p">,</span>
         <span class="n">observations</span><span class="o">=</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">],</span>
         <span class="n">actions</span><span class="o">=</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;action&quot;</span><span class="p">],</span>
         <span class="n">rewards</span><span class="o">=</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;reward&quot;</span><span class="p">],</span>
