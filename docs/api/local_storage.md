@@ -20,6 +20,7 @@ To run the full code below, you will need to install the dependencies shown belo
 .. literalinclude:: ../../tutorials/LocalStorage/requirements.txt
    :language: text
 ```
+Then you need to `pip install -e .` from the root of the repository.
 
 ### Full Code
 ```{eval-rst}
