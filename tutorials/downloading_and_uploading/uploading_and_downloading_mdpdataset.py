@@ -8,6 +8,8 @@ import json
 from google.cloud import storage
 import kabuki
 
+GCP_DATASET_ADMIN = os.environ["GCP_DATASET_ADMIN"]
+
 credentials_json = (
     base64.b64decode(open("encoded_service_acc_key.txt", "r").read())
     .decode("utf8")
