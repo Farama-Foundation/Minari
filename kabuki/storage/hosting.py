@@ -7,7 +7,7 @@ from ..utils.assert_name_spec import test_and_return_name
 from .. import dataset
 
 
-def upload_dataset(dataset_name: str, root_dir: str = ".datasets"):
+def upload_dataset(dataset_name: str):
     project_id = "dogwood-envoy-367012"
     bucket_name = "kabuki-datasets"
     test_and_return_name(dataset_name)
@@ -15,7 +15,7 @@ def upload_dataset(dataset_name: str, root_dir: str = ".datasets"):
 
     storage_client = storage.Client(project_id)
     bucket = storage_client.bucket(bucket_name)
-    blob = bucket.blob(file_path)
+    blob = bucket.blob(f"{dataset_name}.hdf5")
 
     blob.upload_from_filename(
         file_path
@@ -24,7 +24,7 @@ def upload_dataset(dataset_name: str, root_dir: str = ".datasets"):
     print(f"Dataset {dataset_name} uploaded!")
 
 
-def retrieve_dataset(dataset_name: str):
+def download_dataset(dataset_name: str):
     test_and_return_name(dataset_name)
     file_path = get_file_path(dataset_name)
 
@@ -54,7 +54,7 @@ def retrieve_dataset(dataset_name: str):
     return dataset.KabukiDataset.load(file_path)
 
 
-def list_datasets():
+def list_remote_datasets():
     project_id = "dogwood-envoy-367012"
     bucket_name = "kabuki-datasets"
     storage_client = storage.Client(project=project_id)
@@ -62,6 +62,6 @@ def list_datasets():
     bucket = storage_client.bucket(bucket_name)
     blobs = bucket.list_blobs()
 
-    print(f"Found datasets:")
+    print(f"Datasets available to download:")
     for blob in blobs:
         print(blob.name)

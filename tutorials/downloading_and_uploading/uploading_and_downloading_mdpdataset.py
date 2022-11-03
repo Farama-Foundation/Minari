@@ -8,57 +8,82 @@ import kabuki
 
 # os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "../../../../.config/gcloud/credentials.db"
 
-num_episodes = 2
 
-env = gym.make("LunarLander-v2", render_mode="rgb_array")
-observation, info = env.reset(seed=42)
+def generate_dataset(dataset_name: str):
+    num_episodes = 10
 
-replay_buffer = {
-    "episode": np.array([]),
-    "observation": np.array([]),
-    "action": np.array([]),
-    "reward": np.array([]),
-    "terminated": np.array([]),
-    "truncated": np.array([]),
-}
+    env = gym.make("LunarLander-v2", render_mode="rgb_array")
+    observation, info = env.reset(seed=42)
 
-for episode in range(num_episodes):
-    observation, info = env.reset()
-    terminated = False
-    truncated = False
-    while not terminated and not truncated:
-        action = env.action_space.sample()  # User-defined policy function
-        observation, reward, terminated, truncated, info = env.step(action)
-        np.append(replay_buffer["episode"], episode)
-        np.append(replay_buffer["observation"], observation)
-        np.append(replay_buffer["action"], action)
-        np.append(replay_buffer["reward"], reward)
-        np.append(replay_buffer["terminated"], terminated)
-        np.append(replay_buffer["truncated"], truncated)
+    replay_buffer = {
+        "episode": np.array([]),
+        "observation": np.array([]),
+        "action": np.array([]),
+        "reward": np.array([]),
+        "terminated": np.array([]),
+        "truncated": np.array([]),
+    }
 
-env.close()
+    for episode in range(num_episodes):
+        observation, info = env.reset()
+        terminated = False
+        truncated = False
+        while not terminated and not truncated:
+            action = env.action_space.sample()  # User-defined policy function
+            observation, reward, terminated, truncated, info = env.step(action)
+            np.append(replay_buffer["episode"], episode)
+            np.append(replay_buffer["observation"], observation)
+            np.append(replay_buffer["action"], action)
+            np.append(replay_buffer["reward"], reward)
+            np.append(replay_buffer["terminated"], terminated)
+            np.append(replay_buffer["truncated"], truncated)
 
-ds = KabukiDataset(
-    dataset_name="LunarLander-v2",
-    observations=replay_buffer["observation"],
-    actions=replay_buffer["action"],
-    rewards=replay_buffer["reward"],
-    terminations=replay_buffer["terminated"],
-    truncations=replay_buffer["truncated"],
-)
+    env.close()
+
+    ds = KabukiDataset(
+        dataset_name=dataset_name,
+        observations=replay_buffer["observation"],
+        actions=replay_buffer["action"],
+        rewards=replay_buffer["reward"],
+        terminations=replay_buffer["terminated"],
+        truncations=replay_buffer["truncated"],
+    )
+
+    print("Dataset generated!")
+
+    return ds
 
 
 from google.cloud import storage
 
-ds.save(
-    ".datasets/LunarLander-v2-test_dataset.hdf5"
-)  # todo: abstract away parent directory and hdf5 extension
 
-# upload and download datasets
-kabuki.upload_dataset("LunarLander-v2-test_dataset")
-ds = kabuki.retrieve_dataset("LunarLander-v2-test_dataset")
+if __name__ == "__main__":
+    dataset_name = "LunarLander-v2-remote_test_dataset"
 
-# list datasets on server
-kabuki.list_datasets()
+    print("\nGenerate dataset as standard")
+    generated_dataset = generate_dataset(dataset_name)
 
-print(ds.dataset_name)
+    print("\nSave dataset to local storage")
+    generated_dataset.save()
+
+    print(
+        "\nUpload dataset to Google Cloud Storage (here naming checks are done, enforcing dataset naming conventions)"
+    )
+    kabuki.upload_dataset(dataset_name)
+
+    print("\nList all datasets in remote storage")
+    kabuki.list_remote_datasets()
+
+    print(
+        "\nDelete dataset from local storage, list all datasets in local storage to confirm"
+    )
+    kabuki.delete_dataset(dataset_name)
+    kabuki.list_local_datasets()
+
+    print("\nDownload dataset from Google Cloud Storage")
+    kabuki.download_dataset(dataset_name)
+
+    print(
+        "\nListing datasets in local storage, we should see the dataset we just downloaded"
+    )
+    kabuki.list_local_datasets()

@@ -12,9 +12,11 @@ We have a public discord server (which we also use to coordinate development wor
 `pip install git+https://github.com/Farama-Foundation/Kabuki.git@WD/MDPDataset`
 
 ## Downloading datasets
+
 ```python
 import kabuki
-dataset = kabuki.retrieve_dataset("LunarLander-v2-test_dataset")
+
+dataset = kabuki.download_dataset("LunarLander-v2-test_dataset")
 ```
 
 ## Uploading datasets
@@ -33,9 +35,11 @@ It is not the aim of Kabuki to insist that you use a certain buffer implementati
 This converter will have tests to ensure formatting standards
 
 ## Checking available remote datasets
+
 ```python
 import kabuki
-kabuki.list_datasets()
+
+kabuki.list_remote_datasets()
 ```
 
 ## Checking available local datasets

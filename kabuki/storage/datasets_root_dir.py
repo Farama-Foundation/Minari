@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 
 
 def get_file_path(dataset_name):
@@ -12,4 +13,4 @@ def get_file_path(dataset_name):
         file_path = os.path.join(datasets_path, f"{dataset_name}.hdf5")
 
     os.makedirs(datasets_path, exist_ok=True)
-    return file_path
+    return Path(file_path)
