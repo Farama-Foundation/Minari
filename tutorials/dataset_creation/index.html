@@ -7,12 +7,12 @@
     <meta property="og:title" content="Kabuki Documentation" />
     <meta property="og:type" content="website" />
     <meta property="og:description" content="" />
-    <meta property="og:url" content="https://kabuki.farama.org/api/dataset_usage.html" /><meta name="twitter:card" content="summary_large_image"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
-<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Dataset Creation" href="../dataset_creation/" /><link rel="prev" title="Remote Storage" href="../remote_storage/" />
-        <link rel="canonical" href="https://kabuki.farama.org/api/dataset_usage.html" />
+    <meta property="og:url" content="https://kabuki.farama.org/tutorials/dataset_creation.html" /><meta name="twitter:card" content="summary_large_image"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Dataset Usage" href="../dataset_usage/" /><link rel="prev" title="Remote Storage" href="../../api/remote_storage/" />
+        <link rel="canonical" href="https://kabuki.farama.org/tutorials/dataset_creation.html" />
 
     <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.09.15.dev1"/>
-        <title>Dataset Usage - Kabuki Documentation</title>
+        <title>Dataset Creation - Kabuki Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=9ec31e2665bf879c1d47d93a8ec4893870ee1e45" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=a614025deca43086db03c234d5a3a2047a0241ae" />
@@ -334,7 +334,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -350,11 +350,14 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/local_storage/">Local Storage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/remote_storage/">Remote Storage</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../local_storage/">Local Storage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../remote_storage/">Remote Storage</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Dataset Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../dataset_creation/">Dataset Creation</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Dataset Creation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dataset_usage/">Dataset Usage</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul>
@@ -382,7 +385,7 @@
           
     
     <div class="edit-this-page">
-  <a class="muted-link" href="https://github.com/Farama-Foundation/Kabuki/edit/master/docs/api/dataset_usage.md" title="Edit this page">
+  <a class="muted-link" href="https://github.com/Farama-Foundation/Kabuki/edit/master/docs/tutorials/dataset_creation.md" title="Edit this page">
     <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
       <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
       <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
@@ -398,16 +401,104 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
         </div>
         <article role="main">
           
-          <section id="dataset-usage">
-<h1>Dataset Usage<a class="headerlink" href="#dataset-usage" title="Permalink to this heading">#</a></h1>
-<p>(WORK IN PROGRESS)</p>
+          <section id="dataset-creation">
+<h1>Dataset Creation<a class="headerlink" href="#dataset-creation" title="Permalink to this heading">#</a></h1>
+<p>Here we provide code for the standard procedure for collecting a dataset.</p>
+<section id="environment-setup">
+<h2>Environment Setup<a class="headerlink" href="#environment-setup" title="Permalink to this heading">#</a></h2>
+<p>To run the full code below, you will need to install the dependencies shown below. It is recommended to use a newly-created virtual environment to avoid dependency conflicts.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>gymnasium-robotics
+cython
+kabuki
+</pre></div>
+</div>
+<p>Then you need to <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span></code> from the root of the repository.</p>
+</section>
+<section id="full-code">
+<h2>Full Code<a class="headerlink" href="#full-code" title="Permalink to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">base64</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">kabuki</span>
+<span class="kn">from</span> <span class="nn">kabuki.dataset</span> <span class="kn">import</span> <span class="n">KabukiDataset</span>
+
+
+<span class="c1"># 1. Get permissions to upload to GCP</span>
+<span class="n">GCP_DATASET_ADMIN</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;GCP_DATASET_ADMIN&quot;</span><span class="p">]</span>
+
+<span class="n">credentials_json</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">GCP_DATASET_ADMIN</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">)</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;credentials.json&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">credentials_json</span><span class="p">)</span>
+
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;GOOGLE_APPLICATION_CREDENTIALS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;./credentials.json&quot;</span>
+
+
+<span class="c1"># 2. Standard Gymnasium procedure to collect data into whatever replay buffer you want</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;FetchReach-v3&quot;</span><span class="p">)</span>
+<span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="n">replay_buffer</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;episode&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span>
+    <span class="s2">&quot;observation&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span>
+    <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span>
+    <span class="s2">&quot;reward&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span>
+    <span class="s2">&quot;terminated&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span>
+    <span class="s2">&quot;truncated&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span>
+<span class="p">}</span>
+<span class="n">dataset_name</span> <span class="o">=</span> <span class="s2">&quot;FetchReach-v3-example_dataset&quot;</span>
+
+<span class="n">num_episodes</span> <span class="o">=</span> <span class="mi">4</span>
+
+<span class="k">for</span> <span class="n">episode</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_episodes</span><span class="p">):</span>
+    <span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+    <span class="n">terminated</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">truncated</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">terminated</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">truncated</span><span class="p">:</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>  <span class="c1"># User-defined policy function</span>
+        <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;episode&quot;</span><span class="p">],</span> <span class="n">episode</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">],</span> <span class="n">observation</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;action&quot;</span><span class="p">],</span> <span class="n">action</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;reward&quot;</span><span class="p">],</span> <span class="n">reward</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;terminated&quot;</span><span class="p">],</span> <span class="n">terminated</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;truncated&quot;</span><span class="p">],</span> <span class="n">truncated</span><span class="p">)</span>
+
+<span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="c1"># 3. Convert the replay buffer to a KabukiDataset</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">KabukiDataset</span><span class="p">(</span>
+    <span class="n">dataset_name</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">,</span>
+    <span class="n">algorithm_name</span><span class="o">=</span><span class="s2">&quot;random_policy&quot;</span><span class="p">,</span>
+    <span class="n">seed_used</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>  <span class="c1"># For the simplicity of this example, we&#39;re not actually using a seed. Naughty us!</span>
+    <span class="n">code_permalink</span><span class="o">=</span><span class="s2">&quot;https://github.com/Farama-Foundation/Kabuki/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py&quot;</span><span class="p">,</span>
+    <span class="n">author</span><span class="o">=</span><span class="s2">&quot;WillDudley&quot;</span><span class="p">,</span>
+    <span class="n">author_email</span><span class="o">=</span><span class="s2">&quot;wdudley@farama.org&quot;</span><span class="p">,</span>
+    <span class="n">observations</span><span class="o">=</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">],</span>
+    <span class="n">actions</span><span class="o">=</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;action&quot;</span><span class="p">],</span>
+    <span class="n">rewards</span><span class="o">=</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;reward&quot;</span><span class="p">],</span>
+    <span class="n">terminations</span><span class="o">=</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;terminated&quot;</span><span class="p">],</span>
+    <span class="n">truncations</span><span class="o">=</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;truncated&quot;</span><span class="p">],</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Dataset generated!&quot;</span><span class="p">)</span>
+
+<span class="c1"># 4. Save the dataset locally</span>
+<span class="n">dataset</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+<span class="c1"># 5. Upload the dataset to GCP</span>
+<span class="n">kabuki</span><span class="o">.</span><span class="n">upload_dataset</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
 </section>
 
         </article>
@@ -415,16 +506,16 @@
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../dataset_creation/">
+          <a class="next-page" href="../dataset_usage/">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Dataset Creation</div>
+                <div class="title">Dataset Usage</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
-            <a class="prev-page" href="../remote_storage/">
+            <a class="prev-page" href="../../api/remote_storage/">
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
               <div class="page-info">
                 <div class="context">
@@ -460,8 +551,28 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Dataset Creation</a><ul>
+<li><a class="reference internal" href="#environment-setup">Environment Setup</a></li>
+<li><a class="reference internal" href="#full-code">Full Code</a></li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>

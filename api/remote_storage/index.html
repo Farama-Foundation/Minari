@@ -8,7 +8,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:description" content="" />
     <meta property="og:url" content="https://kabuki.farama.org/api/remote_storage.html" /><meta name="twitter:card" content="summary_large_image"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
-<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Dataset Usage" href="../dataset_usage/" /><link rel="prev" title="Local Storage" href="../local_storage/" />
+<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Dataset Creation" href="../../tutorials/dataset_creation/" /><link rel="prev" title="Local Storage" href="../local_storage/" />
         <link rel="canonical" href="https://kabuki.farama.org/api/remote_storage.html" />
 
     <link rel="shortcut icon" href="../../_static/favicon.png"/><meta name="generator" content="sphinx-5.3.0, furo 2022.09.15.dev1"/>
@@ -353,8 +353,11 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../local_storage/">Local Storage</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Remote Storage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../dataset_usage/">Dataset Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../dataset_creation/">Dataset Creation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/dataset_creation/">Dataset Creation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials/dataset_usage/">Dataset Usage</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul>
@@ -411,34 +414,34 @@
 <h2>API Overview<a class="headerlink" href="#api-overview" title="Permalink to this heading">#</a></h2>
 <p>Kabuki’s API easily lets you list datasets available to download, and download datasets to local storage. With permissions, it is also easy to upload your own datasets.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span>
+    <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;episode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;episode&quot;</span><span class="p">][:</span><span class="n">total_steps</span><span class="p">]</span>
+    <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">][:</span><span class="n">total_steps</span><span class="p">]</span>
+    <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;action&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;action&quot;</span><span class="p">][:</span><span class="n">total_steps</span><span class="p">]</span>
+    <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;reward&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;reward&quot;</span><span class="p">][:</span><span class="n">total_steps</span><span class="p">]</span>
+    <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;terminated&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;terminated&quot;</span><span class="p">][:</span><span class="n">total_steps</span><span class="p">]</span>
+    <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;truncated&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;truncated&quot;</span><span class="p">][:</span><span class="n">total_steps</span><span class="p">]</span>
+
+    <span class="n">ds</span> <span class="o">=</span> <span class="n">KabukiDataset</span><span class="p">(</span>
+        <span class="n">dataset_name</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">,</span>
+        <span class="n">algorithm_name</span><span class="o">=</span><span class="s2">&quot;random_policy&quot;</span><span class="p">,</span>
+<span class="hll">        <span class="n">seed_used</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>  <span class="c1"># For the simplicity of this example, we&#39;re not actually using a seed.</span>
+</span>        <span class="n">code_permalink</span><span class="o">=</span><span class="s2">&quot;https://github.com/Farama-Foundation/Kabuki/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py&quot;</span><span class="p">,</span>
+        <span class="n">author</span><span class="o">=</span><span class="s2">&quot;WillDudley&quot;</span><span class="p">,</span>
+<span class="hll">        <span class="n">author_email</span><span class="o">=</span><span class="s2">&quot;wdudley@farama.org&quot;</span><span class="p">,</span>
+</span>        <span class="n">observations</span><span class="o">=</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">],</span>
+        <span class="n">actions</span><span class="o">=</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;action&quot;</span><span class="p">],</span>
+        <span class="n">rewards</span><span class="o">=</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;reward&quot;</span><span class="p">],</span>
+        <span class="n">terminations</span><span class="o">=</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;terminated&quot;</span><span class="p">],</span>
+        <span class="n">truncations</span><span class="o">=</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;truncated&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Dataset generated!&quot;</span><span class="p">)</span>
+<span class="hll">
+</span>    <span class="k">return</span> <span class="n">ds</span>
+
+
 <span class="kn">from</span> <span class="nn">google.cloud</span> <span class="kn">import</span> <span class="n">storage</span>
 
-
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">dataset_name</span> <span class="o">=</span> <span class="s2">&quot;LunarLander-v2-remote_test_dataset&quot;</span>
-
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Generate dataset as standard&quot;</span><span class="p">)</span>
-    <span class="n">generated_dataset</span> <span class="o">=</span> <span class="n">generate_dataset</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
-
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Save dataset to local storage&quot;</span><span class="p">)</span>
-<span class="hll">    <span class="n">generated_dataset</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-</span>
-    <span class="nb">print</span><span class="p">(</span>
-<span class="hll">        <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Upload dataset to Google Cloud Storage (here naming checks are done, enforcing dataset naming conventions)&quot;</span>
-</span>    <span class="p">)</span>
-    <span class="n">kabuki</span><span class="o">.</span><span class="n">upload_dataset</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
-
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">List all datasets in remote storage&quot;</span><span class="p">)</span>
-    <span class="n">kabuki</span><span class="o">.</span><span class="n">list_remote_datasets</span><span class="p">()</span>
-
-    <span class="nb">print</span><span class="p">(</span>
-        <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Delete dataset from local storage, list all datasets in local storage to confirm&quot;</span>
-<span class="hll">    <span class="p">)</span>
-</span>    <span class="n">kabuki</span><span class="o">.</span><span class="n">delete_dataset</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
-    <span class="n">kabuki</span><span class="o">.</span><span class="n">list_local_datasets</span><span class="p">()</span>
-
-    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Download dataset from Google Cloud Storage&quot;</span><span class="p">)</span>
-    <span class="n">kabuki</span><span class="o">.</span><span class="n">download_dataset</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -487,29 +490,55 @@ google-cloud-storage
     <span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
 
     <span class="n">replay_buffer</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;episode&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span>
-        <span class="s2">&quot;observation&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span>
-        <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span>
-        <span class="s2">&quot;reward&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span>
-        <span class="s2">&quot;terminated&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span>
-        <span class="s2">&quot;truncated&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([]),</span>
+        <span class="s2">&quot;episode&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">*</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">max_episode_steps</span> <span class="o">*</span> <span class="n">num_episodes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;observation&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="o">*</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">max_episode_steps</span>
+            <span class="o">*</span> <span class="n">num_episodes</span><span class="p">,</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">max_episode_steps</span> <span class="o">*</span> <span class="n">num_episodes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;reward&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">*</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">max_episode_steps</span> <span class="o">*</span> <span class="n">num_episodes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;terminated&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">*</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">max_episode_steps</span> <span class="o">*</span> <span class="n">num_episodes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;truncated&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">*</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">max_episode_steps</span> <span class="o">*</span> <span class="n">num_episodes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span>
+        <span class="p">),</span>
     <span class="p">}</span>
 
+    <span class="n">total_steps</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">for</span> <span class="n">episode</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_episodes</span><span class="p">):</span>
+        <span class="n">episode_step</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
         <span class="n">terminated</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">truncated</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">while</span> <span class="ow">not</span> <span class="n">terminated</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">truncated</span><span class="p">:</span>
             <span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>  <span class="c1"># User-defined policy function</span>
             <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;episode&quot;</span><span class="p">],</span> <span class="n">episode</span><span class="p">)</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">],</span> <span class="n">observation</span><span class="p">)</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;action&quot;</span><span class="p">],</span> <span class="n">action</span><span class="p">)</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;reward&quot;</span><span class="p">],</span> <span class="n">reward</span><span class="p">)</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;terminated&quot;</span><span class="p">],</span> <span class="n">terminated</span><span class="p">)</span>
-            <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;truncated&quot;</span><span class="p">],</span> <span class="n">truncated</span><span class="p">)</span>
+            <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;episode&quot;</span><span class="p">][</span><span class="n">total_steps</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">episode</span><span class="p">)</span>
+            <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">][</span><span class="n">total_steps</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
+            <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;action&quot;</span><span class="p">][</span><span class="n">total_steps</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+            <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;reward&quot;</span><span class="p">][</span><span class="n">total_steps</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">reward</span><span class="p">)</span>
+            <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;terminated&quot;</span><span class="p">][</span><span class="n">total_steps</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">terminated</span><span class="p">)</span>
+            <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;truncated&quot;</span><span class="p">][</span><span class="n">total_steps</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">truncated</span><span class="p">)</span>
+            <span class="n">episode_step</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">total_steps</span> <span class="o">+=</span> <span class="mi">1</span>
 
     <span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;episode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;episode&quot;</span><span class="p">][:</span><span class="n">total_steps</span><span class="p">]</span>
+    <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">][:</span><span class="n">total_steps</span><span class="p">]</span>
+    <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;action&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;action&quot;</span><span class="p">][:</span><span class="n">total_steps</span><span class="p">]</span>
+    <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;reward&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;reward&quot;</span><span class="p">][:</span><span class="n">total_steps</span><span class="p">]</span>
+    <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;terminated&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;terminated&quot;</span><span class="p">][:</span><span class="n">total_steps</span><span class="p">]</span>
+    <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;truncated&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;truncated&quot;</span><span class="p">][:</span><span class="n">total_steps</span><span class="p">]</span>
 
     <span class="n">ds</span> <span class="o">=</span> <span class="n">KabukiDataset</span><span class="p">(</span>
         <span class="n">dataset_name</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">,</span>
@@ -574,12 +603,12 @@ google-cloud-storage
       <footer>
         
         <div class="related-pages">
-          <a class="next-page" href="../dataset_usage/">
+          <a class="next-page" href="../../tutorials/dataset_creation/">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Dataset Usage</div>
+                <div class="title">Dataset Creation</div>
               </div>
               <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
             </a>
