@@ -27,8 +27,8 @@ api/remote_storage
 :hidden:
 :caption: Tutorials
 
-api/dataset_creation
-api/dataset_usage
+tutorials/dataset_creation
+tutorials/dataset_usage
 ```
 
 ```{toctree}
