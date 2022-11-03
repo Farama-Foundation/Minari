@@ -458,21 +458,61 @@ kabuki
 
 <span class="n">num_episodes</span> <span class="o">=</span> <span class="mi">4</span>
 
+
+<span class="n">replay_buffer</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;episode&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">*</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">max_episode_steps</span> <span class="o">*</span> <span class="n">num_episodes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span>
+    <span class="p">),</span>
+    <span class="s2">&quot;observation&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">13</span><span class="p">]</span> <span class="o">*</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">max_episode_steps</span> <span class="o">*</span> <span class="n">num_episodes</span><span class="p">,</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="s2">&quot;action&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">4</span><span class="p">]</span> <span class="o">*</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">max_episode_steps</span> <span class="o">*</span> <span class="n">num_episodes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+    <span class="p">),</span>
+    <span class="s2">&quot;reward&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">*</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">max_episode_steps</span> <span class="o">*</span> <span class="n">num_episodes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+    <span class="p">),</span>
+    <span class="s2">&quot;terminated&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">*</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">max_episode_steps</span> <span class="o">*</span> <span class="n">num_episodes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span>
+    <span class="p">),</span>
+    <span class="s2">&quot;truncated&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+        <span class="p">[[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">*</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">max_episode_steps</span> <span class="o">*</span> <span class="n">num_episodes</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span>
+    <span class="p">),</span>
+<span class="p">}</span>
+
+<span class="n">total_steps</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="k">for</span> <span class="n">episode</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_episodes</span><span class="p">):</span>
+    <span class="n">episode_step</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">observation</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
     <span class="n">terminated</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">truncated</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="k">while</span> <span class="ow">not</span> <span class="n">terminated</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">truncated</span><span class="p">:</span>
         <span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>  <span class="c1"># User-defined policy function</span>
         <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;episode&quot;</span><span class="p">],</span> <span class="n">episode</span><span class="p">)</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">],</span> <span class="n">observation</span><span class="p">)</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;action&quot;</span><span class="p">],</span> <span class="n">action</span><span class="p">)</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;reward&quot;</span><span class="p">],</span> <span class="n">reward</span><span class="p">)</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;terminated&quot;</span><span class="p">],</span> <span class="n">terminated</span><span class="p">)</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;truncated&quot;</span><span class="p">],</span> <span class="n">truncated</span><span class="p">)</span>
+        <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;episode&quot;</span><span class="p">][</span><span class="n">total_steps</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">episode</span><span class="p">)</span>
+        <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">][</span><span class="n">total_steps</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">observation</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">]),</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">observation</span><span class="p">[</span><span class="s2">&quot;desired_goal&quot;</span><span class="p">]),</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;action&quot;</span><span class="p">][</span><span class="n">total_steps</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+        <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;reward&quot;</span><span class="p">][</span><span class="n">total_steps</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">reward</span><span class="p">)</span>
+        <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;terminated&quot;</span><span class="p">][</span><span class="n">total_steps</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">terminated</span><span class="p">)</span>
+        <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;truncated&quot;</span><span class="p">][</span><span class="n">total_steps</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">truncated</span><span class="p">)</span>
+        <span class="n">episode_step</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">total_steps</span> <span class="o">+=</span> <span class="mi">1</span>
 
 <span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+<span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;episode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;episode&quot;</span><span class="p">][:</span><span class="n">total_steps</span><span class="p">]</span>
+<span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">][:</span><span class="n">total_steps</span><span class="p">]</span>
+<span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;action&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;action&quot;</span><span class="p">][:</span><span class="n">total_steps</span><span class="p">]</span>
+<span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;reward&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;reward&quot;</span><span class="p">][:</span><span class="n">total_steps</span><span class="p">]</span>
+<span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;terminated&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;terminated&quot;</span><span class="p">][:</span><span class="n">total_steps</span><span class="p">]</span>
+<span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;truncated&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;truncated&quot;</span><span class="p">][:</span><span class="n">total_steps</span><span class="p">]</span>
+
 
 <span class="c1"># 3. Convert the replay buffer to a KabukiDataset</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">KabukiDataset</span><span class="p">(</span>
