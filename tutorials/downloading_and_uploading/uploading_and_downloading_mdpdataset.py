@@ -3,10 +3,20 @@ from kabuki.dataset import KabukiDataset
 import numpy as np
 import requests
 import os
+import base64
+import json
 from google.cloud import storage
 import kabuki
 
-# os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "../../../../.config/gcloud/credentials.db"
+credentials_json = (
+    base64.b64decode(open("encoded_service_acc_key.txt", "r").read())
+    .decode("utf8")
+    .replace("'", '"')
+)
+with open("credentials.json", "w") as f:
+    f.write(credentials_json)
+
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./credentials.json"
 
 
 def generate_dataset(dataset_name: str):
