@@ -334,7 +334,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -401,7 +401,7 @@
               <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
             </button>
           </div>
-          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
             <div class="visually-hidden">Toggle table of contents sidebar</div>
             <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
           </label>
@@ -410,7 +410,43 @@
           
           <section id="dataset-usage">
 <h1>Dataset Usage<a class="headerlink" href="#dataset-usage" title="Permalink to this heading">#</a></h1>
-<p>(WORK IN PROGRESS)</p>
+<p>Here we provide examples of how to access the data in the dataset for your own use.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Shape of observations: </span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">observations</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Return of third episode: </span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">episodes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">compute_return</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;21st action of fifth episode: </span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">episodes</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">transitions</span><span class="p">[</span><span class="mi">21</span><span class="p">]</span><span class="o">.</span><span class="n">action</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="complete-working-example">
+<h2>Complete Working Example<a class="headerlink" href="#complete-working-example" title="Permalink to this heading">#</a></h2>
+<section id="environment-setup">
+<h3>Environment Setup<a class="headerlink" href="#environment-setup" title="Permalink to this heading">#</a></h3>
+<p>To run the full code below, you will need to install the dependencies shown below. It is recommended to use a newly-created virtual environment to avoid dependency conflicts.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>numpy
+cython
+kabuki
+</pre></div>
+</div>
+<p>Then you need to <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">.</span></code> from the root of the repository.</p>
+</section>
+<section id="full-code">
+<h3>Full Code<a class="headerlink" href="#full-code" title="Permalink to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">kabuki</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">kabuki</span><span class="o">.</span><span class="n">download_dataset</span><span class="p">(</span><span class="s2">&quot;LunarLander-v2-remote_test_dataset&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">,</span> <span class="s2">&quot; Dataset Structure&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dataset attributes: </span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="fm">__dir__</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Episode attributes: </span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">episodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="fm">__dir__</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Transition attributes: </span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">episodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">transitions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="fm">__dir__</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="mi">60</span><span class="p">,</span> <span class="s2">&quot; Examples&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Shape of observations: </span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">observations</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Return of third episode: </span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">episodes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">compute_return</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;21st action of fifth episode: </span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">episodes</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">transitions</span><span class="p">[</span><span class="mi">21</span><span class="p">]</span><span class="o">.</span><span class="n">action</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
 </section>
 
         </article>
@@ -445,8 +481,31 @@
         
       </footer>
     </div>
-    <aside class="toc-drawer no-toc">
+    <aside class="toc-drawer">
       
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">Dataset Usage</a><ul>
+<li><a class="reference internal" href="#complete-working-example">Complete Working Example</a><ul>
+<li><a class="reference internal" href="#environment-setup">Environment Setup</a></li>
+<li><a class="reference internal" href="#full-code">Full Code</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
       
       
     </aside>
