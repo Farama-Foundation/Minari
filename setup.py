@@ -25,7 +25,7 @@ if __name__ == "__main__":
     # main setup
     setup(
         name="kabuki",
-        version="0.0.1",
+        version="0.1.0",
         description="An offline deep reinforcement learning library",
         long_description=open("README.md").read(),
         long_description_content_type="text/markdown",
