@@ -4,25 +4,31 @@ firstpage:
 lastpage:
 ---
 
-```{toctree}
-:hidden:
-:caption: Introduction
+[//]: # (```{toctree})
 
-content/basic_usage
-```
+[//]: # (:hidden:)
+
+[//]: # (:caption: Introduction)
+
+[//]: # ()
+[//]: # (content/basic_usage)
+
+[//]: # (```)
 
 ```{toctree}
 :hidden:
 :caption: API
 
-
+api/local_storage
+api/remote_storage
 ```
 
 ```{toctree}
 :hidden:
 :caption: Tutorials
 
-
+tutorials/dataset_creation
+tutorials/dataset_usage
 ```
 
 ```{toctree}

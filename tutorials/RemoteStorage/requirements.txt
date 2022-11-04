@@ -1,0 +1,8 @@
+gymnasium[box2d]  # todo: vc
+cython
+kabuki
+h5py
+structlog
+tensorboardX
+typing_extensions
+google-cloud-storage
