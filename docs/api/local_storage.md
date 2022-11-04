@@ -9,7 +9,7 @@ Kabuki's API easily lets you save, load, list and delete locally stored datasets
 ```{eval-rst}
 .. literalinclude:: ../../tutorials/LocalStorage/local_storage.py
    :language: python
-   :lines: 54-76
+   :lines: 85-107
    :emphasize-lines: 7, 12, 15, 18
 ```
 

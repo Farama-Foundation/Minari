@@ -9,7 +9,7 @@ Kabuki's API easily lets you list datasets available to download, and download d
 ```{eval-rst}
 .. literalinclude:: ../../tutorials/RemoteStorage/remote_storage.py
    :language: python
-   :lines: 69-97
+   :lines: 100-128
    :emphasize-lines: 12, 15, 24
 ```
 
