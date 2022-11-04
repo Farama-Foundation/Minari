@@ -413,29 +413,29 @@
 <section id="api-overview">
 <h2>API Overview<a class="headerlink" href="#api-overview" title="Permalink to this heading">#</a></h2>
 <p>Kabuki’s API easily lets you save, load, list and delete locally stored datasets.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>            <span class="n">total_steps</span> <span class="o">+=</span> <span class="mi">1</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span>    <span class="n">dataset_name</span> <span class="o">=</span> <span class="s2">&quot;LunarLander-v2-test_dataset&quot;</span>
 
-    <span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Generate dataset as standard&quot;</span><span class="p">)</span>
+    <span class="n">generated_dataset</span> <span class="o">=</span> <span class="n">generate_dataset</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
 
-    <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;episode&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;episode&quot;</span><span class="p">][:</span><span class="n">total_steps</span><span class="p">]</span>
-    <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">][:</span><span class="n">total_steps</span><span class="p">]</span>
-<span class="hll">    <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;action&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;action&quot;</span><span class="p">][:</span><span class="n">total_steps</span><span class="p">]</span>
-</span>    <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;reward&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;reward&quot;</span><span class="p">][:</span><span class="n">total_steps</span><span class="p">]</span>
-    <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;terminated&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;terminated&quot;</span><span class="p">][:</span><span class="n">total_steps</span><span class="p">]</span>
-    <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;truncated&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;truncated&quot;</span><span class="p">][:</span><span class="n">total_steps</span><span class="p">]</span>
-
-<span class="hll">    <span class="n">ds</span> <span class="o">=</span> <span class="n">KabukiDataset</span><span class="p">(</span>
-</span>        <span class="n">dataset_name</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">,</span>
-        <span class="n">algorithm_name</span><span class="o">=</span><span class="s2">&quot;random_policy&quot;</span><span class="p">,</span>
-<span class="hll">        <span class="n">seed_used</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span>  <span class="c1"># For the simplicity of this example, we&#39;re not actually using a seed. Naughty us!</span>
-</span>        <span class="n">code_permalink</span><span class="o">=</span><span class="s2">&quot;https://github.com/Farama-Foundation/Kabuki/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py&quot;</span><span class="p">,</span>
-        <span class="n">author</span><span class="o">=</span><span class="s2">&quot;WillDudley&quot;</span><span class="p">,</span>
-<span class="hll">        <span class="n">author_email</span><span class="o">=</span><span class="s2">&quot;wdudley@farama.org&quot;</span><span class="p">,</span>
-</span>        <span class="n">observations</span><span class="o">=</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">],</span>
-        <span class="n">actions</span><span class="o">=</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;action&quot;</span><span class="p">],</span>
-        <span class="n">rewards</span><span class="o">=</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;reward&quot;</span><span class="p">],</span>
-        <span class="n">terminations</span><span class="o">=</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;terminated&quot;</span><span class="p">],</span>
-        <span class="n">truncations</span><span class="o">=</span><span class="n">replay_buffer</span><span class="p">[</span><span class="s2">&quot;truncated&quot;</span><span class="p">],</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Save dataset to local storage&quot;</span><span class="p">)</span>
+<span class="hll">    <span class="n">generated_dataset</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Listing datasets in local storage, we should see the dataset we just generated&quot;</span>
+    <span class="p">)</span>
+<span class="hll">    <span class="n">kabuki</span><span class="o">.</span><span class="n">list_local_datasets</span><span class="p">()</span>
+</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">We can load the dataset from local storage as follows&quot;</span><span class="p">)</span>
+<span class="hll">    <span class="n">loaded_dataset</span> <span class="o">=</span> <span class="n">kabuki</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
+</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">We can delete the dataset from local storage as follows&quot;</span><span class="p">)</span>
+<span class="hll">    <span class="n">kabuki</span><span class="o">.</span><span class="n">delete_dataset</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
+</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Listing datasets in local storage, we should now no longer see the dataset we just generated&quot;</span>
+    <span class="p">)</span>
+    <span class="n">kabuki</span><span class="o">.</span><span class="n">list_local_datasets</span><span class="p">()</span>
 </pre></div>
 </div>
 </section>
