@@ -21,4 +21,4 @@ print(f"Transition attributes: {dataset.episodes[0].transitions[0].__dir__()}\n"
 print("*" * 60, " Examples")
 print(f"Shape of observations: {dataset.observations.shape}\n")
 print(f"Return of third episode: {dataset.episodes[2].compute_return()}\n")
-print(f"21st action of fifth episode: {dataset.episodes[5].transitions[21].action}\n")
+print(f"21st action of fifth episode: {dataset.episodes[4].transitions[20].action}\n")
