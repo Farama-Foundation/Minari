@@ -1,4 +1,15 @@
+import base64
+import os
+
 import kabuki
+
+GCP_DATASET_ADMIN = os.environ["GCP_DATASET_ADMIN"]
+
+credentials_json = base64.b64decode(GCP_DATASET_ADMIN).decode("utf8").replace("'", '"')
+with open("credentials.json", "w") as f:
+    f.write(credentials_json)
+
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./credentials.json"
 
 dataset = kabuki.download_dataset("LunarLander-v2-remote_test_dataset")
 

@@ -8,7 +8,7 @@ Here we provide examples of how to access the data in the dataset for your own u
 ```{eval-rst}
 .. literalinclude:: ../../tutorials/DatasetUsage/dataset_usage.py
    :language: python
-   :lines: 11-13
+   :lines: 22-24
 ```
 
 ## Complete Working Example
