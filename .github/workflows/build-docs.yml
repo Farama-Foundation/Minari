@@ -1,7 +1,7 @@
 name: Build Documentation website
 on:
   push:
-    branches: [master, WD/MDPDataset]
+    branches: [master]
 permissions:
   contents: write
 jobs:
