@@ -29,7 +29,7 @@ def download_dataset(dataset_name: str):
     file_path = get_file_path(dataset_name)
 
     if os.path.isfile(file_path):
-        print(f"Dataset {dataset_name} found locally in {file_path}/")
+        print(f"Dataset {dataset_name} found locally at {file_path}")
     else:
         print(
             f"Dataset not found locally. Downloading {dataset_name} from Farama servers..."
@@ -49,7 +49,7 @@ def download_dataset(dataset_name: str):
         blob.download_to_filename(
             f"{file_path}"
         )  # See https://github.com/googleapis/python-storage/issues/27 for discussion on progress bars
-        print(f"Dataset {dataset_name} downloaded to {file_path}/")
+        print(f"Dataset {dataset_name} downloaded to {file_path}")
 
     return dataset.KabukiDataset.load(file_path)
 
