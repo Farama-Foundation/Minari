@@ -173,7 +173,7 @@ class KabukiDataset:
             should be defined as :math:`r_t = r(s_t, a_t)`.
         terminals (numpy.ndarray): array of binary terminal flags.
         episode_terminals (numpy.ndarray): array of binary episode terminal
-            flags. The given data will be splitted based on this flag.
+            flags. The given data will be split based on this flag.
             This is useful if you want to specify the non-environment
             terminations (e.g. timeout). If ``None``, the episode terminations
             match the environment terminations.

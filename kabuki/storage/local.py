@@ -18,7 +18,7 @@ def list_local_datasets():
         if os.path.isfile(os.path.join(datasets_path, f))
     ]
 
-    print(f"Datasets found locally:")
+    print("Datasets found locally:")
     for dataset in datasets:
         print(dataset)
 
@@ -26,4 +26,4 @@ def list_local_datasets():
 def delete_dataset(dataset_name: str):
     file_path = get_file_path(dataset_name)
     os.remove(file_path)
-    print(f"Dataset {dataset_name} deleted!")
+    print("Dataset {dataset_name} deleted!")

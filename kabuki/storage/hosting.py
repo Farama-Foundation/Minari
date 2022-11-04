@@ -2,9 +2,9 @@ import os.path
 
 from google.cloud import storage
 
-from .datasets_root_dir import get_file_path
-from ..utils.assert_name_spec import test_and_return_name
 from .. import dataset
+from ..utils.assert_name_spec import test_and_return_name
+from .datasets_root_dir import get_file_path
 
 
 def upload_dataset(dataset_name: str):
@@ -62,6 +62,6 @@ def list_remote_datasets():
     bucket = storage_client.bucket(bucket_name)
     blobs = bucket.list_blobs()
 
-    print(f"Datasets available to download:")
+    print("Datasets available to download:")
     for blob in blobs:
         print(blob.name)

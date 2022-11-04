@@ -7,7 +7,6 @@ import numpy as np
 import kabuki
 from kabuki.dataset import KabukiDataset
 
-
 # 1. Get permissions to upload to GCP
 GCP_DATASET_ADMIN = os.environ["GCP_DATASET_ADMIN"]
 

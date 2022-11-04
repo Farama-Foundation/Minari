@@ -1,8 +1,8 @@
 import gymnasium as gym
+import numpy as np
 
 import kabuki
 from kabuki.dataset import KabukiDataset
-import numpy as np
 
 
 def generate_dataset(dataset_name: str):
@@ -84,24 +84,24 @@ def generate_dataset(dataset_name: str):
 if __name__ == "__main__":
     dataset_name = "LunarLander-v2-test_dataset"
 
-    print("\nGenerate dataset as standard")
+    print("\n Generate dataset as standard")
     generated_dataset = generate_dataset(dataset_name)
 
-    print("\nSave dataset to local storage")
+    print("\n Save dataset to local storage")
     generated_dataset.save()
 
     print(
-        "\nListing datasets in local storage, we should see the dataset we just generated"
+        "\n Listing datasets in local storage, we should see the dataset we just generated"
     )
     kabuki.list_local_datasets()
 
-    print("\nWe can load the dataset from local storage as follows")
+    print("\n We can load the dataset from local storage as follows")
     loaded_dataset = kabuki.load_dataset(dataset_name)
 
-    print("\nWe can delete the dataset from local storage as follows")
+    print("\n We can delete the dataset from local storage as follows")
     kabuki.delete_dataset(dataset_name)
 
     print(
-        "\nListing datasets in local storage, we should now no longer see the dataset we just generated"
+        "\n Listing datasets in local storage, we should now no longer see the dataset we just generated"
     )
     kabuki.list_local_datasets()

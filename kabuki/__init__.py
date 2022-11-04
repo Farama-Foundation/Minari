@@ -1,9 +1,10 @@
-from . import dataset
 from kabuki.storage.hosting import (
-    upload_dataset,
     download_dataset,
     list_remote_datasets,
+    upload_dataset,
 )
-from kabuki.storage.local import load_dataset, list_local_datasets, delete_dataset
+from kabuki.storage.local import delete_dataset, list_local_datasets, load_dataset
+
+from . import dataset
 
 __version__ = "0.0.1"
