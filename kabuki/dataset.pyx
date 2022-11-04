@@ -60,8 +60,8 @@ def _to_episodes(
                 observations=observations[head_index:i + 1],
                 actions=actions[head_index:i + 1],
                 rewards=rewards[head_index:i + 1],
-                terminations=terminations[i],
-                truncations=truncations[i]
+                termination=terminations[i],
+                truncation=truncations[i]
             )
             rets.append(episode)
             head_index = i + 1
