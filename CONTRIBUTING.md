@@ -48,7 +48,7 @@ Tutorials are a crucial way to help people learn how to use Kabuki and we greatl
 - Tutorials should be written in single .py scripts with clear comments explaining the code and thought process with a naive user in mind.
 - Tutorials should be within their own directory within `/tutorials/`, with the directory name being the tutorial theme.
 - Tutorials should come with their own **fully versioned** `requirements.txt` file that minimally lists all required dependencies needed to run all .py scripts within the directory.
-- The `requirements.txt` file should include `kabuki`, fixed to the current release (eg. `kabuki==0.0.1`).
+- The `requirements.txt` file should include `minari`, fixed to the current release (eg. `minari==0.0.1`).
 
 ### Adding your tutorials to the docs
 - Create the directory `/docs/tutorials/<TUTORIAL_THEME>`.

@@ -17,14 +17,14 @@
 # -- Project information -----------------------------------------------------
 from typing import Any, Dict
 
-# import kabuki
+# import minari
 
 project = "Kabuki"
 copyright = "2022"
 author = "Farama Foundation"
 
 # The full version, including alpha/beta/rc tags
-release = "0.0.1"  # kabuki.__version__
+release = "0.0.1"  # minari.__version__
 
 
 # -- General configuration ---------------------------------------------------
@@ -61,7 +61,7 @@ napoleon_custom_sections = [("Returns", "params_style")]
 #
 html_theme = "furo"
 html_title = "Kabuki Documentation"
-html_baseurl = "https://kabuki.farama.org"
+html_baseurl = "https://minari.farama.org"
 html_copy_source = False
 html_favicon = "_static/img/favicon.png"
 html_theme_options = {
@@ -75,7 +75,7 @@ html_context["display_github"] = True
 html_context["github_user"] = "Farama-Foundation"
 html_context["github_repo"] = "Kabuki"
 html_context["github_version"] = "master"
-html_context["slug"] = "kabuki"
+html_context["slug"] = "minari"
 
 html_static_path = ["_static"]
 html_css_files = []

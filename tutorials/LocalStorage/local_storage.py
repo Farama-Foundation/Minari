@@ -1,8 +1,8 @@
 import gymnasium as gym
 import numpy as np
 
-import kabuki
-from kabuki.dataset import KabukiDataset
+import minari
+from minari.dataset import MinariDataset
 
 
 def generate_dataset(dataset_name: str):
@@ -62,7 +62,7 @@ def generate_dataset(dataset_name: str):
     replay_buffer["terminated"] = replay_buffer["terminated"][:total_steps]
     replay_buffer["truncated"] = replay_buffer["truncated"][:total_steps]
 
-    ds = KabukiDataset(
+    ds = MinariDataset(
         dataset_name=dataset_name,
         algorithm_name="random_policy",
         seed_used=42,  # For the simplicity of this example, we're not actually using a seed. Naughty us!
@@ -93,15 +93,15 @@ if __name__ == "__main__":
     print(
         "\n Listing datasets in local storage, we should see the dataset we just generated"
     )
-    kabuki.list_local_datasets()
+    minari.list_local_datasets()
 
     print("\n We can load the dataset from local storage as follows")
-    loaded_dataset = kabuki.load_dataset(dataset_name)
+    loaded_dataset = minari.load_dataset(dataset_name)
 
     print("\n We can delete the dataset from local storage as follows")
-    kabuki.delete_dataset(dataset_name)
+    minari.delete_dataset(dataset_name)
 
     print(
         "\n Listing datasets in local storage, we should now no longer see the dataset we just generated"
     )
-    kabuki.list_local_datasets()
+    minari.list_local_datasets()

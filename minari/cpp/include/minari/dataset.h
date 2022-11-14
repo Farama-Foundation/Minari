@@ -1,7 +1,7 @@
 #include <vector>
 #include <memory>
 
-namespace kabuki {
+namespace minari {
 
   using namespace std;
 

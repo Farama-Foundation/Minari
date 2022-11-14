@@ -10,9 +10,9 @@ if __name__ == "__main__":
 
     # setup Cython build
     ext = Extension(
-        "kabuki.dataset",
-        sources=["kabuki/dataset.pyx"],
-        include_dirs=[get_include(), "kabuki/cpp/include"],
+        "minari.dataset",
+        sources=["minari/dataset.pyx"],
+        include_dirs=[get_include(), "minari/cpp/include"],
         language="c++",
         extra_compile_args=["-std=c++11", "-O3", "-ffast-math"],
         extra_link_args=["-std=c++11"],
@@ -24,7 +24,7 @@ if __name__ == "__main__":
 
     # main setup
     setup(
-        name="kabuki",
+        name="minari",
         version="0.1.0",
         description="An offline deep reinforcement learning library",
         long_description=open("README.md").read(),
@@ -51,6 +51,6 @@ if __name__ == "__main__":
         ],
         packages=find_packages(exclude=["tests*"]),
         python_requires=">=3.7.0",
-        package_data={"kabuki": ["*.pyx", "*.pxd", "*.h", "*.pyi", "py.typed"]},
+        package_data={"minari": ["*.pyx", "*.pxd", "*.h", "*.pyi", "py.typed"]},
         ext_modules=ext_modules,
     )

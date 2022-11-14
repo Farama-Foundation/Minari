@@ -32,6 +32,6 @@ jobs:
         run: |
           cd tutorials/${{ matrix.tutorial }}
           pip install -r requirements.txt
-          pip uninstall -y kabuki
+          pip uninstall -y minari
           pip install -e ../..
           for f in *.py; do python "$f"; done

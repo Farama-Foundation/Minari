@@ -1,7 +1,7 @@
 import base64
 import os
 
-import kabuki
+import minari
 
 GCP_DATASET_ADMIN = os.environ["GCP_DATASET_ADMIN"]
 
@@ -11,7 +11,7 @@ with open("credentials.json", "w") as f:
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./credentials.json"
 
-dataset = kabuki.download_dataset("LunarLander-v2-remote_test_dataset")
+dataset = minari.download_dataset("LunarLander-v2-remote_test_dataset")
 
 print("*" * 60, " Dataset Structure")
 print(f"Dataset attributes: {dataset.__dir__()}\n")
