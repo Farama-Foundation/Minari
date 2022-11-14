@@ -9,7 +9,7 @@ We have a public discord server (which we also use to coordinate development wor
 ## Installation
 `pip install numpy cython`
 
-`pip install git+https://github.com/Farama-Foundation/Kabuki.git@WD/MDPDataset`
+`pip install git+https://github.com/Farama-Foundation/Kabuki.git`
 
 ## Downloading datasets
 
