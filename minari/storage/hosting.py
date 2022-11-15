@@ -9,7 +9,7 @@ from .datasets_root_dir import get_file_path
 
 def upload_dataset(dataset_name: str):
     project_id = "dogwood-envoy-367012"
-    bucket_name = "minari-datasets"
+    bucket_name = "minari"
     test_and_return_name(dataset_name)
     file_path = get_file_path(dataset_name)
 
@@ -35,7 +35,7 @@ def download_dataset(dataset_name: str):
             f"Dataset not found locally. Downloading {dataset_name} from Farama servers..."
         )
         project_id = "dogwood-envoy-367012"
-        bucket_name = "minari-datasets"
+        bucket_name = "minari"
         storage_client = storage.Client(project=project_id)
 
         bucket = storage_client.bucket(bucket_name)
@@ -56,7 +56,7 @@ def download_dataset(dataset_name: str):
 
 def list_remote_datasets():
     project_id = "dogwood-envoy-367012"
-    bucket_name = "minari-datasets"
+    bucket_name = "minari"
     storage_client = storage.Client(project=project_id)
 
     bucket = storage_client.bucket(bucket_name)
