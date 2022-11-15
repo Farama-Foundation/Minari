@@ -14,7 +14,7 @@ from libc.string cimport memcpy, memset
 from libcpp cimport bool, nullptr
 from libcpp.memory cimport make_shared, shared_ptr
 
-from kabuki.dataset cimport CTransition
+from minari.dataset cimport CTransition
 
 from .logger import LOG
 
@@ -123,7 +123,7 @@ def _check_discrete_action(actions):
     return np.all(float_actions == int_actions)
 
 
-class KabukiDataset:
+class MinariDataset:
     """ Markov-Decision Process Dataset class.
 
     KabukiDataset is deisnged for reinforcement learning datasets to use them like
@@ -131,7 +131,7 @@ class KabukiDataset:
 
     .. code-block:: python
 
-        from kabuki.dataset import KabukiDataset
+        from minari.dataset import KabukiDataset
 
         # 1000 steps of observations with shape of (100,)
         observations = np.random.random((1000, 100))
@@ -145,7 +145,7 @@ class KabukiDataset:
         dataset = KabukiDataset(observations, actions, rewards, terminals)
 
     The KabukiDataset object automatically splits the given data into list of
-    :class:`kabuki.dataset.Episode` objects.
+    :class:`minari.dataset.Episode` objects.
     Furthermore, the KabukiDataset object behaves like a list in order to use with
     scikit-learn utilities.
 
@@ -334,8 +334,8 @@ class KabukiDataset:
         """ Returns the episodes.
 
         Returns:
-            list(kabuki.dataset.Episode):
-                list of :class:`kabuki.dataset.Episode` objects.
+            list(minari.dataset.Episode):
+                list of :class:`minari.dataset.Episode` objects.
 
         """
         if self._episodes is None:
@@ -540,7 +540,7 @@ class KabukiDataset:
         """ Extend dataset by another dataset.
 
         Args:
-            dataset (kabuki.dataset.KabukiDataset): dataset.
+            dataset (minari.dataset.MinariDataset): dataset.
 
         """
         assert self.is_action_discrete() == dataset.is_action_discrete(),\
@@ -568,7 +568,7 @@ class KabukiDataset:
         if datasets_path is not None:
             file_path = os.path.join(datasets_path, f'{self._dataset_name}.hdf5')
         else:
-            datasets_path = os.path.join(os.path.expanduser('~'), '.kabuki', 'datasets')
+            datasets_path = os.path.join(os.path.expanduser('~'), '.minari', 'datasets')
             file_path = os.path.join(datasets_path, f'{self._dataset_name}.hdf5')
 
         os.makedirs(datasets_path, exist_ok=True)
@@ -597,7 +597,7 @@ class KabukiDataset:
         .. code-block:: python
 
             import numpy as np
-            from kabuki.dataset import KabukiDataset
+            from minari.dataset import KabukiDataset
 
             dataset = KabukiDataset(np.random.random(10, 4),
                                  np.random.random(10, 2),
@@ -689,7 +689,7 @@ class Episode:
     This class is designed to hold data collected in a single episode.
 
     Episode object automatically splits data into list of
-    :class:`kabuki.dataset.Transition` objects.
+    :class:`minari.dataset.Transition` objects.
     Also Episode object behaves like a list object for ease of access to
     transitions.
 
@@ -805,8 +805,8 @@ class Episode:
         """ Returns the transitions.
 
         Returns:
-            list(kabuki.dataset.Transition):
-                list of :class:`kabuki.dataset.Transition` objects.
+            list(minari.dataset.Transition):
+                list of :class:`minari.dataset.Transition` objects.
 
         """
         if self._transitions is None:
@@ -900,9 +900,9 @@ cdef class Transition:
         reward (float): reward at `t`.
         next_observation (numpy.ndarray): observation at `t+1`.
         terminal (int): terminal flag at `t+1`.
-        prev_transition (kabuki.dataset.Transition):
+        prev_transition (minari.dataset.Transition):
             pointer to the previous transition.
-        next_transition (kabuki.dataset.Transition):
+        next_transition (minari.dataset.Transition):
             pointer to the next transition.
 
     """
@@ -1085,7 +1085,7 @@ cdef class Transition:
         If this is the first transition, this method should return ``None``.
 
         Returns:
-            kabuki.dataset.Transition: previous transition.
+            minari.dataset.Transition: previous transition.
 
         """
         return self._prev_transition
@@ -1095,7 +1095,7 @@ cdef class Transition:
         """ Sets transition to ``prev_transition``.
 
         Args:
-            kabuki.dataset.Transition: previous transition.
+            minari.dataset.Transition: previous transition.
 
         """
         assert isinstance(transition, Transition)
@@ -1111,7 +1111,7 @@ cdef class Transition:
         If this is the last transition, this method should return ``None``.
 
         Returns:
-            kabuki.dataset.Transition: next transition.
+            minari.dataset.Transition: next transition.
 
         """
         return self._next_transition
@@ -1121,7 +1121,7 @@ cdef class Transition:
         """ Sets transition to ``next_transition``.
 
         Args:
-            kabuki.dataset.Dataset: next transition.
+            minari.dataset.Dataset: next transition.
 
         """
         assert isinstance(transition, Transition)
@@ -1146,7 +1146,7 @@ def trace_back_and_clear(transition):
     """ Traces transitions and clear all links.
 
     Args:
-        transition (kabuki.dataset.Transition): transition.
+        transition (minari.dataset.Transition): transition.
 
     """
     while True:
@@ -1208,7 +1208,7 @@ cdef void _stack_frames(
 cdef class TransitionMiniBatch:
     """ mini-batch of Transition objects.
 
-    This class is designed to hold :class:`kabuki.dataset.Transition` objects
+    This class is designed to hold :class:`minari.dataset.Transition` objects
     for being passed to algorithms during fitting.
 
     If the observation is image, you can stack arbitrary frames via
@@ -1230,7 +1230,7 @@ cdef class TransitionMiniBatch:
     ``prev_transition`` property.
 
     Args:
-        transitions (list(kabuki.dataset.Transition)):
+        transitions (list(minari.dataset.Transition)):
             mini-batch of transitions.
         n_frames (int): the number of frames to stack for image observation.
         n_steps (int): length of N-step sampling.
@@ -1534,7 +1534,7 @@ cdef class TransitionMiniBatch:
         """ Returns transitions.
 
         Returns:
-            kabuki.dataset.Transition: list of transitions.
+            minari.dataset.Transition: list of transitions.
 
         """
         return self._transitions

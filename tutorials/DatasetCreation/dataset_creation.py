@@ -4,8 +4,8 @@ import os
 import gymnasium as gym
 import numpy as np
 
-import kabuki
-from kabuki.dataset import KabukiDataset
+import minari
+from minari.dataset import MinariDataset
 
 # 1. Get permissions to upload to GCP
 GCP_DATASET_ADMIN = os.environ["GCP_DATASET_ADMIN"]
@@ -89,7 +89,7 @@ replay_buffer["truncated"] = replay_buffer["truncated"][:total_steps]
 
 
 # 3. Convert the replay buffer to a KabukiDataset
-dataset = KabukiDataset(
+dataset = MinariDataset(
     dataset_name=dataset_name,
     algorithm_name="random_policy",
     seed_used=42,  # For the simplicity of this example, we're not actually using a seed. Naughty us!
@@ -109,4 +109,4 @@ print("Dataset generated!")
 dataset.save()
 
 # 5. Upload the dataset to GCP
-kabuki.upload_dataset(dataset_name)
+minari.upload_dataset(dataset_name)

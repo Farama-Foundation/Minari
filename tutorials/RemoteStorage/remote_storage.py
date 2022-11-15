@@ -4,8 +4,8 @@ import os
 import gymnasium as gym
 import numpy as np
 
-import kabuki
-from kabuki.dataset import KabukiDataset
+import minari
+from minari.dataset import MinariDataset
 
 GCP_DATASET_ADMIN = os.environ["GCP_DATASET_ADMIN"]
 
@@ -73,7 +73,7 @@ def generate_dataset(dataset_name: str):
     replay_buffer["terminated"] = replay_buffer["terminated"][:total_steps]
     replay_buffer["truncated"] = replay_buffer["truncated"][:total_steps]
 
-    ds = KabukiDataset(
+    ds = MinariDataset(
         dataset_name=dataset_name,
         algorithm_name="random_policy",
         seed_used=42,  # For the simplicity of this example, we're not actually using a seed.
@@ -104,21 +104,21 @@ if __name__ == "__main__":
     print(
         "\nUpload dataset to Google Cloud Storage (here naming checks are done, enforcing dataset naming conventions)"
     )
-    kabuki.upload_dataset(dataset_name)
+    minari.upload_dataset(dataset_name)
 
     print("\nList all datasets in remote storage")
-    kabuki.list_remote_datasets()
+    minari.list_remote_datasets()
 
     print(
         "\nDelete dataset from local storage, list all datasets in local storage to confirm"
     )
-    kabuki.delete_dataset(dataset_name)
-    kabuki.list_local_datasets()
+    minari.delete_dataset(dataset_name)
+    minari.list_local_datasets()
 
     print("\nDownload dataset from Google Cloud Storage")
-    kabuki.download_dataset(dataset_name)
+    minari.download_dataset(dataset_name)
 
     print(
         "\nListing datasets in local storage, we should see the dataset we just downloaded"
     )
-    kabuki.list_local_datasets()
+    minari.list_local_datasets()

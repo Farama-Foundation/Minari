@@ -3,7 +3,7 @@ from libcpp.memory cimport make_shared, shared_ptr
 from libcpp.vector cimport vector
 
 
-cdef extern from "kabuki/dataset.h" namespace "kabuki" nogil:
+cdef extern from "minari/dataset.h" namespace "minari" nogil:
     cdef cppclass CTransition:
         vector[int] observation_shape
         int action_size
