@@ -88,7 +88,7 @@ replay_buffer["terminated"] = replay_buffer["terminated"][:total_steps]
 replay_buffer["truncated"] = replay_buffer["truncated"][:total_steps]
 
 
-# 3. Convert the replay buffer to a KabukiDataset
+# 3. Convert the replay buffer to a MinariDataset
 dataset = MinariDataset(
     dataset_name=dataset_name,
     algorithm_name="random_policy",
