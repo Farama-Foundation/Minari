@@ -93,7 +93,7 @@ def generate_dataset(dataset_name: str):
 
 
 if __name__ == "__main__":
-    dataset_name = "LunarLander-v2-remote_test_dataset"
+    dataset_name = "LunarLander_v2_remote-test-dataset"
 
     print("\nGenerate dataset as standard")
     generated_dataset = generate_dataset(dataset_name)

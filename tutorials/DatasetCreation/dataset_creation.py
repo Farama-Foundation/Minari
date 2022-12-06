@@ -28,7 +28,7 @@ replay_buffer = {
     "terminated": np.array([]),
     "truncated": np.array([]),
 }
-dataset_name = "FetchReach-v3-example_dataset"
+dataset_name = "FetchReach_v3_example-dataset"
 
 num_episodes = 4
 
