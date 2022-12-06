@@ -16,8 +16,8 @@ def test_and_return_name(dataset_path):
     assert (
         extension == "hdf5"
     ), f"File extension must be .hdf5, not {extension}. (Are you trying to use a period in your dataset name?), {parsed.groups()}"
-    if not re.match(r"\w+-v\d-\w+$", filename):
+    if not re.match(r"([\w-]+)_(v\d)_([\w-]+)$", filename):
         raise ValueError(
-            f"Invalid dataset name {filename}. Must be in the format <environment_name>-v<environment_version>-<description>."
+            f"Invalid dataset name {filename}. Must be in the format <environment_name>_v<environment_version>_<description>."
         )
     return filename

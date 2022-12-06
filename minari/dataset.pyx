@@ -85,8 +85,8 @@ def _to_transitions(
         action = actions[i]
         reward = rewards[i]
 
-        if not truncation:
-            if termination:
+        if i == num_data - 1:
+            if termination or truncation:
                 # dummy observation
                 next_observation = np.zeros_like(observation)
             else:
