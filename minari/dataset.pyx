@@ -186,6 +186,7 @@ class MinariDataset:
         self,
         dataset_name,
         algorithm_name,
+        environment_name,
         seed_used,
         code_permalink,
         author,
@@ -200,6 +201,7 @@ class MinariDataset:
     ):
         self._dataset_name = dataset_name
         self._algorithm_name = algorithm_name
+        self._environment_name = environment_name
         self._seed_used = seed_used
         self._code_permalink = code_permalink
         self._author = author
@@ -253,6 +255,10 @@ class MinariDataset:
     @property
     def algorithm_name(self):
         return self._algorithm_name
+
+    @property
+    def environment_name(self):
+        return self._environment_name
 
     @property
     def seed_used(self):
@@ -576,6 +582,7 @@ class MinariDataset:
         with h5py.File(file_path, 'w') as f:
             f.create_dataset('dataset_name', data=self._dataset_name)
             f.create_dataset('algorithm_name', data=self._algorithm_name)
+            f.create_dataset('environment_name', data=self._environment_name)
             f.create_dataset('seed_used', data=self._seed_used)
             f.create_dataset('code_permalink', data=self._code_permalink)
             f.create_dataset('author', data=self._author)
@@ -617,6 +624,7 @@ class MinariDataset:
         with h5py.File(fname, 'r') as f:
             dataset_name = f['dataset_name'][()]
             algorithm_name = f['algorithm_name'][()]
+            environment_name = f['environment_name'][()]
             seed_used = f['seed_used'][()]
             code_permalink = f['code_permalink'][()]
             author = f['author'][()]
@@ -640,6 +648,7 @@ class MinariDataset:
         dataset = cls(
             dataset_name=dataset_name,
             algorithm_name=algorithm_name,
+            environment_name=environment_name,
             seed_used=seed_used,
             code_permalink=code_permalink,
             author=author,
