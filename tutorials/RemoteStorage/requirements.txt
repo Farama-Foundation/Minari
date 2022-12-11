@@ -6,3 +6,4 @@ structlog
 tensorboardX
 typing_extensions
 google-cloud-storage
+git+https://github.com/WillDudley/Gymnasium.git@spec_stack
