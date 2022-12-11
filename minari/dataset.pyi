@@ -110,6 +110,7 @@ class MinariDataset:
         self,
         dataset_name: str,
         algorithm_name: str,
+        environment_name: str,
         seed_used: int,
         code_permalink: str,
         author: str,
@@ -126,6 +127,8 @@ class MinariDataset:
     def dataset_name(self) -> str: ...
     @property
     def algorithm_name(self) -> str: ...
+    @property
+    def environment_name(self) -> str: ...
     @property
     def seed_used(self) -> int: ...
     @property

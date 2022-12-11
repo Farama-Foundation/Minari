@@ -76,6 +76,7 @@ def generate_dataset(dataset_name: str):
     ds = MinariDataset(
         dataset_name=dataset_name,
         algorithm_name="random_policy",
+        environment_name="LunarLander-v2",
         seed_used=42,  # For the simplicity of this example, we're not actually using a seed.
         code_permalink="https://github.com/Farama-Foundation/Kabuki/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
         author="WillDudley",
@@ -93,7 +94,7 @@ def generate_dataset(dataset_name: str):
 
 
 if __name__ == "__main__":
-    dataset_name = "LunarLander-v2-remote_test_dataset"
+    dataset_name = "LunarLander_v2_remote-test-dataset"
 
     print("\nGenerate dataset as standard")
     generated_dataset = generate_dataset(dataset_name)
