@@ -1,4 +1,4 @@
-#gymnasium-robotics
+gymnasium-robotics
 cython
 #minari
 git+https://github.com/WillDudley/Gymnasium.git@spec_stack#egg=gymnasium
