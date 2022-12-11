@@ -29,7 +29,7 @@ if __name__ == "__main__":
         description="An offline deep reinforcement learning library",
         long_description=open("README.md").read(),
         long_description_content_type="text/markdown",
-        url="https://github.com/takuseno/d3rlpy",
+        url="https://github.com/Farama-Foundation/Minari",
         author="Will Dudley",
         author_email="will2346@live.co.uk",
         license="MIT License",
