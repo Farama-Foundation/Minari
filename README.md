@@ -19,7 +19,7 @@ We have a public discord server (which we also use to coordinate development wor
 ```python
 import minari
 
-dataset = minari.download_dataset("LunarLander-v2-test_dataset")
+dataset = minari.download_dataset("LunarLander_v2_test-dataset")
 ```
 
 ## Recreating Gymnasium environments (Coming very soon!)
@@ -36,7 +36,7 @@ env = gym.make(gym.SpecStack(json.loads(dataset.environment_stack)))
 dataset.save(
     ".datasets/LunarLander-v2-test_dataset.hdf5"
 )  # todo: abstract away parent directory and hdf5 extension
-dataset = minari.upload_dataset("LunarLander-v2-test_dataset")
+dataset = minari.upload_dataset("LunarLander_v2_test-dataset")
 ```
 
 
