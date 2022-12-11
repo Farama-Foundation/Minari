@@ -1,6 +1,6 @@
-#gymnasium[box2d]  # todo: vc
+gymnasium[box2d]  # todo: vc
 cython
-minari
+#minari
 h5py
 structlog
 tensorboardX
