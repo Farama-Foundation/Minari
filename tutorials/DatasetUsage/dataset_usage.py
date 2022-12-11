@@ -11,7 +11,7 @@ with open("credentials.json", "w") as f:
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./credentials.json"
 
-dataset = minari.download_dataset("LunarLander-v2-remote_test_dataset")
+dataset = minari.download_dataset("LunarLander_v2_remote-test-dataset")
 
 print("*" * 60, " Dataset Structure")
 print(f"Dataset attributes: {dataset.__dir__()}\n")
