@@ -22,6 +22,14 @@ import minari
 dataset = minari.download_dataset("LunarLander-v2-test_dataset")
 ```
 
+## Recreating Gymnasium environments (Coming very soon!)
+
+```python
+import gymnasium as gym
+
+env = gym.make(gym.SpecStack(json.loads(dataset.environment_stack)))
+```
+
 ## Uploading datasets
 
 ```python
