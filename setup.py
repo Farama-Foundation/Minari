@@ -25,13 +25,13 @@ if __name__ == "__main__":
     # main setup
     setup(
         name="minari",
-        version="0.1.0",
-        description="An offline deep reinforcement learning library",
+        version="0.2.0",
+        description="Datasets for offline deep reinforcement learning",
         long_description=open("README.md").read(),
         long_description_content_type="text/markdown",
-        url="https://github.com/takuseno/d3rlpy",
-        author="Takuma Seno",
-        author_email="takuma.seno@gmail.com",
+        url="https://github.com/Farama-Foundation/Minari",
+        author="Will Dudley",
+        author_email="will2346@live.co.uk",
         license="MIT License",
         classifiers=[
             "Development Status :: 2 - Pre-Alpha",
@@ -48,6 +48,7 @@ if __name__ == "__main__":
             "typing_extensions==4.4.0",
             "google-cloud-storage==2.5.0",
             "protobuf==3.20.1",
+            "gymnasium>=0.26"
         ],
         packages=find_packages(exclude=["tests*"]),
         python_requires=">=3.7.0",
