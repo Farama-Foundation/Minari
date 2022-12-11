@@ -1,4 +1,4 @@
-gymnasium[box2d]==0.27  # todo: vc
+gymnasium[box2d]  # todo: vc
 cython
 #minari
 h5py
