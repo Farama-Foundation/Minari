@@ -1,4 +1,5 @@
 import base64
+import json
 import os
 
 import gymnasium as gym
@@ -78,7 +79,7 @@ def generate_dataset(dataset_name: str):
         dataset_name=dataset_name,
         algorithm_name="random_policy",
         environment_name="LunarLander-v2",
-        environment_stack=environment_stack,
+        environment_stack=json.dumps(environment_stack),
         seed_used=42,  # For the simplicity of this example, we're not actually using a seed.
         code_permalink="https://github.com/Farama-Foundation/Kabuki/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
         author="WillDudley",
