@@ -599,7 +599,7 @@ class MinariDataset:
             f.create_dataset('dataset_name', data=self._dataset_name)
             f.create_dataset('algorithm_name', data=self._algorithm_name)
             f.create_dataset('environment_name', data=self._environment_name)
-            f.create_dataset('environment_stack', data=self._environment_stack)
+            f.create_dataset('environment_stack', data=str(self._environment_stack))
             f.create_dataset('seed_used', data=self._seed_used)
             f.create_dataset('code_permalink', data=str(self._code_permalink))  # allows saving of NoneType
             f.create_dataset('author', data=str(self._author))
