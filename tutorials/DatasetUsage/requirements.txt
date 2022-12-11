@@ -1,4 +1,4 @@
 numpy
 cython
 #minari
-git+https://github.com/WillDudley/Gymnasium.git@spec_stack
+git+https://github.com/WillDudley/Gymnasium.git@spec_stack#egg=gymnasium[box2d]
