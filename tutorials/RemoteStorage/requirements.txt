@@ -1,4 +1,4 @@
-gymnasium[box2d]  # todo: vc
+#gymnasium[box2d]  # todo: vc
 cython
 #minari
 h5py
@@ -6,4 +6,4 @@ structlog
 tensorboardX
 typing_extensions
 google-cloud-storage
-git+https://github.com/WillDudley/Gymnasium.git@spec_stack
+git+https://github.com/WillDudley/Gymnasium.git@spec_stack#egg=gymnasium[box2d]
