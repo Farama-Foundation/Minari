@@ -26,7 +26,7 @@ if __name__ == "__main__":
     setup(
         name="minari",
         version="0.1.0",
-        description="An offline deep reinforcement learning library",
+        description="Datasets for offline deep reinforcement learning",
         long_description=open("README.md").read(),
         long_description_content_type="text/markdown",
         url="https://github.com/Farama-Foundation/Minari",
