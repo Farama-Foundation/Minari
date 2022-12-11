@@ -207,6 +207,14 @@ class MinariDataset:
         self._author = author
         self._author_email = author_email
 
+        # NoneType warnings
+        if code_permalink is None:
+            warnings.warn("`code_permalink` is set to None. For reproducibility purposes it is highly recommended to link your dataset to versioned code.", UserWarning)
+        if author is None:
+            warnings.warn("`author` is set to None. For longevity purposes it is highly recommended to provide an author name.", UserWarning)
+        if author_email is None:
+            warnings.warn("`author_email` is set to None. For longevity purposes it is highly recommended to provide an author email, or some other obvious contact information.", UserWarning)
+
         # validation
         assert isinstance(observations, np.ndarray),\
             'Observations must be numpy array.'
@@ -584,9 +592,9 @@ class MinariDataset:
             f.create_dataset('algorithm_name', data=self._algorithm_name)
             f.create_dataset('environment_name', data=self._environment_name)
             f.create_dataset('seed_used', data=self._seed_used)
-            f.create_dataset('code_permalink', data=self._code_permalink)
-            f.create_dataset('author', data=self._author)
-            f.create_dataset('author_email', data=self._author_email)
+            f.create_dataset('code_permalink', data=str(self._code_permalink))  # allows saving of NoneType
+            f.create_dataset('author', data=str(self._author))
+            f.create_dataset('author_email', data=str(self._author_email))
             f.create_dataset('observations', data=self._observations)
             f.create_dataset('actions', data=self._actions)
             f.create_dataset('rewards', data=self._rewards)

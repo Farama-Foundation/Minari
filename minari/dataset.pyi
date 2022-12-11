@@ -112,9 +112,9 @@ class MinariDataset:
         algorithm_name: str,
         environment_name: str,
         seed_used: int,
-        code_permalink: str,
-        author: str,
-        author_email: str,
+        code_permalink: Union[str, None],
+        author: Union[str, None],
+        author_email: Union[str, None],
         observations: np.ndarray,
         actions: np.ndarray,
         rewards: np.ndarray,
@@ -132,11 +132,11 @@ class MinariDataset:
     @property
     def seed_used(self) -> int: ...
     @property
-    def code_permalink(self) -> str: ...
+    def code_permalink(self) -> Union[str, None]: ...
     @property
-    def author(self) -> str: ...
+    def author(self) -> Union[str, None]: ...
     @property
-    def author_email(self) -> str: ...
+    def author_email(self) -> Union[str, None]: ...
     @property
     def observations(self) -> np.ndarray: ...
     @property
