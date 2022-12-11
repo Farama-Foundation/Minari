@@ -30,8 +30,8 @@ if __name__ == "__main__":
         long_description=open("README.md").read(),
         long_description_content_type="text/markdown",
         url="https://github.com/takuseno/d3rlpy",
-        author="Takuma Seno",
-        author_email="takuma.seno@gmail.com",
+        author="Will Dudley",
+        author_email="will2346@live.co.uk",
         license="MIT License",
         classifiers=[
             "Development Status :: 2 - Pre-Alpha",
