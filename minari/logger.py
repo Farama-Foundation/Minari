@@ -1,9 +1,10 @@
 import json
 import os
+import pathlib
 import time
 from contextlib import contextmanager
 from datetime import datetime
-from typing import Any, Dict, Iterator, List, Optional
+from typing import Any, Dict, Iterator, List, Optional, Union
 
 import numpy as np
 import structlog
@@ -12,7 +13,7 @@ from typing_extensions import Protocol
 
 
 class _SaveProtocol(Protocol):
-    def save_model(self, fname: str) -> None:
+    def save_model(self, fname: Union[str, pathlib.Path]) -> None:
         ...
 
 
@@ -37,7 +38,7 @@ class D3RLPyLogger:
     _save_metrics: bool
     _verbose: bool
     _metrics_buffer: Dict[str, List[float]]
-    _params: Optional[Dict[str, float]]
+    _params: Optional[Dict[str, Any]]
     _writer: Optional[SummaryWriter]
 
     def __init__(
