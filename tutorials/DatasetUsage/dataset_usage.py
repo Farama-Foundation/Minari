@@ -2,9 +2,10 @@ import base64
 import json
 import os
 
-import minari
 import gymnasium as gym
 from gymnasium.utils.serialize_spec_stack import deserialise_spec_stack
+
+import minari
 
 GCP_DATASET_ADMIN = os.environ["GCP_DATASET_ADMIN"]
 
@@ -26,4 +27,6 @@ print(f"Shape of observations: {dataset.observations.shape}\n")
 print(f"Return of third episode: {dataset.episodes[2].compute_return()}\n")
 print(f"21st action of fifth episode: {dataset.episodes[4].transitions[20].action}\n")
 
-reconstructed_environment = gym.make(deserialise_spec_stack(json.loads(dataset.environment_stack)))
+reconstructed_environment = gym.make(
+    deserialise_spec_stack(json.loads(dataset.environment_stack))
+)
