@@ -1,3 +1,5 @@
+# pyright: basic, reportOptionalMemberAccess=false, reportOptionalSubscript=false
+
 import gymnasium as gym
 import numpy as np
 
@@ -10,6 +12,8 @@ def generate_dataset(dataset_name: str):
 
     env = gym.make("LunarLander-v2", render_mode="rgb_array")
     observation, info = env.reset(seed=42)
+
+    assert env.spec.max_episode_steps is not None, "Max episode steps must be defined"
 
     replay_buffer = {
         "episode": np.array(

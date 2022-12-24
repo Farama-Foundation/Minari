@@ -1,3 +1,5 @@
+# pyright: basic, reportOptionalMemberAccess=false
+
 import base64
 import os
 
@@ -32,6 +34,8 @@ dataset_name = "FetchReach_v3_example-dataset"
 
 num_episodes = 4
 
+
+assert env.spec.max_episode_steps is not None, "Max episode steps must be defined"
 
 replay_buffer = {
     "episode": np.array(
