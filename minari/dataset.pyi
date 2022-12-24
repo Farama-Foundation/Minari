@@ -111,6 +111,7 @@ class MinariDataset:
         dataset_name: str,
         algorithm_name: str,
         environment_name: str,
+        environment_stack: Union[str, None],
         seed_used: int,
         code_permalink: Union[str, None],
         author: Union[str, None],
@@ -129,6 +130,8 @@ class MinariDataset:
     def algorithm_name(self) -> str: ...
     @property
     def environment_name(self) -> str: ...
+    @property
+    def environment_stack(self) -> str: ...
     @property
     def seed_used(self) -> int: ...
     @property
