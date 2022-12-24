@@ -1,6 +1,7 @@
 # pyright: basic, reportOptionalMemberAccess=false
 
 import base64
+import json
 import os
 
 import gymnasium as gym
@@ -21,6 +22,9 @@ os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./credentials.json"
 
 # 2. Standard Gymnasium procedure to collect data into whatever replay buffer you want
 env = gym.make("FetchReach-v3")
+
+environment_stack = gym.SpecStack(env).stack_json  # Get the environment specification stack for reproducibility
+
 env.reset()
 replay_buffer = {
     "episode": np.array([]),
@@ -97,6 +101,7 @@ dataset = MinariDataset(
     dataset_name=dataset_name,
     algorithm_name="random_policy",
     environment_name="FetchReach-v3",
+    environment_stack=json.dumps(environment_stack),
     seed_used=42,  # For the simplicity of this example, we're not actually using a seed. Naughty us!
     code_permalink="https://github.com/Farama-Foundation/Kabuki/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
     author="WillDudley",
