@@ -5,6 +5,7 @@ import json
 import os
 
 import gymnasium as gym
+from gymnasium.utils.serialize_spec_stack import serialise_spec_stack
 import numpy as np
 
 import minari
@@ -23,7 +24,7 @@ os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./credentials.json"
 # 2. Standard Gymnasium procedure to collect data into whatever replay buffer you want
 env = gym.make("FetchReach-v3")
 
-environment_stack = gym.SpecStack(env).stack_json  # Get the environment specification stack for reproducibility
+environment_stack = serialise_spec_stack(env.spec_stack)  # Get the environment specification stack for reproducibility
 
 env.reset()
 replay_buffer = {

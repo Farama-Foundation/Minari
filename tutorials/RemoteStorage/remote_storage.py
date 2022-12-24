@@ -6,6 +6,7 @@ import os
 
 import gymnasium as gym
 import numpy as np
+from gymnasium.utils.serialize_spec_stack import serialise_spec_stack
 
 import minari
 from minari.dataset import MinariDataset
@@ -23,7 +24,7 @@ def generate_dataset(dataset_name: str):
     num_episodes = 10
 
     env = gym.make("LunarLander-v2", render_mode="rgb_array")
-    environment_stack = gym.SpecStack(env).stack_json
+    environment_stack = serialise_spec_stack(env.spec_stack)
     observation, info = env.reset(seed=42)
 
     assert env.spec.max_episode_steps is not None, "Max episode steps must be defined"
