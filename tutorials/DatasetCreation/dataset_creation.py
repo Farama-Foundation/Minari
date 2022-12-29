@@ -1,9 +1,12 @@
+# pyright: basic, reportOptionalMemberAccess=false
+
 import base64
 import json
 import os
 
 import gymnasium as gym
 import numpy as np
+from gymnasium.utils.serialize_spec_stack import serialise_spec_stack
 
 import minari
 from minari.dataset import MinariDataset
@@ -21,7 +24,9 @@ os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./credentials.json"
 # 2. Standard Gymnasium procedure to collect data into whatever replay buffer you want
 env = gym.make("FetchReach-v3")
 
-environment_stack = gym.SpecStack(env).stack_json  # Get the environment specification stack for reproducibility
+environment_stack = serialise_spec_stack(
+    env.spec_stack
+)  # Get the environment specification stack for reproducibility
 
 env.reset()
 replay_buffer = {
@@ -36,6 +41,8 @@ dataset_name = "FetchReach_v3_example-dataset"
 
 num_episodes = 4
 
+
+assert env.spec.max_episode_steps is not None, "Max episode steps must be defined"
 
 replay_buffer = {
     "episode": np.array(
