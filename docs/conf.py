@@ -19,7 +19,7 @@ from typing import Any, Dict
 
 # import minari
 
-project = "Kabuki"
+project = "Minari"
 copyright = "2022"
 author = "Farama Foundation"
 
@@ -60,7 +60,7 @@ napoleon_custom_sections = [("Returns", "params_style")]
 # a list of builtin themes.
 #
 html_theme = "furo"
-html_title = "Kabuki Documentation"
+html_title = "Minari Documentation"
 html_baseurl = "https://minari.farama.org"
 html_copy_source = False
 html_favicon = "_static/img/favicon.png"
@@ -73,7 +73,7 @@ html_context: Dict[str, Any] = {}
 html_context["conf_py_path"] = "/docs/"
 html_context["display_github"] = True
 html_context["github_user"] = "Farama-Foundation"
-html_context["github_repo"] = "Kabuki"
+html_context["github_repo"] = "Minari"
 html_context["github_version"] = "master"
 html_context["slug"] = "minari"
 
