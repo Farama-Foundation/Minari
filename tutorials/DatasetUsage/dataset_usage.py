@@ -1,3 +1,5 @@
+# pyright: basic, reportGeneralTypeIssues=false
+
 import base64
 import json
 import os

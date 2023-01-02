@@ -1,14 +1,11 @@
 # pyright: basic, reportOptionalMemberAccess=false
 
-import base64
 import json
-import os
 
 import gymnasium as gym
 import numpy as np
 from gymnasium.utils.serialize_spec_stack import serialise_spec_stack
 
-import minari
 from minari.dataset import MinariDataset
 
 # 1. Get permissions to upload to GCP
