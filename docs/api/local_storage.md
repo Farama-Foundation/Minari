@@ -5,7 +5,7 @@ title: "Local Storage"
 # Local Storage
 ## API Overview
 
-Kabuki's API easily lets you save, load, list and delete locally stored datasets.
+Minari's API easily lets you save, load, list and delete locally stored datasets.
 ```{eval-rst}
 .. literalinclude:: ../../tutorials/LocalStorage/local_storage.py
    :language: python

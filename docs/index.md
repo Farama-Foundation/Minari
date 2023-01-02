@@ -35,9 +35,9 @@ tutorials/dataset_usage
 :hidden:
 :caption: Development
 
-Github <https://github.com/Farama-Foundation/Kabuki>
+Github <https://github.com/Farama-Foundation/Minari>
 Donate <https://farama.org/donations>
 
 ```
 
-# Kabuki is a Python library for conducting research in offline reinforcement learning
+# Minari is a Python library for conducting research in offline reinforcement learning
