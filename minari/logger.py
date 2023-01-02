@@ -31,7 +31,7 @@ def default_json_encoder(obj: Any) -> Any:
 LOG: structlog.BoundLogger = structlog.get_logger(__name__)
 
 
-class D3RLPyLogger:
+class MinariLogger:
 
     _experiment_name: str
     _logdir: str
