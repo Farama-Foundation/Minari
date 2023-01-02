@@ -586,7 +586,7 @@ class MinariDataset:
             fname (str): file path.
 
         """
-        datasets_path = os.environ.get('KABUKI_DATASETS_PATH')
+        datasets_path = os.environ.get('MINARI_DATASETS_PATH')
         if datasets_path is not None:
             file_path = os.path.join(datasets_path, f'{self._dataset_name}.hdf5')
         else:
