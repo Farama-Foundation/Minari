@@ -19,7 +19,7 @@ jobs:
       - name: Install dependencies
         run: pip install -r docs/requirements.txt
       
-      - name: Install Kabuki
+      - name: Install Minari
         run: pip install .
       
       - name: Build

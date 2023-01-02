@@ -126,12 +126,12 @@ def _check_discrete_action(actions):
 class MinariDataset:
     """ Markov-Decision Process Dataset class.
 
-    KabukiDataset is deisnged for reinforcement learning datasets to use them like
+    MinariDataset is deisnged for reinforcement learning datasets to use them like
     supervised learning datasets.
 
     .. code-block:: python
 
-        from minari.dataset import KabukiDataset
+        from minari.dataset import MinariDataset
 
         # 1000 steps of observations with shape of (100,)
         observations = np.random.random((1000, 100))
@@ -142,11 +142,11 @@ class MinariDataset:
         # 1000 steps of terminal flags
         terminals = np.random.randint(2, size=1000)
 
-        dataset = KabukiDataset(observations, actions, rewards, terminals)
+        dataset = MinariDataset(observations, actions, rewards, terminals)
 
-    The KabukiDataset object automatically splits the given data into list of
+    The MinariDataset object automatically splits the given data into list of
     :class:`minari.dataset.Episode` objects.
-    Furthermore, the KabukiDataset object behaves like a list in order to use with
+    Furthermore, the MinariDataset object behaves like a list in order to use with
     scikit-learn utilities.
 
     .. code-block:: python
@@ -621,9 +621,9 @@ class MinariDataset:
         .. code-block:: python
 
             import numpy as np
-            from minari.dataset import KabukiDataset
+            from minari.dataset import MinariDataset
 
-            dataset = KabukiDataset(np.random.random(10, 4),
+            dataset = MinariDataset(np.random.random(10, 4),
                                  np.random.random(10, 2),
                                  np.random.random(10),
                                  np.random.randint(2, size=10))
@@ -632,7 +632,7 @@ class MinariDataset:
             dataset.dump('dataset.h5')
 
             # load from HDF5
-            new_dataset = KabukiDataset.load('dataset.h5')
+            new_dataset = MinariDataset.load('dataset.h5')
 
         Args:
             fname (str): file path.

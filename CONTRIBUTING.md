@@ -1,4 +1,4 @@
-# Kabuki Contribution Guidelines
+# Minari Contribution Guidelines
 
 We welcome:
 
@@ -25,7 +25,7 @@ Contributing code is done through standard github methods:
 - Changes to environment functionality should be avoided when reasonable, and when they occur the environment version must be bumped.
 
 ### Git hooks
-The CI will run several checks on the new code pushed to the Kabuki repository. These checks can also be run locally without waiting for the CI by following the steps below:
+The CI will run several checks on the new code pushed to the Minari repository. These checks can also be run locally without waiting for the CI by following the steps below:
 1. [install `pre-commit`](https://pre-commit.com/#install),
 2. install the Git hooks by running `pre-commit install`.
 
@@ -42,7 +42,7 @@ To use it you first need to have _Make_ installed on your local machine:
 Then `make help` should give all the available commands and you can use `Tab` when writing the command if it's too long to write. For example to run all the tests, one would write `make test-all`.
 
 ## Contributing tutorials
-Tutorials are a crucial way to help people learn how to use Kabuki and we greatly appreciate any contributions. However, we have a few guidelines for tutorials:
+Tutorials are a crucial way to help people learn how to use Minari and we greatly appreciate any contributions. However, we have a few guidelines for tutorials:
 
 ### Tutorial content
 - Tutorials should be written in single .py scripts with clear comments explaining the code and thought process with a naive user in mind.

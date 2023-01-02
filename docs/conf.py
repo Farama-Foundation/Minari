@@ -65,8 +65,8 @@ html_baseurl = "https://minari.farama.org"
 html_copy_source = False
 html_favicon = "_static/img/favicon.png"
 html_theme_options = {
-    "light_logo": "img/Kabuki.svg",
-    "dark_logo": "img/Kabuki_White.svg",
+    "light_logo": "img/Minari.svg",
+    "dark_logo": "img/Minari_White.svg",
     "gtag": "G-R5TRTT6R78",
 }
 html_context: Dict[str, Any] = {}
