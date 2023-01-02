@@ -5,7 +5,7 @@ title: "Remote Usage"
 # Remote Storage
 ## API Overview
 
-Kabuki's API easily lets you list datasets available to download, and download datasets to local storage. With permissions, it is also easy to upload your own datasets.
+Minari's API easily lets you list datasets available to download, and download datasets to local storage. With permissions, it is also easy to upload your own datasets.
 ```{eval-rst}
 .. literalinclude:: ../../tutorials/RemoteStorage/remote_storage.py
    :language: python
