@@ -48,7 +48,7 @@ if __name__ == "__main__":
             "typing_extensions==4.4.0",
             "google-cloud-storage==2.5.0",
             "protobuf==3.20.1",
-            "gymnasium>=0.26",
+            "gymnasium @ git+https://github.com/WillDudley/Gymnasium.git@spec_stack",
         ],
         packages=find_packages(exclude=["tests*"]),
         python_requires=">=3.7.0",
