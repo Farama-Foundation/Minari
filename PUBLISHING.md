@@ -4,7 +4,7 @@
 4. `mv wheelhouse/* dist`
 5. `rm dist/minari-*-cp39-cp39-linux_x86_64.whl`
 6. `twine upload --repository pypi dist/*`
-7. `rm -r build dist wheelhouse minari.egg.info`
+7. `rm -r build dist wheelhouse minari.egg-info`
 
 On Ubuntu 22.04, you can follow https://levelup.gitconnected.com/how-to-deploy-a-cython-package-to-pypi-8217a6581f09 but using `auditwheel repair dist/minari-0.2.0-cp39-cp39-linux_x86_64.whl --plat manylinux_2_34_x86_64`.
 
