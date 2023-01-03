@@ -1,8 +1,6 @@
 # pyright: basic, reportGeneralTypeIssues=false
 
-import base64
 import json
-import os
 
 import gymnasium as gym
 from gymnasium.utils.serialize_spec_stack import deserialise_spec_stack
