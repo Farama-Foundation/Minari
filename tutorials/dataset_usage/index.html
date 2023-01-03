@@ -286,9 +286,9 @@
           <section id="dataset-usage">
 <h1>Dataset Usage<a class="headerlink" href="#dataset-usage" title="Permalink to this heading">#</a></h1>
 <p>Here we provide examples of how to access the data in the dataset for your own use.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Episode attributes: </span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">episodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="fm">__dir__</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Transition attributes: </span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">episodes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">transitions</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="fm">__dir__</span><span class="p">()</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">reconstructed_environment</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span>
+    <span class="n">deserialise_spec_stack</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">environment_stack</span><span class="p">))</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 <section id="complete-working-example">
@@ -306,22 +306,14 @@ git+https://github.com/WillDudley/Gymnasium.git@spec_stack#egg=gymnasium[box2d]
 </section>
 <section id="full-code">
 <h3>Full Code<a class="headerlink" href="#full-code" title="Permalink to this heading">#</a></h3>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">base64</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># pyright: basic, reportGeneralTypeIssues=false</span>
+
 <span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">os</span>
 
 <span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="kn">from</span> <span class="nn">gymnasium.utils.serialize_spec_stack</span> <span class="kn">import</span> <span class="n">deserialise_spec_stack</span>
 
 <span class="kn">import</span> <span class="nn">minari</span>
-
-<span class="n">GCP_DATASET_ADMIN</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;GCP_DATASET_ADMIN&quot;</span><span class="p">]</span>
-
-<span class="n">credentials_json</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b64decode</span><span class="p">(</span><span class="n">GCP_DATASET_ADMIN</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;&#39;&quot;</span><span class="p">,</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">)</span>
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;credentials.json&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-    <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">credentials_json</span><span class="p">)</span>
-
-<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;GOOGLE_APPLICATION_CREDENTIALS&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;./credentials.json&quot;</span>
 
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">download_dataset</span><span class="p">(</span><span class="s2">&quot;LunarLander_v2_remote-test-dataset&quot;</span><span class="p">)</span>
 
