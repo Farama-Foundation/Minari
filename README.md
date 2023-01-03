@@ -25,7 +25,9 @@ dataset = minari.download_dataset("LunarLander_v2_remote-test-dataset")
 ## Recreating Gymnasium environments (Coming very soon!)
 
 ```python
+import json
 import gymnasium as gym
+from gymnasium.utils.serialize_spec_stack import deserialise_spec_stack
 
 env = gym.make(deserialise_spec_stack(json.loads(dataset.environment_stack)))
 ```
