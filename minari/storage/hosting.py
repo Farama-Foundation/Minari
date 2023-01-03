@@ -57,7 +57,7 @@ def download_dataset(dataset_name: str):
 def list_remote_datasets():
     project_id = "dogwood-envoy-367012"
     bucket_name = "minari"
-    storage_client = storage.Client(project=project_id)
+    storage_client = storage.Client.create_anonymous_client()
 
     bucket = storage_client.bucket(bucket_name)
     blobs = bucket.list_blobs()
