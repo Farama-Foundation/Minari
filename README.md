@@ -19,7 +19,7 @@ We have a public discord server (which we also use to coordinate development wor
 ```python
 import minari
 
-dataset = minari.download_dataset("LunarLander_v2_test-dataset")
+dataset = minari.download_dataset("LunarLander_v2_remote-test-dataset")
 ```
 
 ## Recreating Gymnasium environments (Coming very soon!)
@@ -27,7 +27,7 @@ dataset = minari.download_dataset("LunarLander_v2_test-dataset")
 ```python
 import gymnasium as gym
 
-env = gym.make(gym.SpecStack(json.loads(dataset.environment_stack)))
+env = gym.make(deserialise_spec_stack(json.loads(dataset.environment_stack)))
 ```
 
 ## Uploading datasets
@@ -56,9 +56,8 @@ minari.list_remote_datasets()
 ## Checking available local datasets
 ```python
 import minari
-minari.list_local_datasets()  # todo: implement
+minari.list_local_datasets()
 ```
-Datasets are stored in the `.datasets` directory in your project directory.
 
 
 
