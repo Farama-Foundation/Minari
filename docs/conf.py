@@ -68,13 +68,14 @@ html_theme_options = {
     "light_logo": "img/Minari.svg",
     "dark_logo": "img/Minari_White.svg",
     "gtag": "G-R5TRTT6R78",
+    "versioning": True,
 }
 html_context: Dict[str, Any] = {}
 html_context["conf_py_path"] = "/docs/"
 html_context["display_github"] = True
 html_context["github_user"] = "Farama-Foundation"
 html_context["github_repo"] = "Minari"
-html_context["github_version"] = "master"
+html_context["github_version"] = "main"
 html_context["slug"] = "minari"
 
 html_static_path = ["_static"]
