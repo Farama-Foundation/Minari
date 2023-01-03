@@ -9,14 +9,6 @@ from gymnasium.utils.serialize_spec_stack import deserialise_spec_stack
 
 import minari
 
-GCP_DATASET_ADMIN = os.environ["GCP_DATASET_ADMIN"]
-
-credentials_json = base64.b64decode(GCP_DATASET_ADMIN).decode("utf8").replace("'", '"')
-with open("credentials.json", "w") as f:
-    f.write(credentials_json)
-
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "./credentials.json"
-
 dataset = minari.download_dataset("LunarLander_v2_remote-test-dataset")
 
 print("*" * 60, " Dataset Structure")
