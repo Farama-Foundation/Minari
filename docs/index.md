@@ -19,8 +19,7 @@ lastpage:
 :hidden:
 :caption: API
 
-api/local_storage
-api/remote_storage
+api/api
 ```
 
 ```{toctree}
