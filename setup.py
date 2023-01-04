@@ -25,7 +25,7 @@ if __name__ == "__main__":
     # main setup
     setup(
         name="minari",
-        version="0.2.1",
+        version="0.2.2",
         description="Datasets for offline deep reinforcement learning",
         long_description=open("README.md").read(),
         long_description_content_type="text/markdown",
