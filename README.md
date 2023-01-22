@@ -4,7 +4,7 @@
 
 Minari is the new name of this library. Minari used to be called Kabuki.
 
-Minari is intended to be a Python library for conducting research in offline reinforcement learning, akin to an offline version of Gymnasium or an offline RL version of HuggingFace's datasets library. The goal is to release a fully working beta in late November or early December.
+Minari is intended to be a Python library for conducting research in offline reinforcement learning, akin to an offline version of Gymnasium or an offline RL version of HuggingFace's datasets library. This library is currently in beta, and we're targeting having a complete initial release in February
 
 We have a public discord server (which we also use to coordinate development work) that you can join here: https://discord.gg/jfERDCSw.
 
