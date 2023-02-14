@@ -1,26 +1,10 @@
 import os
 
-from setuptools import Extension, find_packages, setup
-
-os.environ["CFLAGS"] = "-std=c++11"
+from setuptools import find_packages, setup
 
 if __name__ == "__main__":
-    from Cython.Build import cythonize
     from numpy import get_include
 
-    # setup Cython build
-    ext = Extension(
-        "minari.dataset",
-        sources=["minari/dataset.pyx"],
-        include_dirs=[get_include(), "minari/cpp/include"],
-        language="c++",
-        extra_compile_args=["-std=c++11", "-O3", "-ffast-math"],
-        extra_link_args=["-std=c++11"],
-    )
-
-    ext_modules = cythonize(
-        [ext], compiler_directives={"linetrace": True, "binding": True}
-    )
 
     # main setup
     setup(
@@ -52,6 +36,5 @@ if __name__ == "__main__":
         ],
         packages=find_packages(exclude=["tests*"]),
         python_requires=">=3.7.0",
-        package_data={"minari": ["*.pyx", "*.pxd", "*.h", "*.pyi", "py.typed"]},
-        ext_modules=ext_modules,
+        # package_data={"minari": ["*.pyx", "*.pxd", "*.h", "*.pyi", "py.typed"]},
     )
