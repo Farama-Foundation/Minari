@@ -41,6 +41,7 @@ def list_local_datasets() -> Dict[str, Dict[str, Union[str, int, bool]]]:
 
     return local_datasets
 
+    return datasets
 
 def delete_dataset(dataset_name: str):
     """Delete a Minari dataset from the local Minari database.
