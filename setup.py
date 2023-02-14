@@ -1,12 +1,6 @@
-import os
-
 from setuptools import find_packages, setup
 
 if __name__ == "__main__":
-    from numpy import get_include
-
-
-    # main setup
     setup(
         name="minari",
         version="0.2.2",
@@ -22,7 +16,9 @@ if __name__ == "__main__":
             "Programming Language :: Python :: 3.6",
             "Programming Language :: Python :: 3.7",
             "Programming Language :: Python :: 3.8",
-            "Programming Language :: Python :: Implementation :: CPython",
+            "Programming Language :: Python :: 3.9",
+            "Programming Language :: Python :: 3.10",
+            "Programming Language :: Python :: 3.11",
         ],
         install_requires=[
             "numpy>=1.18.0",
