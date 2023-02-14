@@ -1,29 +1,27 @@
 import os
-
-from minari.dataset import MinariDataset
-from minari.storage.datasets_root_dir import get_file_path
+import shutil
+from minari.minari_dataset import MinariDataset
+from minari.storage.datasets_root_dir import get_dataset_path
 
 
 def load_dataset(dataset_name: str):
-    file_path = get_file_path(dataset_name)
+    file_path = get_dataset_path(dataset_name)
+    data_path = os.path.join(file_path, "data", "main_data.hdf5")
+    return MinariDataset(data_path)
 
-    return MinariDataset.load(file_path)
 
+def list_local_datasets(verbose=True):
+    datasets_path = get_dataset_path("")
+    datasets = [dir_name for dir_name in os.listdir(datasets_path)]
 
-def list_local_datasets():
-    datasets_path = get_file_path("").parent
-    datasets = [
-        f[:-5]
-        for f in os.listdir(datasets_path)
-        if os.path.isfile(os.path.join(datasets_path, f))
-    ]
+    if verbose:
+        print("Datasets found locally:")
+        for dataset in datasets:
+            print(dataset)
 
-    print("Datasets found locally:")
-    for dataset in datasets:
-        print(dataset)
-
+    return datasets
 
 def delete_dataset(dataset_name: str):
-    file_path = get_file_path(dataset_name)
-    os.remove(file_path)
-    print("Dataset {dataset_name} deleted!")
+    dataset_path = get_dataset_path(dataset_name)
+    shutil.rmtree(dataset_path)
+    print(f"Dataset {dataset_name} deleted!")
