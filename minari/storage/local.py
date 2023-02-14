@@ -1,5 +1,6 @@
 import os
 import shutil
+
 from minari.minari_dataset import MinariDataset
 from minari.storage.datasets_root_dir import get_dataset_path
 
@@ -20,6 +21,7 @@ def list_local_datasets(verbose=True):
             print(dataset)
 
     return datasets
+
 
 def delete_dataset(dataset_name: str):
     dataset_path = get_dataset_path(dataset_name)
