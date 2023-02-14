@@ -1,13 +1,31 @@
 import os
 import h5py
 import warnings
+import numpy as np
 import gymnasium as gym
 from typing import Optional
 from gymnasium.envs.registration import EnvSpec
 from minari.utils.data_collector import DataCollectorV0
 from minari.storage.datasets_root_dir import get_dataset_path
+from minari.utils.data_collector import STEP_DATA_KEYS
 
 
+def clear_buffer(buffer: dict, eps_group):
+    for key, data in buffer.items():
+        if isinstance(data, dict):
+            if key in eps_group:
+                eps_group_to_clear = eps_group[key]
+            else:
+                eps_group_to_clear = eps_group.create_group(key)
+            clear_buffer(data, eps_group_to_clear)      
+        else:
+            # assert data is numpy array                      
+            assert np.all(np.logical_not(np.isnan(data)))
+            # add seed to attributes                   
+            eps_group.create_dataset(key, data=data, chunks=True)                            
+    
+    return eps_group
+            
 class MinariDataset:
     def __init__(self,
         data_path: str
@@ -101,17 +119,48 @@ class MinariDataset:
             file.attrs.modify('total_steps', file.attrs['total_steps'] + new_data_total_steps)
         self._extra_data_id += 1
                
-    def update_dataset_from_buffers(self,
-                                    observations,
-        actions,
-        rewards,
-        terminations,
-        truncations,
-        seeds=None
-        ):
+    def update_dataset_from_buffer(self, buffer: list[dict]):
+        """Additional data can be added to the Minari Dataset from a list of episode dictionary buffers.
         
-        # NoneType warning for seeds
-        pass
+        The episode dictionary buffer must have the following keys:
+            * `observations`:
+            * `actions`:
+            * `rewards`:
+            * `terminations`:
+            * `truncations`:
+        
+        Other keys are optional as long as the data
+
+        Args:            
+        """ 
+        additional_steps = 0                           
+        with h5py.File(self.data_path, 'a', track_order=True) as file:   
+            last_episode_id = file.attrs['total_episodes']
+            for i, eps_buff in enumerate(buffer):
+                episode_id = last_episode_id + i                
+                # check episode terminated or truncated
+                assert eps_buff['terminations'][-1] or eps_buff['truncations'][-1], "Each episode must be terminated or truncated before adding it to a Minari dataset"
+                assert len(eps_buff['actions']) + 1 == len(eps_buff['observations']), f"Number of observations {len(eps_buff['observations'])} must have an additional \
+                                                                                        element compared to the number of action steps {len(eps_buff['actions'])} \
+                                                                                        The initial and final observation must be included"
+                seed = eps_buff.pop('seed', None)
+                eps_group = clear_buffer(eps_buff, file.create_group(f"episode_{episode_id}"))
+                
+                eps_group.attrs['id'] = episode_id
+                total_steps = len(eps_buff['actions'])
+                eps_group.attrs['total_steps'] = total_steps
+                additional_steps += total_steps
+                
+                if seed is None:
+                    eps_group.attrs['seed'] = str(None)
+                else:
+                    assert isinstance(seed, int)
+                    eps_group.attrs['seed'] = seed
+                    
+                # TODO: save EpisodeMetadataCallback callback in MinariDataset and update new episode group metadata
+            
+            file.attrs.modify('total_episodes', last_episode_id+len(buffer))
+            file.attrs.modify('total_steps', file.attrs['total_steps'] + additional_steps)  
 
 def combine_datasets(datasets_to_combine: list[MinariDataset], new_dataset_name: str):
     new_dataset_path = get_dataset_path(new_dataset_name)
@@ -169,16 +218,13 @@ def combine_datasets(datasets_to_combine: list[MinariDataset], new_dataset_name:
     return MinariDataset(new_data_path)
 
 def create_dataset_from_buffers(dataset_name: str,
+        env,
         algorithm_name: str,
         environment,
         code_permalink,
         author,
         author_email,
-        observations,
-        actions,
-        rewards,
-        terminations,
-        truncations,
+        buffer,
         ):
     
      # NoneType warnings
@@ -189,6 +235,52 @@ def create_dataset_from_buffers(dataset_name: str,
     if author_email is None:
         warnings.warn("`author_email` is set to None. For longevity purposes it is highly recommended to provide an author email, or some other obvious contact information.", UserWarning)
 
+    dataset_path = get_dataset_path(dataset_name)
+    
+    # Check if dataset already exists
+    if not os.path.exists(dataset_path):
+        dataset_path = os.path.join(dataset_path, "data")
+        os.makedirs(dataset_path)
+        data_path = os.path.join(dataset_path, "main_data.hdf5")
+        
+        total_steps = 0                           
+        with h5py.File(data_path, 'w', track_order=True) as file:   
+            for i, eps_buff in enumerate(buffer):
+                # check episode terminated or truncated
+                assert eps_buff['terminations'][-1] or eps_buff['truncations'][-1], "Each episode must be terminated or truncated before adding it to a Minari dataset"
+                assert len(eps_buff['actions']) + 1 == len(eps_buff['observations']), f"Number of observations {len(eps_buff['observations'])} must have an additional \
+                                                                                        element compared to the number of action steps {len(eps_buff['actions'])} \
+                                                                                        The initial and final observation must be included"
+                seed = eps_buff.pop('seed', None)
+                eps_group = clear_buffer(eps_buff, file.create_group(f"episode_{i}"))
+                
+                eps_group.attrs['id'] = i
+                total_steps = len(eps_buff['actions'])
+                eps_group.attrs['total_steps'] = total_steps
+                total_steps += total_steps
+                
+                if seed is None:
+                    eps_group.attrs['seed'] = str(None)
+                else:
+                    assert isinstance(seed, int)
+                    eps_group.attrs['seed'] = seed
+                    
+                # TODO: save EpisodeMetadataCallback callback in MinariDataset and update new episode group metadata
+            
+            file.attrs['total_episodes'] = len(buffer)
+            file.attrs['total_steps'] = total_steps
+            
+            # TODO: check if observation/action have been flatten and update
+            file.attrs['flatten_observation'] = False
+            file.attrs['flatten_action'] = False
+            
+            file.attrs['env_spec'] = env.spec.to_json()
+            file.attrs['dataset_name'] = dataset_name
+
+        return MinariDataset(data_path)    
+    else:
+        raise ValueError(f'A Minari dataset with ID {dataset_name} already exists and it cannot be overriden. Please use a different dataset name or version.')
+    
     
 def create_dataset_from_collector_env(dataset_name,
         collector_env: DataCollectorV0,

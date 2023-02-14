@@ -236,7 +236,7 @@ class DataCollectorV0(gym.Wrapper):
                      
         for i, eps_buff in enumerate(self._buffer):
             if len(eps_buff['actions']) == 0:
-                # Make sure that there is data in the buffer and stepped 
+                # Make sure that the episode has stepped 
                 continue
             
             current_episode_group_term_or_trunc = eps_buff['terminations'][-1] or eps_buff['truncations'][-1]
