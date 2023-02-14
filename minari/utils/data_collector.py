@@ -12,6 +12,14 @@ import numpy as np
 from gymnasium import spaces
 from gymnasium.core import ActType, ObsType
 
+STEP_DATA_KEYS = {
+    "actions",
+    "observations",
+    "rewards",
+    "truncations",
+    "terminations",
+    "infos",
+}
 
 EpisodeBufferValues = TypeVar("EpisodeBufferValues", List[Any], "EpisodeBuffer")
 EpisodeBuffer = Dict[str, EpisodeBufferValues]
@@ -102,7 +110,6 @@ class StepDataCallback:
                 ValueError(f"Minari doesn't support space of type {space}")
             else:
                 return False
-
         # check if observation/action need to be flatten before saving to HDF5
         self.flatten_observation = check_flatten_space(self.env.observation_space)
         self.flatten_action = check_flatten_space(self.env.action_space)

@@ -18,15 +18,16 @@ def clear_buffer(buffer: dict, eps_group):
                 eps_group_to_clear = eps_group[key]
             else:
                 eps_group_to_clear = eps_group.create_group(key)
-            clear_buffer(data, eps_group_to_clear)      
+            clear_buffer(data, eps_group_to_clear)
         else:
-            # assert data is numpy array                      
+            # assert data is numpy array
             assert np.all(np.logical_not(np.isnan(data)))
-            # add seed to attributes                   
-            eps_group.create_dataset(key, data=data, chunks=True)                            
-    
+            # add seed to attributes
+            eps_group.create_dataset(key, data=data, chunks=True)
+
     return eps_group
-            
+
+
 class MinariDataset:
     """Main Minari dataset class to sample data and get metadata information from a dataset.
 
@@ -498,7 +499,6 @@ def create_dataset_from_buffers(
             "`code_permalink` is set to None. For reproducibility purposes it is highly recommended to link your dataset to versioned code.",
             UserWarning,
         )
-
     if author is None:
         warnings.warn(
             "`author` is set to None. For longevity purposes it is highly recommended to provide an author name.",
