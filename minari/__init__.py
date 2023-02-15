@@ -17,5 +17,4 @@ from minari.utils.data_collector import (
     StepDataCallback,
 )
 
-
 __version__ = "0.3.0"
