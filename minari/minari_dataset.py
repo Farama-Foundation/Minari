@@ -11,23 +11,6 @@ from minari.storage.datasets_root_dir import get_dataset_path
 from minari.utils.data_collector import DataCollectorV0
 
 
-def clear_buffer(buffer: dict, eps_group):
-    for key, data in buffer.items():
-        if isinstance(data, dict):
-            if key in eps_group:
-                eps_group_to_clear = eps_group[key]
-            else:
-                eps_group_to_clear = eps_group.create_group(key)
-            clear_buffer(data, eps_group_to_clear)
-        else:
-            # assert data is numpy array
-            assert np.all(np.logical_not(np.isnan(data)))
-            # add seed to attributes
-            eps_group.create_dataset(key, data=data, chunks=True)
-
-    return eps_group
-
-
 class MinariDataset:
     """Main Minari dataset class to sample data and get metadata information from a dataset.
 
@@ -341,7 +324,6 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_name:
 
     A new HDF5 metadata attribute will be added to the new dataset called `combined_datasets`. This will
     contain a list of strings with the dataset names that were combined to form this new Minari dataset.
-
     Args:
         datasets_to_combine (list[MinariDataset]): list of datasets to be combined
         new_dataset_name (str): name id for the newly created dataset

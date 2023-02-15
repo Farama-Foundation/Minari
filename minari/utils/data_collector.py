@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import h5py
 import shutil
 import tempfile
 from typing import Any, Dict, List, Optional, SupportsFloat, Type, TypeVar, Union
@@ -216,7 +217,6 @@ class DataCollectorV0(gym.Wrapper):
         * To perform caching the user can set the `max_buffer_steps` or `max_buffer_episodes` before saving the in-memory buffers to a temporary HDF5
           file in disk. If non of `max_buffer_steps` or `max_buffer_episodes` are set, the data will move from in-memory to a permanent location only
           when the Minari dataset is created. To move all the stored data to a permanent location use DataCollectorV0.save_to_disK(path_to_permanent_location).
-
     """
     def __init__(
         self,
