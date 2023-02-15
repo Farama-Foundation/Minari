@@ -3,12 +3,8 @@ import os
 
 from google.cloud import storage
 
-from minari import load_dataset
+from minari.storage.local import load_dataset
 from minari.storage.datasets_root_dir import get_dataset_path
-
-
-
-
 
 def upload_dataset(dataset_name: str, path_to_private_key: str):
     """Upload a Minari dataset to the remote Farama server.
