@@ -180,7 +180,7 @@ class MinariDataset:
                                                                                         element compared to the number of action steps {len(eps_buff['actions'])} \
                                                                                         The initial and final observation must be included"
                 seed = eps_buff.pop("seed", None)
-                eps_group = clear_buffer(
+                eps_group = clear_episode_buffer(
                     eps_buff, file.create_group(f"episode_{episode_id}")
                 )
 
@@ -203,7 +203,7 @@ class MinariDataset:
             )
 
 
-def clear_buffer(episode_buffer: Dict, eps_group: h5py.Group):
+def clear_episode_buffer(episode_buffer: Dict, eps_group: h5py.Group):
     """Save an episode dictionary buffer into an HDF5 episode group recursively.
 
     Args:
@@ -213,20 +213,20 @@ def clear_buffer(episode_buffer: Dict, eps_group: h5py.Group):
     Returns:
         episode group: filled HDF5 episode group
     """
-        for key, data in episode_buffer.items():
-            if isinstance(data, dict):
-                if key in eps_group:
-                    eps_group_to_clear = eps_group[key]
-                else:
-                    eps_group_to_clear = eps_group.create_group(key)
-                clear_buffer(data, eps_group_to_clear)
+    for key, data in episode_buffer.items():
+        if isinstance(data, dict):
+            if key in eps_group:
+                eps_group_to_clear = eps_group[key]
             else:
-                # assert data is numpy array
-                assert np.all(np.logical_not(np.isnan(data)))
-                # add seed to attributes
-                eps_group.create_dataset(key, data=data, chunks=True)
+                eps_group_to_clear = eps_group.create_group(key)
+            clear_episode_buffer(data, eps_group_to_clear)
+        else:
+            # assert data is numpy array
+            assert np.all(np.logical_not(np.isnan(data)))
+            # add seed to attributes
+            eps_group.create_dataset(key, data=data, chunks=True)
 
-        return eps_group
+    return eps_group
     
 def combine_datasets(datasets_to_combine: list[MinariDataset], new_dataset_name: str):
     """Combine a group of MinariDataset in to a single dataset with its own name id.
@@ -395,7 +395,7 @@ def create_dataset_from_buffers(
                                                                                         element compared to the number of action steps {len(eps_buff['actions'])} \
                                                                                         The initial and final observation must be included"
                 seed = eps_buff.pop("seed", None)
-                eps_group = clear_buffer(eps_buff, file.create_group(f"episode_{i}"))
+                eps_group = clear_episode_buffer(eps_buff, file.create_group(f"episode_{i}"))
 
                 eps_group.attrs["id"] = i
                 total_steps = len(eps_buff["actions"])
