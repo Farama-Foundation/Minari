@@ -12,6 +12,7 @@ import numpy as np
 from gymnasium import spaces
 from gymnasium.core import ActType, ObsType
 
+
 STEP_DATA_KEYS = {
     "actions",
     "observations",
@@ -55,7 +56,6 @@ class EpisodeMetadataCallback:
 
     def __call__(self, eps_group: h5py.Group):
         """Callback method.
-
         Override this method to add custom attribute metadata to the episode group.
 
         Args:
@@ -72,7 +72,6 @@ class EpisodeMetadataCallback:
 
 class StepDataCallback:
     """Callback to create step data dictionary from the return data of each Gymnasium environment step.
-
     The current callback automatically detects observation/action spaces that need
     to be flatten before saving to HDF5 file (currently only supports Dict or Tuple
     Gymnasium spaces. Text, Sequence, and Graph are currently not compatible with
@@ -134,7 +133,6 @@ class StepDataCallback:
             class CustomStepDataCallback(StepDataCallback):
                 def __call__(self, env, **kwargs):
                     step_data = super().__call__(env, **kwargs)
-
                     step_data['environment_states'] = {}
                     step_data['environment_states']['pose'] = {}
                     step_data['environment_states']['pose']['position'] = env.position
@@ -220,7 +218,6 @@ class DataCollectorV0(gym.Wrapper):
           when the Minari dataset is created. To move all the stored data to a permanent location use DataCollectorV0.save_to_disK(path_to_permanent_location).
 
     """
-
     def __init__(
         self,
         env: gym.Env,
@@ -586,7 +583,6 @@ class DataCollectorV0(gym.Wrapper):
 
     def close(self):
         """Close the Gymnasium environment.
-
         Clear buffer and close temporary directory.
         """
         super().close()
