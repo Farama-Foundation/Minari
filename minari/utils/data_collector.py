@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 import os
+import h5py
 import shutil
 import tempfile
-
-import gymnasium as gym
-import h5py
 import numpy as np
 from typing import Any, Dict, Optional, Union
+
+import gymnasium as gym
 from gymnasium import spaces
 
 
@@ -25,8 +25,10 @@ class EpisodeMetadataCallback:
     """Callback to full episode after saving to hdf5 file as a group.
     
     This callback can be overriden to add extra metada attributes or statistics to 
-    each HDF5 episode group in the Minari dataset. The custom callback can tehn be 
+    each HDF5 episode group in the Minari dataset. The custom callback can then be 
     passed to the DataCollectorV0 wrapper in the `episode_metadata_callback` argument.
+    
+    TODO: add more default statistics to episode datasets
     """
     def __call__(self, eps_group: h5py.Group):
         """Callback method.
@@ -165,7 +167,7 @@ class DataCollectorV0(gym.Wrapper):
             if terminated or truncated:
                 env.reset()
         
-        dataset = minari.create_dataset(dataset_name="EnvID-dataset", collector_env=env, **kwargs)
+        dataset = minari.create_dataset_from_collector_env(dataset_name="EnvID-dataset", collector_env=env, **kwargs)
     ```
     
     Some of the characteristics of this wrapper:
@@ -181,8 +183,7 @@ class DataCollectorV0(gym.Wrapper):
         
         * To perform caching the user can set the `max_buffer_steps` or `max_buffer_episodes` before saving the in-memory buffers to a temporary HDF5 
           file in disk. If non of `max_buffer_steps` or `max_buffer_episodes` are set, the data will move from in-memory to a permanent location only
-          when the Minari dataset is created. To move all the stored data to a permanent location DataCollectorV0.save_to_disK(path_to_permanent_location)
-          can be used.
+          when the Minari dataset is created. To move all the stored data to a permanent location use DataCollectorV0.save_to_disK(path_to_permanent_location).
     
     """
     def __init__(
@@ -195,7 +196,6 @@ class DataCollectorV0(gym.Wrapper):
         max_buffer_episodes: Optional[int]=None,
     ):
         """
-
         Args:
             env (gym.Env): Gymnasium environment
             step_data_callback (type[StepDataCallback], optional): Callback class to edit/update step databefore storing to buffer. Defaults to StepDataCallback.
