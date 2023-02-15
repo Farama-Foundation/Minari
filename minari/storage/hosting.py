@@ -123,7 +123,7 @@ def list_remote_datasets(verbose=True):
     )
     next(blobs, ...)
 
-    remote_datasets = list(map(lambda x: x[:-1], blobs.prefixes))
+    remote_datasets = sorted(list(map(lambda x: x[:-1], blobs.prefixes)))
     if verbose:
         print("Datasets available to download:")
         for dataset_name in remote_datasets:

@@ -29,7 +29,7 @@ def list_local_datasets(verbose=True):
        list[str]: List of local Minari dataset name id's
     """
     datasets_path = get_dataset_path("")
-    datasets = [dir_name for dir_name in os.listdir(datasets_path)]
+    datasets = sorted([dir_name for dir_name in os.listdir(datasets_path)])
 
     if verbose:
         print("Datasets found locally:")
