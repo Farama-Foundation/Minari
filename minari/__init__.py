@@ -8,7 +8,7 @@ from minari.storage.hosting import (
     list_remote_datasets,
     upload_dataset,
 )
-from minari.utils.data_collector import DataCollectorV0
+from minari.utils.data_collector import DataCollectorV0, StepDataCallback, EpisodeMetadataCallback
 from minari.storage.local import delete_dataset, list_local_datasets, load_dataset
 
 __version__ = "0.3.0"
