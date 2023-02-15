@@ -6,24 +6,31 @@ from google.cloud import storage
 from minari import load_dataset
 from minari.storage.datasets_root_dir import get_dataset_path
 
-# from minari.utils.assert_name_spec import test_and_return_name
 
 
-def _upload_local_directory_to_gcs(local_path, bucket, gcs_path):
-    assert os.path.isdir(local_path)
-    for local_file in glob.glob(local_path + "/**"):
-        if not os.path.isfile(local_file):
-            _upload_local_directory_to_gcs(
-                local_file, bucket, gcs_path + "/" + os.path.basename(local_file)
-            )
-        else:
-            remote_path = os.path.join(gcs_path, local_file[1 + len(local_path) :])
-            blob = bucket.blob(remote_path)
-            blob.upload_from_filename(local_file)
 
 
 def upload_dataset(dataset_name: str, path_to_private_key: str):
-    # test_and_return_name(dataset_name)
+    """Upload a Minari dataset to the remote Farama server.
+    
+    If you would like to upload a dataset please first get in touch with the Farama team at contact@farama.org.
+
+    Args:
+        dataset_name (str): name id of the local Minari dataset
+        path_to_private_key (str): path to the GCP bucket json credentials. Reach out to the Farama team.
+    """
+    def _upload_local_directory_to_gcs(local_path, bucket, gcs_path):
+        assert os.path.isdir(local_path)
+        for local_file in glob.glob(local_path + "/**"):
+            if not os.path.isfile(local_file):
+                _upload_local_directory_to_gcs(
+                    local_file, bucket, gcs_path + "/" + os.path.basename(local_file)
+                )
+            else:
+                remote_path = os.path.join(gcs_path, local_file[1 + len(local_path) :])
+                blob = bucket.blob(remote_path)
+                blob.upload_from_filename(local_file)
+    
     file_path = get_dataset_path(dataset_name)
     remote_datasets = list_remote_datasets(verbose=False)
     if dataset_name not in remote_datasets:
@@ -54,8 +61,12 @@ def upload_dataset(dataset_name: str, path_to_private_key: str):
             f"Stopped upload of dataset {dataset_name}. {dataset_name} is already in the Farama servers."
         )
 
-
 def download_dataset(dataset_name: str):
+    """Download dataset from remote Farama server.
+
+    Args:
+        dataset_name (str): name id of the Minari dataset
+    """
     file_path = get_dataset_path(dataset_name)
 
     if os.path.isfile(file_path):
@@ -88,6 +99,8 @@ def download_dataset(dataset_name: str):
         print(f"Dataset {dataset_name} downloaded to {file_path}")
 
         combined_datasets = load_dataset(dataset_name).combined_datasets
+        
+        # If the dataset is a combination of other datasets download the subdatasets recursively
         if len(combined_datasets) > 0:
             print(
                 f"Dataset {dataset_name} is formed by a combination of the following datasets:"
@@ -98,8 +111,15 @@ def download_dataset(dataset_name: str):
                 print(f"Downloading dataset {dataset}")
                 download_dataset(dataset_name=dataset)
 
-
 def list_remote_datasets(verbose=True):
+    """Get a list of all the Minari dataset names in the remote Farama server.
+
+    Args:
+        verbose (bool, optional): If True the dataset names will be shown in the command line. Defaults to True.
+
+    Returns:
+       list[str]: List of remote Minari dataset names 
+    """
     storage_client = storage.Client.create_anonymous_client()
 
     blobs = storage_client.list_blobs(
