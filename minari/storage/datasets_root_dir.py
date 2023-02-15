@@ -3,8 +3,7 @@ from pathlib import Path
 
 
 def get_dataset_path(dataset_name):
-    """Get the path to a dataset file."""
-    # IF YOU EDIT THIS PLEASE ALSO EDIT LINES ~540 IN dataset.pyx
+    """Get the path to a dataset main directory."""
     datasets_path = os.environ.get("MINARI_DATASETS_PATH")
     if datasets_path is not None:
         file_path = os.path.join(datasets_path, dataset_name)
