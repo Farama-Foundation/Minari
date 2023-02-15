@@ -72,40 +72,6 @@ def upload_dataset(dataset_name: str, path_to_private_key: str):
             f"Stopped upload of dataset {dataset_name}. {dataset_name} is already in the Farama servers."
         )
 
-
-def upload_dataset(dataset_name: str, path_to_private_key: str):
-    # test_and_return_name(dataset_name)
-    file_path = get_dataset_path(dataset_name)
-    remote_datasets = list_remote_datasets(verbose=False)
-    if dataset_name not in remote_datasets:
-        storage_client = storage.Client.from_service_account_json(
-            json_credentials_path=path_to_private_key
-        )
-        bucket = storage.Bucket(storage_client, "minari-datasets")
-
-        # See https://github.com/googleapis/python-storage/issues/27 for discussion on progress bars
-        _upload_local_directory_to_gcs(str(file_path), bucket, dataset_name)
-
-        print(f"Dataset {dataset_name} uploaded!")
-
-        combined_datasets = load_dataset(dataset_name).combined_datasets
-        if len(combined_datasets) > 0:
-            print(
-                f"Dataset {dataset_name} is formed by a combination of the following datasets:"
-            )
-            for name in combined_datasets:
-                print(f"\t{name}")
-            for dataset in combined_datasets:
-                print(f"Uploading dataset {dataset}")
-                upload_dataset(
-                    dataset_name=dataset, path_to_private_key=path_to_private_key
-                )
-    else:
-        print(
-            f"Stopped upload of dataset {dataset_name}. {dataset_name} is already in the Farama servers."
-        )
-
-
 def download_dataset(dataset_name: str):
     """Download dataset from remote Farama server.
 
