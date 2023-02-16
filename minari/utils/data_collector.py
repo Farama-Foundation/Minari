@@ -17,7 +17,6 @@ STEP_DATA_KEYS = {
     "rewards",
     "truncations",
     "terminations",
-    "infos",
 }
 
 
@@ -220,8 +219,8 @@ class DataCollectorV0(gym.Wrapper):
         self.max_buffer_steps = max_buffer_steps
 
         # Initialzie empty buffer
-        self._buffer = [dict.fromkeys(STEP_DATA_KEYS, [])]
-
+        self._buffer = [{key: [] for key in STEP_DATA_KEYS}]
+        
         self._current_seed = None
         self._new_episode = False
 
@@ -263,15 +262,15 @@ class DataCollectorV0(gym.Wrapper):
                 continue
             if key not in episode_buffer:
                 if isinstance(value, dict):
-                    episode_buffer[key] = self._add_to_buffer({}, value)
+                    episode_buffer[key] = self._add_to_episode_buffer({}, value)
                 else:
                     episode_buffer[key] = [value]
             else:
                 if isinstance(value, dict):
-                    episode_buffer[key] = self._add_to_buffer(episode_buffer[key], value)
+                    episode_buffer[key] = self._add_to_episode_buffer(episode_buffer[key], value)
                 else:
                     episode_buffer[key].append(value)
-
+                 
         return episode_buffer
 
     def step(self, action: Any):
@@ -308,7 +307,7 @@ class DataCollectorV0(gym.Wrapper):
             self._buffer[-1]["observations"] = [self._previous_eps_final_obs]
             self._new_episode = False
 
-        # add step data to last episode buffer 
+        # add step data to last episode buffer
         self._buffer[-1] = self._add_to_episode_buffer(self._buffer[-1], step_data)
 
         if step_data["terminations"] or step_data["truncations"]:
@@ -330,7 +329,7 @@ class DataCollectorV0(gym.Wrapper):
         
         # add new episode buffer to global buffer when episode finishes with truncation or termination
         if clear_buffers or step_data["terminations"] or step_data["truncations"]:
-            self._buffer.append(dict.fromkeys(STEP_DATA_KEYS, []))
+            self._buffer.append({key: [] for key in STEP_DATA_KEYS})
 
         return obs, rew, terminated, truncated, info
 
@@ -341,7 +340,7 @@ class DataCollectorV0(gym.Wrapper):
         step_data = self._step_data_callback(env=self, obs=obs, info=info)
 
         assert STEP_DATA_KEYS.issubset(step_data.keys())
-
+        
         # delete nonexisting data in reset
         del step_data["actions"]
         del step_data["rewards"]
@@ -365,12 +364,12 @@ class DataCollectorV0(gym.Wrapper):
                 self.clear_buffer_to_tmp_file()
                 
             # add new episode buffer
-            self._buffer.append(dict.fromkeys(STEP_DATA_KEYS, []))
+            self._buffer.append({key: [] for key in STEP_DATA_KEYS})
             
             # New episode
             self._episode_id += 1
 
-        self._buffer[-1] = self._add_to_buffer(self._buffer[-1], step_data)
+        self._buffer[-1] = self._add_to_episode_buffer(self._buffer[-1], step_data)
 
         if seed is None:
             self._current_seed = str(seed)
@@ -499,7 +498,7 @@ class DataCollectorV0(gym.Wrapper):
         for key, value in dataset_metadata.items():
             self._tmp_f.attrs[key] = value
 
-        self._buffer.append(dict.fromkeys(STEP_DATA_KEYS, []))
+        self._buffer.append({key: [] for key in STEP_DATA_KEYS})
 
         # Reset episode count
         self._episode_id = 0
@@ -534,4 +533,4 @@ class DataCollectorV0(gym.Wrapper):
 
         # Close tmp_dataset.hdf5
         self._tmp_f.close()
-        shutil.rmtree(self._tmp_dir)
+        shutil.rmtree(self._tmp_dir.name)
