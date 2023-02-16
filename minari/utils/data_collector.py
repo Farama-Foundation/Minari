@@ -20,7 +20,6 @@ STEP_DATA_KEYS = {
     "rewards",
     "truncations",
     "terminations",
-    "infos",
 }
 
 EpisodeBufferValues = TypeVar("EpisodeBufferValues", List[Any], "EpisodeBuffer")
@@ -327,7 +326,7 @@ class DataCollectorV0(gym.Wrapper):
                     )
                 else:
                     episode_buffer[key].append(value)
-
+                 
         return episode_buffer
 
     def step(
