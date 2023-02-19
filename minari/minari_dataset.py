@@ -324,10 +324,6 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_name:
 
     A new HDF5 metadata attribute will be added to the new dataset called `combined_datasets`. This will
     contain a list of strings with the dataset names that were combined to form this new Minari dataset.
-<<<<<<< HEAD
-=======
-
->>>>>>> 168d71c (add tests)
     Args:
         datasets_to_combine (list[MinariDataset]): list of datasets to be combined
         new_dataset_name (str): name id for the newly created dataset
