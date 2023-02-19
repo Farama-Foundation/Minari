@@ -21,6 +21,6 @@ jobs:
       - run: |
           docker build -f bin/Dockerfile \
           --build-arg PYTHON_VERSION=${{ matrix.python-version }} \
-          --tag minri-docker .
+          --tag minari-docker .
       - name: Run tests
         run: docker run minari-docker pytest tests/*
