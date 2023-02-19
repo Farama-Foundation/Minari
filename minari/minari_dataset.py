@@ -1,6 +1,6 @@
 import os
 import warnings
-from typing import Optional, Dict, Union
+from typing import Dict, List, Optional, Union
 
 import gymnasium as gym
 import h5py
@@ -12,12 +12,13 @@ from minari.utils.data_collector import DataCollectorV0
 
 
 class MinariDataset:
-    """Main Minari dataset class to sample data and get metadata information from a dataset
-    
+    """Main Minari dataset class to sample data and get metadata information from a dataset.
+
     TODO: Currently sampling data is not implemented
     """
+
     def __init__(self, data_path: str):
-        """Initialize properties of the Minari Dataset
+        """Initialize properties of the Minari Dataset.
 
         Args:
             data_path (str): full path to the `main_data.hdf5` file of the dataset.
@@ -52,50 +53,42 @@ class MinariDataset:
 
     @property
     def flatten_observations(self) -> bool:
-        """If the observations have been flatten when creating the dataset
-        """
+        """If the observations have been flatten when creating the dataset."""
         return self._flatten_observations
 
     @property
     def flatten_actions(self) -> bool:
-        """If the actions have been flatten when creating the dataset
-        """
+        """If the actions have been flatten when creating the dataset."""
         return self._flatten_actions
 
     @property
     def observation_space(self):
-        """Original observation space of the environment before flatteining (if this is the case)
-        """
+        """Original observation space of the environment before flatteining (if this is the case)."""
         return self._observation_space
 
     @property
     def action_space(self):
-        """Original action space of the environment before flatteining (if this is the case)
-        """
+        """Original action space of the environment before flatteining (if this is the case)."""
         return self._action_space
 
     @property
     def data_path(self):
-        """Full path to the `main_data.hdf5` file of the dataset
-        """
+        """Full path to the `main_data.hdf5` file of the dataset."""
         return self._data_path
 
     @property
     def total_steps(self):
-        """Total steps recorded in the Minari dataset along all episodes
-        """
+        """Total steps recorded in the Minari dataset along all episodes."""
         return self._total_steps
 
     @property
     def total_episodes(self):
-        """Total episodes recorded in the Minari dataset
-        """
+        """Total episodes recorded in the Minari dataset."""
         return self._total_episodes
 
     @property
     def combined_datasets(self):
-        """If this Minari dataset is a combination of other subdatasets, return a list with the subdataset names 
-        """
+        """If this Minari dataset is a combination of other subdatasets, return a list with the subdataset names."""
         if self._combined_datasets is None:
             return []
         else:
@@ -103,20 +96,19 @@ class MinariDataset:
 
     @property
     def name(self):
-        """Name of the Minari dataset
-        """
+        """Name of the Minari dataset."""
         return self._dataset_name
 
     def update_dataset_from_collector_env(self, collector_env: type[DataCollectorV0]):
         """Add extra data to Minari dataset from collector environment buffers (DataCollectorV0).
-        
+
         This method can be used as a checkpoint when creating a dataset.
         A new HDF5 file will be created with the new dataset file in the same directory as `main_data.hdf5` called
-        `additional_data_i.hdf5`. Both datasets are joined together by creating external links to each additional 
+        `additional_data_i.hdf5`. Both datasets are joined together by creating external links to each additional
         episode group: https://docs.h5py.org/en/stable/high/group.html#external-links
-        
+
         Args:
-            collector_env (DataCollectorV0): Collector environment 
+            collector_env (DataCollectorV0): Collector environment
         """
         # check that collector env has the same characteristics as self._env_spec
         new_data_file_path = os.path.join(
@@ -150,17 +142,17 @@ class MinariDataset:
             )
         self._extra_data_id += 1
 
-    def update_dataset_from_buffer(self, buffer: list[dict]):
+    def update_dataset_from_buffer(self, buffer: List[dict]):
         """Additional data can be added to the Minari Dataset from a list of episode dictionary buffers.
 
         Each episode dictionary buffer must have the following items:
-            * `observations`: np.ndarray of step observations. shape = (total_episode_steps + 1, (observation_shape)). Should include intial and final observation
+            * `observations`: np.ndarray of step observations. shape = (total_episode_steps + 1, (observation_shape)). Should include initial and final observation
             * `actions`: np.ndarray of step action. shape = (total_episode_steps + 1, (action_shape)).
             * `rewards`: np.ndarray of step rewards. shape = (total_episode_steps + 1, 1).
             * `terminations`: np.ndarray of step terminations. shape = (total_episode_steps + 1, 1).
             * `truncations`: np.ndarray of step truncations. shape = (total_episode_steps + 1, 1).
 
-        Other additional items can be added as long as the values are np.ndarray's or other nested dictionaries. 
+        Other additional items can be added as long as the values are np.ndarray's or other nested dictionaries.
 
         Args:
             buffer (list[dict]): list of episode dictionary buffers to add to dataset
@@ -227,13 +219,14 @@ def clear_episode_buffer(episode_buffer: Dict, eps_group: h5py.Group):
             eps_group.create_dataset(key, data=data, chunks=True)
 
     return eps_group
-    
-def combine_datasets(datasets_to_combine: list[MinariDataset], new_dataset_name: str):
+
+
+def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_name: str):
     """Combine a group of MinariDataset in to a single dataset with its own name id.
 
     A new HDF5 metadata attribute will be added to the new dataset called `combined_datasets`. This will
     contain a list of strings with the dataset names that were combined to form this new Minari dataset.
-    
+
     Args:
         datasets_to_combine (list[MinariDataset]): list of datasets to be combined
         new_dataset_name (str): name id for the newly created dataset
@@ -326,17 +319,16 @@ def combine_datasets(datasets_to_combine: list[MinariDataset], new_dataset_name:
 def create_dataset_from_buffers(
     dataset_name: str,
     env: gym.Env,
-    buffer: list[Dict[str, Union[list, Dict]]],
+    buffer: List[Dict[str, Union[list, Dict]]],
     algorithm_name: Optional[str] = None,
     author: Optional[str] = None,
     author_email: Optional[str] = None,
     code_permalink: Optional[str] = None,
-    
 ):
     """Create Minari dataset from a list of episode dictionary buffers.
-    
+
     Each episode dictionary buffer must have the following items:
-        * `observations`: np.ndarray of step observations. shape = (total_episode_steps + 1, (observation_shape)). Should include intial and final observation
+        * `observations`: np.ndarray of step observations. shape = (total_episode_steps + 1, (observation_shape)). Should include initial and final observation
         * `actions`: np.ndarray of step action. shape = (total_episode_steps + 1, (action_shape)).
         * `rewards`: np.ndarray of step rewards. shape = (total_episode_steps + 1, 1).
         * `terminations`: np.ndarray of step terminations. shape = (total_episode_steps + 1, 1).
@@ -356,7 +348,6 @@ def create_dataset_from_buffers(
     Returns:
         MinariDataset
     """
-
     # NoneType warnings
     if code_permalink is None:
         warnings.warn(
@@ -395,7 +386,9 @@ def create_dataset_from_buffers(
                                                                                         element compared to the number of action steps {len(eps_buff['actions'])} \
                                                                                         The initial and final observation must be included"
                 seed = eps_buff.pop("seed", None)
-                eps_group = clear_episode_buffer(eps_buff, file.create_group(f"episode_{i}"))
+                eps_group = clear_episode_buffer(
+                    eps_buff, file.create_group(f"episode_{i}")
+                )
 
                 eps_group.attrs["id"] = i
                 total_steps = len(eps_buff["actions"])
@@ -417,7 +410,9 @@ def create_dataset_from_buffers(
             file.attrs["flatten_observation"] = False
             file.attrs["flatten_action"] = False
 
-            file.attrs["env_spec"] = env.spec.to_json()
+            file.attrs[
+                "env_spec"
+            ] = env.spec.to_json()  # pyright: ignore [reportOptionalMemberAccess]
             file.attrs["dataset_name"] = dataset_name
 
         return MinariDataset(data_path)
@@ -436,7 +431,7 @@ def create_dataset_from_collector_env(
     code_permalink: Optional[str] = None,
 ):
     """Create a Minari dataset using the data collected from stepping with a Gymnasium environment wrapped with a `DataCollectorV0` Minari wrapper.
-    
+
     Args:
         dataset_name (str): name id to identify Minari dataset
         collector_env (DataCollectorV0): Gymnasium environment used to collect the buffer data
@@ -445,11 +440,10 @@ def create_dataset_from_collector_env(
         author (Optional[str], optional): author that generated the dataset. Defaults to None.
         author_email (Optional[str], optional): email of the author that generated the dataset. Defaults to None.
         code_permalink (Optional[str], optional): link to relevant code used to generate the dataset. Defaults to None.
-        
+
     Returns:
         MinariDataset
     """
-
     # NoneType warnings
     if code_permalink is None:
         warnings.warn(
