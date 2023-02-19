@@ -17,7 +17,7 @@ RUN apt-get -y update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     # Download mujocbo
-    && mkdir5.12.0 /root/.mujoco \
+    && mkdir /root/.mujoco \
     && cd /root/.mujoco \
     && wget -qO- 'https://github.com/deepmind/mujoco/releases/download/2.1.0/mujoco210-linux-x86_64.tar.gz' | tar -xzvf -
 
