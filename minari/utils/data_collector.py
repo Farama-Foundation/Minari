@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 import shutil
 import tempfile
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, Optional, Type, Union
 
 import gymnasium as gym
 import h5py
@@ -198,8 +198,8 @@ class DataCollectorV0(gym.Wrapper):
     def __init__(
         self,
         env: gym.Env,
-        step_data_callback: type[StepDataCallback] = StepDataCallback,
-        episode_metadata_callback: type[
+        step_data_callback: Type[StepDataCallback] = StepDataCallback,
+        episode_metadata_callback: Type[
             EpisodeMetadataCallback
         ] = EpisodeMetadataCallback,
         record_infos: bool = False,
