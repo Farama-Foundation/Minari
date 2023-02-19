@@ -37,6 +37,7 @@ dynamic = ["version"]
 testing = [
     "pytest ==7.1.3",
     "gymnasium-robotics @ git+https://github.com/Farama-Foundation/Gymnasium-Robotics.git@main",
+    "imageio >=2.14.1"
 ]
 
 [project.urls]
