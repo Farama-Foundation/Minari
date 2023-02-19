@@ -72,6 +72,7 @@ def upload_dataset(dataset_name: str, path_to_private_key: str):
             f"Stopped upload of dataset {dataset_name}. {dataset_name} is already in the Farama servers."
         )
 
+
 def download_dataset(dataset_name: str):
     """Download dataset from remote Farama server.
 
