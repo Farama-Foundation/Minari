@@ -17,6 +17,7 @@
 # -- Project information -----------------------------------------------------
 from typing import Any, Dict
 
+
 # import minari
 
 project = "Minari"

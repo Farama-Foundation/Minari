@@ -1,13 +1,13 @@
 from __future__ import annotations
 
 import os
-import h5py
 import shutil
 import tempfile
-import numpy as np
 from typing import Any, Dict, Optional, Union
 
 import gymnasium as gym
+import h5py
+import numpy as np
 from gymnasium import spaces
 
 
@@ -22,16 +22,17 @@ STEP_DATA_KEYS = {
 
 class EpisodeMetadataCallback:
     """Callback to full episode after saving to hdf5 file as a group.
-    
-    This callback can be overriden to add extra metada attributes or statistics to 
-    each HDF5 episode group in the Minari dataset. The custom callback can then be 
+
+    This callback can be overridden to add extra metada attributes or statistics to
+    each HDF5 episode group in the Minari dataset. The custom callback can then be
     passed to the DataCollectorV0 wrapper in the `episode_metadata_callback` argument.
-    
+
     TODO: add more default statistics to episode datasets
     """
+
     def __call__(self, eps_group: h5py.Group):
         """Callback method.
-        
+
         Override this method to add custom attribute metadata to the episode group.
 
         Args:
@@ -48,15 +49,16 @@ class EpisodeMetadataCallback:
 
 class StepDataCallback:
     """Callback to create step data dictionary from the return data of each Gymnasium environment step.
-    
+
     The current callback automatically detects observation/action spaces that need
     to be flatten before saving to HDF5 file (currently only supports Dict or Tuple
     Gymnasium spaces. Text, Sequence, and Graph are currently not compatible with
     Minari).
-    
-    This callback can be overriden to add extra environment information in each step or
+
+    This callback can be overridden to add extra environment information in each step or
     edit the observation, action, reward, termination, truncation, or info returns.
     """
+
     def __init__(self, env: gym.Env):
         self.env = env
 
@@ -81,37 +83,44 @@ class StepDataCallback:
                 ValueError(f"Minari doesn't support space of type {space}")
             else:
                 return False
-        
+
         # check if observation/action need to be flatten before saving to HDF5
         self.flatten_observation = check_flatten_space(self.env.observation_space)
         self.flatten_action = check_flatten_space(self.env.action_space)
 
     def __call__(
-        self, env: gym.Env, obs: Any, info: Dict, action: Optional[Any]=None, rew: Optional[Any]=None, terminated: Optional[Any]=None, truncated: Optional[Any]=None
+        self,
+        env: gym.Env,
+        obs: Any,
+        info: Dict,
+        action: Optional[Any] = None,
+        rew: Optional[Any] = None,
+        terminated: Optional[Any] = None,
+        truncated: Optional[Any] = None,
     ) -> Dict:
         """Callback method.
-        
+
         The input arguments belong to a Gymnasium stepping transition: `obs, rew, terminated, truncated, info = env.step(action)`.
         Override this method to add additional keys or edit each environment's step returns. Additional nested dictionaries can be added to the returned step dictionary
         as follows:
-        
+
         ```
             class CustomStepDataCallback(StepDataCallback):
                 def __call__(self, env, **kwargs):
                     step_data = super().__call__(env, **kwargs)
-                    
+
                     step_data['environment_states'] = {}
                     step_data['environment_states']['pose'] = {}
                     step_data['environment_states']['pose']['position'] = env.position
                     step_data['environment_states']['pose']['orientation'] = env.orientation
                     step_data['environment_states']['velocity'] = env.velocity
-                    
+
                     return step_data
         ```
-        
+
         The episode groups in the HDF5 file of this Minari dataset will contain a subgroup called `environment_states` with dataset `velocity` and another subgroup called `pose`
         with datasets `position` and `orientation`
-        
+
         Args:
             env (gym.Env): current Gymnasium environment.
             obs (Any): observation returned by `env.step(action)`
@@ -147,58 +156,62 @@ class StepDataCallback:
 
 class DataCollectorV0(gym.Wrapper):
     """Gymnasium environment wrapper that collects step data.
-    
+
     This wrapper is meant to work as a temporary buffer of the environment data before creating a Minari dataset. The creation of the buffers
     that will be convert to a Minari dataset is agnostic to the user:
-    
+
     ```
         import minari
         import gymnasium as gym
-                
+
         env = minari.DataCollectorV0(gym.make('EnvID'))
-        
+
         env.reset()
-        
+
         for _ in range(num_steps):
             action = env.action_space.sample()
             obs, rew, terminated, truncated, info = env.step()
 
             if terminated or truncated:
                 env.reset()
-        
+
         dataset = minari.create_dataset_from_collector_env(dataset_name="EnvID-dataset", collector_env=env, **kwargs)
     ```
-    
+
     Some of the characteristics of this wrapper:
-    
+
         * The step data is stored per episode in dictionaries. This dictionaries are then stored in-memory in a global list buffer. The
-          episode dictionaries contain items with list buffers as values for the main episode step datasets `observations`, `actions`, 
-          `terminations`, and `truncations`, the `infos` key can be a list or another nested dictionary with extra datasets. Separate data 
-          keys can be added by passing a custom `StepDataCallback` to the wrapper. When creating the HDF5 file the list values in the episode 
+          episode dictionaries contain items with list buffers as values for the main episode step datasets `observations`, `actions`,
+          `terminations`, and `truncations`, the `infos` key can be a list or another nested dictionary with extra datasets. Separate data
+          keys can be added by passing a custom `StepDataCallback` to the wrapper. When creating the HDF5 file the list values in the episode
           dictionary will be stored as datasets and the nested dictionaries will generate a new HDF5 group.
-    
-        * A new episode dictionary buffer is created if the env.step(action) call returns `truncated` or `terminated`, or if the environment calls 
+
+        * A new episode dictionary buffer is created if the env.step(action) call returns `truncated` or `terminated`, or if the environment calls
           env.reset(). If calling reset and the previous episode was not `truncated` or `terminated`, this will automatically be `truncated`.
-        
-        * To perform caching the user can set the `max_buffer_steps` or `max_buffer_episodes` before saving the in-memory buffers to a temporary HDF5 
+
+        * To perform caching the user can set the `max_buffer_steps` or `max_buffer_episodes` before saving the in-memory buffers to a temporary HDF5
           file in disk. If non of `max_buffer_steps` or `max_buffer_episodes` are set, the data will move from in-memory to a permanent location only
           when the Minari dataset is created. To move all the stored data to a permanent location use DataCollectorV0.save_to_disK(path_to_permanent_location).
-    
+
     """
+
     def __init__(
         self,
         env: gym.Env,
-        step_data_callback: type[StepDataCallback]=StepDataCallback,
-        episode_metadata_callback: type[EpisodeMetadataCallback]=EpisodeMetadataCallback,
-        record_infos: bool=False,
-        max_buffer_steps: Optional[int]=None,
-        max_buffer_episodes: Optional[int]=None,
+        step_data_callback: type[StepDataCallback] = StepDataCallback,
+        episode_metadata_callback: type[
+            EpisodeMetadataCallback
+        ] = EpisodeMetadataCallback,
+        record_infos: bool = False,
+        max_buffer_steps: Optional[int] = None,
+        max_buffer_episodes: Optional[int] = None,
     ):
-        """
+        """Initialize the data colletor attributes and create the temporary directory for caching.
+
         Args:
             env (gym.Env): Gymnasium environment
             step_data_callback (type[StepDataCallback], optional): Callback class to edit/update step databefore storing to buffer. Defaults to StepDataCallback.
-            episode_metadata_callback (type[EpisodeMetadataCallback], optional): Callback calss to add custom metadata to episode group in HDF5 file. Defaults to EpisodeMetadataCallback.
+            episode_metadata_callback (type[EpisodeMetadataCallback], optional): Callback class to add custom metadata to episode group in HDF5 file. Defaults to EpisodeMetadataCallback.
             record_infos (bool, optional): If True record the info return key of each step. Defaults to False.
             max_buffer_steps (Optional[int], optional): number of steps saved in-memory buffers before dumping to HDF5 file in disk. Defaults to None.
             max_buffer_episodes (Optional[int], optional): number of episodes saved in-memory buffers before dumping to HDF5 file in disk. Defaults to None.
@@ -220,13 +233,13 @@ class DataCollectorV0(gym.Wrapper):
 
         # Initialzie empty buffer
         self._buffer = [{key: [] for key in STEP_DATA_KEYS}]
-        
+
         self._current_seed = None
         self._new_episode = False
 
         self._step_id = 0
-        
-        # get path to minari datsets directory
+
+        # get path to minari datasets directory
         self.datasets_path = os.environ.get("MINARI_DATASETS_PATH")
         if self.datasets_path is None:
             self.datasets_path = os.path.join(
@@ -237,21 +250,32 @@ class DataCollectorV0(gym.Wrapper):
         self._tmp_f = h5py.File(
             os.path.join(self._tmp_dir.name, "tmp_dataset.hdf5"), "a", track_order=True
         )  # track insertion order of groups ('episodes_i')
-        self._tmp_f.attrs["env_spec"] = self.env.spec.to_json()
-        self._tmp_f.attrs["flatten_observation"] = self._step_data_callback.flatten_observation
+        self._tmp_f.attrs[
+            "env_spec"
+        ] = self.env.spec.to_json()  # pyright: ignore [reportOptionalMemberAccess]
+        self._tmp_f.attrs[
+            "flatten_observation"
+        ] = self._step_data_callback.flatten_observation
         self._tmp_f.attrs["flatten_action"] = self._step_data_callback.flatten_action
 
-        self._episode_id = 0
         self._new_episode = False
         self._eps_group = None
-        self._last_episode_group_term_or_trunc = True  # Generate new episode
+
+        # Initialize first episode group in temporary hdf5 file
+        self._episode_id = 0
+        self._eps_group: h5py.Group = self._tmp_f.create_group("episode_0")
+        self._eps_group.attrs["id"] = 0
+
+        self._last_episode_group_term_or_trunc = False
         self._last_episode_n_steps = 0
 
-    def _add_to_episode_buffer(self, episode_buffer: Dict[str, Union[list, Dict]], step_data: Dict) -> Dict:
+    def _add_to_episode_buffer(
+        self, episode_buffer: Dict[str, Union[list, Dict]], step_data: Dict
+    ) -> Dict:
         """Add step data dictionary to episode buffer.
 
         Args:
-            buffer (Dict): dictionary episode buffer 
+            buffer (Dict): dictionary episode buffer
             step_data (Dict): dictionary with data for a single step
 
         Returns:
@@ -267,17 +291,18 @@ class DataCollectorV0(gym.Wrapper):
                     episode_buffer[key] = [value]
             else:
                 if isinstance(value, dict):
-                    episode_buffer[key] = self._add_to_episode_buffer(episode_buffer[key], value)
+                    episode_buffer[key] = self._add_to_episode_buffer(
+                        episode_buffer[key], value
+                    )
                 else:
                     episode_buffer[key].append(value)
-                 
+
         return episode_buffer
 
     def step(self, action: Any):
-        """Gymnasium step method.
-        """
+        """Gymnasium step method."""
         obs, rew, terminated, truncated, info = self.env.step(action)
-        
+
         # add/edit data from step and convert to dictionary step data
         step_data = self._step_data_callback(
             env=self,
@@ -297,7 +322,9 @@ class DataCollectorV0(gym.Wrapper):
 
         # check if buffer needs to be cleared to temp file due to maximum step scheduler
         if self.max_buffer_steps is not None:
-            clear_buffers = (self._step_id % self.max_buffer_steps == 0 and self._step_id !=0)
+            clear_buffers = (
+                self._step_id % self.max_buffer_steps == 0 and self._step_id != 0
+            )
         else:
             clear_buffers = False
 
@@ -326,21 +353,20 @@ class DataCollectorV0(gym.Wrapper):
 
             # New episode
             self._episode_id += 1
-        
+
         # add new episode buffer to global buffer when episode finishes with truncation or termination
         if clear_buffers or step_data["terminations"] or step_data["truncations"]:
             self._buffer.append({key: [] for key in STEP_DATA_KEYS})
 
         return obs, rew, terminated, truncated, info
 
-    def reset(self, seed: Optional[int]=None, *args, **kwargs):
-        """Gymnasium environment reset.
-        """
+    def reset(self, seed: Optional[int] = None, *args, **kwargs):
+        """Gymnasium environment reset."""
         obs, info = self.env.reset(seed=seed, *args, **kwargs)
         step_data = self._step_data_callback(env=self, obs=obs, info=info)
 
         assert STEP_DATA_KEYS.issubset(step_data.keys())
-        
+
         # delete nonexisting data in reset
         del step_data["actions"]
         del step_data["rewards"]
@@ -349,7 +375,7 @@ class DataCollectorV0(gym.Wrapper):
 
         # If reset is called before finishing last episode (last episode in global buffer has stored steps)
         if len(self._buffer[-1]["actions"]) > 0:
-            # If the last episode is not term/trunc then truncate the episode 
+            # If the last episode is not term/trunc then truncate the episode
             if (
                 not self._buffer[-1]["terminations"][-1]
                 and not self._buffer[-1]["truncations"][-1]
@@ -362,10 +388,10 @@ class DataCollectorV0(gym.Wrapper):
                 and self._episode_id % self.max_buffer_episodes == 0
             ):
                 self.clear_buffer_to_tmp_file()
-                
+
             # add new episode buffer
             self._buffer.append({key: [] for key in STEP_DATA_KEYS})
-            
+
             # New episode
             self._episode_id += 1
 
@@ -380,19 +406,22 @@ class DataCollectorV0(gym.Wrapper):
 
         return obs, info
 
-    def clear_buffer_to_tmp_file(self, truncate_last_episode: bool=False):
+    def clear_buffer_to_tmp_file(self, truncate_last_episode: bool = False):
         """Save the global buffer in-memory to a temporary HDF5 file in disk.
 
         Args:
             truncate_last_episode (bool, optional): If True the last episode from the buffer will be truncated before saving to disk. Defaults to False.
         """
-        def clear_buffer(dictionary_buffer: Dict[str, Union[list, Dict]], episode_group: h5py.Group):
+
+        def clear_buffer(
+            dictionary_buffer: Dict[str, Union[list, Dict]], episode_group: h5py.Group
+        ):
             """Inner function to recursively save the nested data dictionaries in an episode buffer.
 
             Args:
                 dictionary_buffer (Dict[str, Union[list, Dict]]): ditionary with keys to store as independent HDF5 datasets if the value is a list buffer
                 or create another group if value is a dictionary.
-                eps_group (h5py.Group): HDF5 group to store the datasets from the dictionary_buffer. 
+                episode_group (h5py.Group): HDF5 group to store the datasets from the dictionary_buffer.
             """
             for key, data in dictionary_buffer.items():
                 if isinstance(data, dict):
@@ -407,11 +436,14 @@ class DataCollectorV0(gym.Wrapper):
                     assert np.all(np.logical_not(np.isnan(np_data)))
 
                     # Check if last episode group is terminated or truncated
-                    if not self._last_episode_group_term_or_trunc and key in episode_group:
+                    if (
+                        not self._last_episode_group_term_or_trunc
+                        and key in episode_group
+                    ):
                         # Append to last episode group datasets
                         if key not in STEP_DATA_KEYS and key != "infos":
                             # check current dataset size directly from hdf5 since
-                            # non step data (actions, obs, rew, term, trunc) may not be 
+                            # non step data (actions, obs, rew, term, trunc) may not be
                             # added in a per-step/sequential basis, including "infos"
                             current_dataset_shape = episode_group[key].shape[0]
                         else:
@@ -420,7 +452,9 @@ class DataCollectorV0(gym.Wrapper):
                                 current_dataset_shape += (
                                     1  # include initial observation
                                 )
-                        episode_group[key].resize(current_dataset_shape + len(data), axis=0)
+                        episode_group[key].resize(
+                            current_dataset_shape + len(data), axis=0
+                        )
                         episode_group[key][-len(data) :] = np_data
                     else:
                         if not current_episode_group_term_or_trunc:
@@ -446,7 +480,7 @@ class DataCollectorV0(gym.Wrapper):
 
             # Check if last episode group is terminated or truncated
             if self._last_episode_group_term_or_trunc:
-                # Add new episode
+                # Add new episode group
                 current_episode_id = self._episode_id + i + 1 - len(self._buffer)
                 self._eps_group = self._tmp_f.create_group(
                     f"episode_{current_episode_id}"
@@ -485,12 +519,12 @@ class DataCollectorV0(gym.Wrapper):
         # Clear in-memory buffers
         self._buffer.clear()
 
-    def save_to_disk(self, path: str, dataset_metadata: Dict={}):
+    def save_to_disk(self, path: str, dataset_metadata: Dict = {}):
         """Save all in-memory buffer data and move temporary HDF5 file to a permanent location in disk.
 
         Args:
             path (str): path to store permanent HDF5, i.e: '/home/foo/datasets/data.hdf5'
-            dataset_metadata (Dict, optional): additional metadata to add to HDF5 dataset file as atributes. Defaults to {}.
+            dataset_metadata (Dict, optional): additional metadata to add to HDF5 dataset file as attributes. Defaults to {}.
         """
         # Dump everything in memory buffers to tmp_dataset.hdf5 and truncate last episode
         self.clear_buffer_to_tmp_file(truncate_last_episode=True)
@@ -523,7 +557,7 @@ class DataCollectorV0(gym.Wrapper):
 
     def close(self):
         """Close the Gymnasium environment.
-        
+
         Clear buffer and close temporary directory.
         """
         super().close()
