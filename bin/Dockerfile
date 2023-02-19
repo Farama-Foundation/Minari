@@ -1,4 +1,4 @@
-# A Dockerfile that sets up a full Gymnasium install with test dependencies
+# A Dockerfile that sets up a full Minari install with test dependencies
 ARG PYTHON_VERSION
 FROM python:$PYTHON_VERSION
 
@@ -16,8 +16,8 @@ RUN apt-get -y update \
     && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
-    # Download mujoco
-    && mkdir /root/.mujoco \
+    # Download mujocbo
+    && mkdir5.12.0 /root/.mujoco \
     && cd /root/.mujoco \
     && wget -qO- 'https://github.com/deepmind/mujoco/releases/download/2.1.0/mujoco210-linux-x86_64.tar.gz' | tar -xzvf -
 
