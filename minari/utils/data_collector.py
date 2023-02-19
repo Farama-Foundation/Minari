@@ -245,6 +245,9 @@ class DataCollectorV0(gym.Wrapper):
             self.datasets_path = os.path.join(
                 os.path.expanduser("~"), ".minari", "datasets"
             )
+        # create local directory if it doesn't exist
+        if not os.path.exists(self.datasets_path):
+            os.makedirs(self.datasets_path)
 
         self._tmp_dir = tempfile.TemporaryDirectory(dir=self.datasets_path)
         self._tmp_f = h5py.File(
