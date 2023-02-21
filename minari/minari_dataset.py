@@ -1,6 +1,6 @@
 import os
 import warnings
-from typing import Dict, List, Optional, Type, Union
+from typing import Dict, List, Optional, Union
 
 import gymnasium as gym
 import h5py
@@ -99,7 +99,7 @@ class MinariDataset:
         """Name of the Minari dataset."""
         return self._dataset_name
 
-    def update_dataset_from_collector_env(self, collector_env: Type[DataCollectorV0]):
+    def update_dataset_from_collector_env(self, collector_env: DataCollectorV0):
         """Add extra data to Minari dataset from collector environment buffers (DataCollectorV0).
 
         This method can be used as a checkpoint when creating a dataset.
@@ -423,7 +423,7 @@ def create_dataset_from_buffers(
 
 
 def create_dataset_from_collector_env(
-    dataset_name,
+    dataset_name: str,
     collector_env: DataCollectorV0,
     algorithm_name: Optional[str] = None,
     author: Optional[str] = None,
@@ -461,6 +461,7 @@ def create_dataset_from_collector_env(
             UserWarning,
         )
 
+    assert collector_env.datasets_path is not None
     dataset_path = os.path.join(collector_env.datasets_path, dataset_name)
 
     # Check if dataset already exists

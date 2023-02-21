@@ -3,12 +3,26 @@ from __future__ import annotations
 import os
 import shutil
 import tempfile
-from typing import Any, Dict, Optional, Type, Union
+from typing import Any, Dict, List, Optional, Type, TypeVar, Union
+from typing_extensions import TypedDict
 
 import gymnasium as gym
 import h5py
 import numpy as np
 from gymnasium import spaces
+
+
+EpisodeBufferValues = TypeVar("EpisodeBufferValues", List[Any], "EpisodeBuffer")
+EpisodeBuffer = Dict[str, EpisodeBufferValues]
+
+
+class StepData(TypedDict):
+    observations: Any
+    infos: Dict[str, Any]
+    actions: Optional[Any]
+    rewards: Optional[Any]
+    terminations: Optional[bool]
+    truncations: Optional[bool]
 
 
 STEP_DATA_KEYS = {
@@ -23,9 +37,9 @@ STEP_DATA_KEYS = {
 class EpisodeMetadataCallback:
     """Callback to full episode after saving to hdf5 file as a group.
 
-    This callback can be overridden to add extra metada attributes or statistics to
+    This callback can be overridden to add extra metadata attributes or statistics to
     each HDF5 episode group in the Minari dataset. The custom callback can then be
-    passed to the DataCollectorV0 wrapper in the `episode_metadata_callback` argument.
+    passed to the DataCollectorV0 wrapper to the `episode_metadata_callback` argument.
 
     TODO: add more default statistics to episode datasets
     """
@@ -73,8 +87,12 @@ class StepDataCallback:
 
             ValueError: If space is/contains Text, Sequence, or Graph space types
             """
-            if isinstance(space, (spaces.Dict, spaces.Tuple)):
+            if isinstance(space, spaces.Dict):
                 for s in space.spaces.values():
+                    check_flatten_space(s)
+                return True
+            elif isinstance(space, spaces.Tuple):
+                for s in space.spaces:
                     check_flatten_space(s)
                 return True
             elif isinstance(
@@ -92,12 +110,12 @@ class StepDataCallback:
         self,
         env: gym.Env,
         obs: Any,
-        info: Dict,
+        info: Dict[str, Any],
         action: Optional[Any] = None,
         rew: Optional[Any] = None,
-        terminated: Optional[Any] = None,
-        truncated: Optional[Any] = None,
-    ) -> Dict:
+        terminated: Optional[bool] = None,
+        truncated: Optional[bool] = None,
+    ) -> StepData:
         """Callback method.
 
         The input arguments belong to a Gymnasium stepping transition: `obs, rew, terminated, truncated, info = env.step(action)`.
@@ -137,12 +155,12 @@ class StepDataCallback:
         if action is not None:
             # Flatten the actions
             if self.flatten_action:
-                action = spaces.utils.flatten(self.env.action_space, action)
+                action = spaces.flatten(self.env.action_space, action)
         # Flatten the observations
         if self.flatten_observation:
-            obs = spaces.utils.flatten(self.env.observation_space, obs)
+            obs = spaces.flatten(self.env.observation_space, obs)
 
-        step_data = {
+        step_data: StepData = {
             "actions": action,
             "observations": obs,
             "rewards": rew,
@@ -232,9 +250,9 @@ class DataCollectorV0(gym.Wrapper):
         self.max_buffer_steps = max_buffer_steps
 
         # Initialzie empty buffer
-        self._buffer = [{key: [] for key in STEP_DATA_KEYS}]
+        self._buffer: List[EpisodeBuffer] = [{key: [] for key in STEP_DATA_KEYS}]
 
-        self._current_seed = None
+        self._current_seed: Union[int, str] = str(None)
         self._new_episode = False
 
         self._step_id = 0
@@ -253,16 +271,15 @@ class DataCollectorV0(gym.Wrapper):
         self._tmp_f = h5py.File(
             os.path.join(self._tmp_dir.name, "tmp_dataset.hdf5"), "a", track_order=True
         )  # track insertion order of groups ('episodes_i')
-        self._tmp_f.attrs[
-            "env_spec"
-        ] = self.env.spec.to_json()  # pyright: ignore [reportOptionalMemberAccess]
+
+        assert self.env.spec is not None
+        self._tmp_f.attrs["env_spec"] = self.env.spec.to_json()
         self._tmp_f.attrs[
             "flatten_observation"
         ] = self._step_data_callback.flatten_observation
         self._tmp_f.attrs["flatten_action"] = self._step_data_callback.flatten_action
 
         self._new_episode = False
-        self._eps_group = None
 
         # Initialize first episode group in temporary hdf5 file
         self._episode_id = 0
@@ -273,8 +290,10 @@ class DataCollectorV0(gym.Wrapper):
         self._last_episode_n_steps = 0
 
     def _add_to_episode_buffer(
-        self, episode_buffer: Dict[str, Union[list, Dict]], step_data: Dict
-    ) -> Dict:
+        self,
+        episode_buffer: EpisodeBuffer,
+        step_data: Union[StepData, Dict[str, StepData]],
+    ) -> EpisodeBuffer:
         """Add step data dictionary to episode buffer.
 
         Args:
@@ -285,8 +304,11 @@ class DataCollectorV0(gym.Wrapper):
             Dict: new dictionary episode buffer with added values from step_data
         """
         for key, value in step_data.items():
-            if not self._record_infos and key == "infos":
+            if (not self._record_infos and key == "infos") or (value is None):
+                # if the step data comes from a reset call: skip actions, rewards,
+                # terminations, and truncations their values are set to None in the StepDataCallback
                 continue
+
             if key not in episode_buffer:
                 if isinstance(value, dict):
                     episode_buffer[key] = self._add_to_episode_buffer({}, value)
@@ -294,6 +316,7 @@ class DataCollectorV0(gym.Wrapper):
                     episode_buffer[key] = [value]
             else:
                 if isinstance(value, dict):
+                    assert isinstance(episode_buffer[key], dict)
                     episode_buffer[key] = self._add_to_episode_buffer(
                         episode_buffer[key], value
                     )
@@ -370,12 +393,6 @@ class DataCollectorV0(gym.Wrapper):
 
         assert STEP_DATA_KEYS.issubset(step_data.keys())
 
-        # delete nonexisting data in reset
-        del step_data["actions"]
-        del step_data["rewards"]
-        del step_data["terminations"]
-        del step_data["truncations"]
-
         # If reset is called before finishing last episode (last episode in global buffer has stored steps)
         if len(self._buffer[-1]["actions"]) > 0:
             # If the last episode is not term/trunc then truncate the episode
@@ -401,7 +418,7 @@ class DataCollectorV0(gym.Wrapper):
         self._buffer[-1] = self._add_to_episode_buffer(self._buffer[-1], step_data)
 
         if seed is None:
-            self._current_seed = str(seed)
+            self._current_seed = str(None)
         else:
             self._current_seed = seed
 
@@ -416,13 +433,11 @@ class DataCollectorV0(gym.Wrapper):
             truncate_last_episode (bool, optional): If True the last episode from the buffer will be truncated before saving to disk. Defaults to False.
         """
 
-        def clear_buffer(
-            dictionary_buffer: Dict[str, Union[list, Dict]], episode_group: h5py.Group
-        ):
+        def clear_buffer(dictionary_buffer: EpisodeBuffer, episode_group: h5py.Group):
             """Inner function to recursively save the nested data dictionaries in an episode buffer.
 
             Args:
-                dictionary_buffer (Dict[str, Union[list, Dict]]): ditionary with keys to store as independent HDF5 datasets if the value is a list buffer
+                dictionary_buffer (EpisodeBuffer): ditionary with keys to store as independent HDF5 datasets if the value is a list buffer
                 or create another group if value is a dictionary.
                 episode_group (h5py.Group): HDF5 group to store the datasets from the dictionary_buffer.
             """
@@ -494,7 +509,6 @@ class DataCollectorV0(gym.Wrapper):
                 # Add seed to episode metadata if the current episode has finished
                 # Remove seed key from episode buffer before storing datasets to file
                 self._eps_group.attrs["seed"] = eps_buff.pop("seed")
-
             clear_buffer(eps_buff, self._eps_group)
 
             if not self._last_episode_group_term_or_trunc:
