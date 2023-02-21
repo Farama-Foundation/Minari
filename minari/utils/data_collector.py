@@ -13,32 +13,8 @@ from gymnasium import spaces
 from gymnasium.core import ActType, ObsType
 
 
-STEP_DATA_KEYS = {
-    "actions",
-    "observations",
-    "rewards",
-    "truncations",
-    "terminations",
-}
-
 EpisodeBufferValues = TypeVar("EpisodeBufferValues", List[Any], "EpisodeBuffer")
 EpisodeBuffer = Dict[str, EpisodeBufferValues]
-
-
-class StepData(TypedDict):
-    observations: Any
-    actions: Optional[Any]
-    rewards: Optional[Any]
-    terminations: Optional[bool]
-    truncations: Optional[bool]
-    infos: Dict[str, Any]
-
-
-EpisodeBufferValues = TypeVar("EpisodeBufferValues", List[Any], "EpisodeBuffer")
-EpisodeBuffer = Dict[str, EpisodeBufferValues]
-
-ObsType = TypeVar("ObsType")
-ActType = TypeVar("ActType")
 
 
 class StepData(TypedDict):
