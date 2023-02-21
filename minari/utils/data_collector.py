@@ -388,9 +388,14 @@ class DataCollectorV0(gym.Wrapper):
 
         return obs, rew, terminated, truncated, info
 
-    def reset(self, seed: Optional[int] = None, *args, **kwargs):
+    def reset(
+        self,
+        *,
+        seed: int | None = None,
+        options: dict[str, Any] | None = None,
+    ) -> tuple[ObsType, dict[str, Any]]:
         """Gymnasium environment reset."""
-        obs, info = self.env.reset(seed=seed, *args, **kwargs)
+        obs, info = self.env.reset(seed=seed, options=options)
         step_data = self._step_data_callback(env=self, obs=obs, info=info)
 
         assert STEP_DATA_KEYS.issubset(step_data.keys())
