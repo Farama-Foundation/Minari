@@ -10,13 +10,11 @@ import gymnasium as gym
 import h5py
 import numpy as np
 from gymnasium import spaces
+from gymnasium.core import ActType, ObsType
 
 
 EpisodeBufferValues = TypeVar("EpisodeBufferValues", List[Any], "EpisodeBuffer")
 EpisodeBuffer = Dict[str, EpisodeBufferValues]
-
-ObsType = TypeVar("ObsType")
-ActType = TypeVar("ActType")
 
 
 class StepData(TypedDict):
