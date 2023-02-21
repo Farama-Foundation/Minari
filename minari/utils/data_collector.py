@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 import shutil
 import tempfile
-from typing import Any, Dict, List, Optional, Type, TypeVar, Union
+from typing import Any, Dict, List, Optional, SupportsFloat, Type, TypeVar, Union
 from typing_extensions import TypedDict
 
 import gymnasium as gym
@@ -15,14 +15,17 @@ from gymnasium import spaces
 EpisodeBufferValues = TypeVar("EpisodeBufferValues", List[Any], "EpisodeBuffer")
 EpisodeBuffer = Dict[str, EpisodeBufferValues]
 
+ObsType = TypeVar("ObsType")
+ActType = TypeVar("ActType")
+
 
 class StepData(TypedDict):
     observations: Any
-    infos: Dict[str, Any]
     actions: Optional[Any]
     rewards: Optional[Any]
     terminations: Optional[bool]
     truncations: Optional[bool]
+    infos: Dict[str, Any]
 
 
 STEP_DATA_KEYS = {
@@ -325,7 +328,9 @@ class DataCollectorV0(gym.Wrapper):
 
         return episode_buffer
 
-    def step(self, action: Any):
+    def step(
+        self, action: ActType
+    ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
         """Gymnasium step method."""
         obs, rew, terminated, truncated, info = self.env.step(action)
 
