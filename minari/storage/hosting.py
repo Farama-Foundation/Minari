@@ -1,7 +1,7 @@
 import glob
 import os
 
-from google.cloud import storage
+from google.cloud import storage  # pyright: ignore [reportGeneralTypeIssues)]
 
 from minari.storage.datasets_root_dir import get_dataset_path
 from minari.storage.local import load_dataset
