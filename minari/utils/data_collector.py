@@ -34,6 +34,19 @@ class StepData(TypedDict):
     infos: Dict[str, Any]
 
 
+EpisodeBufferValues = TypeVar("EpisodeBufferValues", List[Any], "EpisodeBuffer")
+EpisodeBuffer = Dict[str, EpisodeBufferValues]
+
+
+class StepData(TypedDict):
+    observations: Any
+    infos: Dict[str, Any]
+    actions: Optional[Any]
+    rewards: Optional[Any]
+    terminations: Optional[bool]
+    truncations: Optional[bool]
+
+
 STEP_DATA_KEYS = {
     "actions",
     "observations",
