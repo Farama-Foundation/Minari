@@ -1,29 +1,50 @@
 import os
+import shutil
 
-from minari.dataset import MinariDataset
-from minari.storage.datasets_root_dir import get_file_path
+from minari.minari_dataset import MinariDataset
+from minari.storage.datasets_root_dir import get_dataset_path
 
 
 def load_dataset(dataset_name: str):
-    file_path = get_file_path(dataset_name)
+    """Retrieve Minari dataset from local database.
 
-    return MinariDataset.load(file_path)
+    Args:
+        dataset_name (str): name id of Minari dataset
+
+    Returns:
+        MinariDataset
+    """
+    file_path = get_dataset_path(dataset_name)
+    data_path = os.path.join(file_path, "data", "main_data.hdf5")
+    return MinariDataset(data_path)
 
 
-def list_local_datasets():
-    datasets_path = get_file_path("").parent
-    datasets = [
-        f[:-5]
-        for f in os.listdir(datasets_path)
-        if os.path.isfile(os.path.join(datasets_path, f))
-    ]
+def list_local_datasets(verbose=True):
+    """Get a list of all the Minari dataset names in the local database.
 
-    print("Datasets found locally:")
-    for dataset in datasets:
-        print(dataset)
+    Args:
+        verbose (bool, optional): If True the dataset names will be shown in the command line. Defaults to True.
+
+    Returns:
+       list[str]: List of local Minari dataset name id's
+    """
+    datasets_path = get_dataset_path("")
+    datasets = sorted([dir_name for dir_name in os.listdir(datasets_path)])
+
+    if verbose:
+        print("Datasets found locally:")
+        for dataset in datasets:
+            print(dataset)
+
+    return datasets
 
 
 def delete_dataset(dataset_name: str):
-    file_path = get_file_path(dataset_name)
-    os.remove(file_path)
-    print("Dataset {dataset_name} deleted!")
+    """Delete a Minari dataset from the local Minari database.
+
+    Args:
+        dataset_name (str): name id of the Minari dataset
+    """
+    dataset_path = get_dataset_path(dataset_name)
+    shutil.rmtree(dataset_path)
+    print(f"Dataset {dataset_name} deleted!")
