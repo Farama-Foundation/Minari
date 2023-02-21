@@ -364,6 +364,11 @@ class DataCollectorV0(gym.Wrapper):
         self._buffer[-1] = self._add_to_episode_buffer(self._buffer[-1], step_data)
 
         if step_data["terminations"] or step_data["truncations"]:
+            # New episode
+            self._episode_id += 1
+            self._previous_eps_final_obs = step_data["observations"]
+            self._reset_called = False
+            self._new_episode = True
             self._buffer[-1]["seed"] = self._current_seed
             # Only check episode scheduler to save in-memory data to temp HDF5 file when episode is done
             if self.max_buffer_episodes is not None:
@@ -371,14 +376,6 @@ class DataCollectorV0(gym.Wrapper):
 
         if clear_buffers:
             self.clear_buffer_to_tmp_file()
-
-        if step_data["terminations"] or step_data["truncations"]:
-            self._previous_eps_final_obs = step_data["observations"]
-            self._reset_called = False
-            self._new_episode = True
-
-            # New episode
-            self._episode_id += 1
 
         # add new episode buffer to global buffer when episode finishes with truncation or termination
         if clear_buffers or step_data["terminations"] or step_data["truncations"]:
@@ -393,7 +390,7 @@ class DataCollectorV0(gym.Wrapper):
 
         assert STEP_DATA_KEYS.issubset(step_data.keys())
 
-        # If reset is called before finishing last episode (last episode in global buffer has stored steps)
+        # If last episode in global buffer has saved steps
         if len(self._buffer[-1]["actions"]) > 0:
             # If the last episode is not term/trunc then truncate the episode
             if (
@@ -403,17 +400,17 @@ class DataCollectorV0(gym.Wrapper):
                 self._buffer[-1]["truncations"][-1] = True
                 self._buffer[-1]["seed"] = self._current_seed
 
-            if (
-                self.max_buffer_episodes is not None
-                and self._episode_id % self.max_buffer_episodes == 0
-            ):
-                self.clear_buffer_to_tmp_file()
+                # New episode
+                self._episode_id += 1
 
-            # add new episode buffer
-            self._buffer.append({key: [] for key in STEP_DATA_KEYS})
+                if (
+                    self.max_buffer_episodes is not None
+                    and self._episode_id % self.max_buffer_episodes == 0
+                ):
+                    self.clear_buffer_to_tmp_file()
 
-            # New episode
-            self._episode_id += 1
+                # add new episode buffer
+                self._buffer.append({key: [] for key in STEP_DATA_KEYS})
 
         self._buffer[-1] = self._add_to_episode_buffer(self._buffer[-1], step_data)
 
@@ -499,7 +496,11 @@ class DataCollectorV0(gym.Wrapper):
             # Check if last episode group is terminated or truncated
             if self._last_episode_group_term_or_trunc:
                 # Add new episode group
+                print("EPISODE ID")
+                print(self._episode_id)
+                print(len(self._buffer))
                 current_episode_id = self._episode_id + i + 1 - len(self._buffer)
+                print(current_episode_id)
                 self._eps_group = self._tmp_f.create_group(
                     f"episode_{current_episode_id}"
                 )
