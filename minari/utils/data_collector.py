@@ -523,11 +523,7 @@ class DataCollectorV0(gym.Wrapper):
             # Check if last episode group is terminated or truncated
             if self._last_episode_group_term_or_trunc:
                 # Add new episode group
-                print("EPISODE ID")
-                print(self._episode_id)
-                print(len(self._buffer))
                 current_episode_id = self._episode_id + i + 1 - len(self._buffer)
-                print(current_episode_id)
                 self._eps_group = self._tmp_f.create_group(
                     f"episode_{current_episode_id}"
                 )
