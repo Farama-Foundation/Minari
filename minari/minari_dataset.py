@@ -1,6 +1,6 @@
 import os
 import warnings
-from typing import Dict, List, Optional, Union
+from typing import Callable, Dict, List, Optional, Union
 
 import gymnasium as gym
 import h5py
@@ -30,8 +30,8 @@ class MinariDataset:
             self._flatten_actions = f.attrs["flatten_action"]
             self._env_spec = EnvSpec.from_json(f.attrs["env_spec"])
 
-            self._total_episodes = f.attrs["total_episodes"]
-            self._total_steps = f.attrs["total_steps"]
+            self._total_episodes: int = f.attrs["total_episodes"]
+            self._total_steps: int = f.attrs["total_steps"]
 
             self._dataset_name = f.attrs["dataset_name"]
             self._combined_datasets = f.attrs.get("combined_datasets")
@@ -42,6 +42,8 @@ class MinariDataset:
             self._action_space = env.action_space
 
             env.close()
+
+        self._episode_idx = list(range(self._total_episodes))
 
     def recover_environment(self):
         """Recover the Gymnasium environment used to create the dataset.
@@ -98,6 +100,91 @@ class MinariDataset:
     def name(self):
         """Name of the Minari dataset."""
         return self._dataset_name
+
+    def _filter_episode_group(
+        self, condition_func: Callable[[h5py.Group], bool], hdf5_file: h5py.File
+    ) -> Callable[[int], bool]:
+        """Decorator to filter episodes by group given episode id.
+
+        Args:
+            condition_func (Callable[[h5py.Group], bool]): HDF5 episode group
+            hdf5_file (h5py.File): opened HDF5 dataset file
+
+        Returns:
+            Callable[[int], bool]: True if condition is met, False otherwise
+        """
+
+        def condition_from_episode_id(episode_id: int) -> bool:
+            """Check condition by episode index.
+
+            Args:
+                episode_id (int): the index of the episode
+
+            Returns:
+                bool: True if condition is met, False otherwise
+            """
+            episode_group = hdf5_file[f"episode_{episode_id}"]
+            assert isinstance(episode_group, h5py.Group)
+            keep_episode = condition_func(episode_group)
+            if not keep_episode:
+                total_episode_steps = episode_group.attrs["total_steps"]
+                assert isinstance(total_episode_steps, int)
+                self._total_steps -= total_episode_steps
+
+            return keep_episode
+
+        return condition_from_episode_id
+
+    def filter_episodes(self, condition: Callable[[h5py.Group], bool]):
+        """Filter the dataset episodes with a condition.
+
+        The condition must be a callable with  a single argument, the episode HDF5 group.
+        The callable must return a `bool` True if the condition is met and False otherwise.
+        i.e filtering for episodes that terminate:
+
+        ```
+        dataset.filter(condition=lambda x: x['terminations'][-1] )
+        ```
+
+        Args:
+            condition (Callable[[h5py.Group], bool]): callable that accepts an episode group and returns True if certain condition is met.
+        """
+        with h5py.File(self._data_path, "r") as f:
+            condition_func = self._filter_episode_group(condition, f)
+            self._episode_idx = list(filter(condition_func, self._episode_idx))
+
+        self._total_episodes = len(self._episode_idx)
+        "TODO: return new updated Minari dataset object instead of "
+
+    def shuffle_episodes(self, seed: Optional[int] = None):
+        """Suffle the episode iterator for sampling.
+
+        Args:
+            seed (Optional[int], optional): random seed to shuffle the episodes. Defaults to None.
+        """
+        pass
+
+    def sample_episodes(
+        self,
+        n_episodes: Optional[int] = None,
+        normalize_observation: bool = False,
+        normalize_reward: bool = False,
+    ):
+        """Sample n number of episodes from the dataset.
+
+        Args:
+            n_episodes (Optional[int], optional): _description_. Defaults to None.
+            normalize_observation (bool, optional): _description_. Defaults to False.
+            normalize_reward (bool, optional): _description_. Defaults to False.
+        """
+        pass
+
+    def reset_episodes(self):
+        """Reset the dataset to its initial state.
+
+        Re-fill index array with filtered episodes and sort them.
+        """
+        pass
 
     def update_dataset_from_collector_env(self, collector_env: DataCollectorV0):
         """Add extra data to Minari dataset from collector environment buffers (DataCollectorV0).
