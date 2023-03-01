@@ -154,7 +154,7 @@ class MinariDataset:
             self._episode_idx = list(filter(condition_func, self._episode_idx))
 
         self._total_episodes = len(self._episode_idx)
-        "TODO: return new updated Minari dataset object instead of "
+        "TODO: return new updated Minari dataset object instead of updating the current object"
 
     def shuffle_episodes(self, seed: Optional[int] = None):
         """Suffle the episode iterator for sampling.
