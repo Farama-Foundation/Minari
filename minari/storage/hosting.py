@@ -2,6 +2,7 @@ import glob
 import os
 
 from google.cloud import storage  # pyright: ignore [reportGeneralTypeIssues)]
+from gymnasium import logger
 from tqdm.auto import tqdm
 
 from minari.storage.datasets_root_dir import get_dataset_path
@@ -68,11 +69,12 @@ def download_dataset(dataset_name: str):
         dataset_name (str): name id of the Minari dataset
     """
     file_path = get_dataset_path(dataset_name)
-    print(file_path)
-    if os.path.isfile(file_path):
-        print(f"Dataset {dataset_name} found locally at {file_path}")
+    if os.path.exists(file_path):
+        logger.warn(
+            f"Dataset {dataset_name} found locally at {file_path}. If you'd like to re-download this dataset please first delete it from your local storage, `minari.delete_dataset('{dataset_name}')`\n"
+        )
     else:
-        print(f"Downloading {dataset_name} from Farama servers...")
+        print(f"\nDownloading {dataset_name} from Farama servers...")
         storage_client = storage.Client.create_anonymous_client()
 
         bucket = storage_client.bucket(bucket_name="minari-datasets")
@@ -83,6 +85,7 @@ def download_dataset(dataset_name: str):
         blobs = bucket.list_blobs(prefix=dataset_name)  # Get list of files
 
         for blob in blobs:
+            print(f"\n * Downloading data file '{blob.name}' ...\n")
             blob_dir, file_name = os.path.split(blob.name)
             blob_local_dir = os.path.join(os.path.dirname(file_path), blob_dir)
             if not os.path.exists(blob_local_dir):
@@ -93,19 +96,19 @@ def download_dataset(dataset_name: str):
                 with tqdm.wrapattr(f, "write", total=blob.size) as file_obj:
                     storage_client.download_blob_to_file(blob, file_obj)
 
-        print(f"Dataset {dataset_name} downloaded to {file_path}")
+        print(f"\nDataset {dataset_name} downloaded to {file_path}")
 
         combined_datasets = load_dataset(dataset_name).combined_datasets
 
         # If the dataset is a combination of other datasets download the subdatasets recursively
         if len(combined_datasets) > 0:
             print(
-                f"Dataset {dataset_name} is formed by a combination of the following datasets:"
+                f"\nDataset {dataset_name} is formed by a combination of the following datasets:"
             )
             for name in combined_datasets:
-                print(f"\t{name}")
+                print(f"  * {name}")
+            print("\nDownloading extra datasets ...")
             for dataset in combined_datasets:
-                print(f"Downloading dataset {dataset}")
                 download_dataset(dataset_name=dataset)
 
 
