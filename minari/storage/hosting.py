@@ -2,6 +2,7 @@ import glob
 import os
 
 from google.cloud import storage  # pyright: ignore [reportGeneralTypeIssues)]
+from tqdm.auto import tqdm
 
 from minari.storage.datasets_root_dir import get_dataset_path
 from minari.storage.local import load_dataset
@@ -67,13 +68,11 @@ def download_dataset(dataset_name: str):
         dataset_name (str): name id of the Minari dataset
     """
     file_path = get_dataset_path(dataset_name)
-
+    print(file_path)
     if os.path.isfile(file_path):
         print(f"Dataset {dataset_name} found locally at {file_path}")
     else:
-        print(
-            f"Dataset not found locally. Downloading {dataset_name} from Farama servers..."
-        )
+        print(f"Downloading {dataset_name} from Farama servers...")
         storage_client = storage.Client.create_anonymous_client()
 
         bucket = storage_client.bucket(bucket_name="minari-datasets")
@@ -83,18 +82,16 @@ def download_dataset(dataset_name: str):
         # using `Bucket.blob` is preferred here.
         blobs = bucket.list_blobs(prefix=dataset_name)  # Get list of files
 
-        # See https://github.com/googleapis/python-storage/issues/27 for discussion on progress bars
         for blob in blobs:
-            print("DOWNLOADING NAME AND SIZE")
-            print(blob.name)
-            print(blob.size)
-
             blob_dir, file_name = os.path.split(blob.name)
             blob_local_dir = os.path.join(os.path.dirname(file_path), blob_dir)
             if not os.path.exists(blob_local_dir):
                 os.makedirs(blob_local_dir)
-
-            blob.download_to_filename(os.path.join(blob_local_dir, file_name))
+            # Download progress bar:
+            # https://stackoverflow.com/questions/62811608/how-to-show-progress-bar-when-we-are-downloading-a-file-from-cloud-bucket-using
+            with open(os.path.join(blob_local_dir, file_name), "wb") as f:
+                with tqdm.wrapattr(f, "write", total=blob.size) as file_obj:
+                    storage_client.download_blob_to_file(blob, file_obj)
 
         print(f"Dataset {dataset_name} downloaded to {file_path}")
 
