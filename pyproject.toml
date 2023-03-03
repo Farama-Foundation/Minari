@@ -46,6 +46,9 @@ Repository = "https://github.com/Farama-Foundation/Minari"
 Documentation = "https://minari.farama.org/"
 "Bug Report" = "https://github.com/Farama-Foundation/Minari/issues"
 
+[project.entry-points."console_scripts"]
+minari = "mianri.__init__:register_robotics_envs"
+
 [tool.setuptools]
 include-package-data = true
 

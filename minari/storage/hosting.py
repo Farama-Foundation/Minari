@@ -85,9 +85,10 @@ def download_dataset(dataset_name: str):
 
         # See https://github.com/googleapis/python-storage/issues/27 for discussion on progress bars
         for blob in blobs:
-            if blob.name.endswith("/"):
-                # Don't download empty folders
-                continue
+            print("DOWNLOADING NAME AND SIZE")
+            print(blob.name)
+            print(blob.size)
+
             blob_dir, file_name = os.path.split(blob.name)
             blob_local_dir = os.path.join(os.path.dirname(file_path), blob_dir)
             if not os.path.exists(blob_local_dir):
