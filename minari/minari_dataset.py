@@ -41,6 +41,9 @@ class MinariDataset:
             self._observation_space = env.observation_space
             self._action_space = env.action_space
 
+            self._author = f.attrs["author"]
+            self._author_email = f.attrs["author_email"]
+
             env.close()
 
         self._episode_idx = list(range(self._total_episodes))
@@ -79,12 +82,12 @@ class MinariDataset:
         return self._data_path
 
     @property
-    def total_steps(self):
+    def total_steps(self) -> int:
         """Total steps recorded in the Minari dataset along all episodes."""
         return self._total_steps
 
     @property
-    def total_episodes(self):
+    def total_episodes(self) -> int:
         """Total episodes recorded in the Minari dataset."""
         return self._total_episodes
 
@@ -97,9 +100,17 @@ class MinariDataset:
             return self._combined_datasets
 
     @property
-    def name(self):
+    def name(self) -> str:
         """Name of the Minari dataset."""
         return self._dataset_name
+
+    @property
+    def author(self) -> str:
+        return self._author
+
+    @property
+    def email(self) -> str:
+        return self._author_email
 
     def _filter_episode_group(
         self, condition_func: Callable[[h5py.Group], bool], hdf5_file: h5py.File

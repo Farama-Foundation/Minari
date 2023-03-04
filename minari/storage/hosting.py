@@ -39,13 +39,16 @@ def upload_dataset(dataset_name: str, path_to_private_key: str):
         )
         bucket = storage.Bucket(storage_client, "minari-datasets")
 
+        dataset = load_dataset(dataset_name)
+
         # See https://github.com/googleapis/python-storage/issues/27 for discussion on progress bars
         _upload_local_directory_to_gcs(str(file_path), bucket, dataset_name)
 
         print(f"Dataset {dataset_name} uploaded!")
 
-        combined_datasets = load_dataset(dataset_name).combined_datasets
-        if len(combined_datasets) > 0:
+        combined_datasets = dataset.combined_datasets
+
+        if len(dataset.combined_datasets) > 0:
             print(
                 f"Dataset {dataset_name} is formed by a combination of the following datasets:"
             )
