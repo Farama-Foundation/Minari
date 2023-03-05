@@ -1,6 +1,8 @@
 import glob
 import os
+from typing import Dict
 
+import h5py
 from google.cloud import storage  # pyright: ignore [reportGeneralTypeIssues)]
 from gymnasium import logger
 from tqdm.auto import tqdm
@@ -29,17 +31,23 @@ def upload_dataset(dataset_name: str, path_to_private_key: str):
             else:
                 remote_path = os.path.join(gcs_path, local_file[1 + len(local_path) :])
                 blob = bucket.blob(remote_path)
+                # add metadata to main data file of dataset
+                if blob.name.endswith("main_data.hdf5"):
+                    blob.metadata = metadata
                 blob.upload_from_filename(local_file)
 
     file_path = get_dataset_path(dataset_name)
-    remote_datasets = list_remote_datasets(verbose=False)
-    if dataset_name not in remote_datasets:
+    remote_datasets = list_remote_datasets()
+    if dataset_name not in remote_datasets.keys():
         storage_client = storage.Client.from_service_account_json(
             json_credentials_path=path_to_private_key
         )
         bucket = storage.Bucket(storage_client, "minari-datasets")
 
         dataset = load_dataset(dataset_name)
+
+        with h5py.File(dataset.data_path, "r") as f:
+            metadata = dict(f.attrs.items())
 
         # See https://github.com/googleapis/python-storage/issues/27 for discussion on progress bars
         _upload_local_directory_to_gcs(str(file_path), bucket, dataset_name)
@@ -115,26 +123,24 @@ def download_dataset(dataset_name: str):
                 download_dataset(dataset_name=dataset)
 
 
-def list_remote_datasets(verbose=True):
-    """Get a list of all the Minari dataset names in the remote Farama server.
-
-    Args:
-        verbose (bool, optional): If True the dataset names will be shown in the command line. Defaults to True.
+def list_remote_datasets() -> Dict[str, Dict[str, str]]:
+    """Get the names and metadata of all the Minari dataset in the remote Farama server.
 
     Returns:
-       list[str]: List of remote Minari dataset names
+       Dict[str, Dict[str, str]]: keys the names of the Minari datasets and values the metadata
     """
     storage_client = storage.Client.create_anonymous_client()
 
-    blobs = storage_client.list_blobs(
-        bucket_or_name="minari-datasets", prefix="", delimiter="/", max_results=1
-    )
-    next(blobs, ...)
+    blobs = storage_client.list_blobs(bucket_or_name="minari-datasets")
 
-    remote_datasets = sorted(list(map(lambda x: x[:-1], blobs.prefixes)))
-    if verbose:
-        print("Datasets available to download:")
-        for dataset_name in remote_datasets:
-            print(dataset_name)
+    remote_datasets_metadata = list(
+        map(
+            lambda x: x.metadata,
+            filter(lambda x: x.name.endswith("main_data.hdf5"), blobs),
+        )
+    )
+    remote_datasets = {}
+    for metadata in remote_datasets_metadata:
+        remote_datasets[metadata["dataset_name"]] = metadata
 
     return remote_datasets
