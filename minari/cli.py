@@ -54,7 +54,11 @@ def _show_dataset_table(datasets, table_title):
 @app.callback()
 def common(
     version: Optional[bool] = typer.Option(
-        None, "--version", "-v", callback=_version_callback
+        None,
+        "--version",
+        "-v",
+        callback=_version_callback,
+        help="Show installed Minari version.",
     )
 ):
     """Minari is a tool for collecting and hosting Offline datasets for Reinforcement Learning environments based on the Gymnaisum API."""
