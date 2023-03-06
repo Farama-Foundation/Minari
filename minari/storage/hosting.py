@@ -82,45 +82,45 @@ def download_dataset(dataset_name: str):
     file_path = get_dataset_path(dataset_name)
     if os.path.exists(file_path):
         logger.warn(
-            f"Dataset {dataset_name} found locally at {file_path}. If you'd like to re-download this dataset please first delete it from your local storage, `minari.delete_dataset('{dataset_name}')`\n"
+            f"Dataset {dataset_name} found locally at {file_path} and its content will be overridden with the remote dataset.\n"
         )
-    else:
-        print(f"\nDownloading {dataset_name} from Farama servers...")
-        storage_client = storage.Client.create_anonymous_client()
 
-        bucket = storage_client.bucket(bucket_name="minari-datasets")
-        # Construct a client side representation of a blob.
-        # Note `Bucket.blob` differs from `Bucket.get_blob` as it doesn't retrieve
-        # any content from Google Cloud Storage. As we don't need additional data,
-        # using `Bucket.blob` is preferred here.
-        blobs = bucket.list_blobs(prefix=dataset_name)  # Get list of files
+    print(f"\nDownloading {dataset_name} from Farama servers...")
+    storage_client = storage.Client.create_anonymous_client()
 
-        for blob in blobs:
-            print(f"\n * Downloading data file '{blob.name}' ...\n")
-            blob_dir, file_name = os.path.split(blob.name)
-            blob_local_dir = os.path.join(os.path.dirname(file_path), blob_dir)
-            if not os.path.exists(blob_local_dir):
-                os.makedirs(blob_local_dir)
-            # Download progress bar:
-            # https://stackoverflow.com/questions/62811608/how-to-show-progress-bar-when-we-are-downloading-a-file-from-cloud-bucket-using
-            with open(os.path.join(blob_local_dir, file_name), "wb") as f:
-                with tqdm.wrapattr(f, "write", total=blob.size) as file_obj:
-                    storage_client.download_blob_to_file(blob, file_obj)
+    bucket = storage_client.bucket(bucket_name="minari-datasets")
+    # Construct a client side representation of a blob.
+    # Note `Bucket.blob` differs from `Bucket.get_blob` as it doesn't retrieve
+    # any content from Google Cloud Storage. As we don't need additional data,
+    # using `Bucket.blob` is preferred here.
+    blobs = bucket.list_blobs(prefix=dataset_name)  # Get list of files
 
-        print(f"\nDataset {dataset_name} downloaded to {file_path}")
+    for blob in blobs:
+        print(f"\n * Downloading data file '{blob.name}' ...\n")
+        blob_dir, file_name = os.path.split(blob.name)
+        blob_local_dir = os.path.join(os.path.dirname(file_path), blob_dir)
+        if not os.path.exists(blob_local_dir):
+            os.makedirs(blob_local_dir)
+        # Download progress bar:
+        # https://stackoverflow.com/questions/62811608/how-to-show-progress-bar-when-we-are-downloading-a-file-from-cloud-bucket-using
+        with open(os.path.join(blob_local_dir, file_name), "wb") as f:
+            with tqdm.wrapattr(f, "write", total=blob.size) as file_obj:
+                storage_client.download_blob_to_file(blob, file_obj)
 
-        combined_datasets = load_dataset(dataset_name).combined_datasets
+    print(f"\nDataset {dataset_name} downloaded to {file_path}")
 
-        # If the dataset is a combination of other datasets download the subdatasets recursively
-        if len(combined_datasets) > 0:
-            print(
-                f"\nDataset {dataset_name} is formed by a combination of the following datasets:"
-            )
-            for name in combined_datasets:
-                print(f"  * {name}")
-            print("\nDownloading extra datasets ...")
-            for dataset in combined_datasets:
-                download_dataset(dataset_name=dataset)
+    combined_datasets = load_dataset(dataset_name).combined_datasets
+
+    # If the dataset is a combination of other datasets download the subdatasets recursively
+    if len(combined_datasets) > 0:
+        print(
+            f"\nDataset {dataset_name} is formed by a combination of the following datasets:"
+        )
+        for name in combined_datasets:
+            print(f"  * {name}")
+        print("\nDownloading extra datasets ...")
+        for dataset in combined_datasets:
+            download_dataset(dataset_name=dataset)
 
 
 def list_remote_datasets() -> Dict[str, Dict[str, str]]:
