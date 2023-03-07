@@ -1,5 +1,8 @@
 import os
 import shutil
+from typing import Dict, Union
+
+import h5py
 
 from minari.minari_dataset import MinariDataset
 from minari.storage.datasets_root_dir import get_dataset_path
@@ -19,24 +22,24 @@ def load_dataset(dataset_name: str):
     return MinariDataset(data_path)
 
 
-def list_local_datasets(verbose=True):
-    """Get a list of all the Minari dataset names in the local database.
-
-    Args:
-        verbose (bool, optional): If True the dataset names will be shown in the command line. Defaults to True.
+def list_local_datasets() -> Dict[str, Dict[str, Union[str, int, bool]]]:
+    """Get a the names and metadata of all the Minari datasets in the local database.
 
     Returns:
-       list[str]: List of local Minari dataset name id's
+       Dict[str, Dict[str, str]]: keys the names of the Minari datasets and values the metadata
     """
     datasets_path = get_dataset_path("")
-    datasets = sorted([dir_name for dir_name in os.listdir(datasets_path)])
+    dataset_names = sorted([dir_name for dir_name in os.listdir(datasets_path)])
 
-    if verbose:
-        print("Datasets found locally:")
-        for dataset in datasets:
-            print(dataset)
+    local_datasets = {}
+    for dst_name in dataset_names:
+        main_file_path = os.path.join(datasets_path, dst_name, "data/main_data.hdf5")
 
-    return datasets
+        with h5py.File(main_file_path, "r") as f:
+            metadata = dict(f.attrs.items())
+            local_datasets[dst_name] = metadata
+
+    return local_datasets
 
 
 def delete_dataset(dataset_name: str):
