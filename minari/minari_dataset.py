@@ -452,6 +452,7 @@ def create_dataset_from_buffers(
             "`code_permalink` is set to None. For reproducibility purposes it is highly recommended to link your dataset to versioned code.",
             UserWarning,
         )
+
     if author is None:
         warnings.warn(
             "`author` is set to None. For longevity purposes it is highly recommended to provide an author name.",
@@ -512,6 +513,9 @@ def create_dataset_from_buffers(
                 "env_spec"
             ] = env.spec.to_json()  # pyright: ignore [reportOptionalMemberAccess]
             file.attrs["dataset_name"] = dataset_name
+            file.attrs["author"] = str(author)
+            file.attrs["author_email"] = str(author_email)
+            file.attrs["code_permalink"] = str(code_permalink)
 
         return MinariDataset(data_path)
     else:
