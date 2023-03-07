@@ -27,8 +27,10 @@ classifiers = [
 dependencies = [
     "numpy >=1.21.0",
     "h5py==3.7.0",
+    "tqdm>=4.65.0",
     "typing_extensions==4.4.0",
     "google-cloud-storage==2.5.0",
+    "typer[all]==0.7.0",
     "gymnasium @ git+https://github.com/pseudo-rnd-thoughts/Gymnasium.git@spec_stack",
 ]
 dynamic = ["version"]
@@ -45,6 +47,10 @@ Homepage = "https://farama.org"
 Repository = "https://github.com/Farama-Foundation/Minari"
 Documentation = "https://minari.farama.org/"
 "Bug Report" = "https://github.com/Farama-Foundation/Minari/issues"
+
+
+[project.scripts]
+minari = "minari.cli:app"
 
 [tool.setuptools]
 include-package-data = true
