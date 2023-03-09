@@ -49,14 +49,50 @@ Minari is a tool for collecting and hosting Offline datasets for Reinforcement L
 The Minari CLI gives access to most of the package functions through the command-line
 ## List datasets
 
+<div class="termy">
+
+```console
+// Show local datasets.
+$ minari list local
+
+         <i>Local Minari datasets('home/farama/.minari/')</i>                   
+┌───────────────┬───────────┬───────────┬─────────┬───────────┐ 
+│               │     <b>Total</b> │     <b>Total</b> │         │           │
+│ <b>Name</b>          │  <b>Episodes</b> │     <b>Steps</b> │  <b>Author</b> │ <b>Email</b>     │
+┡───────────────╇───────────╇───────────╇─────────╇───────────┩
+│ <font color="#A1EFE4">pen-cloned-v0</font> │      <font color="#03AC13">3736</font> │    <font color="#03AC13">500000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
+│ <font color="#A1EFE4">pen-expert-v0</font> │      <font color="#03AC13">4958</font> │    <font color="#03AC13">499206</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
+│ <font color="#A1EFE4">pen-human-v0</font>  │        <font color="#03AC13">25</font> │      <font color="#03AC13">5000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
+└───────────────┴───────────┴───────────┴─────────┴───────────┘  
+
+// Show remote datasets.
+$ minari list remote
+
+                 Minari datasets in Farama server                    
+┌────────────────┬───────────┬────────────┬─────────┬───────────┐ 
+│                │     <b>Total</b> │      <b>Total</b> │         │           │
+│ <b>Name</b>           │  <b>Episodes</b> │      <b>Steps</b> │  <b>Author</b> │ <b>Email</b>     │
+┡────────────────╇───────────╇────────────╇─────────╇───────────┩
+│ <font color="#A1EFE4">door-cloned-v0</font> │      <font color="#03AC13">4356</font> │    <font color="#03AC13">1000000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
+│ <font color="#A1EFE4">door-expert-v0</font> │      <font color="#03AC13">5000</font> │    <font color="#03AC13">1000000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
+│ <font color="#A1EFE4">dorr-human-v0</font>  │        <font color="#03AC13">25</font> │       <font color="#03AC13">6729</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
+│ <font color="#A1EFE4">pen-cloned-v0</font>  │      <font color="#03AC13">3736</font> │     <font color="#03AC13">500000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
+│ <font color="#A1EFE4">pen-expert-v0</font>  │      <font color="#03AC13">4958</font> │     <font color="#03AC13">499206</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
+│ <font color="#A1EFE4">pen-human-v0</font>   │        <font color="#03AC13">25</font> │       <font color="#03AC13">5000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
+└────────────────┴───────────┴────────────┴─────────┴───────────┘ 
 ```
-minari list local
-```
+</div>
+
+## Download datasets
+
+<div class="termy">
+
+```console
+// Download datasets pen-cloned-v0 and door-human-v0
+$ minari download pen-cloned-v0 door-human-v0
 
 ```
-minari list remote
-```
-## Download datasets
+</div>
 
 ## Delete local datasets
 
