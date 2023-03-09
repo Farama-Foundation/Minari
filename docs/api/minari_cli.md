@@ -55,7 +55,7 @@ The Minari CLI gives access to most of the package functions through the command
 // Show local datasets.
 $ minari list local
 
-         <i>Local Minari datasets('home/farama/.minari/')</i>                   
+               <i>Local Minari datasets('.minari/')</i>                   
 ┌───────────────┬───────────┬───────────┬─────────┬───────────┐ 
 │               │     <b>Total</b> │     <b>Total</b> │         │           │
 │ <b>Name</b>          │  <b>Episodes</b> │     <b>Steps</b> │  <b>Author</b> │ <b>Email</b>     │
@@ -68,14 +68,14 @@ $ minari list local
 // Show remote datasets.
 $ minari list remote
 
-                 Minari datasets in Farama server                    
+                 <i>Minari datasets in Farama server</i>                    
 ┌────────────────┬───────────┬────────────┬─────────┬───────────┐ 
 │                │     <b>Total</b> │      <b>Total</b> │         │           │
 │ <b>Name</b>           │  <b>Episodes</b> │      <b>Steps</b> │  <b>Author</b> │ <b>Email</b>     │
 ┡────────────────╇───────────╇────────────╇─────────╇───────────┩
 │ <font color="#A1EFE4">door-cloned-v0</font> │      <font color="#03AC13">4356</font> │    <font color="#03AC13">1000000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
 │ <font color="#A1EFE4">door-expert-v0</font> │      <font color="#03AC13">5000</font> │    <font color="#03AC13">1000000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
-│ <font color="#A1EFE4">dorr-human-v0</font>  │        <font color="#03AC13">25</font> │       <font color="#03AC13">6729</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
+│ <font color="#A1EFE4">door-human-v0</font>  │        <font color="#03AC13">25</font> │       <font color="#03AC13">6729</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
 │ <font color="#A1EFE4">pen-cloned-v0</font>  │      <font color="#03AC13">3736</font> │     <font color="#03AC13">500000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
 │ <font color="#A1EFE4">pen-expert-v0</font>  │      <font color="#03AC13">4958</font> │     <font color="#03AC13">499206</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
 │ <font color="#A1EFE4">pen-human-v0</font>   │        <font color="#03AC13">25</font> │       <font color="#03AC13">5000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
@@ -97,7 +97,7 @@ Downloading pen-expert-v0 from Farama servers...
 
 ---> 100%
 
-Dataset pen-expert-v0 downloaded to /home/farama/.minari/datasets/pen-expert-v0
+Dataset pen-expert-v0 downloaded to <path-to-local-datasets>/.minari/datasets/pen-expert-v0
 
 Downloading door-human-v0 from Farama servers...
 
@@ -105,7 +105,7 @@ Downloading door-human-v0 from Farama servers...
    
 ---> 100%
 
-Dataset door-human-v0 downloaded to /home/farama/.minari/datasets/pen-expert-v0
+Dataset door-human-v0 downloaded to <path-to-local-datasets>/.minari/datasets/pen-expert-v0
 
 ```
 </div>
@@ -118,8 +118,36 @@ Dataset door-human-v0 downloaded to /home/farama/.minari/datasets/pen-expert-v0
 // Delete datasets pen-cloned-v0 and door-human-v0
 $ minari delete pen-cloned-v0 door-human-v0
 
+                   <i>Delete local Minari datasets</i>                    
+┌────────────────┬───────────┬────────────┬─────────┬───────────┐ 
+│                │     <b>Total</b> │      <b>Total</b> │         │           │
+│ <b>Name</b>           │  <b>Episodes</b> │      <b>Steps</b> │  <b>Author</b> │ <b>Email</b>     │
+┡────────────────╇───────────╇────────────╇─────────╇───────────┩
+│ <font color="#A1EFE4">door-human-v0</font>  │        <font color="#03AC13">25</font> │       <font color="#03AC13">6729</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
+│ <font color="#A1EFE4">pen-cloned-v0</font>  │      <font color="#03AC13">3736</font> │     <font color="#03AC13">500000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
+└────────────────┴───────────┴────────────┴─────────┴───────────┘ 
+
+# Are you sure you want to delete these local datasets? [y/N]:$ y
+
+Dataset door-human-v0 deleted!
+Dataset pen-cloned-v0 deleted!
 ```
 </div>
 
 ## Upload datasets
-## Combine datasets=
+
+<div class="termy">
+
+```console
+// Delete datasets pen-cloned-v0 and door-human-v0
+$ minari upload pen-cloned-v0 door-human-v0 --key-path /path-to-key/file-name.json
+
+---> 100%
+Dataset door-human-v0 uploaded!
+
+---> 100%
+Dataset pen-cloned-v0 uploaded!
+```
+</div>
+
+## Combine datasets
