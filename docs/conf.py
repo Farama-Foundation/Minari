@@ -80,4 +80,5 @@ html_context["github_version"] = "main"
 html_context["slug"] = "minari"
 
 html_static_path = ["_static"]
-html_css_files = []
+html_css_files = ["css/termynal.css", "css/custom.css"]
+html_js_files = ["js/termynal.js", "js/custom.js"]

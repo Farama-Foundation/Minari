@@ -3,7 +3,7 @@ hide-toc: true
 firstpage:
 lastpage:
 ---
-
+# Minari is a standard API for 
 [//]: # (```{toctree})
 
 [//]: # (:hidden:)
@@ -19,6 +19,8 @@ lastpage:
 :hidden:
 :caption: API
 
+api/minari_cli
+api/data_collection
 api/local_storage
 api/remote_storage
 ```
@@ -36,8 +38,6 @@ tutorials/dataset_usage
 :caption: Development
 
 Github <https://github.com/Farama-Foundation/Minari>
-Donate <https://farama.org/donations>
-
 ```
 
 # Minari is a Python library for conducting research in offline reinforcement learning
