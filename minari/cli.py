@@ -215,6 +215,7 @@ def combine(datasets: List[str], dataset_name: str = typer.Option(...)):
     if len(datasets) > 1:
         minari_datasets = list(map(lambda x: local.load_dataset(x), datasets))
         combine_datasets(minari_datasets, dataset_name)
+        print(f"The datasets {datasets} were successfully combined into {dataset_name}!")
     else:
         console = Console()
         console.print(

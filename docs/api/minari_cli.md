@@ -139,7 +139,7 @@ Dataset pen-cloned-v0 deleted!
 <div class="termy">
 
 ```console
-// Delete datasets pen-cloned-v0 and door-human-v0
+// Upload datasets pen-cloned-v0 and door-human-v0 to Farama server.
 $ minari upload pen-cloned-v0 door-human-v0 --key-path /path-to-key/file-name.json
 
 ---> 100%
@@ -151,3 +151,12 @@ Dataset pen-cloned-v0 uploaded!
 </div>
 
 ## Combine datasets
+
+<div class="termy">
+
+```console
+// Combine datasets pen-cloned-v0, pen-expert-v0 and pen-human-v0 into pen-all-v0.
+$ minari combine pen-cloned-v0 pen-expert-v0 pen-human-v0 --dataset-name pen-all-v0
+
+```
+</div>
