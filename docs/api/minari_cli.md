@@ -158,5 +158,6 @@ Dataset pen-cloned-v0 uploaded!
 // Combine datasets pen-cloned-v0, pen-expert-v0 and pen-human-v0 into pen-all-v0.
 $ minari combine pen-cloned-v0 pen-expert-v0 pen-human-v0 --dataset-name pen-all-v0
 
+The datasets ['pen-cloned-v0', 'pen-expert-v0', 'pen-human-v0'] were successfully combined into new-pen-v0!
 ```
 </div>
