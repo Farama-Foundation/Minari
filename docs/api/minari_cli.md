@@ -91,14 +91,35 @@ $ minari list remote
 // Download datasets pen-cloned-v0 and door-human-v0
 $ minari download pen-cloned-v0 door-human-v0
 
+Downloading pen-expert-v0 from Farama servers...
+
+   * Downloading data file 'pen-expert-v0/data/main_data.hdf5' ...
+
+---> 100%
+
+Dataset pen-expert-v0 downloaded to /home/farama/.minari/datasets/pen-expert-v0
+
+Downloading door-human-v0 from Farama servers...
+
+   * Downloading data file 'door-human-v0/data/main_data.hdf5' ...
+   
+---> 100%
+
+Dataset door-human-v0 downloaded to /home/farama/.minari/datasets/pen-expert-v0
+
 ```
 </div>
 
 ## Delete local datasets
 
+<div class="termy">
+
+```console
+// Delete datasets pen-cloned-v0 and door-human-v0
+$ minari delete pen-cloned-v0 door-human-v0
+
 ```
-minari delete door
-```
+</div>
 
 ## Upload datasets
-## Combine datasets
+## Combine datasets=
