@@ -4,8 +4,8 @@ title: Minari CLI
 
 # Minari CLI
 
-Minari is also packaged with some useful CLI commands. The CLI tool is build on top off [Typer](https://typer.tiangolo.com/) and it will be available when installing Minari.
-
+Minari is also packaged with some useful CLI commands. The CLI tool is build on top off [Typer](https://typer.tiangolo.com/) and it will be available after installing Minari.
+The Minari CLI gives access to most of the package functions through the command-line such as listing existing datasets, downloading and deleting.
 
 <div class="termy">
 
@@ -45,9 +45,13 @@ Minari is a tool for collecting and hosting Offline datasets for Reinforcement L
 ```
 </div>
 
-
-The Minari CLI gives access to most of the package functions through the command-line
 ## List datasets
+
+The `minari list COMMAND` command shows a table with the existing Minari datasets as well as some of their metadata such as number of episodes and steps in the dataset as well as the author's name and email. 
+This command comes with other two required sub-commands:
+
+- `remote`: the Minari dataset table shows the datasets currently available in the remote Farama server.
+- `local`: the Minari dataset table shows the datasets currently accessible in the local device. 
 
 <div class="termy">
 
@@ -85,6 +89,9 @@ $ minari list remote
 
 ## Download datasets
 
+With the command `minari download DATASETS` you can download a group of datasets that are available in the remote Farama server. If the dataset name already exist locally, the Minari CLI will prompt you to override the
+current content of the local dataset.
+
 <div class="termy">
 
 ```console
@@ -112,6 +119,8 @@ Dataset door-human-v0 downloaded to <path-to-local-datasets>/.minari/datasets/pe
 
 ## Delete local datasets
 
+Local Minari datasets can be deleted by instantiating the following command, `minari delete DATASETS`. This command will also prompt a confirmation message to proceed with the deletion of the given datasets.
+
 <div class="termy">
 
 ```console
@@ -136,6 +145,8 @@ Dataset pen-cloned-v0 deleted!
 
 ## Upload datasets
 
+If you would like to upload your own Minari dataset to the remote server please get in touch with the Farama team at [contact@farama.org](mailto:contact@farama.org). We will share with you a json encryption key file to give you permission to upload data to our GCP bucket. Then you can upload your dataset with the command `minari upload DATASETS --key-path PATH_STRING/KEY_FILE.json`. NOTE: the progress bar shown in the example below is not currently implemented in the Minari package.
+
 <div class="termy">
 
 ```console
@@ -152,12 +163,14 @@ Dataset pen-cloned-v0 uploaded!
 
 ## Combine datasets
 
+Minari datasets can also be merged together into a single dataset with the following command, `minari combine DATASETS --dataset-name NEW_DATASET_NAME`.
+
 <div class="termy">
 
 ```console
 // Combine datasets pen-cloned-v0, pen-expert-v0 and pen-human-v0 into pen-all-v0.
 $ minari combine pen-cloned-v0 pen-expert-v0 pen-human-v0 --dataset-name pen-all-v0
 
-The datasets ['pen-cloned-v0', 'pen-expert-v0', 'pen-human-v0'] were successfully combined into new-pen-v0!
+The datasets <font color="#03AC13">['pen-cloned-v0', 'pen-expert-v0', 'pen-human-v0']</font> were successfully combined into <font color="#A1EFE4">pen-all-v0</font>!
 ```
 </div>

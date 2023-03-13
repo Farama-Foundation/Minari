@@ -4,7 +4,6 @@ from typing import Callable, Dict, List, Optional, Union
 
 import gymnasium as gym
 import h5py
-import json
 import numpy as np
 from gymnasium.envs.registration import EnvSpec
 
@@ -350,7 +349,7 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_name:
         combined_data_file.attrs["combined_datasets"] = [
             dataset.name for dataset in datasets_to_combine
         ]
-        
+
         current_env_spec = None
 
         for dataset in datasets_to_combine:
@@ -360,25 +359,29 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_name:
             with h5py.File(dataset.data_path, "r", track_order=True) as data_file:
                 group_paths = [group.name for group in data_file.values()]
                 dataset_env_spec = data_file.attrs["env_spec"]
-                 
+
                 assert isinstance(dataset_env_spec, str)
                 dataset_env_spec = EnvSpec.from_json(dataset_env_spec)
                 # We have to check that all datasets can be merged by checking that they come from the same
-                # environments. However, we override the time limit max_episode_steps with the max among all 
-                # the datasets to be combined. Then we check if the rest of the env_spec attributes are from 
+                # environments. However, we override the time limit max_episode_steps with the max among all
+                # the datasets to be combined. Then we check if the rest of the env_spec attributes are from
                 # the same environment.
                 if current_env_spec is None:
                     current_env_spec = dataset_env_spec
                 else:
-                    if current_env_spec.max_episode_steps < dataset_env_spec.max_episode_steps:
-                        current_env_spec.max_episode_steps = dataset_env_spec.max_episode_steps
+                    if (
+                        current_env_spec.max_episode_steps
+                        < dataset_env_spec.max_episode_steps
+                    ):
+                        current_env_spec.max_episode_steps = (
+                            dataset_env_spec.max_episode_steps
+                        )
                     else:
-                        dataset_env_spec.max_episode_steps = current_env_spec.max_episode_steps
+                        dataset_env_spec.max_episode_steps = (
+                            current_env_spec.max_episode_steps
+                        )
 
-                if (
-                    current_env_spec
-                    != dataset_env_spec
-                ):
+                if current_env_spec != dataset_env_spec:
                     raise ValueError(
                         "The datasets to be combined have different values for `env_spec` attribute."
                     )
@@ -425,14 +428,13 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_name:
                 "total_steps",
                 combined_data_file.attrs["total_steps"] + dataset.total_steps,
             )
-            
+
             # TODO: list of authors, and emails
             combined_data_file.attrs["author"] = dataset.author
             combined_data_file.attrs["author_email"] = dataset.email
-        
-        assert isinstance(current_env_spec, EnvSpec)
+
+        assert current_env_spec is not None
         combined_data_file.attrs["env_spec"] = current_env_spec.to_json()
-        
 
     return MinariDataset(new_data_path)
 
