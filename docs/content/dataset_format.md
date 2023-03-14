@@ -92,7 +92,9 @@ More information about the features that the `HDF5` file format support can be r
 
 ### HDF5 file structure
 
-The offline data is organized inside the `main_data.hdf5` file in episode [`groups`](https://docs.h5py.org/en/stable/high/dataset.html) named as `episode_id`. Each episode group contains all the stepping data from a Gymnasium environment until the environment is `terminated` or `truncated`. The stepping data inside the episode group is divided into some required `datasets` (`StepData`) plus other optional `groups` and nested `sub-groups` such as `infos`. The hierarchical tree of the Minari dataset `HDF5` file will end up looking as follows:
+The offline data is organized inside the `main_data.hdf5` file in episode [`groups`](https://docs.h5py.org/en/stable/high/dataset.html) named as `episode_id`. Each episode group contains all the stepping data from a Gymnasium environment until the environment is `terminated` or `truncated`.
+
+The stepping data inside the episode group is divided into some required `datasets` (`StepData`) plus other optional `groups` and nested `sub-groups` such as `infos`. The hierarchical tree of the Minari dataset `HDF5` file will end up looking as follows:
 
 <div class="only-light">
 <ul class="directory-list">
@@ -195,9 +197,11 @@ The `dtype` of the numpy array datasets can be of any type compatible with [`h5p
 
 The `info` dictionary returned in `env.step()` and `env.reset()` can be optionally saved in the dataset as a `sub-group`. The option to save the `info` data can be set in the `DataCollectorv0` wrapper with the  `record_infos` argument.
 
-Also, additional `datasets` and nested `sub-groups` can be saved in each episode. This can be the case of environment data that doesn't participate in each `env.step()` or `env.reset()` call in the Gymnasium API, such as the full environment state in each step. This can be achieved by creating a custom `StepDataCallback` that returns extra keys and nested dictionaries in the `StepData` dictionary return. 
+Also, additional `datasets` and nested `sub-groups` can be saved in each episode. This can be the case of environment data that doesn't participate in each `env.step()` or `env.reset()` call in the Gymnasium API, such as the full environment state in each step. This can be achieved by creating a custom `StepDataCallback` that returns extra keys and nested dictionaries in the `StepData` dictionary return.
 
-For example, the `Adroit Hand` environments in the `Gymnasium-Robotics` project need to store the full state of the MuJoCo simulation since this information is not present in the `observations` dataset and the environments are reset by setting an initial state in the simulation. The following code snippet creates a custom `StepDataCallbak` and adds a new key, `state`, to the returned `StepData` dictionary. `state` is a nested dictionary with `np.ndarray` values and the keys are relevant MuJoCo data that represent the state of the simulation: `qpos`, `qvel`, and some other body positions.
+For example, the `Adroit Hand` environments in the `Gymnasium-Robotics` project need to store the full state of the MuJoCo simulation since this information is not present in the `observations` dataset and the environments are reset by setting an initial state in the simulation.
+
+The following code snippet creates a custom `StepDataCallbak` and adds a new key, `state`, to the returned `StepData` dictionary. `state` is a nested dictionary with `np.ndarray` values and the keys are relevant MuJoCo data that represent the state of the simulation: `qpos`, `qvel`, and some other body positions.
 
 ```python
 class AdroitStepDataCallback(StepDataCallback):
@@ -252,7 +256,39 @@ The episode groups in the `HDF5` file will then have the following structure:
 </div>
 
 ### Default dataset metadata
+`HDF5` files can have metadata attached to `objects` as [`attributes`](https://docs.h5py.org/en/stable/high/attr.html). Minari uses these `attributes` to add metadata to the global dataset file, to each episode group, as well as to the individual datasets inside each episode. This                                                                                 metadata can be added by the user by overriding the `EpisodeMetadataCallback` in the `DataCollectorV0` wrapper. However, there is also some metadata added by default to every dataset.
 
-`StepDataCallback` returns a `StepData` dictionary. HDF5 stores numpy array like datasets nested dicitonaries as groups
+When creating a Minari dataset with the `DataCollectorV0` wrapper the default global metadata will be the following:
 
-required groups and datasets found for every Minari dataset created with a Gymnasium environment. rewards, actions, observations, terminations, truncations. Optional store the infos group or you can even add extra data to the one returned each step and create nested dictionaries of data.
+| Attribute               | Type       | Description |
+| ----------------------- | ---------- | ----------- |
+| `total_episodes`        | `np.int64` | Number of episodes in the Minari dataset. |
+| `total_steps`           | `np.int64` | Number of steps in the Minari dataset. |
+| `flattened_observation` | `np.bool`  | If the observation space had to be flattened. Usually for `Dictionary` and `Tuple` spaces. |
+| `flattened_action`      | `np.bool`  | If the action space had to be flattened. Usually for `Dictionary` and `Tuple` spaces.|
+| `env_spec`              | `str`      | json string of the Gymnasium environment spec.|
+| `dataset_name`          | `str`      | Name tag of the Minari dataset. |
+| `code_permalink`        | `str`      | Link to a repository with the code used to generate the dataset.|
+| `author`                | `str`      | Author's name that created the dataset. |
+| `author_email`          | `str`      | Email of the author that created the dataset.|
+| `algorithm_name`        | `str`      | Name of the expert policy used to create the dataset. |
+
+For each episode group the default metadata `attributes` are:
+
+| Attribute     | Type       | Description                             |
+| ------------- | ---------- | --------------------------------------- |
+| `id`          | `np.int64` | ID of the episode, `episode_id`. |
+| `total_steps` | `np.int64` | Number of steps in the episode.         |
+| `seed`        | `np.int64` | Seed used to reset the episode.         |
+
+Statistical metrics are also computed as metadata for the individual datasets in each episode (for now only computed for `rewards` dataset)
+
+- `rewards` dataset:
+
+    | Metric | Type         | Description                                |
+    | ------ | ------------ | ------------------------------------------ |
+    | `max`  | `np.float64` | Maximum reward value in the episode.       |
+    | `min`  | `np.float64` | Minimum reward value in the episode.       |
+    | `mean` | `np.float64` | Mean value of the episode rewards.         |
+    | `std`  | `np.float64` | Standard deviation of the episode rewards. |
+    | `sum`  | `np.float64` | Total return of the episode.               |
