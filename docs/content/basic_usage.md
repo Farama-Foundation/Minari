@@ -1,63 +1,30 @@
 ---
-title: API
+title: Basic Usage
 ---
 # Basic Usage
-<div class="only-light">
-<ul class="directory-list">
-<li class="folder">minari_root
-    <ul>
-    <li class="folder">dataset_name-v0
-        <ul>
-        <li class="folder">data
-            <ul>
-            <li class="file">main_data.hdf5</li>
-            <li class="file">additional_data_0.hdf5</li>
-            <li class="file">additional_data_1.hdf5</li>
-            </ul>
-        </li>
-        </ul>
-    </li>
-    <li class="folder">dataset_name-v1
-        <ul>
-        <li class="folder">data
-            <ul>
-            <li class="file">main_data.hdf5</li>
-            </ul>
-        </li>
-        </ul>
-    </li>
-    <li class="folder-closed">other_dataset_name-v0</li>
-    </ul>
-</li>
-</ul>
-</div>
 
-<div class="only-dark">
-<ul class="directory-list">
-<li class="folder-white">minari_root
-    <ul class="white">
-    <li class="folder-white">dataset_name-v0
-        <ul class="white">
-        <li class="folder-white">data
-            <ul class="white">
-            <li class="file-white">main_data.hdf5</li>
-            <li class="file-white">additional_data_0.hdf5</li>
-            <li class="file-white">additional_data_1.hdf5</li>
-            </ul>
-        </li>
-        </ul>
-    </li>
-    <li class="folder-white">dataset_name-v1
-        <ul class="white">
-        <li class="folder-white">data
-            <ul class="white">
-            <li class="file-white">main_data.hdf5</li>
-            </ul>
-        </li>
-        </ul>
-    </li>
-    <li class="folder-white-closed">other_dataset_name-v0</li>
-    </ul>
-</li>
-</ul>
-</div>
+Minari is a standard dataset hosting interface for Offline Reinforcement Learning applications. Minari is compatible with most of the RL environments that follow the Gymnasium API and facilitates Offline RL dataset handling by providing data collection, dataset hosting, and dataset sampling capabilities.
+## Collecting Data
+
+Minari abstracts the data collection process from the environment. This is achieved by using the `DataCollectorV0` wrapper which stores the environment data in internal memory buffers before storing the dataset into disk. The `DataCollectorV0` wrapper can also perform caching by scheduling the amount of episodes or steps that are stored in-memory before saving the data in a temporary Minari dataset.
+
+The wrapper can be initialized as follows:
+
+```python
+import minari
+import gymnasium as gym
+
+env = gym.make('EnvID')
+env = minari.DataCollectorV0(env, record_infos=True, max_buffer_steps=100000)
+```
+
+## Create Minari Dataset
+
+### Checkpoint Minari Dataset
+### Combine Minari Datasets
+
+## Using Minari Datasets
+### Recover Gymnasium Environment
+
+### Sampling Episodes from Minari Dataset
+

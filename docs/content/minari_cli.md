@@ -147,7 +147,10 @@ Dataset pen-cloned-v0 deleted!
 
 If you would like to upload your own Minari dataset to the remote server please get in touch with the Farama team at [contact@farama.org](mailto:contact@farama.org). We will share with you a json encryption key file to give you permission to upload data to our GCP bucket. Then you can upload your dataset with the command `minari upload DATASETS --key-path PATH_STRING/KEY_FILE.json`.
 
-**Note**: The progress bar shown in the example below is not currently implemented in the Minari package.
+```{eval-rst}
+.. note:: 
+   The progress bar shown in the example below is not currently implemented in the Minari package.
+```
 
 <div class="termy">
 

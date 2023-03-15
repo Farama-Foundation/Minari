@@ -19,7 +19,8 @@ content/minari_cli
 :hidden:
 :caption: API
 api/minari_dataset
-
+api/minari_functions
+api/data_collector
 ```
 
 ```{toctree}
