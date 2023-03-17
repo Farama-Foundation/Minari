@@ -9,7 +9,7 @@ title: Dataset Format
 
 ### Minari root
 
-Minari stores the offline data of all datasets under a common root directory. The root directory path for the local datasets is set by default to `~/.minari/datasets/`. However, this path can be modified by setting the environment variable `MINARI_DATASETS_PATH`. 
+Minari stores the offline datasets under a common root directory. The root directory path for the local datasets is set by default to `~/.minari/datasets/`. However, this path can be modified by setting the environment variable `MINARI_DATASETS_PATH`.
 
 The remote datasets are kept in the public Google Cloud Platform (GCP) bucket [`minari-datasets`](https://console.cloud.google.com/storage/browser/minari-datasets;tab=objects?forceOnBucketsSortingFiltering=false&project=mcmes-345620&prefix=&forceOnObjectsSortingFiltering=false).
 

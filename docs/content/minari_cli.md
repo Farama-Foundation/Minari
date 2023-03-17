@@ -141,6 +141,7 @@ $ minari delete pen-cloned-v0 door-human-v0
 Dataset door-human-v0 deleted!
 Dataset pen-cloned-v0 deleted!
 ```
+
 </div>
 
 ## Upload datasets
