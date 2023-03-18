@@ -1,4 +1,5 @@
 ---
+layout: "contents"
 title: Minari CLI
 ---
 

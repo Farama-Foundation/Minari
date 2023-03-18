@@ -1,8 +1,9 @@
 ---
-title: Dataset Format
+layout: "contents"
+title: Dataset Standards
 ---
 
-# Dataset Information
+# Dataset Standards
 
 
 ## Minari Storage

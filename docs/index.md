@@ -11,7 +11,7 @@ lastpage:
 :hidden:
 :caption: Introduction
 content/basic_usage
-content/dataset_format
+content/dataset_standards
 content/minari_cli
 ```
 
@@ -25,10 +25,9 @@ api/data_collector
 
 ```{toctree}
 :hidden:
+:glob:
 :caption: Tutorials
-
-tutorials/dataset_creation
-tutorials/dataset_usage
+tutorials/**/index
 ```
 
 ```{toctree}
