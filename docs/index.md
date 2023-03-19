@@ -11,7 +11,9 @@ lastpage:
    :width: 600
 ```
 
-
+<p style="text-align: center;">
+"見習い - learning by observation"
+</p>
 
 <div class="termy">
 
