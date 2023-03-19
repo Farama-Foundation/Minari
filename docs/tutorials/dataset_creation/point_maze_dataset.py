@@ -235,7 +235,7 @@ class WaypointController:
 # we will have to truncate the dataset ourselves when a new goal is reached. This can be done by overriding the ``'truncations'`` key in the step data return when the
 # agent returns ``success=True`` in the ``'infos'`` item.
 #
-# In the ``StepDataCallback`` we can add new keys to infos that we would also want to save in our Minari dataset. For example in this
+# In the :class:`minari.StepDataCallback` we can add new keys to infos that we would also want to save in our Minari dataset. For example in this
 # case we will be generating new hdf5 datasets ``qpos``, ``qvel``, and ``goal`` in the ``infos`` subgroup of each episode group.
 #
 
@@ -265,11 +265,11 @@ class PointMazeStepDataCallback(StepDataCallback):
 # Collect Data and Create Minari Dataset
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Now we will finally perform our data collection and create the Minari dataset. This is as simple as wrapping the environment with
-# the ``DataCollectorV0`` wrapper and add the custom callback methods. Once we've done this we can step the environment with the ``WayPointController``
+# the :class:`minari.DataCollectorV0` wrapper and add the custom callback methods. Once we've done this we can step the environment with the ``WayPointController``
 # as our policy. Don't forget to initialize the environment with a ``max_episode_steps`` of ``1,000,000`` since that's the total amount of steps we want to
 # collect for our dataset and we don't want the environment to get ``truncated`` during the data collection due to a time limit.
 #
-# To create the Minari dataset we will first create the dataset by calling the function ``minari.create_dataset_from_collector_env()``, and then checkpoint the dataset
+# To create the Minari dataset we will first create the dataset by calling the function :func:`minari.create_dataset_from_collector_env`, and then checkpoint the dataset
 # every ``200,000`` steps taken by the environment.
 #
 
