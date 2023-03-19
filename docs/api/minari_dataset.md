@@ -2,7 +2,7 @@
 title: MinariDataset
 ---
 
-# Minari Dataset
+# MinariDataset
 
 ## minari.MinariDataset
 

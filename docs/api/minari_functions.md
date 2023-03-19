@@ -1,5 +1,5 @@
 
-# Minari Functions
+# Minari
 
 ## Create Minari Dataset
 

@@ -8,7 +8,7 @@ lastpage:
 
 ```{figure} _static/img/minari-text.png
    :alt: Minari Logo
-   :width: 700
+   :width: 600
 ```
 
 
@@ -53,8 +53,8 @@ content/minari_cli
 ```{toctree}
 :hidden:
 :caption: API
-api/minari_dataset
 api/minari_functions
+api/minari_dataset
 api/data_collector
 ```
 
