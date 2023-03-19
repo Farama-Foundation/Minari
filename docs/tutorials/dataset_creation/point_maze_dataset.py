@@ -29,7 +29,7 @@ from minari import DataCollectorV0, StepDataCallback
 
 # %%
 # WayPoint Planner
-# ~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~
 # Our first task is to create a method that generates a trajectory to the goal in the maze.
 # We have the advantage that the MuJoCo maze can be discretized into a grid of cells, which reduces
 # the size of the state space. The action space for this solver will also be reduced to `UP`, `DOWN`, `LEFT`,
@@ -263,7 +263,7 @@ class PointMazeStepDataCallback(StepDataCallback):
 
 # %%
 # Collect Data and Create Minari Dataset
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Now we will finally perform our data collection and create the Minari dataset. This is as simple as wrapping the environment with
 # the :class:`minari.DataCollectorV0` wrapper and add the custom callback methods. Once we've done this we can step the environment with the ``WayPointController``
 # as our policy. Don't forget to initialize the environment with a ``max_episode_steps`` of ``1,000,000`` since that's the total amount of steps we want to
