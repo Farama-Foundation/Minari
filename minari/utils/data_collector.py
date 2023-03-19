@@ -174,12 +174,13 @@ class StepDataCallback:
 
 
 class DataCollectorV0(gym.Wrapper):
-    """Gymnasium environment wrapper that collects step data.
+    r"""Gymnasium environment wrapper that collects step data.
 
     This wrapper is meant to work as a temporary buffer of the environment data before creating a Minari dataset. The creation of the buffers
     that will be convert to a Minari dataset is agnostic to the user:
 
-    ```
+    .. code::
+
         import minari
         import gymnasium as gym
 
@@ -195,7 +196,6 @@ class DataCollectorV0(gym.Wrapper):
                 env.reset()
 
         dataset = minari.create_dataset_from_collector_env(dataset_name="EnvID-dataset", collector_env=env, **kwargs)
-    ```
 
     Some of the characteristics of this wrapper:
 

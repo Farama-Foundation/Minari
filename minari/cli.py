@@ -3,7 +3,6 @@ from typing import List, Optional
 
 import typer
 from rich import print
-from rich.console import Console
 from rich.table import Table
 from rich.tree import Tree
 
@@ -47,8 +46,7 @@ def _show_dataset_table(datasets, table_title):
             dst_metadata["author_email"],
         )
 
-    console = Console()
-    console.print(table)
+    print(table)
 
 
 @app.callback()
@@ -174,10 +172,8 @@ def upload(datasets: List[str], key_path: str = typer.Option(...)):
         if remote_name in datasets
     }
     if len(matching_remote) > 0:
-        console = Console()
-        console.print(
-            "The following datasets are already present in the Farama server, please contact the Farama team at contact@farama.org to upload your datasets.",
-            style="red",
+        print(
+            "[red]The following datasets are already present in the Farama server, please contact the Farama team at contact@farama.org to upload your datasets.[/red]",
         )
         _show_dataset_table(matching_remote, "Matching datasets in Farama server")
         raise typer.Abort()
@@ -193,10 +189,8 @@ def combine(datasets: List[str], dataset_name: str = typer.Option(...)):
     local_dsts = local.list_local_datasets()
     # check dataset name doesn't exist locally
     if dataset_name in local_dsts:
-        console = Console()
-        console.print(
-            f"Dataset name {dataset_name} already exist in the local Minari datasets.",
-            style="red",
+        print(
+            f"[red]Dataset name {dataset_name} already exist in the local Minari datasets.[/red]",
         )
         raise typer.Abort()
 
@@ -215,11 +209,12 @@ def combine(datasets: List[str], dataset_name: str = typer.Option(...)):
     if len(datasets) > 1:
         minari_datasets = list(map(lambda x: local.load_dataset(x), datasets))
         combine_datasets(minari_datasets, dataset_name)
+        print(
+            f"The datasets [green]{datasets}[/green] were successfully combined into [blue]{dataset_name}[/blue]!"
+        )
     else:
-        console = Console()
-        console.print(
-            f"The list of local datasets to combine {datasets} must be of size two or greater.",
-            style="red",
+        print(
+            f"[red]The list of local datasets to combine {datasets} must be of size two or greater.[/red]",
         )
         raise typer.Abort()
 
