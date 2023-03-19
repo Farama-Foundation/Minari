@@ -29,8 +29,10 @@ minari.list_remote_datasets()
 ```
 
 ## Checking available local datasets
+
 ```python
 import minari
+
 minari.list_local_datasets()
 ```
 
