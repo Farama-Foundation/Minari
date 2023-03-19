@@ -1,1 +1,13 @@
-environments/**/*.md
+.DS_Store
+__pycache__
+.vscode/
+build/
+_build/
+
+tutorials/**/*.pickle
+tutorials/**/images/
+tutorials/**/*.rst
+tutorials/**/*.ipynb
+tutorials/**/*.zip
+!tutorials/**/README.rst
+
