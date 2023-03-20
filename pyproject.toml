@@ -1,0 +1,106 @@
+# Package ######################################################################
+
+[build-system]
+requires = ["setuptools >= 61.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "minari"
+description = "A standard format for offline reinforcement learning datasets, with popular reference datasets and related utilities."
+readme = "README.md"
+requires-python = ">= 3.7"
+authors = [{ name = "Farama Foundation", email = "contact@farama.org" }]
+license = { text = "MIT License" }
+keywords = ["Reinforcement Learning", "Offline RL", "RL", "AI", "gymnasium", "Farama"]
+classifiers = [
+    "Development Status :: 4 - Beta",  # change to `5 - Production/Stable` when ready
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    'Intended Audience :: Science/Research',
+    'Topic :: Scientific/Engineering :: Artificial Intelligence',
+]
+dependencies = [
+    "numpy >=1.21.0",
+    "h5py==3.7.0",
+    "tqdm>=4.65.0",
+    "typing_extensions==4.4.0",
+    "google-cloud-storage==2.5.0",
+    "typer[all]==0.7.0",
+    "gymnasium @ git+https://github.com/Farama-Foundation/Gymnasium.git@main",
+]
+dynamic = ["version"]
+
+[project.optional-dependencies]
+testing = [
+    "pytest ==7.1.3",
+    "gymnasium-robotics @ git+https://github.com/Farama-Foundation/Gymnasium-Robotics.git@main",
+    "imageio >=2.14.1"
+]
+
+[project.urls]
+Homepage = "https://farama.org"
+Repository = "https://github.com/Farama-Foundation/Minari"
+Documentation = "https://minari.farama.org/"
+"Bug Report" = "https://github.com/Farama-Foundation/Minari/issues"
+
+
+[project.scripts]
+minari = "minari.cli:app"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["minari", "minari.*"]
+
+# Linters and Test tools #######################################################
+
+[tool.black]
+safe = true
+
+[tool.isort]
+atomic = true
+profile = "black"
+src_paths = ["minari", "tests"]
+extra_standard_library = ["typing_extensions"]
+indent = 4
+lines_after_imports = 2
+multi_line_output = 3
+
+[tool.pyright]
+include = ["minari/**", "tests/**"]
+exclude = ["**/node_modules", "**/__pycache__"]
+strict = []
+
+typeCheckingMode = "basic"
+pythonVersion = "3.7"
+pythonPlatform = "All"
+typeshedPath = "typeshed"
+enableTypeIgnoreComments = true
+
+# This is required as the CI pre-commit does not download the module (i.e. numpy, pygame, box2d)
+#   Therefore, we have to ignore missing imports
+reportMissingImports = "none"
+# Some modules are missing type stubs, which is an issue when running pyright locally
+reportMissingTypeStubs = false
+# For warning and error, will raise an error when
+reportInvalidTypeVarUse = "none"
+
+# reportUnknownMemberType = "warning"  # -> raises 6035 warnings
+# reportUnknownParameterType = "warning"  # -> raises 1327 warnings
+# reportUnknownVariableType = "warning"  # -> raises 2585 warnings
+# reportUnknownArgumentType = "warning"  # -> raises 2104 warnings
+reportGeneralTypeIssues = "error"  # -> commented out raises 489 errors
+reportUntypedFunctionDecorator = "none"  # -> pytest.mark.parameterize issues
+
+reportPrivateUsage = "warning"
+reportUnboundVariable = "warning"
+
+[tool.pytest.ini_options]
+filterwarnings = ['ignore:.*The environment .* is out of date.*']
+# filterwarnings = ['ignore:.*step API.*:DeprecationWarning']
