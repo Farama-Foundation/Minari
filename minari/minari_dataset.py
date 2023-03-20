@@ -1,11 +1,13 @@
 from __future__ import annotations
-from dataclasses import dataclass
+
 import os
+from dataclasses import dataclass
 from typing import Callable, Iterable, List, NamedTuple, Optional, Union
+
 import gymnasium as gym
-from gymnasium.envs.registration import EnvSpec
 import h5py
 import numpy as np
+from gymnasium.envs.registration import EnvSpec
 
 from minari.data_collector import DataCollectorV0
 from minari.minari_storage import MinariStorage, PathLike
@@ -37,14 +39,12 @@ class MinariDatasetSpec:
 
 
 class MinariDataset:
-    """Main Minari dataset class to sample data and get metadata information from a dataset.
-
-    """
+    """Main Minari dataset class to sample data and get metadata information from a dataset."""
 
     def __init__(
-            self,
-            data: Union[MinariStorage, PathLike],
-            episode_indices: Optional[np.ndarray] = None
+        self,
+        data: Union[MinariStorage, PathLike],
+        episode_indices: Optional[np.ndarray] = None,
     ):
         """Initialize properties of the Minari Dataset.
 
@@ -54,7 +54,11 @@ class MinariDataset:
         """
         if isinstance(data, MinariStorage):
             self._data = data
-        elif isinstance(data, str) or isinstance(data, os.PathLike) or isinstance(data, bytes):
+        elif (
+            isinstance(data, str)
+            or isinstance(data, os.PathLike)
+            or isinstance(data, bytes)
+        ):
             self._data = MinariStorage(data)
         else:
             raise ValueError(f"Unrecognized type {type(data)} for data")
@@ -83,14 +87,14 @@ class MinariDataset:
     def total_episodes(self):
         """Total episodes recorded in the Minari dataset."""
         return len(self._episode_indices)
-    
+
     @property
     def total_steps(self):
         """Total episodes steps in the Minari dataset."""
         if self._total_steps is None:
             t_steps = self._data.apply(
-                lambda episode : episode["total_steps"],
-                episode_indices=self._episode_indices
+                lambda episode: episode["total_steps"],
+                episode_indices=self._episode_indices,
             )
             self._total_steps = sum(t_steps)
         return self._total_steps
@@ -106,10 +110,7 @@ class MinariDataset:
     def set_seed(self, seed):
         self._generator = np.random.default_rng(seed)
 
-    def filter_episodes(
-        self,
-        condition: Callable[[h5py.Group], bool]
-    ) -> MinariDataset:
+    def filter_episodes(self, condition: Callable[[h5py.Group], bool]) -> MinariDataset:
         """Filter the dataset episodes with a condition.
 
         The condition must be a callable with  a single argument, the episode HDF5 group.
@@ -123,15 +124,9 @@ class MinariDataset:
         Args:
             condition (Callable[[h5py.Group], bool]): callable that accepts an episode group and returns True if certain condition is met.
         """
-        mask = self._data.apply(
-            condition,
-            episode_indices=self._episode_indices
-        )
+        mask = self._data.apply(condition, episode_indices=self._episode_indices)
 
-        return MinariDataset(
-            self._data,
-            episode_indices=self._episode_indices[mask]
-        )
+        return MinariDataset(self._data, episode_indices=self._episode_indices[mask])
 
     def sample_episodes(self, n_episodes: int) -> Iterable[EpisodeData]:
         """Sample n number of episodes from the dataset.
@@ -140,9 +135,7 @@ class MinariDataset:
             n_episodes (Optional[int], optional): _description_..
         """
         indices = self._generator.choice(
-            self._episode_indices,
-            size=n_episodes,
-            replace=False
+            self._episode_indices, size=n_episodes, replace=False
         )
         episodes = self._data.get_episodes(indices)
         return map(lambda data: EpisodeData(**data), episodes)

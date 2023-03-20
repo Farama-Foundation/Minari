@@ -1,5 +1,6 @@
 import os
 from typing import Any, Callable, Iterable, List, Optional, Union
+
 import gymnasium as gym
 import h5py
 from gymnasium.envs.registration import EnvSpec
@@ -41,7 +42,7 @@ class MinariStorage:
             self._dataset_name = dataset_name
 
             self._combined_datasets = f.attrs.get("combined_datasets", default=[])
-            
+
             env = gym.make(self._env_spec)
 
             self._observation_space = env.observation_space
@@ -52,14 +53,14 @@ class MinariStorage:
     def apply(
         self,
         function: Callable[[h5py.Group], Any],
-        episode_indices: Optional[Iterable] = None
+        episode_indices: Optional[Iterable] = None,
     ) -> List[Any]:
         """Apply a function to a slice of the data.
 
         Args:
             function (Callable): function to apply to episodes
             episode_indices (Optional[Iterable]): epsiodes id to consider
-        
+
         Returns:
             outs (list): list of outputs returned by the function applied to episodes
         """
@@ -73,13 +74,13 @@ class MinariStorage:
                 out.append(function(ep_group))
 
         return out
-    
+
     def get_episodes(self, episode_indices: Iterable[int]) -> List[dict]:
         """Get a list of episodes
 
         Args:
             episode_indices (Iterable[int]): episodes id to return
-        
+
         Returns:
             episodes (List[dict]): list of episodes data
         """

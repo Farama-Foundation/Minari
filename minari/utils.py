@@ -1,15 +1,14 @@
-
 import os
 import warnings
 from typing import Dict, List, Optional, Union
 
 import gymnasium as gym
-from gymnasium.envs.registration import EnvSpec
 import h5py
 import numpy as np
-from minari.minari_dataset import MinariDataset
-from minari.data_collector import DataCollectorV0
+from gymnasium.envs.registration import EnvSpec
 
+from minari.data_collector import DataCollectorV0
+from minari.minari_dataset import MinariDataset
 from minari.storage.datasets_root_dir import get_dataset_path
 
 
@@ -108,7 +107,9 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_name:
                 )
 
             if combined_data_file.attrs.get("flatten_action") is None:
-                combined_data_file.attrs["flatten_action"] = dataset.spec.flatten_actions
+                combined_data_file.attrs[
+                    "flatten_action"
+                ] = dataset.spec.flatten_actions
             else:
                 if (
                     combined_data_file.attrs["flatten_action"]
@@ -151,9 +152,11 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_name:
             )
 
             # TODO: list of authors, and emails
-            with h5py.File(dataset.spec.data_path, 'r') as dataset_file:
+            with h5py.File(dataset.spec.data_path, "r") as dataset_file:
                 combined_data_file.attrs["author"] = dataset_file.attrs["author"]
-                combined_data_file.attrs["author_email"] = dataset_file.attrs["author_email"]
+                combined_data_file.attrs["author_email"] = dataset_file.attrs[
+                    "author_email"
+                ]
 
         assert current_env_spec is not None
         combined_data_file.attrs["env_spec"] = current_env_spec.to_json()
@@ -161,21 +164,23 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_name:
     return MinariDataset(new_data_path)
 
 
-def split_dataset(dataset: MinariDataset, sizes: List[int], seed: Optional[int] = None) -> List[MinariDataset]:
+def split_dataset(
+    dataset: MinariDataset, sizes: List[int], seed: Optional[int] = None
+) -> List[MinariDataset]:
     """Split a MinariDataset in multiple datasets.
 
     Args:
         dataset (MinariDataset): the MinariDataset to split
         sizes (List[int]): sizes of the resulting datasets
         seed (Optiona[int]): random seed
-    
+
     Returns:
         datasets (List[MinariDataset]): resulting list of datasets
     """
     if sum(sizes) > dataset.total_episodes:
         raise ValueError(
             "Incompatible arguments: the sum of sizes exceeds ",
-            f"the number of episodes in the dataset ({dataset.total_episodes})"
+            f"the number of episodes in the dataset ({dataset.total_episodes})",
         )
     generator = np.random.default_rng(seed=seed)
     indices = generator.permutation(dataset._episode_indices)
@@ -183,8 +188,7 @@ def split_dataset(dataset: MinariDataset, sizes: List[int], seed: Optional[int] 
     start_idx = 0
     for length in sizes:
         end_idx = start_idx + length
-        slice_dataset = MinariDataset(
-            dataset._data, indices[start_idx:end_idx])
+        slice_dataset = MinariDataset(dataset._data, indices[start_idx:end_idx])
         out_datasets.append(slice_dataset)
         start_idx = end_idx
 
