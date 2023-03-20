@@ -368,18 +368,23 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_name:
                 # the same environment.
                 if current_env_spec is None:
                     current_env_spec = dataset_env_spec
-                else:
-                    if (
-                        current_env_spec.max_episode_steps
-                        < dataset_env_spec.max_episode_steps
-                    ):
+                elif dataset_env_spec.max_episode_steps is not None:
+                    if current_env_spec.max_episode_steps is None:
                         current_env_spec.max_episode_steps = (
                             dataset_env_spec.max_episode_steps
                         )
                     else:
-                        dataset_env_spec.max_episode_steps = (
+                        if (
                             current_env_spec.max_episode_steps
-                        )
+                            < dataset_env_spec.max_episode_steps
+                        ):
+                            current_env_spec.max_episode_steps = (
+                                dataset_env_spec.max_episode_steps
+                            )
+                        else:
+                            dataset_env_spec.max_episode_steps = (
+                                current_env_spec.max_episode_steps
+                            )
 
                 if current_env_spec != dataset_env_spec:
                     raise ValueError(
