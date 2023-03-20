@@ -11,6 +11,7 @@ from gymnasium.envs.registration import EnvSpec
 
 from minari.data_collector import DataCollectorV0
 from minari.minari_storage import MinariStorage, PathLike
+from minari.utils import clear_episode_buffer
 
 
 class EpisodeData(NamedTuple):
@@ -35,7 +36,7 @@ class MinariDatasetSpec:
     combined_datasets: List[str]
     observation_space: gym.Space
     action_space: gym.Space
-    data_path: PathLike
+    data_path: str
 
 
 class MinariDataset:
@@ -78,7 +79,7 @@ class MinariDataset:
             combined_datasets=self._data.combined_datasets,
             observation_space=self._data.observation_space,
             action_space=self._data.action_space,
-            data_path=self._data.data_path,
+            data_path=str(self._data.data_path),
         )
         self._total_steps = None
         self._generator = np.random.default_rng()
@@ -98,6 +99,11 @@ class MinariDataset:
             )
             self._total_steps = sum(t_steps)
         return self._total_steps
+
+    @property
+    def episode_indices(self):
+        """Indices of the available episodes to sample within the Minari dataset."""
+        return self._episode_indices
 
     def recover_environment(self):
         """Recover the Gymnasium environment used to create the dataset.
@@ -153,7 +159,7 @@ class MinariDataset:
         """
         # check that collector env has the same characteristics as self._env_spec
         new_data_file_path = os.path.join(
-            os.path.split(self._data.data_path)[0],
+            os.path.split(self.spec.data_path)[0],
             f"additional_data_{self._extra_data_id}.hdf5",
         )
 
@@ -199,7 +205,7 @@ class MinariDataset:
             buffer (list[dict]): list of episode dictionary buffers to add to dataset
         """
         additional_steps = 0
-        with h5py.File(self.data_path, "a", track_order=True) as file:
+        with h5py.File(self.spec.data_path, "a", track_order=True) as file:
             last_episode_id = file.attrs["total_episodes"]
             for i, eps_buff in enumerate(buffer):
                 episode_id = last_episode_id + i

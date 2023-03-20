@@ -76,7 +76,7 @@ class MinariStorage:
         return out
 
     def get_episodes(self, episode_indices: Iterable[int]) -> List[dict]:
-        """Get a list of episodes
+        """Get a list of episodes.
 
         Args:
             episode_indices (Iterable[int]): episodes id to return
@@ -129,7 +129,7 @@ class MinariStorage:
 
     @property
     def env_spec(self):
-        """EnvSpec of the environment that has generated the dataset."""
+        """Envspec of the environment that has generated the dataset."""
         return self._env_spec
 
     @property

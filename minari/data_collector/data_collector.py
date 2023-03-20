@@ -427,6 +427,7 @@ class DataCollectorV0(gym.Wrapper):
 
     def close(self):
         """Close the Gymnasium environment.
+
         Clear buffer and close temporary directory.
         """
         super().close()

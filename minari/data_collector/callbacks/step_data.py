@@ -25,6 +25,7 @@ STEP_DATA_KEYS = {
 
 class StepDataCallback:
     """Callback to create step data dictionary from the return data of each Gymnasium environment step.
+
     The current callback automatically detects observation/action spaces that need
     to be flatten before saving to HDF5 file (currently only supports Dict or Tuple
     Gymnasium spaces. Text, Sequence, and Graph are currently not compatible with

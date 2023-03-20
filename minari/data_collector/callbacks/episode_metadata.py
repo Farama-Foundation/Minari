@@ -14,6 +14,7 @@ class EpisodeMetadataCallback:
 
     def __call__(self, eps_group: h5py.Group):
         """Callback method.
+
         Override this method to add custom attribute metadata to the episode group.
 
         Args:

@@ -183,12 +183,14 @@ def split_dataset(
             f"the number of episodes in the dataset ({dataset.total_episodes})",
         )
     generator = np.random.default_rng(seed=seed)
-    indices = generator.permutation(dataset._episode_indices)
+    indices = generator.permutation(dataset.episode_indices)
     out_datasets = []
     start_idx = 0
     for length in sizes:
         end_idx = start_idx + length
-        slice_dataset = MinariDataset(dataset._data, indices[start_idx:end_idx])
+        slice_dataset = MinariDataset(
+            dataset.spec.data_path, indices[start_idx:end_idx]
+        )
         out_datasets.append(slice_dataset)
         start_idx = end_idx
 
