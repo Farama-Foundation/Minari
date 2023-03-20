@@ -109,7 +109,7 @@ def download_dataset(dataset_name: str):
 
     print(f"\nDataset {dataset_name} downloaded to {file_path}")
 
-    combined_datasets = load_dataset(dataset_name).combined_datasets
+    combined_datasets = load_dataset(dataset_name).spec.combined_datasets
 
     # If the dataset is a combination of other datasets download the subdatasets recursively
     if len(combined_datasets) > 0:
