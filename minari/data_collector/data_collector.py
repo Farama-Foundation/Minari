@@ -5,12 +5,17 @@ import shutil
 import tempfile
 from typing import Any, Dict, List, Optional, SupportsFloat, Type, TypeVar, Union
 
-from minari.data_collector.callbacks import EpisodeMetadataCallback, StepDataCallback, StepData, STEP_DATA_KEYS
-
 import gymnasium as gym
 import h5py
 import numpy as np
 from gymnasium.core import ActType, ObsType
+
+from minari.data_collector.callbacks import (
+    STEP_DATA_KEYS,
+    EpisodeMetadataCallback,
+    StepData,
+    StepDataCallback,
+)
 
 
 EpisodeBufferValues = TypeVar("EpisodeBufferValues", List[Any], "EpisodeBuffer")

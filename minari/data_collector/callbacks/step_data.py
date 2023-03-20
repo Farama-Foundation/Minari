@@ -1,7 +1,8 @@
-import gymnasium as gym
-from gymnasium import spaces
 from typing import Any, Dict, Optional
 from typing_extensions import TypedDict
+
+import gymnasium as gym
+from gymnasium import spaces
 
 
 class StepData(TypedDict):
@@ -20,7 +21,6 @@ STEP_DATA_KEYS = {
     "truncations",
     "terminations",
 }
-
 
 
 class StepDataCallback:

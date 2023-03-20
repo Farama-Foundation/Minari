@@ -28,7 +28,9 @@ def _check_env_recovery(gymnasium_environment: gym.Env, dataset: MinariDataset):
     assert data_equivalence(
         recovered_env.action_space, gymnasium_environment.action_space
     )
-    assert data_equivalence(dataset.spec.action_space, gymnasium_environment.action_space)
+    assert data_equivalence(
+        dataset.spec.action_space, gymnasium_environment.action_space
+    )
 
 
 def _check_load_and_delete_dataset(dataset_name: str):
