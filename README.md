@@ -6,7 +6,7 @@ Minari is the new name of this library. Minari used to be called Kabuki.
 
 Minari is intended to be a Python library for conducting research in offline reinforcement learning, akin to an offline version of Gymnasium or an offline RL version of HuggingFace's datasets library. This library is currently in beta.
 
-More details about the features that Minari supports can be read in the documentation at https://minari.farama.org/. We also have a public discord server (which we use for Q&A and to coordinate development work) that you can join here: https://discord.gg/jfERDCSw.
+More details about the features that Minari supports can be read in the documentation at https://minari.farama.org/main/. We also have a public discord server (which we use for Q&A and to coordinate development work) that you can join here: https://discord.gg/jfERDCSw.
 
 
 ## Installation
