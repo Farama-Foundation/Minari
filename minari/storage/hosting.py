@@ -46,7 +46,7 @@ def upload_dataset(dataset_name: str, path_to_private_key: str):
 
         dataset = load_dataset(dataset_name)
 
-        with h5py.File(dataset.data_path, "r") as f:
+        with h5py.File(dataset.spec.data_path, "r") as f:
             metadata = dict(f.attrs.items())
 
         # See https://github.com/googleapis/python-storage/issues/27 for discussion on progress bars
@@ -54,9 +54,9 @@ def upload_dataset(dataset_name: str, path_to_private_key: str):
 
         print(f"Dataset {dataset_name} uploaded!")
 
-        combined_datasets = dataset.combined_datasets
+        combined_datasets = dataset.spec.combined_datasets
 
-        if len(dataset.combined_datasets) > 0:
+        if len(combined_datasets) > 0:
             print(
                 f"Dataset {dataset_name} is formed by a combination of the following datasets:"
             )
