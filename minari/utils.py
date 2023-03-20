@@ -4,6 +4,7 @@ import warnings
 from typing import Dict, List, Optional, Union
 
 import gymnasium as gym
+from gymnasium.envs.registration import EnvSpec
 import h5py
 import numpy as np
 from minari.minari_dataset import MinariDataset
@@ -66,34 +67,52 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_name:
         combined_data_file.attrs["dataset_name"] = new_dataset_name
 
         combined_data_file.attrs["combined_datasets"] = [
-            dataset.name for dataset in datasets_to_combine
+            dataset.spec.dataset_name for dataset in datasets_to_combine
         ]
+
+        current_env_spec = None
 
         for dataset in datasets_to_combine:
             if not isinstance(dataset, MinariDataset):
-                raise ValueError(
-                    f"The dataset {dataset} is not of type MinariDataset.")
+                raise ValueError(f"The dataset {dataset} is not of type MinariDataset.")
+            dataset_env_spec = dataset.spec.env_spec
 
-            with h5py.File(dataset.data_path, "r", track_order=True) as data_file:
-                group_paths = [group.name for group in data_file.values()]
-
-                if combined_data_file.attrs.get("env_spec") is None:
-                    combined_data_file.attrs["env_spec"] = data_file.attrs["env_spec"]
+            assert isinstance(dataset_env_spec, EnvSpec)
+            # We have to check that all datasets can be merged by checking that they come from the same
+            # environments. However, we override the time limit max_episode_steps with the max among all
+            # the datasets to be combined. Then we check if the rest of the env_spec attributes are from
+            # the same environment.
+            if current_env_spec is None:
+                current_env_spec = dataset_env_spec
+            elif dataset_env_spec.max_episode_steps is not None:
+                if current_env_spec.max_episode_steps is None:
+                    current_env_spec.max_episode_steps = (
+                        dataset_env_spec.max_episode_steps
+                    )
                 else:
                     if (
-                        combined_data_file.attrs["env_spec"]
-                        != data_file.attrs["env_spec"]
+                        current_env_spec.max_episode_steps
+                        < dataset_env_spec.max_episode_steps
                     ):
-                        raise ValueError(
-                            "The datasets to be combined have different values for `env_spec` attribute."
+                        current_env_spec.max_episode_steps = (
+                            dataset_env_spec.max_episode_steps
+                        )
+                    else:
+                        dataset_env_spec.max_episode_steps = (
+                            current_env_spec.max_episode_steps
                         )
 
+            if current_env_spec != dataset_env_spec:
+                raise ValueError(
+                    "The datasets to be combined have different values for `env_spec` attribute."
+                )
+
             if combined_data_file.attrs.get("flatten_action") is None:
-                combined_data_file.attrs["flatten_action"] = dataset.flatten_actions
+                combined_data_file.attrs["flatten_action"] = dataset.spec.flatten_actions
             else:
                 if (
                     combined_data_file.attrs["flatten_action"]
-                    != dataset.flatten_actions
+                    != dataset.spec.flatten_actions
                 ):
                     raise ValueError(
                         "The datasets to be combined have different values for `flatten_action` attribute."
@@ -102,11 +121,11 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_name:
             if combined_data_file.attrs.get("flatten_observation") is None:
                 combined_data_file.attrs[
                     "flatten_observation"
-                ] = dataset.flatten_observations
+                ] = dataset.spec.flatten_observations
             else:
                 if (
                     combined_data_file.attrs["flatten_observation"]
-                    != dataset.flatten_observations
+                    != dataset.spec.flatten_observations
                 ):
                     raise ValueError(
                         "The datasets to be combined have different values for `flatten_observation` attribute."
@@ -114,12 +133,12 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_name:
 
             last_episode_id = combined_data_file.attrs["total_episodes"]
 
-            for i, eps_group_path in enumerate(group_paths):
+            for id in range(dataset.total_episodes):
                 combined_data_file[
-                    f"episode_{last_episode_id + i}"
-                ] = h5py.ExternalLink(dataset.data_path, eps_group_path)
-                combined_data_file[f"episode_{last_episode_id + i}"].attrs.modify(
-                    "id", last_episode_id + i
+                    f"episode_{last_episode_id + id}"
+                ] = h5py.ExternalLink(dataset.spec.data_path, f"/episode_{id}")
+                combined_data_file[f"episode_{last_episode_id + id}"].attrs.modify(
+                    "id", last_episode_id + id
                 )
 
             # Update metadata of minari dataset
@@ -128,8 +147,16 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_name:
             )
             combined_data_file.attrs.modify(
                 "total_steps",
-                combined_data_file.attrs["total_steps"] + dataset.total_steps,
+                combined_data_file.attrs["total_steps"] + dataset.spec.total_steps,
             )
+
+            # TODO: list of authors, and emails
+            with h5py.File(dataset.spec.data_path, 'r') as dataset_file:
+                combined_data_file.attrs["author"] = dataset_file.attrs["author"]
+                combined_data_file.attrs["author_email"] = dataset_file.attrs["author_email"]
+
+        assert current_env_spec is not None
+        combined_data_file.attrs["env_spec"] = current_env_spec.to_json()
 
     return MinariDataset(new_data_path)
 
@@ -314,7 +341,7 @@ def create_dataset_from_collector_env(
 
     # Check if dataset already exists
     if not os.path.exists(dataset_path):
-        dataset_patest_and_return_nameth = os.path.join(dataset_path, "data")
+        dataset_path = os.path.join(dataset_path, "data")
         os.makedirs(dataset_path)
         data_path = os.path.join(dataset_path, "main_data.hdf5")
         collector_env.save_to_disk(

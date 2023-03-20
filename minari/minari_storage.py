@@ -40,14 +40,7 @@ class MinariStorage:
             assert isinstance(dataset_name, str)
             self._dataset_name = dataset_name
 
-            combined_datasets = f.attrs.get("combined_datasets")
-            if combined_datasets is None:
-                combined_datasets = None
-            else:
-                print(combined_datasets) 
-
-            # assert isinstance(combined_datasets, List)
-            self._combined_datasets = combined_datasets
+            self._combined_datasets = f.attrs.get("combined_datasets", default=[])
             
             env = gym.make(self._env_spec)
 

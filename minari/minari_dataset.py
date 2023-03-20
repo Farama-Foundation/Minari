@@ -33,6 +33,7 @@ class MinariDatasetSpec:
     combined_datasets: List[str]
     observation_space: gym.Space
     action_space: gym.Space
+    data_path: PathLike
 
 
 class MinariDataset:
@@ -73,6 +74,7 @@ class MinariDataset:
             combined_datasets=self._data.combined_datasets,
             observation_space=self._data.observation_space,
             action_space=self._data.action_space,
+            data_path=self._data.data_path,
         )
         self._total_steps = None
         self._generator = np.random.default_rng()
