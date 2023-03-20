@@ -53,7 +53,7 @@ class MinariDataset:
         """
         if isinstance(data, MinariStorage):
             self._data = data
-        elif isinstance(data, PathLike):
+        elif isinstance(data, str) or isinstance(data, os.PathLike) or isinstance(data, bytes):
             self._data = MinariStorage(data)
         else:
             raise ValueError(f"Unrecognized type {type(data)} for data")

@@ -7,6 +7,7 @@ import gymnasium as gym
 import h5py
 import numpy as np
 from minari.minari_dataset import MinariDataset
+from minari.data_collector import DataCollectorV0
 
 from minari.storage.datasets_root_dir import get_dataset_path
 

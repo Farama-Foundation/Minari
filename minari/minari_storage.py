@@ -18,21 +18,21 @@ class MinariStorage:
         self._data_path = data_path
         self._extra_data_id = 0
         with h5py.File(self._data_path, "r") as f:
-            flatten_observations = f.attrs["flatten_observation"]
+            flatten_observations = f.attrs["flatten_observation"].item()
             assert isinstance(flatten_observations, bool)
             self._flatten_observations = flatten_observations
 
-            flatten_actions = f.attrs["flatten_action"]
+            flatten_actions = f.attrs["flatten_action"].item()
             assert isinstance(flatten_actions, bool)
             self._flatten_actions = flatten_actions
 
             self._env_spec = EnvSpec.from_json(f.attrs["env_spec"])
 
-            total_episodes = f.attrs["total_episodes"]
+            total_episodes = f.attrs["total_episodes"].item()
             assert isinstance(total_episodes, int)
             self._total_episodes: int = total_episodes
 
-            total_steps = f.attrs["total_steps"]
+            total_steps = f.attrs["total_steps"].item()
             assert isinstance(total_steps, int)
             self._total_steps: int = total_steps
 
@@ -41,7 +41,12 @@ class MinariStorage:
             self._dataset_name = dataset_name
 
             combined_datasets = f.attrs.get("combined_datasets")
-            assert isinstance(combined_datasets, List)
+            if combined_datasets is None:
+                combined_datasets = None
+            else:
+                print(combined_datasets) 
+
+            # assert isinstance(combined_datasets, List)
             self._combined_datasets = combined_datasets
             
             env = gym.make(self._env_spec)
