@@ -77,7 +77,7 @@ class StepDataCallback:
     def __init__(self, env: gym.Env):
         self.env = env
 
-        def check_flatten_space(space: gym.spaces.Space):
+        def check_flatten_space(space: gym.Space):
             """Check if space needs to be flatten or if it's not supported by Minari.
 
             Args:
