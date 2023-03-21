@@ -163,13 +163,13 @@ class MinariDataset:
         """Sample n number of episodes from the dataset.
 
         Args:
-            n_episodes (Optional[int], optional): _description_..
+            n_episodes (Optional[int], optional): number of episodes to sample.
         """
         indices = self._generator.choice(
             self._episode_indices, size=n_episodes, replace=False
         )
         episodes = self._data.get_episodes(indices)
-        return map(lambda data: EpisodeData(**data), episodes)
+        return list(map(lambda data: EpisodeData(**data), episodes))
 
     def update_dataset_from_collector_env(self, collector_env: DataCollectorV0):
         """Add extra data to Minari dataset from collector environment buffers (DataCollectorV0).

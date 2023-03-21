@@ -1,5 +1,5 @@
 import os
-from typing import Any, Callable, Iterable, List, Optional, Union
+from typing import Any, Callable, Dict, Iterable, List, Optional, Union
 
 import gymnasium as gym
 import h5py
@@ -75,6 +75,20 @@ class MinariStorage:
 
         return out
 
+    def _filter_episode_data(self, episode: h5py.Group) -> Dict[str, Any]:
+        episode_data = {
+            "id": episode.attrs.get("id"),
+            "total_timesteps": episode.attrs.get("total_steps"),
+            "seed": episode.attrs.get("seed"),
+            "observations": episode["observations"][()],
+            "actions": episode["actions"][()],
+            "rewards": episode["rewards"][()],
+            "terminations": episode["terminations"][()],
+            "truncations": episode["truncations"][()],
+        }
+
+        return episode_data
+
     def get_episodes(self, episode_indices: Iterable[int]) -> List[dict]:
         """Get a list of episodes.
 
@@ -88,7 +102,7 @@ class MinariStorage:
         with h5py.File(self._data_path, "r") as file:
             for ep_idx in episode_indices:
                 ep_group = file[f"episode_{ep_idx}"]
-                out.append(dict(ep_group.items()))
+                out.append(self._filter_episode_data(ep_group))
 
         return out
 

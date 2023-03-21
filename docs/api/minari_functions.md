@@ -1,6 +1,11 @@
 
 # Minari
 
+```{toctree}
+:hidden:
+minari_dataset/minari_dataset
+```
+
 ## Create Minari Dataset
 
 ```{eval-rst}
