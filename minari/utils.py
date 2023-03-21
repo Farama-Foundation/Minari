@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import os
 import warnings
 from typing import Dict, List, Optional, Union
@@ -7,35 +9,9 @@ import h5py
 import numpy as np
 from gymnasium.envs.registration import EnvSpec
 
-from minari.data_collector import DataCollectorV0
-from minari.minari_dataset import MinariDataset
+from minari import DataCollectorV0
+from minari.dataset.minari_dataset import MinariDataset, clear_episode_buffer
 from minari.storage.datasets_root_dir import get_dataset_path
-
-
-def clear_episode_buffer(episode_buffer: Dict, eps_group: h5py.Group) -> h5py.Group:
-    """Save an episode dictionary buffer into an HDF5 episode group recursively.
-
-    Args:
-        episode_buffer (dict): episode buffer
-        eps_group (h5py.Group): HDF5 group to store the episode datasets
-
-    Returns:
-        episode group: filled HDF5 episode group
-    """
-    for key, data in episode_buffer.items():
-        if isinstance(data, dict):
-            if key in eps_group:
-                eps_group_to_clear = eps_group[key]
-            else:
-                eps_group_to_clear = eps_group.create_group(key)
-            clear_episode_buffer(data, eps_group_to_clear)
-        else:
-            # assert data is numpy array
-            assert np.all(np.logical_not(np.isnan(data)))
-            # add seed to attributes
-            eps_group.create_dataset(key, data=data, chunks=True)
-
-    return eps_group
 
 
 def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_name: str):

@@ -4,7 +4,7 @@ from typing import Dict, Union
 
 import h5py
 
-from minari.minari_dataset import MinariDataset
+from minari.dataset.minari_dataset import MinariDataset
 from minari.storage.datasets_root_dir import get_dataset_path
 
 
