@@ -112,6 +112,7 @@ class MinariDataset:
     @property
     def total_episodes(self):
         """Total episodes recorded in the Minari dataset."""
+        assert self._episode_indices is not None
         return len(self._episode_indices)
 
     @property
@@ -156,7 +157,7 @@ class MinariDataset:
             condition (Callable[[h5py.Group], bool]): callable that accepts an episode group and returns True if certain condition is met.
         """
         mask = self._data.apply(condition, episode_indices=self._episode_indices)
-
+        assert self._episode_indices is not None
         return MinariDataset(self._data, episode_indices=self._episode_indices[mask])
 
     def sample_episodes(self, n_episodes: int) -> Iterable[EpisodeData]:

@@ -3,9 +3,9 @@ import os
 from typing import Dict
 
 import h5py
-from google.cloud import storage  # pyright: ignore [reportGeneralTypeIssues)]
+from google.cloud import storage  # pyright: ignore [reportGeneralTypeIssues]
 from gymnasium import logger
-from tqdm.auto import tqdm
+from tqdm.auto import tqdm  # pyright: ignore [reportMissingModuleSource]
 
 from minari.storage.datasets_root_dir import get_dataset_path
 from minari.storage.local import load_dataset
