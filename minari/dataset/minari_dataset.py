@@ -40,14 +40,19 @@ def clear_episode_buffer(episode_buffer: Dict, eps_group: h5py.Group) -> h5py.Gr
 
 
 class EpisodeData(NamedTuple):
+    """Contains the datasets data for a single episode.
+
+    This is the object returned by :class:`minari.MinariDataset.sample_episodes`.
+    """
+
     id: int
+    seed: Optional[int]
+    total_timesteps: int
     observations: np.ndarray
     actions: np.ndarray
     rewards: np.ndarray
     terminations: np.ndarray
     truncations: np.ndarray
-    seed: Optional[int]
-    total_timesteps: int
 
 
 @dataclass
