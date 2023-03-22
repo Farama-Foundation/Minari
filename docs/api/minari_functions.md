@@ -4,6 +4,7 @@
 ```{toctree}
 :hidden:
 minari_dataset/minari_dataset
+minari_dataset/episode_data
 ```
 
 ## Create Minari Dataset

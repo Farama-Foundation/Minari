@@ -84,7 +84,8 @@ class StepDataCallback:
         Override this method to add additional keys or edit each environment's step returns. Additional nested dictionaries can be added to the returned step dictionary
         as follows:
 
-        ```
+        .. code::
+
             class CustomStepDataCallback(StepDataCallback):
                 def __call__(self, env, **kwargs):
                     step_data = super().__call__(env, **kwargs)
@@ -95,7 +96,6 @@ class StepDataCallback:
                     step_data['environment_states']['velocity'] = env.velocity
 
                     return step_data
-        ```
 
         The episode groups in the HDF5 file of this Minari dataset will contain a subgroup called `environment_states` with dataset `velocity` and another subgroup called `pose`
         with datasets `position` and `orientation`

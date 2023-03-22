@@ -144,7 +144,8 @@ class MinariDataset:
         """
         return gym.make(self._data.env_spec)
 
-    def set_seed(self, seed):
+    def set_seed(self, seed: int):
+        """Set seed for random episode sampling generator."""
         self._generator = np.random.default_rng(seed)
 
     def filter_episodes(self, condition: Callable[[h5py.Group], bool]) -> MinariDataset:
