@@ -1,6 +1,12 @@
 
 # Minari
 
+```{toctree}
+:hidden:
+minari_dataset/minari_dataset
+minari_dataset/episode_data
+```
+
 ## Create Minari Dataset
 
 ```{eval-rst}
@@ -12,6 +18,12 @@
 
 ```{eval-rst}
 .. autofunction:: minari.load_dataset
+```
+
+## Split Minari Dataset
+
+```{eval-rst}
+.. autofunction:: minari.split_dataset
 ```
 
 ## Download Minari Dataset

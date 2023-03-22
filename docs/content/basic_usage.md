@@ -176,14 +176,93 @@ To download any of the remote datasets into the local `Minari root path </conten
 dict_keys(['door-cloned-v0'])
 ```
 
-### Sampling Episodes from Minari Dataset
+### Sampling Episodes
 
-```{eval-rst}
-.. warning:: 
-   WIP. Currently MinariDataset doesn't support any sampling features yet, we know this is a priority feature for the users and will soon be available.
+``` {eval-rst}
+Minari can retrieve a certain amount of episode shards from the dataset files as a list of :class:`minari.EpisodeData` objects. The sampling process of the Minari datasets is performed through the method :func:`minari.MinariDataset.sample_episodes`. This method is a generator that randomly samples ``n`` number of :class:`minari.EpisodeData` from the :class:`minari.MinariDataset`. The seed of this generator can be set with :func:`minari.MinariDataset.set_seed`. For example:
 ```
 
-### Recover Gymnasium Environment
+```python
+import minari
+
+dataset = minari.load_dataset("door-cloned-v0")
+dataset.set_seed(seed=123)
+
+for i in range(5):
+    # sample 5 episodes from the dataset
+    episodes = dataset.sample_episodes(n_episodes=5)
+    # get id's from the sampled episodes
+    ids = list(map(lambda ep: ep.id, episodes))
+    print(f"EPISODE ID'S SAMPLE {i}: {ids}")
+```
+
+```{eval-rst}
+This code will show the following. 
+```
+
+```bash
+>>> EPISODE ID'S SAMPLE 0: [1, 13, 0, 22, 15]
+>>> EPISODE ID'S SAMPLE 1: [3, 10, 23, 7, 18]
+>>> EPISODE ID'S SAMPLE 2: [12, 6, 0, 18, 19]
+>>> EPISODE ID'S SAMPLE 3: [9, 4, 15, 3, 17]
+>>> EPISODE ID'S SAMPLE 4: [19, 4, 12, 17, 21]
+```
+
+```{eval-rst}
+Notice that in each sample non of the episodes are sampled more than once but the same episode can be retrieved in different :func:`minari.MinariDataset.sample_episodes` calls.
+
+Minari doesn't serve the purpose of creating replay buffers out of the Minari datasets, we leave this task for the user to make for their specific needs.
+```
+
+#### Filter Episodes
+
+```{eval-rst}
+The episodes in the dataset can be filtered before sampling. This is done with a custom conditional callable passed to :func:`minari.MinariDataset.filter_episodes`. The input to the conditional callable is an episode group in `h5py.Group <https://docs.h5py.org/en/stable/high/group.html>`_ format and the return value must be ``True`` if you want to keep the episode or ``False`` otherwise. The method will return a new :class:`minari.MinariDataset`:
+```
+
+```python
+import minari
+
+dataset = minari.load_dataset("door-human-v0")
+
+print(f'TOTAL EPISODES ORIGINAL DATASET: {dataset.total_episodes}')
+
+# get episodes with mean reward greater than 2
+filter_dataset = dataset.filter_episodes(lambda episode: episode["rewards"].attrs.get("mean") > 2)
+
+print(f'TOTAL EPISODES FILTER DATASET: {filter_dataset.total_episodes}')
+```
+
+Some episodes were removed from the dataset:
+
+```bash
+>>> TOTAL EPISODES ORIGINAL DATASET: 25
+>>> TOTAL EPISODES FILTER DATASET: 18
+```
+
+#### Split Dataset
+
+```{eval-rst}
+Minari provides another utility function to divide a dataset into multiple datasets, :func:`minari.split_dataset`
+```
+
+```python
+import minari
+
+dataset = minari.load_dataset("door-human-v0")
+
+split_datasets = minari.split_dataset(dataset, sizes=[20, 5], seed=123)
+
+print(f'TOTAL EPISODES FIRST SPLIT: {split_datasets[0].total_episodes}')
+print(f'TOTAL EPISODES SECOND SPLIT: {split_datasets[1].total_episodes}')
+```
+
+```bash
+>>> TOTAL EPISODES FIRST SPLIT: 20
+>>> TOTAL EPISODES SECOND SPLIT: 5
+```
+
+### Recover Environment
 
 ```{eval-rst}
 From a :class:`minari.MinariDataset` object we can also recover the Gymnasium environment used to create the dataset, this can be useful for reproducibility or to generate more data for a specific dataset:

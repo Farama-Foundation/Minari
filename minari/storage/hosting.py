@@ -3,9 +3,9 @@ import os
 from typing import Dict
 
 import h5py
-from google.cloud import storage  # pyright: ignore [reportGeneralTypeIssues)]
+from google.cloud import storage  # pyright: ignore [reportGeneralTypeIssues]
 from gymnasium import logger
-from tqdm.auto import tqdm
+from tqdm.auto import tqdm  # pyright: ignore [reportMissingModuleSource]
 
 from minari.storage.datasets_root_dir import get_dataset_path
 from minari.storage.local import load_dataset
@@ -46,7 +46,7 @@ def upload_dataset(dataset_name: str, path_to_private_key: str):
 
         dataset = load_dataset(dataset_name)
 
-        with h5py.File(dataset.data_path, "r") as f:
+        with h5py.File(dataset.spec.data_path, "r") as f:
             metadata = dict(f.attrs.items())
 
         # See https://github.com/googleapis/python-storage/issues/27 for discussion on progress bars
@@ -54,9 +54,9 @@ def upload_dataset(dataset_name: str, path_to_private_key: str):
 
         print(f"Dataset {dataset_name} uploaded!")
 
-        combined_datasets = dataset.combined_datasets
+        combined_datasets = dataset.spec.combined_datasets
 
-        if len(dataset.combined_datasets) > 0:
+        if len(combined_datasets) > 0:
             print(
                 f"Dataset {dataset_name} is formed by a combination of the following datasets:"
             )
@@ -109,7 +109,7 @@ def download_dataset(dataset_name: str):
 
     print(f"\nDataset {dataset_name} downloaded to {file_path}")
 
-    combined_datasets = load_dataset(dataset_name).combined_datasets
+    combined_datasets = load_dataset(dataset_name).spec.combined_datasets
 
     # If the dataset is a combination of other datasets download the subdatasets recursively
     if len(combined_datasets) > 0:

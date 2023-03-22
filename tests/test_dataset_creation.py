@@ -23,12 +23,14 @@ def _check_env_recovery(gymnasium_environment: gym.Env, dataset: MinariDataset):
         recovered_env.observation_space, gymnasium_environment.observation_space
     )
     assert data_equivalence(
-        dataset.observation_space, gymnasium_environment.observation_space
+        dataset.spec.observation_space, gymnasium_environment.observation_space
     )
     assert data_equivalence(
         recovered_env.action_space, gymnasium_environment.action_space
     )
-    assert data_equivalence(dataset.action_space, gymnasium_environment.action_space)
+    assert data_equivalence(
+        dataset.spec.action_space, gymnasium_environment.action_space
+    )
 
 
 def _check_load_and_delete_dataset(dataset_name: str):
@@ -44,7 +46,7 @@ def _check_load_and_delete_dataset(dataset_name: str):
     # load dataset
     loaded_dataset = minari.load_dataset(dataset_name)
     assert isinstance(loaded_dataset, MinariDataset)
-    assert dataset_name == loaded_dataset.name
+    assert dataset_name == loaded_dataset.spec.dataset_name
 
     # delete dataset and check that it's no longer present in local database
     minari.delete_dataset(dataset_name)

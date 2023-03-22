@@ -7,8 +7,8 @@ from rich.table import Table
 from rich.tree import Tree
 
 from minari import __version__
-from minari.minari_dataset import combine_datasets
 from minari.storage import get_dataset_path, hosting, local
+from minari.utils import combine_datasets
 
 
 app = typer.Typer()
