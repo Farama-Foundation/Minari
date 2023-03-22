@@ -292,4 +292,4 @@ Statistical metrics are also computed as metadata for the individual datasets in
     | `min`  | `np.float64` | Minimum reward value in the episode.       |
     | `mean` | `np.float64` | Mean value of the episode rewards.         |
     | `std`  | `np.float64` | Standard deviation of the episode rewards. |
-    | `sum`  | `np.float64` | Total return of the episode.               |
+    | `sum`  | `np.float64` | Total undiscounted return of the episode.  |

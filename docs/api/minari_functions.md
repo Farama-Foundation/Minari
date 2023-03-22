@@ -19,6 +19,12 @@ minari_dataset/minari_dataset
 .. autofunction:: minari.load_dataset
 ```
 
+## Split Minari Dataset
+
+```{eval-rst}
+.. autofunction:: minari.split_dataset
+```
+
 ## Download Minari Dataset
 
 ```{eval-rst}

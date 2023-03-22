@@ -11,6 +11,7 @@ from minari.utils import (
     combine_datasets,
     create_dataset_from_buffers,
     create_dataset_from_collector_env,
+    split_dataset,
 )
 
 
@@ -31,6 +32,7 @@ __all__ = [
     "combine_datasets",
     "create_dataset_from_buffers",
     "create_dataset_from_collector_env",
+    "split_dataset",
 ]
 
 __version__ = "0.3.0"
