@@ -7,12 +7,12 @@
     <meta property="og:title" content="Minari Documentation" />
     <meta property="og:type" content="website" />
     <meta property="og:description" content="" />
-    <meta property="og:url" content="https://minari.farama.org/content/minari_cli.html" /><meta name="twitter:card" content="summary_large_image"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
-<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Minari" href="../../api/minari_functions/" /><link rel="prev" title="Dataset Standards" href="../dataset_standards/" />
-        <link rel="canonical" href="https://minari.farama.org/content/minari_cli.html" />
+    <meta property="og:url" content="https://minari.farama.org/datasets/coming_soon.html" /><meta name="twitter:card" content="summary_large_image"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="prev" title="PointMaze D4RL dataset" href="../../tutorials/dataset_creation/point_maze_dataset/" />
+        <link rel="canonical" href="https://minari.farama.org/datasets/coming_soon.html" />
 
     <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07.dev1 -->
-        <title>Minari CLI - Minari Documentation</title>
+        <title>Available Minari Datasets (WIP) - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=721f65a87c37740baa8d605b09db5bec3a2987a8" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css" />
@@ -210,7 +210,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -230,10 +230,10 @@
 </form>
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../basic_usage/">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../dataset_standards/">Dataset Standards</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Minari CLI</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../content/basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../content/dataset_standards/">Dataset Standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../content/minari_cli/">Minari CLI</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
@@ -256,8 +256,8 @@
 </li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../../datasets/coming_soon/">Available Minari Datasets (WIP)</a></li>
+<ul class="current">
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Available Minari Datasets (WIP)</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul>
@@ -301,7 +301,7 @@
                 </svg>
               </button>
             </div>
-            <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
               <div class="visually-hidden">Toggle table of contents sidebar</div>
               <i class="icon"><svg>
                   <use href="#svg-toc"></use>
@@ -310,170 +310,12 @@
           </div>
           <article role="main">
             
-            <section id="minari-cli">
-<h1>Minari CLI<a class="headerlink" href="#minari-cli" title="Permalink to this heading">#</a></h1>
-<p>Minari is also packaged with some useful CLI commands. The CLI tool is build on top off <a class="reference external" href="https://typer.tiangolo.com/">Typer</a> and it will be available after installing Minari.
-The Minari CLI gives access to most of the package functions through the command-line such as listing existing datasets, downloading and deleting.</p>
-<div class="termy">
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">// Install Minari</span>
-<span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>minari
-<span class="go">---&gt; 100%</span>
-
-<span class="go">// Check Minari version</span>
-<span class="gp">$ </span>minari<span class="w"> </span>--version
-<span class="go">Minari version: 0.3.0</span>
-
-<span class="go">// Show Minari CLI commands</span>
-<span class="gp">$ </span>minari<span class="w"> </span>--help
-
-<span class="go">&lt;b&gt; &lt;/b&gt;&lt;font color=&quot;#F4BF75&quot;&gt;&lt;b&gt;Usage: &lt;/b&gt;&lt;/font&gt;&lt;b&gt;minari [OPTIONS] COMMANDS [ARGS]...                       &lt;/b&gt;</span>
-<span class="go">&lt;b&gt;                                                     &lt;/b&gt;</span>
-<span class="go">Minari is a tool for collecting and hosting Offline datasets for Reinforcement Learning environments based on the Gymnaisum API. </span>
-
-<span class="go">&lt;font color=&quot;#A5A5A1&quot;&gt;╭─ Options ─────────────────────────────────────────╮&lt;/font&gt;</span>
-<span class="go">&lt;font color=&quot;#A5A5A1&quot;&gt;│ &lt;/font&gt;&lt;font color=&quot;#A1EFE4&quot;&gt;&lt;b&gt;--version&lt;/b&gt;&lt;/font&gt;       &lt;/font&gt;&lt;font color=&quot;#03AC13&quot;&gt;&lt;b&gt;-v&lt;/b&gt;&lt;/font&gt;            Show installed      │</span>
-<span class="go">&lt;font color=&quot;#A5A5A1&quot;&gt;│                               Minari version.     │&lt;/font&gt;</span>
-<span class="go">&lt;font color=&quot;#A5A5A1&quot;&gt;│ &lt;/font&gt;&lt;font color=&quot;#A1EFE4&quot;&gt;&lt;b&gt;--help&lt;/b&gt;&lt;/font&gt;                        Show this message   │</span>
-<span class="go">&lt;font color=&quot;#A5A5A1&quot;&gt;│                               and exit.           │&lt;/font&gt;</span>
-<span class="go">&lt;font color=&quot;#A5A5A1&quot;&gt;╰───────────────────────────────────────────────────╯&lt;/font&gt;</span>
-<span class="go">&lt;font color=&quot;#A5A5A1&quot;&gt;╭─ Commands ────────────────────────────────────────╮&lt;/font&gt;</span>
-<span class="go">&lt;font color=&quot;#A5A5A1&quot;&gt;│ &lt;/font&gt;&lt;font color=&quot;#A1EFE4&quot;&gt;&lt;b&gt;combine&lt;/b&gt;&lt;/font&gt;       Combine multiple datasets into a    │</span>
-<span class="go">&lt;font color=&quot;#A5A5A1&quot;&gt;│               single Minari dataset.              │&lt;/font&gt;</span>
-<span class="go">&lt;font color=&quot;#A5A5A1&quot;&gt;│ &lt;/font&gt;&lt;font color=&quot;#A1EFE4&quot;&gt;&lt;b&gt;delete&lt;/b&gt;&lt;/font&gt;        Delete datasets from local          │</span>
-<span class="go">&lt;font color=&quot;#A5A5A1&quot;&gt;│               database.                           │&lt;/font&gt;</span>
-<span class="go">&lt;font color=&quot;#A5A5A1&quot;&gt;│ &lt;/font&gt;&lt;font color=&quot;#A1EFE4&quot;&gt;&lt;b&gt;download&lt;/b&gt;&lt;/font&gt;      Download Minari datasets from       │</span>
-<span class="go">&lt;font color=&quot;#A5A5A1&quot;&gt;│               Farama server.                      │&lt;/font&gt;</span>
-<span class="go">&lt;font color=&quot;#A5A5A1&quot;&gt;│ &lt;/font&gt;&lt;font color=&quot;#A1EFE4&quot;&gt;&lt;b&gt;list&lt;/b&gt;&lt;/font&gt;          List Minari datasets.               │</span>
-<span class="go">&lt;font color=&quot;#A5A5A1&quot;&gt;│ &lt;/font&gt;&lt;font color=&quot;#A1EFE4&quot;&gt;&lt;b&gt;upload&lt;/b&gt;&lt;/font&gt;        Upload Minari datasets to the       │</span>
-<span class="go">&lt;font color=&quot;#A5A5A1&quot;&gt;│               remote Farama server.               │&lt;/font&gt;</span>
-<span class="go">&lt;font color=&quot;#A5A5A1&quot;&gt;╰───────────────────────────────────────────────────╯&lt;/font&gt;</span>
-</pre></div>
-</div>
-</div>
-<section id="list-datasets">
-<h2>List datasets<a class="headerlink" href="#list-datasets" title="Permalink to this heading">#</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">minari</span> <span class="pre">list</span> <span class="pre">COMMAND</span></code> command shows a table with the existing Minari datasets as well as some of their metadata such as number of episodes and steps in the dataset as well as the author’s name and email.
-This command comes with other two required sub-commands:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">remote</span></code>: the Minari dataset table shows the datasets currently available in the remote Farama server.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">local</span></code>: the Minari dataset table shows the datasets currently accessible in the local device.</p></li>
-</ul>
-<div class="termy">
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">// Show local datasets.</span>
-<span class="gp">$ </span>minari<span class="w"> </span>list<span class="w"> </span><span class="nb">local</span>
-
-<span class="go">               &lt;i&gt;Local Minari datasets(&#39;.minari/&#39;)&lt;/i&gt;                   </span>
-<span class="go">┌───────────────┬───────────┬───────────┬─────────┬───────────┐ </span>
-<span class="go">│               │     &lt;b&gt;Total&lt;/b&gt; │     &lt;b&gt;Total&lt;/b&gt; │         │           │</span>
-<span class="go">│ &lt;b&gt;Name&lt;/b&gt;          │  &lt;b&gt;Episodes&lt;/b&gt; │     &lt;b&gt;Steps&lt;/b&gt; │  &lt;b&gt;Author&lt;/b&gt; │ &lt;b&gt;Email&lt;/b&gt;     │</span>
-<span class="go">┡───────────────╇───────────╇───────────╇─────────╇───────────┩</span>
-<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;pen-cloned-v0&lt;/font&gt; │      &lt;font color=&quot;#03AC13&quot;&gt;3736&lt;/font&gt; │    &lt;font color=&quot;#03AC13&quot;&gt;500000&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;rperezvic…&lt;/font&gt;│</span>
-<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;pen-expert-v0&lt;/font&gt; │      &lt;font color=&quot;#03AC13&quot;&gt;4958&lt;/font&gt; │    &lt;font color=&quot;#03AC13&quot;&gt;499206&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;rperezvic…&lt;/font&gt;│</span>
-<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;pen-human-v0&lt;/font&gt;  │        &lt;font color=&quot;#03AC13&quot;&gt;25&lt;/font&gt; │      &lt;font color=&quot;#03AC13&quot;&gt;5000&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;rperezvic…&lt;/font&gt;│</span>
-<span class="go">└───────────────┴───────────┴───────────┴─────────┴───────────┘  </span>
-
-<span class="go">// Show remote datasets.</span>
-<span class="gp">$ </span>minari<span class="w"> </span>list<span class="w"> </span>remote
-
-<span class="go">                 &lt;i&gt;Minari datasets in Farama server&lt;/i&gt;                    </span>
-<span class="go">┌────────────────┬───────────┬────────────┬─────────┬───────────┐ </span>
-<span class="go">│                │     &lt;b&gt;Total&lt;/b&gt; │      &lt;b&gt;Total&lt;/b&gt; │         │           │</span>
-<span class="go">│ &lt;b&gt;Name&lt;/b&gt;           │  &lt;b&gt;Episodes&lt;/b&gt; │      &lt;b&gt;Steps&lt;/b&gt; │  &lt;b&gt;Author&lt;/b&gt; │ &lt;b&gt;Email&lt;/b&gt;     │</span>
-<span class="go">┡────────────────╇───────────╇────────────╇─────────╇───────────┩</span>
-<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;door-cloned-v0&lt;/font&gt; │      &lt;font color=&quot;#03AC13&quot;&gt;4356&lt;/font&gt; │    &lt;font color=&quot;#03AC13&quot;&gt;1000000&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;rperezvic…&lt;/font&gt;│</span>
-<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;door-expert-v0&lt;/font&gt; │      &lt;font color=&quot;#03AC13&quot;&gt;5000&lt;/font&gt; │    &lt;font color=&quot;#03AC13&quot;&gt;1000000&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;rperezvic…&lt;/font&gt;│</span>
-<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;door-human-v0&lt;/font&gt;  │        &lt;font color=&quot;#03AC13&quot;&gt;25&lt;/font&gt; │       &lt;font color=&quot;#03AC13&quot;&gt;6729&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;rperezvic…&lt;/font&gt;│</span>
-<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;pen-cloned-v0&lt;/font&gt;  │      &lt;font color=&quot;#03AC13&quot;&gt;3736&lt;/font&gt; │     &lt;font color=&quot;#03AC13&quot;&gt;500000&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;rperezvic…&lt;/font&gt;│</span>
-<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;pen-expert-v0&lt;/font&gt;  │      &lt;font color=&quot;#03AC13&quot;&gt;4958&lt;/font&gt; │     &lt;font color=&quot;#03AC13&quot;&gt;499206&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;rperezvic…&lt;/font&gt;│</span>
-<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;pen-human-v0&lt;/font&gt;   │        &lt;font color=&quot;#03AC13&quot;&gt;25&lt;/font&gt; │       &lt;font color=&quot;#03AC13&quot;&gt;5000&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;rperezvic…&lt;/font&gt;│</span>
-<span class="go">└────────────────┴───────────┴────────────┴─────────┴───────────┘ </span>
-</pre></div>
-</div>
-</div>
-</section>
-<section id="download-datasets">
-<h2>Download datasets<a class="headerlink" href="#download-datasets" title="Permalink to this heading">#</a></h2>
-<p>With the command <code class="docutils literal notranslate"><span class="pre">minari</span> <span class="pre">download</span> <span class="pre">DATASETS</span></code> you can download a group of datasets that are available in the remote Farama server. If the dataset name already exist locally, the Minari CLI will prompt you to override the
-current content of the local dataset.</p>
-<div class="termy">
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">// Download datasets pen-cloned-v0 and door-human-v0</span>
-<span class="gp">$ </span>minari<span class="w"> </span>download<span class="w"> </span>pen-cloned-v0<span class="w"> </span>door-human-v0
-
-<span class="go">Downloading pen-expert-v0 from Farama servers...</span>
-
-<span class="go">   * Downloading data file &#39;pen-expert-v0/data/main_data.hdf5&#39; ...</span>
-
-<span class="go">---&gt; 100%</span>
-
-<span class="go">Dataset pen-expert-v0 downloaded to &lt;path-to-local-datasets&gt;/.minari/datasets/pen-expert-v0</span>
-
-<span class="go">Downloading door-human-v0 from Farama servers...</span>
-
-<span class="go">   * Downloading data file &#39;door-human-v0/data/main_data.hdf5&#39; ...</span>
-<span class="go">   </span>
-<span class="go">---&gt; 100%</span>
-
-<span class="go">Dataset door-human-v0 downloaded to &lt;path-to-local-datasets&gt;/.minari/datasets/pen-expert-v0</span>
-</pre></div>
-</div>
-</div>
-</section>
-<section id="delete-local-datasets">
-<h2>Delete local datasets<a class="headerlink" href="#delete-local-datasets" title="Permalink to this heading">#</a></h2>
-<p>Local Minari datasets can be deleted by instantiating the following command, <code class="docutils literal notranslate"><span class="pre">minari</span> <span class="pre">delete</span> <span class="pre">DATASETS</span></code>. This command will also prompt a confirmation message to proceed with the deletion of the given datasets.</p>
-<div class="termy">
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">// Delete datasets pen-cloned-v0 and door-human-v0</span>
-<span class="gp">$ </span>minari<span class="w"> </span>delete<span class="w"> </span>pen-cloned-v0<span class="w"> </span>door-human-v0
-
-<span class="go">                   &lt;i&gt;Delete local Minari datasets&lt;/i&gt;                    </span>
-<span class="go">┌────────────────┬───────────┬────────────┬─────────┬───────────┐ </span>
-<span class="go">│                │     &lt;b&gt;Total&lt;/b&gt; │      &lt;b&gt;Total&lt;/b&gt; │         │           │</span>
-<span class="go">│ &lt;b&gt;Name&lt;/b&gt;           │  &lt;b&gt;Episodes&lt;/b&gt; │      &lt;b&gt;Steps&lt;/b&gt; │  &lt;b&gt;Author&lt;/b&gt; │ &lt;b&gt;Email&lt;/b&gt;     │</span>
-<span class="go">┡────────────────╇───────────╇────────────╇─────────╇───────────┩</span>
-<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;door-human-v0&lt;/font&gt;  │        &lt;font color=&quot;#03AC13&quot;&gt;25&lt;/font&gt; │       &lt;font color=&quot;#03AC13&quot;&gt;6729&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;rperezvic…&lt;/font&gt;│</span>
-<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;pen-cloned-v0&lt;/font&gt;  │      &lt;font color=&quot;#03AC13&quot;&gt;3736&lt;/font&gt; │     &lt;font color=&quot;#03AC13&quot;&gt;500000&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;rperezvic…&lt;/font&gt;│</span>
-<span class="go">└────────────────┴───────────┴────────────┴─────────┴───────────┘ </span>
-
-<span class="gp"># </span>Are<span class="w"> </span>you<span class="w"> </span>sure<span class="w"> </span>you<span class="w"> </span>want<span class="w"> </span>to<span class="w"> </span>delete<span class="w"> </span>these<span class="w"> </span><span class="nb">local</span><span class="w"> </span>datasets?<span class="w"> </span><span class="o">[</span>y/N<span class="o">]</span>:$<span class="w"> </span>y
-
-<span class="go">Dataset door-human-v0 deleted!</span>
-<span class="go">Dataset pen-cloned-v0 deleted!</span>
-</pre></div>
-</div>
-</div>
-</section>
-<section id="upload-datasets">
-<h2>Upload datasets<a class="headerlink" href="#upload-datasets" title="Permalink to this heading">#</a></h2>
-<p>If you would like to upload your own Minari dataset to the remote server please get in touch with the Farama team at <a class="reference external" href="mailto:contact&#37;&#52;&#48;farama&#46;org">contact<span>&#64;</span>farama<span>&#46;</span>org</a>. We will share with you a json encryption key file to give you permission to upload data to our GCP bucket. Then you can upload your dataset with the command <code class="docutils literal notranslate"><span class="pre">minari</span> <span class="pre">upload</span> <span class="pre">DATASETS</span> <span class="pre">--key-path</span> <span class="pre">PATH_STRING/KEY_FILE.json</span></code>.</p>
+            <section id="available-minari-datasets-wip">
+<h1>Available Minari Datasets (WIP)<a class="headerlink" href="#available-minari-datasets-wip" title="Permalink to this heading">#</a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>The progress bar shown in the example below is not currently implemented in the Minari package.</p>
+<p>Documentation for each Minari dataset uploaded in the remote Farama server will be added soon.</p>
 </div>
-<div class="termy">
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">// Upload datasets pen-cloned-v0 and door-human-v0 to Farama server.</span>
-<span class="gp">$ </span>minari<span class="w"> </span>upload<span class="w"> </span>pen-cloned-v0<span class="w"> </span>door-human-v0<span class="w"> </span>--key-path<span class="w"> </span>/path-to-key/file-name.json
-
-<span class="go">---&gt; 100%</span>
-<span class="go">Dataset door-human-v0 uploaded!</span>
-
-<span class="go">---&gt; 100%</span>
-<span class="go">Dataset pen-cloned-v0 uploaded!</span>
-</pre></div>
-</div>
-</div>
-</section>
-<section id="combine-datasets">
-<h2>Combine datasets<a class="headerlink" href="#combine-datasets" title="Permalink to this heading">#</a></h2>
-<p>Minari datasets can also be merged together into a single dataset with the following command, <code class="docutils literal notranslate"><span class="pre">minari</span> <span class="pre">combine</span> <span class="pre">DATASETS</span> <span class="pre">--dataset-name</span> <span class="pre">NEW_DATASET_NAME</span></code>.</p>
-<div class="termy">
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">// Combine datasets pen-cloned-v0, pen-expert-v0 and pen-human-v0 into pen-all-v0.</span>
-<span class="gp">$ </span>minari<span class="w"> </span>combine<span class="w"> </span>pen-cloned-v0<span class="w"> </span>pen-expert-v0<span class="w"> </span>pen-human-v0<span class="w"> </span>--dataset-name<span class="w"> </span>pen-all-v0
-
-<span class="go">The datasets &lt;font color=&quot;#03AC13&quot;&gt;[&#39;pen-cloned-v0&#39;, &#39;pen-expert-v0&#39;, &#39;pen-human-v0&#39;]&lt;/font&gt; were successfully combined into &lt;font color=&quot;#A1EFE4&quot;&gt;pen-all-v0&lt;/font&gt;!</span>
-</pre></div>
-</div>
-</div>
-</section>
 </section>
 
           </article>
@@ -481,30 +323,8 @@ current content of the local dataset.</p>
         <footer>
           
           <div class="related-pages">
-            <a class="next-page" href="../../api/minari_functions/">
-              <div class="page-info">
-                <div class="context">
-                  <span>Next</span>
-                </div>
-                <div class="title">Minari</div>
-              </div>
-              <svg class="furo-related-icon">
-                <use href="#svg-arrow-right"></use>
-              </svg>
-            </a>
-            <a class="prev-page" href="../dataset_standards/">
-              <svg class="furo-related-icon">
-                <use href="#svg-arrow-right"></use>
-              </svg>
-              <div class="page-info">
-                <div class="context">
-                  <span>Previous</span>
-                </div>
-                
-                <div class="title">Dataset Standards</div>
-                
-              </div>
-            </a>
+            
+            
           </div>
           <div class="bottom-of-page">
             <div class="left-details">
@@ -533,31 +353,8 @@ current content of the local dataset.</p>
           
         </footer>
       </div>
-      <aside class="toc-drawer">
+      <aside class="toc-drawer no-toc">
         
-        
-        <div class="toc-sticky toc-scroll">
-          <div class="toc-title-container">
-            <span class="toc-title">
-              On this page
-            </span>
-          </div>
-          <div class="toc-tree-container">
-            <div class="toc-tree">
-              <ul>
-<li><a class="reference internal" href="#">Minari CLI</a><ul>
-<li><a class="reference internal" href="#list-datasets">List datasets</a></li>
-<li><a class="reference internal" href="#download-datasets">Download datasets</a></li>
-<li><a class="reference internal" href="#delete-local-datasets">Delete local datasets</a></li>
-<li><a class="reference internal" href="#upload-datasets">Upload datasets</a></li>
-<li><a class="reference internal" href="#combine-datasets">Combine datasets</a></li>
-</ul>
-</li>
-</ul>
-
-            </div>
-          </div>
-        </div>
         
         
       </aside>

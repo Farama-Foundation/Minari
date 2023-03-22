@@ -255,6 +255,10 @@
 </ul>
 </li>
 </ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="datasets/coming_soon/">Available Minari Datasets (WIP)</a></li>
+</ul>
 <p class="caption" role="heading"><span class="caption-text">Development</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/Minari">Github</a></li>
@@ -306,22 +310,17 @@
           </div>
           <article role="main">
             
-            <section id="minari-is-a-python-api-for-hosting-and-handling-datasets-for-offline-reinforcement-learning">
-<h1>Minari is a Python API for hosting and handling datasets for Offline Reinforcement Learning<a class="headerlink" href="#minari-is-a-python-api-for-hosting-and-handling-datasets-for-offline-reinforcement-learning" title="Permalink to this heading">#</a></h1>
-<figure class="align-default">
-<a class="reference internal image-reference" href="_images/minari-text.png"><img alt="Minari Logo" src="_images/minari-text.png" style="width: 600px;" /></a>
-</figure>
-<p style="text-align: center;">
-"見習い - learning by observation"
-</p>
+            <section id="minari-a-dataset-api-for-offline-reinforcement-learning">
+<h1>Minari, a dataset API for Offline Reinforcement Learning<a class="headerlink" href="#minari-a-dataset-api-for-offline-reinforcement-learning" title="Permalink to this heading">#</a></h1>
+<p>Minari is a Python API that hosts a collection of popular Offline Reinforcement Learning datasets. The environments from which these datasets are generated are standardized to follow the <a class="reference external" href="https://gymnasium.farama.org/">Gymnasium API</a>. The datasets are publicly available in a <a class="reference external" href="https://console.cloud.google.com/storage/browser/minari-datasets;tab=objects?forceOnBucketsSortingFiltering=false&amp;amp;project=mcmes-345620&amp;amp;prefix=&amp;amp;forceOnObjectsSortingFiltering=false">Farama GCP bucket</a> and can be downloaded through the Minari CLI as shown below. Minari also provides dataset handling features such as episode sampling, filtering trajectories with statiscal metrics or metadata, as well as data collection and dataset generation utilities.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This library is currently under beta development and minor/major changes are expected to come along in the near future.</p>
+</div>
 <div class="termy">
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">// Install Minari</span>
 <span class="gp">$ </span>pip<span class="w"> </span>install<span class="w"> </span>minari
 <span class="go">---&gt; 100%</span>
-
-<span class="go">// Check Minari version</span>
-<span class="gp">$ </span>minari<span class="w"> </span>--version
-<span class="go">Minari version: 0.3.0</span>
 
 <span class="go">// Show remote datasets.</span>
 <span class="gp">$ </span>minari<span class="w"> </span>list<span class="w"> </span>remote
@@ -334,12 +333,24 @@
 <span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;door-cloned-v0&lt;/font&gt; │      &lt;font color=&quot;#03AC13&quot;&gt;4356&lt;/font&gt; │    &lt;font color=&quot;#03AC13&quot;&gt;1000000&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Farama&lt;/font&gt;  │&lt;font color=&quot;#FF00FF&quot;&gt;@farama.org&lt;/font&gt;│</span>
 <span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;door-expert-v0&lt;/font&gt; │      &lt;font color=&quot;#03AC13&quot;&gt;5000&lt;/font&gt; │    &lt;font color=&quot;#03AC13&quot;&gt;1000000&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Farama&lt;/font&gt;  │&lt;font color=&quot;#FF00FF&quot;&gt;@farama.org&lt;/font&gt;│</span>
 <span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;door-human-v0&lt;/font&gt;  │        &lt;font color=&quot;#03AC13&quot;&gt;25&lt;/font&gt; │       &lt;font color=&quot;#03AC13&quot;&gt;6729&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Farama&lt;/font&gt;  │&lt;font color=&quot;#FF00FF&quot;&gt;@farama.org&lt;/font&gt;│</span>
-<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;pen-cloned-v0&lt;/font&gt;  │      &lt;font color=&quot;#03AC13&quot;&gt;3736&lt;/font&gt; │     &lt;font color=&quot;#03AC13&quot;&gt;500000&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Farama&lt;/font&gt;  │&lt;font color=&quot;#FF00FF&quot;&gt;@farama.org&lt;/font&gt;│</span>
-<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;pen-expert-v0&lt;/font&gt;  │      &lt;font color=&quot;#03AC13&quot;&gt;4958&lt;/font&gt; │     &lt;font color=&quot;#03AC13&quot;&gt;499206&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Farama&lt;/font&gt;  │&lt;font color=&quot;#FF00FF&quot;&gt;@farama.org&lt;/font&gt;│</span>
-<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;pen-human-v0&lt;/font&gt;   │        &lt;font color=&quot;#03AC13&quot;&gt;25&lt;/font&gt; │       &lt;font color=&quot;#03AC13&quot;&gt;5000&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Farama&lt;/font&gt;  │&lt;font color=&quot;#FF00FF&quot;&gt;@farama.org&lt;/font&gt;│</span>
 <span class="go">└────────────────┴───────────┴────────────┴─────────┴───────────┘ </span>
+
+<span class="go">// Download dataset door-cloned-v0</span>
+<span class="gp">$ </span>minari<span class="w"> </span>download<span class="w"> </span>door-cloned-v0
+<span class="go">Downloading door-cloned-v0 from Farama servers...</span>
+
+<span class="go">   * Downloading data file &#39;door-cloned-v0/data/main_data.hdf5&#39; ...</span>
+
+<span class="go">---&gt; 100%</span>
+
+<span class="go">Dataset door-cloned-v0 downloaded to &lt;path-to-local-datasets&gt;/.minari/datasets/door-cloned-v0</span>
 </pre></div>
 </div>
+</div>
+<p style="text-align: center;">
+"見習い - learning by observation"
+</p>
+<div class="toctree-wrapper compound">
 </div>
 <div class="toctree-wrapper compound">
 </div>
