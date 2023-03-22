@@ -4,16 +4,16 @@ firstpage:
 lastpage:
 ---
 
-# Minari is a Python API for hosting and handling datasets for Offline Reinforcement Learning
+# Minari, a dataset API for Offline Reinforcement Learning
 
-```{figure} _static/img/minari-text.png
-   :alt: Minari Logo
-   :width: 600
+Minari is a Python API that hosts a collection of popular Offline Reinforcement Learning datasets. The environments from which these datasets are generated are standardized to follow the [Gymnasium API](https://gymnasium.farama.org/). The datasets are publicly available in a [Farama GCP bucket](https://console.cloud.google.com/storage/browser/minari-datasets;tab=objects?forceOnBucketsSortingFiltering=false&amp;project=mcmes-345620&amp;prefix=&amp;forceOnObjectsSortingFiltering=false) and can be downloaded through the Minari CLI as shown below. Minari also provides dataset handling features such as episode sampling, filtering trajectories with statiscal metrics or metadata, as well as data collection and dataset generation utilities.
+
+```{eval-rst}
+
+.. note::
+   This library is currently under beta development and minor/major changes are expected to come along in the near future.
+
 ```
-
-<p style="text-align: center;">
-"見習い - learning by observation"
-</p>
 
 <div class="termy">
 
@@ -47,6 +47,11 @@ Dataset door-cloned-v0 downloaded to <path-to-local-datasets>/.minari/datasets/d
 
 ```
 </div>
+
+<p style="text-align: center;">
+"見習い - learning by observation"
+</p>
+
 
 ```{toctree}
 :hidden:
