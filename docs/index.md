@@ -69,6 +69,12 @@ tutorials/**/index
 
 ```{toctree}
 :hidden:
+:caption: Datasets
+datasets/coming_soon
+```
+
+```{toctree}
+:hidden:
 :caption: Development
 
 Github <https://github.com/Farama-Foundation/Minari>
