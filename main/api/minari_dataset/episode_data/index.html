@@ -7,22 +7,22 @@
     <meta property="og:title" content="Minari Documentation" />
     <meta property="og:type" content="website" />
     <meta property="og:description" content="" />
-    <meta property="og:url" content="https://minari.farama.org/tutorials/dataset_creation/index.html" /><meta name="twitter:card" content="summary_large_image"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
-<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="PointMaze D4RL dataset" href="point_maze_dataset/" /><link rel="prev" title="EpisodeMetadataCallback" href="../../api/data_collector_callbacks/episode_metadata_callback/" />
-        <link rel="canonical" href="https://minari.farama.org/tutorials/dataset_creation/index.html" />
+    <meta property="og:url" content="https://minari.farama.org/api/minari_dataset/episode_data.html" /><meta name="twitter:card" content="summary_large_image"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="DataCollectorV0" href="../../data_collector/" /><link rel="prev" title="MinariDataset" href="../minari_dataset/" />
+        <link rel="canonical" href="https://minari.farama.org/api/minari_dataset/episode_data.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07.dev1 -->
-        <title>Dataset Creation - Minari Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=721f65a87c37740baa8d605b09db5bec3a2987a8" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=b0c92cd440df7c18a0306b0433406327ff2c572f" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/termynal.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/directory_tree.css" />
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07.dev1 -->
+        <title>EpisodeData - Minari Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=721f65a87c37740baa8d605b09db5bec3a2987a8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=b0c92cd440df7c18a0306b0433406327ff2c572f" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/termynal.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/directory_tree.css" />
     
     
 
@@ -75,16 +75,16 @@
           </label>
         </div>
         <div class="farama-header__left farama-header__center--mobile">
-          <a href="../../">
-              <img class="farama-header__logo only-light" src="../../_static/img/Minari.svg" alt="Light Logo"/>
-              <img class="farama-header__logo only-dark" src="../../_static/img/Minari_White.svg" alt="Dark Logo"/>
+          <a href="../../../">
+              <img class="farama-header__logo only-light" src="../../../_static/img/Minari.svg" alt="Light Logo"/>
+              <img class="farama-header__logo only-dark" src="../../../_static/img/Minari_White.svg" alt="Dark Logo"/>
             <span class="farama-header__title">Minari Documentation</span>
           </a>
         </div>
         <div class="farama-header__right">
           <div class="farama-header-menu">
             <button class="farama-header-menu__btn" aria-label="Open Farama Menu" aria-expanded="false" aria-haspopup="true" aria-controls="farama-menu">
-              <img class="farama-black-logo-invert" src="../../_static/img/farama-logo-header.svg">
+              <img class="farama-black-logo-invert" src="../../../_static/img/farama-logo-header.svg">
               <svg viewBox="0 0 24 24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <polyline style="stroke-linecap: round; stroke-linejoin: round; fill: none; stroke-width: 2px;" points="1 7 12 18 23 7"></polyline>
               </svg>
@@ -92,7 +92,7 @@
             <div class="farama-header-menu-container farama-hidden" aria-hidden="true" id="farama-menu">
               <div class="farama-header-menu__header">
                 <a href="https://farama.org">
-                  <img class="farama-header-menu__logo farama-white-logo-invert" src="../../_static/img/farama_solid_white.svg" alt="Farama Foundation logo">
+                  <img class="farama-header-menu__logo farama-white-logo-invert" src="../../../_static/img/farama_solid_white.svg" alt="Farama Foundation logo">
                   <span>Farama Foundation</span>
                 </a>
                 <div class="farama-header-menu-header__right">
@@ -199,7 +199,7 @@
       </label>
     </div>
     <div class="header-center">
-      <a href="../../"><div class="brand">Minari Documentation</div></a>
+      <a href="../../../"><div class="brand">Minari Documentation</div></a>
     </div>
     <div class="header-right">
       <div class="theme-toggle-container theme-toggle-header">
@@ -210,7 +210,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -219,11 +219,11 @@
   <aside class="sidebar-drawer">
     <div class="sidebar-container">
       
-      <div class="sidebar-sticky"><a class="farama-sidebar__title" href="../../">
-      <img class="farama-header__logo only-light" src="../../_static/img/Minari.svg" alt="Light Logo"/>
-      <img class="farama-header__logo only-dark" src="../../_static/img/Minari_White.svg" alt="Dark Logo"/>
+      <div class="sidebar-sticky"><a class="farama-sidebar__title" href="../../../">
+      <img class="farama-header__logo only-light" src="../../../_static/img/Minari.svg" alt="Light Logo"/>
+      <img class="farama-header__logo only-dark" src="../../../_static/img/Minari_White.svg" alt="Dark Logo"/>
     <span class="farama-header__title">Minari Documentation</span>
-  </a><form class="sidebar-search-container" method="get" action="../../search/" role="search">
+  </a><form class="sidebar-search-container" method="get" action="../../../search/" role="search">
   <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
   <input type="hidden" name="check_keywords" value="yes">
   <input type="hidden" name="area" value="default">
@@ -231,27 +231,27 @@
 <div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../content/basic_usage/">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../content/dataset_standards/">Dataset Standards</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../content/minari_cli/">Minari CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../content/basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../content/dataset_standards/">Dataset Standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../content/minari_cli/">Minari CLI</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
-<ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/minari_functions/">Minari</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../api/minari_dataset/minari_dataset/">MinariDataset</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/minari_dataset/episode_data/">EpisodeData</a></li>
+<ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../../minari_functions/">Minari</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../minari_dataset/">MinariDataset</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">EpisodeData</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/data_collector/">DataCollectorV0</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../api/data_collector_callbacks/step_data_callback/">StepDataCallback</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/data_collector_callbacks/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../data_collector/">DataCollectorV0</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../data_collector_callbacks/step_data_callback/">StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data_collector_callbacks/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
 </ul>
 </li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
-<ul class="current">
-<li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">Dataset Creation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="point_maze_dataset/">PointMaze D4RL dataset</a></li>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../tutorials/dataset_creation/">Dataset Creation</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/dataset_creation/point_maze_dataset/">PointMaze D4RL dataset</a></li>
 </ul>
 </li>
 </ul>
@@ -297,7 +297,7 @@
                 </svg>
               </button>
             </div>
-            <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <label class="toc-overlay-icon toc-content-icon" for="__toc">
               <div class="visually-hidden">Toggle table of contents sidebar</div>
               <i class="icon"><svg>
                   <use href="#svg-toc"></use>
@@ -306,13 +306,72 @@
           </div>
           <article role="main">
             
-            <section id="dataset-creation">
-<span id="sphx-glr-tutorials-dataset-creation"></span><h1>Dataset Creation<a class="headerlink" href="#dataset-creation" title="Permalink to this heading">#</a></h1>
-<div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="PointMaze D4RL dataset"><img alt="PointMaze D4RL dataset" src="../../_images/sphx_glr_point_maze_dataset_thumb.png" />
-<p><a class="reference internal" href="point_maze_dataset/#sphx-glr-tutorials-dataset-creation-point-maze-dataset-py"><span class="std std-ref">PointMaze D4RL dataset</span></a></p>
-  <div class="sphx-glr-thumbnail-title">PointMaze D4RL dataset</div>
-</div></div><div class="toctree-wrapper compound">
-</div>
+            <section id="episodedata">
+<h1>EpisodeData<a class="headerlink" href="#episodedata" title="Permalink to this heading">#</a></h1>
+<section id="minari-episodedata">
+<h2>minari.EpisodeData<a class="headerlink" href="#minari-episodedata" title="Permalink to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="minari.EpisodeData">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">minari.</span></span><span class="sig-name descname"><span class="pre">EpisodeData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_timesteps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">np.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">np.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rewards</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">np.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terminations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">np.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truncations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">np.ndarray</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#minari.EpisodeData" title="Permalink to this definition">#</a></dt>
+<dd><p>Contains the datasets data for a single episode.</p>
+<p>This is the object returned by <a class="reference internal" href="../minari_dataset/#minari.MinariDataset.sample_episodes" title="minari.MinariDataset.sample_episodes"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.MinariDataset.sample_episodes</span></code></a>.</p>
+<p>Create new instance of EpisodeData(id, seed, total_timesteps, observations, actions, rewards, terminations, truncations)</p>
+</dd></dl>
+
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading">#</a></h3>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="minari.EpisodeData.id">
+<span class="sig-prename descclassname"><span class="pre">EpisodeData.</span></span><span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#minari.EpisodeData.id" title="Permalink to this definition">#</a></dt>
+<dd><p>Alias for field number 0</p>
+<p>The ID of the episode in the Minari dataset.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="minari.EpisodeData.seed">
+<span class="sig-prename descclassname"><span class="pre">EpisodeData.</span></span><span class="sig-name descname"><span class="pre">seed</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#minari.EpisodeData.seed" title="Permalink to this definition">#</a></dt>
+<dd><p>Alias for field number 1</p>
+<p>The seed used to reset this episode in the Gymnasium API.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="minari.EpisodeData.total_timesteps">
+<span class="sig-prename descclassname"><span class="pre">EpisodeData.</span></span><span class="sig-name descname"><span class="pre">total_timesteps</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#minari.EpisodeData.total_timesteps" title="Permalink to this definition">#</a></dt>
+<dd><p>Alias for field number 2</p>
+<p>The number of timesteps contained in this episode.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="minari.EpisodeData.observations">
+<span class="sig-prename descclassname"><span class="pre">EpisodeData.</span></span><span class="sig-name descname"><span class="pre">observations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#minari.EpisodeData.observations" title="Permalink to this definition">#</a></dt>
+<dd><p>Alias for field number 3</p>
+<p>The observations of the environment. The initial and final observations are included meaning that the number
+of observations will be increased by one compared to the number of timesteps</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="minari.EpisodeData.actions">
+<span class="sig-prename descclassname"><span class="pre">EpisodeData.</span></span><span class="sig-name descname"><span class="pre">actions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#minari.EpisodeData.actions" title="Permalink to this definition">#</a></dt>
+<dd><p>Alias for field number 4</p>
+<p>The actions taken in each episode timestep.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="minari.EpisodeData.terminations">
+<span class="sig-prename descclassname"><span class="pre">EpisodeData.</span></span><span class="sig-name descname"><span class="pre">terminations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#minari.EpisodeData.terminations" title="Permalink to this definition">#</a></dt>
+<dd><p>Alias for field number 6</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">terminated</span></code> value after each environment step.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="minari.EpisodeData.truncations">
+<span class="sig-prename descclassname"><span class="pre">EpisodeData.</span></span><span class="sig-name descname"><span class="pre">truncations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#minari.EpisodeData.truncations" title="Permalink to this definition">#</a></dt>
+<dd><p>Alias for field number 7</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">truncated</span></code> value after each environment step.</p>
+</dd></dl>
+
+</section>
+</section>
 </section>
 
           </article>
@@ -320,18 +379,18 @@
         <footer>
           
           <div class="related-pages">
-            <a class="next-page" href="point_maze_dataset/">
+            <a class="next-page" href="../../data_collector/">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">PointMaze D4RL dataset</div>
+                <div class="title">DataCollectorV0</div>
               </div>
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
               </svg>
             </a>
-            <a class="prev-page" href="../../api/data_collector_callbacks/episode_metadata_callback/">
+            <a class="prev-page" href="../minari_dataset/">
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
               </svg>
@@ -340,7 +399,7 @@
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">EpisodeMetadataCallback</div>
+                <div class="title">MinariDataset</div>
                 
               </div>
             </a>
@@ -372,8 +431,40 @@
           
         </footer>
       </div>
-      <aside class="toc-drawer no-toc">
+      <aside class="toc-drawer">
         
+        
+        <div class="toc-sticky toc-scroll">
+          <div class="toc-title-container">
+            <span class="toc-title">
+              On this page
+            </span>
+          </div>
+          <div class="toc-tree-container">
+            <div class="toc-tree">
+              <ul>
+<li><a class="reference internal" href="#">EpisodeData</a><ul>
+<li><a class="reference internal" href="#minari-episodedata">minari.EpisodeData</a><ul>
+<li><a class="reference internal" href="#minari.EpisodeData"><code class="docutils literal notranslate"><span class="pre">EpisodeData</span></code></a></li>
+<li><a class="reference internal" href="#attributes">Attributes</a><ul>
+<li><a class="reference internal" href="#minari.EpisodeData.id"><code class="docutils literal notranslate"><span class="pre">EpisodeData.id</span></code></a></li>
+<li><a class="reference internal" href="#minari.EpisodeData.seed"><code class="docutils literal notranslate"><span class="pre">EpisodeData.seed</span></code></a></li>
+<li><a class="reference internal" href="#minari.EpisodeData.total_timesteps"><code class="docutils literal notranslate"><span class="pre">EpisodeData.total_timesteps</span></code></a></li>
+<li><a class="reference internal" href="#minari.EpisodeData.observations"><code class="docutils literal notranslate"><span class="pre">EpisodeData.observations</span></code></a></li>
+<li><a class="reference internal" href="#minari.EpisodeData.actions"><code class="docutils literal notranslate"><span class="pre">EpisodeData.actions</span></code></a></li>
+<li><a class="reference internal" href="#minari.EpisodeData.terminations"><code class="docutils literal notranslate"><span class="pre">EpisodeData.terminations</span></code></a></li>
+<li><a class="reference internal" href="#minari.EpisodeData.truncations"><code class="docutils literal notranslate"><span class="pre">EpisodeData.truncations</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            </div>
+          </div>
+        </div>
         
         
       </aside>
@@ -433,12 +524,12 @@
         gtag('config', 'G-R5TRTT6R78');
       </script>
 
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
-    <script src="../../_static/scripts/furo.js"></script>
-    <script src="../../_static/js/termynal.js"></script>
-    <script src="../../_static/js/custom.js"></script>
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/scripts/furo.js"></script>
+    <script src="../../../_static/js/termynal.js"></script>
+    <script src="../../../_static/js/custom.js"></script>
     
     <script>
       const createCORSRequest = (method, url) => {

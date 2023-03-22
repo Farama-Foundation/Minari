@@ -7,12 +7,12 @@
     <meta property="og:title" content="Minari Documentation" />
     <meta property="og:type" content="website" />
     <meta property="og:description" content="" />
-    <meta property="og:url" content="https://minari.farama.org/api/data_collector_callbacks/step_data_callback.html" /><meta name="twitter:card" content="summary_large_image"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
-<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="EpisodeMetadataCallback" href="../episode_metadata_callback/" /><link rel="prev" title="DataCollectorV0" href="../../data_collector/" />
-        <link rel="canonical" href="https://minari.farama.org/api/data_collector_callbacks/step_data_callback.html" />
+    <meta property="og:url" content="https://minari.farama.org/api/minari_dataset/minari_dataset.html" /><meta name="twitter:card" content="summary_large_image"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="EpisodeData" href="../episode_data/" /><link rel="prev" title="Minari" href="../../minari_functions/" />
+        <link rel="canonical" href="https://minari.farama.org/api/minari_dataset/minari_dataset.html" />
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 6.1.3 and Furo 2022.12.07.dev1 -->
-        <title>StepDataCallback - Minari Documentation</title>
+        <title>MinariDataset - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=721f65a87c37740baa8d605b09db5bec3a2987a8" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css" />
@@ -237,14 +237,14 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="current">
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../minari_functions/">Minari</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../minari_dataset/minari_dataset/">MinariDataset</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../minari_dataset/episode_data/">EpisodeData</a></li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../../minari_functions/">Minari</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">MinariDataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../episode_data/">EpisodeData</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../../data_collector/">DataCollectorV0</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">StepDataCallback</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../episode_metadata_callback/">EpisodeMetadataCallback</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../data_collector/">DataCollectorV0</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../data_collector_callbacks/step_data_callback/">StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data_collector_callbacks/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
 </ul>
 </li>
 </ul>
@@ -306,62 +306,133 @@
           </div>
           <article role="main">
             
-            <section id="stepdatacallback">
-<h1>StepDataCallback<a class="headerlink" href="#stepdatacallback" title="Permalink to this heading">#</a></h1>
-<section id="minari-stepdatacallback">
-<h2>minari.StepDataCallback<a class="headerlink" href="#minari-stepdatacallback" title="Permalink to this heading">#</a></h2>
+            <section id="minaridataset">
+<h1>MinariDataset<a class="headerlink" href="#minaridataset" title="Permalink to this heading">#</a></h1>
+<section id="minari-minaridataset">
+<h2>minari.MinariDataset<a class="headerlink" href="#minari-minaridataset" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
-<dt class="sig sig-object py" id="minari.StepDataCallback">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">minari.</span></span><span class="sig-name descname"><span class="pre">StepDataCallback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Env</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#minari.StepDataCallback" title="Permalink to this definition">#</a></dt>
-<dd><p>Callback to create step data dictionary from the return data of each Gymnasium environment step.</p>
-<p>The current callback automatically detects observation/action spaces that need
-to be flatten before saving to HDF5 file (currently only supports Dict or Tuple
-Gymnasium spaces. Text, Sequence, and Graph are currently not compatible with
-Minari).</p>
-<p>This callback can be overridden to add extra environment information in each step or
-edit the observation, action, reward, termination, truncation, or info returns.</p>
+<dt class="sig sig-object py" id="minari.MinariDataset">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">minari.</span></span><span class="sig-name descname"><span class="pre">MinariDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MinariStorage</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">bytes</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">episode_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#minari.MinariDataset" title="Permalink to this definition">#</a></dt>
+<dd><p>Main Minari dataset class to sample data and get metadata information from a dataset.</p>
+<p>Initialize properties of the Minari Dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>Union</em><em>[</em><em>MinariStorage</em><em>, </em><em>_PathLike</em><em>]</em>) – source of data.</p></li>
+<li><p><strong>episode_indices</strong> (<em>Optiona</em><em>[</em><em>np.ndarray</em><em>]</em>) – slice of episode indices this dataset is pointing to.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <section id="methods">
 <h3>Methods<a class="headerlink" href="#methods" title="Permalink to this heading">#</a></h3>
 <dl class="py function">
-<dt class="sig sig-object py" id="minari.StepDataCallback.__call__">
-<span class="sig-prename descclassname"><span class="pre">minari.StepDataCallback.</span></span><span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">info</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rew</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terminated</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truncated</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">StepData</span></span></span><a class="headerlink" href="#minari.StepDataCallback.__call__" title="Permalink to this definition">#</a></dt>
-<dd><p>Callback method.</p>
-<p>The input arguments belong to a Gymnasium stepping transition: <cite>obs, rew, terminated, truncated, info = env.step(action)</cite>.
-Override this method to add additional keys or edit each environment’s step returns. Additional nested dictionaries can be added to the returned step dictionary
-as follows:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">CustomStepDataCallback</span><span class="p">(</span><span class="n">StepDataCallback</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">step_data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">step_data</span><span class="p">[</span><span class="s1">&#39;environment_states&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">step_data</span><span class="p">[</span><span class="s1">&#39;environment_states&#39;</span><span class="p">][</span><span class="s1">&#39;pose&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
-        <span class="n">step_data</span><span class="p">[</span><span class="s1">&#39;environment_states&#39;</span><span class="p">][</span><span class="s1">&#39;pose&#39;</span><span class="p">][</span><span class="s1">&#39;position&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">position</span>
-        <span class="n">step_data</span><span class="p">[</span><span class="s1">&#39;environment_states&#39;</span><span class="p">][</span><span class="s1">&#39;pose&#39;</span><span class="p">][</span><span class="s1">&#39;orientation&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">orientation</span>
-        <span class="n">step_data</span><span class="p">[</span><span class="s1">&#39;environment_states&#39;</span><span class="p">][</span><span class="s1">&#39;velocity&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">velocity</span>
-
-        <span class="k">return</span> <span class="n">step_data</span>
-</pre></div>
-</div>
-<p>The episode groups in the HDF5 file of this Minari dataset will contain a subgroup called <cite>environment_states</cite> with dataset <cite>velocity</cite> and another subgroup called <cite>pose</cite>
-with datasets <cite>position</cite> and <cite>orientation</cite></p>
+<dt class="sig sig-object py" id="minari.MinariDataset.sample_episodes">
+<span class="sig-prename descclassname"><span class="pre">minari.MinariDataset.</span></span><span class="sig-name descname"><span class="pre">sample_episodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_episodes</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../episode_data/#minari.EpisodeData" title="minari.dataset.minari_dataset.EpisodeData"><span class="pre">EpisodeData</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#minari.MinariDataset.sample_episodes" title="Permalink to this definition">#</a></dt>
+<dd><p>Sample n number of episodes from the dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>env</strong> (<em>gym.Env</em>) – current Gymnasium environment.</p></li>
-<li><p><strong>obs</strong> (<em>Any</em>) – observation returned by <cite>env.step(action)</cite></p></li>
-<li><p><strong>info</strong> (<em>Dict</em>) – information dictionary returned by <cite>env.step(action)</cite></p></li>
-<li><p><strong>action</strong> (<em>Optional</em><em>[</em><em>Any</em><em>]</em><em>, </em><em>optional</em>) – stepping action in <cite>env.step(action)</cite>. Defaults to None.</p></li>
-<li><p><strong>rew</strong> (<em>Optional</em><em>[</em><em>Any</em><em>]</em><em>, </em><em>optional</em>) – reward returned by <cite>env.step(action)</cite>. Defaults to None.</p></li>
-<li><p><strong>terminated</strong> (<em>Optional</em><em>[</em><em>Any</em><em>]</em><em>, </em><em>optional</em>) – terminated returned by <cite>env.step(action)</cite>. Defaults to None.</p></li>
-<li><p><strong>truncated</strong> (<em>Optional</em><em>[</em><em>Any</em><em>]</em><em>, </em><em>optional</em>) – truncated returned by <cite>env.step(action)</cite>. Defaults to None.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>Dict</strong> – dictionary step data. Must contain the keys in STEP_DATA_KEYS = {‘actions’, ‘observations’,
-‘rewards’, ‘terminations’, ‘truncations’, ‘infos’}. Additional key’s can be added with nested dictionaries</p>
+<dd class="field-odd"><p><strong>n_episodes</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – number of episodes to sample.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="minari.MinariDataset.filter_episodes">
+<span class="sig-prename descclassname"><span class="pre">minari.MinariDataset.</span></span><span class="sig-name descname"><span class="pre">filter_episodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Group</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#minari.MinariDataset" title="minari.dataset.minari_dataset.MinariDataset"><span class="pre">MinariDataset</span></a></span></span><a class="headerlink" href="#minari.MinariDataset.filter_episodes" title="Permalink to this definition">#</a></dt>
+<dd><p>Filter the dataset episodes with a condition.</p>
+<p>The condition must be a callable with  a single argument, the episode HDF5 group.
+The callable must return a <cite>bool</cite> True if the condition is met and False otherwise.
+i.e filtering for episodes that terminate:</p>
+<p><code class="docutils literal notranslate"><span class="pre">`</span>
+<span class="pre">dataset.filter(condition=lambda</span> <span class="pre">x:</span> <span class="pre">x['terminations'][-1]</span> <span class="pre">)</span>
+<span class="pre">`</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>condition</strong> (<em>Callable</em><em>[</em><em>[</em><em>h5py.Group</em><em>]</em><em>, </em><em>bool</em><em>]</em>) – callable that accepts an episode group and returns True if certain condition is met.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="minari.MinariDataset.set_seed">
+<span class="sig-prename descclassname"><span class="pre">minari.MinariDataset.</span></span><span class="sig-name descname"><span class="pre">set_seed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#minari.MinariDataset.set_seed" title="Permalink to this definition">#</a></dt>
+<dd><p>Set seed for random episode sampling generator.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="minari.MinariDataset.recover_environment">
+<span class="sig-prename descclassname"><span class="pre">minari.MinariDataset.</span></span><span class="sig-name descname"><span class="pre">recover_environment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#minari.MinariDataset.recover_environment" title="Permalink to this definition">#</a></dt>
+<dd><p>Recover the Gymnasium environment used to create the dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>environment</strong> – Gymnasium environment</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="minari.MinariDataset.update_dataset_from_collector_env">
+<span class="sig-prename descclassname"><span class="pre">minari.MinariDataset.</span></span><span class="sig-name descname"><span class="pre">update_dataset_from_collector_env</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">collector_env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../data_collector/#minari.DataCollectorV0" title="minari.data_collector.data_collector.DataCollectorV0"><span class="pre">DataCollectorV0</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#minari.MinariDataset.update_dataset_from_collector_env" title="Permalink to this definition">#</a></dt>
+<dd><p>Add extra data to Minari dataset from collector environment buffers (DataCollectorV0).</p>
+<p>This method can be used as a checkpoint when creating a dataset.
+A new HDF5 file will be created with the new dataset file in the same directory as <cite>main_data.hdf5</cite> called
+<cite>additional_data_i.hdf5</cite>. Both datasets are joined together by creating external links to each additional
+episode group: <a class="reference external" href="https://docs.h5py.org/en/stable/high/group.html#external-links">https://docs.h5py.org/en/stable/high/group.html#external-links</a></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>collector_env</strong> (<a class="reference internal" href="../../data_collector/#minari.DataCollectorV0" title="minari.DataCollectorV0"><em>DataCollectorV0</em></a>) – Collector environment</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="minari.MinariDataset.update_dataset_from_buffer">
+<span class="sig-prename descclassname"><span class="pre">minari.MinariDataset.</span></span><span class="sig-name descname"><span class="pre">update_dataset_from_buffer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#minari.MinariDataset.update_dataset_from_buffer" title="Permalink to this definition">#</a></dt>
+<dd><p>Additional data can be added to the Minari Dataset from a list of episode dictionary buffers.</p>
+<dl class="simple">
+<dt>Each episode dictionary buffer must have the following items:</dt><dd><ul class="simple">
+<li><p><cite>observations</cite>: np.ndarray of step observations. shape = (total_episode_steps + 1, (observation_shape)). Should include initial and final observation</p></li>
+<li><p><cite>actions</cite>: np.ndarray of step action. shape = (total_episode_steps + 1, (action_shape)).</p></li>
+<li><p><cite>rewards</cite>: np.ndarray of step rewards. shape = (total_episode_steps + 1, 1).</p></li>
+<li><p><cite>terminations</cite>: np.ndarray of step terminations. shape = (total_episode_steps + 1, 1).</p></li>
+<li><p><cite>truncations</cite>: np.ndarray of step truncations. shape = (total_episode_steps + 1, 1).</p></li>
+</ul>
+</dd>
+</dl>
+<p>Other additional items can be added as long as the values are np.ndarray’s or other nested dictionaries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>buffer</strong> (<em>list</em><em>[</em><em>dict</em><em>]</em>) – list of episode dictionary buffers to add to dataset</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading">#</a></h3>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="minari.MinariDataset.spec">
+<span class="sig-prename descclassname"><span class="pre">MinariDataset.</span></span><span class="sig-name descname"><span class="pre">spec</span></span><a class="headerlink" href="#minari.MinariDataset.spec" title="Permalink to this definition">#</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="minari.MinariDataset.total_steps">
+<span class="sig-prename descclassname"><span class="pre">MinariDataset.</span></span><span class="sig-name descname"><span class="pre">total_steps</span></span><a class="headerlink" href="#minari.MinariDataset.total_steps" title="Permalink to this definition">#</a></dt>
+<dd><p>Total episodes steps in the Minari dataset.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="minari.MinariDataset.total_episodes">
+<span class="sig-prename descclassname"><span class="pre">MinariDataset.</span></span><span class="sig-name descname"><span class="pre">total_episodes</span></span><a class="headerlink" href="#minari.MinariDataset.total_episodes" title="Permalink to this definition">#</a></dt>
+<dd><p>Total episodes recorded in the Minari dataset.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="minari.MinariDataset.episode_indices">
+<span class="sig-prename descclassname"><span class="pre">MinariDataset.</span></span><span class="sig-name descname"><span class="pre">episode_indices</span></span><a class="headerlink" href="#minari.MinariDataset.episode_indices" title="Permalink to this definition">#</a></dt>
+<dd><p>Indices of the available episodes to sample within the Minari dataset.</p>
 </dd></dl>
 
 </section>
@@ -373,18 +444,18 @@ with datasets <cite>position</cite> and <cite>orientation</cite></p>
         <footer>
           
           <div class="related-pages">
-            <a class="next-page" href="../episode_metadata_callback/">
+            <a class="next-page" href="../episode_data/">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">EpisodeMetadataCallback</div>
+                <div class="title">EpisodeData</div>
               </div>
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
               </svg>
             </a>
-            <a class="prev-page" href="../../data_collector/">
+            <a class="prev-page" href="../../minari_functions/">
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
               </svg>
@@ -393,7 +464,7 @@ with datasets <cite>position</cite> and <cite>orientation</cite></p>
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">DataCollectorV0</div>
+                <div class="title">Minari</div>
                 
               </div>
             </a>
@@ -437,11 +508,23 @@ with datasets <cite>position</cite> and <cite>orientation</cite></p>
           <div class="toc-tree-container">
             <div class="toc-tree">
               <ul>
-<li><a class="reference internal" href="#">StepDataCallback</a><ul>
-<li><a class="reference internal" href="#minari-stepdatacallback">minari.StepDataCallback</a><ul>
-<li><a class="reference internal" href="#minari.StepDataCallback"><code class="docutils literal notranslate"><span class="pre">StepDataCallback</span></code></a></li>
+<li><a class="reference internal" href="#">MinariDataset</a><ul>
+<li><a class="reference internal" href="#minari-minaridataset">minari.MinariDataset</a><ul>
+<li><a class="reference internal" href="#minari.MinariDataset"><code class="docutils literal notranslate"><span class="pre">MinariDataset</span></code></a></li>
 <li><a class="reference internal" href="#methods">Methods</a><ul>
-<li><a class="reference internal" href="#minari.StepDataCallback.__call__"><code class="docutils literal notranslate"><span class="pre">__call__()</span></code></a></li>
+<li><a class="reference internal" href="#minari.MinariDataset.sample_episodes"><code class="docutils literal notranslate"><span class="pre">sample_episodes()</span></code></a></li>
+<li><a class="reference internal" href="#minari.MinariDataset.filter_episodes"><code class="docutils literal notranslate"><span class="pre">filter_episodes()</span></code></a></li>
+<li><a class="reference internal" href="#minari.MinariDataset.set_seed"><code class="docutils literal notranslate"><span class="pre">set_seed()</span></code></a></li>
+<li><a class="reference internal" href="#minari.MinariDataset.recover_environment"><code class="docutils literal notranslate"><span class="pre">recover_environment()</span></code></a></li>
+<li><a class="reference internal" href="#minari.MinariDataset.update_dataset_from_collector_env"><code class="docutils literal notranslate"><span class="pre">update_dataset_from_collector_env()</span></code></a></li>
+<li><a class="reference internal" href="#minari.MinariDataset.update_dataset_from_buffer"><code class="docutils literal notranslate"><span class="pre">update_dataset_from_buffer()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#attributes">Attributes</a><ul>
+<li><a class="reference internal" href="#minari.MinariDataset.spec"><code class="docutils literal notranslate"><span class="pre">MinariDataset.spec</span></code></a></li>
+<li><a class="reference internal" href="#minari.MinariDataset.total_steps"><code class="docutils literal notranslate"><span class="pre">MinariDataset.total_steps</span></code></a></li>
+<li><a class="reference internal" href="#minari.MinariDataset.total_episodes"><code class="docutils literal notranslate"><span class="pre">MinariDataset.total_episodes</span></code></a></li>
+<li><a class="reference internal" href="#minari.MinariDataset.episode_indices"><code class="docutils literal notranslate"><span class="pre">MinariDataset.episode_indices</span></code></a></li>
 </ul>
 </li>
 </ul>

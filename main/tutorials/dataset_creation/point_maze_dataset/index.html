@@ -237,9 +237,12 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/minari_functions/">Minari</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/minari_dataset/">MinariDataset</a></li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/data_collector/">DataCollectorV0</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/minari_functions/">Minari</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/minari_dataset/minari_dataset/">MinariDataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/minari_dataset/episode_data/">EpisodeData</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/data_collector/">DataCollectorV0</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector_callbacks/step_data_callback/">StepDataCallback</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector_callbacks/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
 </ul>
@@ -247,7 +250,7 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="current">
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../">Dataset Creation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../">Dataset Creation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">PointMaze D4RL dataset</a></li>
 </ul>
 </li>
@@ -306,7 +309,7 @@
             <section class="sphx-glr-example-title" id="pointmaze-d4rl-dataset">
 <span id="sphx-glr-tutorials-dataset-creation-point-maze-dataset-py"></span><h1>PointMaze D4RL dataset<a class="headerlink" href="#pointmaze-d4rl-dataset" title="Permalink to this heading">#</a></h1>
 <p>In this tutorial you will learn how to re-create the Maze2D datasets from <a class="reference external" href="https://sites.google.com/view/d4rl/home">D4RL</a> [1] with Minari.
-We will be using the refactor version of the PoinMaze environments in <a class="reference external" href="https://robotics.farama.org/envs/maze/point_maze/">Gymnasium-Robotics</a> which support the Gymnasium API as well as the latest
+We will be using the refactor version of the PointMaze environments in <a class="reference external" href="https://robotics.farama.org/envs/maze/point_maze/">Gymnasium-Robotics</a> which support the Gymnasium API as well as the latest
 MuJoCo python bindings.</p>
 <dl class="simple">
 <dt>Lets start by breaking down the steps to generate these datasets:</dt><dd><ol class="arabic simple">
@@ -317,9 +320,9 @@ MuJoCo python bindings.</p>
 </ol>
 </dd>
 </dl>
-<p>For this tutorial we will be using the <cite>pointmaze-medium-v3</cite> environment to collect 1,000,000 transitions. However, any map implementation in the PointMaze environment group can be used.
-Another important factor to take into account is that the environment is continuing, which means that it won’t be <cite>terminated</cite> when reaching a goal. Instead a new goal target will be randomly selected and the agent
-will start from the location it’s currently at (no <cite>env.reset()</cite> required).</p>
+<p>For this tutorial we will be using the <code class="docutils literal notranslate"><span class="pre">pointmaze-medium-v3</span></code> environment to collect 1,000,000 transitions. However, any map implementation in the PointMaze environment group can be used.
+Another important factor to take into account is that the environment is continuing, which means that it won’t be <code class="docutils literal notranslate"><span class="pre">terminated</span></code> when reaching a goal. Instead a new goal target will be randomly selected and the agent
+will start from the location it’s currently at (no <code class="docutils literal notranslate"><span class="pre">env.reset()</span></code> required).</p>
 <p>Lets start by importing the required modules for this tutorial:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -332,8 +335,8 @@ will start from the location it’s currently at (no <cite>env.reset()</cite> re
 <h2>WayPoint Planner<a class="headerlink" href="#waypoint-planner" title="Permalink to this heading">#</a></h2>
 <p>Our first task is to create a method that generates a trajectory to the goal in the maze.
 We have the advantage that the MuJoCo maze can be discretized into a grid of cells, which reduces
-the size of the state space. The action space for this solver will also be reduced to <cite>UP</cite>, <cite>DOWN</cite>, <cite>LEFT</cite>,
-and <cite>RIGHT</cite>. The solution trajectories will then be a set of waypoints that the agent has to follow to reach the
+the size of the state space. The action space for this solver will also be reduced to <code class="docutils literal notranslate"><span class="pre">UP</span></code>, <code class="docutils literal notranslate"><span class="pre">DOWN</span></code>, <code class="docutils literal notranslate"><span class="pre">LEFT</span></code>,
+and <code class="docutils literal notranslate"><span class="pre">RIGHT</span></code>. The solution trajectories will then be a set of waypoints that the agent has to follow to reach the
 goal.
 We can simply use a variation of Dynamic Programming to generate the trajectories. The method chosen in the D4RL[1] publication
 is that of Value Iteration, specifically Q-Value Iteration[2]. We will obtain the optimal Q-values by doing a series of Bellman
@@ -467,7 +470,7 @@ references.</p>
 \[\tau = k_{p}(p_{goal} - p_{agent}) + k_{d}v_{agent}\]</div>
 </div>
 <p>Each target position in the waypoint trajectory is converted from discrete to a continuous value by adding some noise to
-the <cite>x</cite> and <cite>y</cite> coordinates. This will allow to add more variance in the trajectories generated for the offline dataset.</p>
+the <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> coordinates. This will allow to add more variance in the trajectories generated for the offline dataset.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">WaypointController</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Agent controller to follow waypoints in the maze.</span>
 

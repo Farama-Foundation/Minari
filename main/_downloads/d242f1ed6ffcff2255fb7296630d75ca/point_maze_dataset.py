@@ -5,7 +5,7 @@ PointMaze D4RL dataset
 """
 # %%%
 # In this tutorial you will learn how to re-create the Maze2D datasets from `D4RL <https://sites.google.com/view/d4rl/home>`_ [1] with Minari.
-# We will be using the refactor version of the PoinMaze environments in `Gymnasium-Robotics <https://robotics.farama.org/envs/maze/point_maze/>`_ which support the Gymnasium API as well as the latest
+# We will be using the refactor version of the PointMaze environments in `Gymnasium-Robotics <https://robotics.farama.org/envs/maze/point_maze/>`_ which support the Gymnasium API as well as the latest
 # MuJoCo python bindings.
 #
 # Lets start by breaking down the steps to generate these datasets:
@@ -14,9 +14,9 @@ PointMaze D4RL dataset
 #   2. Then we also need to generate the actions so that the agent can follow the waypoints of the trajectory. For this purpose D4RL implements a PD controller.
 #   3. Finally, to create the Minari dataset, we will wrap the environment with a :class:`minari.DataCollectorV0` and step through it by generating actions with the path planner and waypoint controller.
 #
-# For this tutorial we will be using the `pointmaze-medium-v3` environment to collect 1,000,000 transitions. However, any map implementation in the PointMaze environment group can be used.
-# Another important factor to take into account is that the environment is continuing, which means that it won't be `terminated` when reaching a goal. Instead a new goal target will be randomly selected and the agent
-# will start from the location it's currently at (no `env.reset()` required).
+# For this tutorial we will be using the ``pointmaze-medium-v3`` environment to collect 1,000,000 transitions. However, any map implementation in the PointMaze environment group can be used.
+# Another important factor to take into account is that the environment is continuing, which means that it won't be ``terminated`` when reaching a goal. Instead a new goal target will be randomly selected and the agent
+# will start from the location it's currently at (no ``env.reset()`` required).
 #
 # Lets start by importing the required modules for this tutorial:
 
@@ -32,8 +32,8 @@ from minari import DataCollectorV0, StepDataCallback
 # ~~~~~~~~~~~~~~~~
 # Our first task is to create a method that generates a trajectory to the goal in the maze.
 # We have the advantage that the MuJoCo maze can be discretized into a grid of cells, which reduces
-# the size of the state space. The action space for this solver will also be reduced to `UP`, `DOWN`, `LEFT`,
-# and `RIGHT`. The solution trajectories will then be a set of waypoints that the agent has to follow to reach the
+# the size of the state space. The action space for this solver will also be reduced to ``UP``, ``DOWN``, ``LEFT``,
+# and ``RIGHT``. The solution trajectories will then be a set of waypoints that the agent has to follow to reach the
 # goal.
 # We can simply use a variation of Dynamic Programming to generate the trajectories. The method chosen in the D4RL[1] publication
 # is that of Value Iteration, specifically Q-Value Iteration[2]. We will obtain the optimal Q-values by doing a series of Bellman
@@ -171,7 +171,7 @@ class QIteration:
 #   \tau = k_{p}(p_{goal} - p_{agent}) + k_{d}v_{agent}
 #
 # Each target position in the waypoint trajectory is converted from discrete to a continuous value by adding some noise to
-# the `x` and `y` coordinates. This will allow to add more variance in the trajectories generated for the offline dataset.
+# the ``x`` and ``y`` coordinates. This will allow to add more variance in the trajectories generated for the offline dataset.
 
 
 class WaypointController:
