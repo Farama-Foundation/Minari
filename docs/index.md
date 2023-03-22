@@ -22,10 +22,6 @@ lastpage:
 $ pip install minari
 ---> 100%
 
-// Check Minari version
-$ minari --version
-Minari version: 0.3.0
-
 // Show remote datasets.
 $ minari list remote
 
@@ -37,10 +33,18 @@ $ minari list remote
 │ <font color="#A1EFE4">door-cloned-v0</font> │      <font color="#03AC13">4356</font> │    <font color="#03AC13">1000000</font> │ <font color="#FF00FF">Farama</font>  │<font color="#FF00FF">@farama.org</font>│
 │ <font color="#A1EFE4">door-expert-v0</font> │      <font color="#03AC13">5000</font> │    <font color="#03AC13">1000000</font> │ <font color="#FF00FF">Farama</font>  │<font color="#FF00FF">@farama.org</font>│
 │ <font color="#A1EFE4">door-human-v0</font>  │        <font color="#03AC13">25</font> │       <font color="#03AC13">6729</font> │ <font color="#FF00FF">Farama</font>  │<font color="#FF00FF">@farama.org</font>│
-│ <font color="#A1EFE4">pen-cloned-v0</font>  │      <font color="#03AC13">3736</font> │     <font color="#03AC13">500000</font> │ <font color="#FF00FF">Farama</font>  │<font color="#FF00FF">@farama.org</font>│
-│ <font color="#A1EFE4">pen-expert-v0</font>  │      <font color="#03AC13">4958</font> │     <font color="#03AC13">499206</font> │ <font color="#FF00FF">Farama</font>  │<font color="#FF00FF">@farama.org</font>│
-│ <font color="#A1EFE4">pen-human-v0</font>   │        <font color="#03AC13">25</font> │       <font color="#03AC13">5000</font> │ <font color="#FF00FF">Farama</font>  │<font color="#FF00FF">@farama.org</font>│
 └────────────────┴───────────┴────────────┴─────────┴───────────┘ 
+
+// Download dataset door-cloned-v0
+$ minari download door-cloned-v0
+Downloading door-cloned-v0 from Farama servers...
+
+   * Downloading data file 'door-cloned-v0/data/main_data.hdf5' ...
+
+---> 100%
+
+Dataset door-cloned-v0 downloaded to <path-to-local-datasets>/.minari/datasets/door-cloned-v0
+
 ```
 </div>
 
