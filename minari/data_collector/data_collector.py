@@ -197,13 +197,12 @@ class DataCollectorV0(gym.Wrapper):
 
         self._step_id += 1
 
+        clear_buffers = False
         # check if buffer needs to be cleared to temp file due to maximum step scheduler
         if self.max_buffer_steps is not None:
             clear_buffers = (
                 self._step_id % self.max_buffer_steps == 0 and self._step_id != 0
             )
-        else:
-            clear_buffers = False
 
         # Get initial observation from previous episode if reset has not been called after termination or truncation
         # This may happen if the step_data_callback truncates or terminates the episode under certain conditions.
@@ -215,15 +214,13 @@ class DataCollectorV0(gym.Wrapper):
         self._buffer[-1] = self._add_to_episode_buffer(self._buffer[-1], step_data)
 
         if step_data["terminations"] or step_data["truncations"]:
-            # New episode
-            self._episode_id += 1
             self._previous_eps_final_obs = step_data["observations"]
             self._reset_called = False
             self._new_episode = True
             self._buffer[-1]["seed"] = self._current_seed
             # Only check episode scheduler to save in-memory data to temp HDF5 file when episode is done
             if self.max_buffer_episodes is not None:
-                clear_buffers = self._episode_id % self.max_buffer_episodes == 0
+                clear_buffers = (self._episode_id + 1) % self.max_buffer_episodes == 0
 
         if clear_buffers:
             self.clear_buffer_to_tmp_file()
@@ -231,6 +228,11 @@ class DataCollectorV0(gym.Wrapper):
         # add new episode buffer to global buffer when episode finishes with truncation or termination
         if clear_buffers or step_data["terminations"] or step_data["truncations"]:
             self._buffer.append({key: [] for key in STEP_DATA_KEYS})
+
+        # Increase episode count when step is term/trunc and only after clearing buffers to tmp file
+        if step_data["terminations"] or step_data["truncations"]:
+            # New episode
+            self._episode_id += 1
 
         return obs, rew, terminated, truncated, info
 
