@@ -246,9 +246,9 @@ class DataCollectorV0(gym.Wrapper):
 
         assert STEP_DATA_KEYS.issubset(step_data.keys())
 
-        # If last episode in global buffer has saved steps
+        # If last episode in global buffer has saved steps, we need to check if it was truncated or terminated
+        # If not, then we need to auto-truncate the episode
         if len(self._buffer[-1]["actions"]) > 0:
-            # If the last episode is not term/trunc then truncate the episode
             if (
                 not self._buffer[-1]["terminations"][-1]
                 and not self._buffer[-1]["truncations"][-1]
