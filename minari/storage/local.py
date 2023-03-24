@@ -33,6 +33,10 @@ def list_local_datasets() -> Dict[str, Dict[str, Union[str, int, bool]]]:
 
     local_datasets = {}
     for dst_name in dataset_names:
+        if "data" not in os.listdir(os.path.join(datasets_path, dst_name)):
+            # Minari datasets must contain the data directory.
+            continue
+
         main_file_path = os.path.join(datasets_path, dst_name, "data/main_data.hdf5")
 
         with h5py.File(main_file_path, "r") as f:
