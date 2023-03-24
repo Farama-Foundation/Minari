@@ -267,6 +267,23 @@ class DataCollectorV0(gym.Wrapper):
 
                 # add new episode buffer
                 self._buffer.append({key: [] for key in STEP_DATA_KEYS})
+        else:
+            # In the case that the past episode is already stored in the tmp hdf5 file because of caching,
+            # we need to check if it was truncated or terminated, if not then auto-truncate
+            if (
+                len(self._buffer) == 1
+                and not self._last_episode_group_term_or_trunc
+                and self._episode_id != 0
+            ):
+                self._eps_group["truncations"][-1] = True
+                self._last_episode_group_term_or_trunc = True
+                self._eps_group.attrs["seed"] = self._current_seed
+
+                # New episode
+                self._episode_id += 1
+
+                # Compute metadata, use episode dataset in hdf5 file
+                self._episode_metadata_callback(self._eps_group)
 
         self._buffer[-1] = self._add_to_episode_buffer(self._buffer[-1], step_data)
 
