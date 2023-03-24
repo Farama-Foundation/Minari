@@ -94,7 +94,7 @@ class MinariDataset:
         else:
             raise ValueError(f"Unrecognized type {type(data)} for data")
 
-        self._extra_data_id = 0
+        self._additional_data_id = 0
         if episode_indices is None:
             episode_indices = np.arange(self._data.total_episodes)
         self._episode_indices = episode_indices
@@ -192,24 +192,23 @@ class MinariDataset:
         # check that collector env has the same characteristics as self._env_spec
         new_data_file_path = os.path.join(
             os.path.split(self.spec.data_path)[0],
-            f"additional_data_{self._extra_data_id}.hdf5",
+            f"additional_data_{self._additional_data_id}.hdf5",
         )
 
         collector_env.save_to_disk(path=new_data_file_path)
 
         with h5py.File(new_data_file_path, "r", track_order=True) as new_data_file:
-            group_paths = [group.name for group in new_data_file.values()]
             new_data_total_episodes = new_data_file.attrs["total_episodes"]
             new_data_total_steps = new_data_file.attrs["total_steps"]
 
         with h5py.File(self._data.data_path, "a", track_order=True) as file:
             last_episode_id = file.attrs["total_episodes"]
-            for i, eps_group_path in enumerate(group_paths):
-                file[f"episode_{last_episode_id + i}"] = h5py.ExternalLink(
-                    f"additional_data_{self._extra_data_id}.hdf5", eps_group_path
+            for id in range(new_data_total_episodes):
+                file[f"episode_{last_episode_id + id}"] = h5py.ExternalLink(
+                    f"additional_data_{self._additional_data_id}.hdf5", f"/episode_{id}"
                 )
-                file[f"episode_{last_episode_id + i}"].attrs.modify(
-                    "id", last_episode_id + i
+                file[f"episode_{last_episode_id + id}"].attrs.modify(
+                    "id", last_episode_id + id
                 )
 
             # Update metadata of minari dataset
@@ -219,7 +218,7 @@ class MinariDataset:
             file.attrs.modify(
                 "total_steps", file.attrs["total_steps"] + new_data_total_steps
             )
-        self._extra_data_id += 1
+        self._additional_data_id += 1
 
     def update_dataset_from_buffer(self, buffer: List[dict]):
         """Additional data can be added to the Minari Dataset from a list of episode dictionary buffers.
