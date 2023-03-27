@@ -79,7 +79,11 @@ tutorials/**/index
 ```{toctree}
 :hidden:
 :caption: Datasets
-datasets/coming_soon
+datasets/door
+datasets/hammer
+datasets/relocate
+datasets/pen
+datasets/pointmaze
 ```
 
 ```{toctree}
