@@ -37,9 +37,9 @@ class MinariStorage:
             assert isinstance(total_steps, int)
             self._total_steps: int = total_steps
 
-            dataset_name = f.attrs["dataset_name"]
-            assert isinstance(dataset_name, str)
-            self._dataset_name = dataset_name
+            dataset_id = f.attrs["dataset_id"]
+            assert isinstance(dataset_id, str)
+            self._dataset_id = dataset_id
 
             self._combined_datasets = f.attrs.get("combined_datasets", default=[])
 
@@ -155,6 +155,6 @@ class MinariStorage:
             return self._combined_datasets
 
     @property
-    def name(self) -> str:
+    def id(self) -> str:
         """Name of the Minari dataset."""
-        return self._dataset_name
+        return self._dataset_id
