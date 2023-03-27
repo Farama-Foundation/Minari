@@ -1,12 +1,14 @@
 from __future__ import annotations
 
 import os
+import re
 import warnings
 from typing import Dict, List, Optional, Union
 
 import gymnasium as gym
 import h5py
 import numpy as np
+from gymnasium import error
 from gymnasium.envs.registration import EnvSpec
 
 from minari import DataCollectorV0
