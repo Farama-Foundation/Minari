@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import glob
 import os
 from typing import Dict
@@ -7,6 +9,7 @@ from google.cloud import storage  # pyright: ignore [reportGeneralTypeIssues]
 from gymnasium import logger
 from tqdm.auto import tqdm  # pyright: ignore [reportMissingModuleSource]
 
+from minari.dataset.minari_dataset import parse_dataset_id
 from minari.storage.datasets_root_dir import get_dataset_path
 from minari.storage.local import load_dataset
 
@@ -144,3 +147,29 @@ def list_remote_datasets() -> Dict[str, Dict[str, str]]:
         remote_datasets[metadata["dataset_id"]] = metadata
 
     return remote_datasets
+
+
+def find_highest_remote_version(env_name: str, dataset_name: str) -> int | None:
+    """Finds the highest registered version in the remote Farama server of the dataset given.
+
+    Args:
+        env_name: name to identigy the environment of the dataset
+        dataset_name: name of the dataset within the ``env_name``
+    Returns:
+        The highest version of a dataset with matching environment name and name, otherwise ``None`` is returned.
+    """
+    version: list[int] = []
+
+    for dataset_id in list_remote_datasets().keys():
+        remote_env_name, remote_dataset_name, remote_version = parse_dataset_id(
+            dataset_id
+        )
+
+        if (
+            remote_env_name == env_name
+            and remote_dataset_name == dataset_name
+            and remote_version is not None
+        ):
+            version.append(remote_version)
+
+    return max(version, default=None)
