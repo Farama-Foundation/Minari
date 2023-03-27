@@ -1,17 +1,46 @@
 from __future__ import annotations
 
 import os
+import re
 import warnings
 from typing import Dict, List, Optional, Union
 
 import gymnasium as gym
 import h5py
 import numpy as np
+from gymnasium import error
 from gymnasium.envs.registration import EnvSpec
 
 from minari import DataCollectorV0
 from minari.dataset.minari_dataset import MinariDataset, clear_episode_buffer
 from minari.storage.datasets_root_dir import get_dataset_path
+
+
+DATASET_ID_RE = re.compile(
+    r"(?:(?P<environment>[\w]+?))?(?:-(?P<name>[\w:.-]+?))(?:-v(?P<version>\d+))?$"
+)
+
+
+def parse_dataset_id(dataset_id: str) -> tuple[str | None, str, int | None]:
+    """Parse dataset ID string format - ``(env_name-)(dataset_name)[-v(version)]``.
+
+    Args:
+        dataset_id: The dataset id to parse
+    Returns:
+        A tuple of environment name, dataset name and version number
+    Raises:
+        Error: If the dataset id is not valid dataset regex
+    """
+    match = DATASET_ID_RE.fullmatch(dataset_id)
+    if not match:
+        raise error.Error(
+            f"Malformed dataset ID: {dataset_id}. (Currently all IDs must be of the form (env_name-)(dataset_name)-v(version). (namespace is optional))"
+        )
+    env_name, dataset_name, version = match.group("environment", "dataset", "version")
+    if version is not None:
+        version = int(version)
+
+    return env_name, dataset_name, version
 
 
 def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_name: str):
