@@ -81,13 +81,18 @@ title: {dataset_name.title()}
 
 """
 
-        env_md_path = os.path.join(
-            os.path.dirname(__file__),
-            "..",
-            "datasets",
-            env_name,
+        dataset_doc_path = os.path.join(
+            os.path.dirname(__file__), "..", "datasets", env_name
+        )
+
+        if not os.path.exists(dataset_doc_path):
+            os.makedirs(dataset_doc_path)
+
+        dataset_md_path = os.path.join(
+            dataset_doc_path,
             dataset_name + ".md",
         )
-        file = open(env_md_path, "w", encoding="utf-8")
+
+        file = open(dataset_md_path, "w", encoding="utf-8")
         file.write(env_page)
         file.close()
