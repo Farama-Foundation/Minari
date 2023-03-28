@@ -7,7 +7,7 @@ lastpage:
 
 ```{toctree}
 :hidden:
-relocate/relocate-cloned-v0.md
-relocate/relocate-expert-v0.md
-relocate/relocate-human-v0.md
+relocate/cloned.md
+relocate/expert.md
+relocate/human.md
 ```
