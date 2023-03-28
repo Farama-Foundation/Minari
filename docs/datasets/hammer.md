@@ -7,7 +7,7 @@ lastpage:
 
 ```{toctree}
 :hidden:
-hammer/hammer-cloned-v0.md
-hammer/hammer-expert-v0.md
-hammer/hammer-human-v0.md
+hammer/cloned.md
+hammer/expert.md
+hammer/human.md
 ```
