@@ -23,7 +23,7 @@ jobs:
         run: pip install .
 
       - name: Build Datasets Docs
-        run: python docs/scripts/gen_dataset_md.py
+        run: python docs/_scripts/gen_dataset_md.py
 
       - name: Build
         run: sphinx-build -b dirhtml -v docs _build
