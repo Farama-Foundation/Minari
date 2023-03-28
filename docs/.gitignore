@@ -11,3 +11,9 @@ tutorials/**/*.ipynb
 tutorials/**/*.zip
 !tutorials/**/README.rst
 
+datasets/door/*.md
+datasets/hammer/*.md
+datasets/pen/*.md
+datasets/pointmaze/*.md
+datasets/relocate/*.md
+

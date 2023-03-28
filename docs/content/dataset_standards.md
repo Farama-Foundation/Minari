@@ -14,7 +14,13 @@ Minari stores the offline datasets under a common root directory. The root direc
 
 The remote datasets are kept in the public Google Cloud Platform (GCP) bucket [`minari-datasets`](https://console.cloud.google.com/storage/browser/minari-datasets;tab=objects?forceOnBucketsSortingFiltering=false&project=mcmes-345620&prefix=&forceOnObjectsSortingFiltering=false).
 
-The first level of the root directory tree contains the Minari dataset directories. Although not mandatory, the Minari dataset directories follow a naming convention: the dataset name followed by the version of the dataset, i.e. for dataset `my_dataset` and version `0`, the directory name will be `my_dataset-v0`. This directory name will also be the id with which Minari tags the datasets.
+The first level of the root directory tree contains the Minari dataset directories, which are names as the datasets `id` name. The datasets `id` must follow the syntax `(env_name-)(dataset_name)(-v(version))`, where:
+
+- `env_name`: a string that describes the environment from which the dataset was created. If a dataset comes from the [`AdroitHandDoor`](https://robotics.farama.org/envs/adroit_hand/adroit_door/) environment `ennv_name` can be equal to `door`.
+- `dataset_name`: a string describing the content of the dataset. For example, if the dataset for the `AdroitHandDoor` environment was generated from human input we can give the value `human` to `dataset_name`.
+- `version`: integer value that represent the number of versions for `door-human-v(version)` dataset, starting from `0`.
+
+In the end the first version for the example `AdroitHandDoor` dataset will be `door-human-v0`.
 
 ### Data files
 
@@ -23,13 +29,13 @@ Each Minari dataset directory contains another directory named `data` where the 
 - `main_data.hdf5`: root file that aside from raw data it also contains all the metadata of the global dataset and external links to the data in the other files. Minari will read this file when a dataset is loaded.
 - `additional_data_x.hdf5`: these files contain raw data. Each of them is generated after making a checkpoint when collecting the offline data with `MinariDataset.update_datasets(env)`.
 
-The following directory tree of a Minari root path contains three different datasets named `dataset_name-v0`, `dataset_name-v1`, and `other_dataset_name-v0`. The offline data of the `dataset_name-v1` is saved in a single `main_data.hdf5` file, while for `dataset_name-v0` the offline data has been divided into multiple `.hdf5` files.
+The following directory tree of a Minari root path contains three different datasets named `dataset_id-v0`, `dataset_id-v1`, and `other_dataset_id-v0`. The offline data of the `dataset_id-v1` is saved in a single `main_data.hdf5` file, while for `dataset_id-v0` the offline data has been divided into multiple `.hdf5` files.
 
 <div class="only-light">
 <ul class="directory-list">
 <li class="folder">minari_root
     <ul>
-    <li class="folder">dataset_name-v0
+    <li class="folder">dataset_id-v0
         <ul>
         <li class="folder">data
             <ul>
@@ -40,7 +46,7 @@ The following directory tree of a Minari root path contains three different data
         </li>
         </ul>
     </li>
-    <li class="folder">dataset_name-v1
+    <li class="folder">dataset_id-v1
         <ul>
         <li class="folder">data
             <ul>
@@ -49,7 +55,7 @@ The following directory tree of a Minari root path contains three different data
         </li>
         </ul>
     </li>
-    <li class="folder-closed">other_dataset_name-v0</li>
+    <li class="folder-closed">other_dataset_id-v0</li>
     </ul>
 </li>
 </ul>
@@ -59,7 +65,7 @@ The following directory tree of a Minari root path contains three different data
 <ul class="directory-list">
 <li class="folder-white">minari_root
     <ul class="white">
-    <li class="folder-white">dataset_name-v0
+    <li class="folder-white">dataset_id-v0
         <ul class="white">
         <li class="folder-white">data
             <ul class="white">
@@ -70,7 +76,7 @@ The following directory tree of a Minari root path contains three different data
         </li>
         </ul>
     </li>
-    <li class="folder-white">dataset_name-v1
+    <li class="folder-white">dataset_id-v1
         <ul class="white">
         <li class="folder-white">data
             <ul class="white">
@@ -79,7 +85,7 @@ The following directory tree of a Minari root path contains three different data
         </li>
         </ul>
     </li>
-    <li class="folder-white-closed">other_dataset_name-v0</li>
+    <li class="folder-white-closed">other_dataset_id-v0</li>
     </ul>
 </li>
 </ul>

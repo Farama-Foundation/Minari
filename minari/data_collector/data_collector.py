@@ -44,7 +44,7 @@ class DataCollectorV0(gym.Wrapper):
             if terminated or truncated:
                 env.reset()
 
-        dataset = minari.create_dataset_from_collector_env(dataset_name="EnvID-dataset", collector_env=env, **kwargs)
+        dataset = minari.create_dataset_from_collector_env(dataset_id="env_name-dataset_name-v(version)", collector_env=env, **kwargs)
 
     Some of the characteristics of this wrapper:
 

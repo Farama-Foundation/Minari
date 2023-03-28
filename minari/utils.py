@@ -14,7 +14,7 @@ from minari.dataset.minari_dataset import MinariDataset, clear_episode_buffer
 from minari.storage.datasets_root_dir import get_dataset_path
 
 
-def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_name: str):
+def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_id: str):
     """Combine a group of MinariDataset in to a single dataset with its own name id.
 
     A new HDF5 metadata attribute will be added to the new dataset called `combined_datasets`. This will
@@ -22,9 +22,9 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_name:
 
     Args:
         datasets_to_combine (list[MinariDataset]): list of datasets to be combined
-        new_dataset_name (str): name id for the newly created dataset
+        new_dataset_id (str): name id for the newly created dataset
     """
-    new_dataset_path = get_dataset_path(new_dataset_name)
+    new_dataset_path = get_dataset_path(new_dataset_id)
 
     # Check if dataset already exists
     if not os.path.exists(new_dataset_path):
@@ -33,16 +33,16 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_name:
         new_data_path = os.path.join(new_dataset_path, "main_data.hdf5")
     else:
         raise ValueError(
-            f"A Minari dataset with ID {new_dataset_name} already exists and it cannot be overridden. Please use a different dataset name or version."
+            f"A Minari dataset with ID {new_dataset_id} already exists and it cannot be overridden. Please use a different dataset name or version."
         )
 
     with h5py.File(new_data_path, "a", track_order=True) as combined_data_file:
         combined_data_file.attrs["total_episodes"] = 0
         combined_data_file.attrs["total_steps"] = 0
-        combined_data_file.attrs["dataset_name"] = new_dataset_name
+        combined_data_file.attrs["dataset_id"] = new_dataset_id
 
         combined_data_file.attrs["combined_datasets"] = [
-            dataset.spec.dataset_name for dataset in datasets_to_combine
+            dataset.spec.dataset_id for dataset in datasets_to_combine
         ]
 
         current_env_spec = None
@@ -174,7 +174,7 @@ def split_dataset(
 
 
 def create_dataset_from_buffers(
-    dataset_name: str,
+    dataset_id: str,
     env: gym.Env,
     buffer: List[Dict[str, Union[list, Dict]]],
     algorithm_name: Optional[str] = None,
@@ -183,6 +183,10 @@ def create_dataset_from_buffers(
     code_permalink: Optional[str] = None,
 ):
     """Create Minari dataset from a list of episode dictionary buffers.
+
+    The ``dataset_id`` parameter corresponds to the name of the dataset, with the syntax as follows:
+    ``(env_name-)(dataset_name)(-v(version))`` where ``env_name`` identifies the name of the environment used to generate the dataset ``dataset_name``.
+    This ``dataset_id`` is used to load the Minari datasets with :meth:`minari.load_dataset`.
 
     Each episode dictionary buffer must have the following items:
         * `observations`: np.ndarray of step observations. shape = (total_episode_steps + 1, (observation_shape)). Should include initial and final observation
@@ -194,7 +198,7 @@ def create_dataset_from_buffers(
     Other additional items can be added as long as the values are np.ndarray's or other nested dictionaries.
 
     Args:
-        dataset_name (str): name id to identify Minari dataset
+        dataset_id (str): name id to identify Minari dataset
         env (gym.Env): Gymnasium environment used to collect the buffer data
         buffer (list[Dict[str, Union[list, Dict]]]): list of episode dictionaries with data
         algorithm_name (Optional[str], optional): name of the algorithm used to collect the data. Defaults to None.
@@ -222,7 +226,7 @@ def create_dataset_from_buffers(
             UserWarning,
         )
 
-    dataset_path = get_dataset_path(dataset_name)
+    dataset_path = get_dataset_path(dataset_id)
 
     # Check if dataset already exists
     if not os.path.exists(dataset_path):
@@ -270,17 +274,17 @@ def create_dataset_from_buffers(
             file.attrs[
                 "env_spec"
             ] = env.spec.to_json()  # pyright: ignore [reportOptionalMemberAccess]
-            file.attrs["dataset_name"] = dataset_name
+            file.attrs["dataset_id"] = dataset_id
 
         return MinariDataset(data_path)
     else:
         raise ValueError(
-            f"A Minari dataset with ID {dataset_name} already exists and it cannot be overridden. Please use a different dataset name or version."
+            f"A Minari dataset with ID {dataset_id} already exists and it cannot be overridden. Please use a different dataset name or version."
         )
 
 
 def create_dataset_from_collector_env(
-    dataset_name: str,
+    dataset_id: str,
     collector_env: DataCollectorV0,
     algorithm_name: Optional[str] = None,
     author: Optional[str] = None,
@@ -289,8 +293,12 @@ def create_dataset_from_collector_env(
 ):
     """Create a Minari dataset using the data collected from stepping with a Gymnasium environment wrapped with a `DataCollectorV0` Minari wrapper.
 
+    The ``dataset_id`` parameter corresponds to the name of the dataset, with the syntax as follows:
+    ``(env_name-)(dataset_name)(-v(version))`` where ``env_name`` identifies the name of the environment used to generate the dataset ``dataset_name``.
+    This ``dataset_id`` is used to load the Minari datasets with :meth:`minari.load_dataset`.
+
     Args:
-        dataset_name (str): name id to identify Minari dataset
+        dataset_id (str): name id to identify Minari dataset
         collector_env (DataCollectorV0): Gymnasium environment used to collect the buffer data
         buffer (list[Dict[str, Union[list, Dict]]]): list of episode dictionaries with data
         algorithm_name (Optional[str], optional): name of the algorithm used to collect the data. Defaults to None.
@@ -319,7 +327,7 @@ def create_dataset_from_collector_env(
         )
 
     assert collector_env.datasets_path is not None
-    dataset_path = os.path.join(collector_env.datasets_path, dataset_name)
+    dataset_path = os.path.join(collector_env.datasets_path, dataset_id)
 
     # Check if dataset already exists
     if not os.path.exists(dataset_path):
@@ -329,7 +337,7 @@ def create_dataset_from_collector_env(
         collector_env.save_to_disk(
             data_path,
             dataset_metadata={
-                "dataset_name": str(dataset_name),
+                "dataset_id": str(dataset_id),
                 "algorithm_name": str(algorithm_name),
                 "author": str(author),
                 "author_email": str(author_email),
@@ -339,5 +347,5 @@ def create_dataset_from_collector_env(
         return MinariDataset(data_path)
     else:
         raise ValueError(
-            f"A Minari dataset with ID {dataset_name} already exists and it cannot be overridden. Please use a different dataset name or version."
+            f"A Minari dataset with ID {dataset_id} already exists and it cannot be overridden. Please use a different dataset name or version."
         )

@@ -34,11 +34,11 @@ def _show_dataset_table(datasets, table_title):
     table.add_column("Email", justify="left", style="magenta")
 
     for dst_metadata in datasets.values():
-        assert isinstance(dst_metadata["dataset_name"], str)
+        assert isinstance(dst_metadata["dataset_id"], str)
         assert isinstance(dst_metadata["author"], str)
         assert isinstance(dst_metadata["author_email"], str)
         table.add_row(
-            dst_metadata["dataset_name"],
+            dst_metadata["dataset_id"],
             str(dst_metadata["total_episodes"]),
             str(dst_metadata["total_steps"]),
             "Coming soon ...",
@@ -184,13 +184,13 @@ def upload(datasets: List[str], key_path: str = typer.Option(...)):
 
 
 @app.command()
-def combine(datasets: List[str], dataset_name: str = typer.Option(...)):
+def combine(datasets: List[str], dataset_id: str = typer.Option(...)):
     """Combine multiple datasets into a single Minari dataset."""
     local_dsts = local.list_local_datasets()
     # check dataset name doesn't exist locally
-    if dataset_name in local_dsts:
+    if dataset_id in local_dsts:
         print(
-            f"[red]Dataset name {dataset_name} already exist in the local Minari datasets.[/red]",
+            f"[red]Dataset name {dataset_id} already exist in the local Minari datasets.[/red]",
         )
         raise typer.Abort()
 
@@ -208,9 +208,9 @@ def combine(datasets: List[str], dataset_name: str = typer.Option(...)):
         raise typer.Abort()
     if len(datasets) > 1:
         minari_datasets = list(map(lambda x: local.load_dataset(x), datasets))
-        combine_datasets(minari_datasets, dataset_name)
+        combine_datasets(minari_datasets, dataset_id)
         print(
-            f"The datasets [green]{datasets}[/green] were successfully combined into [blue]{dataset_name}[/blue]!"
+            f"The datasets [green]{datasets}[/green] were successfully combined into [blue]{dataset_id}[/blue]!"
         )
     else:
         print(

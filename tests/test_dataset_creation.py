@@ -33,30 +33,30 @@ def _check_env_recovery(gymnasium_environment: gym.Env, dataset: MinariDataset):
     )
 
 
-def _check_load_and_delete_dataset(dataset_name: str):
+def _check_load_and_delete_dataset(dataset_id: str):
     """Test loading and deletion of local Minari datasets.
 
     Args:
-        dataset_name (str): name of Minari dataset to test
+        dataset_id (str): name of Minari dataset to test
     """
     # check dataset name is present in local database
     local_datasets = minari.list_local_datasets()
-    assert dataset_name in local_datasets
+    assert dataset_id in local_datasets
 
     # load dataset
-    loaded_dataset = minari.load_dataset(dataset_name)
+    loaded_dataset = minari.load_dataset(dataset_id)
     assert isinstance(loaded_dataset, MinariDataset)
-    assert dataset_name == loaded_dataset.spec.dataset_name
+    assert dataset_id == loaded_dataset.spec.dataset_id
 
     # delete dataset and check that it's no longer present in local database
-    minari.delete_dataset(dataset_name)
+    minari.delete_dataset(dataset_id)
     local_datasets = minari.list_local_datasets()
-    assert dataset_name not in local_datasets
+    assert dataset_id not in local_datasets
 
 
 def test_generate_dataset_with_collector_env():
     """Test DataCollectorV0 wrapper and Minari dataset creation."""
-    dataset_name = "CartPole-v1_test-dataset"
+    dataset_id = "cartpole-test-v0"
     env = gym.make("CartPole-v1")
 
     env = DataCollectorV0(env)
@@ -76,7 +76,7 @@ def test_generate_dataset_with_collector_env():
 
     # Create Minari dataset and store locally
     dataset = minari.create_dataset_from_collector_env(
-        dataset_name=dataset_name,
+        dataset_id=dataset_id,
         collector_env=env,
         algorithm_name="random_policy",
         code_permalink="https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
@@ -92,13 +92,13 @@ def test_generate_dataset_with_collector_env():
     env.close()
 
     # check load and delete local dataset
-    _check_load_and_delete_dataset(dataset_name)
+    _check_load_and_delete_dataset(dataset_id)
 
 
 def test_generate_dataset_with_external_buffer():
     """Test create dataset from external buffers without using DataCollectorV0."""
     buffer = []
-    dataset_name = "CartPole-v1_test-dataset"
+    dataset_id = "cartpole-test-v0"
     env = gym.make("CartPole-v1")
 
     observations = []
@@ -147,7 +147,7 @@ def test_generate_dataset_with_external_buffer():
 
     # Create Minari dataset and store locally
     dataset = minari.create_dataset_from_buffers(
-        dataset_name=dataset_name,
+        dataset_id=dataset_id,
         env=env,
         buffer=buffer,
         algorithm_name="random_policy",
@@ -161,4 +161,4 @@ def test_generate_dataset_with_external_buffer():
 
     env.close()
 
-    _check_load_and_delete_dataset(dataset_name)
+    _check_load_and_delete_dataset(dataset_id)

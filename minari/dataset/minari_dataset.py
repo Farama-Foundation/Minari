@@ -1,16 +1,45 @@
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
+import re
+from dataclasses import dataclass, field
 from typing import Callable, Dict, Iterable, List, NamedTuple, Optional, Union
 
 import gymnasium as gym
 import h5py
 import numpy as np
+from gymnasium import error
 from gymnasium.envs.registration import EnvSpec
 
 from minari.data_collector import DataCollectorV0
 from minari.dataset.minari_storage import MinariStorage, PathLike
+
+
+DATASET_ID_RE = re.compile(
+    r"(?:(?P<environment>[\w]+?))?(?:-(?P<dataset>[\w:.-]+?))(?:-v(?P<version>\d+))?$"
+)
+
+
+def parse_dataset_id(dataset_id: str) -> tuple[str | None, str, int | None]:
+    """Parse dataset ID string format - ``(env_name-)(dataset_name)(-v(version))``.
+
+    Args:
+        dataset_id: The dataset id to parse
+    Returns:
+        A tuple of environment name, dataset name and version number
+    Raises:
+        Error: If the dataset id is not valid dataset regex
+    """
+    match = DATASET_ID_RE.fullmatch(dataset_id)
+    if not match:
+        raise error.Error(
+            f"Malformed dataset ID: {dataset_id}. (Currently all IDs must be of the form (env_name-)(dataset_name)-v(version). (namespace is optional))"
+        )
+    env_name, dataset_name, version = match.group("environment", "dataset", "version")
+    if version is not None:
+        version = int(version)
+
+    return env_name, dataset_name, version
 
 
 def clear_episode_buffer(episode_buffer: Dict, eps_group: h5py.Group) -> h5py.Group:
@@ -62,11 +91,22 @@ class MinariDatasetSpec:
     env_spec: EnvSpec
     total_episodes: int
     total_steps: int
-    dataset_name: str
+    dataset_id: str
     combined_datasets: List[str]
     observation_space: gym.Space
     action_space: gym.Space
     data_path: str
+
+    # post-init attributes
+    env_name: str | None = field(init=False)
+    dataset_name: str = field(init=False)
+    version: int | None = field(init=False)
+
+    def __post_init__(self):
+        """Calls after the spec is created to extract the environment name, dataset name and version from the dataset id."""
+        self.env_name, self.dataset_name, self.version = parse_dataset_id(
+            self.dataset_id
+        )
 
 
 class MinariDataset:
@@ -105,7 +145,7 @@ class MinariDataset:
             env_spec=self._data.env_spec,
             total_episodes=self._data.total_episodes,
             total_steps=self._data.total_steps,
-            dataset_name=self._data.name,
+            dataset_id=self._data.id,
             combined_datasets=self._data.combined_datasets,
             observation_space=self._data.observation_space,
             action_space=self._data.action_space,
