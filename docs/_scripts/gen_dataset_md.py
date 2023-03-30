@@ -73,24 +73,6 @@ for env_name, datasets in filtered_datasets.items():
                 'style="display: block; margin:0 auto"/>'
             )
 
-        description = None
-        if "description" in dataset_spec:
-            description = dataset_spec["description"]
-
-        # Get image gif link if available
-        img_path = f"{dataset_id}/_docs/_imgs/{dataset_id}.gif"
-        storage_client = storage.Client.create_anonymous_client()
-        bucket = storage_client.bucket(bucket_name="minari-datasets")
-
-        img_exists = storage.Blob(bucket=bucket, name=img_path).exists(storage_client)
-
-        img_link_str = None
-        if img_exists:
-            img_link_str = (
-                f'<img src="https://storage.googleapis.com/minari-datasets/{dataset_id}/_docs/_imgs/{dataset_id}.gif" width="200" '
-                'style="display: block; margin:0 auto"/>'
-            )
-
         # Environment Specs
         env_spec = json.loads(dataset_spec["env_spec"])
         env_id = env_spec["id"]
