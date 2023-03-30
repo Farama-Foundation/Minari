@@ -14,13 +14,13 @@ Minari stores the offline datasets under a common root directory. The root direc
 
 The remote datasets are kept in the public Google Cloud Platform (GCP) bucket [`minari-datasets`](https://console.cloud.google.com/storage/browser/minari-datasets;tab=objects?forceOnBucketsSortingFiltering=false&project=mcmes-345620&prefix=&forceOnObjectsSortingFiltering=false).
 
-The first level of the root directory tree contains the Minari dataset directories, which are names as the datasets `id` name. The datasets `id` must follow the syntax `(env_name-)(dataset_name)(-v(version))`, where:
+The first level of the root directory tree contains the Minari dataset directories, which are named after the datasets `id`. The datasets `id` must follow the syntax `(env_name-)(dataset_name)(-v(version))`, where:
 
 - `env_name`: a string that describes the environment from which the dataset was created. If a dataset comes from the [`AdroitHandDoor`](https://robotics.farama.org/envs/adroit_hand/adroit_door/) environment `ennv_name` can be equal to `door`.
 - `dataset_name`: a string describing the content of the dataset. For example, if the dataset for the `AdroitHandDoor` environment was generated from human input we can give the value `human` to `dataset_name`.
 - `version`: integer value that represent the number of versions for `door-human-v(version)` dataset, starting from `0`.
 
-In the end the first version for the example `AdroitHandDoor` dataset will be `door-human-v0`.
+In the end, the `id` of the dataset for the initial version of the `AdroitHandDoor` environment example will be `door-human-v0`.
 
 ### Data files
 
