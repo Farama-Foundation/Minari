@@ -258,27 +258,27 @@
 <p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/door/">Door</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/door/cloned/">Cloned</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/door/expert/">Expert</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/door/human/">Human</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/door/expert/">Expert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/door/cloned/">Cloned</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/hammer/">Hammer</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/hammer/cloned/">Cloned</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/hammer/expert/">Expert</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/hammer/human/">Human</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/hammer/expert/">Expert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/hammer/cloned/">Cloned</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/relocate/">Relocate</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/relocate/cloned/">Cloned</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/relocate/expert/">Expert</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/relocate/human/">Human</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/relocate/expert/">Expert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/relocate/cloned/">Cloned</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/pen/">Pen</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/pen/cloned/">Cloned</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/pen/expert/">Expert</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/pen/human/">Human</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/pen/expert/">Expert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/pen/cloned/">Cloned</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/pointmaze/">Point Maze</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -352,13 +352,13 @@
 <h3>Minari root<a class="headerlink" href="#minari-root" title="Permalink to this heading">#</a></h3>
 <p>Minari stores the offline datasets under a common root directory. The root directory path for the local datasets is set by default to <code class="docutils literal notranslate"><span class="pre">~/.minari/datasets/</span></code>. However, this path can be modified by setting the environment variable <code class="docutils literal notranslate"><span class="pre">MINARI_DATASETS_PATH</span></code>.</p>
 <p>The remote datasets are kept in the public Google Cloud Platform (GCP) bucket <a class="reference external" href="https://console.cloud.google.com/storage/browser/minari-datasets;tab=objects?forceOnBucketsSortingFiltering=false&amp;amp;project=mcmes-345620&amp;amp;prefix=&amp;amp;forceOnObjectsSortingFiltering=false"><code class="docutils literal notranslate"><span class="pre">minari-datasets</span></code></a>.</p>
-<p>The first level of the root directory tree contains the Minari dataset directories, which are names as the datasets <code class="docutils literal notranslate"><span class="pre">id</span></code> name. The datasets <code class="docutils literal notranslate"><span class="pre">id</span></code> must follow the syntax <code class="docutils literal notranslate"><span class="pre">(env_name-)(dataset_name)(-v(version))</span></code>, where:</p>
+<p>The first level of the root directory tree contains the Minari dataset directories, which are named after the datasets <code class="docutils literal notranslate"><span class="pre">id</span></code>. The datasets <code class="docutils literal notranslate"><span class="pre">id</span></code> must follow the syntax <code class="docutils literal notranslate"><span class="pre">(env_name-)(dataset_name)(-v(version))</span></code>, where:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">env_name</span></code>: a string that describes the environment from which the dataset was created. If a dataset comes from the <a class="reference external" href="https://robotics.farama.org/envs/adroit_hand/adroit_door/"><code class="docutils literal notranslate"><span class="pre">AdroitHandDoor</span></code></a> environment <code class="docutils literal notranslate"><span class="pre">ennv_name</span></code> can be equal to <code class="docutils literal notranslate"><span class="pre">door</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">dataset_name</span></code>: a string describing the content of the dataset. For example, if the dataset for the <code class="docutils literal notranslate"><span class="pre">AdroitHandDoor</span></code> environment was generated from human input we can give the value <code class="docutils literal notranslate"><span class="pre">human</span></code> to <code class="docutils literal notranslate"><span class="pre">dataset_name</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">version</span></code>: integer value that represent the number of versions for <code class="docutils literal notranslate"><span class="pre">door-human-v(version)</span></code> dataset, starting from <code class="docutils literal notranslate"><span class="pre">0</span></code>.</p></li>
 </ul>
-<p>In the end the first version for the example <code class="docutils literal notranslate"><span class="pre">AdroitHandDoor</span></code> dataset will be <code class="docutils literal notranslate"><span class="pre">door-human-v0</span></code>.</p>
+<p>In the end, the <code class="docutils literal notranslate"><span class="pre">id</span></code> of the dataset for the initial version of the <code class="docutils literal notranslate"><span class="pre">AdroitHandDoor</span></code> environment example will be <code class="docutils literal notranslate"><span class="pre">door-human-v0</span></code>.</p>
 </section>
 <section id="data-files">
 <h3>Data files<a class="headerlink" href="#data-files" title="Permalink to this heading">#</a></h3>
