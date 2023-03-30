@@ -97,10 +97,12 @@ def download_dataset(dataset_id: str):
     # any content from Google Cloud Storage. As we don't need additional data,
     # using `Bucket.blob` is preferred here.
     blobs = bucket.list_blobs(prefix=dataset_id)  # Get list of files
-
     for blob in blobs:
         print(f"\n * Downloading data file '{blob.name}' ...\n")
         blob_dir, file_name = os.path.split(blob.name)
+        # If the object blob path is a directory continue searching for files
+        if file_name == "":
+            continue
         blob_local_dir = os.path.join(os.path.dirname(file_path), blob_dir)
         if not os.path.exists(blob_local_dir):
             os.makedirs(blob_local_dir)
