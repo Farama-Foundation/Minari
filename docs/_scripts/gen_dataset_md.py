@@ -26,6 +26,12 @@ for dataset_id in all_remote_datasets.keys():
         ]
 
 for env_name, datasets in filtered_datasets.items():
+    available_datasets = """
+## Available Datasets
+| Dataset ID | Description |
+| ---------- | ----------- |
+"""
+
     for i, (dataset_name, dataset_spec) in enumerate(datasets.items()):
         if i == 0:
             related_pages_meta = "firstpage:\n"
@@ -43,10 +49,15 @@ for env_name, datasets in filtered_datasets.items():
         author = dataset_spec["author"]
         email = dataset_spec["author_email"]
         algo_name = dataset_spec["algorithm_name"]
+        code = dataset_spec["code_permalink"]
 
         description = None
         if "description" in dataset_spec:
             description = dataset_spec["description"]
+
+        # Add dataset id and description to main env page
+        available_datasets += f"""| <a href="../{env_name}/{dataset_name}" title="{dataset_id}">{dataset_id}</a> | {description.split('. ')[0] if description is not None else ""} |
+"""
 
         # Get image gif link if available
         img_path = f"{dataset_id}/_docs/_imgs/{dataset_id}.gif"
@@ -93,6 +104,7 @@ title: {dataset_name.title()}
 | Algorithm           | `{algo_name}`           |
 | Author              | `{author}`              |
 | Email               | `{email}`               |
+| Code Permalink      | `{code}`                |
 | download            | `minari.download_dataset("{dataset_id}")` |
 
 
@@ -121,3 +133,10 @@ title: {dataset_name.title()}
         file = open(dataset_md_path, "w", encoding="utf-8")
         file.write(env_page)
         file.close()
+
+    env_page_path = os.path.join(
+        os.path.dirname(__file__), "..", "datasets", f"{env_name}.md"
+    )
+    file = open(env_page_path, "a", encoding="utf-8")
+    file.write(available_datasets)
+    file.close()
