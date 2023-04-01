@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 import re
 from dataclasses import dataclass, field
-from typing import Callable, Dict, Iterable, List, NamedTuple, Optional, Union
+from typing import Any, Callable, Dict, Iterable, List, NamedTuple, Optional, Union
 
 import gymnasium as gym
 import h5py
@@ -311,3 +311,35 @@ class MinariDataset:
             file.attrs.modify(
                 "total_steps", file.attrs["total_steps"] + additional_steps
             )
+
+    def compute_stats(self) -> Dict[str, Dict[str, np.ndarray]]:
+        """Compute statistics the dataset.
+
+        Returns:
+            Dictionary containing statistics for observations, rewards and actions.
+        """
+        datasets_to_compute = ["observations", "rewards", "actions"]
+        stats = {}
+        for dataset_name in datasets_to_compute:
+            stats[dataset_name] = self._compute_dataset_stats(dataset_name)
+
+        return stats
+
+    def _compute_dataset_stats(self, dataset_name: str) -> Dict[str, Any]:
+        episode_data = self._data.apply(
+            lambda episode: episode[dataset_name][()], self.episode_indices
+        )
+        episode_data = np.concatenate(episode_data, axis=0)
+        if len(episode_data.shape) == 1:
+            histograms = np.histogram(episode_data, bins=20)
+        else:
+            histograms = []
+            for i in range(episode_data.shape[1]):
+                histograms.append(np.histogram(episode_data[:, i], bins=20))
+        return {
+            "mean": np.mean(episode_data, axis=0),
+            "std": np.std(episode_data, axis=0),
+            "min": np.min(episode_data, axis=0),
+            "max": np.max(episode_data, axis=0),
+            "histogram": histograms,
+        }
