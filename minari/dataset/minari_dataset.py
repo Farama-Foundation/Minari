@@ -313,7 +313,7 @@ class MinariDataset:
             )
 
     def compute_stats(self) -> Dict[str, Dict[str, np.ndarray]]:
-        """Compute statistics the dataset.
+        """Compute statistics of the dataset.
 
         Returns:
             Dictionary containing statistics for observations, rewards and actions.
