@@ -318,28 +318,28 @@ class MinariDataset:
         Returns:
             Dictionary containing statistics for observations, rewards and actions.
         """
-        datasets_to_compute = ["observations", "rewards", "actions"]
+        data_to_targe = ["observations", "rewards", "actions"]
         stats = {}
-        for dataset_name in datasets_to_compute:
-            stats[dataset_name] = self._compute_dataset_stats(dataset_name)
+        for data_name in data_to_targe:
+            stats[data_name] = self._compute_data_stats(data_name)
 
         return stats
 
-    def _compute_dataset_stats(self, dataset_name: str) -> Dict[str, Any]:
-        episode_data = self._data.apply(
-            lambda episode: episode[dataset_name][()], self.episode_indices
+    def _compute_data_stats(self, data_name: str) -> Dict[str, Any]:
+        data = self._data.apply(
+            lambda episode: episode[data_name][()], self.episode_indices
         )
-        episode_data = np.concatenate(episode_data, axis=0)
-        if len(episode_data.shape) == 1:
-            histograms = np.histogram(episode_data, bins=20)
+        data = np.concatenate(data, axis=0)
+        if len(data.shape) == 1:
+            histograms = np.histogram(data, bins=20)
         else:
             histograms = []
-            for i in range(episode_data.shape[1]):
-                histograms.append(np.histogram(episode_data[:, i], bins=20))
+            for i in range(data.shape[1]):
+                histograms.append(np.histogram(data[:, i], bins=20))
         return {
-            "mean": np.mean(episode_data, axis=0),
-            "std": np.std(episode_data, axis=0),
-            "min": np.min(episode_data, axis=0),
-            "max": np.max(episode_data, axis=0),
+            "mean": np.mean(data, axis=0),
+            "std": np.std(data, axis=0),
+            "min": np.min(data, axis=0),
+            "max": np.max(data, axis=0),
             "histogram": histograms,
         }
