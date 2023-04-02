@@ -331,7 +331,7 @@ class MinariDataset:
         )
         data = np.concatenate(data, axis=0)
         if len(data.shape) == 1:
-            histograms = np.histogram(data, bins=20)
+            histograms = [np.histogram(data, bins=20)]
         else:
             histograms = []
             for i in range(data.shape[1]):
