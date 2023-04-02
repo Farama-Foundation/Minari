@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 import shutil
 import tempfile
-from typing import Any, Dict, List, Optional, SupportsFloat, Type, TypeVar, Union
+from typing import Any, Dict, List, Optional, SupportsFloat, Type, Union
 
 import gymnasium as gym
 import h5py
@@ -18,7 +18,8 @@ from minari.data_collector.callbacks import (
 )
 
 
-EpisodeBuffer = dict[str, list | dict | int | str]
+EpisodeBuffer = Dict[str, Any]  # TODO: narrow this down
+
 
 class DataCollectorV0(gym.Wrapper):
     r"""Gymnasium environment wrapper that collects step data.
@@ -169,6 +170,7 @@ class DataCollectorV0(gym.Wrapper):
                         episode_buffer[key], value
                     )
                 else:
+                    assert isinstance(episode_buffer[key], list)
                     episode_buffer[key].append(value)
 
         return episode_buffer
@@ -216,7 +218,7 @@ class DataCollectorV0(gym.Wrapper):
             self._previous_eps_final_obs = step_data["observations"]
             self._reset_called = False
             self._new_episode = True
-            self._buffer[-1]["seed"] = self._current_seed
+            self._buffer[-1]["seed"] = self._current_seed  # type: ignore
             # Only check episode scheduler to save in-memory data to temp HDF5 file when episode is done
             if self.max_buffer_episodes is not None:
                 clear_buffers = (self._episode_id + 1) % self.max_buffer_episodes == 0
@@ -255,7 +257,7 @@ class DataCollectorV0(gym.Wrapper):
                 and not self._buffer[-1]["truncations"][-1]
             ):
                 self._buffer[-1]["truncations"][-1] = True
-                self._buffer[-1]["seed"] = self._current_seed
+                self._buffer[-1]["seed"] = self._current_seed  # type: ignore
 
                 # New episode
                 self._episode_id += 1
@@ -407,7 +409,7 @@ class DataCollectorV0(gym.Wrapper):
         # Clear in-memory buffers
         self._buffer.clear()
 
-    def save_to_disk(self, path: str, dataset_metadata: dict | None = None):
+    def save_to_disk(self, path: str, dataset_metadata: Optional[Dict] = None):
         """Save all in-memory buffer data and move temporary HDF5 file to a permanent location in disk.
 
         Args:
