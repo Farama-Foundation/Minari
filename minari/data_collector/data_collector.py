@@ -127,6 +127,7 @@ class DataCollectorV0(gym.Wrapper):
         self._tmp_f.attrs["flatten_action"] = self._step_data_callback.flatten_action
 
         self._new_episode = False
+        self._reset_called = False
 
         # Initialize first episode group in temporary hdf5 file
         self._episode_id = 0
@@ -406,13 +407,16 @@ class DataCollectorV0(gym.Wrapper):
         # Clear in-memory buffers
         self._buffer.clear()
 
-    def save_to_disk(self, path: str, dataset_metadata: Dict = {}):
+    def save_to_disk(self, path: str, dataset_metadata: dict | None = None):
         """Save all in-memory buffer data and move temporary HDF5 file to a permanent location in disk.
 
         Args:
             path (str): path to store permanent HDF5, i.e: '/home/foo/datasets/data.hdf5'
             dataset_metadata (Dict, optional): additional metadata to add to HDF5 dataset file as attributes. Defaults to {}.
         """
+        if dataset_metadata is None:
+            dataset_metadata = {}
+
         # Dump everything in memory buffers to tmp_dataset.hdf5 and truncate last episode
         self.clear_buffer_to_tmp_file(truncate_last_episode=True)
 
