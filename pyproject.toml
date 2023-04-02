@@ -31,7 +31,7 @@ dependencies = [
     "typing_extensions==4.4.0",
     "google-cloud-storage==2.5.0",
     "typer[all]==0.7.0",
-    "gymnasium @ git+https://github.com/Farama-Foundation/Gymnasium.git@main",
+    "gymnasium>=0.28.1",
 ]
 dynamic = ["version"]
 
