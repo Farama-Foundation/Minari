@@ -18,7 +18,7 @@ from minari.data_collector.callbacks import (
 )
 
 
-EpisodeBuffer = dict[str, list | dict]
+EpisodeBuffer = dict[str, list | dict | int | str]
 
 class DataCollectorV0(gym.Wrapper):
     r"""Gymnasium environment wrapper that collects step data.
