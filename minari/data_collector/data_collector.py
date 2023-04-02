@@ -18,9 +18,7 @@ from minari.data_collector.callbacks import (
 )
 
 
-EpisodeBufferValues = TypeVar("EpisodeBufferValues", List[Any], "EpisodeBuffer")
-EpisodeBuffer = Dict[str, EpisodeBufferValues]
-
+EpisodeBuffer = dict[str, list | dict]
 
 class DataCollectorV0(gym.Wrapper):
     r"""Gymnasium environment wrapper that collects step data.
@@ -86,7 +84,7 @@ class DataCollectorV0(gym.Wrapper):
         Raises:
             ValueError: `max_buffer_steps` and `max_buffer_episodes` can't be passed at the same time
         """
-        self.env = env
+        super().__init__(env)
         self._step_data_callback = step_data_callback(env)
 
         self._episode_metadata_callback = episode_metadata_callback()
@@ -146,7 +144,7 @@ class DataCollectorV0(gym.Wrapper):
         """Add step data dictionary to episode buffer.
 
         Args:
-            buffer (Dict): dictionary episode buffer
+            episode_buffer (Dict): dictionary episode buffer
             step_data (Dict): dictionary with data for a single step
 
         Returns:
@@ -191,8 +189,8 @@ class DataCollectorV0(gym.Wrapper):
             truncated=truncated,
         )
 
-        # force step data dicitonary to include keys corresponding to Gymnasium step returns:
-        # actions, observations, rewards, terminations, truncatins, and infos
+        # force step data dictionary to include keys corresponding to Gymnasium step returns:
+        # actions, observations, rewards, terminations, truncations, and infos
         assert STEP_DATA_KEYS.issubset(step_data.keys())
 
         self._step_id += 1
