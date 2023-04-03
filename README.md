@@ -43,6 +43,12 @@ import minari
 
 dataset = minari.download_dataset("LunarLander_v2_remote-test-dataset")
 ```
+
+## Project Maintainers
+Main Contributors: [Rodrigo Perez-Vicente](https://github.com/rodrigodelazcano), [Omar Younis](https://github.com/younik)
+
+Maintenance for this project is also contributed by the broader Farama team: [farama.org/team](https://farama.org/team).
+
 ___
 
 _Minari is a shortening of Minarai, the Japanese word for "learning by observation"._
