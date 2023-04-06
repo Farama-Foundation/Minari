@@ -212,7 +212,7 @@ This code will show the following.
 Notice that in each sample non of the episodes are sampled more than once but the same episode can be retrieved in different :func:`minari.MinariDataset.sample_episodes` calls.
 
 Minari doesn't serve the purpose of creating replay buffers out of the Minari datasets, we leave this task for the user to make for their specific needs.
-To create your own buffers and dataloaders, you may need the ability to iterate through an episode in a deterministic order. This can be achieved with :func:`minari.MinariDataset.iterate_episodes`. This method is a generator that iterates over :class:`minari.EpisodeData` episodes from :class:`minari.MinariDataset` in ascending order of indexes. Specific indices can be also provided, however they will be still sorted for iteration. For example:
+To create your own buffers and dataloaders, you may need the ability to iterate through an episodes in a deterministic order. This can be achieved with :func:`minari.MinariDataset.iterate_episodes`. This method is a generator that iterates over :class:`minari.EpisodeData` episodes from :class:`minari.MinariDataset` in ascending order of indexes. Specific indices can be also provided, however they will be still sorted for iteration. For example:
 ```
 
 ```python
