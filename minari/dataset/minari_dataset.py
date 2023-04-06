@@ -218,7 +218,9 @@ class MinariDataset:
         episodes = self._data.get_episodes(indices)
         return list(map(lambda data: EpisodeData(**data), episodes))
 
-    def iterate_episodes(self, episode_indices: Optional[Union[np.ndarray, List[int]]] = None) -> Iterator[EpisodeData]:
+    def iterate_episodes(
+        self, episode_indices: Optional[Union[np.ndarray, List[int]]] = None
+    ) -> Iterator[EpisodeData]:
         """Iterate over episodes from the dataset in ascending order of indexes.
 
         Args:
