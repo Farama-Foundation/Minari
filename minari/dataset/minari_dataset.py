@@ -219,20 +219,20 @@ class MinariDataset:
         return list(map(lambda data: EpisodeData(**data), episodes))
 
     def iterate_episodes(
-        self, episode_indices: Optional[Union[np.ndarray, List[int]]] = None
+        self, episode_indices: Optional[List[int]] = None
     ) -> Iterator[EpisodeData]:
-        """Iterate over episodes from the dataset in ascending order of indexes.
+        """Iterate over episodes from the dataset.
 
         Args:
-            episode_indices (Optional[Union[np.ndarray, List[int]]], optional): episode indices to iterate over.
+            episode_indices (Optional[List[int]], optional): episode indices to iterate over.
         """
         if episode_indices is None:
-            episode_indices = self._episode_indices
+            assert self._episode_indices is not None
+            assert self._episode_indices.ndim == 1
+            episode_indices = self._episode_indices.tolist()
 
-        if isinstance(episode_indices, np.ndarray) and episode_indices.ndim != 1:
-            raise RuntimeError("The indices must have a ndim of 1.")
-
-        for episode_index in sorted(list(episode_indices)):
+        assert episode_indices is not None
+        for episode_index in episode_indices:
             data = self._data.get_episodes([episode_index])[0]
             yield EpisodeData(**data)
 
