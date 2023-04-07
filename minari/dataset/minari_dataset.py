@@ -231,8 +231,9 @@ class MinariDataset:
             assert self._episode_indices.ndim == 1
             episode_indices = self._episode_indices.tolist()
 
-        assert episode_indices is not None
-        for episode_index in episode_indices:
+        for (
+            episode_index
+        ) in episode_indices:  # pyright: ignore [reportOptionalIterable]
             data = self._data.get_episodes([episode_index])[0]
             yield EpisodeData(**data)
 
