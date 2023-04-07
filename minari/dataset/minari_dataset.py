@@ -176,6 +176,14 @@ class MinariDataset:
         """Indices of the available episodes to sample within the Minari dataset."""
         return self._episode_indices
 
+    @property
+    def observation_space(self):
+        return self._data.observation_space
+
+    @property
+    def action_space(self):
+        return self._data.action_space
+
     def recover_environment(self):
         """Recover the Gymnasium environment used to create the dataset.
 
