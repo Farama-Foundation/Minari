@@ -229,7 +229,10 @@ class MinariDataset:
         if episode_indices is None:
             episode_indices = self._episode_indices
 
-        for episode_index in sorted(episode_indices):
+        if isinstance(episode_indices, np.ndarray) and episode_indices.ndim != 1:
+            raise RuntimeError("The indices must have a ndim of 1.")
+
+        for episode_index in sorted(list(episode_indices)):
             data = self._data.get_episodes([episode_index])[0]
             yield EpisodeData(**data)
 
