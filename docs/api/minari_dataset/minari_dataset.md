@@ -10,6 +10,7 @@
 
 ```{eval-rst}
 .. autofunction:: minari.MinariDataset.sample_episodes
+.. autofunction:: minari.MinariDataset.iterate_episodes
 .. autofunction:: minari.MinariDataset.filter_episodes
 .. autofunction:: minari.MinariDataset.set_seed
 .. autofunction:: minari.MinariDataset.recover_environment

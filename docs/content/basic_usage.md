@@ -59,7 +59,7 @@ for _ in range(total_episodes):
         if terminated or truncated:
             break
 
-dataset = minari.create_dataset_from_collector_env(dataset_name="LunarLander-v2-test-v0", 
+dataset = minari.create_dataset_from_collector_env(dataset_id="LunarLander-v2-test-v0", 
                                                    collector_env=env,
                                                    algorithm_name="Random-Policy",
                                                    code_permalink="https://github.com/Farama-Foundation/Minari",
@@ -125,7 +125,7 @@ for episode_id in range(total_episodes):
         # Update local Minari dataset every 10 episodes.
         # This works as a checkpoint to not lose the already collected data
         if dataset is None:
-            dataset = minari.create_dataset_from_collector_env(dataset_name=dataset_name, 
+            dataset = minari.create_dataset_from_collector_env(dataset_id=dataset_name, 
                                                     collector_env=env,
                                                     algorithm_name="Random-Policy",
                                                     code_permalink="https://github.com/Farama-Foundation/Minari",
@@ -170,7 +170,7 @@ To download any of the remote datasets into the local `Minari root path </conten
 
 ```python
 >>> import minari
->>> minari.download_dataset(dataset_name="door-cloned-v0")
+>>> minari.download_dataset(dataset_id="door-cloned-v0")
 >>> local_datasets = minari.list_local_datasets()
 >>> local_datasets.keys()
 dict_keys(['door-cloned-v0'])
@@ -212,7 +212,42 @@ This code will show the following.
 Notice that in each sample non of the episodes are sampled more than once but the same episode can be retrieved in different :func:`minari.MinariDataset.sample_episodes` calls.
 
 Minari doesn't serve the purpose of creating replay buffers out of the Minari datasets, we leave this task for the user to make for their specific needs.
+To create your own buffers and dataloaders, you may need the ability to iterate through an episodes in a deterministic order. This can be achieved with :func:`minari.MinariDataset.iterate_episodes`. This method is a generator that iterates over :class:`minari.EpisodeData` episodes from :class:`minari.MinariDataset`. Specific indices can be also provided. For example:
 ```
+
+```python
+import minari
+
+dataset = minari.load_dataset("door-cloned-v0")
+episodes_generator = dataset.iterate_episodes(episode_indices=[1, 2, 0])
+
+for episode in episodes_generator:
+    print(f"EPISODE ID {episode.id}")
+```
+
+```{eval-rst}
+This code will show the following. 
+```
+
+```bash
+>>> EPISODE ID 1
+>>> EPISODE ID 2
+>>> EPISODE ID 0
+```
+
+```{eval-rst}
+In addition, the :class:`minari.MinariDataset` dataset itself is iterable. However, in this case the indices will have to be filtered separately using :func:`minari.MinariDataset.filter_episodes`.
+```
+
+```python
+import minari
+
+dataset = minari.load_dataset("door-cloned-v0")
+
+for episode in dataset:
+    print(f"EPISODE ID {episode.id}")
+```
+
 
 #### Filter Episodes
 
@@ -292,7 +327,7 @@ Lastly, in the case of having two or more Minari datasets created with the same 
 >>> human_dataset = minari.load_dataset('door-human-v0')
 >>> expert_dataset = minari.load_dataset('door-expert-v0')
 >>> combine_dataset = minari.combine_datasets(datasets_to_combine=[human_dataset,               expert_dataset], 
-                                        new_dataset_name="door-all-v0")
+                                        new_dataset_id="door-all-v0")
 >>> combine_dataset.name
 'door-all-v0'
 >>> minari.list_local_datasets()
