@@ -19,7 +19,7 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=b0c92cd440df7c18a0306b0433406327ff2c572f" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?digest=4297ed78bc2370ec4493f1a6639f04addebc5da5" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/termynal.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/directory_tree.css" />
@@ -385,6 +385,17 @@
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="minari.MinariDataset.iterate_episodes">
+<span class="sig-prename descclassname"><span class="pre">minari.MinariDataset.</span></span><span class="sig-name descname"><span class="pre">iterate_episodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">episode_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../episode_data/#minari.EpisodeData" title="minari.dataset.minari_dataset.EpisodeData"><span class="pre">EpisodeData</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#minari.MinariDataset.iterate_episodes" title="Permalink to this definition">#</a></dt>
+<dd><p>Iterate over episodes from the dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>episode_indices</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>int</em><em>]</em><em>]</em><em>, </em><em>optional</em>) – episode indices to iterate over.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="minari.MinariDataset.filter_episodes">
 <span class="sig-prename descclassname"><span class="pre">minari.MinariDataset.</span></span><span class="sig-name descname"><span class="pre">filter_episodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">Group</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#minari.MinariDataset" title="minari.dataset.minari_dataset.MinariDataset"><span class="pre">MinariDataset</span></a></span></span><a class="headerlink" href="#minari.MinariDataset.filter_episodes" title="Permalink to this definition">#</a></dt>
 <dd><p>Filter the dataset episodes with a condition.</p>
@@ -552,6 +563,7 @@ episode group: <a class="reference external" href="https://docs.h5py.org/en/stab
 <li><a class="reference internal" href="#minari.MinariDataset"><code class="docutils literal notranslate"><span class="pre">MinariDataset</span></code></a></li>
 <li><a class="reference internal" href="#methods">Methods</a><ul>
 <li><a class="reference internal" href="#minari.MinariDataset.sample_episodes"><code class="docutils literal notranslate"><span class="pre">sample_episodes()</span></code></a></li>
+<li><a class="reference internal" href="#minari.MinariDataset.iterate_episodes"><code class="docutils literal notranslate"><span class="pre">iterate_episodes()</span></code></a></li>
 <li><a class="reference internal" href="#minari.MinariDataset.filter_episodes"><code class="docutils literal notranslate"><span class="pre">filter_episodes()</span></code></a></li>
 <li><a class="reference internal" href="#minari.MinariDataset.set_seed"><code class="docutils literal notranslate"><span class="pre">set_seed()</span></code></a></li>
 <li><a class="reference internal" href="#minari.MinariDataset.recover_environment"><code class="docutils literal notranslate"><span class="pre">recover_environment()</span></code></a></li>
