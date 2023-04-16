@@ -318,9 +318,9 @@ class MinariDataset:
         Returns:
             Dictionary containing statistics for observations, rewards and actions.
         """
-        data_to_targe = ["observations", "rewards", "actions"]
+        data_to_target = ["observations", "rewards", "actions"]
         stats = {}
-        for data_name in data_to_targe:
+        for data_name in data_to_target:
             stats[data_name] = self._compute_data_stats(data_name)
 
         return stats
