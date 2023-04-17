@@ -3,7 +3,17 @@ from __future__ import annotations
 import os
 import re
 from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, Iterable, List, NamedTuple, Optional, Union
+from typing import (
+    Any,
+    Callable,
+    Dict,
+    Iterable,
+    Iterator,
+    List,
+    NamedTuple,
+    Optional,
+    Union,
+)
 
 import gymnasium as gym
 import h5py
@@ -218,6 +228,25 @@ class MinariDataset:
         episodes = self._data.get_episodes(indices)
         return list(map(lambda data: EpisodeData(**data), episodes))
 
+    def iterate_episodes(
+        self, episode_indices: Optional[List[int]] = None
+    ) -> Iterator[EpisodeData]:
+        """Iterate over episodes from the dataset.
+
+        Args:
+            episode_indices (Optional[List[int]], optional): episode indices to iterate over.
+        """
+        if episode_indices is None:
+            assert self._episode_indices is not None
+            assert self._episode_indices.ndim == 1
+            episode_indices = self._episode_indices.tolist()
+
+        assert episode_indices is not None
+
+        for episode_index in episode_indices:
+            data = self._data.get_episodes([episode_index])[0]
+            yield EpisodeData(**data)
+
     def update_dataset_from_collector_env(self, collector_env: DataCollectorV0):
         """Add extra data to Minari dataset from collector environment buffers (DataCollectorV0).
 
@@ -318,28 +347,31 @@ class MinariDataset:
         Returns:
             Dictionary containing statistics for observations, rewards and actions.
         """
-        data_to_target = ["observations", "rewards", "actions"]
+        target_data = ["observations", "rewards", "actions"]
         stats = {}
-        for data_name in data_to_target:
-            stats[data_name] = self._compute_data_stats(data_name)
+        for data_name in target_data:
+            episode_data = self._data.apply(
+                lambda episode: episode[data_name][()], self.episode_indices
+            )
+            stats[data_name] = self._compute_episode_data_stats(episode_data)
 
         return stats
 
-    def _compute_data_stats(self, data_name: str) -> Dict[str, Any]:
-        data = self._data.apply(
-            lambda episode: episode[data_name][()], self.episode_indices
-        )
-        data = np.concatenate(data, axis=0)
-        if len(data.shape) == 1:
-            histograms = [np.histogram(data, bins=20)]
+    def _compute_episode_data_stats(self, data: List[Any]) -> Dict[str, Any]:
+        concatenated_data = np.concatenate(data, axis=0)
+        if len(concatenated_data.shape) == 1:
+            histograms = [np.histogram(concatenated_data, bins=20)]
         else:
             histograms = []
-            for i in range(data.shape[1]):
-                histograms.append(np.histogram(data[:, i], bins=20))
+            for i in range(concatenated_data.shape[1]):
+                histograms.append(np.histogram(concatenated_data[:, i], bins=20))
         return {
-            "mean": np.mean(data, axis=0),
-            "std": np.std(data, axis=0),
-            "min": np.min(data, axis=0),
-            "max": np.max(data, axis=0),
+            "mean": np.mean(concatenated_data, axis=0),
+            "std": np.std(concatenated_data, axis=0),
+            "min": np.min(concatenated_data, axis=0),
+            "max": np.max(concatenated_data, axis=0),
             "histogram": histograms,
         }
+
+    def __iter__(self):
+        return self.iterate_episodes()
