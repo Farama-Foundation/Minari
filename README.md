@@ -2,11 +2,11 @@
     <img src="minari-text.png" width="500px"/>
 </p>
 
-Minari is the new name of this library. Minari used to be called Kabuki.
+Minari is a Python library for conducting research in offline reinforcement learning, akin to an offline version of Gymnasium or an offline RL version of HuggingFace's datasets library. This library is currently in beta.
 
-Minari is intended to be a Python library for conducting research in offline reinforcement learning, akin to an offline version of Gymnasium or an offline RL version of HuggingFace's datasets library. This library is currently in beta.
+The documentation website is at [minari.farama.org](https://minari.farama.org/main/). We also have a public discord server (which we use for Q&A and to coordinate development work) that you can join here: https://discord.gg/jfERDCSw.
 
-More details about the features that Minari supports can be read in the documentation at https://minari.farama.org/main/. We also have a public discord server (which we use for Q&A and to coordinate development work) that you can join here: https://discord.gg/jfERDCSw.
+Note: Minari was previously developed under the name Kabuki.
 
 
 ## Installation
@@ -19,8 +19,13 @@ cd Minari
 pip install -e .
 ```
 
+## Getting Started
 
-## Checking available remote datasets
+For an introduction to Minari, see [Basic Usage](https://minari.farama.org/main/content/basic_usage/). To create new datasets using Minari, see our [Pointmaze D4RL Dataset](https://minari.farama.org/main/tutorials/dataset_creation/point_maze_dataset/) tutorial, which re-creates the Maze2D datasets from [D4RL](https://github.com/Farama-Foundation/D4RL).
+
+## API 
+
+To check available remote datasets:
 
 ```python
 import minari
@@ -28,7 +33,7 @@ import minari
 minari.list_remote_datasets()
 ```
 
-## Checking available local datasets
+To check available local datasets:
 
 ```python
 import minari
@@ -36,7 +41,7 @@ import minari
 minari.list_local_datasets()
 ```
 
-## Downloading datasets
+To download a dataset:
 
 ```python
 import minari
