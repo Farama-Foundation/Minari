@@ -1,8 +1,7 @@
 import logging
-from typing import Any, NamedTuple
+from typing import NamedTuple
 import numpy as np
 from minari.dataset.minari_dataset import EpisodeData, MinariDataset
-import gymnasium as gym
 from gymnasium import spaces
 
 
