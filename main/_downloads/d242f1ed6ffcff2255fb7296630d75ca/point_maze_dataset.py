@@ -5,7 +5,7 @@ PointMaze D4RL dataset
 """
 # %%%
 # In this tutorial you will learn how to re-create the Maze2D datasets from `D4RL <https://sites.google.com/view/d4rl/home>`_ [1] with Minari.
-# We will be using the refactor version of the PointMaze environments in `Gymnasium-Robotics <https://robotics.farama.org/envs/maze/point_maze/>`_ which support the Gymnasium API as well as the latest
+# We will be using the refactored version of the PointMaze environments in `Gymnasium-Robotics <https://robotics.farama.org/envs/maze/point_maze/>`_ which support the Gymnasium API as well as the latest
 # MuJoCo python bindings.
 #
 # Lets start by breaking down the steps to generate these datasets:
