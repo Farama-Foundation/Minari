@@ -92,36 +92,32 @@ def _generate_dataset_with_collector_env(dataset_id: str, num_episodes: int = 10
 def test_combine_datasets():
     num_datasets, num_episodes = 5, 10
     test_datasets_ids = [f"cartpole-test-v{i}" for i in range(num_datasets)]
-    # clean datasets if they already exists
-    for dataset_id in test_datasets_ids:
-        minari.delete_dataset(dataset_id)
-    minari.delete_dataset("cartpole-combined-test-v0")
 
+    local_datasets = minari.list_local_datasets()
     # generating multiple test datasets
     for dataset_id in test_datasets_ids:
+        if dataset_id in local_datasets:
+            minari.delete_dataset(dataset_id)
         _generate_dataset_with_collector_env(dataset_id, num_episodes)
 
     test_datasets = [
         minari.load_dataset(dataset_id) for dataset_id in test_datasets_ids
     ]
+    if "cartpole-combined-test-v0" in local_datasets:
+        minari.delete_dataset("cartpole-combined-test-v0")
 
     combined_dataset = combine_datasets(
         test_datasets, new_dataset_id="cartpole-combined-test-v0"
     )
     assert isinstance(combined_dataset, MinariDataset)
-    assert combined_dataset.spec.combined_datasets == test_datasets
+    assert list(combined_dataset.spec.combined_datasets) == test_datasets_ids
     assert combined_dataset.spec.total_episodes == num_datasets * num_episodes
     assert combined_dataset.spec.total_steps == sum(
         d.spec.total_steps for d in test_datasets
     )
-
     _check_env_recovery(gym.make("CartPole-v1"), combined_dataset)
     _check_load_and_delete_dataset("cartpole-combined-test-v0")
 
     # deleting test datasets
     for dataset_id in test_datasets_ids:
         minari.delete_dataset(dataset_id)
-
-
-if __name__ == "__main__":
-    test_combine_datasets()
