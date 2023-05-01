@@ -71,6 +71,8 @@ class DataCollectorV0(gym.Wrapper):
         record_infos: bool = False,
         max_buffer_steps: Optional[int] = None,
         max_buffer_episodes: Optional[int] = None,
+        observation_space=None,
+        action_space=None,
     ):
         """Initialize the data colletor attributes and create the temporary directory for caching.
 
@@ -85,8 +87,18 @@ class DataCollectorV0(gym.Wrapper):
         Raises:
             ValueError: `max_buffer_steps` and `max_buffer_episodes` can't be passed at the same time
         """
-        super().__init__(env)
-        self._step_data_callback = step_data_callback(env)
+        self.env = env
+        self._step_data_callback = step_data_callback()
+
+        if observation_space is None:
+            self.dataset_observation_space = self.env.observation_space
+        else:
+            self.dataset_observation_space = observation_space
+
+        if action_space is None:
+            self.dataset_action_space = self.env.action_space
+        else:
+            self.dataset_action_space = action_space
 
         self._episode_metadata_callback = episode_metadata_callback()
         self._record_infos = record_infos
@@ -122,10 +134,6 @@ class DataCollectorV0(gym.Wrapper):
 
         assert self.env.spec is not None
         self._tmp_f.attrs["env_spec"] = self.env.spec.to_json()
-        self._tmp_f.attrs[
-            "flatten_observation"
-        ] = self._step_data_callback.flatten_observation
-        self._tmp_f.attrs["flatten_action"] = self._step_data_callback.flatten_action
 
         self._new_episode = False
         self._reset_called = False
@@ -192,8 +200,12 @@ class DataCollectorV0(gym.Wrapper):
             truncated=truncated,
         )
 
-        # force step data dictionary to include keys corresponding to Gymnasium step returns:
-        # actions, observations, rewards, terminations, truncations, and infos
+        # Check that the saved observation and action belong to the dataset's observation/action spaces
+        assert self.dataset_observation_space.contains(step_data["observations"])
+        assert self.dataset_action_space.contains(step_data["actions"])
+
+        # force step data dicitonary to include keys corresponding to Gymnasium step returns:
+        # actions, observations, rewards, terminations, truncatins, and infos
         assert STEP_DATA_KEYS.issubset(step_data.keys())
 
         self._step_id += 1
