@@ -193,20 +193,20 @@ class WaypointController:
         # Check if we need to generate new waypoint path due to change in global target
         if np.linalg.norm(self.global_target_xy - obs['desired_goal']) > 1e-3 or self.waypoint_targets is None:
             # Convert xy to cell id
-            achived_goal_cell = tuple(self.maze.cell_xy_to_rowcol(obs['achieved_goal']))
+            achieved_goal_cell = tuple(self.maze.cell_xy_to_rowcol(obs['achieved_goal']))
             self.global_target_id = tuple(self.maze.cell_xy_to_rowcol(obs['desired_goal']))
             self.global_target_xy = obs['desired_goal']
 
-            self.waypoint_targets = self.maze_solver.generate_path(achived_goal_cell, self.global_target_id)
+            self.waypoint_targets = self.maze_solver.generate_path(achieved_goal_cell, self.global_target_id)
 
             # Check if the waypoint dictionary is empty
             # If empty then the ball is already in the target cell location
             if self.waypoint_targets:
-                self.current_control_target_id = self.waypoint_targets[achived_goal_cell]
+                self.current_control_target_id = self.waypoint_targets[achieved_goal_cell]
                 self.current_control_target_xy = self.maze.cell_rowcol_to_xy(np.array(self.current_control_target_id))
             else:
                 self.waypoint_targets[self.current_control_target_id] = self.current_control_target_id
-                self.current_control_target_id == self.global_target_id
+                self.current_control_target_id = self.global_target_id
                 self.current_control_target_xy = self.global_target_xy
 
         # Check if we need to go to the next waypoint
