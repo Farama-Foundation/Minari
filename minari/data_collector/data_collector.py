@@ -110,7 +110,7 @@ class DataCollectorV0(gym.Wrapper):
         self.max_buffer_steps = max_buffer_steps
 
         # Initialzie empty buffer
-        self._buffer: List[EpisodeBuffer] = [{key: [] for key in STEP_DATA_KEYS}]
+        self._buffer: List[EpisodeBuffer] = [{}]
 
         self._current_seed: Union[int, str] = str(None)
         self._new_episode = False
@@ -173,6 +173,10 @@ class DataCollectorV0(gym.Wrapper):
                     episode_buffer[key] = [value]
             else:
                 if isinstance(value, dict):
+                    # print(value)
+                    # print(episode_buffer[key])
+                    # print(key)
+                    # print(self._buffer)
                     assert isinstance(episode_buffer[key], dict)
                     episode_buffer[key] = self._add_to_episode_buffer(
                         episode_buffer[key], value
@@ -200,13 +204,12 @@ class DataCollectorV0(gym.Wrapper):
             truncated=truncated,
         )
 
-        # Check that the saved observation and action belong to the dataset's observation/action spaces
-        assert self.dataset_observation_space.contains(step_data["observations"])
-        assert self.dataset_action_space.contains(step_data["actions"])
-
         # force step data dicitonary to include keys corresponding to Gymnasium step returns:
         # actions, observations, rewards, terminations, truncatins, and infos
         assert STEP_DATA_KEYS.issubset(step_data.keys())
+        # Check that the saved observation and action belong to the dataset's observation/action spaces
+        assert self.dataset_observation_space.contains(step_data["observations"])
+        assert self.dataset_action_space.contains(step_data["actions"])
 
         self._step_id += 1
 
@@ -240,7 +243,7 @@ class DataCollectorV0(gym.Wrapper):
 
         # add new episode buffer to global buffer when episode finishes with truncation or termination
         if clear_buffers or step_data["terminations"] or step_data["truncations"]:
-            self._buffer.append({key: [] for key in STEP_DATA_KEYS})
+            self._buffer.append({})
 
         # Increase episode count when step is term/trunc and only after clearing buffers to tmp file
         if step_data["terminations"] or step_data["truncations"]:
@@ -262,8 +265,8 @@ class DataCollectorV0(gym.Wrapper):
         assert STEP_DATA_KEYS.issubset(step_data.keys())
 
         # If last episode in global buffer has saved steps, we need to check if it was truncated or terminated
-        # If not, then we need to auto-truncate the episode
-        if len(self._buffer[-1]["actions"]) > 0:
+        # If not (empty dicitionary), then we need to auto-truncate the episode.
+        if self._buffer[-1]:
             if (
                 not self._buffer[-1]["terminations"][-1]
                 and not self._buffer[-1]["truncations"][-1]
@@ -281,7 +284,7 @@ class DataCollectorV0(gym.Wrapper):
                     self.clear_buffer_to_tmp_file()
 
                 # add new episode buffer
-                self._buffer.append({key: [] for key in STEP_DATA_KEYS})
+                self._buffer.append({})
         else:
             # In the case that the past episode is already stored in the tmp hdf5 file because of caching,
             # we need to check if it was truncated or terminated, if not then auto-truncate
@@ -437,7 +440,7 @@ class DataCollectorV0(gym.Wrapper):
         for key, value in dataset_metadata.items():
             self._tmp_f.attrs[key] = value
 
-        self._buffer.append({key: [] for key in STEP_DATA_KEYS})
+        self._buffer.append({})
 
         # Reset episode count
         self._episode_id = 0
