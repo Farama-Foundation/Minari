@@ -19,14 +19,6 @@ class MinariStorage:
         self._data_path = data_path
         self._extra_data_id = 0
         with h5py.File(self._data_path, "r") as f:
-            flatten_observations = f.attrs["flatten_observation"].item()
-            assert isinstance(flatten_observations, bool)
-            self._flatten_observations = flatten_observations
-
-            flatten_actions = f.attrs["flatten_action"].item()
-            assert isinstance(flatten_actions, bool)
-            self._flatten_actions = flatten_actions
-
             self._env_spec = EnvSpec.from_json(f.attrs["env_spec"])
 
             total_episodes = f.attrs["total_episodes"].item()
@@ -105,16 +97,6 @@ class MinariStorage:
                 out.append(self._filter_episode_data(ep_group))
 
         return out
-
-    @property
-    def flatten_observations(self) -> bool:
-        """If the observations have been flatten when creating the dataset."""
-        return self._flatten_observations
-
-    @property
-    def flatten_actions(self) -> bool:
-        """If the actions have been flatten when creating the dataset."""
-        return self._flatten_actions
 
     @property
     def observation_space(self):

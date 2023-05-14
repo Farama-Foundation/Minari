@@ -271,8 +271,6 @@ When creating a Minari dataset with the `DataCollectorV0` wrapper the default gl
 | ----------------------- | ---------- | ----------- |
 | `total_episodes`        | `np.int64` | Number of episodes in the Minari dataset. |
 | `total_steps`           | `np.int64` | Number of steps in the Minari dataset. |
-| `flattened_observation` | `np.bool`  | If the observation space had to be flattened. Usually for `Dictionary` and `Tuple` spaces. |
-| `flattened_action`      | `np.bool`  | If the action space had to be flattened. Usually for `Dictionary` and `Tuple` spaces.|
 | `env_spec`              | `str`      | json string of the Gymnasium environment spec.|
 | `dataset_name`          | `str`      | Name tag of the Minari dataset. |
 | `code_permalink`        | `str`      | Link to a repository with the code used to generate the dataset.|

@@ -82,32 +82,6 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_id: s
                     "The datasets to be combined have different values for `env_spec` attribute."
                 )
 
-            if combined_data_file.attrs.get("flatten_action") is None:
-                combined_data_file.attrs[
-                    "flatten_action"
-                ] = dataset.spec.flatten_actions
-            else:
-                if (
-                    combined_data_file.attrs["flatten_action"]
-                    != dataset.spec.flatten_actions
-                ):
-                    raise ValueError(
-                        "The datasets to be combined have different values for `flatten_action` attribute."
-                    )
-
-            if combined_data_file.attrs.get("flatten_observation") is None:
-                combined_data_file.attrs[
-                    "flatten_observation"
-                ] = dataset.spec.flatten_observations
-            else:
-                if (
-                    combined_data_file.attrs["flatten_observation"]
-                    != dataset.spec.flatten_observations
-                ):
-                    raise ValueError(
-                        "The datasets to be combined have different values for `flatten_observation` attribute."
-                    )
-
             last_episode_id = combined_data_file.attrs["total_episodes"]
 
             for id in range(dataset.total_episodes):
@@ -266,10 +240,6 @@ def create_dataset_from_buffers(
 
             file.attrs["total_episodes"] = len(buffer)
             file.attrs["total_steps"] = total_steps
-
-            # TODO: check if observation/action have been flatten and update
-            file.attrs["flatten_observation"] = False
-            file.attrs["flatten_action"] = False
 
             file.attrs[
                 "env_spec"

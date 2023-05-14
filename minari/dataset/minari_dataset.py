@@ -86,8 +86,6 @@ class EpisodeData(NamedTuple):
 
 @dataclass
 class MinariDatasetSpec:
-    flatten_observations: bool
-    flatten_actions: bool
     env_spec: EnvSpec
     total_episodes: int
     total_steps: int
@@ -140,8 +138,6 @@ class MinariDataset:
         self._episode_indices = episode_indices
 
         self.spec = MinariDatasetSpec(
-            flatten_observations=self._data.flatten_observations,
-            flatten_actions=self._data.flatten_actions,
             env_spec=self._data.env_spec,
             total_episodes=self._data.total_episodes,
             total_steps=self._data.total_steps,
