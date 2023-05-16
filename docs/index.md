@@ -84,6 +84,7 @@ datasets/hammer
 datasets/relocate
 datasets/pen
 datasets/pointmaze
+datasets/kitchen
 ```
 
 ```{toctree}
