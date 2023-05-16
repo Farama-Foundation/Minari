@@ -33,3 +33,15 @@ pointmaze/medium-dense.md
 pointmaze/large-dense.md
 ```
 
+
+## Available Datasets
+| Dataset ID | Description |
+| ---------- | ----------- |
+| <a href="../pointmaze/large-dense" title="pointmaze-large-dense-v0">pointmaze-large-dense-v0</a> | The data is collected from the [`PointMaze_LargeDense-v3`](https://robotics.farama.org/envs/maze/point_maze/) environment |
+| <a href="../pointmaze/large" title="pointmaze-large-v0">pointmaze-large-v0</a> | The data is collected from the [`PointMaze_Large-v3`](https://robotics.farama.org/envs/maze/point_maze/) environment |
+| <a href="../pointmaze/medium-dense" title="pointmaze-medium-dense-v0">pointmaze-medium-dense-v0</a> | The data is collected from the [`PointMaze_MediumDense-v3`](https://robotics.farama.org/envs/maze/point_maze/) environment |
+| <a href="../pointmaze/medium" title="pointmaze-medium-v0">pointmaze-medium-v0</a> | The data is collected from the [`PointMaze_Medium-v3`](https://robotics.farama.org/envs/maze/point_maze/) environment |
+| <a href="../pointmaze/open-dense" title="pointmaze-open-dense-v0">pointmaze-open-dense-v0</a> | The data is collected from the [`PointMaze_OpenDense-v3`](https://robotics.farama.org/envs/maze/point_maze/) environment, which contains an open arena with only perimeter walls |
+| <a href="../pointmaze/open" title="pointmaze-open-v0">pointmaze-open-v0</a> | The data is collected from the [`PointMaze_Open-v3`](https://robotics.farama.org/envs/maze/point_maze/) environment, which contains an open arena with only perimeter walls |
+| <a href="../pointmaze/umaze-dense" title="pointmaze-umaze-dense-v0">pointmaze-umaze-dense-v0</a> | The data is collected from the [`PointMaze_UMazeDense-v3`](https://robotics.farama.org/envs/maze/point_maze/) environment, which contains a U shape maze |
+| <a href="../pointmaze/umaze" title="pointmaze-umaze-v0">pointmaze-umaze-v0</a> | The data is collected from the [`PointMaze_UMaze-v3`](https://robotics.farama.org/envs/maze/point_maze/) environment, which contains a U shape maze |
