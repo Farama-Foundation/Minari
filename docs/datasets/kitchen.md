@@ -5,7 +5,7 @@ lastpage:
 
 # Kitchen
 
-These datasets were generated with the [`FrankaKitchen-v1`](https://robotics.farama.org/envs/franka_kitchen/franka_kitchen/) environment, originally hosted in the [`D4RL`](https://github.com/aravindr93/hand_dapg)[1] and [`relay-policy-learning](https://github.com/google-research/relay-policy-learning)[2] repository. The goal of the `FrankaKitchen` environment is to interact with the various objects in order to reach a desired state configuration. The objects you can interact with include the position of the kettle, flipping the light switch, opening and closing the microwave and cabinet doors, or sliding the other cabinet door. The desired goal configuration for all datasets is to complete 4 subtasks: open the microwave, move the kettle, flip the light switch, and slide open the cabinet door.
+These datasets were generated with the [`FrankaKitchen-v1`](https://robotics.farama.org/envs/franka_kitchen/franka_kitchen/) environment, originally hosted in the [`D4RL`](https://github.com/aravindr93/hand_dapg)[1] and [`relay-policy-learning`](https://github.com/google-research/relay-policy-learning)[2] repository. The goal of the `FrankaKitchen` environment is to interact with the various objects in order to reach a desired state configuration. The objects you can interact with include the position of the kettle, flipping the light switch, opening and closing the microwave and cabinet doors, or sliding the other cabinet door. The desired goal configuration for all datasets is to complete 4 subtasks: open the microwave, move the kettle, flip the light switch, and slide open the cabinet door.
 
 There are three types of datasets:
 
