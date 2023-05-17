@@ -41,6 +41,7 @@ extensions = [
     "sphinx.ext.doctest",
     "sphinx.ext.autodoc",
     "sphinx.ext.githubpages",
+    "sphinx.ext.viewcode",
     "furo.gen_tutorials",
     "myst_parser",
     "sphinx_gallery.gen_gallery",
@@ -77,6 +78,8 @@ html_favicon = "_static/img/favicon.png"
 html_theme_options = {
     "light_logo": "img/Minari.svg",
     "dark_logo": "img/Minari_White.svg",
+    "image": "img/robotics-github.png",
+    "description": "Minari is a Python library for conducting research in offline reinforcement learning.",
     "gtag": "G-R5TRTT6R78",
     "versioning": True,
     "source_repository": "https://github.com/Farama-Foundation/Minari/",

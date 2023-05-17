@@ -4,9 +4,58 @@ firstpage:
 lastpage:
 ---
 
-# Minari, a dataset API for Offline Reinforcement Learning
+```{toctree}
+:hidden:
+:caption: Introduction
+content/basic_usage
+content/dataset_standards
+content/minari_cli
+```
 
-Minari is a Python API that hosts a collection of popular Offline Reinforcement Learning datasets. The environments from which these datasets are generated are standardized to follow the [Gymnasium API](https://gymnasium.farama.org/). The datasets are publicly available in a [Farama GCP bucket](https://console.cloud.google.com/storage/browser/minari-datasets;tab=objects?forceOnBucketsSortingFiltering=false&amp;project=mcmes-345620&amp;prefix=&amp;forceOnObjectsSortingFiltering=false) and can be downloaded through the Minari CLI as shown below. Minari also provides dataset handling features such as episode sampling, filtering trajectories with statiscal metrics or metadata, as well as data collection and dataset generation utilities.
+```{toctree}
+:hidden:
+:caption: API
+api/minari_functions
+api/minari_dataset
+api/data_collector
+```
+
+```{toctree}
+:hidden:
+:glob:
+:caption: Tutorials
+tutorials/**/index
+```
+
+```{toctree}
+:hidden:
+:caption: Datasets
+datasets/door
+datasets/hammer
+datasets/relocate
+datasets/pen
+datasets/pointmaze
+datasets/kitchen
+```
+
+```{toctree}
+:hidden:
+:caption: Development
+
+Github <https://github.com/Farama-Foundation/Minari>
+release_notes/index
+Contribute to the Docs <https://github.com/Farama-Foundation/Minari/tree/main/docs>
+```
+
+```{project-logo} _static/img/minari-text.svg
+:alt: Minari Logo
+```
+
+```{project-heading}
+A dataset API for Offline Reinforcement Learning.
+```
+
+**Minari is a Python API that hosts a collection of popular Offline Reinforcement Learning datasets.** The environments from which these datasets are generated are standardized to follow the [Gymnasium API](https://gymnasium.farama.org/). The datasets are publicly available in a [Farama GCP bucket](https://console.cloud.google.com/storage/browser/minari-datasets;tab=objects?forceOnBucketsSortingFiltering=false&amp;project=mcmes-345620&amp;prefix=&amp;forceOnObjectsSortingFiltering=false) and can be downloaded through the Minari CLI as shown below. Minari also provides dataset handling features such as episode sampling, filtering trajectories with statiscal metrics or metadata, as well as data collection and dataset generation utilities.
 
 ```{eval-rst}
 
@@ -51,46 +100,3 @@ Dataset door-cloned-v0 downloaded to <path-to-local-datasets>/.minari/datasets/d
 <p style="text-align: center;">
 "見習い - learning by observation"
 </p>
-
-
-```{toctree}
-:hidden:
-:caption: Introduction
-content/basic_usage
-content/dataset_standards
-content/minari_cli
-```
-
-```{toctree}
-:hidden:
-:caption: API
-api/minari_functions
-api/minari_dataset
-api/data_collector
-```
-
-```{toctree}
-:hidden:
-:glob:
-:caption: Tutorials
-tutorials/**/index
-```
-
-```{toctree}
-:hidden:
-:caption: Datasets
-datasets/door
-datasets/hammer
-datasets/relocate
-datasets/pen
-datasets/pointmaze
-datasets/kitchen
-```
-
-```{toctree}
-:hidden:
-:caption: Development
-
-Github <https://github.com/Farama-Foundation/Minari>
-```
-
