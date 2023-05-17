@@ -45,6 +45,7 @@ extensions = [
     "furo.gen_tutorials",
     "myst_parser",
     "sphinx_gallery.gen_gallery",
+    "sphinx_github_changelog",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
