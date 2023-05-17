@@ -47,7 +47,7 @@ release_notes/index
 Contribute to the Docs <https://github.com/Farama-Foundation/Minari/tree/main/docs>
 ```
 
-```{project-logo} _static/img/minari-text.svg
+```{project-logo} _static/img/minari-text.png
 :alt: Minari Logo
 ```
 

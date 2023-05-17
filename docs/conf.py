@@ -45,6 +45,7 @@ extensions = [
     "furo.gen_tutorials",
     "myst_parser",
     "sphinx_gallery.gen_gallery",
+    "sphinx_github_changelog",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -118,3 +119,7 @@ sphinx_gallery_conf = {
         os.path.dirname(__file__), "_static/img/minari-text.png"
     ),
 }
+
+# -- Generate Changelog -------------------------------------------------
+
+sphinx_github_changelog_token = os.environ.get("SPHINX_GITHUB_CHANGELOG_TOKEN")
