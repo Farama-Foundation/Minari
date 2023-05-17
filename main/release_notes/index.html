@@ -362,6 +362,185 @@
             
             <section id="release-notes">
 <h1>Release Notes<a class="headerlink" href="#release-notes" title="Permalink to this heading">#</a></h1>
+<section id="release-v0-3-0">
+<h2>v0.3.0<a class="headerlink" href="#release-v0-3-0" title="Permalink to this heading">#</a></h2>
+<p><em>Released on 2023-05-17 - <a class="reference external" href="https://github.com/Farama-Foundation/Minari/releases/tag/v0.3.0">GitHub</a> - <a class="reference external" href="https://pypi.org/project/minari/v0.3.0/">PyPI</a></em></p>
+<h1>v0.3.0: Minari is ready for testing</h1>
+<h2><strong>Minari 0.3.0 Release Notes:</strong></h2>
+<p>For this beta release Minari has experienced considerable changes from its past <code>v0.2.2</code> version. As a major refactor, the C source code and Cython dependency have been removed in favor of a pure Python API in order to reduce code complexity. If we require a more efficient API in the future we will explore the use of C.</p>
+<p>Apart from the API changes and new features we are excited to include the first official Minari datasets which have been re-created from the D4RL project.</p>
+<p>The documentation page at <a href="https://minari.farama.org/" rel="nofollow">https://minari.farama.org/</a>, has also been updated with the latest changes.</p>
+<p>We are constantly developing this library. Please don't hesitate to open a GitHub issue or reach out to us directly. Your ideas and contributions are highly appreciated and will help shape the future of this library. Thank you for using our library!</p>
+<h2>New Features and Improvements</h2>
+<h3>Dataset File Format</h3>
+<p>We are keeping the <a href="https://www.hdfgroup.org/solutions/hdf5/" rel="nofollow">HDF5</a> file format to store the Minari datasets. However, the internal structure of the datasets has been modified. The data is now stored in a per episode basis. Each Minari dataset has a minimum of one HDF5 file (<g-emoji class="g-emoji" alias="page_facing_up" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c4.png">📄</g-emoji>, <code>main_data.hdf5</code>). In the dataset file,  the collected transitions are separated by episode groups (<g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji>) that contain 5 required datasets(<g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji>) : <code>observations</code>, <code>actions</code>, <code>terminations</code>, <code>truncations</code>, and <code>rewards</code>. Other optional group and dataset collections can be included in each episode; such is the case of the <code>infos</code> step return. This structure allows us to store <a href="https://minari.farama.org/main/content/dataset_standards/#default-dataset-metadata" rel="nofollow">metadata</a> for each episode.</p>
+<p><g-emoji class="g-emoji" alias="page_facing_up" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c4.png">📄</g-emoji> main_data.hdf5<br>
+├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> episode_id<br>
+│   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> observations<br>
+│   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> actions<br>
+│   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> terminations<br>
+│   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> truncations<br>
+│   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> rewards<br>
+│   ├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> infos<br>
+│   │   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> info datasets<br>
+│   │   └ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> info subgroup<br>
+│   │      └ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> info subgroup dataset<br>
+│   └ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> extra dataset group<br>
+│       └ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> extra datasets<br>
+└ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> next_episode_id</p>
+<h3>MinariDataset</h3>
+<p>When <a href="https://minari.farama.org/main/content/basic_usage/#using-minari-datasets" rel="nofollow">loading</a> a dataset, the <a href="https://minari.farama.org/main/api/minari_dataset/minari_dataset/" rel="nofollow">MinariDataset</a> object now delegates the HDF5 file access to a <a href="https://github.com/Farama-Foundation/Minari/blob/901235974ca69b175ddb7de4faff40dba4b13ede/minari/dataset/minari_storage.py#L12">MinariStorage</a> object. The  <a href="https://minari.farama.org/main/api/minari_dataset/minari_dataset/" rel="nofollow">MinariDataset</a> provides new methods (<a href="https://minari.farama.org/main/api/minari_dataset/minari_dataset/#minari.MinariDataset.sample_episodes" rel="nofollow"><code>MinariDataset.sample_episodes()</code></a>(<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1605340486" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/34" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/34/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/34">#34</a>) and <a href="https://minari.farama.org/main/api/minari_dataset/minari_dataset/#minari.MinariDataset.iterate_episodes" rel="nofollow"><code>MinariDataset.iterate_episodes()</code></a>(<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1658034582" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/54" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/54/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/54">#54</a>)) to retrieve <a href="https://minari.farama.org/main/api/minari_dataset/episode_data/" rel="nofollow">EpisodeData</a> from the available episode indices in the dataset.</p>
+<p><strong>NOTE</strong>: for now the user is in charge of creating their own replay buffers with the provided episode <a href="https://minari.farama.org/main/content/basic_usage/#sampling-episodes" rel="nofollow">sampling methods</a>. We are currently working on creating standard replay buffers (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1659055513" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/55" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/55/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/55">#55</a>) and making Minari datasets compatible with other learning Offline RL libraries.</p>
+<p>The available episode indices can be filtered using metadata or other information from the episodes HDF5 datasets with <a href="https://minari.farama.org/main/api/minari_dataset/minari_dataset/#minari.MinariDataset.filter_episodes" rel="nofollow"> <code>MinariDataset.filter_episodes(condition: Callable[[h5py.Group], bool])</code></a>(<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1605340486" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/34" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/34/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/34">#34</a>).</p>
+<div class="highlight highlight-source-python notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="dataset = minari.load_dataset(&quot;door-human-v0&quot;)
+
+print(f'TOTAL EPISODES ORIGINAL DATASET: {dataset.total_episodes}')
+
+# get episodes with mean reward greater than 2
+filter_dataset = dataset.filter_episodes(lambda episode: episode[&quot;rewards&quot;].attrs.get(&quot;mean&quot;) &gt; 2)
+
+print(f'TOTAL EPISODES FILTER DATASET: {filter_dataset.total_episodes}')"><pre><span class="pl-s1">dataset</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-en">load_dataset</span>(<span class="pl-s">"door-human-v0"</span>)
+
+<span class="pl-en">print</span>(<span class="pl-s">f'TOTAL EPISODES ORIGINAL DATASET: <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">dataset</span>.<span class="pl-s1">total_episodes</span><span class="pl-kos">}</span></span>'</span>)
+
+<span class="pl-c"># get episodes with mean reward greater than 2</span>
+<span class="pl-s1">filter_dataset</span> <span class="pl-c1">=</span> <span class="pl-s1">dataset</span>.<span class="pl-en">filter_episodes</span>(<span class="pl-k">lambda</span> <span class="pl-s1">episode</span>: <span class="pl-s1">episode</span>[<span class="pl-s">"rewards"</span>].<span class="pl-s1">attrs</span>.<span class="pl-en">get</span>(<span class="pl-s">"mean"</span>) <span class="pl-c1">&gt;</span> <span class="pl-c1">2</span>)
+
+<span class="pl-en">print</span>(<span class="pl-s">f'TOTAL EPISODES FILTER DATASET: <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">filter_dataset</span>.<span class="pl-s1">total_episodes</span><span class="pl-kos">}</span></span>'</span>)</pre></div>
+<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="&gt;&gt;&gt; TOTAL EPISODES ORIGINAL DATASET: 25
+&gt;&gt;&gt; TOTAL EPISODES FILTER DATASET: 18"><pre>&gt;&gt;&gt; TOTAL EPISODES ORIGINAL DATASET: 25
+&gt;&gt;&gt; TOTAL EPISODES FILTER DATASET: 18</pre></div>
+<p>The episodes in a <a href="https://minari.farama.org/main/api/minari_dataset/minari_dataset/" rel="nofollow">MinariDataset</a> can also be splitted into smaller sub-datasets with <a href="https://minari.farama.org/main/api/minari_functions/#split-minari-dataset" rel="nofollow"><code>minari.split_dataset(dataset: MinariDataset, sizes: List[int], seed: int | None = None)</code></a>(<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1605340486" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/34" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/34/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/34">#34</a>).</p>
+<div class="highlight highlight-source-python notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="dataset = minari.load_dataset(&quot;door-human-v0&quot;)
+
+split_datasets = minari.split_dataset(dataset, sizes=[20, 5], seed=123)
+
+print(f'TOTAL EPISODES FIRST SPLIT: {split_datasets[0].total_episodes}')
+print(f'TOTAL EPISODES SECOND SPLIT: {split_datasets[1].total_episodes}')"><pre><span class="pl-s1">dataset</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-en">load_dataset</span>(<span class="pl-s">"door-human-v0"</span>)
+
+<span class="pl-s1">split_datasets</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-en">split_dataset</span>(<span class="pl-s1">dataset</span>, <span class="pl-s1">sizes</span><span class="pl-c1">=</span>[<span class="pl-c1">20</span>, <span class="pl-c1">5</span>], <span class="pl-s1">seed</span><span class="pl-c1">=</span><span class="pl-c1">123</span>)
+
+<span class="pl-en">print</span>(<span class="pl-s">f'TOTAL EPISODES FIRST SPLIT: <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">split_datasets</span>[<span class="pl-c1">0</span>].<span class="pl-s1">total_episodes</span><span class="pl-kos">}</span></span>'</span>)
+<span class="pl-en">print</span>(<span class="pl-s">f'TOTAL EPISODES SECOND SPLIT: <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">split_datasets</span>[<span class="pl-c1">1</span>].<span class="pl-s1">total_episodes</span><span class="pl-kos">}</span></span>'</span>)</pre></div>
+<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="&gt;&gt;&gt; TOTAL EPISODES FIRST SPLIT: 20
+&gt;&gt;&gt; TOTAL EPISODES SECOND SPLIT: 5"><pre>&gt;&gt;&gt; TOTAL EPISODES FIRST SPLIT: 20
+&gt;&gt;&gt; TOTAL EPISODES SECOND SPLIT: 5</pre></div>
+<p>Finally,  Gymnasium release <a href="https://github.com/Farama-Foundation/Gymnasium/releases/tag/v0.28.0"><code>v0.28.0</code></a> made possible the conversion of the environment's <a href="https://gymnasium.farama.org/api/registry/#gymnasium.envs.registration.EnvSpec" rel="nofollow"><code>EnvSpec</code></a> to a <code>json</code> dictionary. This allowed Minari to "safe" the description of the environment used to generate the dataset into the HDF5 file for later recovery through: <a href="https://minari.farama.org/main/api/minari_dataset/minari_dataset/#minari.MinariDataset.recover_environment" rel="nofollow"><code>MinariDataset.recover_environment()</code></a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1586245546" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/31" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/31/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/31">#31</a>). <strong>NOTE</strong>: the <a href="https://gymnasium.farama.org/api/registry/#core-variables" rel="nofollow"><code>entry_point</code></a> of the environment must be available, i.e. to recover the environment from <code>door-human-v0</code> dataset, the <a href="https://robotics.farama.org/" rel="nofollow"><code>gymnasium-robotics</code></a> library must be installed.</p>
+<h3>Dataset Creation (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1586245546" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/31" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/31/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/31">#31</a>)</h3>
+<p>We are facilitating the logging of environment data by providing a Gymnasium environment wrapper,  <a href="https://minari.farama.org/main/api/data_collector/#minari-datacollectorv0" rel="nofollow"><code>DataCollectorV0</code></a>. This wrapper buffers the parameters from a Gymnasium <a href="https://gymnasium.farama.org/api/env/#gymnasium.Env.step" rel="nofollow">step</a> transition. The <a href="https://minari.farama.org/main/api/data_collector/#minari-datacollectorv0" rel="nofollow"><code>DataCollectorV0</code></a> is also memory efficient by providing a step/episode scheduler to cache the recorded data. In addition, this wrapper can be initialized with two custom callbacks:</p>
+<ul>
+<li>
+<p><a href="https://minari.farama.org/main/api/data_collector_callbacks/step_data_callback/" rel="nofollow"><code>StepDataCallback</code></a> - This callback automatically flattens <a href="https://gymnasium.farama.org/api/spaces/composite/#gymnasium.spaces.Dict" rel="nofollow">Dictionary</a> or <a href="https://gymnasium.farama.org/api/spaces/composite/#gymnasium.spaces.Tuple" rel="nofollow">Tuple</a> observation/action spaces (this functionality will be removed in a future release following the suggestions of <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1659154687" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/57" data-hovercard-type="issue" data-hovercard-url="/Farama-Foundation/Minari/issues/57/hovercard" href="https://github.com/Farama-Foundation/Minari/issues/57">#57</a>). This class can be overridden to store additional environment data.</p>
+</li>
+<li>
+<p><a href="https://minari.farama.org/main/api/data_collector_callbacks/episode_metadata_callback/" rel="nofollow"><code>EpisodeMetadataCallback</code></a> - This callback adds metadata to each recorded episode. For now automatic metadata will be added to the rewards dataset of each episode. It can also be overridden to include additional metadata.</p>
+</li>
+</ul>
+<p>To save the Minari dataset in disk with a specific dataset <code>id</code> two functions are provided. If the data is collected by wrapping the environment with a <a href="https://minari.farama.org/main/api/data_collector/#minari-datacollectorv0" rel="nofollow"><code>DataCollectorV0</code></a>, use <a href="https://minari.farama.org/main/api/minari_functions/#minari.create_dataset_from_collector_env" rel="nofollow"><code>minari.create_dataset_from_collector_env</code></a>. Otherwise you can collect the episode trajectories with dictionary collection buffers and use <a href="https://minari.farama.org/main/api/minari_functions/#minari.create_dataset_from_buffers" rel="nofollow"><code>minari.create_dataset_from_buffers</code></a>.</p>
+<p>This functions return a <code>MinariDataset</code> object which can be used to checkpoint the data collection process to later append more data with<br>
+<a href="https://minari.farama.org/main/api/minari_dataset/minari_dataset/#minari.MinariDataset.update_dataset_from_collector_env" rel="nofollow"><code>MinariDataset.update_dataset_from_collector_env(collector_env: DataCollectorV0)</code></a>.</p>
+<div class="highlight highlight-source-python notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="import minari
+import gynasium as gym
+
+env = gym.make('CartPole-v1')   
+collector_env = minari.DataCollectorV0(env)
+
+dataset_id = 'cartpole-test-v0'
+
+# Collect 1000 episodes for the dataset
+for n_step in range(1000):
+	collector_env.reset(seed=123)
+	while True:
+    	action = collector_env.action_space.sample()
+    	obs, rew, terminated, truncated, info = collector_env.step(action)
+    	if terminated or truncated:
+         	break
+
+	# Checkpoint data after each 100 episodes
+	if (n_step + 1) % 100 == 0:
+    	# If the Minari dataset id does not exist create a new dataset, otherwise update the existing one
+    	if dataset_id not in minari.list_local_datasets():
+        	dataset = minari.create_dataset_from_collector_env(collector_env=collector_env, dataset_id=dataset_id)
+    	else:
+        	dataset.update_dataset_from_collector_env(collector_env)"><pre><span class="pl-k">import</span> <span class="pl-s1">minari</span>
+<span class="pl-k">import</span> <span class="pl-s1">gynasium</span> <span class="pl-k">as</span> <span class="pl-s1">gym</span>
+
+<span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-en">make</span>(<span class="pl-s">'CartPole-v1'</span>)   
+<span class="pl-s1">collector_env</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-v">DataCollectorV0</span>(<span class="pl-s1">env</span>)
+
+<span class="pl-s1">dataset_id</span> <span class="pl-c1">=</span> <span class="pl-s">'cartpole-test-v0'</span>
+
+<span class="pl-c"># Collect 1000 episodes for the dataset</span>
+<span class="pl-k">for</span> <span class="pl-s1">n_step</span> <span class="pl-c1">in</span> <span class="pl-en">range</span>(<span class="pl-c1">1000</span>):
+	<span class="pl-s1">collector_env</span>.<span class="pl-en">reset</span>(<span class="pl-s1">seed</span><span class="pl-c1">=</span><span class="pl-c1">123</span>)
+	<span class="pl-k">while</span> <span class="pl-c1">True</span>:
+    	<span class="pl-s1">action</span> <span class="pl-c1">=</span> <span class="pl-s1">collector_env</span>.<span class="pl-s1">action_space</span>.<span class="pl-en">sample</span>()
+    	<span class="pl-s1">obs</span>, <span class="pl-s1">rew</span>, <span class="pl-s1">terminated</span>, <span class="pl-s1">truncated</span>, <span class="pl-s1">info</span> <span class="pl-c1">=</span> <span class="pl-s1">collector_env</span>.<span class="pl-en">step</span>(<span class="pl-s1">action</span>)
+    	<span class="pl-k">if</span> <span class="pl-s1">terminated</span> <span class="pl-c1">or</span> <span class="pl-s1">truncated</span>:
+         	<span class="pl-k">break</span>
+
+	<span class="pl-c"># Checkpoint data after each 100 episodes</span>
+	<span class="pl-k">if</span> (<span class="pl-s1">n_step</span> <span class="pl-c1">+</span> <span class="pl-c1">1</span>) <span class="pl-c1">%</span> <span class="pl-c1">100</span> <span class="pl-c1">==</span> <span class="pl-c1">0</span>:
+    	<span class="pl-c"># If the Minari dataset id does not exist create a new dataset, otherwise update the existing one</span>
+    	<span class="pl-k">if</span> <span class="pl-s1">dataset_id</span> <span class="pl-c1">not</span> <span class="pl-c1">in</span> <span class="pl-s1">minari</span>.<span class="pl-en">list_local_datasets</span>():
+        	<span class="pl-s1">dataset</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-en">create_dataset_from_collector_env</span>(<span class="pl-s1">collector_env</span><span class="pl-c1">=</span><span class="pl-s1">collector_env</span>, <span class="pl-s1">dataset_id</span><span class="pl-c1">=</span><span class="pl-s1">dataset_id</span>)
+    	<span class="pl-k">else</span>:
+        	<span class="pl-s1">dataset</span>.<span class="pl-en">update_dataset_from_collector_env</span>(<span class="pl-s1">collector_env</span>)</pre></div>
+<p>We provide a curated tutorial in the documentation on how to use these dataset creation tools: <a href="https://minari.farama.org/main/tutorials/dataset_creation/point_maze_dataset/#sphx-glr-tutorials-dataset-creation-point-maze-dataset-py" rel="nofollow">https://minari.farama.org/main/tutorials/dataset_creation/point_maze_dataset/#sphx-glr-tutorials-dataset-creation-point-maze-dataset-py</a></p>
+<p>Finally, multiple existent datasets can be combined into a larger dataset. This requires that the datasets to be combined have the same observation/action space as well as the same <code>EnvSpec</code> (except for the <a href="https://gymnasium.farama.org/api/wrappers/misc_wrappers/#gymnasium.wrappers.TimeLimit" rel="nofollow"><code>max_episode_steps</code></a> argument for which the largest will be selected among all the datasets)</p>
+<p>Multiple already existent Minari datasets can be combined under a different name as follows:</p>
+<div class="highlight highlight-source-python notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="dataset_v1 = minari.load_dataset('dataset-v1')
+dataset_v2 = minari.load_dataset('dataset-v2')
+
+dataset_v3 = minari.combine_datasets(datasets_to_combine = [dataset_v1, dataset_v2], new_dataset_id = 'dataset-v3')"><pre><span class="pl-s1">dataset_v1</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-en">load_dataset</span>(<span class="pl-s">'dataset-v1'</span>)
+<span class="pl-s1">dataset_v2</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-en">load_dataset</span>(<span class="pl-s">'dataset-v2'</span>)
+
+<span class="pl-s1">dataset_v3</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-en">combine_datasets</span>(<span class="pl-s1">datasets_to_combine</span> <span class="pl-c1">=</span> [<span class="pl-s1">dataset_v1</span>, <span class="pl-s1">dataset_v2</span>], <span class="pl-s1">new_dataset_id</span> <span class="pl-c1">=</span> <span class="pl-s">'dataset-v3'</span>)</pre></div>
+<h3>CLI</h3>
+<p>To improve accessibility to the remote public datasets, we are also including a <a href="https://minari.farama.org/main/content/minari_cli/" rel="nofollow">CLI</a> tool with commands to list, download, and upload Minari datasets.</p>
+<h2>New Public Datasets</h2>
+<p>Bellow is a list of new available dataset ids from different Gymnasium environments. These datasets have been re-created from the original <a href="https://sites.google.com/view/d4rl-anonymous/" rel="nofollow">D4RL</a> project.</p>
+<h3><a href="https://robotics.farama.org/envs/adroit_hand/adroit_door/" rel="nofollow">AdroitHandDoor-v1</a>:</h3>
+<ul>
+<li><a href="https://minari.farama.org/main/datasets/door/human/" rel="nofollow">door-human-v0</a></li>
+<li><a href="https://minari.farama.org/main/datasets/door/expert/" rel="nofollow">door-expert-v0</a></li>
+<li><a href="https://minari.farama.org/main/datasets/door/cloned/" rel="nofollow">door-cloned-v0</a></li>
+</ul>
+<h3><a href="https://robotics.farama.org/envs/adroit_hand/adroit_hammer/" rel="nofollow">AdroitHandHammer-v1</a></h3>
+<ul>
+<li><a href="https://minari.farama.org/main/datasets/hammer/human/" rel="nofollow">hammer-human-v0</a></li>
+<li><a href="https://minari.farama.org/main/datasets/hammer/expert/" rel="nofollow">hammer-expert-v0</a></li>
+<li><a href="https://minari.farama.org/main/datasets/hammer/cloned/" rel="nofollow">hammer-cloned-v0</a></li>
+</ul>
+<h3><a href="https://robotics.farama.org/envs/adroit_hand/adroit_pen/" rel="nofollow">AdroitHandPen-v1</a></h3>
+<ul>
+<li><a href="https://minari.farama.org/main/datasets/pen/human/" rel="nofollow">pen-human-v0</a></li>
+<li><a href="https://minari.farama.org/main/datasets/pen/expert/" rel="nofollow">pen-expert-v0</a></li>
+<li><a href="https://minari.farama.org/main/datasets/pen/cloned/" rel="nofollow">pen-cloned-v0</a></li>
+</ul>
+<h3><a href="https://robotics.farama.org/envs/adroit_hand/adroit_relocate/" rel="nofollow">AdroitHandRelocate-v1</a></h3>
+<ul>
+<li><a href="https://minari.farama.org/main/datasets/relocate/human/" rel="nofollow">relocate-human-v0</a></li>
+<li><a href="https://minari.farama.org/main/datasets/relocate/expert/" rel="nofollow">relocate-expert-v0</a></li>
+<li><a href="https://minari.farama.org/main/datasets/relocate/cloned/" rel="nofollow">relocate-cloned-v0</a></li>
+</ul>
+<h3><a href="https://robotics.farama.org/envs/maze/point_maze/" rel="nofollow">PointMaze</a></h3>
+<ul>
+<li><a href="https://minari.farama.org/main/datasets/pointmaze/umaze/" rel="nofollow">pointmaze-umaze-v0</a></li>
+<li><a href="https://minari.farama.org/main/datasets/pointmaze/umaze-dense/" rel="nofollow">pointmaze-umaze-dense-v0</a></li>
+<li><a href="https://minari.farama.org/main/datasets/pointmaze/open/" rel="nofollow">pointmaze-open-v0</a></li>
+<li><a href="https://minari.farama.org/main/datasets/pointmaze/open-dense/" rel="nofollow">pointmaze-open-dense-v0</a></li>
+<li><a href="https://minari.farama.org/main/datasets/pointmaze/medium/" rel="nofollow">pointmaze-medium-v0</a></li>
+<li><a href="https://minari.farama.org/main/datasets/pointmaze/medium-dense/" rel="nofollow">pointmaze-medium-dense-v0</a></li>
+<li><a href="https://minari.farama.org/main/datasets/pointmaze/large/" rel="nofollow">pointmaze-large-v0</a></li>
+<li><a href="https://minari.farama.org/main/datasets/pointmaze/large-dense/" rel="nofollow">pointmaze-large-dense-v0</a></li>
+</ul>
+<h3><a href="https://robotics.farama.org/envs/franka_kitchen/" rel="nofollow">FrankaKitchen-v1</a></h3>
+<ul>
+<li><a href="https://minari.farama.org/main/datasets/kitchen/partial/" rel="nofollow">kitchen-partial-v0</a></li>
+<li><a href="https://minari.farama.org/main/datasets/kitchen/complete/" rel="nofollow">kitchen-complete-v0</a></li>
+<li><a href="https://minari.farama.org/main/datasets/kitchen/mixed/" rel="nofollow">kitchen-mixed-v0</a></li>
+</ul></section>
 <section id="release-0-2-2">
 <h2>0.2.2<a class="headerlink" href="#release-0-2-2" title="Permalink to this heading">#</a></h2>
 <p><em>Released on 2023-01-04 - <a class="reference external" href="https://github.com/Farama-Foundation/Minari/releases/tag/0.2.2">GitHub</a> - <a class="reference external" href="https://pypi.org/project/minari/0.2.2/">PyPI</a></em></p>
@@ -446,6 +625,7 @@
             <div class="toc-tree">
               <ul>
 <li><a class="reference internal" href="#">Release Notes</a><ul>
+<li><a class="reference internal" href="#release-v0-3-0">v0.3.0</a></li>
 <li><a class="reference internal" href="#release-0-2-2">0.2.2</a></li>
 <li><a class="reference internal" href="#release-0-1-0">0.1.0</a></li>
 </ul>
