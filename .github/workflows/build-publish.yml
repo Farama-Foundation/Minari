@@ -42,7 +42,7 @@ jobs:
         python -m pip install cython numpy
         python -m pip install --upgrade setuptools wheel
     - name: Build wheels
-      run: python setup.py sdist bdist_wheel
+      run: python -m build
     - name: Store wheels
       uses: actions/upload-artifact@v2
       with:
