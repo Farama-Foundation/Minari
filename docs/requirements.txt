@@ -1,5 +1,6 @@
 sphinx
 sphinx-autobuild
+sphinx_github_changelog
 myst-parser
 google-cloud-storage==2.5.0
 gymnasium-robotics>=1.2.1
