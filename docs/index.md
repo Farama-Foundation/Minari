@@ -43,6 +43,8 @@ datasets/kitchen
 :caption: Development
 
 Github <https://github.com/Farama-Foundation/Minari>
+release_notes/index
+Contribute to the Docs <https://github.com/Farama-Foundation/Minari/tree/main/docs>
 ```
 
 ```{project-logo} _static/img/minari-text.svg
