@@ -36,4 +36,4 @@ __all__ = [
     "split_dataset",
 ]
 
-__version__ = "0.3.0b"
+__version__ = "0.3.0"
