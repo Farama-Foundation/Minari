@@ -9,6 +9,8 @@ jobs:
   docs:
     name: Generate Website for new version
     runs-on: ubuntu-latest
+    env:
+      SPHINX_GITHUB_CHANGELOG_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v3
 
@@ -26,6 +28,9 @@ jobs:
       - name: Install Minari
         run: pip install .
 
+      - name: Build Datasets Docs
+        run: python docs/_scripts/gen_dataset_md.py
+        
       - name: Build
         run: sphinx-build -b dirhtml -v docs _build
 

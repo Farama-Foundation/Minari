@@ -129,10 +129,10 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_id: s
 
             # TODO: list of authors, and emails
             with h5py.File(dataset.spec.data_path, "r") as dataset_file:
-                combined_data_file.attrs["author"] = dataset_file.attrs["author"]
-                combined_data_file.attrs["author_email"] = dataset_file.attrs[
-                    "author_email"
-                ]
+                combined_data_file.attrs.modify("author", dataset_file.attrs["author"])
+                combined_data_file.attrs.modify(
+                    "author_email", dataset_file.attrs["author_email"]
+                )
 
         assert current_env_spec is not None
         combined_data_file.attrs["env_spec"] = current_env_spec.to_json()

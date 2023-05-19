@@ -17,7 +17,6 @@
 # -- Project information -----------------------------------------------------
 import os
 import re
-from typing import Any, Dict
 
 import sphinx_gallery.gen_rst
 
@@ -42,9 +41,11 @@ extensions = [
     "sphinx.ext.doctest",
     "sphinx.ext.autodoc",
     "sphinx.ext.githubpages",
+    "sphinx.ext.viewcode",
     "furo.gen_tutorials",
     "myst_parser",
     "sphinx_gallery.gen_gallery",
+    "sphinx_github_changelog",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -78,16 +79,14 @@ html_favicon = "_static/img/favicon.png"
 html_theme_options = {
     "light_logo": "img/Minari.svg",
     "dark_logo": "img/Minari_White.svg",
+    "image": "img/robotics-github.png",
+    "description": "Minari is a Python library for conducting research in offline reinforcement learning.",
     "gtag": "G-R5TRTT6R78",
     "versioning": True,
+    "source_repository": "https://github.com/Farama-Foundation/Minari/",
+    "source_branch": "main",
+    "source_directory": "docs/",
 }
-html_context: Dict[str, Any] = {}
-html_context["conf_py_path"] = "/docs/"
-html_context["display_github"] = True
-html_context["github_user"] = "Farama-Foundation"
-html_context["github_repo"] = "Minari"
-html_context["github_version"] = "main"
-html_context["slug"] = "minari"
 
 html_static_path = ["_static"]
 html_css_files = ["css/termynal.css", "css/custom.css", "css/directory_tree.css"]
@@ -120,3 +119,7 @@ sphinx_gallery_conf = {
         os.path.dirname(__file__), "_static/img/minari-text.png"
     ),
 }
+
+# -- Generate Changelog -------------------------------------------------
+
+sphinx_github_changelog_token = os.environ.get("SPHINX_GITHUB_CHANGELOG_TOKEN")

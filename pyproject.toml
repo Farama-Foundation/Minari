@@ -26,7 +26,7 @@ classifiers = [
 ]
 dependencies = [
     "numpy >=1.21.0",
-    "h5py==3.7.0",
+    "h5py>=3.8.0",
     "tqdm>=4.65.0",
     "typing_extensions==4.4.0",
     "google-cloud-storage==2.5.0",
@@ -38,7 +38,7 @@ dynamic = ["version"]
 [project.optional-dependencies]
 testing = [
     "pytest ==7.1.3",
-    "gymnasium-robotics @ git+https://github.com/Farama-Foundation/Gymnasium-Robotics.git@main",
+    "gymnasium-robotics>=1.2.1",
     "imageio >=2.14.1"
 ]
 

@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 import re
 from dataclasses import dataclass, field
-from typing import Callable, Dict, Iterable, List, NamedTuple, Optional, Union
+from typing import Callable, Dict, Iterable, Iterator, List, NamedTuple, Optional, Union
 
 import gymnasium as gym
 import h5py
@@ -218,6 +218,25 @@ class MinariDataset:
         episodes = self._data.get_episodes(indices)
         return list(map(lambda data: EpisodeData(**data), episodes))
 
+    def iterate_episodes(
+        self, episode_indices: Optional[List[int]] = None
+    ) -> Iterator[EpisodeData]:
+        """Iterate over episodes from the dataset.
+
+        Args:
+            episode_indices (Optional[List[int]], optional): episode indices to iterate over.
+        """
+        if episode_indices is None:
+            assert self._episode_indices is not None
+            assert self._episode_indices.ndim == 1
+            episode_indices = self._episode_indices.tolist()
+
+        assert episode_indices is not None
+
+        for episode_index in episode_indices:
+            data = self._data.get_episodes([episode_index])[0]
+            yield EpisodeData(**data)
+
     def update_dataset_from_collector_env(self, collector_env: DataCollectorV0):
         """Add extra data to Minari dataset from collector environment buffers (DataCollectorV0).
 
@@ -311,3 +330,6 @@ class MinariDataset:
             file.attrs.modify(
                 "total_steps", file.attrs["total_steps"] + additional_steps
             )
+
+    def __iter__(self):
+        return self.iterate_episodes()
