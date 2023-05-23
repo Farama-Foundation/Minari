@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 import shutil
 import tempfile
-from typing import Any, Dict, List, Optional, SupportsFloat, Type, TypeVar, Union
+from typing import Any, Dict, List, Optional, SupportsFloat, Type, Union
 
 import gymnasium as gym
 import h5py
@@ -18,8 +18,7 @@ from minari.data_collector.callbacks import (
 )
 
 
-EpisodeBufferValues = TypeVar("EpisodeBufferValues", List[Any], "EpisodeBuffer")
-EpisodeBuffer = Dict[str, EpisodeBufferValues]
+EpisodeBuffer = Dict[str, Any]  # TODO: narrow this down
 
 
 class DataCollectorV0(gym.Wrapper):
@@ -86,7 +85,7 @@ class DataCollectorV0(gym.Wrapper):
         Raises:
             ValueError: `max_buffer_steps` and `max_buffer_episodes` can't be passed at the same time
         """
-        self.env = env
+        super().__init__(env)
         self._step_data_callback = step_data_callback(env)
 
         self._episode_metadata_callback = episode_metadata_callback()
@@ -129,6 +128,7 @@ class DataCollectorV0(gym.Wrapper):
         self._tmp_f.attrs["flatten_action"] = self._step_data_callback.flatten_action
 
         self._new_episode = False
+        self._reset_called = False
 
         # Initialize first episode group in temporary hdf5 file
         self._episode_id = 0
@@ -146,7 +146,7 @@ class DataCollectorV0(gym.Wrapper):
         """Add step data dictionary to episode buffer.
 
         Args:
-            buffer (Dict): dictionary episode buffer
+            episode_buffer (Dict): dictionary episode buffer
             step_data (Dict): dictionary with data for a single step
 
         Returns:
@@ -170,6 +170,7 @@ class DataCollectorV0(gym.Wrapper):
                         episode_buffer[key], value
                     )
                 else:
+                    assert isinstance(episode_buffer[key], list)
                     episode_buffer[key].append(value)
 
         return episode_buffer
@@ -191,8 +192,8 @@ class DataCollectorV0(gym.Wrapper):
             truncated=truncated,
         )
 
-        # force step data dicitonary to include keys corresponding to Gymnasium step returns:
-        # actions, observations, rewards, terminations, truncatins, and infos
+        # force step data dictionary to include keys corresponding to Gymnasium step returns:
+        # actions, observations, rewards, terminations, truncations, and infos
         assert STEP_DATA_KEYS.issubset(step_data.keys())
 
         self._step_id += 1
@@ -217,7 +218,7 @@ class DataCollectorV0(gym.Wrapper):
             self._previous_eps_final_obs = step_data["observations"]
             self._reset_called = False
             self._new_episode = True
-            self._buffer[-1]["seed"] = self._current_seed
+            self._buffer[-1]["seed"] = self._current_seed  # type: ignore
             # Only check episode scheduler to save in-memory data to temp HDF5 file when episode is done
             if self.max_buffer_episodes is not None:
                 clear_buffers = (self._episode_id + 1) % self.max_buffer_episodes == 0
@@ -256,7 +257,7 @@ class DataCollectorV0(gym.Wrapper):
                 and not self._buffer[-1]["truncations"][-1]
             ):
                 self._buffer[-1]["truncations"][-1] = True
-                self._buffer[-1]["seed"] = self._current_seed
+                self._buffer[-1]["seed"] = self._current_seed  # type: ignore
 
                 # New episode
                 self._episode_id += 1
@@ -408,13 +409,16 @@ class DataCollectorV0(gym.Wrapper):
         # Clear in-memory buffers
         self._buffer.clear()
 
-    def save_to_disk(self, path: str, dataset_metadata: Dict = {}):
+    def save_to_disk(self, path: str, dataset_metadata: Optional[Dict] = None):
         """Save all in-memory buffer data and move temporary HDF5 file to a permanent location in disk.
 
         Args:
             path (str): path to store permanent HDF5, i.e: '/home/foo/datasets/data.hdf5'
             dataset_metadata (Dict, optional): additional metadata to add to HDF5 dataset file as attributes. Defaults to {}.
         """
+        if dataset_metadata is None:
+            dataset_metadata = {}
+
         # Dump everything in memory buffers to tmp_dataset.hdf5 and truncate last episode
         self.clear_buffer_to_tmp_file(truncate_last_episode=True)
 
