@@ -1,5 +1,4 @@
-from typing import List
-
+from typing import Iterable
 
 import gymnasium as gym
 import numpy as np
@@ -37,27 +36,22 @@ def _check_env_recovery(gymnasium_environment: gym.Env, dataset: MinariDataset):
     )
 
 
-
-def _check_data_integrity(data: MinariStorage, episode_indices: List[np.ndarray]):
+def _check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
     episodes = data.get_episodes(episode_indices)
-    #verify we have the right number of episodes, available at the right indicies
+    # verify we have the right number of episodes, available at the right indices
     assert data.total_episodes == len(episodes)
-    print(data.action_space)
-    print(data.observation_space)
-    #verify the actions and observations are in the appropriate action and observation spaces, and that the episode lengths are correct
+    # verify the actions and observations are in the appropriate action space and observation space, and that the episode lengths are correct
     for episode in episodes:
-        assert episode["total_timesteps"] + 1  == len(episode["observations"]) 
+        assert episode["total_timesteps"] + 1 == len(episode["observations"])
         assert episode["total_timesteps"] == len(episode["actions"])
         assert episode["total_timesteps"] == len(episode["rewards"])
-        assert episode["total_timesteps"]   == len(episode["terminations"]) 
-        assert episode["total_timesteps"]  == len(episode["truncations"]) 
+        assert episode["total_timesteps"] == len(episode["terminations"])
+        assert episode["total_timesteps"] == len(episode["truncations"])
 
         for observation in episode["observations"]:
             assert observation in data.observation_space
         for action in episode["actions"]:
             assert action in data.action_space
-
-
 
 
 def _check_load_and_delete_dataset(dataset_id: str):
@@ -115,7 +109,6 @@ def test_generate_dataset_with_collector_env():
     assert dataset.total_episodes == num_episodes
     assert dataset.spec.total_episodes == num_episodes
     assert len(dataset.episode_indices) == num_episodes
-
 
     _check_data_integrity(dataset._data, dataset.episode_indices)
 
@@ -189,12 +182,10 @@ def test_generate_dataset_with_external_buffer():
         author_email="wdudley@farama.org",
     )
 
-
     assert isinstance(dataset, MinariDataset)
     assert dataset.total_episodes == num_episodes
     assert dataset.spec.total_episodes == num_episodes
     assert len(dataset.episode_indices) == num_episodes
-
 
     _check_data_integrity(dataset._data, dataset.episode_indices)
     _check_env_recovery(env, dataset)
