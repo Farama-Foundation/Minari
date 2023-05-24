@@ -37,6 +37,12 @@ def _check_env_recovery(gymnasium_environment: gym.Env, dataset: MinariDataset):
 
 
 def _check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
+    """Checks to see if a MinariStorage episode has consistent data and has episodes at the expected indices.
+
+    Args:
+        data (MinariStorage): a MinariStorage instance
+        episode_indices (Iterable[int]): the list of episode indices expected
+    """
     episodes = data.get_episodes(episode_indices)
     # verify we have the right number of episodes, available at the right indices
     assert data.total_episodes == len(episodes)
