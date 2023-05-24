@@ -87,7 +87,7 @@ class DataCollectorV0(gym.Wrapper):
         Raises:
             ValueError: `max_buffer_steps` and `max_buffer_episodes` can't be passed at the same time
         """
-        self.env = env
+        super().__init__(env)
         self._step_data_callback = step_data_callback()
 
         if observation_space is None:
