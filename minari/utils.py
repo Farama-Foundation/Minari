@@ -112,28 +112,25 @@ def combine_datasets(
                     )
 
             last_episode_id = combined_data_file.attrs["total_episodes"]
-
-            with h5py.File(dataset.spec.data_path, "r") as dataset_file:
-                for id in range(dataset.total_episodes):
-                    if copy:
+            if copy:
+                with h5py.File(dataset.spec.data_path, "r") as dataset_file:
+                    for id in range(dataset.total_episodes):
                         dataset_file.copy(
                             dataset_file[f"episode_{id}"],
                             combined_data_file,
                             name=f"episode_{last_episode_id + id}",
                         )
-                    else:
                         combined_data_file[
                             f"episode_{last_episode_id + id}"
-                        ] = h5py.ExternalLink(dataset.spec.data_path, f"/episode_{id}")
+                        ].attrs.modify("id", last_episode_id + id)
+            else:
+                for id in range(dataset.total_episodes):
+                    combined_data_file[
+                        f"episode_{last_episode_id + id}"
+                    ] = h5py.ExternalLink(dataset.spec.data_path, f"/episode_{id}")
                     combined_data_file[f"episode_{last_episode_id + id}"].attrs.modify(
                         "id", last_episode_id + id
                     )
-
-                # TODO: list of authors, and emails
-                combined_data_file.attrs.modify("author", dataset_file.attrs["author"])
-                combined_data_file.attrs.modify(
-                    "author_email", dataset_file.attrs["author_email"]
-                )
 
             # Update metadata of minari dataset
             combined_data_file.attrs.modify(
@@ -143,6 +140,13 @@ def combine_datasets(
                 "total_steps",
                 combined_data_file.attrs["total_steps"] + dataset.spec.total_steps,
             )
+
+            with h5py.File(dataset.spec.data_path, "r") as dataset_file:
+                # TODO: list of authors, and emails
+                combined_data_file.attrs.modify("author", dataset_file.attrs["author"])
+                combined_data_file.attrs.modify(
+                    "author_email", dataset_file.attrs["author_email"]
+                )
 
         assert current_env_spec is not None
         combined_data_file.attrs["env_spec"] = current_env_spec.to_json()
