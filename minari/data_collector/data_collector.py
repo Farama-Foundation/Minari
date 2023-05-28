@@ -376,7 +376,7 @@ class DataCollectorV0(gym.Wrapper):
                             episode_group.create_dataset(key, data=np_data, chunks=True)
 
         for i, eps_buff in enumerate(self._buffer):
-            if len(eps_buff["actions"]) == 0:
+            if not "actions" in eps_buff:
                 # Make sure that the episode has stepped
                 continue
 
