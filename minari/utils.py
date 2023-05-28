@@ -141,8 +141,8 @@ def combine_datasets(
                 combined_data_file.attrs["total_steps"] + dataset.spec.total_steps,
             )
 
+            # TODO: list of authors, and emails
             with h5py.File(dataset.spec.data_path, "r") as dataset_file:
-                # TODO: list of authors, and emails
                 combined_data_file.attrs.modify("author", dataset_file.attrs["author"])
                 combined_data_file.attrs.modify(
                     "author_email", dataset_file.attrs["author_email"]
