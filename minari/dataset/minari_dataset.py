@@ -172,7 +172,7 @@ class MinariDataset:
         return self._total_steps
 
     @property
-    def episode_indices(self):
+    def episode_indices(self) -> np.ndarray:
         """Indices of the available episodes to sample within the Minari dataset."""
         return self._episode_indices
 

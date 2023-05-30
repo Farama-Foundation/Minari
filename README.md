@@ -46,11 +46,11 @@ To download a dataset:
 ```python
 import minari
 
-dataset = minari.download_dataset("LunarLander_v2_remote-test-dataset")
+dataset = minari.download_dataset("door-cloned-v0")
 ```
 
 ## Project Maintainers
-Main Contributors: [Rodrigo Perez-Vicente](https://github.com/rodrigodelazcano), [Omar Younis](https://github.com/younik)
+Main Contributors: [Rodrigo Perez-Vicente](https://github.com/rodrigodelazcano), [Omar Younis](https://github.com/younik), [John Balis](https://github.com/balisujohn)
 
 Maintenance for this project is also contributed by the broader Farama team: [farama.org/team](https://farama.org/team).
 

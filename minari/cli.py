@@ -1,4 +1,5 @@
 """Minari CLI commands."""
+import os
 from typing import List, Optional
 
 import typer
@@ -75,7 +76,10 @@ def list_remote():
 def list_local():
     """List local Minari datasets."""
     datasets = local.list_local_datasets()
-    dataset_dir = "home/rodrigo/.minari/"
+    dataset_dir = os.environ.get(
+        "MINARI_DATASETS_PATH",
+        os.path.join(os.path.expanduser("~"), ".minari/datasets/"),
+    )
     table_title = f"Local Minari datasets('{dataset_dir}')"
     _show_dataset_table(datasets, table_title)
 
