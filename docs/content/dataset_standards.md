@@ -301,19 +301,9 @@ Statistical metrics are also computed as metadata for the individual datasets in
     | `sum`  | `np.float64` | Total undiscounted return of the episode.  |
 
 ## Observation and Action Spaces
-
-
-
-| Observation Space                                             | Action Space                                                 |
-| ------------------------------------------------------------- | ------------------------------------------------------------ |
-| [spaceDiscrete](https://github.com/another-repo/blob/master/observation_space.py)      | [Discrete](https://github.com/another-repo/blob/master/action_space.py)           |
-| [Box](https://github.com/another-repo/blob/master/observation_space.py)                    | [Box](https://github.com/another-repo/blob/master/action_space.py)             |
-| [Tuple](https://github.com/another-repo/blob/master/observation_space.py)                  | [Tuple](https://github.com/another-repo/blob/master/action_space.py)           |
-| [Dict](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/dict.py)       | [Dict](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/dict.py)            |
-
+The Minari storage supports the following observation and action spaces:
 
 ### Observation Spaces
-The Minari storage supports the following observation and action spaces:
 
 | Observation Space                                             | Description                                                  |
 | ------------------------------------------------------------- | ------------------------------------------------------------ |
