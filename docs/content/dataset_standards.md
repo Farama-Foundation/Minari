@@ -299,3 +299,36 @@ Statistical metrics are also computed as metadata for the individual datasets in
     | `mean` | `np.float64` | Mean value of the episode rewards.         |
     | `std`  | `np.float64` | Standard deviation of the episode rewards. |
     | `sum`  | `np.float64` | Total undiscounted return of the episode.  |
+
+## Observation and Action Spaces
+
+
+
+| Observation Space                                             | Action Space                                                 |
+| ------------------------------------------------------------- | ------------------------------------------------------------ |
+| [spaceDiscrete](https://github.com/another-repo/blob/master/observation_space.py)      | [Discrete](https://github.com/another-repo/blob/master/action_space.py)           |
+| [Box](https://github.com/another-repo/blob/master/observation_space.py)                    | [Box](https://github.com/another-repo/blob/master/action_space.py)             |
+| [Tuple](https://github.com/another-repo/blob/master/observation_space.py)                  | [Tuple](https://github.com/another-repo/blob/master/action_space.py)           |
+| [Dict](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/dict.py)       | [Dict](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/dict.py)            |
+
+
+### Observation Spaces
+The Minari storage supports the following observation and action spaces:
+
+| Observation Space                                             | Description                                                  |
+| ------------------------------------------------------------- | ------------------------------------------------------------ |
+| [Discrete](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/discrete.py) |  describes a discrete space where {0, 1, ..., n-1} are the possible values our observation or action can take. Values can be shifted to {a, a+1, ..., a+n-1} using an optional argument.|
+| [Box](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/box.py)       | describes an n-dimensional continuous space. It's a bounded space where we can define the upper and lower limits which describe the valid values our observations can take |
+| [Tuple](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/tuple.py)     | represents a tuple of simple spaces.|
+| [Dict](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/dict.py)      |represents a dictionary of simple spaces.|
+
+### Action Spaces
+
+| Action Space                                                 | Description                                                  |
+| ------------------------------------------------------------- |------------------------------------------------------------ |
+| [Discrete](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/discrete.py) |describes a discrete space where {0, 1, ..., n-1} are the possible values our observation or action can take. Values can be shifted to {a, a+1, ..., a+n-1} using an optional argument.|
+| [Box](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/box.py)      |describes an n-dimensional continuous space. It's a bounded space where we can define the upper and lower limits which describe the valid values our observations can take|
+| [Tuple](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/tuple.py)    |represents a tuple of simple spaces.
+|
+| [Dict](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/dict.py)     |represents a dictionary of simple spaces.
+|
