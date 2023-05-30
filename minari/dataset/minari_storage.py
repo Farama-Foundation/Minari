@@ -1,5 +1,6 @@
 import os
 from typing import Any, Callable, Dict, Iterable, List, Optional, Union
+import sys
 
 import gymnasium as gym
 import h5py
@@ -42,8 +43,15 @@ class MinariStorage:
             self._dataset_id = dataset_id
 
             self._combined_datasets = f.attrs.get("combined_datasets", default=[])
-
-            env = gym.make(self._env_spec)
+            
+            base_lib = self._env_spec.entry_point.split(".")[0]
+            env_name = self._env_spec.id
+            
+            # checking the installation of base library for the environment
+            if base_lib in sys.modules:
+                env = gym.make(self._env_spec)
+            else:
+                raise ImportError(f"Install {base_lib} for loading {env_name} data")
 
             self._observation_space = env.observation_space
             self._action_space = env.action_space
