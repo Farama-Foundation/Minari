@@ -299,3 +299,26 @@ Statistical metrics are also computed as metadata for the individual datasets in
     | `mean` | `np.float64` | Mean value of the episode rewards.         |
     | `std`  | `np.float64` | Standard deviation of the episode rewards. |
     | `sum`  | `np.float64` | Total undiscounted return of the episode.  |
+
+## Observation and Action Spaces
+The Minari storage format supports the following observation and action spaces:
+
+### Observation Spaces
+
+| Observation Space                                                                                 | Description                                                                                              |
+| ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| [Discrete](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/discrete.py) |Describes a discrete space where `{0, 1, ..., n-1}` are the possible values our observation can take. An optional argument can be used to shift the values to `{a, a+1, ..., a+n-1}`.|
+| [Box](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/box.py)           |An n-dimensional continuous space. The `upper` and `lower` arguments can be used to define bounded spaces.|
+| [Tuple](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/tuple.py)       |Represents a tuple of spaces.                                                                             |
+| [Dict](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/dict.py)         |Represents a dictionary of spaces.                                                                        |
+
+### Action Spaces
+
+| Action Space                                                                                      | Description                                                                                               |
+| ------------------------------------------------------------------------------------------------- |---------------------------------------------------------------------------------------------------------- |
+| [Discrete](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/discrete.py) |Describes a discrete space where `{0, 1, ..., n-1}` are the possible values our action can take. An optional argument can be used to shift the values to `{a, a+1, ..., a+n-1}`. |
+| [Box](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/box.py)           |An n-dimensional continuous space. The `upper` and `lower` arguments can be used to define bounded spaces. |
+| [Tuple](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/tuple.py)       |Represents a tuple of spaces.                                                                              |
+| [Dict](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/dict.py)         |Represents a dictionary of spaces.                                                                         |
+
+
