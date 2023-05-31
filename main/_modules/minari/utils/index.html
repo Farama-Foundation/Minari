@@ -367,7 +367,9 @@
 <span class="kn">from</span> <span class="nn">minari.storage.datasets_root_dir</span> <span class="kn">import</span> <span class="n">get_dataset_path</span>
 
 
-<div class="viewcode-block" id="combine_datasets"><a class="viewcode-back" href="../../../api/minari_functions/#minari.combine_datasets">[docs]</a><span class="k">def</span> <span class="nf">combine_datasets</span><span class="p">(</span><span class="n">datasets_to_combine</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">MinariDataset</span><span class="p">],</span> <span class="n">new_dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="combine_datasets"><a class="viewcode-back" href="../../../api/minari_functions/#minari.combine_datasets">[docs]</a><span class="k">def</span> <span class="nf">combine_datasets</span><span class="p">(</span>
+    <span class="n">datasets_to_combine</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">MinariDataset</span><span class="p">],</span> <span class="n">new_dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">copy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Combine a group of MinariDataset in to a single dataset with its own name id.</span>
 
 <span class="sd">    A new HDF5 metadata attribute will be added to the new dataset called `combined_datasets`. This will</span>
@@ -376,6 +378,7 @@
 <span class="sd">    Args:</span>
 <span class="sd">        datasets_to_combine (list[MinariDataset]): list of datasets to be combined</span>
 <span class="sd">        new_dataset_id (str): name id for the newly created dataset</span>
+<span class="sd">        copy (bool): whether to copy the data to a new dataset or to create external link (see h5py.ExternalLink)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">new_dataset_path</span> <span class="o">=</span> <span class="n">get_dataset_path</span><span class="p">(</span><span class="n">new_dataset_id</span><span class="p">)</span>
 
@@ -462,14 +465,25 @@
                     <span class="p">)</span>
 
             <span class="n">last_episode_id</span> <span class="o">=</span> <span class="n">combined_data_file</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;total_episodes&quot;</span><span class="p">]</span>
-
-            <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">total_episodes</span><span class="p">):</span>
-                <span class="n">combined_data_file</span><span class="p">[</span>
-                    <span class="sa">f</span><span class="s2">&quot;episode_</span><span class="si">{</span><span class="n">last_episode_id</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">id</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="p">]</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">ExternalLink</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">data_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;/episode_</span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="n">combined_data_file</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;episode_</span><span class="si">{</span><span class="n">last_episode_id</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">modify</span><span class="p">(</span>
-                    <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="n">last_episode_id</span> <span class="o">+</span> <span class="nb">id</span>
-                <span class="p">)</span>
+            <span class="k">if</span> <span class="n">copy</span><span class="p">:</span>
+                <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">data_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">dataset_file</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">total_episodes</span><span class="p">):</span>
+                        <span class="n">dataset_file</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span>
+                            <span class="n">dataset_file</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;episode_</span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">],</span>
+                            <span class="n">combined_data_file</span><span class="p">,</span>
+                            <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;episode_</span><span class="si">{</span><span class="n">last_episode_id</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="p">)</span>
+                        <span class="n">combined_data_file</span><span class="p">[</span>
+                            <span class="sa">f</span><span class="s2">&quot;episode_</span><span class="si">{</span><span class="n">last_episode_id</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">id</span><span class="si">}</span><span class="s2">&quot;</span>
+                        <span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">modify</span><span class="p">(</span><span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="n">last_episode_id</span> <span class="o">+</span> <span class="nb">id</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="nb">id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">total_episodes</span><span class="p">):</span>
+                    <span class="n">combined_data_file</span><span class="p">[</span>
+                        <span class="sa">f</span><span class="s2">&quot;episode_</span><span class="si">{</span><span class="n">last_episode_id</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">id</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">]</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">ExternalLink</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">data_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;/episode_</span><span class="si">{</span><span class="nb">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">combined_data_file</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;episode_</span><span class="si">{</span><span class="n">last_episode_id</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nb">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">modify</span><span class="p">(</span>
+                        <span class="s2">&quot;id&quot;</span><span class="p">,</span> <span class="n">last_episode_id</span> <span class="o">+</span> <span class="nb">id</span>
+                    <span class="p">)</span>
 
             <span class="c1"># Update metadata of minari dataset</span>
             <span class="n">combined_data_file</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">modify</span><span class="p">(</span>
