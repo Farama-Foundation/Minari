@@ -301,7 +301,7 @@ Statistical metrics are also computed as metadata for the individual datasets in
     | `sum`  | `np.float64` | Total undiscounted return of the episode.  |
 
 ## Observation and Action Spaces
-The Minari storage supports the following observation and action spaces:
+The Minari storage format supports the following observation and action spaces:
 
 ### Observation Spaces
 
