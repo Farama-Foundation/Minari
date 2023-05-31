@@ -14,7 +14,9 @@ from minari.dataset.minari_dataset import MinariDataset, clear_episode_buffer
 from minari.storage.datasets_root_dir import get_dataset_path
 
 
-def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_id: str):
+def combine_datasets(
+    datasets_to_combine: List[MinariDataset], new_dataset_id: str, copy: bool = False
+):
     """Combine a group of MinariDataset in to a single dataset with its own name id.
 
     A new HDF5 metadata attribute will be added to the new dataset called `combined_datasets`. This will
@@ -23,6 +25,7 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_id: s
     Args:
         datasets_to_combine (list[MinariDataset]): list of datasets to be combined
         new_dataset_id (str): name id for the newly created dataset
+        copy (bool): whether to copy the data to a new dataset or to create external link (see h5py.ExternalLink)
     """
     new_dataset_path = get_dataset_path(new_dataset_id)
 
@@ -109,14 +112,25 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_id: s
                     )
 
             last_episode_id = combined_data_file.attrs["total_episodes"]
-
-            for id in range(dataset.total_episodes):
-                combined_data_file[
-                    f"episode_{last_episode_id + id}"
-                ] = h5py.ExternalLink(dataset.spec.data_path, f"/episode_{id}")
-                combined_data_file[f"episode_{last_episode_id + id}"].attrs.modify(
-                    "id", last_episode_id + id
-                )
+            if copy:
+                with h5py.File(dataset.spec.data_path, "r") as dataset_file:
+                    for id in range(dataset.total_episodes):
+                        dataset_file.copy(
+                            dataset_file[f"episode_{id}"],
+                            combined_data_file,
+                            name=f"episode_{last_episode_id + id}",
+                        )
+                        combined_data_file[
+                            f"episode_{last_episode_id + id}"
+                        ].attrs.modify("id", last_episode_id + id)
+            else:
+                for id in range(dataset.total_episodes):
+                    combined_data_file[
+                        f"episode_{last_episode_id + id}"
+                    ] = h5py.ExternalLink(dataset.spec.data_path, f"/episode_{id}")
+                    combined_data_file[f"episode_{last_episode_id + id}"].attrs.modify(
+                        "id", last_episode_id + id
+                    )
 
             # Update metadata of minari dataset
             combined_data_file.attrs.modify(
