@@ -49,7 +49,7 @@ class DummyDictEnv(gym.Env):
 
 register(
     id="DummyDictEnv-v0",
-    entry_point="tests.test_dataset_creation:DummyDictEnv",
+    entry_point="tests.utils.test_dataset_creation:DummyDictEnv",
     max_episode_steps=5,
 )
 
