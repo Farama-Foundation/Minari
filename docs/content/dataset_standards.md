@@ -305,20 +305,20 @@ The Minari storage supports the following observation and action spaces:
 
 ### Observation Spaces
 
-| Observation Space                                             | Description                                                  |
-| ------------------------------------------------------------- | ------------------------------------------------------------ |
-| [Discrete](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/discrete.py) |  describes a discrete space where {0, 1, ..., n-1} are the possible values our observation or action can take. Values can be shifted to {a, a+1, ..., a+n-1} using an optional argument.|
-| [Box](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/box.py)       | describes an n-dimensional continuous space. It's a bounded space where we can define the upper and lower limits which describe the valid values our observations can take |
-| [Tuple](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/tuple.py)     | represents a tuple of simple spaces.|
-| [Dict](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/dict.py)      |represents a dictionary of simple spaces.|
+| Observation Space                                                                                 | Description                                                                                            |
+| ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
+| [Discrete](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/discrete.py) |describes a discrete space where {0, 1, ..., n-1} are the possible values our observation can take. An optional argument can be used to shift the values to {a, a+1, ..., a+n-1}.|
+| [Box](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/box.py)           |an n-dimensional continuous space. The `upper` and `lower` arguments can be used to define bounded spaces|
+| [Tuple](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/tuple.py)       | represents a tuple of simple spaces.                                                                    |
+| [Dict](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/dict.py)         |represents a dictionary of simple spaces.                                                                |
 
 ### Action Spaces
 
-| Action Space                                                 | Description                                                  |
-| ------------------------------------------------------------- |------------------------------------------------------------ |
-| [Discrete](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/discrete.py) |describes a discrete space where {0, 1, ..., n-1} are the possible values our observation or action can take. Values can be shifted to {a, a+1, ..., a+n-1} using an optional argument.|
-| [Box](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/box.py)      |describes an n-dimensional continuous space. It's a bounded space where we can define the upper and lower limits which describe the valid values our observations can take|
-| [Tuple](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/tuple.py)    |represents a tuple of simple spaces.
-|
-| [Dict](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/dict.py)     |represents a dictionary of simple spaces.
-|
+| Action Space                                                                                      | Description                                                                                               |
+| ------------------------------------------------------------------------------------------------- |---------------------------------------------------------------------------------------------------------- |
+| [Discrete](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/discrete.py) |describes a discrete space where `{0, 1, ..., n-1}` are the possible values our action can take. An optional argument can be used to shift the values to `{a, a+1, ..., a+n-1}`. |
+| [Box](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/box.py)           |an n-dimensional continuous space. The `upper` and `lower` arguments can be used to define bounded spaces. |
+| [Tuple](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/tuple.py)       |represents a tuple of simple spaces.                                                                       |
+| [Dict](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/dict.py)         |represents a dictionary of simple spaces.                                                                  |
+
+
