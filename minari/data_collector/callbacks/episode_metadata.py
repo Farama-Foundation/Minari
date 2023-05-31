@@ -26,4 +26,4 @@ class EpisodeMetadataCallback:
         eps_group["rewards"].attrs["max"] = np.max(eps_group["rewards"])
         eps_group["rewards"].attrs["min"] = np.min(eps_group["rewards"])
 
-        eps_group.attrs["total_steps"] = eps_group["actions"].shape[0]
+        eps_group.attrs["total_steps"] = eps_group["rewards"].shape[0]

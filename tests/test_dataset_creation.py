@@ -10,7 +10,17 @@ from minari import DataCollectorV0, MinariDataset
 
 class DummyDictEnv(gym.Env):
     def __init__(self):
-        self.action_space = spaces.Box(low=-1, high=1, dtype=np.float32)
+        self.action_space = spaces.Dict(
+            {
+                "component_1": spaces.Box(low=-1, high=1, dtype=np.float32),
+                "component_2": spaces.Dict(
+                    {
+                        "subcomponent_1": spaces.Box(low=2, high=3, dtype=np.float32),
+                        "subcomponent_2": spaces.Box(low=4, high=5, dtype=np.float32),
+                    }
+                ),
+            }
+        )
         self.observation_space = spaces.Dict(
             {
                 "component_1": spaces.Box(low=-1, high=1, dtype=np.float32),
@@ -91,6 +101,12 @@ def _check_load_and_delete_dataset(dataset_id: str):
 
 def test_generate_dict_dataset_with_collector_env():
     dataset_id = "dummy-dict-test-v0"
+
+    # delete the test dataset if it already exists
+    local_datasets = minari.list_local_datasets()
+    if dataset_id in local_datasets:
+        minari.delete_dataset(dataset_id)
+
     env = gym.make("DummyDictEnv-v0")
 
     env = DataCollectorV0(env)
@@ -132,6 +148,11 @@ def test_generate_dict_dataset_with_collector_env():
 def test_generate_dataset_with_collector_env():
     """Test DataCollectorV0 wrapper and Minari dataset creation."""
     dataset_id = "cartpole-test-v0"
+    # delete the test dataset if it already exists
+    local_datasets = minari.list_local_datasets()
+    if dataset_id in local_datasets:
+        minari.delete_dataset(dataset_id)
+
     env = gym.make("CartPole-v1")
 
     env = DataCollectorV0(env)
@@ -174,6 +195,12 @@ def test_generate_dataset_with_external_buffer():
     """Test create dataset from external buffers without using DataCollectorV0."""
     buffer = []
     dataset_id = "cartpole-test-v0"
+
+    # delete the test dataset if it already exists
+    local_datasets = minari.list_local_datasets()
+    if dataset_id in local_datasets:
+        minari.delete_dataset(dataset_id)
+
     env = gym.make("CartPole-v1")
 
     observations = []
