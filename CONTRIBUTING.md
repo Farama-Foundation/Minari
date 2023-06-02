@@ -32,7 +32,7 @@ Once those two steps are done, the Git hooks will be run automatically at every 
 ### Testing Environment
 Along with `pre-commit`, CI will be running Unit Tests on the complete code base to ensure all the functionalities are working properly. Unit tests can also be run manually on local machine by following the steps below:
 
-1. To setup the testing environment you need to install optinal testing dependencies for minari by running `pip3 install '.[testing]'` from the root directory.
+1. To setup the testing environment you need to install optional testing dependencies for minari by running `pip3 install '.[testing]'` from the root directory.
 2. After setting up the testing environment, you can run the unit tests using `pytest -v` command. For every new functionality or change in existing functionality, necessary changes are to be made in the respective unit tests.
 
 ## Contributing tutorials
