@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 import shutil
 import tempfile
+from collections import OrderedDict
 from typing import Any, Dict, List, Optional, SupportsFloat, Type, Union
 
 import gymnasium as gym
@@ -173,10 +174,6 @@ class DataCollectorV0(gym.Wrapper):
                     episode_buffer[key] = [value]
             else:
                 if isinstance(value, dict):
-                    # print(value)
-                    # print(episode_buffer[key])
-                    # print(key)
-                    # print(self._buffer)
                     assert isinstance(episode_buffer[key], dict)
                     episode_buffer[key] = self._add_to_episode_buffer(
                         episode_buffer[key], value
@@ -331,11 +328,36 @@ class DataCollectorV0(gym.Wrapper):
             """
             for key, data in dictionary_buffer.items():
                 if isinstance(data, dict):
+
                     if key in episode_group:
                         eps_group_to_clear = episode_group[key]
                     else:
                         eps_group_to_clear = episode_group.create_group(key)
                     clear_buffer(data, eps_group_to_clear)
+                elif all([isinstance(entry, tuple) for entry in data]):
+                    # we have a list of tuples, so we need to act appropriately
+                    dict_data = {
+                        f"_tuple_index_{str(i)}": [entry[i] for entry in data]
+                        for i, _ in enumerate(data[0])
+                    }
+                    if key in episode_group:
+                        eps_group_to_clear = episode_group[key]
+                    else:
+                        eps_group_to_clear = episode_group.create_group(key)
+                    clear_buffer(dict_data, eps_group_to_clear)
+                elif all([isinstance(entry, OrderedDict) for entry in data]):
+
+                    # we have a list of OrderedDicts, so we need to act appropriately
+                    dict_data = {
+                        key: [entry[key] for entry in data]
+                        for key, value in data[0].items()
+                    }
+
+                    if key in episode_group:
+                        eps_group_to_clear = episode_group[key]
+                    else:
+                        eps_group_to_clear = episode_group.create_group(key)
+                    clear_buffer(dict_data, eps_group_to_clear)
                 else:
                     # convert data to numpy
                     np_data = np.asarray(data)

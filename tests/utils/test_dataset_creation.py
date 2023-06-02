@@ -54,6 +54,100 @@ register(
 )
 
 
+class DummyTupleEnv(gym.Env):
+    def __init__(self):
+        self.action_space = spaces.Tuple(
+            (
+                spaces.Box(low=2, high=3, dtype=np.float32),
+                spaces.Box(low=4, high=5, dtype=np.float32),
+            )
+        )
+
+        self.observation_space = spaces.Tuple(
+            (
+                spaces.Box(low=2, high=3, dtype=np.float32),
+                spaces.Tuple(
+                    (
+                        spaces.Box(low=2, high=3, dtype=np.float32),
+                        spaces.Box(low=4, high=5, dtype=np.float32),
+                    )
+                ),
+            )
+        )
+
+    def step(self, action):
+        terminated = self.timestep > 5
+        self.timestep += 1
+
+        return self.observation_space.sample(), 0, terminated, False, {}
+
+    def reset(self, seed=0, options=None):
+        self.timestep = 0
+        return self.observation_space.sample(), {}
+
+
+register(
+    id="DummyTupleEnv-v0",
+    entry_point="tests.utils.test_dataset_creation:DummyTupleEnv",
+    max_episode_steps=5,
+)
+
+
+class DummyComboEnv(gym.Env):
+    def __init__(self):
+        self.action_space = spaces.Tuple(
+            (
+                spaces.Box(low=2, high=3, dtype=np.float32),
+                spaces.Box(low=4, high=5, dtype=np.float32),
+            )
+        )
+
+        self.observation_space = spaces.Tuple(
+            (
+                spaces.Box(low=2, high=3, dtype=np.float32),
+                spaces.Tuple(
+                    (
+                        spaces.Box(low=2, high=3, dtype=np.float32),
+                        spaces.Dict(
+                            {
+                                "component_1": spaces.Box(
+                                    low=-1, high=1, dtype=np.float32
+                                ),
+                                "component_2": spaces.Dict(
+                                    {
+                                        "subcomponent_1": spaces.Box(
+                                            low=2, high=3, dtype=np.float32
+                                        ),
+                                        "subcomponent_2": spaces.Box(
+                                            low=4, high=5, dtype=np.float32
+                                        ),
+                                    }
+                                ),
+                            }
+                        ),
+                    )
+                ),
+            )
+        )
+
+    def step(self, action):
+        terminated = self.timestep > 5
+        self.timestep += 1
+
+        return self.observation_space.sample(), 0, terminated, False, {}
+
+    def reset(self, seed=0, options=None):
+        self.timestep = 0
+        return self.observation_space.sample(), {}
+
+
+register(
+    id="DummyComboEnv-v0",
+    entry_point="tests.utils.test_dataset_creation:DummyComboEnv",
+    max_episode_steps=5,
+)
+
+
 def _check_env_recovery(gymnasium_environment: gym.Env, dataset: MinariDataset):
     """Test that the recovered environment from MinariDataset is the same as the one used to generate the dataset.
 
@@ -124,6 +218,98 @@ def _check_load_and_delete_dataset(dataset_id: str):
     minari.delete_dataset(dataset_id)
     local_datasets = minari.list_local_datasets()
     assert dataset_id not in local_datasets
+
+
+def test_generate_combo_dataset_with_collector_env():
+    dataset_id = "dummy-combo-test-v0"
+
+    # delete the test dataset if it already exists
+    local_datasets = minari.list_local_datasets()
+    if dataset_id in local_datasets:
+        minari.delete_dataset(dataset_id)
+
+    env = gym.make("DummyComboEnv-v0")
+
+    env = DataCollectorV0(env)
+    num_episodes = 10
+
+    # Step the environment, DataCollectorV0 wrapper will do the data collection job
+    env.reset(seed=42)
+
+    for episode in range(num_episodes):
+        terminated = False
+        truncated = False
+        while not terminated and not truncated:
+            action = env.action_space.sample()  # User-defined policy function
+            _, _, terminated, truncated, _ = env.step(action)
+
+        env.reset()
+
+    # Create Minari dataset and store locally
+    dataset = minari.create_dataset_from_collector_env(
+        dataset_id=dataset_id,
+        collector_env=env,
+        algorithm_name="random_policy",
+        code_permalink="https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
+        author="John U. Balis",
+        author_email="balisujohn@gmail.com",
+    )
+
+    assert isinstance(dataset, MinariDataset)
+
+    # check that the environment can be recovered from the dataset
+    _check_env_recovery(env.env, dataset)
+
+    env.close()
+
+    # check load and delete local dataset
+    _check_load_and_delete_dataset(dataset_id)
+
+
+def test_generate_tuple_dataset_with_collector_env():
+    dataset_id = "dummy-tuple-test-v0"
+
+    # delete the test dataset if it already exists
+    local_datasets = minari.list_local_datasets()
+    if dataset_id in local_datasets:
+        minari.delete_dataset(dataset_id)
+
+    env = gym.make("DummyTupleEnv-v0")
+
+    env = DataCollectorV0(env)
+    num_episodes = 10
+
+    # Step the environment, DataCollectorV0 wrapper will do the data collection job
+    env.reset(seed=42)
+
+    for episode in range(num_episodes):
+        terminated = False
+        truncated = False
+        while not terminated and not truncated:
+            action = env.action_space.sample()  # User-defined policy function
+            _, _, terminated, truncated, _ = env.step(action)
+
+        env.reset()
+
+    # Create Minari dataset and store locally
+    dataset = minari.create_dataset_from_collector_env(
+        dataset_id=dataset_id,
+        collector_env=env,
+        algorithm_name="random_policy",
+        code_permalink="https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
+        author="John U. Balis",
+        author_email="balisujohn@gmail.com",
+    )
+
+    assert isinstance(dataset, MinariDataset)
+
+    # check that the environment can be recovered from the dataset
+    _check_env_recovery(env.env, dataset)
+
+    env.close()
+
+    # check load and delete local dataset
+    _check_load_and_delete_dataset(dataset_id)
 
 
 def test_generate_dict_dataset_with_collector_env():
