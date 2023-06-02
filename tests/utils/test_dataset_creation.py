@@ -49,7 +49,7 @@ class DummyDictEnv(gym.Env):
 
 register(
     id="DummyDictEnv-v0",
-    entry_point="tests.utils.test_dataset_creation:DummyDictEnv",
+    entry_point="test_dataset_creation:DummyDictEnv",
     max_episode_steps=5,
 )
 
@@ -88,7 +88,7 @@ class DummyTupleEnv(gym.Env):
 
 register(
     id="DummyTupleEnv-v0",
-    entry_point="tests.utils.test_dataset_creation:DummyTupleEnv",
+    entry_point="test_dataset_creation:DummyTupleEnv",
     max_episode_steps=5,
 )
 
@@ -143,7 +143,7 @@ class DummyComboEnv(gym.Env):
 
 register(
     id="DummyComboEnv-v0",
-    entry_point="tests.utils.test_dataset_creation:DummyComboEnv",
+    entry_point="test_dataset_creation:DummyComboEnv",
     max_episode_steps=5,
 )
 
