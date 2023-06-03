@@ -46,7 +46,8 @@ class MinariStorage:
 
             # checking if the base library of the environment is present in the environment
             entry_point = json.loads(f.attrs["env_spec"])["entry_point"]
-            base_lib = entry_point.split(".")[0]
+            lib_full_path = entry_point.split(":")[0]
+            base_lib = lib_full_path.split(".")[0]
             env_name = self._env_spec.id
 
             try:
