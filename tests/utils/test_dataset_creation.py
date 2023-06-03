@@ -13,6 +13,39 @@ from minari import DataCollectorV0, MinariDataset
 from minari.dataset.minari_storage import MinariStorage
 
 
+class DummyTupleDisceteBoxEnv(gym.Env):
+    def __init__(self):
+        self.action_space = spaces.Tuple(
+            (
+                spaces.Discrete(1),
+                spaces.Discrete(5),
+            )
+        )
+        self.observation_space = spaces.Tuple(
+            (
+                spaces.Box(low=-1, high=4, dtype=np.float32),
+                spaces.Discrete(5),
+            )
+        )
+
+    def step(self, action):
+        terminated = self.timestep > 5
+        self.timestep += 1
+
+        return self.observation_space.sample(), 0, terminated, False, {}
+
+    def reset(self, seed=0, options=None):
+        self.timestep = 0
+        return self.observation_space.sample(), {}
+
+
+register(
+    id="DummyTupleDisceteBoxEnv-v0",
+    entry_point="test_dataset_creation:DummyTupleDisceteBoxEnv",
+    max_episode_steps=5,
+)
+
+
 class DummyDictEnv(gym.Env):
     def __init__(self):
         self.action_space = spaces.Dict(
@@ -120,8 +153,13 @@ class DummyComboEnv(gym.Env):
                                         "subcomponent_1": spaces.Box(
                                             low=2, high=3, dtype=np.float32
                                         ),
-                                        "subcomponent_2": spaces.Box(
-                                            low=4, high=5, dtype=np.float32
+                                        "subcomponent_2": spaces.Tuple(
+                                            (
+                                                spaces.Box(
+                                                    low=4, high=5, dtype=np.float32
+                                                ),
+                                                spaces.Discrete(10),
+                                            )
                                         ),
                                     }
                                 ),
@@ -230,6 +268,7 @@ def _check_load_and_delete_dataset(dataset_id: str):
         ("dummy-dict-test-v0", "DummyDictEnv-v0"),
         ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
         ("dummy-combo-test-v0", "DummyComboEnv-v0"),
+        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDisceteBoxEnv-v0"),
     ],
 )
 def test_generate_dataset_with_collector_env(dataset_id, env_id):
@@ -290,6 +329,7 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
         ("dummy-dict-test-v0", "DummyDictEnv-v0"),
         ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
         ("dummy-combo-test-v0", "DummyComboEnv-v0"),
+        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDisceteBoxEnv-v0"),
     ],
 )
 def test_generate_dataset_with_external_buffer(dataset_id, env_id):
