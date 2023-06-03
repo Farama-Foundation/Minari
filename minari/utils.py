@@ -226,6 +226,8 @@ def create_dataset_from_buffers(
                 )
 
                 eps_group.attrs["id"] = i
+                print("actions")
+                print(eps_buff["actions"])
                 total_steps = len(eps_buff["actions"])
                 eps_group.attrs["total_steps"] = total_steps
                 total_steps += total_steps

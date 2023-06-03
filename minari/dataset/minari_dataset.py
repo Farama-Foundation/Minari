@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 import re
+from collections import OrderedDict
 from dataclasses import dataclass, field
 from typing import Callable, Dict, Iterable, Iterator, List, NamedTuple, Optional, Union
 
@@ -42,30 +43,57 @@ def parse_dataset_id(dataset_id: str) -> tuple[str | None, str, int | None]:
     return env_name, dataset_name, version
 
 
-def clear_episode_buffer(episode_buffer: Dict, eps_group: h5py.Group) -> h5py.Group:
+def clear_episode_buffer(episode_buffer: Dict, episode_group: h5py.Group) -> h5py.Group:
     """Save an episode dictionary buffer into an HDF5 episode group recursively.
 
     Args:
         episode_buffer (dict): episode buffer
-        eps_group (h5py.Group): HDF5 group to store the episode datasets
+        episode_group (h5py.Group): HDF5 group to store the episode datasets
 
     Returns:
         episode group: filled HDF5 episode group
     """
     for key, data in episode_buffer.items():
         if isinstance(data, dict):
-            if key in eps_group:
-                eps_group_to_clear = eps_group[key]
+            if key in episode_group:
+                episode_group_to_clear = episode_group[key]
             else:
-                eps_group_to_clear = eps_group.create_group(key)
-            clear_episode_buffer(data, eps_group_to_clear)
+                episode_group_to_clear = episode_group.create_group(key)
+            clear_episode_buffer(data, episode_group_to_clear)
+        elif all([isinstance(entry, tuple) for entry in data]):
+            # we have a list of tuples, so we need to act appropriately
+            dict_data = {
+                f"_index_{str(i)}": [entry[i] for entry in data]
+                for i, _ in enumerate(data[0])
+            }
+            if key in episode_group:
+                episode_group_to_clear = episode_group[key]
+            else:
+                episode_group_to_clear = episode_group.create_group(key)
+            episode_group_to_clear.attrs.create("tuple", True, dtype=bool)
+            clear_episode_buffer(dict_data, episode_group_to_clear)
+        elif all([isinstance(entry, OrderedDict) for entry in data]):
+
+            # we have a list of OrderedDicts, so we need to act appropriately
+            dict_data = {
+                key: [entry[key] for entry in data] for key, value in data[0].items()
+            }
+
+            if key in episode_group:
+                episode_group_to_clear = episode_group[key]
+            else:
+                episode_group_to_clear = episode_group.create_group(key)
+            clear_episode_buffer(dict_data, episode_group_to_clear)
         else:
             # assert data is numpy array
+            print("PROBLEM")
+            print(data)
+
             assert np.all(np.logical_not(np.isnan(data)))
             # add seed to attributes
-            eps_group.create_dataset(key, data=data, chunks=True)
+            episode_group.create_dataset(key, data=data, chunks=True)
 
-    return eps_group
+    return episode_group
 
 
 class EpisodeData(NamedTuple):
@@ -305,20 +333,20 @@ class MinariDataset:
                                                                                         element compared to the number of action steps {len(eps_buff['actions'])} \
                                                                                         The initial and final observation must be included"
                 seed = eps_buff.pop("seed", None)
-                eps_group = clear_episode_buffer(
+                episode_group = clear_episode_buffer(
                     eps_buff, file.create_group(f"episode_{episode_id}")
                 )
 
-                eps_group.attrs["id"] = episode_id
+                episode_group.attrs["id"] = episode_id
                 total_steps = len(eps_buff["actions"])
-                eps_group.attrs["total_steps"] = total_steps
+                episode_group.attrs["total_steps"] = total_steps
                 additional_steps += total_steps
 
                 if seed is None:
-                    eps_group.attrs["seed"] = str(None)
+                    episode_group.attrs["seed"] = str(None)
                 else:
                     assert isinstance(seed, int)
-                    eps_group.attrs["seed"] = seed
+                    episode_group.attrs["seed"] = seed
 
                 # TODO: save EpisodeMetadataCallback callback in MinariDataset and update new episode group metadata
 

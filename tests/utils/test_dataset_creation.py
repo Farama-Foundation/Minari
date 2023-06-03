@@ -1,7 +1,9 @@
+import copy
 from typing import Iterable
 
 import gymnasium as gym
 import numpy as np
+import pytest
 from gymnasium import spaces
 from gymnasium.envs.registration import register
 from gymnasium.utils.env_checker import data_equivalence
@@ -221,168 +223,24 @@ def _check_load_and_delete_dataset(dataset_id: str):
     assert dataset_id not in local_datasets
 
 
-def test_generate_combo_dataset_with_collector_env():
-    dataset_id = "dummy-combo-test-v0"
-
-    # delete the test dataset if it already exists
-    local_datasets = minari.list_local_datasets()
-    if dataset_id in local_datasets:
-        minari.delete_dataset(dataset_id)
-
-    env = gym.make("DummyComboEnv-v0")
-
-    env = DataCollectorV0(env)
-    num_episodes = 10
-
-    # Step the environment, DataCollectorV0 wrapper will do the data collection job
-    env.reset(seed=42)
-
-    for episode in range(num_episodes):
-        terminated = False
-        truncated = False
-        while not terminated and not truncated:
-            action = env.action_space.sample()  # User-defined policy function
-            _, _, terminated, truncated, _ = env.step(action)
-
-        env.reset()
-
-    # Create Minari dataset and store locally
-    dataset = minari.create_dataset_from_collector_env(
-        dataset_id=dataset_id,
-        collector_env=env,
-        algorithm_name="random_policy",
-        code_permalink="https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
-        author="John U. Balis",
-        author_email="balisujohn@gmail.com",
-    )
-
-    assert isinstance(dataset, MinariDataset)
-    assert dataset.total_episodes == num_episodes
-    assert dataset.spec.total_episodes == num_episodes
-    assert len(dataset.episode_indices) == num_episodes
-
-    _check_data_integrity(dataset._data, dataset.episode_indices)
-
-    # check that the environment can be recovered from the dataset
-    _check_env_recovery(env.env, dataset)
-
-    env.close()
-
-    # check load and delete local dataset
-    _check_load_and_delete_dataset(dataset_id)
-
-
-def test_generate_tuple_dataset_with_collector_env():
-    dataset_id = "dummy-tuple-test-v0"
-
-    # delete the test dataset if it already exists
-    local_datasets = minari.list_local_datasets()
-    if dataset_id in local_datasets:
-        minari.delete_dataset(dataset_id)
-
-    env = gym.make("DummyTupleEnv-v0")
-
-    env = DataCollectorV0(env)
-    num_episodes = 10
-
-    # Step the environment, DataCollectorV0 wrapper will do the data collection job
-    env.reset(seed=42)
-
-    for episode in range(num_episodes):
-        terminated = False
-        truncated = False
-        while not terminated and not truncated:
-            action = env.action_space.sample()  # User-defined policy function
-            _, _, terminated, truncated, _ = env.step(action)
-
-        env.reset()
-
-    # Create Minari dataset and store locally
-    dataset = minari.create_dataset_from_collector_env(
-        dataset_id=dataset_id,
-        collector_env=env,
-        algorithm_name="random_policy",
-        code_permalink="https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
-        author="John U. Balis",
-        author_email="balisujohn@gmail.com",
-    )
-
-    assert isinstance(dataset, MinariDataset)
-    assert dataset.total_episodes == num_episodes
-    assert dataset.spec.total_episodes == num_episodes
-    assert len(dataset.episode_indices) == num_episodes
-
-    _check_data_integrity(dataset._data, dataset.episode_indices)
-
-    # check that the environment can be recovered from the dataset
-    _check_env_recovery(env.env, dataset)
-
-    env.close()
-
-    # check load and delete local dataset
-    _check_load_and_delete_dataset(dataset_id)
-
-
-def test_generate_dict_dataset_with_collector_env():
-    dataset_id = "dummy-dict-test-v0"
-
-    # delete the test dataset if it already exists
-    local_datasets = minari.list_local_datasets()
-    if dataset_id in local_datasets:
-        minari.delete_dataset(dataset_id)
-
-    env = gym.make("DummyDictEnv-v0")
-
-    env = DataCollectorV0(env)
-    num_episodes = 10
-
-    # Step the environment, DataCollectorV0 wrapper will do the data collection job
-    env.reset(seed=42)
-
-    for episode in range(num_episodes):
-        terminated = False
-        truncated = False
-        while not terminated and not truncated:
-            action = env.action_space.sample()  # User-defined policy function
-            _, _, terminated, truncated, _ = env.step(action)
-
-        env.reset()
-
-    # Create Minari dataset and store locally
-    dataset = minari.create_dataset_from_collector_env(
-        dataset_id=dataset_id,
-        collector_env=env,
-        algorithm_name="random_policy",
-        code_permalink="https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
-        author="John U. Balis",
-        author_email="balisujohn@gmail.com",
-    )
-
-    assert isinstance(dataset, MinariDataset)
-    assert dataset.total_episodes == num_episodes
-    assert dataset.spec.total_episodes == num_episodes
-    assert len(dataset.episode_indices) == num_episodes
-
-    _check_data_integrity(dataset._data, dataset.episode_indices)
-
-    # check that the environment can be recovered from the dataset
-    _check_env_recovery(env.env, dataset)
-
-    env.close()
-
-    # check load and delete local dataset
-    _check_load_and_delete_dataset(dataset_id)
-
-
-def test_generate_dataset_with_collector_env():
+@pytest.mark.parametrize(
+    "dataset_id,env_id",
+    [
+        ("cartpole-test-v0", "CartPole-v1"),
+        ("dummy-dict-test-v0", "DummyDictEnv-v0"),
+        ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
+        ("dummy-combo-test-v0", "DummyComboEnv-v0"),
+    ],
+)
+def test_generate_dataset_with_collector_env(dataset_id, env_id):
     """Test DataCollectorV0 wrapper and Minari dataset creation."""
-    dataset_id = "cartpole-test-v0"
+    # dataset_id = "cartpole-test-v0"
     # delete the test dataset if it already exists
     local_datasets = minari.list_local_datasets()
     if dataset_id in local_datasets:
         minari.delete_dataset(dataset_id)
 
-    env = gym.make("CartPole-v1")
+    env = gym.make(env_id)
 
     env = DataCollectorV0(env)
     num_episodes = 10
@@ -425,17 +283,26 @@ def test_generate_dataset_with_collector_env():
     _check_load_and_delete_dataset(dataset_id)
 
 
-def test_generate_dataset_with_external_buffer():
+@pytest.mark.parametrize(
+    "dataset_id,env_id",
+    [
+        ("cartpole-test-v0", "CartPole-v1"),
+        ("dummy-dict-test-v0", "DummyDictEnv-v0"),
+        ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
+        ("dummy-combo-test-v0", "DummyComboEnv-v0"),
+    ],
+)
+def test_generate_dataset_with_external_buffer(dataset_id, env_id):
     """Test create dataset from external buffers without using DataCollectorV0."""
     buffer = []
-    dataset_id = "cartpole-test-v0"
+    # dataset_id = "cartpole-test-v0"
 
     # delete the test dataset if it already exists
     local_datasets = minari.list_local_datasets()
     if dataset_id in local_datasets:
         minari.delete_dataset(dataset_id)
 
-    env = gym.make("CartPole-v1")
+    env = gym.make(env_id)
 
     observations = []
     actions = []
@@ -464,8 +331,8 @@ def test_generate_dataset_with_external_buffer():
             truncations.append(truncated)
 
         episode_buffer = {
-            "observations": np.asarray(observations),
-            "actions": np.asarray(actions),
+            "observations": copy.deepcopy(observations),
+            "actions": copy.deepcopy(actions),
             "rewards": np.asarray(rewards),
             "terminations": np.asarray(terminations),
             "truncations": np.asarray(truncations),
