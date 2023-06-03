@@ -67,17 +67,54 @@ class MinariStorage:
 
         return out
 
+    def _h5_group_to_dict_recursive(self, hdf_ref, timestep):
+
+        if not isinstance(hdf_ref, h5py.Group):
+            return hdf_ref[timestep]
+
+        if "tuple" in hdf_ref.attrs.keys():
+            result = []
+            for i in range(len(hdf_ref.keys())):
+                result.append(
+                    self._h5_group_to_dict_recursive(hdf_ref[f"_index_{i}"], timestep)
+                )
+            return tuple(result)
+        else:
+            result = {}
+            for key in hdf_ref:
+                result[key] = self._h5_group_to_dict_recursive(hdf_ref[key], timestep)
+            return result
+
+    def _reconstruct_space_from_h5(self, hdf_ref, timesteps):
+        result = []
+        for i in range(timesteps):
+            result.append(self._h5_group_to_dict_recursive(hdf_ref, i))
+        return result
+
     def _filter_episode_data(self, episode: h5py.Group) -> Dict[str, Any]:
+
         episode_data = {
             "id": episode.attrs.get("id"),
             "total_timesteps": episode.attrs.get("total_steps"),
             "seed": episode.attrs.get("seed"),
-            "observations": episode["observations"][()],
-            "actions": episode["actions"][()],
             "rewards": episode["rewards"][()],
             "terminations": episode["terminations"][()],
             "truncations": episode["truncations"][()],
         }
+
+        if isinstance(episode["observations"], h5py.Group):
+            episode_data["observations"] = self._reconstruct_space_from_h5(
+                episode["observations"], episode.attrs.get("total_steps")
+            )
+        else:
+            episode_data["observations"] = episode["observations"][()]
+
+        if isinstance(episode["actions"], h5py.Group):
+            episode_data["actions"] = self._reconstruct_space_from_h5(
+                episode["actions"], episode.attrs.get("total_steps")
+            )
+        else:
+            episode_data["actions"] = episode["actions"][()]
 
         return episode_data
 

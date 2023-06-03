@@ -337,13 +337,14 @@ class DataCollectorV0(gym.Wrapper):
                 elif all([isinstance(entry, tuple) for entry in data]):
                     # we have a list of tuples, so we need to act appropriately
                     dict_data = {
-                        f"_tuple_index_{str(i)}": [entry[i] for entry in data]
+                        f"_index_{str(i)}": [entry[i] for entry in data]
                         for i, _ in enumerate(data[0])
                     }
                     if key in episode_group:
                         eps_group_to_clear = episode_group[key]
                     else:
                         eps_group_to_clear = episode_group.create_group(key)
+                    eps_group_to_clear.attrs.create("tuple", True, dtype=bool)
                     clear_buffer(dict_data, eps_group_to_clear)
                 elif all([isinstance(entry, OrderedDict) for entry in data]):
 
