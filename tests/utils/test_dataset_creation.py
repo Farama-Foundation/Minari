@@ -13,6 +13,58 @@ from minari import DataCollectorV0, MinariDataset
 from minari.dataset.minari_storage import MinariStorage
 
 
+class DummyBoxEnv(gym.Env):
+    def __init__(self):
+        self.action_space = spaces.Box(low=-1, high=4, shape=(2,), dtype=np.float32)
+        self.observation_space = spaces.Box(
+            low=-1, high=4, shape=(3,), dtype=np.float32
+        )
+
+    def step(self, action):
+        terminated = self.timestep > 5
+        self.timestep += 1
+
+        return self.observation_space.sample(), 0, terminated, False, {}
+
+    def reset(self, seed=None, options=None):
+        self.timestep = 0
+        return self.observation_space.sample(), {}
+
+
+register(
+    id="DummyBoxEnv-v0",
+    entry_point="test_dataset_creation:DummyBoxEnv",
+    max_episode_steps=5,
+)
+
+
+class DummyMultiDimensionalBoxEnv(gym.Env):
+    def __init__(self):
+        self.action_space = spaces.Box(
+            low=-1, high=4, shape=(2, 2, 2), dtype=np.float32
+        )
+        self.observation_space = spaces.Box(
+            low=-1, high=4, shape=(3, 3, 3), dtype=np.float32
+        )
+
+    def step(self, action):
+        terminated = self.timestep > 5
+        self.timestep += 1
+
+        return self.observation_space.sample(), 0, terminated, False, {}
+
+    def reset(self, seed=None, options=None):
+        self.timestep = 0
+        return self.observation_space.sample(), {}
+
+
+register(
+    id="DummyMultiDimensionalBoxEnv-v0",
+    entry_point="test_dataset_creation:DummyMultiDimensionalBoxEnv",
+    max_episode_steps=5,
+)
+
+
 class DummyTupleDisceteBoxEnv(gym.Env):
     def __init__(self):
         self.action_space = spaces.Tuple(
@@ -34,7 +86,7 @@ class DummyTupleDisceteBoxEnv(gym.Env):
 
         return self.observation_space.sample(), 0, terminated, False, {}
 
-    def reset(self, seed=0, options=None):
+    def reset(self, seed=None, options=None):
         self.timestep = 0
         return self.observation_space.sample(), {}
 
@@ -77,7 +129,7 @@ class DummyDictEnv(gym.Env):
 
         return self.observation_space.sample(), 0, terminated, False, {}
 
-    def reset(self, seed=0, options=None):
+    def reset(self, seed=None, options=None):
         self.timestep = 0
         return self.observation_space.sample(), {}
 
@@ -116,7 +168,7 @@ class DummyTupleEnv(gym.Env):
 
         return self.observation_space.sample(), 0, terminated, False, {}
 
-    def reset(self, seed=0, options=None):
+    def reset(self, seed=None, options=None):
         self.timestep = 0
         return self.observation_space.sample(), {}
 
@@ -227,7 +279,6 @@ def _check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
     assert data.total_episodes == len(episodes)
     # verify the actions and observations are in the appropriate action space and observation space, and that the episode lengths are correct
     for episode in episodes:
-        print(type(episode))
         # assert episode["total_timesteps"] + 1 == len(episode["observations"])
         # assert episode["total_timesteps"] == len(episode["actions"])
         assert episode["total_timesteps"] == len(episode["rewards"])
@@ -266,6 +317,7 @@ def _check_load_and_delete_dataset(dataset_id: str):
     [
         ("cartpole-test-v0", "CartPole-v1"),
         ("dummy-dict-test-v0", "DummyDictEnv-v0"),
+        ("dummy-box-test-v0", "DummyBoxEnv-v0"),
         ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
         ("dummy-combo-test-v0", "DummyComboEnv-v0"),
         ("dummy-tuple-discrete-box-test-v0", "DummyTupleDisceteBoxEnv-v0"),
@@ -317,7 +369,6 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
     _check_env_recovery(env.env, dataset)
 
     env.close()
-
     # check load and delete local dataset
     _check_load_and_delete_dataset(dataset_id)
 

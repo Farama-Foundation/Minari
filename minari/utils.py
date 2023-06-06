@@ -11,6 +11,7 @@ from gymnasium.envs.registration import EnvSpec
 
 from minari import DataCollectorV0
 from minari.dataset.minari_dataset import MinariDataset, clear_episode_buffer
+from minari.serialization import serialize_space
 from minari.storage.datasets_root_dir import get_dataset_path
 
 
@@ -226,8 +227,6 @@ def create_dataset_from_buffers(
                 )
 
                 eps_group.attrs["id"] = i
-                print("actions")
-                print(eps_buff["actions"])
                 total_steps = len(eps_buff["actions"])
                 eps_group.attrs["total_steps"] = total_steps
                 total_steps += total_steps
@@ -247,6 +246,12 @@ def create_dataset_from_buffers(
                 "env_spec"
             ] = env.spec.to_json()  # pyright: ignore [reportOptionalMemberAccess]
             file.attrs["dataset_id"] = dataset_id
+
+            action_space_str = serialize_space(env.action_space)
+            observation_space_str = serialize_space(env.observation_space)
+
+            file.attrs["action_space"] = action_space_str
+            file.attrs["observation_space"] = observation_space_str
 
         return MinariDataset(data_path)
     else:

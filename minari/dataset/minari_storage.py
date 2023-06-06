@@ -5,6 +5,8 @@ import gymnasium as gym
 import h5py
 from gymnasium.envs.registration import EnvSpec
 
+from minari.serialization import deserialize_space
+
 
 PathLike = Union[str, bytes, os.PathLike]
 
@@ -35,12 +37,20 @@ class MinariStorage:
 
             self._combined_datasets = f.attrs.get("combined_datasets", default=[])
 
-            env = gym.make(self._env_spec)
-
-            self._observation_space = env.observation_space
-            self._action_space = env.action_space
-
-            env.close()
+            # ww will default to using the reconstructed observation and action spaces from the dataset
+            # and fall back to the env spec env if the action and observation spaces are not both present
+            # in the dataset.
+            if "action_space" in f.attrs and "observation_space" in f.attrs:
+                print("deserializing")
+                self._observation_space = deserialize_space(
+                    f.attrs["observation_space"]
+                )
+                self._action_space = deserialize_space(f.attrs["action_space"])
+            else:
+                env = gym.make(self._env_spec)
+                self._observation_space = env.observation_space
+                self._action_space = env.action_space
+                env.close()
 
     def apply(
         self,

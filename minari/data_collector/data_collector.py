@@ -17,6 +17,7 @@ from minari.data_collector.callbacks import (
     StepData,
     StepDataCallback,
 )
+from minari.serialization import serialize_space
 
 
 EpisodeBuffer = Dict[str, Any]  # TODO: narrow this down
@@ -344,7 +345,7 @@ class DataCollectorV0(gym.Wrapper):
                         eps_group_to_clear = episode_group[key]
                     else:
                         eps_group_to_clear = episode_group.create_group(key)
-                    eps_group_to_clear.attrs.create("tuple", True, dtype=bool)
+                    eps_group_to_clear.attrs["tuple"] = 1
                     clear_buffer(dict_data, eps_group_to_clear)
                 elif all([isinstance(entry, OrderedDict) for entry in data]):
 
@@ -462,6 +463,15 @@ class DataCollectorV0(gym.Wrapper):
 
         for key, value in dataset_metadata.items():
             self._tmp_f.attrs[key] = value
+
+        assert "observation_space" not in dataset_metadata.keys()
+        assert "action_space" not in dataset_metadata.keys()
+
+        action_space_str = serialize_space(self.env.action_space)
+        observation_space_str = serialize_space(self.env.observation_space)
+
+        self._tmp_f.attrs["action_space"] = action_space_str
+        self._tmp_f.attrs["observation_space"] = observation_space_str
 
         self._buffer.append({})
 
