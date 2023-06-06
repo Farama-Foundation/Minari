@@ -1,8 +1,6 @@
-
-
 import gymnasium as gym
-import pytest
 import numpy as np
+import pytest
 
 from minari.serialization import deserialize_space, serialize_space
 
@@ -10,17 +8,11 @@ from minari.serialization import deserialize_space, serialize_space
 @pytest.mark.parametrize(
     "space",
     [
-       gym.spaces.Box(low=-1, high=4, shape=(2,), dtype=np.float32),
-       gym.spaces.Box(
-            low=-1, high=4, shape=(3,), dtype=np.float32
-        ),
-        gym.spaces.Box(
-            low=-1, high=4, shape=(2, 2, 2), dtype=np.float32
-        ),
-        gym.spaces.Box(
-            low=-1, high=4, shape=(3, 3, 3), dtype=np.float32
-        ),
-         gym.spaces.Tuple(
+        gym.spaces.Box(low=-1, high=4, shape=(2,), dtype=np.float32),
+        gym.spaces.Box(low=-1, high=4, shape=(3,), dtype=np.float32),
+        gym.spaces.Box(low=-1, high=4, shape=(2, 2, 2), dtype=np.float32),
+        gym.spaces.Box(low=-1, high=4, shape=(3, 3, 3), dtype=np.float32),
+        gym.spaces.Tuple(
             (
                 gym.spaces.Discrete(1),
                 gym.spaces.Discrete(5),
@@ -37,12 +29,17 @@ from minari.serialization import deserialize_space, serialize_space
                 "component_1": gym.spaces.Box(low=-1, high=1, dtype=np.float32),
                 "component_2": gym.spaces.Dict(
                     {
-                        "subcomponent_1": gym.spaces.Box(low=2, high=3, dtype=np.float32),
-                        "subcomponent_2": gym.spaces.Box(low=4, high=5, dtype=np.float32),
+                        "subcomponent_1": gym.spaces.Box(
+                            low=2, high=3, dtype=np.float32
+                        ),
+                        "subcomponent_2": gym.spaces.Box(
+                            low=4, high=5, dtype=np.float32
+                        ),
                     }
                 ),
-            }),
-            gym.spaces.Tuple(
+            }
+        ),
+        gym.spaces.Tuple(
             (
                 gym.spaces.Box(low=2, high=3, dtype=np.float32),
                 gym.spaces.Box(low=4, high=5, dtype=np.float32),
@@ -106,5 +103,3 @@ def test_space_serialize_deserialize(space):
     action_2 = reconstructed_space.sample()
     assert space.contains(action_2)
     assert reconstructed_space.contains(action_1)
-
-   

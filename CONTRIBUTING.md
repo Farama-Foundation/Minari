@@ -29,6 +29,12 @@ The CI will run several checks on the new code pushed to the Minari repository. 
 
 Once those two steps are done, the Git hooks will be run automatically at every new commit. The Git hooks can also be run manually with `pre-commit run --all-files`, and if needed they can be skipped (not recommended) with `git commit --no-verify`. **Note:** you may have to run `pre-commit run --all-files` manually a couple of times to make it pass when you commit, as each formatting tool will first format the code and fail the first time but should pass the second time.
 
+### Testing Environment
+Along with `pre-commit`, CI will be running Unit Tests on the complete code base to ensure all the functionalities are working properly. Unit tests can also be run manually on local machine by following the steps below:
+
+1. To setup the testing environment you need to install optional testing dependencies for minari by running `pip3 install '.[testing]'` from the root directory.
+2. After setting up the testing environment, you can run the unit tests using `pytest -v` command. For every new functionality or change in existing functionality, necessary changes are to be made in the respective unit tests.
+
 ## Contributing tutorials
 Tutorials are a crucial way to help people learn how to use Minari and we greatly appreciate any contributions. However, we have a few guidelines for tutorials:
 

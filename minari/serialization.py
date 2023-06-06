@@ -1,16 +1,10 @@
 from __future__ import annotations
 
 import json
-import os
-import warnings
-from typing import Dict, List, Optional, Union
+from typing import Dict, Union
 
 import gymnasium as gym
-import h5py
 import numpy as np
-from gymnasium.envs.registration import EnvSpec
-
-
 
 
 def serialize_space(space: gym.spaces.Space, to_string=True) -> Union[Dict, str]:
@@ -73,7 +67,7 @@ def deserialize_space(space_dict, from_string=True):
         low = np.array(space_dict["low"])
         high = np.array(space_dict["high"])
         dtype = np.dtype(space_dict["dtype"])
-        return gym.spaces.Box(low=low, high=high, shape=shape, dtype=dtype) # type: ignore
+        return gym.spaces.Box(low=low, high=high, shape=shape, dtype=dtype)  # type: ignore
     elif space_dict["type"] == "discrete":
         n = space_dict["n"]
         start = space_dict["start"]

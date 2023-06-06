@@ -1,3 +1,4 @@
+import json
 import os
 from typing import Any, Callable, Dict, Iterable, List, Optional, Union
 
@@ -41,16 +42,26 @@ class MinariStorage:
             # and fall back to the env spec env if the action and observation spaces are not both present
             # in the dataset.
             if "action_space" in f.attrs and "observation_space" in f.attrs:
-                print("deserializing")
                 self._observation_space = deserialize_space(
                     f.attrs["observation_space"]
                 )
                 self._action_space = deserialize_space(f.attrs["action_space"])
             else:
-                env = gym.make(self._env_spec)
-                self._observation_space = env.observation_space
-                self._action_space = env.action_space
-                env.close()
+                # checking if the base library of the environment is present in the environment
+                entry_point = json.loads(f.attrs["env_spec"])["entry_point"]
+                lib_full_path = entry_point.split(":")[0]
+                base_lib = lib_full_path.split(".")[0]
+                env_name = self._env_spec.id
+
+                try:
+                    env = gym.make(self._env_spec)
+                    self._observation_space = env.observation_space
+                    self._action_space = env.action_space
+                    env.close()
+                except ModuleNotFoundError as e:
+                    raise ModuleNotFoundError(
+                        f"Install {base_lib} for loading {env_name} data"
+                    ) from e
 
     def apply(
         self,
