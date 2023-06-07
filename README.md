@@ -46,7 +46,15 @@ To download a dataset:
 ```python
 import minari
 
-dataset = minari.download_dataset("door-cloned-v0")
+minari.download_dataset("door-cloned-v0")
+```
+
+To load a dataset:
+
+```python
+import minari
+
+dataset = minari.load_dataset("door-cloned-v0")
 ```
 
 ## Project Maintainers
