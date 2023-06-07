@@ -122,10 +122,9 @@ class MinariStorage:
             "terminations": episode["terminations"][()],
             "truncations": episode["truncations"][()],
         }
-
         if isinstance(episode["observations"], h5py.Group):
             episode_data["observations"] = self._reconstruct_space_from_h5(
-                episode["observations"], episode.attrs.get("total_steps")
+                episode["observations"], episode.attrs.get("total_steps") + 1
             )
         else:
             episode_data["observations"] = episode["observations"][()]

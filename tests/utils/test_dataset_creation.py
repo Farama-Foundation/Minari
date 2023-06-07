@@ -279,8 +279,8 @@ def _check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
     assert data.total_episodes == len(episodes)
     # verify the actions and observations are in the appropriate action space and observation space, and that the episode lengths are correct
     for episode in episodes:
-        # assert episode["total_timesteps"] + 1 == len(episode["observations"])
-        # assert episode["total_timesteps"] == len(episode["actions"])
+        assert episode["total_timesteps"] + 1 == len(episode["observations"])
+        assert episode["total_timesteps"] == len(episode["actions"])
         assert episode["total_timesteps"] == len(episode["rewards"])
         assert episode["total_timesteps"] == len(episode["terminations"])
         assert episode["total_timesteps"] == len(episode["truncations"])
