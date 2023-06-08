@@ -263,7 +263,7 @@ class DataCollectorV0(gym.Wrapper):
         assert STEP_DATA_KEYS.issubset(step_data.keys())
 
         # If last episode in global buffer has saved steps, we need to check if it was truncated or terminated
-        # If not (empty dicitionary), then we need to auto-truncate the episode.
+        # If the last element in the buffer is not an empty dictionary, then we need to auto-truncate the episode.
         if self._buffer[-1]:
             if (
                 not self._buffer[-1]["terminations"][-1]
@@ -400,8 +400,8 @@ class DataCollectorV0(gym.Wrapper):
                             episode_group.create_dataset(key, data=np_data, chunks=True)
 
         for i, eps_buff in enumerate(self._buffer):
+            # Make sure that the episode has stepped, by checking if the 'actions' key has been added to the episode buffer.
             if "actions" not in eps_buff:
-                # Make sure that the episode has stepped
                 continue
 
             current_episode_group_term_or_trunc = (
