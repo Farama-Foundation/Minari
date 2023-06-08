@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 import re
 from dataclasses import dataclass, field
-from typing import Callable, Dict, Iterable, Iterator, List, NamedTuple, Optional, Union
+from typing import Callable, Dict, Iterable, Iterator, List, Optional, Union
 
 import gymnasium as gym
 import h5py
@@ -68,7 +68,8 @@ def clear_episode_buffer(episode_buffer: Dict, eps_group: h5py.Group) -> h5py.Gr
     return eps_group
 
 
-class EpisodeData(NamedTuple):
+@dataclass(frozen=True)
+class EpisodeData:
     """Contains the datasets data for a single episode.
 
     This is the object returned by :class:`minari.MinariDataset.sample_episodes`.
@@ -82,6 +83,29 @@ class EpisodeData(NamedTuple):
     rewards: np.ndarray
     terminations: np.ndarray
     truncations: np.ndarray
+
+    def __repr__(self) -> str:
+        return (
+            "EpisodeData("
+            f"id={repr(self.id)}, "
+            f"seed={repr(self.seed)}, "
+            f"total_timesteps={self.total_timesteps}, "
+            f"observations={EpisodeData._repr_space_values(self.observations)}, "
+            f"actions={EpisodeData._repr_space_values(self.actions)}, "
+            f"rewards=ndarray of {len(self.rewards)} floats, "
+            f"terminations=ndarray of {len(self.terminations)} bools, "
+            f"truncations=ndarray of {len(self.truncations)} bools, "
+            ")"
+        )
+
+    @staticmethod
+    def _repr_space_values(value):
+        if isinstance(value, np.ndarray):
+            return f"ndarray of shape {value.shape} and dtype {value.dtype}"
+        elif isinstance(value, dict):
+            return f"dict with keys {value.keys()}"
+        else:
+            return repr(value)
 
 
 @dataclass
