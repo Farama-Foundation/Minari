@@ -177,7 +177,230 @@ The stepping data inside the episode group is divided into some required `datase
 </ul>
 </div>
 
-The required `datasets` found in the episode groups correspond to the data involved in every Gymnasium step call `obs, rew, terminated, truncated, info = env.step(action)`: `observations`, `actions`, `rewards`, `terminations`, and `truncations`. These datasets are `np.ndarray` or nested groups of `np.ndarray` and other groups, depending on the observation and action spaces, and their shape is equal to:
+In the case where, for example, the observation space is a relatively complex `Dict` space with the following definition: 
+```
+spaces.Dict(
+    {
+        "component_1": spaces.Box(low=-1, high=1, dtype=np.float32),
+        "component_2": spaces.Dict(
+            {
+                "subcomponent_1": spaces.Box(low=2, high=3, dtype=np.float32),
+                "subcomponent_2": spaces.Box(low=4, high=5, dtype=np.float32),
+            }
+        ),
+    }
+)
+```
+and the action space is a `Box` space, the resulting Minari dataset `HDF5` file will end up looking as follows: 
+
+<div class="only-light">
+<ul class="directory-list">
+<li class="file">main_data.hdf5
+    <ul>
+        <li class="folder">episode_0
+            <ul>
+                <li class="folder">observations
+                <ul>
+                    <li class="dataset">component_1</li>
+                    <li class="folder">component_2
+                    <ul>
+                    <li class="dataset"> subcomponent_1 </li>
+                    <li class="dataset"> subcomponent_2 </li>
+                    </ul>
+                    </li>
+                </ul>
+                </li>
+                <li class="dataset">actions</li>
+                <li class="dataset">terminations</li>
+                <li class="dataset">truncations</li>
+                <li class="dataset">rewards</li>
+                <li class="folder">infos
+                <ul>
+                    <li class="dataset">infos_datasets</li>
+                    <li class="folder">infos_subgroup
+                    <ul>
+                        <li class="dataset">more_datasets</li>
+                    </ul>
+                    </li>
+                </ul>
+                </li>
+                <li class="folder">additional_groups
+                    <ul>
+                        <li class="dataset">additional_datasets</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li class="folder-closed">episode_1</li>
+        <li class="folder-closed">episode_2</li>
+        <ul><br></ul>
+        <li class="folder-closed">episode_id</li>
+    </ul>
+</li>
+</ul>
+</div>
+
+<div class="only-dark">
+<ul class="directory-list">
+    <li class="file-white" style="color:white">main_data.hdf5
+        <ul class="white">
+            <li class="folder-white">episode_0
+                <ul class="white">
+                <li class="folder-white">observations
+                <ul>
+                    <li class="dataset-white">component_1</li>
+                    <li class="folder-white">component_2
+                        <ul class="white">
+                            <li class="dataset-white"> subcomponent_1 </li>
+                            <li class="dataset-white"> subcomponent_2 </li>
+                        </ul>
+                    </li>
+                </ul>
+                </li>                    
+                <li class="dataset-white">actions</li>
+                <li class="dataset-white">terminations</li>
+                <li class="dataset-white">truncations</li>
+                <li class="dataset-white">rewards</li>
+                <li class="folder-white">infos
+                <ul class="white">
+                    <li class="dataset-white">infos_datasets</li>
+                    <li class="folder-white">infos_subgroup
+                    <ul class="white">
+                        <li class="dataset-white">more_datasets</li>
+                    </ul>
+                    </li>
+                </ul>
+                </li>
+                <li class="folder-white">additional_groups
+                    <ul class="white">
+                        <li class="dataset-white">additional_datasets</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li class="folder-white-closed">episode_1</li>
+        <li class="folder-white-closed">episode_2</li>
+        <ul class="white"><br></ul>
+        <li class="folder-white-closed">episode_id</li>
+        </ul>
+    </li>
+</ul>
+</div>
+
+Similarly, consider the case where we had a `Box` space as an observation space and a relatively complex `Tuple` space as an action space with the following definition: 
+```
+spaces.Tuple(
+    (
+        spaces.Box(low=2, high=3, dtype=np.float32),
+        spaces.Tuple(
+            (
+                spaces.Box(low=2, high=3, dtype=np.float32),
+                spaces.Box(low=4, high=5, dtype=np.float32),
+            )
+        ),
+    )
+)
+```
+In this case, the resulting Minari dataset `HDF5` file will end up looking as follows: 
+
+<div class="only-light">
+<ul class="directory-list">
+<li class="file">main_data.hdf5
+    <ul>
+        <li class="folder">episode_0
+            <ul>
+                <li class="dataset">observations</li>
+                <li class="folder">actions
+                <ul>
+                    <li class="dataset">_index_0</li>
+                    <li class="folder">_index_1_
+                    <ul>
+                    <li class="dataset"> _index_0 </li>
+                    <li class="dataset"> _index_1_ </li>
+                    </ul>
+                    </li>
+                </ul>
+                </li>
+                <li class="dataset">terminations</li>
+                <li class="dataset">truncations</li>
+                <li class="dataset">rewards</li>
+                <li class="folder">infos
+                <ul>
+                    <li class="dataset">infos_datasets</li>
+                    <li class="folder">infos_subgroup
+                    <ul>
+                        <li class="dataset">more_datasets</li>
+                    </ul>
+                    </li>
+                </ul>
+                </li>
+                <li class="folder">additional_groups
+                    <ul>
+                        <li class="dataset">additional_datasets</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li class="folder-closed">episode_1</li>
+        <li class="folder-closed">episode_2</li>
+        <ul><br></ul>
+        <li class="folder-closed">episode_id</li>
+    </ul>
+</li>
+</ul>
+</div>
+
+<div class="only-dark">
+<ul class="directory-list">
+    <li class="file-white" style="color:white">main_data.hdf5
+        <ul class="white">
+            <li class="folder-white">episode_0
+                <ul class="white">
+                    <li class="dataset-white">observations</li>
+                    <li class="folder-white">actions
+                        <ul>
+                            <li class="dataset-white">_index_0</li>
+                            <li class="folder-white">_index_1_
+                            <ul>
+                            <li class="dataset-white"> _index_0 </li>
+                            <li class="dataset-white"> _index_1_ </li>
+                            </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dataset-white">terminations</li>
+                    <li class="dataset-white">truncations</li>
+                    <li class="dataset-white">rewards</li>
+                    <li class="folder-white">infos
+                    <ul class="white">
+                        <li class="dataset-white">infos_datasets</li>
+                        <li class="folder-white">infos_subgroup
+                        <ul class="white">
+                            <li class="dataset-white">more_datasets</li>
+                        </ul>
+                        </li>
+                    </ul>
+                    </li>
+                    <li class="folder-white">additional_groups
+                        <ul class="white">
+                            <li class="dataset-white">additional_datasets</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li class="folder-white-closed">episode_1</li>
+            <li class="folder-white-closed">episode_2</li>
+            <ul class="white"><br></ul>
+            <li class="folder-white-closed">episode_id</li>
+        </ul>
+    </li>
+</ul>
+</div>
+
+Note how the `Tuple` space elements are assigned corresponding keys of the format `f"_index_{i}"` were `i` is their index in the `Tuple` space.
+
+
+The required `datasets` found in the episode groups correspond to the data involved in every Gymnasium step call `obs, rew, terminated, truncated, info = env.step(action)`: `observations`, `actions`, `rewards`, `terminations`, and `truncations`. These datasets are `np.ndarray` or nested groups of `np.ndarray` and other groups, depending on the observation and action spaces, and the space of all datasets under each required top-level episode key is equal to:
 
 - `actions`: `shape=(number_of_steps, action_space_component_shape)`. If the action or observation space is `Dict` or a `Tuple`, then the corresponding entry will be a group instead of a dataset. Within this group, there will be nested groups and datasets, as specified by the action and observation spaces. `Dict` and `Tuple` spaces are represented as groups, and `Box` and `Discrete` spaces are represented as datasets. All datasets at any level under the top-level key `actions` will have the same `number_of_steps`, but will vary in `action_space_component_shape` on for each particular action space component. For example, a `Dict` space may contain two `Box` spaces with different shapes.
 - `observations`: `shape=(number_of_steps + 1, observation_space_component_shape)`. Observations nest in the same way as actions if the top level space is a `Tuple` or `Dict` space. The value of `number_of_steps + 1` is the same for datasets at any level under `observations`. These datasets have an additional element because the initial observation of the environment when calling `obs, info = env.reset()` is also saved. `observation_space_component_shape` will vary between datasets, depending on the shapes of the simple spaces specified in the observation space. You can get a transition of the form `(o_t, a_t, o_t+1)` from the datasets in the episode group, where `o_t` is the current observation, `o_t+1` is the next observation after taking action `a`, and `t` is the discrete transition index
