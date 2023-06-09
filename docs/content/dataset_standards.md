@@ -101,7 +101,7 @@ More information about the features that the `HDF5` file format support can be r
 
 The offline data is organized inside the `main_data.hdf5` file in episode [`groups`](https://docs.h5py.org/en/stable/high/dataset.html) named as `episode_id`. Each episode group contains all the stepping data from a Gymnasium environment until the environment is `terminated` or `truncated`.
 
-The stepping data inside the episode group is divided into some required `datasets` (`StepData`) plus other optional `groups` and nested `sub-groups` such as `infos`. The hierarchical tree of the Minari dataset `HDF5` file will end up looking as follows:
+The stepping data inside the episode group is divided into some required `datasets` (`StepData`) plus other optional `groups` and nested `sub-groups` such as `infos`. If the action and observation spaces both are simple spaces (not `Tuple` and not `Dict`), then the hierarchical tree of the Minari dataset `HDF5` file will end up looking as follows:
 
 <div class="only-light">
 <ul class="directory-list">
@@ -177,10 +177,10 @@ The stepping data inside the episode group is divided into some required `datase
 </ul>
 </div>
 
-The required `datasets` found in the episode groups correspond to the data involved in every Gymnasium step call `obs, rew, terminated, truncated, info = env.step(action)`: `observations`, `actions`, `rewards`, `terminations`, and `truncations`. These datasets are `np.ndarray` and their shape is equal to:
+The required `datasets` found in the episode groups correspond to the data involved in every Gymnasium step call `obs, rew, terminated, truncated, info = env.step(action)`: `observations`, `actions`, `rewards`, `terminations`, and `truncations`. These datasets are `np.ndarray` or nested groups of `np.ndarray` and other groups, depending on the observation and action spaces, and their shape is equal to:
 
-- `actions`: `shape=(number_of_steps, action_space_shape)`. If the action space is a `Dictionary` or a `Tuple` each step action is flatten before creating the `actions` dataset (currently `Sequence` and `Graph` action spaces are not supported). If using the `DataCollectorv0` wrapper to create the Mianri datasets, the saved actions will be automatically flattened by the `StepDataCallback`.
-- `observations`: `shape=(number_of_steps + 1, observation_space_shape)`. The observations are also flattened if the observation space of the environment is of types `Dictionary` or `Tuple`. The size of the first axis of the `observations` dataset has an additional element because the initial observation of the environment when calling `obs, info = env.reset()` is also saved. You can get a transition of the form `(o_t, a_t, o_t+1)` from the datasets in the episode group, where `o_t` is the current observation, `o_t+1` is the next observation after taking action `a`, and `t` is the discrete transition index
+- `actions`: `shape=(number_of_steps, action_space_component_shape)`. If the action or observation space is `Dict` or a `Tuple`, then the corresponding entry will be a group instead of a dataset. Within this group, there will be nested groups and datasets, as specified by the action and observation spaces. `Dict` and `Tuple` spaces are represented as groups, and `Box` and `Discrete` spaces are represented as datasets. All datasets at any level under the top-level key `actions` will have the same `number_of_steps`, but will vary in `action_space_component_shape` on for each particular action space component. For example, a `Dict` space may contain two `Box` spaces with different shapes.
+- `observations`: `shape=(number_of_steps + 1, observation_space_component_shape)`. Observations nest in the same way as actions if the top level space is a `Tuple` or `Dict` space. The value of `number_of_steps + 1` is the same for datasets at any level under `observations`. These datasets have an additional element because the initial observation of the environment when calling `obs, info = env.reset()` is also saved. `observation_space_component_shape` will vary between datasets, depending on the shapes of the simple spaces specified in the observation space. You can get a transition of the form `(o_t, a_t, o_t+1)` from the datasets in the episode group, where `o_t` is the current observation, `o_t+1` is the next observation after taking action `a`, and `t` is the discrete transition index
 ; as follows:
 
     ```python
@@ -272,11 +272,15 @@ When creating a Minari dataset with the `DataCollectorV0` wrapper the default gl
 | `total_episodes`        | `np.int64` | Number of episodes in the Minari dataset. |
 | `total_steps`           | `np.int64` | Number of steps in the Minari dataset. |
 | `env_spec`              | `str`      | json string of the Gymnasium environment spec.|
-| `dataset_name`          | `str`      | Name tag of the Minari dataset. |
+| `dataset_id`            | `str`      | Name tag of the Minari dataset. |
 | `code_permalink`        | `str`      | Link to a repository with the code used to generate the dataset.|
 | `author`                | `str`      | Author's name that created the dataset. |
 | `author_email`          | `str`      | Email of the author that created the dataset.|
 | `algorithm_name`        | `str`      | Name of the expert policy used to create the dataset. |
+| `action_space`          | `str`      | Serialized Gymnasium action space describing actions in dataset. |
+| `observation_space`     | `str`      | Serialized Gymnasium observation space describing observations in dataset. |
+
+
 
 For each episode group the default metadata `attributes` are:
 
