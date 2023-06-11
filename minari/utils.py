@@ -170,6 +170,8 @@ def create_dataset_from_buffers(
     author: Optional[str] = None,
     author_email: Optional[str] = None,
     code_permalink: Optional[str] = None,
+    action_space: Optional[gym.spaces.Space] = None,
+    observation_space: Optional[gym.spaces.Space] = None,
 ):
     """Create Minari dataset from a list of episode dictionary buffers.
 
@@ -214,6 +216,11 @@ def create_dataset_from_buffers(
             "`author_email` is set to None. For longevity purposes it is highly recommended to provide an author email, or some other obvious contact information.",
             UserWarning,
         )
+
+    if observation_space is None:
+        observation_space = env.observation_space
+    if action_space is None:
+        action_space = env.action_space
 
     dataset_path = get_dataset_path(dataset_id)
 
@@ -261,8 +268,8 @@ def create_dataset_from_buffers(
             ] = env.spec.to_json()  # pyright: ignore [reportOptionalMemberAccess]
             file.attrs["dataset_id"] = dataset_id
 
-            action_space_str = serialize_space(env.action_space)
-            observation_space_str = serialize_space(env.observation_space)
+            action_space_str = serialize_space(action_space)
+            observation_space_str = serialize_space(observation_space)
 
             file.attrs["action_space"] = action_space_str
             file.attrs["observation_space"] = observation_space_str

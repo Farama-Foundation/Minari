@@ -1,5 +1,6 @@
 import copy
-from typing import Iterable
+from collections import OrderedDict
+from typing import Dict, Iterable
 
 import gymnasium as gym
 import numpy as np
@@ -240,6 +241,37 @@ register(
 )
 
 
+def _check_env_recovery_with_subset_spaces(
+    gymnasium_environment: gym.Env,
+    dataset: MinariDataset,
+    action_space_subset: gym.spaces.Space,
+    observation_space_subset: gym.spaces.Space,
+):
+    """Test that the recovered environment from MinariDataset is the same as the one used to generate the dataset.
+
+    Args:
+        gymnasium_environment (gym.Env): original Gymnasium environment
+        dataset (MinariDataset): Minari dataset created with gymnasium_environment
+        action_space_subset (gym.spaces.Space): desired subset action space
+        observation_space_subset (gym.spaces.Space): desired subset observation space
+
+    """
+    recovered_env = dataset.recover_environment()
+
+    # Check that environment spec is the same
+    assert recovered_env.spec == gymnasium_environment.spec
+
+    # Check that action/observation spaces are the same
+    assert data_equivalence(
+        recovered_env.observation_space, gymnasium_environment.observation_space
+    )
+    assert data_equivalence(dataset.spec.observation_space, observation_space_subset)
+    assert data_equivalence(
+        recovered_env.action_space, gymnasium_environment.action_space
+    )
+    assert data_equivalence(dataset.spec.action_space, action_space_subset)
+
+
 def _check_env_recovery(gymnasium_environment: gym.Env, dataset: MinariDataset):
     """Test that the recovered environment from MinariDataset is the same as the one used to generate the dataset.
 
@@ -461,6 +493,122 @@ def test_generate_dataset_with_external_buffer(dataset_id, env_id):
 
     _check_data_integrity(dataset._data, dataset.episode_indices)
     _check_env_recovery(env, dataset)
+
+    env.close()
+
+    _check_load_and_delete_dataset(dataset_id)
+
+
+def _space_subset_helper(entry: Dict):
+
+    return OrderedDict(
+        {
+            "component_2": OrderedDict(
+                {"subcomponent_2": entry["component_2"]["subcomponent_2"]}
+            )
+        }
+    )
+
+
+def test_generate_dataset_with_space_subset_external_buffer():
+    """Test create dataset from external buffers without using DataCollectorV0."""
+    buffer = []
+    dataset_id = "dummy-dict-test-v0"
+
+    # delete the test dataset if it already exists
+
+    action_space_subset = spaces.Dict(
+        {
+            "component_2": spaces.Dict(
+                {
+                    "subcomponent_2": spaces.Box(low=4, high=5, dtype=np.float32),
+                }
+            ),
+        }
+    )
+    observation_space_subset = spaces.Dict(
+        {
+            "component_2": spaces.Dict(
+                {
+                    "subcomponent_2": spaces.Box(low=4, high=5, dtype=np.float32),
+                }
+            ),
+        }
+    )
+
+    local_datasets = minari.list_local_datasets()
+    if dataset_id in local_datasets:
+        minari.delete_dataset(dataset_id)
+
+    env = gym.make("DummyDictEnv-v0")
+
+    observations = []
+    actions = []
+    rewards = []
+    terminations = []
+    truncations = []
+
+    num_episodes = 10
+
+    observation, info = env.reset(seed=42)
+
+    # Step the environment, DataCollectorV0 wrapper will do the data collection job
+    observation, _ = env.reset()
+    observations.append(_space_subset_helper(observation))
+    for episode in range(num_episodes):
+        terminated = False
+        truncated = False
+
+        while not terminated and not truncated:
+            action = env.action_space.sample()  # User-defined policy function
+            observation, reward, terminated, truncated, _ = env.step(action)
+            observations.append(_space_subset_helper(observation))
+            actions.append(_space_subset_helper(action))
+            rewards.append(reward)
+            terminations.append(terminated)
+            truncations.append(truncated)
+
+        episode_buffer = {
+            "observations": copy.deepcopy(observations),
+            "actions": copy.deepcopy(actions),
+            "rewards": np.asarray(rewards),
+            "terminations": np.asarray(terminations),
+            "truncations": np.asarray(truncations),
+        }
+
+        buffer.append(episode_buffer)
+
+        observations.clear()
+        actions.clear()
+        rewards.clear()
+        terminations.clear()
+        truncations.clear()
+
+        observation, _ = env.reset()
+        observations.append(_space_subset_helper(observation))
+
+    # Create Minari dataset and store locally
+    dataset = minari.create_dataset_from_buffers(
+        dataset_id=dataset_id,
+        env=env,
+        buffer=buffer,
+        algorithm_name="random_policy",
+        code_permalink="https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
+        author="WillDudley",
+        author_email="wdudley@farama.org",
+        action_space=action_space_subset,
+        observation_space=observation_space_subset,
+    )
+
+    assert isinstance(dataset, MinariDataset)
+    assert dataset.total_episodes == num_episodes
+    assert dataset.spec.total_episodes == num_episodes
+    assert len(dataset.episode_indices) == num_episodes
+
+    _check_data_integrity(dataset._data, dataset.episode_indices)
+    _check_env_recovery_with_subset_spaces(
+        env, dataset, action_space_subset, observation_space_subset
+    )
 
     env.close()
 
