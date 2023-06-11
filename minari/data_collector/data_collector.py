@@ -92,9 +92,6 @@ class DataCollectorV0(gym.Wrapper):
         super().__init__(env)
         self._step_data_callback = step_data_callback()
 
-        self.env_observation_space = self.env.observation_space
-        self.env_action_space = self.env.action_space
-
         if observation_space is None:
             self.dataset_observation_space = self.env.observation_space
         else:
@@ -475,15 +472,6 @@ class DataCollectorV0(gym.Wrapper):
 
         self._tmp_f.attrs["action_space"] = action_space_str
         self._tmp_f.attrs["observation_space"] = observation_space_str
-
-        assert "env_observation_space" not in dataset_metadata.keys()
-        assert "env_action_space" not in dataset_metadata.keys()
-
-        env_action_space_str = serialize_space(self.env_action_space)
-        env_observation_space_str = serialize_space(self.env_observation_space)
-
-        self._tmp_f.attrs["env_action_space"] = env_action_space_str
-        self._tmp_f.attrs["env_observation_space"] = env_observation_space_str
 
         self._buffer.append({})
 

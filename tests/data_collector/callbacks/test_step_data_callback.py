@@ -1,19 +1,18 @@
-import copy
 from typing import Iterable
 
 import gymnasium as gym
 import numpy as np
-import pytest
 from gymnasium import spaces
 from gymnasium.envs.registration import register
 from gymnasium.utils.env_checker import data_equivalence
 
 import minari
 from minari import DataCollectorV0, MinariDataset
-from minari.dataset.minari_storage import MinariStorage
 from minari.data_collector.callbacks import StepDataCallback
+from minari.dataset.minari_storage import MinariStorage
 
-#todo refractor these to be a dependency available to all tests
+
+# todo refractor these to be a dependency available to all tests
 def _check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
     """Checks to see if a MinariStorage episode has consistent data and has episodes at the expected indices.
 
@@ -59,13 +58,20 @@ def _check_load_and_delete_dataset(dataset_id: str):
     assert dataset_id not in local_datasets
 
 
-
-def _check_env_recovery_with_subset_spaces(gymnasium_environment: gym.Env, dataset: MinariDataset, action_space_subset: gym.spaces.Space, observation_space_subset: gym.spaces.Space):
+def _check_env_recovery_with_subset_spaces(
+    gymnasium_environment: gym.Env,
+    dataset: MinariDataset,
+    action_space_subset: gym.spaces.Space,
+    observation_space_subset: gym.spaces.Space,
+):
     """Test that the recovered environment from MinariDataset is the same as the one used to generate the dataset.
 
     Args:
         gymnasium_environment (gym.Env): original Gymnasium environment
         dataset (MinariDataset): Minari dataset created with gymnasium_environment
+        action_space_subset (gym.spaces.Space): desired subset action space
+        observation_space_subset (gym.spaces.Space): desired subset observation space
+
     """
     recovered_env = dataset.recover_environment()
 
@@ -76,16 +82,11 @@ def _check_env_recovery_with_subset_spaces(gymnasium_environment: gym.Env, datas
     assert data_equivalence(
         recovered_env.observation_space, gymnasium_environment.observation_space
     )
-    assert data_equivalence(
-        dataset.spec.observation_space, observation_space_subset
-    )
+    assert data_equivalence(dataset.spec.observation_space, observation_space_subset)
     assert data_equivalence(
         recovered_env.action_space, gymnasium_environment.action_space
     )
-    assert data_equivalence(
-        dataset.spec.action_space, action_space_subset
-    )
-
+    assert data_equivalence(dataset.spec.action_space, action_space_subset)
 
 
 class DummyDictEnv(gym.Env):
@@ -130,15 +131,26 @@ register(
     max_episode_steps=5,
 )
 
+
 class CustomSubsetStepDataCallback(StepDataCallback):
     def __call__(self, env, **kwargs):
         step_data = super().__call__(env, **kwargs)
-        step_data["observations"] = {"component_2":{"subcomponent_2":step_data["observations"]["component_2"]["subcomponent_2"]}}
-        if step_data["actions"] != None:
-            step_data["actions"] = {"component_2":{"subcomponent_2":step_data["actions"]["component_2"]["subcomponent_2"]}}
+        step_data["observations"] = {
+            "component_2": {
+                "subcomponent_2": step_data["observations"]["component_2"][
+                    "subcomponent_2"
+                ]
+            }
+        }
+        if step_data["actions"] is not None:
+            step_data["actions"] = {
+                "component_2": {
+                    "subcomponent_2": step_data["actions"]["component_2"][
+                        "subcomponent_2"
+                    ]
+                }
+            }
         return step_data
-
-
 
 
 def test_data_collector_step_data_callback():
@@ -151,16 +163,15 @@ def test_data_collector_step_data_callback():
 
     env = gym.make("DummyDictEnv-v0")
 
-
     action_space_subset = spaces.Dict(
+        {
+            "component_2": spaces.Dict(
                 {
-                    "component_2": spaces.Dict(
-                        {
-                            "subcomponent_2": spaces.Box(low=4, high=5, dtype=np.float32),
-                        }
-                    ),
+                    "subcomponent_2": spaces.Box(low=4, high=5, dtype=np.float32),
                 }
-            )
+            ),
+        }
+    )
     observation_space_subset = spaces.Dict(
         {
             "component_2": spaces.Dict(
@@ -171,8 +182,12 @@ def test_data_collector_step_data_callback():
         }
     )
 
-
-    env = DataCollectorV0(env, observation_space = observation_space_subset, action_space = action_space_subset, step_data_callback=CustomSubsetStepDataCallback)
+    env = DataCollectorV0(
+        env,
+        observation_space=observation_space_subset,
+        action_space=action_space_subset,
+        step_data_callback=CustomSubsetStepDataCallback,
+    )
     num_episodes = 10
 
     # Step the environment, DataCollectorV0 wrapper will do the data collection job
@@ -205,9 +220,10 @@ def test_data_collector_step_data_callback():
     _check_data_integrity(dataset._data, dataset.episode_indices)
 
     # check that the environment can be recovered from the dataset
-    _check_env_recovery_with_subset_spaces(env.env, dataset, action_space_subset, observation_space_subset)
+    _check_env_recovery_with_subset_spaces(
+        env.env, dataset, action_space_subset, observation_space_subset
+    )
 
     env.close()
     # check load and delete local dataset
     _check_load_and_delete_dataset(dataset_id)
-
