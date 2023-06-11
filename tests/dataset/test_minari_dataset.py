@@ -1,8 +1,9 @@
-import pytest
-from tests.test_common import test_spaces
-from minari.dataset.minari_dataset import EpisodeData
-import numpy as np
 import gymnasium as gym
+import numpy as np
+import pytest
+
+from minari.dataset.minari_dataset import EpisodeData
+from tests.test_common import test_spaces
 
 
 @pytest.mark.parametrize("space", test_spaces)
@@ -21,7 +22,7 @@ def test_episode_data(space: gym.Space):
         actions=space.sample(),
         rewards=rewards,
         terminations=terminations,
-        truncations=truncations
+        truncations=truncations,
     )
 
     repr(episode_data)

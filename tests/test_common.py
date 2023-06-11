@@ -24,12 +24,8 @@ test_spaces = [
             "component_1": gym.spaces.Box(low=-1, high=1, dtype=np.float32),
             "component_2": gym.spaces.Dict(
                 {
-                    "subcomponent_1": gym.spaces.Box(
-                        low=2, high=3, dtype=np.float32
-                    ),
-                    "subcomponent_2": gym.spaces.Box(
-                        low=4, high=5, dtype=np.float32
-                    ),
+                    "subcomponent_1": gym.spaces.Box(low=2, high=3, dtype=np.float32),
+                    "subcomponent_2": gym.spaces.Box(low=4, high=5, dtype=np.float32),
                 }
             ),
         }

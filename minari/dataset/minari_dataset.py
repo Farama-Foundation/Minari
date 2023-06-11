@@ -103,7 +103,9 @@ class EpisodeData:
         if isinstance(value, np.ndarray):
             return f"ndarray of shape {value.shape} and dtype {value.dtype}"
         elif isinstance(value, dict):
-            reprs = [f"{k}: {EpisodeData._repr_space_values(v)}" for k, v in value.items()]
+            reprs = [
+                f"{k}: {EpisodeData._repr_space_values(v)}" for k, v in value.items()
+            ]
             dict_repr = ", ".join(reprs)
             return "{" + dict_repr + "}"
         elif isinstance(value, tuple):
