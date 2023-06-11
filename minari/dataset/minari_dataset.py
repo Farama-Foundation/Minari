@@ -94,7 +94,7 @@ class EpisodeData:
             f"actions={EpisodeData._repr_space_values(self.actions)}, "
             f"rewards=ndarray of {len(self.rewards)} floats, "
             f"terminations=ndarray of {len(self.terminations)} bools, "
-            f"truncations=ndarray of {len(self.truncations)} bools, "
+            f"truncations=ndarray of {len(self.truncations)} bools"
             ")"
         )
 
@@ -103,7 +103,13 @@ class EpisodeData:
         if isinstance(value, np.ndarray):
             return f"ndarray of shape {value.shape} and dtype {value.dtype}"
         elif isinstance(value, dict):
-            return f"dict with keys {value.keys()}"
+            reprs = [f"{k}: {EpisodeData._repr_space_values(v)}" for k, v in value.items()]
+            dict_repr = ", ".join(reprs)
+            return "{" + dict_repr + "}"
+        elif isinstance(value, tuple):
+            reprs = [EpisodeData._repr_space_values(v) for v in value]
+            values_repr = ", ".join(reprs)
+            return "(" + values_repr + ")"
         else:
             return repr(value)
 
