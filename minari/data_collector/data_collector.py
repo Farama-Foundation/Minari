@@ -93,14 +93,12 @@ class DataCollectorV0(gym.Wrapper):
         self._step_data_callback = step_data_callback()
 
         if observation_space is None:
-            self.dataset_observation_space = self.env.observation_space
-        else:
-            self.dataset_observation_space = observation_space
+            observation_space = self.env.observation_space
+        self.dataset_observation_space = observation_space
 
         if action_space is None:
-            self.dataset_action_space = self.env.action_space
-        else:
-            self.dataset_action_space = action_space
+            action_space = self.env.action_space
+        self.dataset_action_space = action_space
 
         self._episode_metadata_callback = episode_metadata_callback()
         self._record_infos = record_infos
