@@ -345,6 +345,10 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
         while not terminated and not truncated:
             action = env.action_space.sample()  # User-defined policy function
             _, _, terminated, truncated, _ = env.step(action)
+            if terminated or truncated:
+                assert not env._buffer[-1]
+            else:
+                assert env._buffer[-1]
 
         env.reset()
 
