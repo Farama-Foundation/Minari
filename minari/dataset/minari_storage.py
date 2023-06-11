@@ -1,9 +1,10 @@
 import json
 import os
-from typing import Any, Callable, Dict, Iterable, List, Optional, Union
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
 
 import gymnasium as gym
 import h5py
+import numpy as np
 from gymnasium.envs.registration import EnvSpec
 
 from minari.serialization import deserialize_space
@@ -88,25 +89,37 @@ class MinariStorage:
 
         return out
 
-    def _h5_group_to_dict_recursive(self, hdf_ref, timestep):
+    def _h5_group_to_dict_recursive(
+        self, hdf_ref: Union[h5py.Group, h5py.Dataset], timestep
+    ) -> Union[Dict, Tuple, np.ndarray]:
 
-        if not isinstance(hdf_ref, h5py.Group):
+        if isinstance(hdf_ref, h5py.Dataset):
             return hdf_ref[timestep]
-
-        if "tuple" in hdf_ref.attrs.keys():
-            result = []
-            for i in range(len(hdf_ref.keys())):
-                result.append(
-                    self._h5_group_to_dict_recursive(hdf_ref[f"_index_{i}"], timestep)
-                )
-            return tuple(result)
+        elif isinstance(hdf_ref, h5py.Group):
+            if "Tuple" in hdf_ref.attrs.keys():
+                result = []
+                for i in range(len(hdf_ref.keys())):
+                    result.append(
+                        self._h5_group_to_dict_recursive(
+                            hdf_ref[f"_index_{i}"], timestep
+                        )
+                    )
+                return tuple(result)
+            else:
+                result = {}
+                for key in hdf_ref:
+                    result[key] = self._h5_group_to_dict_recursive(
+                        hdf_ref[key], timestep
+                    )
+                return result
         else:
-            result = {}
-            for key in hdf_ref:
-                result[key] = self._h5_group_to_dict_recursive(hdf_ref[key], timestep)
-            return result
+            raise TypeError(
+                f"hdf_ref of type {type(hdf_ref)} is not h5py.Group or h5py.Dict"
+            )
 
-    def _reconstruct_space_from_h5(self, hdf_ref, timesteps):
+    def _reconstruct_space_from_h5(
+        self, hdf_ref: h5py.Group, timesteps: int
+    ) -> List[Union[Tuple, Dict]]:
         result = []
         for i in range(timesteps):
             result.append(self._h5_group_to_dict_recursive(hdf_ref, i))

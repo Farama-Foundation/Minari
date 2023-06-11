@@ -345,7 +345,7 @@ class DataCollectorV0(gym.Wrapper):
                         eps_group_to_clear = episode_group[key]
                     else:
                         eps_group_to_clear = episode_group.create_group(key)
-                    eps_group_to_clear.attrs["tuple"] = 1
+                    eps_group_to_clear.attrs["Tuple"] = 1
                     clear_buffer(dict_data, eps_group_to_clear)
                 elif all([isinstance(entry, OrderedDict) for entry in data]):
 

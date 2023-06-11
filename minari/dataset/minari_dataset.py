@@ -70,7 +70,7 @@ def clear_episode_buffer(episode_buffer: Dict, episode_group: h5py.Group) -> h5p
                 episode_group_to_clear = episode_group[key]
             else:
                 episode_group_to_clear = episode_group.create_group(key)
-            episode_group_to_clear.attrs["tuple"] = 1
+            episode_group_to_clear.attrs["Tuple"] = 1
 
             clear_episode_buffer(dict_data, episode_group_to_clear)
         elif all([isinstance(entry, OrderedDict) for entry in data]):
