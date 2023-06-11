@@ -206,7 +206,7 @@ class DataCollectorV0(gym.Wrapper):
         )
 
         # Force step data dictionary to include keys corresponding to Gymnasium step returns:
-        # actions, observations, rewards, terminations, truncatins, and infos
+        # actions, observations, rewards, terminations, truncations, and infos
         assert STEP_DATA_KEYS.issubset(step_data.keys())
         # Check that the saved observation and action belong to the dataset's observation/action spaces
         assert self.dataset_observation_space.contains(step_data["observations"])

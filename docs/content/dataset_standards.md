@@ -495,7 +495,7 @@ When creating a Minari dataset with the `DataCollectorV0` wrapper the default gl
 | `total_episodes`        | `np.int64` | Number of episodes in the Minari dataset. |
 | `total_steps`           | `np.int64` | Number of steps in the Minari dataset. |
 | `env_spec`              | `str`      | json string of the Gymnasium environment spec.|
-| `dataset_id`            | `str`      | Name tag of the Minari dataset. |
+| `dataset_id`            | `str`      | Identifier of the Minari dataset. |
 | `code_permalink`        | `str`      | Link to a repository with the code used to generate the dataset.|
 | `author`                | `str`      | Author's name that created the dataset. |
 | `author_email`          | `str`      | Email of the author that created the dataset.|
