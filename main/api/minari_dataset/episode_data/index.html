@@ -366,10 +366,9 @@
 <h2>minari.EpisodeData<a class="headerlink" href="#minari-episodedata" title="Permalink to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="minari.EpisodeData">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">minari.</span></span><span class="sig-name descname"><span class="pre">EpisodeData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_timesteps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">np.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">np.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rewards</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">np.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terminations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">np.ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truncations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">np.ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/minari/dataset/minari_dataset/#EpisodeData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#minari.EpisodeData" title="Permalink to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">minari.</span></span><span class="sig-name descname"><span class="pre">EpisodeData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_timesteps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rewards</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terminations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truncations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/minari/dataset/minari_dataset/#EpisodeData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#minari.EpisodeData" title="Permalink to this definition">#</a></dt>
 <dd><p>Contains the datasets data for a single episode.</p>
 <p>This is the object returned by <a class="reference internal" href="../minari_dataset/#minari.MinariDataset.sample_episodes" title="minari.MinariDataset.sample_episodes"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.MinariDataset.sample_episodes</span></code></a>.</p>
-<p>Create new instance of EpisodeData(id, seed, total_timesteps, observations, actions, rewards, terminations, truncations)</p>
 </dd></dl>
 
 <section id="attributes">
@@ -377,51 +376,44 @@
 <dl class="py attribute">
 <dt class="sig sig-object py" id="minari.EpisodeData.id">
 <span class="sig-prename descclassname"><span class="pre">EpisodeData.</span></span><span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#minari.EpisodeData.id" title="Permalink to this definition">#</a></dt>
-<dd><p>Alias for field number 0</p>
-<p>The ID of the episode in the Minari dataset.</p>
+<dd><p>The ID of the episode in the Minari dataset.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="minari.EpisodeData.seed">
 <span class="sig-prename descclassname"><span class="pre">EpisodeData.</span></span><span class="sig-name descname"><span class="pre">seed</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#minari.EpisodeData.seed" title="Permalink to this definition">#</a></dt>
-<dd><p>Alias for field number 1</p>
-<p>The seed used to reset this episode in the Gymnasium API.</p>
+<dd><p>The seed used to reset this episode in the Gymnasium API.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="minari.EpisodeData.total_timesteps">
 <span class="sig-prename descclassname"><span class="pre">EpisodeData.</span></span><span class="sig-name descname"><span class="pre">total_timesteps</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#minari.EpisodeData.total_timesteps" title="Permalink to this definition">#</a></dt>
-<dd><p>Alias for field number 2</p>
-<p>The number of timesteps contained in this episode.</p>
+<dd><p>The number of timesteps contained in this episode.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="minari.EpisodeData.observations">
 <span class="sig-prename descclassname"><span class="pre">EpisodeData.</span></span><span class="sig-name descname"><span class="pre">observations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#minari.EpisodeData.observations" title="Permalink to this definition">#</a></dt>
-<dd><p>Alias for field number 3</p>
-<p>The observations of the environment. The initial and final observations are included meaning that the number
+<dd><p>The observations of the environment. The initial and final observations are included meaning that the number
 of observations will be increased by one compared to the number of timesteps</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="minari.EpisodeData.actions">
 <span class="sig-prename descclassname"><span class="pre">EpisodeData.</span></span><span class="sig-name descname"><span class="pre">actions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#minari.EpisodeData.actions" title="Permalink to this definition">#</a></dt>
-<dd><p>Alias for field number 4</p>
-<p>The actions taken in each episode timestep.</p>
+<dd><p>The actions taken in each episode timestep.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="minari.EpisodeData.terminations">
 <span class="sig-prename descclassname"><span class="pre">EpisodeData.</span></span><span class="sig-name descname"><span class="pre">terminations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#minari.EpisodeData.terminations" title="Permalink to this definition">#</a></dt>
-<dd><p>Alias for field number 6</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">terminated</span></code> value after each environment step.</p>
+<dd><p>The <code class="docutils literal notranslate"><span class="pre">terminated</span></code> value after each environment step.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="minari.EpisodeData.truncations">
 <span class="sig-prename descclassname"><span class="pre">EpisodeData.</span></span><span class="sig-name descname"><span class="pre">truncations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#minari.EpisodeData.truncations" title="Permalink to this definition">#</a></dt>
-<dd><p>Alias for field number 7</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">truncated</span></code> value after each environment step.</p>
+<dd><p>The <code class="docutils literal notranslate"><span class="pre">truncated</span></code> value after each environment step.</p>
 </dd></dl>
 
 </section>
