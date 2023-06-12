@@ -1,3 +1,5 @@
+import re
+
 import gymnasium as gym
 import numpy as np
 import pytest
@@ -25,4 +27,14 @@ def test_episode_data(space: gym.Space):
         truncations=truncations,
     )
 
-    repr(episode_data)
+    pattern = r"EpisodeData\("
+    pattern += r"id=\d+, "
+    pattern += r"seed=\d+, "
+    pattern += r"total_timesteps=100, "
+    pattern += r"observations=.+, "
+    pattern += r"actions=.+, "
+    pattern += r"rewards=.+, "
+    pattern += r"terminations=.+, "
+    pattern += r"truncations=.+"
+    pattern += r"\)"
+    assert re.fullmatch(pattern, repr(episode_data))
