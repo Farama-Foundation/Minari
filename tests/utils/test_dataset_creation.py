@@ -9,7 +9,7 @@ from gymnasium import spaces
 
 import minari
 from minari import DataCollectorV0, MinariDataset
-from tests.test_common import (
+from tests.common import (
     check_data_integrity,
     check_env_recovery,
     check_env_recovery_with_subset_spaces,

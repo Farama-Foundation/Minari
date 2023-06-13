@@ -200,37 +200,37 @@ def register_dummy_envs():
 
     register(
         id="DummyBoxEnv-v0",
-        entry_point="tests.test_common:DummyBoxEnv",
+        entry_point="tests.common:DummyBoxEnv",
         max_episode_steps=5,
     )
 
     register(
         id="DummyMultiDimensionalBoxEnv-v0",
-        entry_point="tests.test_common:DummyMultiDimensionalBoxEnv",
+        entry_point="tests.common:DummyMultiDimensionalBoxEnv",
         max_episode_steps=5,
     )
 
     register(
         id="DummyTupleDisceteBoxEnv-v0",
-        entry_point="tests.test_common:DummyTupleDisceteBoxEnv",
+        entry_point="tests.common:DummyTupleDisceteBoxEnv",
         max_episode_steps=5,
     )
 
     register(
         id="DummyDictEnv-v0",
-        entry_point="tests.test_common:DummyDictEnv",
+        entry_point="tests.common:DummyDictEnv",
         max_episode_steps=5,
     )
 
     register(
         id="DummyTupleEnv-v0",
-        entry_point="tests.test_common:DummyTupleEnv",
+        entry_point="tests.common:DummyTupleEnv",
         max_episode_steps=5,
     )
 
     register(
         id="DummyComboEnv-v0",
-        entry_point="tests.test_common:DummyComboEnv",
+        entry_point="tests.common:DummyComboEnv",
         max_episode_steps=5,
     )
 

@@ -546,4 +546,5 @@ The Minari storage format supports the following observation and action spaces:
 | [Tuple](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/tuple.py)       |Represents a tuple of spaces.                                                                              |
 | [Dict](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/dict.py)         |Represents a dictionary of spaces.                                                                         |
 
-
+#### Space Serialization
+Spaces are serialized to a JSON format when saving to disk. This serialization supports all space types supported by Minari, and aims to be both human, and machine readable. The serialized action and observation spaces for the episodes in the dataset are saved as strings in the global HDF5 group metadata in `main_data.hdf5` for a particular dataset as `action_space` and `observation_space` respectively. All episodes in `main_data.hdf5` must have observations and actions that comply with these action and observation spaces. 

@@ -5,7 +5,7 @@ from gymnasium import spaces
 import minari
 from minari import DataCollectorV0, MinariDataset
 from minari.data_collector.callbacks import StepDataCallback
-from tests.test_common import (
+from tests.common import (
     check_data_integrity,
     check_env_recovery_with_subset_spaces,
     check_load_and_delete_dataset,
