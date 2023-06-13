@@ -1,5 +1,4 @@
 """Set of Error classes for gymnasium."""
-import warnings
 
 
 class Error(Exception):
@@ -9,4 +8,3 @@ class Error(Exception):
 # Local errors
 class ExistingDataSet(Error):
     """Raised when the dataset already exists and force_download=False."""
-
