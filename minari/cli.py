@@ -147,7 +147,7 @@ def download(datasets: List[str]):
 
     # download datastets
     for dst in datasets:
-        hosting.download_dataset(dst)
+        hosting.download_dataset(dst, force_download=True)
 
 
 @app.command()

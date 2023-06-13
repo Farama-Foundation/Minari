@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import glob
 import os
+import sys
 from typing import Dict
 
 import h5py
@@ -76,14 +77,21 @@ def upload_dataset(dataset_id: str, path_to_private_key: str):
         )
 
 
-def download_dataset(dataset_id: str):
+def download_dataset(dataset_id: str, force_download: bool = False):
     """Download dataset from remote Farama server.
 
     Args:
         dataset_id (str): name id of the Minari dataset
+        force_download (bool): boolean flag for force downloading the dataset. Default Value = False
     """
     file_path = get_dataset_path(dataset_id)
     if os.path.exists(file_path):
+        if not force_download:
+            logger.warn(
+                f"Dataset {dataset_id} found locally at {file_path}, Use force_download=True to download the dataset again.\n"
+            )
+            sys.exit()
+
         logger.warn(
             f"Dataset {dataset_id} found locally at {file_path} and its content will be overridden with the remote dataset.\n"
         )

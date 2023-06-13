@@ -19,7 +19,7 @@ def test_download_dataset_from_farama_server(dataset_id: str):
     remote_datasets = minari.list_remote_datasets()
     assert dataset_id in remote_datasets
 
-    minari.download_dataset(dataset_id)
+    minari.download_dataset(dataset_id, force_download=True)
     local_datasets = minari.list_local_datasets()
     assert dataset_id in local_datasets
 
