@@ -177,7 +177,7 @@ The stepping data inside the episode group is divided into some required `datase
 </ul>
 </div>
 
-In the case where, for example, the observation space is a relatively complex `Dict` space with the following definition: 
+In the case where, the observation space is a relatively complex `Dict` space with the following definition: 
 ```
 spaces.Dict(
     {
@@ -287,7 +287,7 @@ and the action space is a `Box` space, the resulting Minari dataset `HDF5` file 
 </ul>
 </div>
 
-Similarly, consider the case where we had a `Box` space as an observation space and a relatively complex `Tuple` space as an action space with the following definition: 
+Similarly, consider the case where we have a `Box` space as an observation space and a relatively complex `Tuple` space as an action space with the following definition: 
 ```
 spaces.Tuple(
     (
@@ -400,10 +400,10 @@ In this case, the resulting Minari dataset `HDF5` file will end up looking as fo
 Note how the `Tuple` space elements are assigned corresponding keys of the format `f"_index_{i}"` were `i` is their index in the `Tuple` space.
 
 
-The required `datasets` found in the episode groups correspond to the data involved in every Gymnasium step call `obs, rew, terminated, truncated, info = env.step(action)`: `observations`, `actions`, `rewards`, `terminations`, and `truncations`. These datasets are `np.ndarray` or nested groups of `np.ndarray` and other groups, depending on the observation and action spaces, and the space of all datasets under each required top-level episode key is equal to:
+The required `datasets` found in the episode groups correspond to the data involved in every Gymnasium step call: `obs, rew, terminated, truncated, info = env.step(action)`: `observations`, `actions`, `rewards`, `terminations`, and `truncations`. These datasets are `np.ndarray` or nested groups of `np.ndarray` and other groups, depending on the observation and action spaces, and the space of all datasets under each required top-level episode key is equal to:
 
-- `actions`: `shape=(number_of_steps, action_space_component_shape)`. If the action or observation space is `Dict` or a `Tuple`, then the corresponding entry will be a group instead of a dataset. Within this group, there will be nested groups and datasets, as specified by the action and observation spaces. `Dict` and `Tuple` spaces are represented as groups, and `Box` and `Discrete` spaces are represented as datasets. All datasets at any level under the top-level key `actions` will have the same `number_of_steps`, but will vary in `action_space_component_shape` on for each particular action space component. For example, a `Dict` space may contain two `Box` spaces with different shapes.
-- `observations`: `shape=(number_of_steps + 1, observation_space_component_shape)`. Observations nest in the same way as actions if the top level space is a `Tuple` or `Dict` space. The value of `number_of_steps + 1` is the same for datasets at any level under `observations`. These datasets have an additional element because the initial observation of the environment when calling `obs, info = env.reset()` is also saved. `observation_space_component_shape` will vary between datasets, depending on the shapes of the simple spaces specified in the observation space. You can get a transition of the form `(o_t, a_t, o_t+1)` from the datasets in the episode group, where `o_t` is the current observation, `o_t+1` is the next observation after taking action `a`, and `t` is the discrete transition index
+- `actions`: `shape=(num_steps, action_space_component_shape)`. If the action or observation space is `Dict` or a `Tuple`, then the corresponding entry will be a group instead of a dataset. Within this group, there will be nested groups and datasets, as specified by the action and observation spaces. `Dict` and `Tuple` spaces are represented as groups, and `Box` and `Discrete` spaces are represented as datasets. All datasets at any level under the top-level key `actions` will have the same `num_steps`, but will vary in `action_space_component_shape` on for each particular action space component. For example, a `Dict` space may contain two `Box` spaces with different shapes.
+- `observations`: `shape=(num_steps + 1, observation_space_component_shape)`. Observations nest in the same way as actions if the top level space is a `Tuple` or `Dict` space. The value of `num_steps + 1` is the same for datasets at any level under `observations`. These datasets have an additional element because the initial observation of the environment when calling `obs, info = env.reset()` is also saved. `observation_space_component_shape` will vary between datasets, depending on the shapes of the simple spaces specified in the observation space. You can get a transition of the form `(o_t, a_t, o_t+1)` from the datasets in the episode group, where `o_t` is the current observation, `o_t+1` is the next observation after taking action `a`, and `t` is the discrete transition index
 ; as follows:
 
     ```python
@@ -419,9 +419,9 @@ The required `datasets` found in the episode groups correspond to the data invol
     truncated = truncations[t]
     ```
 
-- `rewards`: `shape=(number_of_steps, 1)`, stores the returned reward in each step.
-- `terminations`: `shape=(number_of_steps, 1)`, the `dtype` is `np.bool` and the last element value will be `True` if the episode finished due to  a `terminated` step return.
-- `truncations`: `shape=(number_of_steps, 1)`, the `dtype` is `np.bool` and the last element value will be `True` if the episode finished due to a `truncated` step return.  
+- `rewards`: `shape=(num_steps, 1)`, stores the returned reward in each step.
+- `terminations`: `shape=(num_steps, 1)`, the `dtype` is `np.bool` and the last element value will be `True` if the episode finished due to  a `terminated` step return.
+- `truncations`: `shape=(num_steps, 1)`, the `dtype` is `np.bool` and the last element value will be `True` if the episode finished due to a `truncated` step return.  
 
 The `dtype` of the numpy array datasets can be of any type compatible with [`h5py`](https://docs.h5py.org/en/latest/faq.html#what-datatypes-are-supported).
 

@@ -21,9 +21,9 @@ def _check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
         episode_indices (Iterable[int]): the list of episode indices expected
     """
     episodes = data.get_episodes(episode_indices)
-    # verify we have the right number of episodes, available at the right indices
+    # Verify we have the right number of episodes, available at the right indices.
     assert data.total_episodes == len(episodes)
-    # verify the actions and observations are in the appropriate action space and observation space, and that the episode lengths are correct
+    # Verify the actions and observations are in the appropriate action space and observation space, and that the episode lengths are correct.
     for episode in episodes:
         assert episode["total_timesteps"] + 1 == len(episode["observations"])
         assert episode["total_timesteps"] == len(episode["actions"])

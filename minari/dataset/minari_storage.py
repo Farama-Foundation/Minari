@@ -39,7 +39,7 @@ class MinariStorage:
 
             self._combined_datasets = f.attrs.get("combined_datasets", default=[])
 
-            # ww will default to using the reconstructed observation and action spaces from the dataset
+            # We will default to using the reconstructed observation and action spaces from the dataset
             # and fall back to the env spec env if the action and observation spaces are not both present
             # in the dataset.
             if "action_space" in f.attrs and "observation_space" in f.attrs:
@@ -48,7 +48,7 @@ class MinariStorage:
                 )
                 self._action_space = deserialize_space(f.attrs["action_space"])
             else:
-                # checking if the base library of the environment is present in the environment
+                # Checking if the base library of the environment is present in the environment
                 entry_point = json.loads(f.attrs["env_spec"])["entry_point"]
                 lib_full_path = entry_point.split(":")[0]
                 base_lib = lib_full_path.split(".")[0]
@@ -90,42 +90,36 @@ class MinariStorage:
         return out
 
     def _h5_group_to_dict_recursive(
-        self, hdf_ref: Union[h5py.Group, h5py.Dataset], timestep
+        self,
+        hdf_ref: Union[h5py.Group, h5py.Dataset],
+        space: gym.spaces.Space,
+        timestep,
     ) -> Union[Dict, Tuple, np.ndarray]:
 
         if isinstance(hdf_ref, h5py.Dataset):
             return hdf_ref[timestep]
         elif isinstance(hdf_ref, h5py.Group):
-            if "Tuple" in hdf_ref.attrs.keys():
+            if isinstance(space, gym.spaces.Tuple):
                 result = []
                 for i in range(len(hdf_ref.keys())):
                     result.append(
                         self._h5_group_to_dict_recursive(
-                            hdf_ref[f"_index_{i}"], timestep
+                            hdf_ref[f"_index_{i}"], space.spaces[i], timestep
                         )
                     )
                 return tuple(result)
-            else:
+            elif isinstance(space, gym.spaces.Dict):
                 result = {}
                 for key in hdf_ref:
                     result[key] = self._h5_group_to_dict_recursive(
-                        hdf_ref[key], timestep
+                        hdf_ref[key], space.spaces[key], timestep
                     )
                 return result
-        else:
-            raise TypeError(
-                f"hdf_ref of type {type(hdf_ref)} is not h5py.Group or h5py.Dict"
-            )
+        raise TypeError(
+            f"hdf_ref of type {type(hdf_ref)} is not h5py.Group or h5py.Dict"
+        )
 
-    def _reconstruct_space_from_h5(
-        self, hdf_ref: h5py.Group, timesteps: int
-    ) -> List[Union[Tuple, Dict]]:
-        result = []
-        for i in range(timesteps):
-            result.append(self._h5_group_to_dict_recursive(hdf_ref, i))
-        return result
-
-    def _filter_episode_data(self, episode: h5py.Group) -> Dict[str, Any]:
+    def _get_episode_from_h5(self, episode: h5py.Group) -> Dict[str, Any]:
 
         episode_data = {
             "id": episode.attrs.get("id"),
@@ -135,17 +129,26 @@ class MinariStorage:
             "terminations": episode["terminations"][()],
             "truncations": episode["truncations"][()],
         }
+
         if isinstance(episode["observations"], h5py.Group):
-            episode_data["observations"] = self._reconstruct_space_from_h5(
-                episode["observations"], episode.attrs.get("total_steps") + 1
-            )
+            episode_data["observations"] = []
+            for i in range(episode.attrs.get("total_steps") + 1):
+                episode_data["observations"].append(
+                    self._h5_group_to_dict_recursive(
+                        episode["observations"], self.observation_space, i
+                    )
+                )
         else:
             episode_data["observations"] = episode["observations"][()]
 
         if isinstance(episode["actions"], h5py.Group):
-            episode_data["actions"] = self._reconstruct_space_from_h5(
-                episode["actions"], episode.attrs.get("total_steps")
-            )
+            episode_data["actions"] = []
+            for i in range(episode.attrs.get("total_steps")):
+                episode_data["actions"].append(
+                    self._h5_group_to_dict_recursive(
+                        episode["actions"], self.action_space, i
+                    )
+                )
         else:
             episode_data["actions"] = episode["actions"][()]
 
@@ -164,7 +167,7 @@ class MinariStorage:
         with h5py.File(self._data_path, "r") as file:
             for ep_idx in episode_indices:
                 ep_group = file[f"episode_{ep_idx}"]
-                out.append(self._filter_episode_data(ep_group))
+                out.append(self._get_episode_from_h5(ep_group))
 
         return out
 

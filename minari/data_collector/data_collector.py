@@ -132,7 +132,7 @@ class DataCollectorV0(gym.Wrapper):
             os.path.join(self._tmp_dir.name, "tmp_dataset.hdf5"), "a", track_order=True
         )  # track insertion order of groups ('episodes_i')
 
-        assert self.env.spec is not None
+        assert self.env.spec is not None, "Env Spec is None"
         self._tmp_f.attrs["env_spec"] = self.env.spec.to_json()
 
         self._new_episode = False
@@ -173,12 +173,16 @@ class DataCollectorV0(gym.Wrapper):
                     episode_buffer[key] = [value]
             else:
                 if isinstance(value, dict):
-                    assert isinstance(episode_buffer[key], dict)
+                    assert isinstance(
+                        episode_buffer[key], dict
+                    ), f"Element to be inserted is type 'dict', but buffer accepts type {type(episode_buffer[key])}"
                     episode_buffer[key] = self._add_to_episode_buffer(
                         episode_buffer[key], value
                     )
                 else:
-                    assert isinstance(episode_buffer[key], list)
+                    assert isinstance(
+                        episode_buffer[key], list
+                    ), f"Element to be inserted is type 'list', but buffer accepts type {type(episode_buffer[key])}"
                     episode_buffer[key].append(value)
 
         return episode_buffer
@@ -202,10 +206,16 @@ class DataCollectorV0(gym.Wrapper):
 
         # Force step data dictionary to include keys corresponding to Gymnasium step returns:
         # actions, observations, rewards, terminations, truncations, and infos
-        assert STEP_DATA_KEYS.issubset(step_data.keys())
+        assert STEP_DATA_KEYS.issubset(
+            step_data.keys()
+        ), "One or more required keys is missing from 'step-data'."
         # Check that the saved observation and action belong to the dataset's observation/action spaces
-        assert self.dataset_observation_space.contains(step_data["observations"])
-        assert self.dataset_action_space.contains(step_data["actions"])
+        assert self.dataset_observation_space.contains(
+            step_data["observations"]
+        ), "Observations are not in observation space."
+        assert self.dataset_action_space.contains(
+            step_data["actions"]
+        ), "Actions are not in action space."
 
         self._step_id += 1
 
@@ -258,7 +268,9 @@ class DataCollectorV0(gym.Wrapper):
         obs, info = self.env.reset(seed=seed, options=options)
         step_data = self._step_data_callback(env=self, obs=obs, info=info)
 
-        assert STEP_DATA_KEYS.issubset(step_data.keys())
+        assert STEP_DATA_KEYS.issubset(
+            step_data.keys()
+        ), "One or more required keys is missing from 'step-data'"
 
         # If last episode in global buffer has saved steps, we need to check if it was truncated or terminated
         # If the last element in the buffer is not an empty dictionary, then we need to auto-truncate the episode.
@@ -361,7 +373,9 @@ class DataCollectorV0(gym.Wrapper):
                 else:
                     # convert data to numpy
                     np_data = np.asarray(data)
-                    assert np.all(np.logical_not(np.isnan(np_data)))
+                    assert np.all(
+                        np.logical_not(np.isnan(np_data))
+                    ), "Nan found after cast to nump array, check the type of 'data'."
 
                     # Check if last episode group is terminated or truncated
                     if (
@@ -462,8 +476,12 @@ class DataCollectorV0(gym.Wrapper):
         for key, value in dataset_metadata.items():
             self._tmp_f.attrs[key] = value
 
-        assert "observation_space" not in dataset_metadata.keys()
-        assert "action_space" not in dataset_metadata.keys()
+        assert (
+            "observation_space" not in dataset_metadata.keys()
+        ), "'observation_space' is not allowed as an optional key."
+        assert (
+            "action_space" not in dataset_metadata.keys()
+        ), "'action_space' is not allowed as an optional key."
 
         action_space_str = serialize_space(self.dataset_action_space)
         observation_space_str = serialize_space(self.dataset_observation_space)
