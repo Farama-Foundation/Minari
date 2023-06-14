@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import glob
 import os
-import sys
 from typing import Dict
 
 import h5py
@@ -88,13 +87,9 @@ def download_dataset(dataset_id: str, force_download: bool = False):
     if os.path.exists(file_path):
         if not force_download:
             logger.warn(
-                f"Download Aborted. Dataset {dataset_id} found locally at {file_path}, Use force_download=True to download the dataset again.\n"
+                f"Skipping Download. Dataset {dataset_id} found locally at {file_path}, Use force_download=True to download the dataset again.\n"
             )
-            sys.exit()
-
-        logger.warn(
-            f"Dataset {dataset_id} found locally at {file_path} and its content will be overridden with the remote dataset.\n"
-        )
+            return
 
     print(f"\nDownloading {dataset_id} from Farama servers...")
     storage_client = storage.Client.create_anonymous_client()
