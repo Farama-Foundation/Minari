@@ -76,17 +76,20 @@ def upload_dataset(dataset_id: str, path_to_private_key: str):
         )
 
 
-def download_dataset(dataset_id: str):
+def download_dataset(dataset_id: str, force_download: bool = False):
     """Download dataset from remote Farama server.
 
     Args:
         dataset_id (str): name id of the Minari dataset
+        force_download (bool): boolean flag for force downloading the dataset. Default Value = False
     """
     file_path = get_dataset_path(dataset_id)
     if os.path.exists(file_path):
-        logger.warn(
-            f"Dataset {dataset_id} found locally at {file_path} and its content will be overridden with the remote dataset.\n"
-        )
+        if not force_download:
+            logger.warn(
+                f"Skipping Download. Dataset {dataset_id} found locally at {file_path}, Use force_download=True to download the dataset again.\n"
+            )
+            return
 
     print(f"\nDownloading {dataset_id} from Farama servers...")
     storage_client = storage.Client.create_anonymous_client()
