@@ -88,7 +88,7 @@ def download_dataset(dataset_id: str, force_download: bool = False):
     if os.path.exists(file_path):
         if not force_download:
             logger.warn(
-                f"Dataset {dataset_id} found locally at {file_path}, Use force_download=True to download the dataset again.\n"
+                f"Download Aborted. Dataset {dataset_id} found locally at {file_path}, Use force_download=True to download the dataset again.\n"
             )
             sys.exit()
 
