@@ -429,17 +429,20 @@
         <span class="p">)</span>
 
 
-<div class="viewcode-block" id="download_dataset"><a class="viewcode-back" href="../../../../api/minari_functions/#minari.download_dataset">[docs]</a><span class="k">def</span> <span class="nf">download_dataset</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<div class="viewcode-block" id="download_dataset"><a class="viewcode-back" href="../../../../api/minari_functions/#minari.download_dataset">[docs]</a><span class="k">def</span> <span class="nf">download_dataset</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">force_download</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Download dataset from remote Farama server.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        dataset_id (str): name id of the Minari dataset</span>
+<span class="sd">        force_download (bool): boolean flag for force downloading the dataset. Default Value = False</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">file_path</span> <span class="o">=</span> <span class="n">get_dataset_path</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">file_path</span><span class="p">):</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Dataset </span><span class="si">{</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2"> found locally at </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2"> and its content will be overridden with the remote dataset.</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">force_download</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Skipping Download. Dataset </span><span class="si">{</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2"> found locally at </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">, Use force_download=True to download the dataset again.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+            <span class="k">return</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Downloading </span><span class="si">{</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2"> from Farama servers...&quot;</span><span class="p">)</span>
     <span class="n">storage_client</span> <span class="o">=</span> <span class="n">storage</span><span class="o">.</span><span class="n">Client</span><span class="o">.</span><span class="n">create_anonymous_client</span><span class="p">()</span>
