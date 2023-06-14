@@ -313,6 +313,43 @@ test_spaces = [
         )
     ),
 ]
+unsupported_test_spaces = [
+    gym.spaces.Graph(
+        gym.spaces.Box(low=-1, high=4, shape=(3,), dtype=np.float32), None
+    ),
+    gym.spaces.Tuple(
+        (
+            gym.spaces.Box(low=2, high=3, dtype=np.float32),
+            gym.spaces.Tuple(
+                (
+                    gym.spaces.Box(low=2, high=3, dtype=np.float32),
+                    gym.spaces.Dict(
+                        {
+                            "component_1": gym.spaces.Box(
+                                low=-1, high=1, dtype=np.float32
+                            ),
+                            "component_2": gym.spaces.Dict(
+                                {
+                                    "subcomponent_1": gym.spaces.Box(
+                                        low=2, high=3, dtype=np.float32
+                                    ),
+                                    "subcomponent_2": gym.spaces.Tuple(
+                                        (
+                                            gym.spaces.Box(
+                                                low=4, high=5, dtype=np.float32
+                                            ),
+                                            gym.spaces.Text(1),
+                                        )
+                                    ),
+                                }
+                            ),
+                        }
+                    ),
+                )
+            ),
+        )
+    ),
+]
 
 
 def check_env_recovery_with_subset_spaces(

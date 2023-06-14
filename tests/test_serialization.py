@@ -1,7 +1,7 @@
 import pytest
 
 from minari.serialization import deserialize_space, serialize_space
-from tests.common import test_spaces
+from tests.common import test_spaces, unsupported_test_spaces
 
 
 @pytest.mark.parametrize("space", test_spaces)
@@ -18,3 +18,10 @@ def test_space_serialize_deserialize(space):
     action_2 = reconstructed_space.sample()
     assert space.contains(action_2)
     assert reconstructed_space.contains(action_1)
+
+
+@pytest.mark.parametrize("space", unsupported_test_spaces)
+def test_space_serialize_deserialize_unsupported(space):
+
+    with pytest.raises(TypeError, match=r"space or subspace has unsupported type: .+"):
+        serialize_space(space)

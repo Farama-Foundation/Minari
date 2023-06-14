@@ -37,6 +37,9 @@ def serialize_space(space: gym.spaces.Space, to_string=True) -> Union[Dict, str]
         result = {"type": "Tuple", "subspaces": []}
         for subspace in space.spaces:
             result["subspaces"].append(serialize_space(subspace, to_string=False))
+    else:
+        raise TypeError(f"space or subspace has unsupported type: {type(space)}")
+
     if to_string:
         return json.dumps(result)
     else:
