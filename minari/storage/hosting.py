@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import glob
 import os
+import sys
 from typing import Dict
 
 import h5py
@@ -12,7 +13,6 @@ from tqdm.auto import tqdm  # pyright: ignore [reportMissingModuleSource]
 from minari.dataset.minari_dataset import parse_dataset_id
 from minari.storage.datasets_root_dir import get_dataset_path
 from minari.storage.local import load_dataset
-from minari.wrappers.error import ExistingDataSet
 
 
 def upload_dataset(dataset_id: str, path_to_private_key: str):
@@ -90,9 +90,7 @@ def download_dataset(dataset_id: str, force_download: bool = False):
             logger.warn(
                 f"Dataset {dataset_id} found locally at {file_path}, Use force_download=True to download the dataset again.\n"
             )
-            raise ExistingDataSet(
-                f"Dataset {dataset_id} found locally at {file_path}, Use force_download=True to download the dataset again.\n"
-            )
+            sys.exit()
 
         logger.warn(
             f"Dataset {dataset_id} found locally at {file_path} and its content will be overridden with the remote dataset.\n"
