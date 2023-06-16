@@ -209,6 +209,10 @@ class DataCollectorV0(gym.Wrapper):
         # This may happen if the step_data_callback truncates or terminates the episode under certain conditions.
         if self._new_episode and not self._reset_called:
             self._buffer[-1]["observations"] = [self._previous_eps_final_obs]
+            if self._record_infos:
+                self._buffer[-1]["infos"] = self._add_to_episode_buffer(
+                    {}, self._previous_eps_final_info
+                )
             self._new_episode = False
 
         # add step data to last episode buffer
@@ -216,6 +220,8 @@ class DataCollectorV0(gym.Wrapper):
 
         if step_data["terminations"] or step_data["truncations"]:
             self._previous_eps_final_obs = step_data["observations"]
+            if self._record_infos:
+                self._previous_eps_final_info = step_data["infos"]
             self._reset_called = False
             self._new_episode = True
             self._buffer[-1]["seed"] = self._current_seed  # type: ignore
