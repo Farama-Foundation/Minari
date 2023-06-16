@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 import shutil
 import tempfile
+from collections import OrderedDict
 from typing import Any, Dict, List, Optional, SupportsFloat, Type, Union
 
 import gymnasium as gym
@@ -16,6 +17,7 @@ from minari.data_collector.callbacks import (
     StepData,
     StepDataCallback,
 )
+from minari.serialization import serialize_space
 
 
 EpisodeBuffer = Dict[str, Any]  # TODO: narrow this down
@@ -71,6 +73,8 @@ class DataCollectorV0(gym.Wrapper):
         record_infos: bool = False,
         max_buffer_steps: Optional[int] = None,
         max_buffer_episodes: Optional[int] = None,
+        observation_space=None,
+        action_space=None,
     ):
         """Initialize the data colletor attributes and create the temporary directory for caching.
 
@@ -86,7 +90,15 @@ class DataCollectorV0(gym.Wrapper):
             ValueError: `max_buffer_steps` and `max_buffer_episodes` can't be passed at the same time
         """
         super().__init__(env)
-        self._step_data_callback = step_data_callback(env)
+        self._step_data_callback = step_data_callback()
+
+        if observation_space is None:
+            observation_space = self.env.observation_space
+        self.dataset_observation_space = observation_space
+
+        if action_space is None:
+            action_space = self.env.action_space
+        self.dataset_action_space = action_space
 
         self._episode_metadata_callback = episode_metadata_callback()
         self._record_infos = record_infos
@@ -98,7 +110,7 @@ class DataCollectorV0(gym.Wrapper):
         self.max_buffer_steps = max_buffer_steps
 
         # Initialzie empty buffer
-        self._buffer: List[EpisodeBuffer] = [{key: [] for key in STEP_DATA_KEYS}]
+        self._buffer: List[EpisodeBuffer] = [{}]
 
         self._current_seed: Union[int, str] = str(None)
         self._new_episode = False
@@ -120,12 +132,8 @@ class DataCollectorV0(gym.Wrapper):
             os.path.join(self._tmp_dir.name, "tmp_dataset.hdf5"), "a", track_order=True
         )  # track insertion order of groups ('episodes_i')
 
-        assert self.env.spec is not None
+        assert self.env.spec is not None, "Env Spec is None"
         self._tmp_f.attrs["env_spec"] = self.env.spec.to_json()
-        self._tmp_f.attrs[
-            "flatten_observation"
-        ] = self._step_data_callback.flatten_observation
-        self._tmp_f.attrs["flatten_action"] = self._step_data_callback.flatten_action
 
         self._new_episode = False
         self._reset_called = False
@@ -165,12 +173,16 @@ class DataCollectorV0(gym.Wrapper):
                     episode_buffer[key] = [value]
             else:
                 if isinstance(value, dict):
-                    assert isinstance(episode_buffer[key], dict)
+                    assert isinstance(
+                        episode_buffer[key], dict
+                    ), f"Element to be inserted is type 'dict', but buffer accepts type {type(episode_buffer[key])}"
                     episode_buffer[key] = self._add_to_episode_buffer(
                         episode_buffer[key], value
                     )
                 else:
-                    assert isinstance(episode_buffer[key], list)
+                    assert isinstance(
+                        episode_buffer[key], list
+                    ), f"Element to be inserted is type 'list', but buffer accepts type {type(episode_buffer[key])}"
                     episode_buffer[key].append(value)
 
         return episode_buffer
@@ -192,9 +204,18 @@ class DataCollectorV0(gym.Wrapper):
             truncated=truncated,
         )
 
-        # force step data dictionary to include keys corresponding to Gymnasium step returns:
+        # Force step data dictionary to include keys corresponding to Gymnasium step returns:
         # actions, observations, rewards, terminations, truncations, and infos
-        assert STEP_DATA_KEYS.issubset(step_data.keys())
+        assert STEP_DATA_KEYS.issubset(
+            step_data.keys()
+        ), "One or more required keys is missing from 'step-data'."
+        # Check that the saved observation and action belong to the dataset's observation/action spaces
+        assert self.dataset_observation_space.contains(
+            step_data["observations"]
+        ), "Observations are not in observation space."
+        assert self.dataset_action_space.contains(
+            step_data["actions"]
+        ), "Actions are not in action space."
 
         self._step_id += 1
 
@@ -208,7 +229,9 @@ class DataCollectorV0(gym.Wrapper):
         # Get initial observation from previous episode if reset has not been called after termination or truncation
         # This may happen if the step_data_callback truncates or terminates the episode under certain conditions.
         if self._new_episode and not self._reset_called:
-            self._buffer[-1]["observations"] = [self._previous_eps_final_obs]
+            self._buffer[-1] = self._add_to_episode_buffer(
+                {}, {"observations": self._previous_eps_final_obs}
+            )
             self._new_episode = False
 
         # add step data to last episode buffer
@@ -228,7 +251,7 @@ class DataCollectorV0(gym.Wrapper):
 
         # add new episode buffer to global buffer when episode finishes with truncation or termination
         if clear_buffers or step_data["terminations"] or step_data["truncations"]:
-            self._buffer.append({key: [] for key in STEP_DATA_KEYS})
+            self._buffer.append({})
 
         # Increase episode count when step is term/trunc and only after clearing buffers to tmp file
         if step_data["terminations"] or step_data["truncations"]:
@@ -247,11 +270,13 @@ class DataCollectorV0(gym.Wrapper):
         obs, info = self.env.reset(seed=seed, options=options)
         step_data = self._step_data_callback(env=self, obs=obs, info=info)
 
-        assert STEP_DATA_KEYS.issubset(step_data.keys())
+        assert STEP_DATA_KEYS.issubset(
+            step_data.keys()
+        ), "One or more required keys is missing from 'step-data'"
 
         # If last episode in global buffer has saved steps, we need to check if it was truncated or terminated
-        # If not, then we need to auto-truncate the episode
-        if len(self._buffer[-1]["actions"]) > 0:
+        # If the last element in the buffer is not an empty dictionary, then we need to auto-truncate the episode.
+        if self._buffer[-1]:
             if (
                 not self._buffer[-1]["terminations"][-1]
                 and not self._buffer[-1]["truncations"][-1]
@@ -269,7 +294,7 @@ class DataCollectorV0(gym.Wrapper):
                     self.clear_buffer_to_tmp_file()
 
                 # add new episode buffer
-                self._buffer.append({key: [] for key in STEP_DATA_KEYS})
+                self._buffer.append({})
         else:
             # In the case that the past episode is already stored in the tmp hdf5 file because of caching,
             # we need to check if it was truncated or terminated, if not then auto-truncate
@@ -316,15 +341,42 @@ class DataCollectorV0(gym.Wrapper):
             """
             for key, data in dictionary_buffer.items():
                 if isinstance(data, dict):
+
                     if key in episode_group:
                         eps_group_to_clear = episode_group[key]
                     else:
                         eps_group_to_clear = episode_group.create_group(key)
                     clear_buffer(data, eps_group_to_clear)
+                elif all([isinstance(entry, tuple) for entry in data]):
+                    # we have a list of tuples, so we need to act appropriately
+                    dict_data = {
+                        f"_index_{str(i)}": [entry[i] for entry in data]
+                        for i, _ in enumerate(data[0])
+                    }
+                    if key in episode_group:
+                        eps_group_to_clear = episode_group[key]
+                    else:
+                        eps_group_to_clear = episode_group.create_group(key)
+                    clear_buffer(dict_data, eps_group_to_clear)
+                elif all([isinstance(entry, OrderedDict) for entry in data]):
+
+                    # we have a list of OrderedDicts, so we need to act appropriately
+                    dict_data = {
+                        key: [entry[key] for entry in data]
+                        for key, value in data[0].items()
+                    }
+
+                    if key in episode_group:
+                        eps_group_to_clear = episode_group[key]
+                    else:
+                        eps_group_to_clear = episode_group.create_group(key)
+                    clear_buffer(dict_data, eps_group_to_clear)
                 else:
                     # convert data to numpy
                     np_data = np.asarray(data)
-                    assert np.all(np.logical_not(np.isnan(np_data)))
+                    assert np.all(
+                        np.logical_not(np.isnan(np_data))
+                    ), "Nan found after cast to nump array, check the type of 'data'."
 
                     # Check if last episode group is terminated or truncated
                     if (
@@ -361,8 +413,8 @@ class DataCollectorV0(gym.Wrapper):
                             episode_group.create_dataset(key, data=np_data, chunks=True)
 
         for i, eps_buff in enumerate(self._buffer):
-            if len(eps_buff["actions"]) == 0:
-                # Make sure that the episode has stepped
+            # Make sure that the episode has stepped, by checking if the 'actions' key has been added to the episode buffer.
+            if "actions" not in eps_buff:
                 continue
 
             current_episode_group_term_or_trunc = (
@@ -425,7 +477,20 @@ class DataCollectorV0(gym.Wrapper):
         for key, value in dataset_metadata.items():
             self._tmp_f.attrs[key] = value
 
-        self._buffer.append({key: [] for key in STEP_DATA_KEYS})
+        assert (
+            "observation_space" not in dataset_metadata.keys()
+        ), "'observation_space' is not allowed as an optional key."
+        assert (
+            "action_space" not in dataset_metadata.keys()
+        ), "'action_space' is not allowed as an optional key."
+
+        action_space_str = serialize_space(self.dataset_action_space)
+        observation_space_str = serialize_space(self.dataset_observation_space)
+
+        self._tmp_f.attrs["action_space"] = action_space_str
+        self._tmp_f.attrs["observation_space"] = observation_space_str
+
+        self._buffer.append({})
 
         # Reset episode count
         self._episode_id = 0

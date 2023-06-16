@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 
 from minari.dataset.minari_dataset import EpisodeData
-from tests.test_common import test_spaces
+from tests.common import test_spaces
 
 
 @pytest.mark.parametrize("space", test_spaces)

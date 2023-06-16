@@ -11,6 +11,7 @@ from gymnasium.envs.registration import EnvSpec
 
 from minari import DataCollectorV0
 from minari.dataset.minari_dataset import MinariDataset, clear_episode_buffer
+from minari.serialization import serialize_space
 from minari.storage.datasets_root_dir import get_dataset_path
 
 
@@ -84,32 +85,6 @@ def combine_datasets(
                 raise ValueError(
                     "The datasets to be combined have different values for `env_spec` attribute."
                 )
-
-            if combined_data_file.attrs.get("flatten_action") is None:
-                combined_data_file.attrs[
-                    "flatten_action"
-                ] = dataset.spec.flatten_actions
-            else:
-                if (
-                    combined_data_file.attrs["flatten_action"]
-                    != dataset.spec.flatten_actions
-                ):
-                    raise ValueError(
-                        "The datasets to be combined have different values for `flatten_action` attribute."
-                    )
-
-            if combined_data_file.attrs.get("flatten_observation") is None:
-                combined_data_file.attrs[
-                    "flatten_observation"
-                ] = dataset.spec.flatten_observations
-            else:
-                if (
-                    combined_data_file.attrs["flatten_observation"]
-                    != dataset.spec.flatten_observations
-                ):
-                    raise ValueError(
-                        "The datasets to be combined have different values for `flatten_observation` attribute."
-                    )
 
             last_episode_id = combined_data_file.attrs["total_episodes"]
             if copy:
@@ -195,6 +170,8 @@ def create_dataset_from_buffers(
     author: Optional[str] = None,
     author_email: Optional[str] = None,
     code_permalink: Optional[str] = None,
+    action_space: Optional[gym.spaces.Space] = None,
+    observation_space: Optional[gym.spaces.Space] = None,
 ):
     """Create Minari dataset from a list of episode dictionary buffers.
 
@@ -240,6 +217,11 @@ def create_dataset_from_buffers(
             UserWarning,
         )
 
+    if observation_space is None:
+        observation_space = env.observation_space
+    if action_space is None:
+        action_space = env.action_space
+
     dataset_path = get_dataset_path(dataset_id)
 
     # Check if dataset already exists
@@ -281,14 +263,16 @@ def create_dataset_from_buffers(
             file.attrs["total_episodes"] = len(buffer)
             file.attrs["total_steps"] = total_steps
 
-            # TODO: check if observation/action have been flatten and update
-            file.attrs["flatten_observation"] = False
-            file.attrs["flatten_action"] = False
-
             file.attrs[
                 "env_spec"
             ] = env.spec.to_json()  # pyright: ignore [reportOptionalMemberAccess]
             file.attrs["dataset_id"] = dataset_id
+
+            action_space_str = serialize_space(action_space)
+            observation_space_str = serialize_space(observation_space)
+
+            file.attrs["action_space"] = action_space_str
+            file.attrs["observation_space"] = observation_space_str
 
         return MinariDataset(data_path)
     else:

@@ -1,10 +1,13 @@
 import json
 import os
-from typing import Any, Callable, Dict, Iterable, List, Optional, Union
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
 
 import gymnasium as gym
 import h5py
+import numpy as np
 from gymnasium.envs.registration import EnvSpec
+
+from minari.serialization import deserialize_space
 
 
 PathLike = Union[str, bytes, os.PathLike]
@@ -20,14 +23,6 @@ class MinariStorage:
         self._data_path = data_path
         self._extra_data_id = 0
         with h5py.File(self._data_path, "r") as f:
-            flatten_observations = f.attrs["flatten_observation"].item()
-            assert isinstance(flatten_observations, bool)
-            self._flatten_observations = flatten_observations
-
-            flatten_actions = f.attrs["flatten_action"].item()
-            assert isinstance(flatten_actions, bool)
-            self._flatten_actions = flatten_actions
-
             self._env_spec = EnvSpec.from_json(f.attrs["env_spec"])
 
             total_episodes = f.attrs["total_episodes"].item()
@@ -44,23 +39,30 @@ class MinariStorage:
 
             self._combined_datasets = f.attrs.get("combined_datasets", default=[])
 
-            # checking if the base library of the environment is present in the environment
-            entry_point = json.loads(f.attrs["env_spec"])["entry_point"]
-            lib_full_path = entry_point.split(":")[0]
-            base_lib = lib_full_path.split(".")[0]
-            env_name = self._env_spec.id
+            # We will default to using the reconstructed observation and action spaces from the dataset
+            # and fall back to the env spec env if the action and observation spaces are not both present
+            # in the dataset.
+            if "action_space" in f.attrs and "observation_space" in f.attrs:
+                self._observation_space = deserialize_space(
+                    f.attrs["observation_space"]
+                )
+                self._action_space = deserialize_space(f.attrs["action_space"])
+            else:
+                # Checking if the base library of the environment is present in the environment
+                entry_point = json.loads(f.attrs["env_spec"])["entry_point"]
+                lib_full_path = entry_point.split(":")[0]
+                base_lib = lib_full_path.split(".")[0]
+                env_name = self._env_spec.id
 
-            try:
-                env = gym.make(self._env_spec)
-            except ModuleNotFoundError as e:
-                raise ModuleNotFoundError(
-                    f"Install {base_lib} for loading {env_name} data"
-                ) from e
-
-            self._observation_space = env.observation_space
-            self._action_space = env.action_space
-
-            env.close()
+                try:
+                    env = gym.make(self._env_spec)
+                    self._observation_space = env.observation_space
+                    self._action_space = env.action_space
+                    env.close()
+                except ModuleNotFoundError as e:
+                    raise ModuleNotFoundError(
+                        f"Install {base_lib} for loading {env_name} data"
+                    ) from e
 
     def apply(
         self,
@@ -87,19 +89,28 @@ class MinariStorage:
 
         return out
 
-    def _filter_episode_data(self, episode: h5py.Group) -> Dict[str, Any]:
-        episode_data = {
-            "id": episode.attrs.get("id"),
-            "total_timesteps": episode.attrs.get("total_steps"),
-            "seed": episode.attrs.get("seed"),
-            "observations": episode["observations"][()],
-            "actions": episode["actions"][()],
-            "rewards": episode["rewards"][()],
-            "terminations": episode["terminations"][()],
-            "truncations": episode["truncations"][()],
-        }
-
-        return episode_data
+    def _decode_space(
+        self,
+        hdf_ref: Union[h5py.Group, h5py.Dataset],
+        space: gym.spaces.Space,
+    ) -> Union[Dict, Tuple, np.ndarray]:
+        if isinstance(space, gym.spaces.Tuple):
+            assert isinstance(hdf_ref, h5py.Group)
+            result = []
+            for i in range(len(hdf_ref.keys())):
+                result.append(
+                    self._decode_space(hdf_ref[f"_index_{i}"], space.spaces[i])
+                )
+            return tuple(result)
+        elif isinstance(space, gym.spaces.Dict):
+            assert isinstance(hdf_ref, h5py.Group)
+            result = {}
+            for key in hdf_ref:
+                result[key] = self._decode_space(hdf_ref[key], space.spaces[key])
+            return result
+        else:
+            assert isinstance(hdf_ref, h5py.Dataset)
+            return hdf_ref[()]
 
     def get_episodes(self, episode_indices: Iterable[int]) -> List[dict]:
         """Get a list of episodes.
@@ -114,19 +125,24 @@ class MinariStorage:
         with h5py.File(self._data_path, "r") as file:
             for ep_idx in episode_indices:
                 ep_group = file[f"episode_{ep_idx}"]
-                out.append(self._filter_episode_data(ep_group))
+                out.append(
+                    {
+                        "id": ep_group.attrs.get("id"),
+                        "total_timesteps": ep_group.attrs.get("total_steps"),
+                        "seed": ep_group.attrs.get("seed"),
+                        "observations": self._decode_space(
+                            ep_group["observations"], self.observation_space
+                        ),
+                        "actions": self._decode_space(
+                            ep_group["actions"], self.action_space
+                        ),
+                        "rewards": ep_group["rewards"][()],
+                        "terminations": ep_group["terminations"][()],
+                        "truncations": ep_group["truncations"][()],
+                    }
+                )
 
         return out
-
-    @property
-    def flatten_observations(self) -> bool:
-        """If the observations have been flatten when creating the dataset."""
-        return self._flatten_observations
-
-    @property
-    def flatten_actions(self) -> bool:
-        """If the actions have been flatten when creating the dataset."""
-        return self._flatten_actions
 
     @property
     def observation_space(self):
