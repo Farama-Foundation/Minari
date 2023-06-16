@@ -9,6 +9,8 @@ from gymnasium.utils.env_checker import data_equivalence
 import minari
 from minari import MinariDataset
 from minari.dataset.minari_storage import MinariStorage
+from minari.utils import create_dataset_from_collector_env
+from minari.data_collector import DataCollectorV0
 
 
 class DummyBoxEnv(gym.Env):
@@ -453,3 +455,36 @@ def check_load_and_delete_dataset(dataset_id: str):
     minari.delete_dataset(dataset_id)
     local_datasets = minari.list_local_datasets()
     assert dataset_id not in local_datasets
+
+
+def create_dummy_dataset_with_collecter_env_helper(dataset_id: str, env: DataCollectorV0 , num_episodes: int =10):
+    local_datasets = minari.list_local_datasets()
+    if dataset_id in local_datasets:
+        minari.delete_dataset(dataset_id)
+
+
+    # Step the environment, DataCollectorV0 wrapper will do the data collection job
+    env.reset(seed=42)
+
+    for episode in range(num_episodes):
+        terminated = False
+        truncated = False
+        while not terminated and not truncated:
+            action = env.action_space.sample()  # User-defined policy function
+            _, _, terminated, truncated, _ = env.step(action)
+            if terminated or truncated:
+                assert not env._buffer[-1]
+            else:
+                assert env._buffer[-1]
+
+        env.reset()
+
+    # Create Minari dataset and store locally
+    return minari.create_dataset_from_collector_env(
+        dataset_id=dataset_id,
+        collector_env=env,
+        algorithm_name="random_policy",
+        code_permalink="https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
+        author="WillDudley",
+        author_email="wdudley@farama.org",
+    )

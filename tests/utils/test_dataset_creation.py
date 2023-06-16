@@ -15,6 +15,7 @@ from tests.common import (
     check_env_recovery_with_subset_spaces,
     check_load_and_delete_dataset,
     register_dummy_envs,
+    create_dummy_dataset_with_collecter_env_helper
 )
 
 
@@ -36,40 +37,14 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
     """Test DataCollectorV0 wrapper and Minari dataset creation."""
     # dataset_id = "cartpole-test-v0"
     # delete the test dataset if it already exists
-    local_datasets = minari.list_local_datasets()
-    if dataset_id in local_datasets:
-        minari.delete_dataset(dataset_id)
+
+    num_episodes = 10
 
     env = gym.make(env_id)
 
     env = DataCollectorV0(env)
-    num_episodes = 10
 
-    # Step the environment, DataCollectorV0 wrapper will do the data collection job
-    env.reset(seed=42)
-
-    for episode in range(num_episodes):
-        terminated = False
-        truncated = False
-        while not terminated and not truncated:
-            action = env.action_space.sample()  # User-defined policy function
-            _, _, terminated, truncated, _ = env.step(action)
-            if terminated or truncated:
-                assert not env._buffer[-1]
-            else:
-                assert env._buffer[-1]
-
-        env.reset()
-
-    # Create Minari dataset and store locally
-    dataset = minari.create_dataset_from_collector_env(
-        dataset_id=dataset_id,
-        collector_env=env,
-        algorithm_name="random_policy",
-        code_permalink="https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
-        author="WillDudley",
-        author_email="wdudley@farama.org",
-    )
+    dataset = create_dummy_dataset_with_collecter_env_helper(dataset_id, env, num_episodes = num_episodes)
 
     assert isinstance(dataset, MinariDataset)
     assert dataset.total_episodes == num_episodes
