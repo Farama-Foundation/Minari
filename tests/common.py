@@ -1,4 +1,4 @@
-from typing import Iterable
+from typing import Any, Iterable
 
 import gymnasium as gym
 import numpy as np
@@ -422,16 +422,32 @@ def check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
     assert data.total_episodes == len(episodes)
     # verify the actions and observations are in the appropriate action space and observation space, and that the episode lengths are correct
     for episode in episodes:
-        assert episode["total_timesteps"] + 1 == len(episode["observations"])
-        assert episode["total_timesteps"] == len(episode["actions"])
+        _check_space_elem(
+            episode["observations"],
+            data.observation_space,
+            episode["total_timesteps"] + 1,
+        )
+        _check_space_elem(
+            episode["actions"], data.action_space, episode["total_timesteps"]
+        )
         assert episode["total_timesteps"] == len(episode["rewards"])
         assert episode["total_timesteps"] == len(episode["terminations"])
         assert episode["total_timesteps"] == len(episode["truncations"])
 
-        for observation in episode["observations"]:
-            assert observation in data.observation_space
-        for action in episode["actions"]:
-            assert action in data.action_space
+
+def _check_space_elem(data: Any, space: spaces.Space, n_elements: int):
+    if isinstance(space, spaces.Tuple):
+        assert isinstance(data, tuple)
+        assert len(data) == len(space.spaces)
+        for data_elem, sub_space in zip(data, space.spaces):
+            _check_space_elem(data_elem, sub_space, n_elements)
+    elif isinstance(space, spaces.Dict):
+        assert isinstance(data, dict)
+        assert data.keys() == space.keys()
+        for key in data.keys():
+            _check_space_elem(data[key], space[key], n_elements)
+    else:
+        assert len(data) == n_elements
 
 
 def check_load_and_delete_dataset(dataset_id: str):

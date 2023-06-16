@@ -1,44 +1,64 @@
 from __future__ import annotations
 
 import json
+from collections import defaultdict
+from functools import singledispatch
 from typing import Dict, Union
 
-import gymnasium as gym
 import numpy as np
+from gymnasium import spaces
 
 
-def serialize_space(space: gym.spaces.Space, to_string=True) -> Union[Dict, str]:
-    if isinstance(space, gym.spaces.Box):
-        result = {}
-        result["type"] = "Box"
-        result["dtype"] = str(space.dtype)
-        result["shape"] = list(space.shape)
-        result[
-            "low"
-        ] = (
-            space.low.tolist()
-        )  # we have to use python float type to serialze the np.float32 types
-        result["high"] = space.high.tolist()
-    elif isinstance(space, gym.spaces.Discrete):
-        result = {}
-        result["type"] = "Discrete"
-        result["dtype"] = "int64"  # this seems to be hardcoded in Gymnasium
-        result["start"] = int(
-            space.start
-        )  # we need to cast from np.int64 to python's int type in order to serialize
-        result["n"] = int(space.n)
-    elif isinstance(space, gym.spaces.Dict):
-        result = {"type": "Dict", "subspaces": {}}
-        for key in space.spaces.keys():
-            result["subspaces"][key] = serialize_space(
-                space.spaces[key], to_string=False
-            )
-    elif isinstance(space, gym.spaces.Tuple):
-        result = {"type": "Tuple", "subspaces": []}
-        for subspace in space.spaces:
-            result["subspaces"].append(serialize_space(subspace, to_string=False))
-    else:
-        raise TypeError(f"space or subspace has unsupported type: {type(space)}")
+@singledispatch
+def serialize_space(space: spaces.Space, to_string=True) -> Union[Dict, str]:
+    raise NotImplementedError(f"No serialization method available for {space}")
+
+
+@serialize_space.register(spaces.Box)
+def _serialize_box(space: spaces.Box, to_string=True) -> Union[Dict, str]:
+    result = {}
+    result["type"] = "Box"
+    result["dtype"] = str(space.dtype)
+    result["shape"] = list(space.shape)
+    # we have to use python float type to serialze the np.float32 types
+    result["low"] = space.low.tolist()
+    result["high"] = space.high.tolist()
+
+    if to_string:
+        result = json.dumps(result)
+    return result
+
+
+@serialize_space.register(spaces.Discrete)
+def _serialize_discrete(space: spaces.Discrete, to_string=True) -> Union[Dict, str]:
+    result = {}
+    result["type"] = "Discrete"
+    result["dtype"] = "int64"  # this seems to be hardcoded in Gymnasium
+    # we need to cast from np.int64 to python's int type in order to serialize
+    result["start"] = int(space.start)
+    result["n"] = int(space.n)
+
+    if to_string:
+        result = json.dumps(result)
+    return result
+
+
+@serialize_space.register(spaces.Dict)
+def _serialize_dict(space: spaces.Dict, to_string=True) -> Union[Dict, str]:
+    result = {"type": "Dict", "subspaces": {}}
+    for key in space.spaces.keys():
+        result["subspaces"][key] = serialize_space(space.spaces[key], to_string=False)
+
+    if to_string:
+        result = json.dumps(result)
+    return result
+
+
+@serialize_space.register(spaces.Tuple)
+def _serialize_tuple(space: spaces.Tuple, to_string=True) -> Union[Dict, str]:
+    result = {"type": "Tuple", "subspaces": []}
+    for subspace in space.spaces:
+        result["subspaces"].append(serialize_space(subspace, to_string=False))
 
     if to_string:
         return json.dumps(result)
@@ -46,36 +66,64 @@ def serialize_space(space: gym.spaces.Space, to_string=True) -> Union[Dict, str]
         return result
 
 
-def deserialize_space(space_dict, from_string=True):
-    if from_string:
-        space_dict = json.loads(space_dict)
+class type_value_dispatch:
+    def __init__(self, func) -> None:
+        self.registry = defaultdict(func)
 
-    assert type(space_dict) == dict
-    if space_dict["type"] == "Tuple":
-        subspaces = tuple(
-            [
-                deserialize_space(subspace, from_string=False)
-                for subspace in space_dict["subspaces"]
-            ]
-        )
-        return gym.spaces.Tuple(subspaces)
-    elif space_dict["type"] == "Dict":
-        subspaces = {
-            key: deserialize_space(space_dict["subspaces"][key], from_string=False)
-            for key in space_dict["subspaces"]
-        }
-        return gym.spaces.Dict(subspaces)
-    elif space_dict["type"] == "Box":
-        shape = tuple(space_dict["shape"])
-        low = np.array(space_dict["low"])
-        high = np.array(space_dict["high"])
-        dtype = np.dtype(space_dict["dtype"])
-        return gym.spaces.Box(low=low, high=high, shape=shape, dtype=dtype)  # type: ignore
-    elif space_dict["type"] == "Discrete":
-        n = space_dict["n"]
-        start = space_dict["start"]
-        return gym.spaces.Discrete(n=n, start=start)
-    else:
-        raise TypeError(
-            f"Encountered invalid type {space_dict['type']} when deserializing."
-        )
+    def register(self, type: str):
+        def decorator(method):
+            self.registry[type] = method
+            return method
+
+        return decorator
+
+    def __call__(self, space_dict: Union[Dict, str]) -> spaces.Space:
+        if not isinstance(space_dict, Dict):
+            space_dict = json.loads(space_dict)
+
+        assert isinstance(space_dict, Dict)
+        return self.registry[space_dict["type"]](space_dict)
+
+
+@type_value_dispatch
+def deserialize_space(space_dict: Dict) -> spaces.Space:
+    raise NotImplementedError(
+        f"No deserialization method available for {space_dict['type']}"
+    )
+
+
+@deserialize_space.register("Tuple")
+def _deserialize_tuple(space_dict: Dict) -> spaces.Tuple:
+    assert space_dict["type"] == "Tuple"
+    subspaces = tuple(
+        deserialize_space(subspace) for subspace in space_dict["subspaces"]
+    )
+    return spaces.Tuple(subspaces)
+
+
+@deserialize_space.register("Dict")
+def _deserialize_dict(space_dict: Dict) -> spaces.Dict:
+    assert space_dict["type"] == "Dict"
+    subspaces = {
+        key: deserialize_space(space_dict["subspaces"][key])
+        for key in space_dict["subspaces"]
+    }
+    return spaces.Dict(subspaces)
+
+
+@deserialize_space.register("Box")
+def _deserialize_box(space_dict: Dict) -> spaces.Box:
+    assert space_dict["type"] == "Box"
+    shape = tuple(space_dict["shape"])
+    low = np.array(space_dict["low"])
+    high = np.array(space_dict["high"])
+    dtype = np.dtype(space_dict["dtype"])
+    return spaces.Box(low=low, high=high, shape=shape, dtype=dtype)  # type: ignore
+
+
+@deserialize_space.register("Discrete")
+def _deserialize_discrete(space_dict: Dict) -> spaces.Discrete:
+    assert space_dict["type"] == "Discrete"
+    n = space_dict["n"]
+    start = space_dict["start"]
+    return spaces.Discrete(n=n, start=start)
