@@ -32,4 +32,6 @@ def test_convert_minari_dataset_to_hugging_face_dataset(dataset_id, env_id):
     dataset = create_dummy_dataset_with_collecter_env_helper(dataset_id, env, num_episodes = num_episodes)
 
     print(dataset)
-    convert_minari_dataset_to_hugging_face_dataset(dataset)
+    hugging_face_dataset = convert_minari_dataset_to_hugging_face_dataset(dataset)
+    print(hugging_face_dataset)
+    
