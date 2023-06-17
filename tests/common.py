@@ -447,7 +447,7 @@ def check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
 
 def _reconstuct_obs_or_action_at_index_recursive(
     data: Union[dict, tuple, np.ndarray], index: int
-):
+) -> Union[np.ndarray, dict, tuple]:
     if isinstance(data, dict):
         return {
             key: _reconstuct_obs_or_action_at_index_recursive(data[key], index)
