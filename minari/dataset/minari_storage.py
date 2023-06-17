@@ -89,70 +89,28 @@ class MinariStorage:
 
         return out
 
-    def _h5_group_to_dict_recursive(
+    def _decode_space(
         self,
         hdf_ref: Union[h5py.Group, h5py.Dataset],
         space: gym.spaces.Space,
-        timestep,
     ) -> Union[Dict, Tuple, np.ndarray]:
-
-        if isinstance(hdf_ref, h5py.Dataset):
-            return hdf_ref[timestep]
-        elif isinstance(hdf_ref, h5py.Group):
-            if isinstance(space, gym.spaces.Tuple):
-                result = []
-                for i in range(len(hdf_ref.keys())):
-                    result.append(
-                        self._h5_group_to_dict_recursive(
-                            hdf_ref[f"_index_{i}"], space.spaces[i], timestep
-                        )
-                    )
-                return tuple(result)
-            elif isinstance(space, gym.spaces.Dict):
-                result = {}
-                for key in hdf_ref:
-                    result[key] = self._h5_group_to_dict_recursive(
-                        hdf_ref[key], space.spaces[key], timestep
-                    )
-                return result
-        raise TypeError(
-            f"hdf_ref of type {type(hdf_ref)} is not h5py.Group or h5py.Dict"
-        )
-
-    def _get_episode_from_h5(self, episode: h5py.Group) -> Dict[str, Any]:
-
-        episode_data = {
-            "id": episode.attrs.get("id"),
-            "total_timesteps": episode.attrs.get("total_steps"),
-            "seed": episode.attrs.get("seed"),
-            "rewards": episode["rewards"][()],
-            "terminations": episode["terminations"][()],
-            "truncations": episode["truncations"][()],
-        }
-
-        if isinstance(episode["observations"], h5py.Group):
-            episode_data["observations"] = []
-            for i in range(episode.attrs.get("total_steps") + 1):
-                episode_data["observations"].append(
-                    self._h5_group_to_dict_recursive(
-                        episode["observations"], self.observation_space, i
-                    )
+        if isinstance(space, gym.spaces.Tuple):
+            assert isinstance(hdf_ref, h5py.Group)
+            result = []
+            for i in range(len(hdf_ref.keys())):
+                result.append(
+                    self._decode_space(hdf_ref[f"_index_{i}"], space.spaces[i])
                 )
+            return tuple(result)
+        elif isinstance(space, gym.spaces.Dict):
+            assert isinstance(hdf_ref, h5py.Group)
+            result = {}
+            for key in hdf_ref:
+                result[key] = self._decode_space(hdf_ref[key], space.spaces[key])
+            return result
         else:
-            episode_data["observations"] = episode["observations"][()]
-
-        if isinstance(episode["actions"], h5py.Group):
-            episode_data["actions"] = []
-            for i in range(episode.attrs.get("total_steps")):
-                episode_data["actions"].append(
-                    self._h5_group_to_dict_recursive(
-                        episode["actions"], self.action_space, i
-                    )
-                )
-        else:
-            episode_data["actions"] = episode["actions"][()]
-
-        return episode_data
+            assert isinstance(hdf_ref, h5py.Dataset)
+            return hdf_ref[()]
 
     def get_episodes(self, episode_indices: Iterable[int]) -> List[dict]:
         """Get a list of episodes.
@@ -167,7 +125,22 @@ class MinariStorage:
         with h5py.File(self._data_path, "r") as file:
             for ep_idx in episode_indices:
                 ep_group = file[f"episode_{ep_idx}"]
-                out.append(self._get_episode_from_h5(ep_group))
+                out.append(
+                    {
+                        "id": ep_group.attrs.get("id"),
+                        "total_timesteps": ep_group.attrs.get("total_steps"),
+                        "seed": ep_group.attrs.get("seed"),
+                        "observations": self._decode_space(
+                            ep_group["observations"], self.observation_space
+                        ),
+                        "actions": self._decode_space(
+                            ep_group["actions"], self.action_space
+                        ),
+                        "rewards": ep_group["rewards"][()],
+                        "terminations": ep_group["terminations"][()],
+                        "truncations": ep_group["truncations"][()],
+                    }
+                )
 
         return out
 

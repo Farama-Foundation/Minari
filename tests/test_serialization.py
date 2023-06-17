@@ -23,5 +23,7 @@ def test_space_serialize_deserialize(space):
 @pytest.mark.parametrize("space", unsupported_test_spaces)
 def test_space_serialize_deserialize_unsupported(space):
 
-    with pytest.raises(TypeError, match=r"space or subspace has unsupported type: .+"):
+    with pytest.raises(
+        NotImplementedError, match=r"No serialization method available for .+"
+    ):
         serialize_space(space)
