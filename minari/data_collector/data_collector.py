@@ -138,70 +138,6 @@ class DataCollectorV0(gym.Wrapper):
         self._last_episode_group_term_or_trunc = False
         self._last_episode_n_steps = 0
 
-    def reset(
-        self,
-        *,
-        seed: int | None = None,
-        options: dict[str, Any] | None = None,
-    ) -> tuple[ObsType, dict[str, Any]]:
-        """Gymnasium environment reset."""
-        obs, info = self.env.reset(seed=seed, options=options)
-        step_data = self._step_data_callback(env=self, obs=obs, info=info)
-
-        assert STEP_DATA_KEYS.issubset(step_data.keys())
-
-        # If last episode in global buffer has saved steps, we need to check if it was truncated or terminated
-        # If not, then we need to auto-truncate the episode
-        if len(self._buffer[-1]["actions"]) > 0:
-            if (
-                not self._buffer[-1]["terminations"][-1]
-                and not self._buffer[-1]["truncations"][-1]
-            ):
-                self._buffer[-1]["truncations"][-1] = True
-                self._buffer[-1]["seed"] = self._current_seed  # type: ignore
-
-                # New episode
-                self._episode_id += 1
-
-                if (
-                    self.max_buffer_episodes is not None
-                    and self._episode_id % self.max_buffer_episodes == 0
-                ):
-                    self.clear_buffer_to_tmp_file()
-
-                # add new episode buffer
-                self._buffer.append({key: [] for key in STEP_DATA_KEYS})
-        else:
-            # In the case that the past episode is already stored in the tmp hdf5 file because of caching,
-            # we need to check if it was truncated or terminated, if not then auto-truncate
-            if (
-                len(self._buffer) == 1
-                and not self._last_episode_group_term_or_trunc
-                and self._episode_id != 0
-            ):
-                self._eps_group["truncations"][-1] = True
-                self._last_episode_group_term_or_trunc = True
-                self._eps_group.attrs["seed"] = self._current_seed
-
-                # New episode
-                self._episode_id += 1
-
-                # Compute metadata, use episode dataset in hdf5 file
-                self._episode_metadata_callback(self._eps_group)
-
-        self._buffer[-1] = add_to_episode_buffer(
-            self._buffer[-1], step_data, record_infos=self._record_infos
-        )
-
-        if seed is None:
-            self._current_seed = str(None)
-        else:
-            self._current_seed = seed
-
-        self._reset_called = True
-
-        return obs, info
-
     def step(
         self, action: ActType
     ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
@@ -265,6 +201,70 @@ class DataCollectorV0(gym.Wrapper):
             self._episode_id += 1
 
         return obs, rew, terminated, truncated, info
+
+    def reset(
+        self,
+        *,
+        seed: int | None = None,
+        options: dict[str, Any] | None = None,
+    ) -> tuple[ObsType, dict[str, Any]]:
+        """Gymnasium environment reset."""
+        obs, info = self.env.reset(seed=seed, options=options)
+        step_data = self._step_data_callback(env=self, obs=obs, info=info)
+
+        assert STEP_DATA_KEYS.issubset(step_data.keys())
+
+        # If last episode in global buffer has saved steps, we need to check if it was truncated or terminated
+        # If not, then we need to auto-truncate the episode
+        if len(self._buffer[-1]["actions"]) > 0:
+            if (
+                not self._buffer[-1]["terminations"][-1]
+                and not self._buffer[-1]["truncations"][-1]
+            ):
+                self._buffer[-1]["truncations"][-1] = True
+                self._buffer[-1]["seed"] = self._current_seed  # type: ignore
+
+                # New episode
+                self._episode_id += 1
+
+                if (
+                    self.max_buffer_episodes is not None
+                    and self._episode_id % self.max_buffer_episodes == 0
+                ):
+                    self.clear_buffer_to_tmp_file()
+
+                # add new episode buffer
+                self._buffer.append({key: [] for key in STEP_DATA_KEYS})
+        else:
+            # In the case that the past episode is already stored in the tmp hdf5 file because of caching,
+            # we need to check if it was truncated or terminated, if not then auto-truncate
+            if (
+                len(self._buffer) == 1
+                and not self._last_episode_group_term_or_trunc
+                and self._episode_id != 0
+            ):
+                self._eps_group["truncations"][-1] = True
+                self._last_episode_group_term_or_trunc = True
+                self._eps_group.attrs["seed"] = self._current_seed
+
+                # New episode
+                self._episode_id += 1
+
+                # Compute metadata, use episode dataset in hdf5 file
+                self._episode_metadata_callback(self._eps_group)
+
+        self._buffer[-1] = add_to_episode_buffer(
+            self._buffer[-1], step_data, record_infos=self._record_infos
+        )
+
+        if seed is None:
+            self._current_seed = str(None)
+        else:
+            self._current_seed = seed
+
+        self._reset_called = True
+
+        return obs, info
 
     def clear_buffer_to_tmp_file(self, truncate_last_episode: bool = False):
         """Save the global buffer in-memory to a temporary HDF5 file in disk.
