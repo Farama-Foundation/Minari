@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 import shutil
 import tempfile
+from collections import OrderedDict
 from typing import Any, Dict, List, Optional, SupportsFloat, Type, Union
 
 import gymnasium as gym
@@ -388,7 +389,7 @@ def clear_buffer(
     last_episode_group_term_or_trunc: bool,
     current_episode_group_term_or_trunc: bool,
 ):
-    """Inner function to recursively save the nested data dictionaries in an episode buffer.
+    """Function to recursively save the nested data dictionaries in an episode buffer.
 
     Args:
         dictionary_buffer (EpisodeBuffer): ditionary with keys to store as independent HDF5 datasets if the value is a list buffer
@@ -400,6 +401,7 @@ def clear_buffer(
     """
     for key, data in dictionary_buffer.items():
         if isinstance(data, dict):
+
             if key in episode_group:
                 eps_group_to_clear = episode_group[key]
             else:
@@ -411,10 +413,47 @@ def clear_buffer(
                 last_episode_group_term_or_trunc,
                 current_episode_group_term_or_trunc,
             )
+        elif all([isinstance(entry, tuple) for entry in data]):
+            # we have a list of tuples, so we need to act appropriately
+            dict_data = {
+                f"_index_{str(i)}": [entry[i] for entry in data]
+                for i, _ in enumerate(data[0])
+            }
+            if key in episode_group:
+                eps_group_to_clear = episode_group[key]
+            else:
+                eps_group_to_clear = episode_group.create_group(key)
+            clear_buffer(
+                dict_data,
+                eps_group_to_clear,
+                last_episode_n_steps,
+                last_episode_group_term_or_trunc,
+                current_episode_group_term_or_trunc,
+            )
+        elif all([isinstance(entry, OrderedDict) for entry in data]):
+
+            # we have a list of OrderedDicts, so we need to act appropriately
+            dict_data = {
+                key: [entry[key] for entry in data] for key, value in data[0].items()
+            }
+
+            if key in episode_group:
+                eps_group_to_clear = episode_group[key]
+            else:
+                eps_group_to_clear = episode_group.create_group(key)
+            clear_buffer(
+                dict_data,
+                eps_group_to_clear,
+                last_episode_n_steps,
+                last_episode_group_term_or_trunc,
+                current_episode_group_term_or_trunc,
+            )
         else:
             # convert data to numpy
             np_data = np.asarray(data)
-            assert np.all(np.logical_not(np.isnan(np_data)))
+            assert np.all(
+                np.logical_not(np.isnan(np_data))
+            ), "Nan found after cast to nump array, check the type of 'data'."
 
             # Check if last episode group is terminated or truncated
             if not last_episode_group_term_or_trunc and key in episode_group:
@@ -472,12 +511,16 @@ def add_to_episode_buffer(
                 episode_buffer[key] = [value]
         else:
             if isinstance(value, dict):
-                assert isinstance(episode_buffer[key], dict)
+                assert isinstance(
+                    episode_buffer[key], dict
+                ), f"Element to be inserted is type 'dict', but buffer accepts type {type(episode_buffer[key])}"
                 episode_buffer[key] = add_to_episode_buffer(
                     episode_buffer[key], value, record_infos
                 )
             else:
-                assert isinstance(episode_buffer[key], list)
+                assert isinstance(
+                    episode_buffer[key], list
+                ), f"Element to be inserted is type 'list', but buffer accepts type {type(episode_buffer[key])}"
                 episode_buffer[key].append(value)
 
     return episode_buffer
