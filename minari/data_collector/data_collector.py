@@ -146,7 +146,6 @@ class DataCollectorV0(gym.Wrapper):
         self._last_episode_group_term_or_trunc = False
         self._last_episode_n_steps = 0
 
-
     def step(
         self, action: ActType
     ) -> tuple[ObsType, SupportsFloat, bool, bool, dict[str, Any]]:
@@ -294,7 +293,6 @@ class DataCollectorV0(gym.Wrapper):
         Args:
             truncate_last_episode (bool, optional): If True the last episode from the buffer will be truncated before saving to disk. Defaults to False.
         """
-
         for i, eps_buff in enumerate(self._buffer):
             # Make sure that the episode has stepped, by checking if the 'actions' key has been added to the episode buffer.
             if "actions" not in eps_buff:
