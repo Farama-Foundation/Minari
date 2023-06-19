@@ -435,10 +435,10 @@ def check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
             obs = _reconstuct_obs_or_action_at_index_recursive(
                 episode["observations"], i
             )
-            assert obs in data.observation_space
+            assert data.observation_space.contains(obs)
         for i in range(episode["total_timesteps"]):
             action = _reconstuct_obs_or_action_at_index_recursive(episode["actions"], i)
-            assert action in data.action_space
+            assert data.action_space.contains(action)
 
         assert episode["total_timesteps"] == len(episode["rewards"])
         assert episode["total_timesteps"] == len(episode["terminations"])
