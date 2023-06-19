@@ -8,9 +8,8 @@ from gymnasium.utils.env_checker import data_equivalence
 
 import minari
 from minari import MinariDataset
-from minari.dataset.minari_storage import MinariStorage
-from minari.utils import create_dataset_from_collector_env
 from minari.data_collector import DataCollectorV0
+from minari.dataset.minari_storage import MinariStorage
 
 
 class DummyBoxEnv(gym.Env):
@@ -473,11 +472,12 @@ def check_load_and_delete_dataset(dataset_id: str):
     assert dataset_id not in local_datasets
 
 
-def create_dummy_dataset_with_collecter_env_helper(dataset_id: str, env: DataCollectorV0 , num_episodes: int =10):
+def create_dummy_dataset_with_collecter_env_helper(
+    dataset_id: str, env: DataCollectorV0, num_episodes: int = 10
+):
     local_datasets = minari.list_local_datasets()
     if dataset_id in local_datasets:
         minari.delete_dataset(dataset_id)
-
 
     # Step the environment, DataCollectorV0 wrapper will do the data collection job
     env.reset(seed=42)

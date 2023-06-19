@@ -14,8 +14,8 @@ from tests.common import (
     check_env_recovery,
     check_env_recovery_with_subset_spaces,
     check_load_and_delete_dataset,
+    create_dummy_dataset_with_collecter_env_helper,
     register_dummy_envs,
-    create_dummy_dataset_with_collecter_env_helper
 )
 
 
@@ -44,7 +44,9 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
 
     env = DataCollectorV0(env)
 
-    dataset = create_dummy_dataset_with_collecter_env_helper(dataset_id, env, num_episodes = num_episodes)
+    dataset = create_dummy_dataset_with_collecter_env_helper(
+        dataset_id, env, num_episodes=num_episodes
+    )
 
     assert isinstance(dataset, MinariDataset)
     assert dataset.total_episodes == num_episodes

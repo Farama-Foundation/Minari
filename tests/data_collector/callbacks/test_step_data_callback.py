@@ -9,8 +9,8 @@ from tests.common import (
     check_data_integrity,
     check_env_recovery_with_subset_spaces,
     check_load_and_delete_dataset,
+    create_dummy_dataset_with_collecter_env_helper,
     register_dummy_envs,
-    create_dummy_dataset_with_collecter_env_helper
 )
 
 
@@ -76,8 +76,9 @@ def test_data_collector_step_data_callback():
     num_episodes = 10
 
     # Step the environment, DataCollectorV0 wrapper will do the data collection job
-    dataset = create_dummy_dataset_with_collecter_env_helper(dataset_id, env, num_episodes = num_episodes)
-
+    dataset = create_dummy_dataset_with_collecter_env_helper(
+        dataset_id, env, num_episodes=num_episodes
+    )
 
     assert isinstance(dataset, MinariDataset)
     assert dataset.total_episodes == num_episodes
