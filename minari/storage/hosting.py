@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import glob
 import os
+import warnings
 from typing import Dict
 
 import h5py
@@ -141,15 +142,13 @@ def list_remote_datasets() -> Dict[str, Dict[str, str]]:
 
     blobs = storage_client.list_blobs(bucket_or_name="minari-datasets")
 
-    remote_datasets_metadata = list(
-        map(
-            lambda x: x.metadata,
-            filter(lambda x: x.name.endswith("main_data.hdf5"), blobs),
-        )
-    )
     remote_datasets = {}
-    for metadata in remote_datasets_metadata:
-        remote_datasets[metadata["dataset_id"]] = metadata
+    for blob in blobs:
+        try:
+            if blob.name.endswith("main_data.hdf5"):
+                remote_datasets[blob.metadata["dataset_id"]] = blob.metadata
+        except Exception:
+            warnings.warn(f"Misconfigured dataset named {blob.name} on remote")
 
     return remote_datasets
 
