@@ -118,6 +118,7 @@ def test_generate_dataset_with_external_buffer(dataset_id, env_id):
             "terminations": np.asarray(terminations),
             "truncations": np.asarray(truncations),
         }
+        print(episode_buffer)
         buffer.append(episode_buffer)
 
         observations.clear()
@@ -129,6 +130,7 @@ def test_generate_dataset_with_external_buffer(dataset_id, env_id):
         observation, _ = env.reset()
         observations.append(observation)
 
+    print(buffer)
     # Create Minari dataset and store locally
     dataset = minari.create_dataset_from_buffers(
         dataset_id=dataset_id,

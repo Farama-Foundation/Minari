@@ -394,6 +394,8 @@ def check_env_recovery(gymnasium_environment: gym.Env, dataset: MinariDataset):
     recovered_env = dataset.recover_environment()
 
     # Check that environment spec is the same
+    print(recovered_env.spec)
+    print(gymnasium_environment.spec)
     assert recovered_env.spec == gymnasium_environment.spec
 
     # Check that action/observation spaces are the same
