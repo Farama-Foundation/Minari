@@ -124,8 +124,6 @@ def _cast_to_numpy_recursive(space: gym.spaces.space, entry: Union[tuple, dict, 
 
 def convert_hugging_face_dataset_to_minari_dataset(dataset: Dataset):
 
-    print("REACHED")
-    print(dataset.info)
 
     description_data = json.loads(dataset.info.description)
 
@@ -189,7 +187,4 @@ def push_dataset_to_hugging_face(dataset: Dataset, path: str, private: bool = Tr
 def pull_dataset_from_hugging_face(path: str) -> Dataset:
     """Pulls a hugging face dataset froms the HuggingFace respository at the specfied path."""
     hugging_face_dataset = load_dataset(path)
-    dataset = convert_hugging_face_dataset_to_minari_dataset(
-        hugging_face_dataset["train"]
-    )
-    return dataset
+    return hugging_face_dataset["train"]

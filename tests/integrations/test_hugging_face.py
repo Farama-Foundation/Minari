@@ -72,9 +72,9 @@ def test_convert_minari_dataset_to_hugging_face_dataset_and_back(dataset_id, env
     check_load_and_delete_dataset(dataset_id)
 
 
-@pytest.mark.skip(
-    reason="relies on a private repo, just using this for testing while developing"
-)
+#@pytest.mark.skip(
+#    reason="relies on a private repo, just using this for testing while developing"
+#)
 @pytest.mark.parametrize(
     "dataset_id,env_id",
     [
@@ -98,7 +98,7 @@ def test_hugging_face_push_and_pull_dataset(dataset_id, env_id):
     )
 
     hugging_face_dataset = convert_minari_dataset_to_hugging_face_dataset(dataset)
-    print("start")
+    print("DATASET INFO BEFORE UPLOADING")
     print(hugging_face_dataset.info)
 
     push_dataset_to_hugging_face(hugging_face_dataset, "balisujohn/minari_test")
@@ -106,7 +106,8 @@ def test_hugging_face_push_and_pull_dataset(dataset_id, env_id):
     recovered_hugging_face_dataset = pull_dataset_from_hugging_face(
         "balisujohn/minari_test"
     )
-    print(type(recovered_hugging_face_dataset))
+    print("DATASET INFO AFTER UPLOADING AND DOWNLOADING")
+    print(recovered_hugging_face_dataset.info)
     reconstructed_minari_dataset = convert_hugging_face_dataset_to_minari_dataset(
         recovered_hugging_face_dataset
     )
