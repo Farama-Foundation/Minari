@@ -226,8 +226,9 @@ class DataCollectorV0(gym.Wrapper):
                 self._step_id % self.max_buffer_steps == 0 and self._step_id != 0
             )
 
-        # Get initial observation from previous episode if reset has not been called after termination or truncation
-        # This may happen if the step_data_callback truncates or terminates the episode under certain conditions.
+        # Get initial observation/info from previous episode if reset has not been called after termination
+        # or truncation. This may happen if the step_data_callback truncates or terminates the episode under
+        # certain conditions.
         if self._new_episode and not self._reset_called:
             self._buffer[-1]["observations"] = [self._previous_eps_final_obs]
             if self._record_infos:
@@ -241,6 +242,7 @@ class DataCollectorV0(gym.Wrapper):
         self._buffer[-1] = self._add_to_episode_buffer(self._buffer[-1], step_data)
 
         if step_data["terminations"] or step_data["truncations"]:
+            # Save last observation/info to use as initial observation/info in the next episode
             self._previous_eps_final_obs = step_data["observations"]
             if self._record_infos:
                 self._previous_eps_final_info = step_data["infos"]
