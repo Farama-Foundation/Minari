@@ -215,9 +215,9 @@ class QIteration:
 # These gains determine the influence of each term on the control action.
 # The optimal values for these gains are typically determined through tuning, which involves adjusting
 # the gains to achieve the desired control performance.
-# Now back to our controller as stated previously, for the D4RL task we use a PD contoller and we
+# Now back to our controller as stated previously, for the D4RL task we use a PD controller and we
 # follow the same theme as what we have stated before as can be seen below. The ``Error`` is equlivalent
-# to the diffrence between the `goal_{pose}`` and ``agent_{pose}`` and we replace the derivative term ``(d(Error) / dt)`` with
+# to the difference between the `goal_{pose}`` and ``agent_{pose}`` and we replace the derivative term ``(d(Error) / dt)`` with
 # the velocity of the the agent ``v_{agent}``, we can think of this as a measure of the speed at which the agent
 # is approaching the target position. When the agent is moving quickly towards the target, the
 # derivative term will be larger, contributing to a stronger corrective action from the controller.
