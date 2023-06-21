@@ -169,7 +169,7 @@ class QIteration:
 # PID combines three components Proportial Term(P), Integral Term(I) and Derivative Term (D)
 # 1. Proportial Term(P)
 # ~~~~~~~~~~~~~~~~~~~
-# The proportional term in a PID controller adjusts the control action based on the current error, which 
+# The proportional term in a PID controller adjusts the control action based on the current error, which
 # is the difference between the desired value (setpoint) and the current value of the process variable.
 # The control action is directly proportional to the error. A higher error results in a stronger control action.
 # However, the proportional term alone can lead to overshooting or instability. Note ``\tau`` is our control value.
@@ -182,7 +182,7 @@ class QIteration:
 # ~~~~~~~~~~~~~~~~~~~
 # The derivative term in a PD controller considers the rate of change of the error over time.
 # It helps to predict the future behavior of the error. By dampening the control action based
-# on the rate of change of the error, the derivative term contributes to system stability and reduces overshooting. 
+# on the rate of change of the error, the derivative term contributes to system stability and reduces overshooting.
 # It also helps the system respond quickly to changes in the error.
 # references.
 #
@@ -212,7 +212,7 @@ class QIteration:
 #   \tau = k_{p}(Error)  + k_{d}(d(Error) / dt) +  k_{I}\(\int\) Error dt
 #
 # In the PID controller formula, Kp, Ki, and Kd are the respective gains for the proportional, integral, and derivative terms.
-# These gains determine the influence of each term on the control action. 
+# These gains determine the influence of each term on the control action.
 # The optimal values for these gains are typically determined through tuning, which involves adjusting
 # the gains to achieve the desired control performance.
 # Now back to our controller as stated previously, for the D4RL task we use a PD contoller and we
