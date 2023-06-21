@@ -2,7 +2,6 @@ from typing import Any, Dict, Optional
 from typing_extensions import TypedDict
 
 import gymnasium as gym
-from gymnasium import spaces
 
 
 class StepData(TypedDict):
@@ -26,47 +25,9 @@ STEP_DATA_KEYS = {
 class StepDataCallback:
     """Callback to create step data dictionary from the return data of each Gymnasium environment step.
 
-    The current callback automatically detects observation/action spaces that need
-    to be flatten before saving to HDF5 file (currently only supports Dict or Tuple
-    Gymnasium spaces. Text, Sequence, and Graph are currently not compatible with
-    Minari).
-
     This callback can be overridden to add extra environment information in each step or
     edit the observation, action, reward, termination, truncation, or info returns.
     """
-
-    def __init__(self, env: gym.Env):
-        self.env = env
-
-        def check_flatten_space(space: gym.Space):
-            """Check if space needs to be flatten or if it's not supported by Minari.
-
-            Args:
-                space: the Gymnasium space to be checked
-
-            Returns:
-                bool: True if space needs to be flatten before storing in HDF5 dataset. False otherwise.
-
-            ValueError: If space is/contains Text, Sequence, or Graph space types
-            """
-            if isinstance(space, spaces.Dict):
-                for s in space.spaces.values():
-                    check_flatten_space(s)
-                return True
-            elif isinstance(space, spaces.Tuple):
-                for s in space.spaces:
-                    check_flatten_space(s)
-                return True
-            elif isinstance(
-                self.env.observation_space, (spaces.Text, spaces.Sequence, spaces.Graph)
-            ):
-                ValueError(f"Minari doesn't support space of type {space}")
-            else:
-                return False
-
-        # check if observation/action need to be flatten before saving to HDF5
-        self.flatten_observation = check_flatten_space(self.env.observation_space)
-        self.flatten_action = check_flatten_space(self.env.action_space)
 
     def __call__(
         self,
@@ -113,14 +74,6 @@ class StepDataCallback:
             Dict: dictionary step data. Must contain the keys in STEP_DATA_KEYS = {'actions', 'observations',
                     'rewards', 'terminations', 'truncations', 'infos'}. Additional key's can be added with nested dictionaries
         """
-        if action is not None:
-            # Flatten the actions
-            if self.flatten_action:
-                action = spaces.flatten(self.env.action_space, action)
-        # Flatten the observations
-        if self.flatten_observation:
-            obs = spaces.flatten(self.env.observation_space, obs)
-
         step_data: StepData = {
             "actions": action,
             "observations": obs,
