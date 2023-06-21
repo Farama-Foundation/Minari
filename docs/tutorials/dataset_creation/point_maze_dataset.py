@@ -169,19 +169,19 @@ class QIteration:
 # PID combines three components Proportial Term(P), Integral Term(I) and Derivative Term (D)
 # 1. Proportial Term(P)
 # ~~~~~~~~~~~~~~~~~~~
-# The proportional term in a PID controller adjusts the control action based on the current error, 
-# which is the difference between the desired value (setpoint) and the current value of the process variable. 
-# The control action is directly proportional to the error. A higher error results in a stronger control action. 
-# However, the proportional term alone can lead to overshooting or instability. Note ``\tau`` is our control value
+# The proportional term in a PID controller adjusts the control action based on the current error, which 
+# is the difference between the desired value (setpoint) and the current value of the process variable.
+# The control action is directly proportional to the error. A higher error results in a stronger control action.
+# However, the proportional term alone can lead to overshooting or instability. Note ``\tau`` is our control value.
 # references.
 #
 # .. math ::
-#   \tau = k_{p}(Error) 
+#   \tau = k_{p}(Error)
 #
 # 2. Derivative Term (D)
 # ~~~~~~~~~~~~~~~~~~~
-#The derivative term in a PD controller considers the rate of change of the error over time.
-#  It helps to predict the future behavior of the error. By dampening the control action based
+# The derivative term in a PD controller considers the rate of change of the error over time.
+# It helps to predict the future behavior of the error. By dampening the control action based
 # on the rate of change of the error, the derivative term contributes to system stability and reduces overshooting. 
 # It also helps the system respond quickly to changes in the error.
 # references.
@@ -197,8 +197,8 @@ class QIteration:
 #
 # 3. Integral Term (I)
 # ~~~~~~~~~~~~~~~~~~~
-#The integral term in a PID controller integrates the cumulative error over time. 
-# It helps to address steady-state errors or biases that may exist in the system. 
+# The integral term in a PID controller integrates the cumulative error over time.
+# It helps to address steady-state errors or biases that may exist in the system.
 # The integral term continuously adjusts the control action based on the accumulated error,
 # aiming to eliminate any long-term deviations between the desired setpoint and the actual process variable.
 # references.
@@ -211,16 +211,16 @@ class QIteration:
 # .. math ::
 #   \tau = k_{p}(Error)  + k_{d}(d(Error) / dt) +  k_{I}\(\int\) Error dt
 #
-# In the PID controller formula, Kp, Ki, and Kd are the respective gains for the proportional, integral, and derivative terms. 
+# In the PID controller formula, Kp, Ki, and Kd are the respective gains for the proportional, integral, and derivative terms.
 # These gains determine the influence of each term on the control action. 
-# The optimal values for these gains are typically determined through tuning, which involves adjusting 
+# The optimal values for these gains are typically determined through tuning, which involves adjusting
 # the gains to achieve the desired control performance.
 # Now back to our controller as stated previously, for the D4RL task we use a PD contoller and we
 # follow the same theme as what we have stated before as can be seen below. The ``Error`` is equlivalent
 # to the diffrence between the `goal_{pose}`` and ``agent_{pose}`` and we replace the derivative term ``(d(Error) / dt)`` with
-# the velocity of the the agent ``v_{agent}``, we can think of this as a measure of the speed at which the agent 
-# is approaching the target position. When the agent is moving quickly towards the target, 
-# the derivative term will be larger, contributing to a stronger corrective action from the controller.
+# the velocity of the the agent ``v_{agent}``, we can think of this as a measure of the speed at which the agent
+# is approaching the target position. When the agent is moving quickly towards the target, the
+# derivative term will be larger, contributing to a stronger corrective action from the controller.
 #  On the other hand, if the agent is already close to the target and moving slowly, the derivative term will be smaller,
 #  resulting in a less aggressive control action.
 # references.
@@ -230,6 +230,7 @@ class QIteration:
 #
 # Each target position in the waypoint trajectory is converted from discrete to a continuous value and we also add some noise to
 # the ``x`` and ``y`` coordinates to add more variance in the trajectories generated for the offline dataset.
+
 
 class WaypointController:
     """Agent controller to follow waypoints in the maze.
