@@ -1,4 +1,4 @@
-from typing import Any, Iterable
+from typing import Any, Iterable, Union
 
 import gymnasium as gym
 import numpy as np
@@ -430,9 +430,41 @@ def check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
         _check_space_elem(
             episode["actions"], data.action_space, episode["total_timesteps"]
         )
+
+        for i in range(episode["total_timesteps"] + 1):
+            obs = _reconstuct_obs_or_action_at_index_recursive(
+                episode["observations"], i
+            )
+            assert data.observation_space.contains(obs)
+        for i in range(episode["total_timesteps"]):
+            action = _reconstuct_obs_or_action_at_index_recursive(episode["actions"], i)
+            assert data.action_space.contains(action)
+
         assert episode["total_timesteps"] == len(episode["rewards"])
         assert episode["total_timesteps"] == len(episode["terminations"])
         assert episode["total_timesteps"] == len(episode["truncations"])
+
+
+def _reconstuct_obs_or_action_at_index_recursive(
+    data: Union[dict, tuple, np.ndarray], index: int
+) -> Union[np.ndarray, dict, tuple]:
+    if isinstance(data, dict):
+        return {
+            key: _reconstuct_obs_or_action_at_index_recursive(data[key], index)
+            for key in data.keys()
+        }
+    elif isinstance(data, tuple):
+        return tuple(
+            [
+                _reconstuct_obs_or_action_at_index_recursive(entry, index)
+                for entry in data
+            ]
+        )
+
+    elif isinstance(data, np.ndarray):
+        return data[index]
+    else:
+        assert False, "error, invalid observation or action structure"
 
 
 def _check_space_elem(data: Any, space: spaces.Space, n_elements: int):
