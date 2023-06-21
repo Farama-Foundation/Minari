@@ -355,6 +355,7 @@
 
 <span class="kn">import</span> <span class="nn">glob</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
 
 <span class="kn">import</span> <span class="nn">h5py</span>
@@ -494,15 +495,13 @@
 
     <span class="n">blobs</span> <span class="o">=</span> <span class="n">storage_client</span><span class="o">.</span><span class="n">list_blobs</span><span class="p">(</span><span class="n">bucket_or_name</span><span class="o">=</span><span class="s2">&quot;minari-datasets&quot;</span><span class="p">)</span>
 
-    <span class="n">remote_datasets_metadata</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
-        <span class="nb">map</span><span class="p">(</span>
-            <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">metadata</span><span class="p">,</span>
-            <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;main_data.hdf5&quot;</span><span class="p">),</span> <span class="n">blobs</span><span class="p">),</span>
-        <span class="p">)</span>
-    <span class="p">)</span>
     <span class="n">remote_datasets</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">metadata</span> <span class="ow">in</span> <span class="n">remote_datasets_metadata</span><span class="p">:</span>
-        <span class="n">remote_datasets</span><span class="p">[</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;dataset_id&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">metadata</span>
+    <span class="k">for</span> <span class="n">blob</span> <span class="ow">in</span> <span class="n">blobs</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">blob</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;main_data.hdf5&quot;</span><span class="p">):</span>
+                <span class="n">remote_datasets</span><span class="p">[</span><span class="n">blob</span><span class="o">.</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;dataset_id&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">blob</span><span class="o">.</span><span class="n">metadata</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Misconfigured dataset named </span><span class="si">{</span><span class="n">blob</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> on remote&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">remote_datasets</span></div>
 
