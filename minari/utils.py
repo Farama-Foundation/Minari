@@ -18,6 +18,10 @@ from minari.dataset.minari_storage import clear_episode_buffer
 from minari.serialization import serialize_space
 from minari.storage.datasets_root_dir import get_dataset_path
 
+import importlib.metadata
+
+MINARI_VERSION = importlib.metadata.version('minari')
+
 
 class RandomPolicy:
     """A random action selection policy to compute `ref_min_score`."""
@@ -47,6 +51,7 @@ def combine_datasets(
     """
     new_dataset_path = get_dataset_path(new_dataset_id)
 
+    # TODO: Make sure that the datasets support the same Minari versions
     # Check if dataset already exists
     if not os.path.exists(new_dataset_path):
         new_dataset_path = os.path.join(new_dataset_path, "data")
@@ -343,6 +348,8 @@ def create_dataset_from_buffers(
                 file.attrs["ref_max_score"] = ref_max_score
                 file.attrs["ref_min_score"] = ref_min_score
                 file.attrs["num_episodes_average_score"] = num_episodes_average_score
+            
+            file["minari_version"] = MINARI_VERSION
 
         return MinariDataset(data_path)
     else:
@@ -444,7 +451,14 @@ def create_dataset_from_collector_env(
 
         collector_env.save_to_disk(
             data_path,
-            dataset_metadata=dataset_metadata,
+            dataset_metadata={
+                "dataset_id": str(dataset_id),
+                "algorithm_name": str(algorithm_name),
+                "author": str(author),
+                "author_email": str(author_email),
+                "code_permalink": str(code_permalink),
+                "minari_version": MINARI_VERSION,
+            },
         )
         return MinariDataset(data_path)
     else:
