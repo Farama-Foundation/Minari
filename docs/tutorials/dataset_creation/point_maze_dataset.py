@@ -59,7 +59,7 @@ from minari import DataCollectorV0, StepDataCallback
 #   {(5, 1): (4, 1), (4, 1): (4, 2), (4, 2): (3, 2), (3, 2): (2, 2), (2, 2): (2, 1), (2, 1): (1, 1)}
 #
 # The keys of this dictionary are the current state of the agent and the values the next state of the wapoint path.
-#
+# 
 
 UP = 0
 DOWN = 1
@@ -160,6 +160,7 @@ class QIteration:
         else:
             return True
 
+
 # %%
 # Waypoint Controller
 # ~~~~~~~~~~~~~~~~~~~
@@ -167,8 +168,9 @@ class QIteration:
 # D4RL uses a PD controller to output continuous force actions from position and velocity.
 # A PD controller is a variation of the PID controller often used in classical Control Theory.
 # PID combines three components Proportial Term(P), Integral Term(I) and Derivative Term (D)
+#
 # 1. Proportial Term(P)
-# ~~~~~~~~~~~~~~~~~~~
+# -------------------
 # The proportional term in a PID controller adjusts the control action based on the current error, 
 # which is the difference between the desired value (setpoint) and the current value of the process variable. 
 # The control action is directly proportional to the error. A higher error results in a stronger control action. 
@@ -179,8 +181,8 @@ class QIteration:
 #   \tau = k_{p}(Error) 
 #
 # 2. Derivative Term (D)
-# ~~~~~~~~~~~~~~~~~~~
-#The derivative term in a PD controller considers the rate of change of the error over time.
+# -------------------
+# The derivative term in a PD controller considers the rate of change of the error over time.
 #  It helps to predict the future behavior of the error. By dampening the control action based
 # on the rate of change of the error, the derivative term contributes to system stability and reduces overshooting. 
 # It also helps the system respond quickly to changes in the error.
@@ -196,20 +198,20 @@ class QIteration:
 #   \tau = k_{p}(Error)  + k_{d}(d(Error) / dt)
 #
 # 3. Integral Term (I)
-# ~~~~~~~~~~~~~~~~~~~
-#The integral term in a PID controller integrates the cumulative error over time. 
+# -------------------
+# The integral term in a PID controller integrates the cumulative error over time. 
 # It helps to address steady-state errors or biases that may exist in the system. 
 # The integral term continuously adjusts the control action based on the accumulated error,
 # aiming to eliminate any long-term deviations between the desired setpoint and the actual process variable.
 # references.
 #
 # .. math ::
-#   \tau = k_{I}\(\int\)(Error) dt
+#   \tau = k_{I}(\int)(Error) dt
 #
 # Finally for a PID controller we have the equation below
 #
 # .. math ::
-#   \tau = k_{p}(Error)  + k_{d}(d(Error) / dt) +  k_{I}\(\int\) Error dt
+#   \tau = k_{p}(Error)  + k_{d}(d(Error) / dt) +  k_{I}(\int) Error dt
 #
 # In the PID controller formula, Kp, Ki, and Kd are the respective gains for the proportional, integral, and derivative terms. 
 # These gains determine the influence of each term on the control action. 
