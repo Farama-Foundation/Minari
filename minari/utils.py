@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import importlib.metadata
 import os
 import warnings
 from typing import Any, Callable, Dict, List, Optional, Union
@@ -18,15 +19,16 @@ from minari.dataset.minari_storage import clear_episode_buffer
 from minari.serialization import serialize_space
 from minari.storage.datasets_root_dir import get_dataset_path
 
-import importlib.metadata
 
 # Use importlib due to circular import when: "from minari import __version__"
-__version__ = importlib.metadata.version('minari')
+__version__ = importlib.metadata.version("minari")
 
-def _check_datasets_to_combine(datasets: List[MinariDataset]):
-    # Check the env_spec
-    # Check the minari version
-    datasets_minari_version = []
+
+# def _check_datasets_to_combine(datasets: List[MinariDataset]):
+#     # Check the env_spec
+#     # Check the minari version
+#     datasets_minari_version = []
+
 
 class RandomPolicy:
     """A random action selection policy to compute `ref_min_score`."""
