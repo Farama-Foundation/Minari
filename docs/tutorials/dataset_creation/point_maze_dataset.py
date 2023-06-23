@@ -59,7 +59,6 @@ from minari import DataCollectorV0, StepDataCallback
 #   {(5, 1): (4, 1), (4, 1): (4, 2), (4, 2): (3, 2), (3, 2): (2, 2), (2, 2): (2, 1), (2, 1): (1, 1)}
 #
 # The keys of this dictionary are the current state of the agent and the values the next state of the wapoint path.
-# 
 
 UP = 0
 DOWN = 1
