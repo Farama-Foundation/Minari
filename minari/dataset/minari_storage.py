@@ -93,7 +93,7 @@ class MinariStorage:
         self,
         hdf_ref: Union[h5py.Group, h5py.Dataset],
         space: gym.spaces.Space,
-    ) -> Union[Dict, Tuple, np.ndarray]:
+    ) -> Union[Dict, Tuple, List, np.ndarray]:
         if isinstance(space, gym.spaces.Tuple):
             assert isinstance(hdf_ref, h5py.Group)
             result = []
@@ -108,6 +108,10 @@ class MinariStorage:
             for key in hdf_ref:
                 result[key] = self._decode_space(hdf_ref[key], space.spaces[key])
             return result
+        elif isinstance(space, gym.spaces.Text):
+            assert isinstance(hdf_ref, h5py.Dataset)
+            result = map(lambda string: string.decode("utf-8"), hdf_ref[()])
+            return list(result)
         else:
             assert isinstance(hdf_ref, h5py.Dataset)
             return hdf_ref[()]

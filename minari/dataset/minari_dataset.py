@@ -84,8 +84,10 @@ def clear_episode_buffer(episode_buffer: Dict, episode_group: h5py.Group) -> h5p
             else:
                 episode_group_to_clear = episode_group.create_group(key)
             clear_episode_buffer(dict_data, episode_group_to_clear)
+        elif all(map(lambda elem: isinstance(elem, str), data)):
+            dtype = h5py.string_dtype(encoding="utf-8")
+            episode_group.create_dataset(key, data=data, dtype=dtype, chunks=True)
         else:
-            # assert data is numpy array
             assert np.all(np.logical_not(np.isnan(data)))
             # add seed to attributes
             episode_group.create_dataset(key, data=data, chunks=True)
