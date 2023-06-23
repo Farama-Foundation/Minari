@@ -169,8 +169,8 @@ class QIteration:
 # A PD controller is a variation of the PID controller often used in classical Control Theory.
 # PID combines three components Proportial Term(P), Integral Term(I) and Derivative Term (D)
 #
-# 1. Proportial Term(P)
-# ~~~~~~~~~~~~~~~~~~~
+# 1. Proportional Term (P)
+# -------------------
 # The proportional term in a PID controller adjusts the control action based on the current error, which
 # is the difference between the desired value (setpoint) and the current value of the process variable.
 # The control action is directly proportional to the error. A higher error results in a stronger control action.
@@ -181,7 +181,7 @@ class QIteration:
 #   \tau = k_{p}(Error)
 #
 # 2. Derivative Term (D)
-# ~~~~~~~~~~~~~~~~~~~
+# -------------------
 # The derivative term in a PD controller considers the rate of change of the error over time.
 # It helps to predict the future behavior of the error. By dampening the control action based
 # on the rate of change of the error, the derivative term contributes to system stability and reduces overshooting.
@@ -198,7 +198,7 @@ class QIteration:
 #   \tau = k_{p}(Error)  + k_{d}(d(Error) / dt)
 #
 # 3. Integral Term (I)
-# ~~~~~~~~~~~~~~~~~~~
+# -------------------
 # The integral term in a PID controller integrates the cumulative error over time.
 # It helps to address steady-state errors or biases that may exist in the system.
 # The integral term continuously adjusts the control action based on the accumulated error,
