@@ -1,3 +1,4 @@
+import io
 import json
 import warnings
 from collections import OrderedDict
@@ -6,11 +7,10 @@ from typing import Union
 import gymnasium as gym
 import numpy as np
 from datasets import Dataset, DatasetInfo, load_dataset
-from huggingface_hub import whoami
+from huggingface_hub import hf_hub_download, upload_file, whoami
 
 import minari
 from minari import MinariDataset
-from minari.dataset.minari_dataset import MinariDataset
 from minari.serialization import deserialize_space, serialize_space
 
 
@@ -100,16 +100,20 @@ def convert_minari_dataset_to_hugging_face_dataset(dataset: MinariDataset):
     return hugging_face_dataset
 
 
-def _cast_to_numpy_recursive(space: gym.spaces.space, entry: Union[tuple, dict, list]):
+def _cast_to_numpy_recursive(
+    space: gym.spaces.Space, entry: Union[tuple, dict, list]
+) -> Union[OrderedDict, np.ndarray, tuple]:
     """Recurses on an observation or action space, and mirrors the recursion on an observation or action, casting all components to numpy arrays."""
-    if isinstance(space, gym.spaces.Dict):
+    if isinstance(space, gym.spaces.Dict) and isinstance(entry, dict):
         result = OrderedDict()
         for key in space.spaces.keys():
             result[key] = _cast_to_numpy_recursive(space.spaces[key], entry[key])
         return result
-    elif isinstance(space, gym.spaces.Tuple):
-        result = []
-        for i in range(len(entry.keys())):
+    elif isinstance(space, gym.spaces.Tuple) and isinstance(
+        entry, dict
+    ):  # we substitute tuples with dicts in the hugging face dataset
+        result = []  # with keys corresponding to the elements index in the tuple.
+        for i in range(len(space.spaces)):
             result.append(
                 _cast_to_numpy_recursive(space.spaces[i], entry[f"_index_{str(i)}"])
             )
@@ -119,11 +123,12 @@ def _cast_to_numpy_recursive(space: gym.spaces.space, entry: Union[tuple, dict, 
     elif isinstance(space, gym.spaces.Box):
         return np.asarray(entry, dtype=space.dtype)
     else:
-        raise TypeError(f"{type(state)} is not supported.")
+        raise TypeError(
+            f"{type(space)} is not supported. or there is type mismatch with the entry type {type(entry)}"
+        )
 
 
 def convert_hugging_face_dataset_to_minari_dataset(dataset: Dataset):
-
 
     description_data = json.loads(dataset.info.description)
 
@@ -181,10 +186,27 @@ def push_dataset_to_hugging_face(dataset: Dataset, path: str, private: bool = Tr
             "Please log in using the huggingface-hub cli in order to push to a remote dataset."
         )
         return
+
+    metadata_file = io.BytesIO(dataset.info.description.encode("utf-8"))
+
+    upload_file(
+        path_or_fileobj=metadata_file,
+        path_in_repo="metadata.json",
+        repo_id=path,
+        repo_type="dataset",
+    )
+
     dataset.push_to_hub(path, private=private)
 
 
 def pull_dataset_from_hugging_face(path: str) -> Dataset:
-    """Pulls a hugging face dataset froms the HuggingFace respository at the specfied path."""
+    """Pulls a hugging face dataset from the HuggingFace repository at the specified path."""
     hugging_face_dataset = load_dataset(path)
+
+    with open(
+        hf_hub_download(filename="metadata.json", repo_id=path, repo_type="dataset"),
+    ) as metadata_file:
+        metadata_str = metadata_file.read()
+    hugging_face_dataset["train"].info.description = metadata_str
+
     return hugging_face_dataset["train"]

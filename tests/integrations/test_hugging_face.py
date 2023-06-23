@@ -72,13 +72,18 @@ def test_convert_minari_dataset_to_hugging_face_dataset_and_back(dataset_id, env
     check_load_and_delete_dataset(dataset_id)
 
 
-#@pytest.mark.skip(
-#    reason="relies on a private repo, just using this for testing while developing"
-#)
+@pytest.mark.skip(
+    reason="relies on a private repo, if you want to use this test locally, you'll need to change it to point at a repo you control"
+)
 @pytest.mark.parametrize(
     "dataset_id,env_id",
     [
+        ("cartpole-test-v0", "CartPole-v1"),
+        ("dummy-dict-test-v0", "DummyDictEnv-v0"),
+        ("dummy-box-test-v0", "DummyBoxEnv-v0"),
+        ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
         ("dummy-combo-test-v0", "DummyComboEnv-v0"),
+        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDisceteBoxEnv-v0"),
     ],
 )
 def test_hugging_face_push_and_pull_dataset(dataset_id, env_id):
@@ -98,16 +103,12 @@ def test_hugging_face_push_and_pull_dataset(dataset_id, env_id):
     )
 
     hugging_face_dataset = convert_minari_dataset_to_hugging_face_dataset(dataset)
-    print("DATASET INFO BEFORE UPLOADING")
-    print(hugging_face_dataset.info)
 
     push_dataset_to_hugging_face(hugging_face_dataset, "balisujohn/minari_test")
     minari.delete_dataset(dataset_id)
     recovered_hugging_face_dataset = pull_dataset_from_hugging_face(
         "balisujohn/minari_test"
     )
-    print("DATASET INFO AFTER UPLOADING AND DOWNLOADING")
-    print(recovered_hugging_face_dataset.info)
     reconstructed_minari_dataset = convert_hugging_face_dataset_to_minari_dataset(
         recovered_hugging_face_dataset
     )
