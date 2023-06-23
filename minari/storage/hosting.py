@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import glob
+import importlib.metadata
 import os
 import warnings
 from typing import Dict
@@ -8,11 +9,16 @@ from typing import Dict
 import h5py
 from google.cloud import storage  # pyright: ignore [reportGeneralTypeIssues]
 from gymnasium import logger
+from packaging import version
 from tqdm.auto import tqdm  # pyright: ignore [reportMissingModuleSource]
 
 from minari.dataset.minari_dataset import parse_dataset_id
 from minari.storage.datasets_root_dir import get_dataset_path
 from minari.storage.local import load_dataset
+
+
+# Use importlib due to circular import when: "from minari import __version__"
+__version__ = importlib.metadata.version("minari")
 
 
 def upload_dataset(dataset_id: str, path_to_private_key: str):
@@ -132,8 +138,13 @@ def download_dataset(dataset_id: str, force_download: bool = False):
             download_dataset(dataset_id=dataset)
 
 
-def list_remote_datasets() -> Dict[str, Dict[str, str]]:
+def list_remote_datasets(
+    compatible_minari_version: bool = False,
+) -> Dict[str, Dict[str, str]]:
     """Get the names and metadata of all the Minari dataset in the remote Farama server.
+
+    Args:
+        compatible_minari_version (bool): if `True` only the datasets compatible with the current Minari version are returned. Default to `False`.
 
     Returns:
        Dict[str, Dict[str, str]]: keys the names of the Minari datasets and values the metadata
@@ -146,7 +157,12 @@ def list_remote_datasets() -> Dict[str, Dict[str, str]]:
     for blob in blobs:
         try:
             if blob.name.endswith("main_data.hdf5"):
-                remote_datasets[blob.metadata["dataset_id"]] = blob.metadata
+                metadata = blob.metadata
+                if compatible_minari_version and version.parse(
+                    metadata["minari_version"]
+                ) != version.parse(__version__):
+                    continue
+                remote_datasets[blob.metadata["dataset_id"]] = metadata
         except Exception:
             warnings.warn(f"Misconfigured dataset named {blob.name} on remote")
 

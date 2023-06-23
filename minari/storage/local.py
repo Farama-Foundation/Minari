@@ -1,11 +1,17 @@
+import importlib.metadata
 import os
 import shutil
 from typing import Dict, Union
 
 import h5py
+from packaging import version
 
 from minari.dataset.minari_dataset import MinariDataset
 from minari.storage.datasets_root_dir import get_dataset_path
+
+
+# Use importlib due to circular import when: "from minari import __version__"
+__version__ = importlib.metadata.version("minari")
 
 
 def load_dataset(dataset_id: str):
@@ -22,8 +28,13 @@ def load_dataset(dataset_id: str):
     return MinariDataset(data_path)
 
 
-def list_local_datasets() -> Dict[str, Dict[str, Union[str, int, bool]]]:
+def list_local_datasets(
+    compatible_minari_version: bool = False,
+) -> Dict[str, Dict[str, Union[str, int, bool]]]:
     """Get the ids and metadata of all the Minari datasets in the local database.
+
+    Args:
+        compatible_minari_version (bool): if `True` only the datasets compatible with the current Minari version are returned. Default to `False`.
 
     Returns:
        Dict[str, Dict[str, str]]: keys the names of the Minari datasets and values the metadata
@@ -47,6 +58,10 @@ def list_local_datasets() -> Dict[str, Dict[str, Union[str, int, bool]]]:
 
         with h5py.File(main_file_path, "r") as f:
             metadata = dict(f.attrs.items())
+            if compatible_minari_version and version.parse(
+                metadata["minari_version"]
+            ) != version.parse(__version__):
+                continue
             local_datasets[dst_id] = metadata
 
     return local_datasets
