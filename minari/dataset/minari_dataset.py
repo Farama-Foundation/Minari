@@ -99,6 +99,7 @@ class MinariDatasetSpec:
     observation_space: gym.Space
     action_space: gym.Space
     data_path: str
+    minari_version: str
 
     # post-init attributes
     env_name: str | None = field(init=False)
@@ -110,6 +111,7 @@ class MinariDatasetSpec:
         self.env_name, self.dataset_name, self.version = parse_dataset_id(
             self.dataset_id
         )
+        
 
 
 class MinariDataset:
@@ -161,6 +163,7 @@ class MinariDataset:
             observation_space=self._data.observation_space,
             action_space=self._data.action_space,
             data_path=str(self._data.data_path),
+            
         )
         self._total_steps = total_steps
         self._generator = np.random.default_rng()

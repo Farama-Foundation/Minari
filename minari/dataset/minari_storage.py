@@ -11,6 +11,10 @@ from gymnasium.envs.registration import EnvSpec
 from minari.data_collector import DataCollectorV0
 from minari.serialization import deserialize_space
 
+import importlib.metadata
+
+# Use importlib due to circular import when: "from minari import __version__"
+__version__ = importlib.metadata.version('minari')
 
 PathLike = Union[str, bytes, os.PathLike]
 
@@ -38,6 +42,12 @@ class MinariStorage:
             dataset_id = f.attrs["dataset_id"]
             assert isinstance(dataset_id, str)
             self._dataset_id = dataset_id
+
+            minari_version = f.attrs["minari_version"]
+            assert isinstance(minari_version, str)
+
+            # Check that the dataset is compatible with the current version of Minari
+            assert version.parse(__version__) == version.parse(minari_version), f'Dataset {dataset_id} is compatible with Minari version {minari_version}. The Minari version of your system is {__version__}. Please install the appropiate version of Minari through : "pip install minari=={minari_version}'
 
             self._combined_datasets = f.attrs.get("combined_datasets", default=[])
 

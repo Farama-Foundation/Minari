@@ -20,8 +20,13 @@ from minari.storage.datasets_root_dir import get_dataset_path
 
 import importlib.metadata
 
-MINARI_VERSION = importlib.metadata.version('minari')
+# Use importlib due to circular import when: "from minari import __version__"
+__version__ = importlib.metadata.version('minari')
 
+def _check_datasets_to_combine(datasets: List[MinariDataset]):
+    # Check the env_spec
+    # Check the minari version
+    datasets_minari_version = []
 
 class RandomPolicy:
     """A random action selection policy to compute `ref_min_score`."""
@@ -457,7 +462,7 @@ def create_dataset_from_collector_env(
                 "author": str(author),
                 "author_email": str(author_email),
                 "code_permalink": str(code_permalink),
-                "minari_version": MINARI_VERSION,
+                "minari_version": __version__,
             },
         )
         return MinariDataset(data_path)
