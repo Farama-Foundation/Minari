@@ -146,7 +146,7 @@ class DummyTupleEnv(gym.Env):
 class DummyTextEnv(gym.Env):
     def __init__(self):
         self.action_space = spaces.Text(max_length=10, min_length=2, charset="01")
-        utf8_charset = ''.join([chr(i) for i in range(0x100)])
+        utf8_charset = "".join([chr(i) for i in range(0x100)])
         self.observation_space = spaces.Text(max_length=20, charset=utf8_charset)
 
     def step(self, action):
@@ -264,7 +264,7 @@ test_spaces = [
     gym.spaces.Box(low=-1, high=4, shape=(2, 2, 2), dtype=np.float32),
     gym.spaces.Box(low=-1, high=4, shape=(3, 3, 3), dtype=np.float32),
     gym.spaces.Text(max_length=10, min_length=10),
-    gym.spaces.Text(max_length=20, charset=''.join([chr(i) for i in range(0x100)])),
+    gym.spaces.Text(max_length=20, charset="".join([chr(i) for i in range(0x100)])),
     gym.spaces.Text(max_length=10, charset="01"),
     gym.spaces.Tuple(
         (
