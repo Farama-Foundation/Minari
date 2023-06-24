@@ -5,6 +5,8 @@ import importlib.metadata
 import os
 import warnings
 from typing import Any, Callable, Dict, List, Optional, Union
+from packaging.specifiers import SpecifierSet
+from packaging.version import Version
 
 import gymnasium as gym
 import h5py
@@ -24,10 +26,50 @@ from minari.storage.datasets_root_dir import get_dataset_path
 __version__ = importlib.metadata.version("minari")
 
 
-# def _check_datasets_to_combine(datasets: List[MinariDataset]):
-#     # Check the env_spec
-#     # Check the minari version
-#     datasets_minari_version = []
+def _validate_datasets_to_combine(datasets_to_combine: List[MinariDataset]):
+    """Check if the given datasets can be combined.
+    """
+    combined_dataset_env_spec = None
+
+    for dataset in datasets_to_combine:
+        if not isinstance(dataset, MinariDataset):
+            raise ValueError(f"The dataset {dataset} is not of type MinariDataset.")
+        dataset_env_spec = dataset.spec.env_spec
+
+        assert isinstance(dataset_env_spec, EnvSpec)
+        # We have to check that all datasets can be merged by checking that they come from the same
+        # environments. However, we override the time limit max_episode_steps with the max among all
+        # the datasets to be combined. Then we check if the rest of the env_spec attributes are from
+        # the same environment.
+        if combined_dataset_env_spec is None:
+            combined_dataset_env_spec = dataset_env_spec
+        elif dataset_env_spec.max_episode_steps is not None:
+            if combined_dataset_env_spec.max_episode_steps is None:
+                combined_dataset_env_spec.max_episode_steps = (
+                    dataset_env_spec.max_episode_steps
+                )
+            else:
+                if (
+                    combined_dataset_env_spec.max_episode_steps
+                    < dataset_env_spec.max_episode_steps
+                ):
+                    combined_dataset_env_spec.max_episode_steps = (
+                        dataset_env_spec.max_episode_steps
+                    )
+                else:
+                    dataset_env_spec.max_episode_steps = (
+                        combined_dataset_env_spec.max_episode_steps
+                    )
+
+        if combined_dataset_env_spec != dataset_env_spec:
+            raise ValueError(
+                "The datasets to be combined have different values for `env_spec` attribute."
+            )
+
+    # Check the minari version
+    datasets_minari_versions = []
+
+    return combined_dataset_env_spec
 
 
 class RandomPolicy:
@@ -56,9 +98,10 @@ def combine_datasets(
         new_dataset_id (str): name id for the newly created dataset
         copy (bool): whether to copy the data to a new dataset or to create external link (see h5py.ExternalLink)
     """
+    _validate_datasets_to_combine(datasets_to_combine)
+    
     new_dataset_path = get_dataset_path(new_dataset_id)
 
-    # TODO: Make sure that the datasets support the same Minari versions
     # Check if dataset already exists
     if not os.path.exists(new_dataset_path):
         new_dataset_path = os.path.join(new_dataset_path, "data")
@@ -78,7 +121,7 @@ def combine_datasets(
             dataset.spec.dataset_id for dataset in datasets_to_combine
         ]
 
-        current_env_spec = None
+        combined_dataset_env_spec = None
 
         for dataset in datasets_to_combine:
             if not isinstance(dataset, MinariDataset):
@@ -90,27 +133,27 @@ def combine_datasets(
             # environments. However, we override the time limit max_episode_steps with the max among all
             # the datasets to be combined. Then we check if the rest of the env_spec attributes are from
             # the same environment.
-            if current_env_spec is None:
-                current_env_spec = dataset_env_spec
+            if combined_dataset_env_spec is None:
+                combined_dataset_env_spec = dataset_env_spec
             elif dataset_env_spec.max_episode_steps is not None:
-                if current_env_spec.max_episode_steps is None:
-                    current_env_spec.max_episode_steps = (
+                if combined_dataset_env_spec.max_episode_steps is None:
+                    combined_dataset_env_spec.max_episode_steps = (
                         dataset_env_spec.max_episode_steps
                     )
                 else:
                     if (
-                        current_env_spec.max_episode_steps
+                        combined_dataset_env_spec.max_episode_steps
                         < dataset_env_spec.max_episode_steps
                     ):
-                        current_env_spec.max_episode_steps = (
+                        combined_dataset_env_spec.max_episode_steps = (
                             dataset_env_spec.max_episode_steps
                         )
                     else:
                         dataset_env_spec.max_episode_steps = (
-                            current_env_spec.max_episode_steps
+                            combined_dataset_env_spec.max_episode_steps
                         )
 
-            if current_env_spec != dataset_env_spec:
+            if combined_dataset_env_spec != dataset_env_spec:
                 raise ValueError(
                     "The datasets to be combined have different values for `env_spec` attribute."
                 )
@@ -152,8 +195,8 @@ def combine_datasets(
                     "author_email", dataset_file.attrs["author_email"]
                 )
 
-        assert current_env_spec is not None
-        combined_data_file.attrs["env_spec"] = current_env_spec.to_json()
+        assert combined_dataset_env_spec is not None
+        combined_data_file.attrs["env_spec"] = combined_dataset_env_spec.to_json()
 
     return MinariDataset(new_data_path)
 
@@ -221,6 +264,7 @@ def create_dataset_from_buffers(
     author: Optional[str] = None,
     author_email: Optional[str] = None,
     code_permalink: Optional[str] = None,
+    minari_version: Optional[str] = None,
     action_space: Optional[gym.spaces.Space] = None,
     observation_space: Optional[gym.spaces.Space] = None,
     ref_min_score: Optional[float] = None,
@@ -277,6 +321,16 @@ def create_dataset_from_buffers(
             "`author_email` is set to None. For longevity purposes it is highly recommended to provide an author email, or some other obvious contact information.",
             UserWarning,
         )
+    if minari_version is None:
+        warnings.warn(
+            f"`minari_version` is set to None. The compatible dataset version specifier for Minari will be automatically fixed to the installed version {__version__}.",
+            UserWarning,
+        )
+        minari_version = __version__
+    else:
+        # Check if the installed Minari version falls inside the minari_version specifier
+        assert Version(__version__) in SpecifierSet(minari_version), f"The installed Minari version {__version__} is not contained in the dataset version specifier {minari_version}."
+
 
     if observation_space is None:
         observation_space = env.observation_space
@@ -356,7 +410,7 @@ def create_dataset_from_buffers(
                 file.attrs["ref_min_score"] = ref_min_score
                 file.attrs["num_episodes_average_score"] = num_episodes_average_score
             
-            file["minari_version"] = MINARI_VERSION
+            file["minari_version"] = minari_version
 
         return MinariDataset(data_path)
     else:
@@ -376,6 +430,7 @@ def create_dataset_from_collector_env(
     ref_max_score: Optional[float] = None,
     expert_policy: Optional[Callable[[ObsType], ActType]] = None,
     num_episodes_average_score: int = 100,
+    minari_version: Optional[str] = None
 ):
     """Create a Minari dataset using the data collected from stepping with a Gymnasium environment wrapped with a `DataCollectorV0` Minari wrapper.
 
@@ -396,6 +451,7 @@ def create_dataset_from_collector_env(
         expert_policy (Optional[Callable[[ObsType], ActType], optional): policy to compute `ref_max_score` by averaging the returns over a number of episodes equal to  `num_episodes_average_score`.
                                                                         `ref_max_score` and `expert_policy` can't be passed at the same time. Default to None
         num_episodes_average_score (int): number of episodes to average over the returns to compute `ref_min_score` and `ref_max_score`. Default to 100.
+        minari_version (Optional[str], optional): Minari version specifier compatible with the dataset. If None (default) use the installed Minari version.
 
     Returns:
         MinariDataset
@@ -420,6 +476,15 @@ def create_dataset_from_collector_env(
         raise ValueError(
             "Can't pass a value for `expert_policy` and `ref_max_score` at the same time."
         )
+    if minari_version is None:
+        warnings.warn(
+            f"`minari_version` is set to None. The compatible dataset version specifier for Minari will be automatically fixed to the installed version {__version__}.",
+            UserWarning,
+        )
+        minari_version = __version__
+    else:
+        # Check if the installed Minari version falls inside the minari_version specifier
+        assert Version(__version__) in SpecifierSet(minari_version), f"The installed Minari version {__version__} is not contained in the dataset version specifier {minari_version}."
 
     assert collector_env.datasets_path is not None
     dataset_path = os.path.join(collector_env.datasets_path, dataset_id)
@@ -464,7 +529,7 @@ def create_dataset_from_collector_env(
                 "author": str(author),
                 "author_email": str(author_email),
                 "code_permalink": str(code_permalink),
-                "minari_version": __version__,
+                "minari_version": minari_version,
             },
         )
         return MinariDataset(data_path)
