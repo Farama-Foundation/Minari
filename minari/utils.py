@@ -5,6 +5,7 @@ import importlib.metadata
 import os
 import warnings
 from typing import Any, Callable, Dict, List, Optional, Union
+import portion as P
 from packaging.specifiers import SpecifierSet
 from packaging.version import Version
 
@@ -25,8 +26,104 @@ from minari.storage.datasets_root_dir import get_dataset_path
 # Use importlib due to circular import when: "from minari import __version__"
 __version__ = importlib.metadata.version("minari")
 
+def combine_minari_version_specifiers(specifier_set: SpecifierSet):
+    specifiers = sorted(specifiers, key=str)
 
-def _validate_datasets_to_combine(datasets_to_combine: List[MinariDataset]):
+    exclusion_specifiers = filter(lambda spec: spec.operator == '!=', specifiers)
+    inclusion_specifiers = filter(lambda spec: spec.operator != '!=', specifiers)
+
+    inclusion_interval = P.closed(-P.inf, P.inf)
+    
+    for spec in inclusion_specifiers:
+        operator = spec.operator
+        version = spec.version
+        if operator[0] == '>':
+            if operator[-1] == '=':
+                inclusion_interval &= P.closedopen(Version(version), P.inf)
+            else:
+                inclusion_interval &= P.open(Version(version), P.inf)
+        elif operator[0] == '<':
+            if operator[-1] == '=':
+                inclusion_interval &= P.openclosed(-P.inf, Version(version))
+            else:
+                inclusion_interval &= P.open(-P.inf, Version(version))
+        elif operator == '==':
+            if version[-1] == '*':
+                version = Version(version[:-2])      
+                release = list(version.release)
+                release[-1] = 0
+                release[-2] += 1
+                max_release = Version('.'.join(str(r) for r in release))
+                inclusion_interval &= P.closedopen(version, max_release)
+            else: 
+                inclusion_interval &= P.singleton(Version(version))
+        elif operator == '~=':
+            release = list(Version(version).release)
+            release[-1] = 0
+            release[-2] += 1
+            max_release = Version('.'.join(str(r) for r in release))
+            inclusion_interval &= P.closedopen(Version(version), max_release)
+
+    final_version_specifier = SpecifierSet()
+    # Convert the interval to version specifier
+    # If singleton => '==current_minari_version'
+    if inclusion_interval.lower == inclusion_interval.upper:
+        # return
+        final_version_specifier &= f'=={inclusion_interval.lower}'
+
+    # Check '~='
+    if inclusion_interval.lower != -P.inf and inclusion_interval.upper != P.inf:
+        lower_version = Version(str(inclusion_interval.lower))
+        next_release = list(lower_version.release)
+        next_release[-1] = 0
+        next_release[-2] += 1
+        next_release = Version('.'.join(str(r) for r in next_release))
+        upper_version = Version(str(inclusion_interval.upper))
+        if inclusion_interval.left == P.CLOSED and inclusion_interval.left == P.CLOSED and upper_version == next_release:
+            final_version_specifier &= f'~={str(lower_version)}'
+        else:
+            if inclusion_interval.left == P.CLOSED:
+                operator = '>='
+            else:
+                operator = '>'
+            final_version_specifier &= f'{operator}{str(inclusion_interval.lower)}'
+
+            if inclusion_interval.right == P.CLOSED:
+                operator = '<='
+            else:
+                operator = '<'
+            final_version_specifier &= f'{operator}{str(inclusion_interval.upper)}'
+    else:
+        if inclusion_interval.lower != -P.inf:
+            if inclusion_interval.left == P.CLOSED:
+                operator = '>='
+            else:
+                operator = '>'
+            final_version_specifier &= f'{operator}{str(inclusion_interval.lower)}'
+        if inclusion_interval.upper != P.inf:
+            if inclusion_interval.right == P.CLOSED:
+                operator = '<='
+            else:
+                operator = '<'
+            final_version_specifier &= f'{operator}{str(inclusion_interval.upper)}'
+
+    for spec in exclusion_specifiers:
+        version = spec.version
+        if version[-1] == '*':
+            version = Version(version[:-2])      
+            release = list(version.release)
+            release[-1] = 0
+            release[-2] += 1
+            max_release = Version('.'.join(str(r) for r in release))
+            exclusion_interval = P.closedopen(version, max_release)
+            if inclusion_interval.overlaps(exclusion_interval):
+                final_version_specifier &= str(spec)
+        elif version in final_version_specifier:
+            final_version_specifier &= str(spec)
+    
+    return final_version_specifier
+
+def validate_datasets_to_combine(datasets_to_combine: List[MinariDataset]):
     """Check if the given datasets can be combined.
     """
     combined_dataset_env_spec = None
@@ -66,8 +163,14 @@ def _validate_datasets_to_combine(datasets_to_combine: List[MinariDataset]):
                 "The datasets to be combined have different values for `env_spec` attribute."
             )
 
-    # Check the minari version
-    datasets_minari_versions = []
+    # Compute intersection of Minari version specifiers
+    # We don't use pre-releases in Farama
+    # MinariDataset already checks that all datasets are compatible with the installed version of Minari
+    datasets_minari_version_specifiers = SpecifierSet()
+    for dataset in datasets_to_combine:
+        datasets_minari_version_specifiers &= dataset.spec.minari_version
+    
+    minari_version_specifier = combine_minari_version_specifiers(datasets_minari_version_specifiers)
 
     return combined_dataset_env_spec
 
@@ -98,7 +201,7 @@ def combine_datasets(
         new_dataset_id (str): name id for the newly created dataset
         copy (bool): whether to copy the data to a new dataset or to create external link (see h5py.ExternalLink)
     """
-    _validate_datasets_to_combine(datasets_to_combine)
+    validate_datasets_to_combine(datasets_to_combine)
     
     new_dataset_path = get_dataset_path(new_dataset_id)
 

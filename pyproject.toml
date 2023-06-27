@@ -32,6 +32,7 @@ dependencies = [
     "google-cloud-storage==2.5.0",
     "typer[all]==0.7.0",
     "gymnasium>=0.28.1",
+    "portion==2.4.0",
 ]
 dynamic = ["version"]
 
