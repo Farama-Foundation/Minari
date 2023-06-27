@@ -9,7 +9,7 @@ from typing import Dict
 import h5py
 from google.cloud import storage  # pyright: ignore [reportGeneralTypeIssues]
 from gymnasium import logger
-from packaging import version
+from packaging.specifiers import SpecifierSet
 from tqdm.auto import tqdm  # pyright: ignore [reportMissingModuleSource]
 
 from minari.dataset.minari_dataset import parse_dataset_id
@@ -90,6 +90,10 @@ def download_dataset(dataset_id: str, force_download: bool = False):
         dataset_id (str): name id of the Minari dataset
         force_download (bool): boolean flag for force downloading the dataset. Default Value = False
     """
+
+    # Check if minari version is compatible with dataset
+    remote_dataset_ids = list_remote_datasets(compatible_minari_version=True).keys()
+    # if dataset_id not in remote_dataset_ids:
     file_path = get_dataset_path(dataset_id)
     if os.path.exists(file_path):
         if not force_download:
@@ -158,9 +162,7 @@ def list_remote_datasets(
         try:
             if blob.name.endswith("main_data.hdf5"):
                 metadata = blob.metadata
-                if compatible_minari_version and version.parse(
-                    metadata["minari_version"]
-                ) != version.parse(__version__):
+                if compatible_minari_version and __version__ not in SpecifierSet(metadata["minari_version"]):
                     continue
                 remote_datasets[blob.metadata["dataset_id"]] = metadata
         except Exception:
