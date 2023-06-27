@@ -37,8 +37,14 @@ def combine_minari_version_specifiers(specifier_set: SpecifierSet):
     The supported version specifier operators are those in PEP 440(https://peps.python.org/pep-0440/#version-specifiers), 
     except for '==='.
 
+    Args:
+        specifier_set (SpecifierSet): set of all version specifiers to intersect
+
+    Returns:
+        version_specifier (SpecifierSet): resulting version specifier
+
     """
-    specifiers = sorted(specifiers, key=str)
+    specifiers = sorted(specifier_set, key=str)
 
     exclusion_specifiers = filter(lambda spec: spec.operator == '!=', specifiers)
     inclusion_specifiers = filter(lambda spec: spec.operator != '!=', specifiers)
@@ -80,6 +86,7 @@ def combine_minari_version_specifiers(specifier_set: SpecifierSet):
     final_version_specifier = SpecifierSet()
 
     if inclusion_interval.lower == inclusion_interval.upper:
+        assert inclusion_interval.lower == __version__
         final_version_specifier &= f'=={inclusion_interval.lower}'
         # There is just one compatible version of Minari
         return final_version_specifier
