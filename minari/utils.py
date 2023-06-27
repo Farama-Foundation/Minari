@@ -27,10 +27,17 @@ from minari.storage.datasets_root_dir import get_dataset_path
 __version__ = importlib.metadata.version("minari")
 
 def combine_minari_version_specifiers(specifier_set: SpecifierSet):
+    """ Calculates the Minari version specifier dependency intersection between a group of Minari version specifiers.
 
-    # We don't use pre-releases in Farama
-    # MinariDataset already checks that all datasets are compatible with the installed version of Minari
+    Used to calculate the `minari_version` metadata attribute when combining multiple datasets. The function
+    assumes that all the given version specifiers at least contain the current minari version thus the version
+    specifier sets will always intersect. Also, it doesn't take into account any pre-releases since Farama projects 
+    don't use them for versioning.
 
+    The supported version specifier operators are those in PEP 440(https://peps.python.org/pep-0440/#version-specifiers), 
+    except for '==='.
+
+    """
     specifiers = sorted(specifiers, key=str)
 
     exclusion_specifiers = filter(lambda spec: spec.operator == '!=', specifiers)
@@ -38,6 +45,7 @@ def combine_minari_version_specifiers(specifier_set: SpecifierSet):
 
     inclusion_interval = P.closed(-P.inf, P.inf)
     
+    # Intersect the version intervals compatible with the datasets 
     for spec in inclusion_specifiers:
         operator = spec.operator
         version = spec.version
@@ -67,15 +75,15 @@ def combine_minari_version_specifiers(specifier_set: SpecifierSet):
             release[-2] += 1
             max_release = Version('.'.join(str(r) for r in release))
             inclusion_interval &= P.closedopen(Version(version), max_release)
-
+    
+    # Convert the intersection of version intervals to a version specifier
     final_version_specifier = SpecifierSet()
-    # Convert the interval to version specifier
-    # If singleton => '==current_minari_version'
-    if inclusion_interval.lower == inclusion_interval.upper:
-        # return
-        final_version_specifier &= f'=={inclusion_interval.lower}'
 
-    # Check '~='
+    if inclusion_interval.lower == inclusion_interval.upper:
+        final_version_specifier &= f'=={inclusion_interval.lower}'
+        # There is just one compatible version of Minari
+        return final_version_specifier
+    
     if inclusion_interval.lower != -P.inf and inclusion_interval.upper != P.inf:
         lower_version = Version(str(inclusion_interval.lower))
         next_release = list(lower_version.release)
@@ -111,6 +119,8 @@ def combine_minari_version_specifiers(specifier_set: SpecifierSet):
                 operator = '<'
             final_version_specifier &= f'{operator}{str(inclusion_interval.upper)}'
 
+    # If the versions to be excluded fall inside the previous calculated version specifier
+    # add them to the specifier as `!=`
     for spec in exclusion_specifiers:
         version = spec.version
         if version[-1] == '*':
