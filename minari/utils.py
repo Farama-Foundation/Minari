@@ -27,6 +27,10 @@ from minari.storage.datasets_root_dir import get_dataset_path
 __version__ = importlib.metadata.version("minari")
 
 def combine_minari_version_specifiers(specifier_set: SpecifierSet):
+
+    # We don't use pre-releases in Farama
+    # MinariDataset already checks that all datasets are compatible with the installed version of Minari
+
     specifiers = sorted(specifiers, key=str)
 
     exclusion_specifiers = filter(lambda spec: spec.operator == '!=', specifiers)
@@ -125,6 +129,15 @@ def combine_minari_version_specifiers(specifier_set: SpecifierSet):
 
 def validate_datasets_to_combine(datasets_to_combine: List[MinariDataset]):
     """Check if the given datasets can be combined.
+
+    Tests if the datasets were created with the same environment (`env_spec`) and re-calculates the
+    `max_episode_steps` argument.
+
+    Args:
+        datasets_to_combine (List[MinariDataset]): list of MinariDataset to combine
+
+    Returns:
+        combined_dataset_env_spec (EnvSpec): the resulting EnvSpec of combining the MinariDatasets
     """
     combined_dataset_env_spec = None
 
@@ -134,10 +147,9 @@ def validate_datasets_to_combine(datasets_to_combine: List[MinariDataset]):
         dataset_env_spec = dataset.spec.env_spec
 
         assert isinstance(dataset_env_spec, EnvSpec)
-        # We have to check that all datasets can be merged by checking that they come from the same
-        # environments. However, we override the time limit max_episode_steps with the max among all
-        # the datasets to be combined. Then we check if the rest of the env_spec attributes are from
-        # the same environment.
+        
+        # Look for the maximum value of `max_episode_steps` of the environments of all the
+        # datasets to combine and sets that value to the `max_episode_steps` of the combined datset.
         if combined_dataset_env_spec is None:
             combined_dataset_env_spec = dataset_env_spec
         elif dataset_env_spec.max_episode_steps is not None:
@@ -162,15 +174,6 @@ def validate_datasets_to_combine(datasets_to_combine: List[MinariDataset]):
             raise ValueError(
                 "The datasets to be combined have different values for `env_spec` attribute."
             )
-
-    # Compute intersection of Minari version specifiers
-    # We don't use pre-releases in Farama
-    # MinariDataset already checks that all datasets are compatible with the installed version of Minari
-    datasets_minari_version_specifiers = SpecifierSet()
-    for dataset in datasets_to_combine:
-        datasets_minari_version_specifiers &= dataset.spec.minari_version
-    
-    minari_version_specifier = combine_minari_version_specifiers(datasets_minari_version_specifiers)
 
     return combined_dataset_env_spec
 
@@ -200,8 +203,19 @@ def combine_datasets(
         datasets_to_combine (list[MinariDataset]): list of datasets to be combined
         new_dataset_id (str): name id for the newly created dataset
         copy (bool): whether to copy the data to a new dataset or to create external link (see h5py.ExternalLink)
+    
+    Returns:
+        combined_dataset (MinariDataset): the resulting MinariDataset
     """
-    validate_datasets_to_combine(datasets_to_combine)
+
+    combined_dataset_env_spec = validate_datasets_to_combine(datasets_to_combine)
+
+    # Compute intersection of Minari version specifiers
+    datasets_minari_version_specifiers = SpecifierSet()
+    for dataset in datasets_to_combine:
+        datasets_minari_version_specifiers &= dataset.spec.minari_version
+    
+    minari_version_specifier = combine_minari_version_specifiers(datasets_minari_version_specifiers)
     
     new_dataset_path = get_dataset_path(new_dataset_id)
 
@@ -224,43 +238,7 @@ def combine_datasets(
             dataset.spec.dataset_id for dataset in datasets_to_combine
         ]
 
-        combined_dataset_env_spec = None
-
         for dataset in datasets_to_combine:
-            if not isinstance(dataset, MinariDataset):
-                raise ValueError(f"The dataset {dataset} is not of type MinariDataset.")
-            dataset_env_spec = dataset.spec.env_spec
-
-            assert isinstance(dataset_env_spec, EnvSpec)
-            # We have to check that all datasets can be merged by checking that they come from the same
-            # environments. However, we override the time limit max_episode_steps with the max among all
-            # the datasets to be combined. Then we check if the rest of the env_spec attributes are from
-            # the same environment.
-            if combined_dataset_env_spec is None:
-                combined_dataset_env_spec = dataset_env_spec
-            elif dataset_env_spec.max_episode_steps is not None:
-                if combined_dataset_env_spec.max_episode_steps is None:
-                    combined_dataset_env_spec.max_episode_steps = (
-                        dataset_env_spec.max_episode_steps
-                    )
-                else:
-                    if (
-                        combined_dataset_env_spec.max_episode_steps
-                        < dataset_env_spec.max_episode_steps
-                    ):
-                        combined_dataset_env_spec.max_episode_steps = (
-                            dataset_env_spec.max_episode_steps
-                        )
-                    else:
-                        dataset_env_spec.max_episode_steps = (
-                            combined_dataset_env_spec.max_episode_steps
-                        )
-
-            if combined_dataset_env_spec != dataset_env_spec:
-                raise ValueError(
-                    "The datasets to be combined have different values for `env_spec` attribute."
-                )
-
             last_episode_id = combined_data_file.attrs["total_episodes"]
             if copy:
                 with h5py.File(dataset.spec.data_path, "r") as dataset_file:
@@ -300,6 +278,7 @@ def combine_datasets(
 
         assert combined_dataset_env_spec is not None
         combined_data_file.attrs["env_spec"] = combined_dataset_env_spec.to_json()
+        combined_data_file.attrs["minari_version"] = str(minari_version_specifier)
 
     return MinariDataset(new_data_path)
 
