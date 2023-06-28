@@ -1,3 +1,5 @@
+import sys
+import unicodedata
 from typing import Any, Iterable, List, Union
 
 import gymnasium as gym
@@ -9,6 +11,11 @@ from gymnasium.utils.env_checker import data_equivalence
 import minari
 from minari import MinariDataset
 from minari.dataset.minari_storage import MinariStorage
+
+
+unicode_charset = "".join(
+    [chr(i) for i in range(sys.maxunicode) if unicodedata.category(chr(i)) != "Cs"]
+)
 
 
 class DummyBoxEnv(gym.Env):
@@ -146,8 +153,7 @@ class DummyTupleEnv(gym.Env):
 class DummyTextEnv(gym.Env):
     def __init__(self):
         self.action_space = spaces.Text(max_length=10, min_length=2, charset="01")
-        charset = "".join([chr(i) for i in range(0xD800)])
-        self.observation_space = spaces.Text(max_length=20, charset=charset)
+        self.observation_space = spaces.Text(max_length=20, charset=unicode_charset)
 
     def step(self, action):
         terminated = self.timestep > 5
@@ -157,7 +163,7 @@ class DummyTextEnv(gym.Env):
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
-        return self.observation_space.sample(), {}
+        return "者示序袋費欠走立🐝🗓🈸🐿🍯🚆▶️🎧🎇💫", {}
 
 
 class DummyComboEnv(gym.Env):
@@ -264,7 +270,7 @@ test_spaces = [
     gym.spaces.Box(low=-1, high=4, shape=(2, 2, 2), dtype=np.float32),
     gym.spaces.Box(low=-1, high=4, shape=(3, 3, 3), dtype=np.float32),
     gym.spaces.Text(max_length=10, min_length=10),
-    gym.spaces.Text(max_length=20, charset="".join([chr(i) for i in range(0xD800)])),
+    gym.spaces.Text(max_length=20, charset=unicode_charset),
     gym.spaces.Text(max_length=10, charset="01"),
     gym.spaces.Tuple(
         (
