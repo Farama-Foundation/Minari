@@ -464,10 +464,6 @@ def check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
             obs = _reconstuct_obs_or_action_at_index_recursive(
                 episode["observations"], i
             )
-            if not data.observation_space.contains(obs):
-                import pdb
-
-                pdb.set_trace()
             assert data.observation_space.contains(obs)
         for i in range(episode["total_timesteps"]):
             action = _reconstuct_obs_or_action_at_index_recursive(episode["actions"], i)
