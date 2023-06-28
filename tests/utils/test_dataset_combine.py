@@ -90,10 +90,12 @@ def _generate_dataset_with_collector_env(dataset_id: str, num_episodes: int = 10
 
 
 def test_combine_datasets():
+
     num_datasets, num_episodes = 5, 10
     test_datasets_ids = [f"cartpole-test-{i}-v0" for i in range(num_datasets)]
 
     local_datasets = minari.list_local_datasets()
+    print(local_datasets)
     # generating multiple test datasets
     for dataset_id in test_datasets_ids:
         if dataset_id in local_datasets:
@@ -117,6 +119,7 @@ def test_combine_datasets():
         d.spec.total_steps for d in test_datasets
     )
     _check_env_recovery(gym.make("CartPole-v1"), combined_dataset)
+
     _check_load_and_delete_dataset("cartpole-combined-test-v0")
 
     # testing with copy

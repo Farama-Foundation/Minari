@@ -30,6 +30,7 @@ def list_local_datasets() -> Dict[str, Dict[str, Union[str, int, bool]]]:
     """
     datasets_path = get_dataset_path("")
     dataset_ids = sorted([dir_name for dir_name in os.listdir(datasets_path)])
+    print(dataset_ids)
 
     local_datasets = {}
     for dst_id in dataset_ids:

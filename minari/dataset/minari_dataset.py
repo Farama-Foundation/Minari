@@ -2,12 +2,10 @@ from __future__ import annotations
 
 import os
 import re
-from collections import OrderedDict
 from dataclasses import dataclass, field
-from typing import Callable, Dict, Iterable, Iterator, List, Optional, Union
+from typing import Any, Callable, Iterable, Iterator, List, Optional, Union
 
 import gymnasium as gym
-import h5py
 import numpy as np
 from gymnasium import error
 from gymnasium.envs.registration import EnvSpec
@@ -41,56 +39,6 @@ def parse_dataset_id(dataset_id: str) -> tuple[str | None, str, int | None]:
         version = int(version)
 
     return env_name, dataset_name, version
-
-
-def clear_episode_buffer(episode_buffer: Dict, episode_group: h5py.Group) -> h5py.Group:
-    """Save an episode dictionary buffer into an HDF5 episode group recursively.
-
-    Args:
-        episode_buffer (dict): episode buffer
-        episode_group (h5py.Group): HDF5 group to store the episode datasets
-
-    Returns:
-        episode group: filled HDF5 episode group
-    """
-    for key, data in episode_buffer.items():
-        if isinstance(data, dict):
-            if key in episode_group:
-                episode_group_to_clear = episode_group[key]
-            else:
-                episode_group_to_clear = episode_group.create_group(key)
-            clear_episode_buffer(data, episode_group_to_clear)
-        elif all([isinstance(entry, tuple) for entry in data]):
-            # we have a list of tuples, so we need to act appropriately
-            dict_data = {
-                f"_index_{str(i)}": [entry[i] for entry in data]
-                for i, _ in enumerate(data[0])
-            }
-            if key in episode_group:
-                episode_group_to_clear = episode_group[key]
-            else:
-                episode_group_to_clear = episode_group.create_group(key)
-
-            clear_episode_buffer(dict_data, episode_group_to_clear)
-        elif all([isinstance(entry, OrderedDict) for entry in data]):
-
-            # we have a list of OrderedDicts, so we need to act appropriately
-            dict_data = {
-                key: [entry[key] for entry in data] for key, value in data[0].items()
-            }
-
-            if key in episode_group:
-                episode_group_to_clear = episode_group[key]
-            else:
-                episode_group_to_clear = episode_group.create_group(key)
-            clear_episode_buffer(dict_data, episode_group_to_clear)
-        else:
-            # assert data is numpy array
-            assert np.all(np.logical_not(np.isnan(data)))
-            # add seed to attributes
-            episode_group.create_dataset(key, data=data, chunks=True)
-
-    return episode_group
 
 
 @dataclass(frozen=True)
@@ -241,7 +189,7 @@ class MinariDataset:
         """Set seed for random episode sampling generator."""
         self._generator = np.random.default_rng(seed)
 
-    def filter_episodes(self, condition: Callable[[h5py.Group], bool]) -> MinariDataset:
+    def filter_episodes(self, condition: Callable[Any, bool]) -> MinariDataset:
         """Filter the dataset episodes with a condition.
 
         The condition must be a callable with  a single argument, the episode HDF5 group.
@@ -253,7 +201,7 @@ class MinariDataset:
         ```
 
         Args:
-            condition (Callable[[h5py.Group], bool]): callable that accepts an episode group and returns True if certain condition is met.
+            condition (Callable[[Any], bool]): callable that accepts any type(For our current backend, an h5py episode group) and returns True if certain condition is met.
         """
         mask = self._data.apply(condition, episode_indices=self._episode_indices)
         assert self._episode_indices is not None
@@ -307,30 +255,15 @@ class MinariDataset:
             f"additional_data_{self._additional_data_id}.hdf5",
         )
 
-        collector_env.save_to_disk(path=new_data_file_path)
+        self._data.update_from_collector_env(
+            collector_env, new_data_file_path, self._additional_data_id
+        )
 
-        with h5py.File(new_data_file_path, "r", track_order=True) as new_data_file:
-            new_data_total_episodes = new_data_file.attrs["total_episodes"]
-            new_data_total_steps = new_data_file.attrs["total_steps"]
-
-        with h5py.File(self._data.data_path, "a", track_order=True) as file:
-            last_episode_id = file.attrs["total_episodes"]
-            for id in range(new_data_total_episodes):
-                file[f"episode_{last_episode_id + id}"] = h5py.ExternalLink(
-                    f"additional_data_{self._additional_data_id}.hdf5", f"/episode_{id}"
-                )
-                file[f"episode_{last_episode_id + id}"].attrs.modify(
-                    "id", last_episode_id + id
-                )
-
-            # Update metadata of minari dataset
-            file.attrs.modify(
-                "total_episodes", last_episode_id + new_data_total_episodes
-            )
-            file.attrs.modify(
-                "total_steps", file.attrs["total_steps"] + new_data_total_steps
-            )
         self._additional_data_id += 1
+
+        self._episode_indices = np.arange(self._data.total_episodes)
+
+        self.spec.total_episodes = self.total_episodes
 
     def update_dataset_from_buffer(self, buffer: List[dict]):
         """Additional data can be added to the Minari Dataset from a list of episode dictionary buffers.
@@ -347,42 +280,11 @@ class MinariDataset:
         Args:
             buffer (list[dict]): list of episode dictionary buffers to add to dataset
         """
-        additional_steps = 0
-        with h5py.File(self.spec.data_path, "a", track_order=True) as file:
-            last_episode_id = file.attrs["total_episodes"]
-            for i, eps_buff in enumerate(buffer):
-                episode_id = last_episode_id + i
-                # check episode terminated or truncated
-                assert (
-                    eps_buff["terminations"][-1] or eps_buff["truncations"][-1]
-                ), "Each episode must be terminated or truncated before adding it to a Minari dataset"
-                assert len(eps_buff["actions"]) + 1 == len(
-                    eps_buff["observations"]
-                ), f"Number of observations {len(eps_buff['observations'])} must have an additional \
-                                                                                        element compared to the number of action steps {len(eps_buff['actions'])} \
-                                                                                        The initial and final observation must be included"
-                seed = eps_buff.pop("seed", None)
-                episode_group = clear_episode_buffer(
-                    eps_buff, file.create_group(f"episode_{episode_id}")
-                )
+        self._data.update_from_buffer(buffer, self.spec.data_path)
 
-                episode_group.attrs["id"] = episode_id
-                total_steps = len(eps_buff["actions"])
-                episode_group.attrs["total_steps"] = total_steps
-                additional_steps += total_steps
+        self._episode_indices = np.arange(self._data.total_episodes)
 
-                if seed is None:
-                    episode_group.attrs["seed"] = str(None)
-                else:
-                    assert isinstance(seed, int)
-                    episode_group.attrs["seed"] = seed
-
-                # TODO: save EpisodeMetadataCallback callback in MinariDataset and update new episode group metadata
-
-            file.attrs.modify("total_episodes", last_episode_id + len(buffer))
-            file.attrs.modify(
-                "total_steps", file.attrs["total_steps"] + additional_steps
-            )
+        self.spec.total_episodes = self.total_episodes
 
     def __iter__(self):
         return self.iterate_episodes()
