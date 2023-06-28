@@ -192,7 +192,7 @@ class MinariDataset:
         self._additional_data_id = 0
         if episode_indices is None:
             episode_indices = np.arange(self._data.total_episodes)
-        self.episode_indices = episode_indices
+        self.episode_indices: np.ndarray = episode_indices
 
         self.spec = MinariDatasetSpec(
             env_spec=self._data.env_spec,
