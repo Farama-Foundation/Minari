@@ -95,7 +95,6 @@ def test_combine_datasets():
     test_datasets_ids = [f"cartpole-test-{i}-v0" for i in range(num_datasets)]
 
     local_datasets = minari.list_local_datasets()
-    print(local_datasets)
     # generating multiple test datasets
     for dataset_id in test_datasets_ids:
         if dataset_id in local_datasets:

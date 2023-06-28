@@ -124,8 +124,7 @@ def test_update_dataset_from_collector_env(dataset_id, env_id):
     ],
 )
 def test_filter_episodes(dataset_id, env_id):
-    """Tests to make sure that episodes are filtered and sampled correctly. These tests are combined because filter_episodes creates a filtered dataset
-    and it is necessary to create a filtered dataset to see if"""
+    """Tests to make sure that episodes are filtered and sampled correctly."""
     local_datasets = minari.list_local_datasets()
     if dataset_id in local_datasets:
         minari.delete_dataset(dataset_id)
@@ -189,7 +188,7 @@ def test_sample_episodes(dataset_id, env_id):
 
     filtered_dataset = dataset.filter_episodes(filter_by_index)
     for i in [1, 7]:
-        episodes = filtered_dataset.sample_episodes(i)
+        episodes = list(filtered_dataset.sample_episodes(i))
         assert len(episodes) == i
         check_episode_data_integrity(
             episodes,
@@ -324,6 +323,6 @@ def test_update_dataset_from_buffer(dataset_id, env_id):
     check_data_integrity(dataset._data, dataset.episode_indices)
     check_env_recovery(env, dataset)
 
-    env.close()
+    collector_env.close()
 
     check_load_and_delete_dataset(dataset_id)

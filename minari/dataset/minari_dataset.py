@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 import re
 from dataclasses import dataclass, field
-from typing import Any, Callable, Iterable, Iterator, List, Optional, Union
+from typing import Callable, Iterable, Iterator, List, Optional, Union
 
 import gymnasium as gym
 import numpy as np
@@ -189,7 +189,7 @@ class MinariDataset:
         """Set seed for random episode sampling generator."""
         self._generator = np.random.default_rng(seed)
 
-    def filter_episodes(self, condition: Callable[Any, bool]) -> MinariDataset:
+    def filter_episodes(self, condition: Callable[..., bool]) -> MinariDataset:
         """Filter the dataset episodes with a condition.
 
         The condition must be a callable with  a single argument, the episode HDF5 group.

@@ -88,7 +88,6 @@ class MinariStorage:
                 ep_group = file[f"episode_{ep_idx}"]
                 assert isinstance(ep_group, h5py.Group)
                 out.append(function(ep_group))
-                print(ep_group)
 
         return out
 
@@ -151,7 +150,7 @@ class MinariStorage:
         self,
         collector_env: DataCollectorV0,
         new_data_file_path: str,
-        additional_data_id: str,
+        additional_data_id: int,
     ):
 
         collector_env.save_to_disk(path=new_data_file_path)
