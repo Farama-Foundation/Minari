@@ -256,13 +256,10 @@ class DataCollectorV0(gym.Wrapper):
         if clear_buffers:
             self.clear_buffer_to_tmp_file()
 
-        # add new episode buffer to global buffer when episode finishes with truncation or termination
         if clear_buffers or step_data["terminations"] or step_data["truncations"]:
             self._buffer.append({})
 
-        # Increase episode count when step is term/trunc and only after clearing buffers to tmp file
         if step_data["terminations"] or step_data["truncations"]:
-            # New episode
             self._episode_id += 1
 
         return obs, rew, terminated, truncated, info
@@ -389,8 +386,6 @@ class DataCollectorV0(gym.Wrapper):
                         and key in episode_group
                     ):
                         current_dataset_shape = episode_group[key].shape[0]
-                        if key == "observations":
-                            current_dataset_shape += 1
                         episode_group[key].resize(
                             current_dataset_shape + len(data), axis=0
                         )
