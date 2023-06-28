@@ -27,7 +27,7 @@ from minari.storage.datasets_root_dir import get_dataset_path
 __version__ = importlib.metadata.version("minari")
 
 def combine_minari_version_specifiers(specifier_set: SpecifierSet):
-    """ Calculates the Minari version specifier dependency intersection between a group of Minari version specifiers.
+    """Calculates the Minari version specifier by intersecting a group of Minari version specifiers.
 
     Used to calculate the `minari_version` metadata attribute when combining multiple datasets. The function
     assumes that all the given version specifiers at least contain the current minari version thus the version

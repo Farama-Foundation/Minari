@@ -92,8 +92,16 @@ def download_dataset(dataset_id: str, force_download: bool = False):
     """
 
     # Check if minari version is compatible with dataset
+    download_env_name, download_dataset_name, _ = parse_dataset_id(dataset_id)
     remote_dataset_ids = list_remote_datasets(compatible_minari_version=True).keys()
-    # if dataset_id not in remote_dataset_ids:
+    
+    # If dataset_id not in remote, version not compatible. Check if there are any compatible versions.
+    if dataset_id not in remote_dataset_ids:
+        available_versions = []
+        for id in remote_dataset_ids:
+            env_name, dataset_name, version = parse_dataset_id(id)
+            if download_env_name == env_name and download_dataset_name == dataset_name:
+                available_versions.append(version)
     file_path = get_dataset_path(dataset_id)
     if os.path.exists(file_path):
         if not force_download:
@@ -171,7 +179,7 @@ def list_remote_datasets(
     return remote_datasets
 
 
-def find_highest_remote_version(env_name: str, dataset_name: str) -> int | None:
+def find_highest_remote_version(env_name: str, dataset_name: str, compatible_minari_version: bool = False) -> int | None:
     """Finds the highest registered version in the remote Farama server of the dataset given.
 
     Args:
@@ -182,7 +190,7 @@ def find_highest_remote_version(env_name: str, dataset_name: str) -> int | None:
     """
     version: list[int] = []
 
-    for dataset_id in list_remote_datasets().keys():
+    for dataset_id in list_remote_datasets(compatible_minari_version).keys():
         remote_env_name, remote_dataset_name, remote_version = parse_dataset_id(
             dataset_id
         )
