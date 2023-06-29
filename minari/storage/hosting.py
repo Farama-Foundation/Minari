@@ -92,16 +92,29 @@ def download_dataset(dataset_id: str, force_download: bool = False):
     """
 
     # Check if minari version is compatible with dataset
-    download_env_name, download_dataset_name, _ = parse_dataset_id(dataset_id)
+    download_env_name, download_dataset_name, download_version = parse_dataset_id(dataset_id)
     remote_dataset_ids = list_remote_datasets(compatible_minari_version=True).keys()
     
-    # If dataset_id not in remote, version not compatible. Check if there are any compatible versions.
+    # If dataset_id not in remote, version is not compatible. Check and suggest other compatible versions.
     if dataset_id not in remote_dataset_ids:
         available_versions = []
         for id in remote_dataset_ids:
             env_name, dataset_name, version = parse_dataset_id(id)
             if download_env_name == env_name and download_dataset_name == dataset_name:
                 available_versions.append(version)
+            
+        if available_versions:
+            available_datasets = [f'{download_env_name}-{download_dataset_name}-v{version}' for version in available_versions]
+            raise ValueError(f"The version you are trying to download for this dataset, v{download_version}, is not compatible with\
+                                your local installed version of Minari, {__version__}. We found other dataset versions that are compatible: {', '.join(available_datasets)}")
+        else:
+            raise ValueError(f"No datasets or other versions of it were found for dataset id {dataset_id} in the Farama server. Are you sure\
+                                this is the dataset you are looking for?")
+
+    higher_version = find_highest_remote_version(download_env_name, download_dataset_name, True)
+    if higher_version > download_version:
+        logger.warn(f"We recommend you install a higher dataset version available and compatible with your local installed Minari version: {download_env_name}-{download_dataset_name}-v{higher_version}.")
+    
     file_path = get_dataset_path(dataset_id)
     if os.path.exists(file_path):
         if not force_download:
@@ -136,6 +149,7 @@ def download_dataset(dataset_id: str, force_download: bool = False):
 
     print(f"\nDataset {dataset_id} downloaded to {file_path}")
 
+    # 
     combined_datasets = load_dataset(dataset_id).spec.combined_datasets
 
     # If the dataset is a combination of other datasets download the subdatasets recursively
