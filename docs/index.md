@@ -25,6 +25,7 @@ api/data_collector
 :glob:
 :caption: Tutorials
 tutorials/**/index
+tutorials/q_learning_torch
 ```
 
 ```{toctree}
