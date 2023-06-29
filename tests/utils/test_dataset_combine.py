@@ -90,7 +90,6 @@ def _generate_dataset_with_collector_env(dataset_id: str, num_episodes: int = 10
 
 
 def test_combine_datasets():
-
     num_datasets, num_episodes = 5, 10
     test_datasets_ids = [f"cartpole-test-{i}-v0" for i in range(num_datasets)]
 
