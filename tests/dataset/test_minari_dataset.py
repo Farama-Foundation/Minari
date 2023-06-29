@@ -123,8 +123,11 @@ def test_update_dataset_from_collector_env(dataset_id, env_id):
         ("dummy-tuple-discrete-box-test-v0", "DummyTupleDisceteBoxEnv-v0"),
     ],
 )
-def test_filter_episodes(dataset_id, env_id):
-    """Tests to make sure that episodes are filtered and sampled correctly."""
+def test_filter_episodes_and_subsequent_updates(dataset_id, env_id):
+    """Tests to make sure that episodes are filtered filtered correctly.
+
+    Additionally ensures indices are correctly updated when adding more episodes to a filtered dataset.
+    """
     local_datasets = minari.list_local_datasets()
     if dataset_id in local_datasets:
         minari.delete_dataset(dataset_id)
@@ -139,7 +142,7 @@ def test_filter_episodes(dataset_id, env_id):
     )
 
     def filter_by_index(episode: Any):
-        return int(episode.attrs.get("id")) >= 3
+        return int(episode.attrs.get("id")) <= 6
 
     filtered_dataset = dataset.filter_episodes(filter_by_index)
 
@@ -153,7 +156,137 @@ def test_filter_episodes(dataset_id, env_id):
     )  # checks that the underlying episodes are still present in the `MinariStorage` object
     check_env_recovery(env.env, filtered_dataset)
 
+    # Step the environment, DataCollectorV0 wrapper will do the data collection job
+    env.reset(seed=42)
+
+    for episode in range(num_episodes):
+        terminated = False
+        truncated = False
+        while not terminated and not truncated:
+            action = env.action_space.sample()  # User-defined policy function
+            _, _, terminated, truncated, _ = env.step(action)
+            if terminated or truncated:
+                assert not env._buffer[-1]
+            else:
+                assert env._buffer[-1]
+
+        env.reset()
+
+    filtered_dataset.update_dataset_from_collector_env(env)
+
+    assert isinstance(filtered_dataset, MinariDataset)
+    assert filtered_dataset.total_episodes == 17
+    assert filtered_dataset.spec.total_episodes == 20
+    assert tuple(filtered_dataset.episode_indices) == (
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+    )
+    print(dataset._episode_indices)
+    assert filtered_dataset._data.total_episodes == 20
+    assert dataset._data.total_episodes == 20
+    check_env_recovery(env.env, filtered_dataset)
+
     env.close()
+
+    env = gym.make(env_id)
+    buffer = []
+
+    observations = []
+    actions = []
+    rewards = []
+    terminations = []
+    truncations = []
+
+    num_episodes = 10
+
+    observation, info = env.reset(seed=42)
+
+    observation, _ = env.reset()
+    observations.append(observation)
+    for episode in range(num_episodes):
+        terminated = False
+        truncated = False
+
+        while not terminated and not truncated:
+            action = env.action_space.sample()  # User-defined policy function
+            observation, reward, terminated, truncated, _ = env.step(action)
+            observations.append(observation)
+            actions.append(action)
+            rewards.append(reward)
+            terminations.append(terminated)
+            truncations.append(truncated)
+
+        episode_buffer = {
+            "observations": copy.deepcopy(observations),
+            "actions": copy.deepcopy(actions),
+            "rewards": np.asarray(rewards),
+            "terminations": np.asarray(terminations),
+            "truncations": np.asarray(truncations),
+        }
+        buffer.append(episode_buffer)
+
+        observations.clear()
+        actions.clear()
+        rewards.clear()
+        terminations.clear()
+        truncations.clear()
+
+        observation, _ = env.reset()
+        observations.append(observation)
+
+    filtered_dataset.update_dataset_from_buffer(buffer)
+
+    assert isinstance(filtered_dataset, MinariDataset)
+    assert filtered_dataset.total_episodes == 27
+    assert filtered_dataset.spec.total_episodes == 30
+    assert tuple(filtered_dataset.episode_indices) == (
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+    )
+    print(dataset._episode_indices)
+    assert filtered_dataset._data.total_episodes == 30
+    assert dataset._data.total_episodes == 30
+    check_env_recovery(env, filtered_dataset)
 
     check_load_and_delete_dataset(dataset_id)
 

@@ -255,15 +255,21 @@ class MinariDataset:
             f"additional_data_{self._additional_data_id}.hdf5",
         )
 
+        old_total_episodes = self._data.total_episodes
+
         self._data.update_from_collector_env(
             collector_env, new_data_file_path, self._additional_data_id
         )
 
+        new_total_episodes = self._data._total_episodes
+
         self._additional_data_id += 1
 
-        self._episode_indices = np.arange(self._data.total_episodes)
+        self._episode_indices = np.append(
+            self._episode_indices, np.arange(old_total_episodes, new_total_episodes)
+        )  # ~= np.append(self._episode_indices,np.arange(self._data.total_episodes))
 
-        self.spec.total_episodes = self.total_episodes
+        self.spec.total_episodes = self._data.total_episodes
 
     def update_dataset_from_buffer(self, buffer: List[dict]):
         """Additional data can be added to the Minari Dataset from a list of episode dictionary buffers.
@@ -280,11 +286,17 @@ class MinariDataset:
         Args:
             buffer (list[dict]): list of episode dictionary buffers to add to dataset
         """
+        old_total_episodes = self._data.total_episodes
+
         self._data.update_from_buffer(buffer, self.spec.data_path)
 
-        self._episode_indices = np.arange(self._data.total_episodes)
+        new_total_episodes = self._data._total_episodes
 
-        self.spec.total_episodes = self.total_episodes
+        self._episode_indices = np.append(
+            self._episode_indices, np.arange(old_total_episodes, new_total_episodes)
+        )  # ~= np.append(self._episode_indices,np.arange(self._data.total_episodes))
+
+        self.spec.total_episodes = self._data.total_episodes
 
     def __iter__(self):
         return self.iterate_episodes()
