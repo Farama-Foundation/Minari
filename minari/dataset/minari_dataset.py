@@ -19,7 +19,7 @@ DATASET_ID_RE = re.compile(
 )
 
 
-def parse_dataset_id(dataset_id: str) -> tuple[str | None, str, int | None]:
+def parse_dataset_id(dataset_id: str) -> tuple[str | None, str, int]:
     """Parse dataset ID string format - ``(env_name-)(dataset_name)(-v(version))``.
 
     Args:
@@ -35,8 +35,8 @@ def parse_dataset_id(dataset_id: str) -> tuple[str | None, str, int | None]:
             f"Malformed dataset ID: {dataset_id}. (Currently all IDs must be of the form (env_name-)(dataset_name)-v(version). (namespace is optional))"
         )
     env_name, dataset_name, version = match.group("environment", "dataset", "version")
-    if version is not None:
-        version = int(version)
+
+    version = int(version)
 
     return env_name, dataset_name, version
 

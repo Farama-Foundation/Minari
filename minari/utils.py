@@ -230,7 +230,6 @@ def combine_datasets(
     Returns:
         combined_dataset (MinariDataset): the resulting MinariDataset
     """
-
     combined_dataset_env_spec = validate_datasets_to_combine(datasets_to_combine)
 
     # Compute intersection of Minari version specifiers
