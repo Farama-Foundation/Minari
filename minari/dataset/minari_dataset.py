@@ -143,7 +143,7 @@ class MinariDataset:
 
         self._episode_indices = episode_indices
 
-        assert isinstance(self._episode_indices, np.ndarray)
+        assert self._episode_indices is not None
 
         total_steps = sum(
             [
