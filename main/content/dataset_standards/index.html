@@ -19,7 +19,7 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=6342a809aabeb35cfac296000cfa245808bc1d78" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=093e2efd5a2c7b46ab7c7157e45f5f05a1e0a463" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/termynal.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/directory_tree.css" />
@@ -938,12 +938,12 @@
 <section id="observation-and-action-spaces">
 <h2>Observation and Action Spaces<a class="headerlink" href="#observation-and-action-spaces" title="Permalink to this heading">#</a></h2>
 <p>The Minari storage format supports the following observation and action spaces:</p>
-<section id="observation-spaces">
-<h3>Observation Spaces<a class="headerlink" href="#observation-spaces" title="Permalink to this heading">#</a></h3>
+<section id="supported-spaces">
+<h3>Supported Spaces<a class="headerlink" href="#supported-spaces" title="Permalink to this heading">#</a></h3>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
-<tr class="row-odd"><th class="head"><p>Observation Space</p></th>
+<tr class="row-odd"><th class="head"><p>Space</p></th>
 <th class="head"><p>Description</p></th>
 </tr>
 </thead>
@@ -960,31 +960,8 @@
 <tr class="row-odd"><td><p><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/dict.py">Dict</a></p></td>
 <td><p>Represents a dictionary of spaces.</p></td>
 </tr>
-</tbody>
-</table>
-</div>
-</section>
-<section id="action-spaces">
-<h3>Action Spaces<a class="headerlink" href="#action-spaces" title="Permalink to this heading">#</a></h3>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p>Action Space</p></th>
-<th class="head"><p>Description</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/discrete.py">Discrete</a></p></td>
-<td><p>Describes a discrete space where <code class="docutils literal notranslate"><span class="pre">{0,</span> <span class="pre">1,</span> <span class="pre">...,</span> <span class="pre">n-1}</span></code> are the possible values our action can take. An optional argument can be used to shift the values to <code class="docutils literal notranslate"><span class="pre">{a,</span> <span class="pre">a+1,</span> <span class="pre">...,</span> <span class="pre">a+n-1}</span></code>.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/box.py">Box</a></p></td>
-<td><p>An n-dimensional continuous space. The <code class="docutils literal notranslate"><span class="pre">upper</span></code> and <code class="docutils literal notranslate"><span class="pre">lower</span></code> arguments can be used to define bounded spaces.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/tuple.py">Tuple</a></p></td>
-<td><p>Represents a tuple of spaces.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/dict.py">Dict</a></p></td>
-<td><p>Represents a dictionary of spaces.</p></td>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/text.py">Text</a></p></td>
+<td><p>The elements of this space are bounded strings from a charset. Note: at the moment, we don’t guarantee support for all surrogate pairs.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1078,8 +1055,7 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#observation-and-action-spaces">Observation and Action Spaces</a><ul>
-<li><a class="reference internal" href="#observation-spaces">Observation Spaces</a></li>
-<li><a class="reference internal" href="#action-spaces">Action Spaces</a><ul>
+<li><a class="reference internal" href="#supported-spaces">Supported Spaces</a><ul>
 <li><a class="reference internal" href="#space-serialization">Space Serialization</a></li>
 </ul>
 </li>

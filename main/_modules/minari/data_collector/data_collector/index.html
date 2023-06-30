@@ -18,7 +18,7 @@
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?digest=6342a809aabeb35cfac296000cfa245808bc1d78" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?digest=093e2efd5a2c7b46ab7c7157e45f5f05a1e0a463" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/css/termynal.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/css/directory_tree.css" />
@@ -579,19 +579,26 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_step_id</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_buffer_steps</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step_id</span> <span class="o">!=</span> <span class="mi">0</span>
             <span class="p">)</span>
 
-        <span class="c1"># Get initial observation from previous episode if reset has not been called after termination or truncation</span>
-        <span class="c1"># This may happen if the step_data_callback truncates or terminates the episode under certain conditions.</span>
+        <span class="c1"># Get initial observation/info from previous episode if reset has not been called after termination</span>
+        <span class="c1"># or truncation. This may happen if the step_data_callback truncates or terminates the episode under</span>
+        <span class="c1"># certain conditions.</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_episode</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reset_called</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_to_episode_buffer</span><span class="p">(</span>
-                <span class="p">{},</span> <span class="p">{</span><span class="s2">&quot;observations&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_previous_eps_final_obs</span><span class="p">}</span>
-            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;observations&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_previous_eps_final_obs</span><span class="p">]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_record_infos</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;infos&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_to_episode_buffer</span><span class="p">(</span>
+                    <span class="p">{},</span> <span class="bp">self</span><span class="o">.</span><span class="n">_previous_eps_final_info</span>
+                <span class="p">)</span>
+
             <span class="bp">self</span><span class="o">.</span><span class="n">_new_episode</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="c1"># add step data to last episode buffer</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_to_episode_buffer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">step_data</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;terminations&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;truncations&quot;</span><span class="p">]:</span>
+            <span class="c1"># Save last observation/info to use as initial observation/info in the next episode</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_previous_eps_final_obs</span> <span class="o">=</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;observations&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_record_infos</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_previous_eps_final_info</span> <span class="o">=</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;infos&quot;</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_reset_called</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_new_episode</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;seed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_seed</span>  <span class="c1"># type: ignore</span>
@@ -602,13 +609,10 @@
         <span class="k">if</span> <span class="n">clear_buffers</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">clear_buffer_to_tmp_file</span><span class="p">()</span>
 
-        <span class="c1"># add new episode buffer to global buffer when episode finishes with truncation or termination</span>
         <span class="k">if</span> <span class="n">clear_buffers</span> <span class="ow">or</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;terminations&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;truncations&quot;</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">append</span><span class="p">({})</span>
 
-        <span class="c1"># Increase episode count when step is term/trunc and only after clearing buffers to tmp file</span>
         <span class="k">if</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;terminations&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;truncations&quot;</span><span class="p">]:</span>
-            <span class="c1"># New episode</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_episode_id</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span>
@@ -694,76 +698,58 @@
 <span class="sd">            &quot;&quot;&quot;</span>
             <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">dictionary_buffer</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-
-                    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">episode_group</span><span class="p">:</span>
-                        <span class="n">eps_group_to_clear</span> <span class="o">=</span> <span class="n">episode_group</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">eps_group_to_clear</span> <span class="o">=</span> <span class="n">episode_group</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                    <span class="n">eps_group_to_clear</span> <span class="o">=</span> <span class="n">episode_group</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                        <span class="n">key</span><span class="p">,</span> <span class="n">episode_group</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                    <span class="p">)</span>
                     <span class="n">clear_buffer</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">eps_group_to_clear</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="nb">all</span><span class="p">([</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">)</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]):</span>
+                <span class="k">elif</span> <span class="nb">all</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">elem</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">),</span> <span class="n">data</span><span class="p">)):</span>
                     <span class="c1"># we have a list of tuples, so we need to act appropriately</span>
                     <span class="n">dict_data</span> <span class="o">=</span> <span class="p">{</span>
                         <span class="sa">f</span><span class="s2">&quot;_index_</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">entry</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
                         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
                     <span class="p">}</span>
-                    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">episode_group</span><span class="p">:</span>
-                        <span class="n">eps_group_to_clear</span> <span class="o">=</span> <span class="n">episode_group</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">eps_group_to_clear</span> <span class="o">=</span> <span class="n">episode_group</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                    <span class="n">eps_group_to_clear</span> <span class="o">=</span> <span class="n">episode_group</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                        <span class="n">key</span><span class="p">,</span> <span class="n">episode_group</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                    <span class="p">)</span>
                     <span class="n">clear_buffer</span><span class="p">(</span><span class="n">dict_data</span><span class="p">,</span> <span class="n">eps_group_to_clear</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="nb">all</span><span class="p">([</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">entry</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">)</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]):</span>
-
+                <span class="k">elif</span> <span class="nb">all</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">elem</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">),</span> <span class="n">data</span><span class="p">)):</span>
                     <span class="c1"># we have a list of OrderedDicts, so we need to act appropriately</span>
                     <span class="n">dict_data</span> <span class="o">=</span> <span class="p">{</span>
                         <span class="n">key</span><span class="p">:</span> <span class="p">[</span><span class="n">entry</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
                         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
                     <span class="p">}</span>
-
-                    <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">episode_group</span><span class="p">:</span>
-                        <span class="n">eps_group_to_clear</span> <span class="o">=</span> <span class="n">episode_group</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">eps_group_to_clear</span> <span class="o">=</span> <span class="n">episode_group</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                    <span class="n">eps_group_to_clear</span> <span class="o">=</span> <span class="n">episode_group</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                        <span class="n">key</span><span class="p">,</span> <span class="n">episode_group</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                    <span class="p">)</span>
                     <span class="n">clear_buffer</span><span class="p">(</span><span class="n">dict_data</span><span class="p">,</span> <span class="n">eps_group_to_clear</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="c1"># convert data to numpy</span>
-                    <span class="n">np_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-                    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span>
-                        <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">np_data</span><span class="p">))</span>
-                    <span class="p">),</span> <span class="s2">&quot;Nan found after cast to nump array, check the type of &#39;data&#39;.&quot;</span>
+                    <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">elem</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span> <span class="n">data</span><span class="p">)):</span>
+                        <span class="n">data_shape</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),)</span>
+                        <span class="n">dtype</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">string_dtype</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+                        <span class="n">data_shape</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span>
+                        <span class="n">dtype</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">dtype</span>
+                        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span>
+                            <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+                        <span class="p">),</span> <span class="s2">&quot;Nan found after cast to nump array, check the type of &#39;data&#39;.&quot;</span>
 
-                    <span class="c1"># Check if last episode group is terminated or truncated</span>
                     <span class="k">if</span> <span class="p">(</span>
                         <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_episode_group_term_or_trunc</span>
                         <span class="ow">and</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">episode_group</span>
                     <span class="p">):</span>
-                        <span class="c1"># Append to last episode group datasets</span>
-                        <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">STEP_DATA_KEYS</span> <span class="ow">and</span> <span class="n">key</span> <span class="o">!=</span> <span class="s2">&quot;infos&quot;</span><span class="p">:</span>
-                            <span class="c1"># check current dataset size directly from hdf5 since</span>
-                            <span class="c1"># non step data (actions, obs, rew, term, trunc) may not be</span>
-                            <span class="c1"># added in a per-step/sequential basis, including &quot;infos&quot;</span>
-                            <span class="n">current_dataset_shape</span> <span class="o">=</span> <span class="n">episode_group</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                        <span class="k">else</span><span class="p">:</span>
-                            <span class="n">current_dataset_shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_episode_n_steps</span>
-                            <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;observations&quot;</span><span class="p">:</span>
-                                <span class="n">current_dataset_shape</span> <span class="o">+=</span> <span class="p">(</span>
-                                    <span class="mi">1</span>  <span class="c1"># include initial observation</span>
-                                <span class="p">)</span>
+                        <span class="n">current_dataset_shape</span> <span class="o">=</span> <span class="n">episode_group</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
                         <span class="n">episode_group</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span>
                             <span class="n">current_dataset_shape</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
                         <span class="p">)</span>
-                        <span class="n">episode_group</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np_data</span>
+                        <span class="n">episode_group</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">data</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">if</span> <span class="ow">not</span> <span class="n">current_episode_group_term_or_trunc</span><span class="p">:</span>
-                            <span class="c1"># Create resizable datasets</span>
-                            <span class="n">episode_group</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span>
-                                <span class="n">key</span><span class="p">,</span>
-                                <span class="n">data</span><span class="o">=</span><span class="n">np_data</span><span class="p">,</span>
-                                <span class="n">maxshape</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,)</span> <span class="o">+</span> <span class="n">np_data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span>
-                                <span class="n">chunks</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-                            <span class="p">)</span>
-                        <span class="k">else</span><span class="p">:</span>
-                            <span class="c1"># Dump everything to episode group</span>
-                            <span class="n">episode_group</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">np_data</span><span class="p">,</span> <span class="n">chunks</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                            <span class="n">data_shape</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,)</span> <span class="o">+</span> <span class="n">data_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>  <span class="c1"># resizable dataset</span>
+
+                        <span class="n">episode_group</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span>
+                            <span class="n">key</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">maxshape</span><span class="o">=</span><span class="n">data_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span>
+                        <span class="p">)</span>
 
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">eps_buff</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">):</span>
             <span class="c1"># Make sure that the episode has stepped, by checking if the &#39;actions&#39; key has been added to the episode buffer.</span>

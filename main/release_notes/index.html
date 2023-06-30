@@ -19,7 +19,7 @@
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=6342a809aabeb35cfac296000cfa245808bc1d78" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=093e2efd5a2c7b46ab7c7157e45f5f05a1e0a463" />
     <link rel="stylesheet" type="text/css" href="../_static/css/termynal.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/directory_tree.css" />
@@ -384,17 +384,17 @@
 <h2>New Features and Improvements</h2>
 <h3>Dataset File Format</h3>
 <p>We are keeping the <a href="https://www.hdfgroup.org/solutions/hdf5/" rel="nofollow">HDF5</a> file format to store the Minari datasets. However, the internal structure of the datasets has been modified. The data is now stored in a per episode basis. Each Minari dataset has a minimum of one HDF5 file (<g-emoji class="g-emoji" alias="page_facing_up" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c4.png">📄</g-emoji>, <code>main_data.hdf5</code>). In the dataset file,  the collected transitions are separated by episode groups (<g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji>) that contain 5 required datasets(<g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji>) : <code>observations</code>, <code>actions</code>, <code>terminations</code>, <code>truncations</code>, and <code>rewards</code>. Other optional group and dataset collections can be included in each episode; such is the case of the <code>infos</code> step return. This structure allows us to store <a href="https://minari.farama.org/main/content/dataset_standards/#default-dataset-metadata" rel="nofollow">metadata</a> for each episode.</p>
-<p><g-emoji class="g-emoji" alias="page_facing_up" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c4.png">📄</g-emoji> main_data.hdf5<br>
-├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> episode_id<br>
+<p>📄 main_data.hdf5<br>
+├ 📁 episode_id<br>
 │   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> observations<br>
-│   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> actions<br>
+│   ├ 💾 actions<br>
 │   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> terminations<br>
 │   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> truncations<br>
 │   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> rewards<br>
 │   ├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> infos<br>
 │   │   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> info datasets<br>
 │   │   └ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> info subgroup<br>
-│   │      └ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> info subgroup dataset<br>
+│   │      └ 💾 info subgroup dataset<br>
 │   └ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> extra dataset group<br>
 │       └ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> extra datasets<br>
 └ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> next_episode_id</p>
