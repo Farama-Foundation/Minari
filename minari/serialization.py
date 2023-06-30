@@ -66,6 +66,21 @@ def _serialize_tuple(space: spaces.Tuple, to_string=True) -> Union[Dict, str]:
         return result
 
 
+@serialize_space.register(spaces.Text)
+def _serialize_text(space: spaces.Text, to_string=True) -> Union[Dict, str]:
+    result = {
+        "type": "Text",
+        "max_length": space.max_length,
+        "min_length": space.min_length,
+        "charset": space.characters,
+    }
+
+    if to_string:
+        return json.dumps(result)
+    else:
+        return result
+
+
 class type_value_dispatch:
     def __init__(self, func) -> None:
         self.registry = defaultdict(func)
@@ -127,3 +142,13 @@ def _deserialize_discrete(space_dict: Dict) -> spaces.Discrete:
     n = space_dict["n"]
     start = space_dict["start"]
     return spaces.Discrete(n=n, start=start)
+
+
+@deserialize_space.register("Text")
+def _deserialize_text(space_dict: Dict) -> spaces.Text:
+    assert space_dict["type"] == "Text"
+    return spaces.Text(
+        max_length=space_dict["max_length"],
+        min_length=space_dict["min_length"],
+        charset=space_dict["charset"],
+    )

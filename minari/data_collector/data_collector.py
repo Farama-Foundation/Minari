@@ -256,13 +256,10 @@ class DataCollectorV0(gym.Wrapper):
         if clear_buffers:
             self.clear_buffer_to_tmp_file()
 
-        # add new episode buffer to global buffer when episode finishes with truncation or termination
         if clear_buffers or step_data["terminations"] or step_data["truncations"]:
             self._buffer.append({})
 
-        # Increase episode count when step is term/trunc and only after clearing buffers to tmp file
         if step_data["terminations"] or step_data["truncations"]:
-            # New episode
             self._episode_id += 1
 
         return obs, rew, terminated, truncated, info
@@ -348,76 +345,58 @@ class DataCollectorV0(gym.Wrapper):
             """
             for key, data in dictionary_buffer.items():
                 if isinstance(data, dict):
-
-                    if key in episode_group:
-                        eps_group_to_clear = episode_group[key]
-                    else:
-                        eps_group_to_clear = episode_group.create_group(key)
+                    eps_group_to_clear = episode_group.get(
+                        key, episode_group.create_group(key)
+                    )
                     clear_buffer(data, eps_group_to_clear)
-                elif all([isinstance(entry, tuple) for entry in data]):
+                elif all(map(lambda elem: isinstance(elem, tuple), data)):
                     # we have a list of tuples, so we need to act appropriately
                     dict_data = {
                         f"_index_{str(i)}": [entry[i] for entry in data]
                         for i, _ in enumerate(data[0])
                     }
-                    if key in episode_group:
-                        eps_group_to_clear = episode_group[key]
-                    else:
-                        eps_group_to_clear = episode_group.create_group(key)
+                    eps_group_to_clear = episode_group.get(
+                        key, episode_group.create_group(key)
+                    )
                     clear_buffer(dict_data, eps_group_to_clear)
-                elif all([isinstance(entry, OrderedDict) for entry in data]):
-
+                elif all(map(lambda elem: isinstance(elem, OrderedDict), data)):
                     # we have a list of OrderedDicts, so we need to act appropriately
                     dict_data = {
                         key: [entry[key] for entry in data]
                         for key, value in data[0].items()
                     }
-
-                    if key in episode_group:
-                        eps_group_to_clear = episode_group[key]
-                    else:
-                        eps_group_to_clear = episode_group.create_group(key)
+                    eps_group_to_clear = episode_group.get(
+                        key, episode_group.create_group(key)
+                    )
                     clear_buffer(dict_data, eps_group_to_clear)
                 else:
-                    # convert data to numpy
-                    np_data = np.asarray(data)
-                    assert np.all(
-                        np.logical_not(np.isnan(np_data))
-                    ), "Nan found after cast to nump array, check the type of 'data'."
+                    if all(map(lambda elem: isinstance(elem, str), data)):
+                        data_shape = (len(data),)
+                        dtype = h5py.string_dtype(encoding="utf-8")
+                    else:
+                        data = np.asarray(data)
+                        data_shape = data.shape
+                        dtype = data.dtype
+                        assert np.all(
+                            np.logical_not(np.isnan(data))
+                        ), "Nan found after cast to nump array, check the type of 'data'."
 
-                    # Check if last episode group is terminated or truncated
                     if (
                         not self._last_episode_group_term_or_trunc
                         and key in episode_group
                     ):
-                        # Append to last episode group datasets
-                        if key not in STEP_DATA_KEYS and key != "infos":
-                            # check current dataset size directly from hdf5 since
-                            # non step data (actions, obs, rew, term, trunc) may not be
-                            # added in a per-step/sequential basis, including "infos"
-                            current_dataset_shape = episode_group[key].shape[0]
-                        else:
-                            current_dataset_shape = self._last_episode_n_steps
-                            if key == "observations":
-                                current_dataset_shape += (
-                                    1  # include initial observation
-                                )
+                        current_dataset_shape = episode_group[key].shape[0]
                         episode_group[key].resize(
                             current_dataset_shape + len(data), axis=0
                         )
-                        episode_group[key][-len(data) :] = np_data
+                        episode_group[key][-len(data) :] = data
                     else:
                         if not current_episode_group_term_or_trunc:
-                            # Create resizable datasets
-                            episode_group.create_dataset(
-                                key,
-                                data=np_data,
-                                maxshape=(None,) + np_data.shape[1:],
-                                chunks=True,
-                            )
-                        else:
-                            # Dump everything to episode group
-                            episode_group.create_dataset(key, data=np_data, chunks=True)
+                            data_shape = (None,) + data_shape[1:]  # resizable dataset
+
+                        episode_group.create_dataset(
+                            key, data=data, maxshape=data_shape, dtype=dtype
+                        )
 
         for i, eps_buff in enumerate(self._buffer):
             # Make sure that the episode has stepped, by checking if the 'actions' key has been added to the episode buffer.
