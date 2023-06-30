@@ -140,7 +140,9 @@ class MinariDataset:
         self._additional_data_id = 0
         if episode_indices is None:
             episode_indices = np.arange(self._data.total_episodes)
+
         self._episode_indices = episode_indices
+        assert isinstance(self._episode_indices, np.ndarray)
 
         total_steps = sum(
             [
