@@ -142,10 +142,17 @@ class MinariDataset:
             episode_indices = np.arange(self._data.total_episodes)
         self._episode_indices = episode_indices
 
+        total_steps = sum(
+            [
+                episode["total_timesteps"]
+                for episode in self._data.get_episodes(self._episode_indices)
+            ]
+        )
+
         self.spec = MinariDatasetSpec(
             env_spec=self._data.env_spec,
-            total_episodes=self._data.total_episodes,
-            total_steps=self._data.total_steps,
+            total_episodes=len(self._episode_indices),
+            total_steps=total_steps,
             dataset_id=self._data.id,
             combined_datasets=self._data.combined_datasets,
             observation_space=self._data.observation_space,
@@ -269,7 +276,13 @@ class MinariDataset:
             self._episode_indices, np.arange(old_total_episodes, new_total_episodes)
         )  # ~= np.append(self._episode_indices,np.arange(self._data.total_episodes))
 
-        self.spec.total_episodes = self._data.total_episodes
+        self.spec.total_episodes = len(self._episode_indices)
+        self.spec.total_steps = sum(
+            [
+                episode["total_timesteps"]
+                for episode in self._data.get_episodes(self._episode_indices)
+            ]
+        )
 
     def update_dataset_from_buffer(self, buffer: List[dict]):
         """Additional data can be added to the Minari Dataset from a list of episode dictionary buffers.
@@ -296,7 +309,13 @@ class MinariDataset:
             self._episode_indices, np.arange(old_total_episodes, new_total_episodes)
         )  # ~= np.append(self._episode_indices,np.arange(self._data.total_episodes))
 
-        self.spec.total_episodes = self._data.total_episodes
+        self.spec.total_episodes = len(self._episode_indices)
+        self.spec.total_steps = sum(
+            [
+                episode["total_timesteps"]
+                for episode in self._data.get_episodes(self._episode_indices)
+            ]
+        )
 
     def __iter__(self):
         return self.iterate_episodes()

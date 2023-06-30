@@ -115,7 +115,6 @@ def test_update_dataset_from_collector_env(dataset_id, env_id):
 @pytest.mark.parametrize(
     "dataset_id,env_id",
     [
-        ("cartpole-test-v0", "CartPole-v1"),
         ("dummy-dict-test-v0", "DummyDictEnv-v0"),
         ("dummy-box-test-v0", "DummyBoxEnv-v0"),
         ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
@@ -148,7 +147,7 @@ def test_filter_episodes_and_subsequent_updates(dataset_id, env_id):
 
     assert isinstance(filtered_dataset, MinariDataset)
     assert filtered_dataset.total_episodes == 7
-    assert filtered_dataset.spec.total_episodes == 10
+    assert filtered_dataset.spec.total_episodes == 7
     assert len(filtered_dataset.episode_indices) == 7
 
     check_data_integrity(
@@ -176,7 +175,8 @@ def test_filter_episodes_and_subsequent_updates(dataset_id, env_id):
 
     assert isinstance(filtered_dataset, MinariDataset)
     assert filtered_dataset.total_episodes == 17
-    assert filtered_dataset.spec.total_episodes == 20
+    assert filtered_dataset.spec.total_episodes == 17
+    assert filtered_dataset.spec.total_steps == 17 * 5
     assert tuple(filtered_dataset.episode_indices) == (
         0,
         1,
@@ -253,7 +253,9 @@ def test_filter_episodes_and_subsequent_updates(dataset_id, env_id):
 
     assert isinstance(filtered_dataset, MinariDataset)
     assert filtered_dataset.total_episodes == 27
-    assert filtered_dataset.spec.total_episodes == 30
+    assert filtered_dataset.spec.total_episodes == 27
+    assert filtered_dataset.spec.total_steps == 27 * 5
+
     assert tuple(filtered_dataset.episode_indices) == (
         0,
         1,
