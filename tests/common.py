@@ -1,3 +1,5 @@
+import sys
+import unicodedata
 from typing import Any, Iterable, List, Union
 
 import gymnasium as gym
@@ -10,6 +12,11 @@ import minari
 from minari import DataCollectorV0, MinariDataset
 from minari.dataset.minari_dataset import EpisodeData
 from minari.dataset.minari_storage import MinariStorage
+
+
+unicode_charset = "".join(
+    [chr(i) for i in range(sys.maxunicode) if unicodedata.category(chr(i)) != "Cs"]
+)
 
 
 class DummyBoxEnv(gym.Env):
@@ -144,6 +151,22 @@ class DummyTupleEnv(gym.Env):
         return self.observation_space.sample(), {}
 
 
+class DummyTextEnv(gym.Env):
+    def __init__(self):
+        self.action_space = spaces.Text(max_length=10, min_length=2, charset="01")
+        self.observation_space = spaces.Text(max_length=20, charset=unicode_charset)
+
+    def step(self, action):
+        terminated = self.timestep > 5
+        self.timestep += 1
+
+        return self.observation_space.sample(), 0, terminated, False, {}
+
+    def reset(self, seed=None, options=None):
+        self.timestep = 0
+        return "者示序袋費欠走立🐝🗓🈸🐿🍯🚆▶️🎧🎇💫", {}
+
+
 class DummyComboEnv(gym.Env):
     def __init__(self):
         self.action_space = spaces.Tuple(
@@ -230,6 +253,12 @@ def register_dummy_envs():
     )
 
     register(
+        id="DummyTextEnv-v0",
+        entry_point="tests.common:DummyTextEnv",
+        max_episode_steps=5,
+    )
+
+    register(
         id="DummyComboEnv-v0",
         entry_point="tests.common:DummyComboEnv",
         max_episode_steps=5,
@@ -241,6 +270,9 @@ test_spaces = [
     gym.spaces.Box(low=-1, high=4, shape=(3,), dtype=np.float32),
     gym.spaces.Box(low=-1, high=4, shape=(2, 2, 2), dtype=np.float32),
     gym.spaces.Box(low=-1, high=4, shape=(3, 3, 3), dtype=np.float32),
+    gym.spaces.Text(max_length=10, min_length=10),
+    gym.spaces.Text(max_length=20, charset=unicode_charset),
+    gym.spaces.Text(max_length=10, charset="01"),
     gym.spaces.Tuple(
         (
             gym.spaces.Discrete(1),
@@ -307,6 +339,7 @@ test_spaces = [
                                     ),
                                 }
                             ),
+                            "component_3": gym.spaces.Text(100, min_length=20),
                         }
                     ),
                 )
@@ -339,7 +372,9 @@ unsupported_test_spaces = [
                                             gym.spaces.Box(
                                                 low=4, high=5, dtype=np.float32
                                             ),
-                                            gym.spaces.Text(1),
+                                            gym.spaces.Graph(
+                                                gym.spaces.Box(-1, 1), None
+                                            ),
                                         )
                                     ),
                                 }
@@ -466,11 +501,11 @@ def _reconstuct_obs_or_action_at_index_recursive(
                 for entry in data
             ]
         )
-
-    elif isinstance(data, np.ndarray):
-        return data[index]
     else:
-        assert False, "error, invalid observation or action structure"
+        assert isinstance(
+            data, (np.ndarray, List)
+        ), "error, invalid observation or action structure"
+        return data[index]
 
 
 def _check_space_elem(data: Any, space: spaces.Space, n_elements: int):
