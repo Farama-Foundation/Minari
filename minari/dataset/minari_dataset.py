@@ -142,18 +142,17 @@ class MinariDataset:
             episode_indices = np.arange(self._data.total_episodes)
 
         self._episode_indices = episode_indices
-        assert isinstance(self._episode_indices, np.ndarray)
 
         total_steps = sum(
             [
                 episode["total_timesteps"]
-                for episode in self._data.get_episodes(self._episode_indices)
+                for episode in self._data.get_episodes(list(self._episode_indices))
             ]
         )
 
         self.spec = MinariDatasetSpec(
             env_spec=self._data.env_spec,
-            total_episodes=len(self._episode_indices),
+            total_episodes=self._episode_indices.size,
             total_steps=total_steps,
             dataset_id=self._data.id,
             combined_datasets=self._data.combined_datasets,
