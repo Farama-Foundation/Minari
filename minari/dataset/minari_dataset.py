@@ -176,7 +176,7 @@ class MinariDataset:
         """Total episodes steps in the Minari dataset."""
         if self._total_steps is None:
             t_steps = self._data.apply(
-                lambda episode: episode["total_steps"],
+                lambda episode: episode.total_steps,
                 episode_indices=self._episode_indices,
             )
             self._total_steps = sum(t_steps)
@@ -199,7 +199,9 @@ class MinariDataset:
         """Set seed for random episode sampling generator."""
         self._generator = np.random.default_rng(seed)
 
-    def filter_episodes(self, condition: Callable[..., bool]) -> MinariDataset:
+    def filter_episodes(
+        self, condition: Callable[[EpisodeData], bool]
+    ) -> MinariDataset:
         """Filter the dataset episodes with a condition.
 
         The condition must be a callable with  a single argument, the episode HDF5 group.
@@ -213,7 +215,13 @@ class MinariDataset:
         Args:
             condition (Callable[[Any], bool]): callable that accepts any type(For our current backend, an h5py episode group) and returns True if certain condition is met.
         """
-        mask = self._data.apply(condition, episode_indices=self._episode_indices)
+
+        def dict_to_episode_data_condition(episode: dict) -> bool:
+            return condition(EpisodeData(**episode))
+
+        mask = self._data.apply(
+            dict_to_episode_data_condition, episode_indices=self._episode_indices
+        )
         assert self._episode_indices is not None
         return MinariDataset(self._data, episode_indices=self._episode_indices[mask])
 

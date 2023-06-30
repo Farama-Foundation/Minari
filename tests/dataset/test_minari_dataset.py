@@ -141,7 +141,7 @@ def test_filter_episodes_and_subsequent_updates(dataset_id, env_id):
     )
 
     def filter_by_index(episode: Any):
-        return int(episode.attrs.get("id")) <= 6
+        return int(episode.id) <= 6
 
     filtered_dataset = dataset.filter_episodes(filter_by_index)
 
@@ -319,7 +319,7 @@ def test_sample_episodes(dataset_id, env_id):
     )
 
     def filter_by_index(episode: Any):
-        return int(episode.attrs.get("id")) >= 3
+        return int(episode.id) >= 3
 
     filtered_dataset = dataset.filter_episodes(filter_by_index)
     for i in [1, 7]:

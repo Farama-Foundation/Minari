@@ -87,7 +87,21 @@ class MinariStorage:
             for ep_idx in episode_indices:
                 ep_group = file[f"episode_{ep_idx}"]
                 assert isinstance(ep_group, h5py.Group)
-                out.append(function(ep_group))
+                ep_dict = {
+                    "id": ep_group.attrs.get("id"),
+                    "total_timesteps": ep_group.attrs.get("total_steps"),
+                    "seed": ep_group.attrs.get("seed"),
+                    "observations": self._decode_space(
+                        ep_group["observations"], self.observation_space
+                    ),
+                    "actions": self._decode_space(
+                        ep_group["actions"], self.action_space
+                    ),
+                    "rewards": ep_group["rewards"][()],
+                    "terminations": ep_group["terminations"][()],
+                    "truncations": ep_group["truncations"][()],
+                }
+                out.append(function(ep_dict))
 
         return out
 
