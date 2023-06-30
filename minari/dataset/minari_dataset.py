@@ -143,10 +143,12 @@ class MinariDataset:
 
         self._episode_indices = episode_indices
 
+        assert isinstance(self._episode_indices, np.ndarray)
+
         total_steps = sum(
             [
                 episode["total_timesteps"]
-                for episode in self._data.get_episodes(list(self._episode_indices))
+                for episode in self._data.get_episodes(self._episode_indices.tolist())
             ]
         )
 
