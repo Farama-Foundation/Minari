@@ -33,11 +33,16 @@ def _show_dataset_table(datasets, table_title):
     table.add_column("Description", justify="left", style="yellow")
     table.add_column("Author", justify="left", style="magenta")
     table.add_column("Email", justify="left", style="magenta")
+    table.add_column("Env ID", justify="left", style="yellow")
+    table.add_column("File size on disk", justify="left", style="cyan")
+    table.add_column("Dataset Group", justify="left", style="green")
 
     for dst_metadata in datasets.values():
         assert isinstance(dst_metadata["dataset_id"], str)
         assert isinstance(dst_metadata["author"], str)
         assert isinstance(dst_metadata["author_email"], str)
+        assert isinstance(dst_metadata["dataset_group"], str)
+        
         table.add_row(
             dst_metadata["dataset_id"],
             str(dst_metadata["total_episodes"]),
@@ -45,6 +50,9 @@ def _show_dataset_table(datasets, table_title):
             "Coming soon ...",
             dst_metadata["author"],
             dst_metadata["author_email"],
+            str(dst_metadata["env_id"]),
+            str(dst_metadata["file_size"]),
+            "Unknown..",
         )
 
     print(table)

@@ -502,6 +502,7 @@ When creating a Minari dataset with the `DataCollectorV0` wrapper the default gl
 | `algorithm_name`        | `str`      | Name of the expert policy used to create the dataset. |
 | `action_space`          | `str`      | Serialized Gymnasium action space describing actions in dataset. |
 | `observation_space`     | `str`      | Serialized Gymnasium observation space describing observations in dataset. |
+| `dataset_group`         | `str`      | Number of dataset groups in Minari dataset. |
 
 
 

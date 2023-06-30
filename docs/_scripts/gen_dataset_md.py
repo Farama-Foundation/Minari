@@ -48,6 +48,7 @@ for env_name, datasets in filtered_datasets.items():
         email = dataset_spec["author_email"]
         algo_name = dataset_spec["algorithm_name"]
         code = dataset_spec["code_permalink"]
+        dataset_group = dataset_spec["dataset_group"]
 
         description = None
         if "description" in dataset_spec:
@@ -102,6 +103,7 @@ title: {dataset_name.title()}
 | Email               | `{email}`               |
 | Code Permalink      | `{code}`                |
 | download            | `minari.download_dataset("{dataset_id}")` |
+| Dataset group       | `{dataset_group}`                |
 
 
 ## Environment Specs
