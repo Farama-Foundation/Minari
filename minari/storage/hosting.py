@@ -86,35 +86,66 @@ def upload_dataset(dataset_id: str, path_to_private_key: str):
 def download_dataset(dataset_id: str, force_download: bool = False):
     """Download dataset from remote Farama server.
 
+    An error will be raised if the dataset version is not compatible with the local installed version of Minari.
+    This error can be skipped and the download continued with the `force_download` argument. Also, with `force_download`,
+    any local datasets that match the id of the downloading dataset will be overridden.
+
     Args:
         dataset_id (str): name id of the Minari dataset
         force_download (bool): boolean flag for force downloading the dataset. Default Value = False
     """
 
     # Check if minari version is compatible with dataset
-    download_env_name, download_dataset_name, download_version = parse_dataset_id(dataset_id)
-    remote_dataset_ids = list_remote_datasets(compatible_minari_version=True).keys()
-    
-    # If dataset_id not in remote, version is not compatible. Check and suggest other compatible versions.
-    if dataset_id not in remote_dataset_ids:
+    download_env_name, download_dataset_name, download_version = parse_dataset_id(
+        dataset_id
+    )
+    all_remote_dataset_ids = list_remote_datasets().keys()
+    compatible_remote_dataset_ids = list_remote_datasets(
+        compatible_minari_version=True
+    ).keys()
+
+    if dataset_id not in all_remote_dataset_ids:
+        raise ValueError(
+            f"Dataset {dataset_id} doesn't exist in the remote Farama server."
+        )
+    # If dataset_id not in remote, version is not compatible or dataset doesn't exist.
+    # Check and suggest other compatible versions.
+    if dataset_id not in compatible_remote_dataset_ids:
         available_versions = []
-        for id in remote_dataset_ids:
+        for id in compatible_remote_dataset_ids:
             env_name, dataset_name, version = parse_dataset_id(id)
             if download_env_name == env_name and download_dataset_name == dataset_name:
                 available_versions.append(version)
-            
-        if available_versions:
-            available_datasets = [f'{download_env_name}-{download_dataset_name}-v{version}' for version in available_versions]
-            raise ValueError(f"The version you are trying to download for this dataset, v{download_version}, is not compatible with\
-                                your local installed version of Minari, {__version__}. We found other dataset versions that are compatible: {', '.join(available_datasets)}")
-        else:
-            raise ValueError(f"No datasets or other versions of it were found for dataset id {dataset_id} in the Farama server. Are you sure\
-                                this is the dataset you are looking for?")
 
-    higher_version = find_highest_remote_version(download_env_name, download_dataset_name, True)
-    if higher_version > download_version:
-        logger.warn(f"We recommend you install a higher dataset version available and compatible with your local installed Minari version: {download_env_name}-{download_dataset_name}-v{higher_version}.")
-    
+        if available_versions:
+            available_datasets = [
+                f"{download_env_name}-{download_dataset_name}-v{version}"
+                for version in available_versions
+            ]
+            error_msg = f"The version you are trying to download for dataset, {dataset_id}, is not compatible with\
+                                    your local installed version of Minari, {__version__}."
+            if not force_download:
+                raise ValueError(
+                    error_msg
+                    + f" We found other dataset versions that are compatible: {', '.join(available_datasets)}."
+                )
+            else:
+                logger.warn(
+                    error_msg
+                    + f" We found other dataset versions that are compatible: {', '.join(available_datasets)}."
+                )
+        else:
+            raise ValueError(error_msg)
+
+    higher_version = find_highest_remote_version(
+        download_env_name, download_dataset_name, True
+    )
+    if higher_version is not None:
+        if higher_version > download_version:
+            logger.warn(
+                f"We recommend you install a higher dataset version available and compatible with your local installed Minari version: {download_env_name}-{download_dataset_name}-v{higher_version}."
+            )
+
     file_path = get_dataset_path(dataset_id)
     if os.path.exists(file_path):
         if not force_download:
@@ -149,7 +180,6 @@ def download_dataset(dataset_id: str, force_download: bool = False):
 
     print(f"\nDataset {dataset_id} downloaded to {file_path}")
 
-    # 
     combined_datasets = load_dataset(dataset_id).spec.combined_datasets
 
     # If the dataset is a combination of other datasets download the subdatasets recursively
@@ -184,7 +214,9 @@ def list_remote_datasets(
         try:
             if blob.name.endswith("main_data.hdf5"):
                 metadata = blob.metadata
-                if compatible_minari_version and __version__ not in SpecifierSet(metadata["minari_version"]):
+                if compatible_minari_version and __version__ not in SpecifierSet(
+                    metadata["minari_version"]
+                ):
                     continue
                 remote_datasets[blob.metadata["dataset_id"]] = metadata
         except Exception:
@@ -193,7 +225,9 @@ def list_remote_datasets(
     return remote_datasets
 
 
-def find_highest_remote_version(env_name: str, dataset_name: str, compatible_minari_version: bool = False) -> int | None:
+def find_highest_remote_version(
+    env_name: str, dataset_name: str, compatible_minari_version: bool = False
+) -> int | None:
     """Finds the highest registered version in the remote Farama server of the dataset given.
 
     Args:
@@ -215,5 +249,7 @@ def find_highest_remote_version(env_name: str, dataset_name: str, compatible_min
             and remote_version is not None
         ):
             version.append(remote_version)
-
+    if not version:
+        assert ValueError(f"Couldn't find any version for dataset {env_name}-{dataset_name}.")
+        
     return max(version, default=None)
