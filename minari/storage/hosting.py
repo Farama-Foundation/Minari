@@ -249,6 +249,11 @@ def list_remote_datasets(
         except Exception:
             warnings.warn(f"Misconfigured dataset named {blob.name} on remote")
 
+    assert bool(remote_datasets), (
+        "No datasets were found in the remote Farama server with the specified coniguration: "
+        f"`compatible_minari_version = {compatible_minari_version}, `latest_version` = {latest_version}."
+    )
+
     # Return dict = {'dataset_id': metadata}
     return dict(map(lambda x: (f"{x[0]}-v{x[1][0]}", x[1][1]), remote_datasets.items()))
 
