@@ -109,10 +109,10 @@ def download_dataset(dataset_id: str, force_download: bool = False):
         )
 
     # 2. Check if there are any remote compatible versions with the local installed Minari version
-    max_version = find_highest_remote_version(
-        download_env_name, download_dataset_name, True
+    max_version = get_remote_dataset_versions(
+        download_env_name, download_dataset_name, True, True
     )
-    if max_version is None:
+    if not max_version:
         if not force_download:
             raise ValueError(
                 f"Couldn't find any compatible version of dataset {download_env_name}-{download_dataset_name} with the local installed version of Minari, {__version__}."
@@ -125,7 +125,7 @@ def download_dataset(dataset_id: str, force_download: bool = False):
     # 3. Check that the dataset version exists
     if download_version not in all_dataset_versions:
         e_msg = f"The dataset version, {dataset_id}, doesn't exist in the remote Farama server."
-        if max_version is None:
+        if not max_version:
             raise ValueError(
                 e_msg
                 + f", and no other compatible versions with the local installed Minari version {__version__} were found."
@@ -133,7 +133,7 @@ def download_dataset(dataset_id: str, force_download: bool = False):
         else:
             raise ValueError(
                 e_msg
-                + f" We suggest you download the latest compatible version of this dataset: {download_env_name}-{download_dataset_name}-v{max_version}"
+                + f" We suggest you download the latest compatible version of this dataset: {download_env_name}-{download_dataset_name}-v{max_version[0]}"
             )
 
     # 4. Check that the dataset version is compatible with the local installed Minari version
@@ -146,7 +146,7 @@ def download_dataset(dataset_id: str, force_download: bool = False):
         if not force_download:
             raise ValueError(
                 e_msg
-                + f" You can download the latest compatible version of this dataset: {download_env_name}-{download_dataset_name}-v{max_version}."
+                + f" You can download the latest compatible version of this dataset: {download_env_name}-{download_dataset_name}-v{max_version[0]}."
             )
         # Only a warning and force download incompatible dataset
         else:
@@ -156,7 +156,7 @@ def download_dataset(dataset_id: str, force_download: bool = False):
             )
 
     # 5. Warning to recommend downloading the latest compatible version of the dataset
-    elif max_version is not None and download_version < max_version:
+    elif max_version[0] is not None and download_version < max_version[0]:
         logger.warn(
             f"We recommend you install a higher dataset version available and compatible with your local installed Minari version: {download_env_name}-{download_dataset_name}-v{max_version}."
         )
@@ -212,71 +212,73 @@ def download_dataset(dataset_id: str, force_download: bool = False):
 
 
 def list_remote_datasets(
+    latest_version: bool = False,
     compatible_minari_version: bool = False,
 ) -> Dict[str, Dict[str, str]]:
-    """Get the names and metadata of all the Minari dataset in the remote Farama server.
+    """Get the names and metadata of all the Minari datasets in the remote Farama server.
 
     Args:
+        latest_version (bool): if `True` only the latest version of the datasets are returned i.e. from ['door-human-v0', 'door-human-v1`], only the metadata for v1 is returned. Default to `False`
         compatible_minari_version (bool): if `True` only the datasets compatible with the current Minari version are returned. Default to `False`.
 
     Returns:
        Dict[str, Dict[str, str]]: keys the names of the Minari datasets and values the metadata
     """
-    storage_client = storage.Client.create_anonymous_client()
+    client = storage.Client.create_anonymous_client()
+    bucket = client.bucket("minari-datasets")
+    blobs = bucket.list_blobs(delimiter="main_data.hdf5")
 
-    blobs = storage_client.list_blobs(bucket_or_name="minari-datasets")
-
+    # Generate dict = {'env_name-dataset_name': (version, metadata)}
     remote_datasets = {}
-    for blob in blobs:
+    for prefix in blobs.prefixes:
+        blob = bucket.get_blob(prefix)
         try:
-            if blob.name.endswith("main_data.hdf5"):
-                metadata = blob.metadata
-                if compatible_minari_version and __version__ not in SpecifierSet(
-                    metadata["minari_version"]
-                ):
-                    continue
-                remote_datasets[blob.metadata["dataset_id"]] = metadata
+            metadata = blob.metadata
+            if compatible_minari_version and __version__ not in SpecifierSet(
+                metadata["minari_version"]
+            ):
+                continue
+            dataset_id = metadata["dataset_id"]
+            env_name, dataset_name, version = parse_dataset_id(dataset_id)
+            dataset = f"{env_name}-{dataset_name}"
+            if latest_version and dataset in remote_datasets:
+                if version > remote_datasets[dataset][0]:
+                    remote_datasets[dataset] = (version, metadata)
+            else:
+                remote_datasets[dataset] = (version, metadata)
         except Exception:
             warnings.warn(f"Misconfigured dataset named {blob.name} on remote")
 
-    return remote_datasets
+    # Return dict = {'dataset_id': metadata}
+    return dict(map(lambda x: (f"{x[0]}-v{x[1][0]}", x[1][1]), remote_datasets.items()))
 
 
-def find_highest_remote_version(
-    env_name: str | None, dataset_name: str, compatible_minari_version: bool = False
-) -> int | None:
-    """Finds the highest registered version in the remote Farama server of the dataset given.
+def get_remote_dataset_versions(
+    env_name: str | None,
+    dataset_name: str,
+    latest_version: bool = False,
+    compatible_minari_version: bool = False,
+) -> List[int]:
+    """Finds all registered versions in the remote Farama server of the dataset given.
 
     Args:
-        env_name: name to identigy the environment of the dataset
-        dataset_name: name of the dataset within the ``env_name``
+        env_name (str): name to identigy the environment of the dataset
+        dataset_name (str): name of the dataset within the ``env_name``
+        latest_version (bool): if `True` only the latest version of the datasets is returned. Default to `False`.
         compatible_minari_version: only return highest version among the datasets compatible with the local installed version of Minari. Default to `False`
     Returns:
         The highest version of a dataset with matching environment name and name, otherwise ``None`` is returned.
     """
-    versions = get_remote_dataset_versions(
-        env_name, dataset_name, compatible_minari_version
-    )
-
-    return max(versions, default=None)
-
-
-def get_remote_dataset_versions(
-    env_name: str | None, dataset_name: str, compatible_minari_version: bool = False
-) -> List[int]:
-    """ """
     versions: list[int] = []
 
-    for dataset_id in list_remote_datasets(compatible_minari_version).keys():
+    for dataset_id in list_remote_datasets(
+        latest_version, compatible_minari_version
+    ).keys():
         remote_env_name, remote_dataset_name, remote_version = parse_dataset_id(
             dataset_id
         )
 
-        if (
-            remote_env_name == env_name
-            and remote_dataset_name == dataset_name
-            and remote_version is not None
-        ):
+        if remote_env_name == env_name and remote_dataset_name == dataset_name:
             versions.append(remote_version)
 
     return versions
