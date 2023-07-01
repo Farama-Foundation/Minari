@@ -228,6 +228,9 @@ def list_remote_datasets(
     bucket = client.bucket("minari-datasets")
     blobs = bucket.list_blobs(delimiter="main_data.hdf5")
 
+    # Necessary to get prefixes iterable
+    next(blobs)
+
     # Generate dict = {'env_name-dataset_name': (version, metadata)}
     remote_datasets = {}
     for prefix in blobs.prefixes:

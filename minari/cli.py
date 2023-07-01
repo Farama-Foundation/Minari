@@ -67,7 +67,9 @@ def common(
 @list_app.command("remote")
 def list_remote():
     """List Minari datasets hosted in the Farama server."""
-    datasets = hosting.list_remote_datasets()
+    datasets = hosting.list_remote_datasets(
+        latest_version=True, compatible_minari_version=True
+    )
     table_title = "Minari datasets in Farama server"
     _show_dataset_table(datasets, table_title)
 
