@@ -218,7 +218,7 @@ def list_remote_datasets(
     """Get the names and metadata of all the Minari datasets in the remote Farama server.
 
     Args:
-        latest_version (bool): if `True` only the latest version of the datasets are returned i.e. from ['door-human-v0', 'door-human-v1`], only the metadata for v1 is returned. Default to `False`
+        latest_version (bool): if `True` only the latest version of the datasets are returned i.e. from ['door-human-v0', 'door-human-v1`], only the metadata for v1 is returned. Default to `False`.
         compatible_minari_version (bool): if `True` only the datasets compatible with the current Minari version are returned. Default to `False`.
 
     Returns:
@@ -249,11 +249,6 @@ def list_remote_datasets(
         except Exception:
             warnings.warn(f"Misconfigured dataset named {blob.name} on remote")
 
-    assert bool(remote_datasets), (
-        "No datasets were found in the remote Farama server with the specified coniguration: "
-        f"`compatible_minari_version = {compatible_minari_version}, `latest_version` = {latest_version}."
-    )
-
     # Return dict = {'dataset_id': metadata}
     return dict(map(lambda x: (f"{x[0]}-v{x[1][0]}", x[1][1]), remote_datasets.items()))
 
@@ -272,7 +267,7 @@ def get_remote_dataset_versions(
         latest_version (bool): if `True` only the latest version of the datasets is returned. Default to `False`.
         compatible_minari_version: only return highest version among the datasets compatible with the local installed version of Minari. Default to `False`
     Returns:
-        The highest version of a dataset with matching environment name and name, otherwise ``None`` is returned.
+        A list of integer versions of the dataset with the specified requirements.
     """
     versions: list[int] = []
 

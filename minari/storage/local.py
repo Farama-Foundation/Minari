@@ -4,9 +4,9 @@ import shutil
 from typing import Dict, Union
 
 import h5py
-from packaging import version
+from packaging.specifiers import SpecifierSet
 
-from minari.dataset.minari_dataset import MinariDataset
+from minari.dataset.minari_dataset import MinariDataset, parse_dataset_id
 from minari.storage.datasets_root_dir import get_dataset_path
 
 
@@ -29,11 +29,13 @@ def load_dataset(dataset_id: str):
 
 
 def list_local_datasets(
+    latest_version: bool = False,
     compatible_minari_version: bool = False,
 ) -> Dict[str, Dict[str, Union[str, int, bool]]]:
     """Get the ids and metadata of all the Minari datasets in the local database.
 
     Args:
+        latest_version (bool): if `True` only the latest version of the datasets are returned i.e. from ['door-human-v0', 'door-human-v1`], only the metadata for v1 is returned. Default to `False`.
         compatible_minari_version (bool): if `True` only the datasets compatible with the current Minari version are returned. Default to `False`.
 
     Returns:
@@ -58,13 +60,19 @@ def list_local_datasets(
 
         with h5py.File(main_file_path, "r") as f:
             metadata = dict(f.attrs.items())
-            if compatible_minari_version and version.parse(
+            if compatible_minari_version and __version__ not in SpecifierSet(
                 metadata["minari_version"]
-            ) != version.parse(__version__):
+            ):
                 continue
-            local_datasets[dst_id] = metadata
+            env_name, dataset_name, version = parse_dataset_id(dst_id)
+            dataset = f"{env_name}-{dataset_name}"
+            if latest_version and dataset in local_datasets:
+                if version > local_datasets[dataset][0]:
+                    local_datasets[dataset] = (version, metadata)
+            else:
+                local_datasets[dataset] = (version, metadata)
 
-    return local_datasets
+    return dict(map(lambda x: (f"{x[0]}-v{x[1][0]}", x[1][1]), local_datasets.items()))
 
 
 def delete_dataset(dataset_id: str):
