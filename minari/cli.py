@@ -75,7 +75,7 @@ def list_remote():
 
 
 @list_app.command("local")
-def list_local():
+def list_local(all: Optional[bool] = typer.Option(False)):
     """List local Minari datasets."""
     datasets = local.list_local_datasets(
         latest_version=False, compatible_minari_version=False
