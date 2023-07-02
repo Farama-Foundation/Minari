@@ -1,6 +1,7 @@
 """Minari CLI commands."""
 import os
 from typing import List, Optional
+from typing_extensions import Annotated
 
 import typer
 from rich import print
@@ -65,21 +66,35 @@ def common(
 
 
 @list_app.command("remote")
-def list_remote():
+def list_remote(
+    all: Annotated[
+        bool, typer.Option("--all", "-a", help="Show all dataset versions.")
+    ] = False
+):
     """List Minari datasets hosted in the Farama server."""
-    datasets = hosting.list_remote_datasets(
-        latest_version=True, compatible_minari_version=True
-    )
+    if all:
+        datasets = hosting.list_remote_datasets()
+    else:
+        datasets = hosting.list_remote_datasets(
+            latest_version=True, compatible_minari_version=True
+        )
     table_title = "Minari datasets in Farama server"
     _show_dataset_table(datasets, table_title)
 
 
 @list_app.command("local")
-def list_local(all: Optional[bool] = typer.Option(False)):
+def list_local(
+    all: Annotated[
+        bool, typer.Option("--all", "-a", help="Show all dataset versions.")
+    ] = False
+):
     """List local Minari datasets."""
-    datasets = local.list_local_datasets(
-        latest_version=False, compatible_minari_version=False
-    )
+    if all:
+        datasets = local.list_local_datasets()
+    else:
+        datasets = local.list_local_datasets(
+            latest_version=True, compatible_minari_version=True
+        )
     dataset_dir = os.environ.get(
         "MINARI_DATASETS_PATH",
         os.path.join(os.path.expanduser("~"), ".minari/datasets/"),
