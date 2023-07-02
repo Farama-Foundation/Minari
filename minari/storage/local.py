@@ -57,7 +57,6 @@ def list_local_datasets(
             continue
 
         main_file_path = os.path.join(datasets_path, dst_id, "data/main_data.hdf5")
-
         with h5py.File(main_file_path, "r") as f:
             metadata = dict(f.attrs.items())
             if compatible_minari_version and __version__ not in SpecifierSet(
@@ -66,13 +65,20 @@ def list_local_datasets(
                 continue
             env_name, dataset_name, version = parse_dataset_id(dst_id)
             dataset = f"{env_name}-{dataset_name}"
-            if latest_version and dataset in local_datasets:
-                if version > local_datasets[dataset][0]:
+            if latest_version:
+                if (
+                    dataset not in local_datasets
+                    or version > local_datasets[dataset][0]
+                ):
                     local_datasets[dataset] = (version, metadata)
             else:
-                local_datasets[dataset] = (version, metadata)
-
-    return dict(map(lambda x: (f"{x[0]}-v{x[1][0]}", x[1][1]), local_datasets.items()))
+                local_datasets[dst_id] = metadata
+    if latest_version:
+        return dict(
+            map(lambda x: (f"{x[0]}-v{x[1][0]}", x[1][1]), local_datasets.items())
+        )
+    else:
+        return local_datasets
 
 
 def delete_dataset(dataset_id: str):

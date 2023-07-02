@@ -77,7 +77,9 @@ def list_remote():
 @list_app.command("local")
 def list_local():
     """List local Minari datasets."""
-    datasets = local.list_local_datasets()
+    datasets = local.list_local_datasets(
+        latest_version=False, compatible_minari_version=False
+    )
     dataset_dir = os.environ.get(
         "MINARI_DATASETS_PATH",
         os.path.join(os.path.expanduser("~"), ".minari/datasets/"),
@@ -121,6 +123,7 @@ def download(datasets: List[str]):
     """Download Minari datasets from Farama server."""
     # check if datasets exist in remote server
     remote_dsts = hosting.list_remote_datasets()
+
     non_matching_remote = [dst for dst in datasets if dst not in remote_dsts]
     if len(non_matching_remote) > 0:
         tree = Tree(
