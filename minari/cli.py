@@ -53,13 +53,15 @@ def _show_dataset_table(datasets, table_title):
 
 @app.callback()
 def common(
-    version: Optional[bool] = typer.Option(
-        None,
-        "--version",
-        "-v",
-        callback=_version_callback,
-        help="Show installed Minari version.",
-    )
+    version: Annotated[
+        Optional[bool],
+        typer.Option(
+            "--version",
+            "-v",
+            callback=_version_callback,
+            help="Show installed Minari version.",
+        ),
+    ] = None,
 ):
     """Minari is a tool for collecting and hosting Offline datasets for Reinforcement Learning environments based on the Gymnaisum API."""
     pass
@@ -104,7 +106,7 @@ def list_local(
 
 
 @app.command()
-def delete(datasets: List[str]):
+def delete(datasets: Annotated[List[str], typer.Argument()]):
     """Delete datasets from local database."""
     # check that the given local datasets exist
     local_dsts = local.list_local_datasets()
@@ -134,7 +136,7 @@ def delete(datasets: List[str]):
 
 
 @app.command()
-def download(datasets: List[str]):
+def download(datasets: Annotated[List[str], typer.Argument()]):
     """Download Minari datasets from Farama server."""
     # check if datasets exist in remote server
     remote_dsts = hosting.list_remote_datasets()
@@ -171,7 +173,10 @@ def download(datasets: List[str]):
 
 
 @app.command()
-def upload(datasets: List[str], key_path: str = typer.Option(...)):
+def upload(
+    datasets: Annotated[List[str], typer.Argument()],
+    key_path: Annotated[str, typer.Option()],
+):
     """Upload Minari datasets to the remote Farama server."""
     local_dsts = local.list_local_datasets()
     remote_dsts = hosting.list_remote_datasets()
@@ -208,7 +213,10 @@ def upload(datasets: List[str], key_path: str = typer.Option(...)):
 
 
 @app.command()
-def combine(datasets: List[str], dataset_id: str = typer.Option(...)):
+def combine(
+    datasets: Annotated[List[str], typer.Argument()],
+    dataset_id: Annotated[str, typer.Option()],
+):
     """Combine multiple datasets into a single Minari dataset."""
     local_dsts = local.list_local_datasets()
     # check dataset name doesn't exist locally
