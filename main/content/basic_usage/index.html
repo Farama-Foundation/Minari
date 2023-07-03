@@ -363,6 +363,17 @@
             <section id="basic-usage">
 <h1>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this heading">#</a></h1>
 <p>Minari is a standard dataset hosting interface for Offline Reinforcement Learning applications. Minari is compatible with most of the RL environments that follow the Gymnasium API and facilitates Offline RL dataset handling by providing data collection, dataset hosting, and dataset sampling capabilities.</p>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">#</a></h2>
+<p>To install the most recent version of the Minari library run this command: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">minari</span></code></p>
+<p>The beta release is currently under development. If you’d like to start testing or contribute to Minari then please install this project from source with:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Farama-Foundation/Minari.git
+<span class="nb">cd</span><span class="w"> </span>Minari
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+</pre></div>
+</div>
+<p>We support Python 3.7, 3.8, 3.9, 3.10 and 3.11 on Linux and macOS.</p>
+</section>
 <section id="create-minari-dataset">
 <h2>Create Minari Dataset<a class="headerlink" href="#create-minari-dataset" title="Permalink to this heading">#</a></h2>
 <section id="collecting-data">
@@ -688,6 +699,7 @@ To create your own buffers and dataloaders, you may need the ability to iterate 
             <div class="toc-tree">
               <ul>
 <li><a class="reference internal" href="#">Basic Usage</a><ul>
+<li><a class="reference internal" href="#installation">Installation</a></li>
 <li><a class="reference internal" href="#create-minari-dataset">Create Minari Dataset</a><ul>
 <li><a class="reference internal" href="#collecting-data">Collecting Data</a></li>
 <li><a class="reference internal" href="#save-dataset">Save Dataset</a></li>

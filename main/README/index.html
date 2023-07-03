@@ -210,7 +210,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -351,7 +351,7 @@
                 </svg>
               </button>
             </div>
-            <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <label class="toc-overlay-icon toc-content-icon" for="__toc">
               <div class="visually-hidden">Toggle table of contents sidebar</div>
               <i class="icon"><svg>
                   <use href="#svg-toc"></use>
@@ -364,6 +364,26 @@
 <h1>Minari documentation<a class="headerlink" href="#minari-documentation" title="Permalink to this heading">#</a></h1>
 <p>This folder contains the documentation for Minari.</p>
 <p>For more information about how to contribute to the documentation go to our <a class="reference external" href="https://github.com/Farama-Foundation/Celshast/blob/main/CONTRIBUTING.md">CONTRIBUTING.md</a></p>
+<section id="build-the-documentation">
+<h2>Build the Documentation<a class="headerlink" href="#build-the-documentation" title="Permalink to this heading">#</a></h2>
+<p>Install the required packages and Minari:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Farama-Foundation/Minari.git
+<span class="nb">cd</span><span class="w"> </span>Minari
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>docs/requirements.txt
+</pre></div>
+</div>
+<p>To build the documentation once:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>docs
+make<span class="w"> </span>dirhtml
+</pre></div>
+</div>
+<p>To rebuild the documentation automatically every time a change is made:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>docs
+sphinx-autobuild<span class="w"> </span>-b<span class="w"> </span>dirhtml<span class="w"> </span>.<span class="w"> </span>_build
+</pre></div>
+</div>
+</section>
 </section>
 
           </article>
@@ -401,8 +421,27 @@
           
         </footer>
       </div>
-      <aside class="toc-drawer no-toc">
+      <aside class="toc-drawer">
         
+        
+        <div class="toc-sticky toc-scroll">
+          <div class="toc-title-container">
+            <span class="toc-title">
+              On this page
+            </span>
+          </div>
+          <div class="toc-tree-container">
+            <div class="toc-tree">
+              <ul>
+<li><a class="reference internal" href="#">Minari documentation</a><ul>
+<li><a class="reference internal" href="#build-the-documentation">Build the Documentation</a></li>
+</ul>
+</li>
+</ul>
+
+            </div>
+          </div>
+        </div>
         
         
       </aside>
