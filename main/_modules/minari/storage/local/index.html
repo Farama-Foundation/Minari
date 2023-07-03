@@ -382,7 +382,13 @@
 <span class="sd">       Dict[str, Dict[str, str]]: keys the names of the Minari datasets and values the metadata</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">datasets_path</span> <span class="o">=</span> <span class="n">get_dataset_path</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
-    <span class="n">dataset_ids</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="n">dir_name</span> <span class="k">for</span> <span class="n">dir_name</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">datasets_path</span><span class="p">)])</span>
+    <span class="n">dataset_ids</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+        <span class="p">[</span>
+            <span class="n">dir_name</span>
+            <span class="k">for</span> <span class="n">dir_name</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">datasets_path</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">dir_name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+        <span class="p">]</span>
+    <span class="p">)</span>
 
     <span class="n">local_datasets</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">dst_id</span> <span class="ow">in</span> <span class="n">dataset_ids</span><span class="p">:</span>
