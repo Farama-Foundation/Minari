@@ -29,7 +29,13 @@ def list_local_datasets() -> Dict[str, Dict[str, Union[str, int, bool]]]:
        Dict[str, Dict[str, str]]: keys the names of the Minari datasets and values the metadata
     """
     datasets_path = get_dataset_path("")
-    dataset_ids = sorted([dir_name for dir_name in os.listdir(datasets_path)])
+    dataset_ids = sorted(
+        [
+            dir_name
+            for dir_name in os.listdir(datasets_path)
+            if not dir_name.startswith(".")
+        ]
+    )
 
     local_datasets = {}
     for dst_id in dataset_ids:
