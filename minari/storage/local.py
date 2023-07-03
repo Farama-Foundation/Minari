@@ -74,6 +74,7 @@ def list_local_datasets(
             else:
                 local_datasets[dst_id] = metadata
     if latest_version:
+        # Return dict = {'dataset_id': metadata}
         return dict(
             map(lambda x: (f"{x[0]}-v{x[1][0]}", x[1][1]), local_datasets.items())
         )

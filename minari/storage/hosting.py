@@ -244,16 +244,21 @@ def list_remote_datasets(
             dataset_id = metadata["dataset_id"]
             env_name, dataset_name, version = parse_dataset_id(dataset_id)
             dataset = f"{env_name}-{dataset_name}"
-            if latest_version and dataset in remote_datasets:
-                if version > remote_datasets[dataset][0]:
+            if latest_version:
+                if dataset not in remote_datasets or version > remote_datasets[dataset][0]:
                     remote_datasets[dataset] = (version, metadata)
             else:
-                remote_datasets[dataset] = (version, metadata)
+                remote_datasets[dataset_id] = metadata
         except Exception:
             warnings.warn(f"Misconfigured dataset named {blob.name} on remote")
 
-    # Return dict = {'dataset_id': metadata}
-    return dict(map(lambda x: (f"{x[0]}-v{x[1][0]}", x[1][1]), remote_datasets.items()))
+    if latest_version:
+        # Return dict = {'dataset_id': metadata}
+        return dict(
+            map(lambda x: (f"{x[0]}-v{x[1][0]}", x[1][1]), remote_datasets.items())
+        )
+    else:
+        return remote_datasets
 
 
 def get_remote_dataset_versions(
