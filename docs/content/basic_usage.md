@@ -7,6 +7,20 @@ title: Basic Usage
 
 Minari is a standard dataset hosting interface for Offline Reinforcement Learning applications. Minari is compatible with most of the RL environments that follow the Gymnasium API and facilitates Offline RL dataset handling by providing data collection, dataset hosting, and dataset sampling capabilities.
 
+## Installation
+
+To install the most recent version of the Minari library run this command: `pip install minari`
+
+The beta release is currently under development. If you'd like to start testing or contribute to Minari then please install this project from source with:
+
+```bash
+git clone https://github.com/Farama-Foundation/Minari.git
+cd Minari
+pip install -e .
+```
+
+We support Python 3.7, 3.8, 3.9, 3.10 and 3.11 on Linux and macOS.
+
 ## Create Minari Dataset
 
 ### Collecting Data
