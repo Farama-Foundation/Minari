@@ -136,7 +136,12 @@ def delete(datasets: Annotated[List[str], typer.Argument()]):
 
 
 @app.command()
-def download(datasets: Annotated[List[str], typer.Argument()]):
+def download(
+    datasets: Annotated[List[str], typer.Argument()],
+    force: Annotated[
+        bool, typer.Option("--force", "-f", help="Perform a force download.")
+    ] = False,
+):
     """Download Minari datasets from Farama server."""
     # check if datasets exist in remote server
     remote_dsts = hosting.list_remote_datasets()
@@ -160,7 +165,7 @@ def download(datasets: Annotated[List[str], typer.Argument()]):
         if local_name in datasets
     }
 
-    if len(datasets_to_override) > 0:
+    if len(datasets_to_override) > 0 and not force:
         _show_dataset_table(datasets_to_override, "Download remote Minari datasets")
         typer.confirm(
             "Are you sure you want to download and override these local datasets?",
@@ -169,7 +174,7 @@ def download(datasets: Annotated[List[str], typer.Argument()]):
 
     # download datastets
     for dst in datasets:
-        hosting.download_dataset(dst, force_download=True)
+        hosting.download_dataset(dst, force_download=force)
 
 
 @app.command()

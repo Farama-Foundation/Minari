@@ -245,7 +245,10 @@ def list_remote_datasets(
             env_name, dataset_name, version = parse_dataset_id(dataset_id)
             dataset = f"{env_name}-{dataset_name}"
             if latest_version:
-                if dataset not in remote_datasets or version > remote_datasets[dataset][0]:
+                if (
+                    dataset not in remote_datasets
+                    or version > remote_datasets[dataset][0]
+                ):
                     remote_datasets[dataset] = (version, metadata)
             else:
                 remote_datasets[dataset_id] = metadata
