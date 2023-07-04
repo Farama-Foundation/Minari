@@ -233,7 +233,7 @@ def list_remote_datasets(
 
     # Generate dict = {'env_name-dataset_name': (version, metadata)}
     remote_datasets = {}
-    for prefix in blobs.prefixes:
+    for prefix in sorted(blobs.prefixes):
         blob = bucket.get_blob(prefix)
         try:
             metadata = blob.metadata
