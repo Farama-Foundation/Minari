@@ -146,10 +146,10 @@ class MinariDataset:
         assert self._episode_indices is not None
 
         total_steps = sum(
-            [
-                episode["total_timesteps"]
-                for episode in self._data.get_episodes(self._episode_indices.tolist())
-            ]
+            self._data.apply(
+                lambda episode: episode["total_timesteps"],
+                episode_indices=self._episode_indices,
+            )
         )
 
         self.spec = MinariDatasetSpec(
@@ -162,24 +162,18 @@ class MinariDataset:
             action_space=self._data.action_space,
             data_path=str(self._data.data_path),
         )
-        self._total_steps = None
+        self._total_steps = total_steps
         self._generator = np.random.default_rng()
 
     @property
     def total_episodes(self):
         """Total episodes recorded in the Minari dataset."""
         assert self._episode_indices is not None
-        return len(self._episode_indices)
+        return self._episode_indices.size
 
     @property
     def total_steps(self):
         """Total episodes steps in the Minari dataset."""
-        if self._total_steps is None:
-            t_steps = self._data.apply(
-                lambda episode: episode.total_steps,
-                episode_indices=self._episode_indices,
-            )
-            self._total_steps = sum(t_steps)
         return self._total_steps
 
     @property
@@ -204,7 +198,7 @@ class MinariDataset:
     ) -> MinariDataset:
         """Filter the dataset episodes with a condition.
 
-        The condition must be a callable with  a single argument, the episode HDF5 group.
+        The condition must be a callable which takes an `EpisodeData` instance and retutrns a bool.
         The callable must return a `bool` True if the condition is met and False otherwise.
         i.e filtering for episodes that terminate:
 
@@ -213,7 +207,7 @@ class MinariDataset:
         ```
 
         Args:
-            condition (Callable[[Any], bool]): callable that accepts any type(For our current backend, an h5py episode group) and returns True if certain condition is met.
+            condition (Callable[[EpisodeData], bool]): callable that accepts any type(For our current backend, an h5py episode group) and returns True if certain condition is met.
         """
 
         def dict_to_episode_data_condition(episode: dict) -> bool:
@@ -287,12 +281,12 @@ class MinariDataset:
             self._episode_indices, np.arange(old_total_episodes, new_total_episodes)
         )  # ~= np.append(self._episode_indices,np.arange(self._data.total_episodes))
 
-        self.spec.total_episodes = len(self._episode_indices)
+        self.spec.total_episodes = self._episode_indices.size
         self.spec.total_steps = sum(
-            [
-                episode["total_timesteps"]
-                for episode in self._data.get_episodes(self._episode_indices)
-            ]
+            self._data.apply(
+                lambda episode: episode["total_timesteps"],
+                episode_indices=self._episode_indices,
+            )
         )
 
     def update_dataset_from_buffer(self, buffer: List[dict]):
@@ -320,12 +314,13 @@ class MinariDataset:
             self._episode_indices, np.arange(old_total_episodes, new_total_episodes)
         )  # ~= np.append(self._episode_indices,np.arange(self._data.total_episodes))
 
-        self.spec.total_episodes = len(self._episode_indices)
+        self.spec.total_episodes = self._episode_indices.size
+
         self.spec.total_steps = sum(
-            [
-                episode["total_timesteps"]
-                for episode in self._data.get_episodes(self._episode_indices)
-            ]
+            self._data.apply(
+                lambda episode: episode["total_timesteps"],
+                episode_indices=self._episode_indices,
+            )
         )
 
     def __iter__(self):
