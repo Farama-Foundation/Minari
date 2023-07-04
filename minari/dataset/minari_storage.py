@@ -50,7 +50,7 @@ class MinariStorage:
 
             # Check that the dataset is compatible with the current version of Minari
             assert Version(__version__) in SpecifierSet(
-            minari_version
+                minari_version
             ), f'Dataset {dataset_id} is compatible with Minari version {minari_version}. The Minari version of your system is {__version__}. Please install the appropriate version of Minari through : "pip install minari=={minari_version}'
             self._minari_version = minari_version
 

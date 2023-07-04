@@ -87,7 +87,9 @@ def combine_minari_version_specifiers(specifier_set: SpecifierSet):
     final_version_specifier = SpecifierSet()
 
     if inclusion_interval.lower == inclusion_interval.upper:
-        assert inclusion_interval.lower == __version__
+        assert inclusion_interval.lower == Version(
+            __version__
+        ), f"The local installed version of Minari, {__version__}, must comply with the equality version specifier: =={inclusion_interval.lower}"
         final_version_specifier &= f"=={inclusion_interval.lower}"
         # There is just one compatible version of Minari
         return final_version_specifier
