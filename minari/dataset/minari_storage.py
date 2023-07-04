@@ -8,7 +8,8 @@ import gymnasium as gym
 import h5py
 import numpy as np
 from gymnasium.envs.registration import EnvSpec
-from packaging import version
+from packaging.specifiers import SpecifierSet
+from packaging.version import Version
 
 from minari.data_collector import DataCollectorV0
 from minari.serialization import deserialize_space
@@ -48,8 +49,8 @@ class MinariStorage:
             assert isinstance(minari_version, str)
 
             # Check that the dataset is compatible with the current version of Minari
-            assert version.parse(__version__) == version.parse(
-                minari_version
+            assert Version(__version__) in SpecifierSet(
+            minari_version
             ), f'Dataset {dataset_id} is compatible with Minari version {minari_version}. The Minari version of your system is {__version__}. Please install the appropriate version of Minari through : "pip install minari=={minari_version}'
             self._minari_version = minari_version
 

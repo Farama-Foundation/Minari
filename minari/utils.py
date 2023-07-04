@@ -432,7 +432,7 @@ def create_dataset_from_buffers(
             f"`minari_version` is set to None. The compatible dataset version specifier for Minari will be automatically fixed to the installed version {__version__}.",
             UserWarning,
         )
-        minari_version = __version__
+        minari_version = f"=={__version__}"
     else:
         # Check if the installed Minari version falls inside the minari_version specifier
         assert Version(__version__) in SpecifierSet(
@@ -588,7 +588,7 @@ def create_dataset_from_collector_env(
             f"`minari_version` is set to None. The compatible dataset version specifier for Minari will be automatically fixed to the installed version {__version__}.",
             UserWarning,
         )
-        minari_version = __version__
+        minari_version = f"=={__version__}"
     else:
         # Check if the installed Minari version falls inside the minari_version specifier
         assert Version(__version__) in SpecifierSet(
