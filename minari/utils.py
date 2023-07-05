@@ -14,7 +14,8 @@ import h5py
 import numpy as np
 from gymnasium.core import ActType, ObsType
 from gymnasium.envs.registration import EnvSpec
-from gymnasium.wrappers import RecordEpisodeStatistics
+from packaging.specifiers import InvalidSpecifier, Specifier, SpecifierSet
+from packaging.version import Version
 
 from minari import DataCollectorV0
 from minari.dataset.minari_dataset import MinariDataset
@@ -437,9 +438,12 @@ def create_dataset_from_buffers(
         minari_version = f"=={__version__}"
     else:
         # Check if the installed Minari version falls inside the minari_version specifier
-        assert Version(__version__) in SpecifierSet(
-            minari_version
-        ), f"The installed Minari version {__version__} is not contained in the dataset version specifier {minari_version}."
+        try:
+            assert Version(__version__) in Specifier(
+                minari_version
+            ), f"The installed Minari version {__version__} is not contained in the dataset version specifier {minari_version}."
+        except InvalidSpecifier:
+            print(f"{minari_version} is not a version specifier.")
 
     if observation_space is None:
         observation_space = env.observation_space
@@ -593,9 +597,12 @@ def create_dataset_from_collector_env(
         minari_version = f"=={__version__}"
     else:
         # Check if the installed Minari version falls inside the minari_version specifier
-        assert Version(__version__) in SpecifierSet(
-            minari_version
-        ), f"The installed Minari version {__version__} is not contained in the dataset version specifier {minari_version}."
+        try:
+            assert Version(__version__) in Specifier(
+                minari_version
+            ), f"The installed Minari version {__version__} is not contained in the dataset version specifier {minari_version}."
+        except InvalidSpecifier:
+            print(f"{minari_version} is not a version specifier.")
 
     assert collector_env.datasets_path is not None
     dataset_path = os.path.join(collector_env.datasets_path, dataset_id)
