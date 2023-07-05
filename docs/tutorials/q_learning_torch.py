@@ -5,8 +5,8 @@ Offline Q-Learning with PyTorch
 """
 
 # %%%
-# This tutorial will guide you through the process of utilizing offline data generated with Minari to learn a ``Q`-value <https://spinningup.openai.com/en/latest/spinningup/rl_intro.html#value-functions>`_ function using PyTorch. 
-# The `CartPolve-v1 <https://gymnasium.farama.org/environments/classic_control/cart_pole/>`_ environment, which is a classic control problem, will be employed for this demonstration.
+# This tutorial will guide you through the process of utilizing offline data generated with Minari to learn a `Q-value <https://spinningup.openai.com/en/latest/spinningup/rl_intro.html#value-functions>`_ function using PyTorch. 
+# The `CartPole-v1 <https://gymnasium.farama.org/environments/classic_control/cart_pole/>`_ environment, which is a classic control problem, will be employed for this demonstration.
 
 # %%
 # Dataset generation
@@ -176,7 +176,7 @@ env.close()
 print("Offline Q-Learning accumulated rew: ", accumulated_rew)
 
 # %%%
-# We can visually observe that the learned agent act better than randomly in controlling the pole. 
+# We can visually observe that the learned agent acts better than randomly in controlling the pole. 
 # In the environment, the reward is +1 for each timestep until the pole falls. With the learned `Q`-values, we achieve an accumulated reward of 247. 
 # In contrast, the random policy demonstrates poor performance:
 
