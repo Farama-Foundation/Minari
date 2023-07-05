@@ -431,19 +431,21 @@ def create_dataset_from_buffers(
             UserWarning,
         )
     if minari_version is None:
+        version = Version(__version__)
+        release = version.release
+        # For __version__ = X.Y.Z, set version specifier by default to compatibility with version X.Y or later, but not (X+1).0 or later.
+        minari_version = f"~={'.'.join(str(x) for x in release[:2])}"
         warnings.warn(
-            f"`minari_version` is set to None. The compatible dataset version specifier for Minari will be automatically fixed to the installed version {__version__}.",
+            f"`minari_version` is set to None. The compatible dataset version specifier for Minari will be set to {minari_version}.",
             UserWarning,
         )
-        minari_version = f"=={__version__}"
-    else:
-        # Check if the installed Minari version falls inside the minari_version specifier
-        try:
-            assert Version(__version__) in Specifier(
-                minari_version
-            ), f"The installed Minari version {__version__} is not contained in the dataset version specifier {minari_version}."
-        except InvalidSpecifier:
-            print(f"{minari_version} is not a version specifier.")
+    # Check if the installed Minari version falls inside the minari_version specifier
+    try:
+        assert Version(__version__) in Specifier(
+            minari_version
+        ), f"The installed Minari version {__version__} is not contained in the dataset version specifier {minari_version}."
+    except InvalidSpecifier:
+        print(f"{minari_version} is not a version specifier.")
 
     if observation_space is None:
         observation_space = env.observation_space
@@ -590,19 +592,21 @@ def create_dataset_from_collector_env(
             "Can't pass a value for `expert_policy` and `ref_max_score` at the same time."
         )
     if minari_version is None:
+        version = Version(__version__)
+        release = version.release
+        # For __version__ = X.Y.Z, by default compatibility with version X.Y or later, but not (X+1).0 or later.
+        minari_version = f"~={'.'.join(str(x) for x in release[:2])}"
         warnings.warn(
-            f"`minari_version` is set to None. The compatible dataset version specifier for Minari will be automatically fixed to the installed version {__version__}.",
+            f"`minari_version` is set to None. The compatible dataset version specifier for Minari will be set to {minari_version}.",
             UserWarning,
         )
-        minari_version = f"=={__version__}"
-    else:
-        # Check if the installed Minari version falls inside the minari_version specifier
-        try:
-            assert Version(__version__) in Specifier(
-                minari_version
-            ), f"The installed Minari version {__version__} is not contained in the dataset version specifier {minari_version}."
-        except InvalidSpecifier:
-            print(f"{minari_version} is not a version specifier.")
+    # Check if the installed Minari version falls inside the minari_version specifier
+    try:
+        assert Version(__version__) in Specifier(
+            minari_version
+        ), f"The installed Minari version {__version__} is not contained in the dataset version specifier {minari_version}."
+    except InvalidSpecifier:
+        print(f"{minari_version} is not a version specifier.")
 
     assert collector_env.datasets_path is not None
     dataset_path = os.path.join(collector_env.datasets_path, dataset_id)
