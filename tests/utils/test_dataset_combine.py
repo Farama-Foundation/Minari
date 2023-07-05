@@ -117,6 +117,7 @@ def test_combine_datasets():
         d.spec.total_steps for d in test_datasets
     )
     _check_env_recovery(gym.make("CartPole-v1"), combined_dataset)
+
     _check_load_and_delete_dataset("cartpole-combined-test-v0")
 
     # testing with copy

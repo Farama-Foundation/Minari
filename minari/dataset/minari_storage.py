@@ -1,5 +1,6 @@
 import json
 import os
+from collections import OrderedDict
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
 
 import gymnasium as gym
@@ -7,6 +8,7 @@ import h5py
 import numpy as np
 from gymnasium.envs.registration import EnvSpec
 
+from minari.data_collector import DataCollectorV0
 from minari.serialization import deserialize_space
 
 
@@ -66,7 +68,7 @@ class MinariStorage:
 
     def apply(
         self,
-        function: Callable[[h5py.Group], Any],
+        function: Callable[[dict], Any],
         episode_indices: Optional[Iterable] = None,
     ) -> List[Any]:
         """Apply a function to a slice of the data.
@@ -85,7 +87,21 @@ class MinariStorage:
             for ep_idx in episode_indices:
                 ep_group = file[f"episode_{ep_idx}"]
                 assert isinstance(ep_group, h5py.Group)
-                out.append(function(ep_group))
+                ep_dict = {
+                    "id": ep_group.attrs.get("id"),
+                    "total_timesteps": ep_group.attrs.get("total_steps"),
+                    "seed": ep_group.attrs.get("seed"),
+                    "observations": self._decode_space(
+                        ep_group["observations"], self.observation_space
+                    ),
+                    "actions": self._decode_space(
+                        ep_group["actions"], self.action_space
+                    ),
+                    "rewards": ep_group["rewards"][()],
+                    "terminations": ep_group["terminations"][()],
+                    "truncations": ep_group["truncations"][()],
+                }
+                out.append(function(ep_dict))
 
         return out
 
@@ -148,6 +164,78 @@ class MinariStorage:
 
         return out
 
+    def update_from_collector_env(
+        self,
+        collector_env: DataCollectorV0,
+        new_data_file_path: str,
+        additional_data_id: int,
+    ):
+
+        collector_env.save_to_disk(path=new_data_file_path)
+
+        with h5py.File(new_data_file_path, "r", track_order=True) as new_data_file:
+            new_data_total_episodes = new_data_file.attrs["total_episodes"]
+            new_data_total_steps = new_data_file.attrs["total_steps"]
+
+        with h5py.File(self.data_path, "a", track_order=True) as file:
+            last_episode_id = file.attrs["total_episodes"]
+            for id in range(new_data_total_episodes):
+                file[f"episode_{last_episode_id + id}"] = h5py.ExternalLink(
+                    f"additional_data_{additional_data_id}.hdf5", f"/episode_{id}"
+                )
+                file[f"episode_{last_episode_id + id}"].attrs.modify(
+                    "id", last_episode_id + id
+                )
+
+            # Update metadata of minari dataset
+            file.attrs.modify(
+                "total_episodes", last_episode_id + new_data_total_episodes
+            )
+            file.attrs.modify(
+                "total_steps", file.attrs["total_steps"] + new_data_total_steps
+            )
+            self._total_episodes = int(file.attrs["total_episodes"].item())
+
+    def update_from_buffer(self, buffer: List[dict], data_path: str):
+        additional_steps = 0
+        with h5py.File(data_path, "a", track_order=True) as file:
+            last_episode_id = file.attrs["total_episodes"]
+            for i, eps_buff in enumerate(buffer):
+                episode_id = last_episode_id + i
+                # check episode terminated or truncated
+                assert (
+                    eps_buff["terminations"][-1] or eps_buff["truncations"][-1]
+                ), "Each episode must be terminated or truncated before adding it to a Minari dataset"
+                assert len(eps_buff["actions"]) + 1 == len(
+                    eps_buff["observations"]
+                ), f"Number of observations {len(eps_buff['observations'])} must have an additional \
+                                                                                        element compared to the number of action steps {len(eps_buff['actions'])} \
+                                                                                        The initial and final observation must be included"
+                seed = eps_buff.pop("seed", None)
+                episode_group = clear_episode_buffer(
+                    eps_buff, file.create_group(f"episode_{episode_id}")
+                )
+
+                episode_group.attrs["id"] = episode_id
+                total_steps = len(eps_buff["actions"])
+                episode_group.attrs["total_steps"] = total_steps
+                additional_steps += total_steps
+
+                if seed is None:
+                    episode_group.attrs["seed"] = str(None)
+                else:
+                    assert isinstance(seed, int)
+                    episode_group.attrs["seed"] = seed
+
+                # TODO: save EpisodeMetadataCallback callback in MinariDataset and update new episode group metadata
+
+            file.attrs.modify("total_episodes", last_episode_id + len(buffer))
+            file.attrs.modify(
+                "total_steps", file.attrs["total_steps"] + additional_steps
+            )
+
+            self._total_episodes = int(file.attrs["total_episodes"].item())
+
     @property
     def observation_space(self):
         """Original observation space of the environment before flatteining (if this is the case)."""
@@ -190,3 +278,55 @@ class MinariStorage:
     def id(self) -> str:
         """Name of the Minari dataset."""
         return self._dataset_id
+
+
+def clear_episode_buffer(episode_buffer: Dict, episode_group: h5py.Group) -> h5py.Group:
+    """Save an episode dictionary buffer into an HDF5 episode group recursively.
+
+    Args:
+        episode_buffer (dict): episode buffer
+        episode_group (h5py.Group): HDF5 group to store the episode datasets
+
+    Returns:
+        episode group: filled HDF5 episode group
+    """
+    for key, data in episode_buffer.items():
+        if isinstance(data, dict):
+            if key in episode_group:
+                episode_group_to_clear = episode_group[key]
+            else:
+                episode_group_to_clear = episode_group.create_group(key)
+            clear_episode_buffer(data, episode_group_to_clear)
+        elif all([isinstance(entry, tuple) for entry in data]):
+            # we have a list of tuples, so we need to act appropriately
+            dict_data = {
+                f"_index_{str(i)}": [entry[i] for entry in data]
+                for i, _ in enumerate(data[0])
+            }
+            if key in episode_group:
+                episode_group_to_clear = episode_group[key]
+            else:
+                episode_group_to_clear = episode_group.create_group(key)
+
+            clear_episode_buffer(dict_data, episode_group_to_clear)
+        elif all([isinstance(entry, OrderedDict) for entry in data]):
+
+            # we have a list of OrderedDicts, so we need to act appropriately
+            dict_data = {
+                key: [entry[key] for entry in data] for key, value in data[0].items()
+            }
+
+            if key in episode_group:
+                episode_group_to_clear = episode_group[key]
+            else:
+                episode_group_to_clear = episode_group.create_group(key)
+            clear_episode_buffer(dict_data, episode_group_to_clear)
+        elif all(map(lambda elem: isinstance(elem, str), data)):
+            dtype = h5py.string_dtype(encoding="utf-8")
+            episode_group.create_dataset(key, data=data, dtype=dtype, chunks=True)
+        else:
+            assert np.all(np.logical_not(np.isnan(data)))
+            # add seed to attributes
+            episode_group.create_dataset(key, data=data, chunks=True)
+
+    return episode_group

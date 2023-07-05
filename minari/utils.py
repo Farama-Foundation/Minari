@@ -10,7 +10,8 @@ import numpy as np
 from gymnasium.envs.registration import EnvSpec
 
 from minari import DataCollectorV0
-from minari.dataset.minari_dataset import MinariDataset, clear_episode_buffer
+from minari.dataset.minari_dataset import MinariDataset
+from minari.dataset.minari_storage import clear_episode_buffer
 from minari.serialization import serialize_space
 from minari.storage.datasets_root_dir import get_dataset_path
 
