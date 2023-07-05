@@ -68,7 +68,7 @@ class MinariStorage:
 
     def apply(
         self,
-        function: Callable[[h5py.Group], Any],
+        function: Callable[[dict], Any],
         episode_indices: Optional[Iterable] = None,
     ) -> List[Any]:
         """Apply a function to a slice of the data.
