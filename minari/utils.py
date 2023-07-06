@@ -6,8 +6,7 @@ import os
 import warnings
 from typing import Any, Callable, Dict, List, Optional, Union
 import portion as P
-from packaging.specifiers import SpecifierSet
-from packaging.version import Version
+import copy
 
 import gymnasium as gym
 import h5py
@@ -165,43 +164,31 @@ def validate_datasets_to_combine(datasets_to_combine: List[MinariDataset]):
     Returns:
         combined_dataset_env_spec (EnvSpec): the resulting EnvSpec of combining the MinariDatasets
     """
-    combined_dataset_env_spec = None
+    assert all(isinstance(dataset, MinariDataset) for dataset in datasets_to_combine)
 
+    # Check if there are any `None` max_episode_steps
+    if any(
+        (dataset.spec.env_spec.max_episode_steps is None)
+        for dataset in datasets_to_combine
+    ):
+        max_episode_steps = None
+    else:
+        max_episode_steps = max(
+            dataset.spec.env_spec.max_episode_steps for dataset in datasets_to_combine
+        )
+
+    combine_env_spec = []
     for dataset in datasets_to_combine:
-        if not isinstance(dataset, MinariDataset):
-            raise ValueError(f"The dataset {dataset} is not of type MinariDataset.")
-        dataset_env_spec = dataset.spec.env_spec
+        dataset_env_spec = copy.deepcopy(dataset.spec.env_spec)
+        dataset_env_spec.max_episode_steps = max_episode_steps
+        combine_env_spec.append(dataset_env_spec)
 
-        assert isinstance(dataset_env_spec, EnvSpec)
+    assert all(
+        env_spec == combine_env_spec[0]
+        for env_spec in combine_env_spec
+    ), "The datasets to be combined have different values for `env_spec` attribute."
 
-        # Look for the maximum value of `max_episode_steps` of the environments of all the
-        # datasets to combine and sets that value to the `max_episode_steps` of the combined dataset.
-        if combined_dataset_env_spec is None:
-            combined_dataset_env_spec = dataset_env_spec
-        elif dataset_env_spec.max_episode_steps is not None:
-            if combined_dataset_env_spec.max_episode_steps is None:
-                combined_dataset_env_spec.max_episode_steps = (
-                    dataset_env_spec.max_episode_steps
-                )
-            else:
-                if (
-                    combined_dataset_env_spec.max_episode_steps
-                    < dataset_env_spec.max_episode_steps
-                ):
-                    combined_dataset_env_spec.max_episode_steps = (
-                        dataset_env_spec.max_episode_steps
-                    )
-                else:
-                    dataset_env_spec.max_episode_steps = (
-                        combined_dataset_env_spec.max_episode_steps
-                    )
-
-        if combined_dataset_env_spec != dataset_env_spec:
-            raise ValueError(
-                "The datasets to be combined have different values for `env_spec` attribute."
-            )
-
-    return combined_dataset_env_spec
+    return combine_env_spec[0]
 
 
 class RandomPolicy:
