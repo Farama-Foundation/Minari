@@ -27,7 +27,7 @@ from minari.storage.datasets_root_dir import get_dataset_path
 __version__ = importlib.metadata.version("minari")
 
 
-def combine_minari_version_specifiers(specifier_set: SpecifierSet):
+def combine_minari_version_specifiers(specifier_set: SpecifierSet) -> SpecifierSet:
     """Calculates the Minari version specifier by intersecting a group of Minari version specifiers.
 
     Used to calculate the `minari_version` metadata attribute when combining multiple datasets. The function
@@ -152,7 +152,7 @@ def combine_minari_version_specifiers(specifier_set: SpecifierSet):
     return final_version_specifier
 
 
-def validate_datasets_to_combine(datasets_to_combine: List[MinariDataset]):
+def validate_datasets_to_combine(datasets_to_combine: List[MinariDataset]) -> EnvSpec:
     """Check if the given datasets can be combined.
 
     Tests if the datasets were created with the same environment (`env_spec`) and re-calculates the
@@ -184,8 +184,7 @@ def validate_datasets_to_combine(datasets_to_combine: List[MinariDataset]):
         combine_env_spec.append(dataset_env_spec)
 
     assert all(
-        env_spec == combine_env_spec[0]
-        for env_spec in combine_env_spec
+        env_spec == combine_env_spec[0] for env_spec in combine_env_spec
     ), "The datasets to be combined have different values for `env_spec` attribute."
 
     return combine_env_spec[0]

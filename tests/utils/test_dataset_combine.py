@@ -1,9 +1,13 @@
+from typing import Optional
+
 import gymnasium as gym
+import pytest
 from gymnasium.utils.env_checker import data_equivalence
+from packaging.specifiers import SpecifierSet
 
 import minari
 from minari import DataCollectorV0, MinariDataset
-from minari.utils import combine_datasets
+from minari.utils import combine_datasets, combine_minari_version_specifiers
 
 
 def _check_env_recovery(gymnasium_environment: gym.Env, dataset: MinariDataset):
@@ -54,14 +58,23 @@ def _check_load_and_delete_dataset(dataset_id: str):
     assert dataset_id not in local_datasets
 
 
-def _generate_dataset_with_collector_env(dataset_id: str, num_episodes: int = 10):
+def _generate_dataset_with_collector_env(
+    dataset_id: str, num_episodes: int = 10, max_episode_steps: Optional[int] = 500
+):
     """Helper function to create tmp dataset to combining.
 
     Args:
         dataset_id (str): name of the generated Minari dataset
         num_episodes (int): number of episodes in the generated dataset
+        max_episode_steps (int | None): max episodes per step of the environment
     """
-    env = gym.make("CartPole-v1")
+    if max_episode_steps is None:
+        # Force None max_episode_steps
+        env_spec = gym.make("CartPole-v1").spec
+        env_spec.max_episode_steps = None
+        env = env_spec.make()
+    else:
+        env = gym.make("CartPole-v1", max_episode_steps=max_episode_steps)
 
     env = DataCollectorV0(env)
     # Step the environment, DataCollectorV0 wrapper will do the data collection job
@@ -138,3 +151,83 @@ def test_combine_datasets():
 
     # checking that we still can load combined dataset after deleting source datasets
     _check_load_and_delete_dataset("cartpole-combined-test-v0")
+
+    # testing re-calculation of env_spec.max_episode_steps: max(max_episode_steps) or None propagates.
+    dataset_max_episode_steps = [5, 10, None]
+    test_datasets_ids = [
+        f"cartpole-test-{i}-v0" for i in range(len(dataset_max_episode_steps))
+    ]
+
+    local_datasets = minari.list_local_datasets()
+    # generating multiple test datasets
+    for dataset_id, max_episode_steps in zip(
+        test_datasets_ids, dataset_max_episode_steps
+    ):
+        if dataset_id in local_datasets:
+            minari.delete_dataset(dataset_id)
+        _generate_dataset_with_collector_env(
+            dataset_id, num_episodes, max_episode_steps
+        )
+
+    test_datasets = [
+        minari.load_dataset(dataset_id) for dataset_id in test_datasets_ids
+    ]
+
+    # testing without creating a copy
+    combined_dataset = combine_datasets(
+        test_datasets, new_dataset_id="cartpole-combined-test-v0"
+    )
+    assert combined_dataset.spec.env_spec.max_episode_steps is None
+    _check_load_and_delete_dataset("cartpole-combined-test-v0")
+
+    # testing with copy
+    combined_dataset = combine_datasets(
+        test_datasets, new_dataset_id="cartpole-combined-test-v0", copy=True
+    )
+    assert combined_dataset.spec.env_spec.max_episode_steps is None
+    _check_load_and_delete_dataset("cartpole-combined-test-v0")
+
+    # Check that we get max(max_episode_steps) when there is no max_episode_steps=None
+    test_datasets.pop()
+    # testing without creating a copy
+    combined_dataset = combine_datasets(
+        test_datasets, new_dataset_id="cartpole-combined-test-v0"
+    )
+    assert combined_dataset.spec.env_spec.max_episode_steps == 10
+    _check_load_and_delete_dataset("cartpole-combined-test-v0")
+
+    # testing with copy
+    combined_dataset = combine_datasets(
+        test_datasets, new_dataset_id="cartpole-combined-test-v0", copy=True
+    )
+    assert combined_dataset.spec.env_spec.max_episode_steps == 10
+    _check_load_and_delete_dataset("cartpole-combined-test-v0")
+
+    # deleting test datasets
+    for dataset_id in test_datasets_ids:
+        minari.delete_dataset(dataset_id)
+
+
+@pytest.mark.parametrize(
+    "specifier_intersection,version_specifiers",
+    [
+        (
+            SpecifierSet(">3.0.0, <=3.9.1"),
+            SpecifierSet(">3.0.0") & SpecifierSet("<=3.9.1"),
+        ),
+        (
+            SpecifierSet(">3.2, <=3.2.5"),
+            SpecifierSet(">=3.0.0, <3.3.0") & SpecifierSet(">3.2, <=3.2.5"),
+        ),
+        (SpecifierSet(">=1.3.0, !=1.4.0"), SpecifierSet(">=1.3.0, !=1.4.0")),
+        (SpecifierSet(">=1.3.0"), SpecifierSet(">=1.3.0, !=1.2.0")),
+        (
+            SpecifierSet(">=3.0.0, <=3.9.1"),
+            SpecifierSet("~=3.0") & SpecifierSet("<=3.9.1"),
+        ),
+    ],
+)
+def test_combine_minari_version_specifiers(specifier_intersection, version_specifiers):
+    intersection = combine_minari_version_specifiers(version_specifiers)
+
+    assert specifier_intersection == intersection
