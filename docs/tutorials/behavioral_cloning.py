@@ -4,14 +4,14 @@ Behavioral cloning with PyTorch
 =========================================
 """
 # %%%
-# We present here how to perform behavioral cloning on a Minari dataset using PyTorch. 
+# We present here how to perform behavioral cloning on a Minari dataset using PyTorch.
 # We will start generating the dataset of the expert policy for the `CartPole-v1 <https://gymnasium.farama.org/environments/classic_control/cart_pole/>`_ environment, which is a classic control problem.
 
 # %%
 # Policy training
 # ~~~~~~~~~~~~~~~~~~~
 # To train the expert policy, we use the library rl_zoo3.
-# After installing the lirbary with ``pip install rl_zoo3``, 
+# After installing the lirbary with ``pip install rl_zoo3``,
 # we train a PPO agent on the environment with the following command:
 #
 # ``python -m rl_zoo3.train --algo ppo --env CartPole-v1``
@@ -19,19 +19,35 @@ Behavioral cloning with PyTorch
 # %%
 # This will generate a new folder named `log` with the expert policy.
 
+# %%
+# Imports
+# ~~~~~~~~~~~~~~~~~~~
+# Let's import all the occurrences and set the random seed for reproducibility:
+
+
+import os
+
+import gymnasium as gym
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from gymnasium import spaces
+from stable_baselines3 import PPO
+from torch.utils.data import DataLoader
+from tqdm.auto import tqdm
+
+import minari
+from minari import DataCollectorV0
+
+
+torch.manual_seed(42)
 
 # %%
 # Dataset generation
 # ~~~~~~~~~~~~~~~~~~~
 # Now let's generate the dataset using the `DataCollectorV0 <https://minari.farama.org/api/data_collector/>`_ wrapper:
-# 
-
-import os 
-import minari
-from minari import DataCollectorV0
-import gymnasium as gym
-from stable_baselines3 import PPO
-from tqdm.auto import tqdm
+#
 
 env = DataCollectorV0(gym.make('CartPole-v1'))
 path = os.path.abspath('') + '/logs/ppo/CartPole-v1_1/best_model'
@@ -43,17 +59,17 @@ for i in tqdm(range(total_episodes)):
     while True:
         action, _ = agent.predict(obs)
         obs, rew, terminated, truncated, info = env.step(action)
-        
+
         if terminated or truncated:
             break
 
-dataset = minari.create_dataset_from_collector_env(dataset_id="CartPole-v1-expert", 
+dataset = minari.create_dataset_from_collector_env(dataset_id="CartPole-v1-expert",
                                                    collector_env=env,
                                                    algorithm_name="ExpertPolicy",
                                                    code_permalink="https://minari.farama.org/tutorials/behavioral_cloning",
                                                    author="Farama",
                                                    author_email="contact@farama.org"
-)
+                                                   )
 
 # %%
 # Once executing the script, the dataset will be saved on your disk. You can display the list of datasets with ``minari list local`` command.
@@ -62,22 +78,12 @@ dataset = minari.create_dataset_from_collector_env(dataset_id="CartPole-v1-exper
 # Behavioral cloning with PyTorch
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Now we can use PyTorch to learn the policy from the offline dataset.
-# Let's import all the occurrences and define the policy network:
+# Let's define the policy network:
 
-from gymnasium import spaces
-import minari
-
-import numpy as np
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from torch.utils.data import DataLoader
-
-torch.manual_seed(42)
 
 class PolicyNetwork(nn.Module):
     def __init__(self, input_dim, output_dim):
-        super(PolicyNetwork, self).__init__()
+        super().__init__()
         self.fc1 = nn.Linear(input_dim, 256)
         self.fc2 = nn.Linear(256, 128)
         self.fc3 = nn.Linear(128, output_dim)
@@ -89,11 +95,11 @@ class PolicyNetwork(nn.Module):
         return x
 
 # %%
-# In this scenario, the output dimension will be two, as previously mentioned. As for the input dimension, it will be four, corresponding to the observation space of ``CartPole-v1``. 
-# Our next step is to load the dataset and set up the training loop. The ``MinariDataset`` is compatible with the PyTorch Dataset API, allowing us to load it directly using PyTorch DataLoader. 
-# However, since each episode can have a varying length, we need to pad them. 
+# In this scenario, the output dimension will be two, as previously mentioned. As for the input dimension, it will be four, corresponding to the observation space of ``CartPole-v1``.
+# Our next step is to load the dataset and set up the training loop. The ``MinariDataset`` is compatible with the PyTorch Dataset API, allowing us to load it directly using PyTorch DataLoader.
+# However, since each episode can have a varying length, we need to pad them.
 # To achieve this, we can utilize the `collate_fn <https://pytorch.org/docs/stable/data.html#working-with-collate-fn>`_ feature of PyTorch DataLoader. Let's create the ``collate_fn`` function:
-# 
+
 
 def collate_fn(batch):
     return {
@@ -123,11 +129,11 @@ def collate_fn(batch):
     }
 
 # %%
-# We can now proceed to load the data and create the training loop. 
+# We can now proceed to load the data and create the training loop.
 # To begin, let's initialize the DataLoader, neural network, optimizer, and loss.
-# 
 
-minari_dataset =  minari.load_dataset("CartPole-v1-expert")
+
+minari_dataset = minari.load_dataset("CartPole-v1-expert")
 dataloader = DataLoader(minari_dataset, batch_size=256, shuffle=True, collate_fn=collate_fn)
 
 env = minari_dataset.recover_environment()
@@ -140,10 +146,9 @@ policy_net = PolicyNetwork(np.prod(observation_space.shape), action_space.n)
 optimizer = torch.optim.Adam(policy_net.parameters())
 loss_fn = nn.CrossEntropyLoss()
 
-# %% 
+# %%
 # We use the cross-entropy loss like a classic classification task, as the action space is discrete.
 # We then train the policy to predict the actions:
-# 
 
 num_epochs = 32
 
@@ -152,16 +157,15 @@ for epoch in range(num_epochs):
         a_pred = policy_net(batch['observations'][:, :-1])
         a_hat = F.one_hot(batch["actions"]).type(torch.float32)
         loss = loss_fn(a_pred, a_hat)
-        
+
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
 
     print(f"Epoch: {epoch}/{num_epochs}, Loss: {loss.item()}")
 
-# %% 
+# %%
 # And now, we can evaluate if the policy learned from the expert!
-# 
 
 env = gym.make("CartPole-v1", render_mode="human")
 obs, _ = env.reset(seed=42)
@@ -178,6 +182,4 @@ print("Accumulated rew: ", accumulated_rew)
 
 # %%
 # We can visually observe that the learned policy aces this simple control task, and we get the maximum reward.
-# 
-
-
+#
