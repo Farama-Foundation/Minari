@@ -1,4 +1,6 @@
-from typing import Any, Iterable, Union
+import sys
+import unicodedata
+from typing import Any, Iterable, List, Union
 
 import gymnasium as gym
 import numpy as np
@@ -7,8 +9,14 @@ from gymnasium.envs.registration import register
 from gymnasium.utils.env_checker import data_equivalence
 
 import minari
-from minari import MinariDataset
+from minari import DataCollectorV0, MinariDataset
+from minari.dataset.minari_dataset import EpisodeData
 from minari.dataset.minari_storage import MinariStorage
+
+
+unicode_charset = "".join(
+    [chr(i) for i in range(sys.maxunicode) if unicodedata.category(chr(i)) != "Cs"]
+)
 
 
 class DummyBoxEnv(gym.Env):
@@ -143,6 +151,22 @@ class DummyTupleEnv(gym.Env):
         return self.observation_space.sample(), {}
 
 
+class DummyTextEnv(gym.Env):
+    def __init__(self):
+        self.action_space = spaces.Text(max_length=10, min_length=2, charset="01")
+        self.observation_space = spaces.Text(max_length=20, charset=unicode_charset)
+
+    def step(self, action):
+        terminated = self.timestep > 5
+        self.timestep += 1
+
+        return self.observation_space.sample(), 0, terminated, False, {}
+
+    def reset(self, seed=None, options=None):
+        self.timestep = 0
+        return "者示序袋費欠走立🐝🗓🈸🐿🍯🚆▶️🎧🎇💫", {}
+
+
 class DummyComboEnv(gym.Env):
     def __init__(self):
         self.action_space = spaces.Tuple(
@@ -229,6 +253,12 @@ def register_dummy_envs():
     )
 
     register(
+        id="DummyTextEnv-v0",
+        entry_point="tests.common:DummyTextEnv",
+        max_episode_steps=5,
+    )
+
+    register(
         id="DummyComboEnv-v0",
         entry_point="tests.common:DummyComboEnv",
         max_episode_steps=5,
@@ -240,6 +270,9 @@ test_spaces = [
     gym.spaces.Box(low=-1, high=4, shape=(3,), dtype=np.float32),
     gym.spaces.Box(low=-1, high=4, shape=(2, 2, 2), dtype=np.float32),
     gym.spaces.Box(low=-1, high=4, shape=(3, 3, 3), dtype=np.float32),
+    gym.spaces.Text(max_length=10, min_length=10),
+    gym.spaces.Text(max_length=20, charset=unicode_charset),
+    gym.spaces.Text(max_length=10, charset="01"),
     gym.spaces.Tuple(
         (
             gym.spaces.Discrete(1),
@@ -306,6 +339,7 @@ test_spaces = [
                                     ),
                                 }
                             ),
+                            "component_3": gym.spaces.Text(100, min_length=20),
                         }
                     ),
                 )
@@ -338,7 +372,9 @@ unsupported_test_spaces = [
                                             gym.spaces.Box(
                                                 low=4, high=5, dtype=np.float32
                                             ),
-                                            gym.spaces.Text(1),
+                                            gym.spaces.Graph(
+                                                gym.spaces.Box(-1, 1), None
+                                            ),
                                         )
                                     ),
                                 }
@@ -370,7 +406,9 @@ def check_env_recovery_with_subset_spaces(
     recovered_env = dataset.recover_environment()
 
     # Check that environment spec is the same
-    assert recovered_env.spec == gymnasium_environment.spec
+    assert (
+        recovered_env.spec == gymnasium_environment.spec
+    ), f"recovered_env spec: {recovered_env.spec}\noriginal spec: {gymnasium_environment.spec}"
 
     # Check that action/observation spaces are the same
     assert data_equivalence(
@@ -393,7 +431,9 @@ def check_env_recovery(gymnasium_environment: gym.Env, dataset: MinariDataset):
     recovered_env = dataset.recover_environment()
 
     # Check that environment spec is the same
-    assert recovered_env.spec == gymnasium_environment.spec
+    assert (
+        recovered_env.spec == gymnasium_environment.spec
+    ), f"recovered_env spec: {recovered_env.spec}\noriginal spec: {gymnasium_environment.spec}"
 
     # Check that action/observation spaces are the same
     assert data_equivalence(
@@ -418,6 +458,7 @@ def check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
         episode_indices (Iterable[int]): the list of episode indices expected
     """
     episodes = data.get_episodes(episode_indices)
+    print([episode["id"] for episode in episodes])
     # verify we have the right number of episodes, available at the right indices
     assert data.total_episodes == len(episodes)
     # verify the actions and observations are in the appropriate action space and observation space, and that the episode lengths are correct
@@ -460,11 +501,11 @@ def _reconstuct_obs_or_action_at_index_recursive(
                 for entry in data
             ]
         )
-
-    elif isinstance(data, np.ndarray):
-        return data[index]
     else:
-        assert False, "error, invalid observation or action structure"
+        assert isinstance(
+            data, (np.ndarray, List)
+        ), "error, invalid observation or action structure"
+        return data[index]
 
 
 def _check_space_elem(data: Any, space: spaces.Space, n_elements: int):
@@ -501,3 +542,72 @@ def check_load_and_delete_dataset(dataset_id: str):
     minari.delete_dataset(dataset_id)
     local_datasets = minari.list_local_datasets()
     assert dataset_id not in local_datasets
+
+
+def create_dummy_dataset_with_collecter_env_helper(
+    dataset_id: str, env: DataCollectorV0, num_episodes: int = 10
+):
+    local_datasets = minari.list_local_datasets()
+    if dataset_id in local_datasets:
+        minari.delete_dataset(dataset_id)
+
+    # Step the environment, DataCollectorV0 wrapper will do the data collection job
+    env.reset(seed=42)
+
+    for episode in range(num_episodes):
+        terminated = False
+        truncated = False
+        while not terminated and not truncated:
+            action = env.action_space.sample()  # User-defined policy function
+            _, _, terminated, truncated, _ = env.step(action)
+            if terminated or truncated:
+                assert not env._buffer[-1]
+            else:
+                assert env._buffer[-1]
+
+        env.reset()
+
+    # Create Minari dataset and store locally
+    return minari.create_dataset_from_collector_env(
+        dataset_id=dataset_id,
+        collector_env=env,
+        algorithm_name="random_policy",
+        code_permalink="https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
+        author="WillDudley",
+        author_email="wdudley@farama.org",
+    )
+    env.close()
+
+
+def check_episode_data_integrity(
+    episode_data_list: List[EpisodeData],
+    observation_space: gym.spaces.Space,
+    action_space: gym.spaces.Space,
+):
+    """Checks to see if a list of EpisodeData insteances has consistent data and that the observations and actions are in the appropriate spaces.
+
+    Args:
+        episode_data_list (List[EpisodeData]): A list of EpisodeData instances representing episodes.
+        observation_space(gym.spaces.Space): The environment's observation space.
+        action_space(gym.spaces.Space): The environment's action space.
+
+    """
+    # verify the actions and observations are in the appropriate action space and observation space, and that the episode lengths are correct
+    for episode in episode_data_list:
+        _check_space_elem(
+            episode.observations,
+            observation_space,
+            episode.total_timesteps + 1,
+        )
+        _check_space_elem(episode.actions, action_space, episode.total_timesteps)
+
+        for i in range(episode.total_timesteps + 1):
+            obs = _reconstuct_obs_or_action_at_index_recursive(episode.observations, i)
+            assert observation_space.contains(obs)
+        for i in range(episode.total_timesteps):
+            action = _reconstuct_obs_or_action_at_index_recursive(episode.actions, i)
+            assert action_space.contains(action)
+
+        assert episode.total_timesteps == len(episode.rewards)
+        assert episode.total_timesteps == len(episode.terminations)
+        assert episode.total_timesteps == len(episode.truncations)

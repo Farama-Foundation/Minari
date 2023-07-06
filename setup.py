@@ -9,7 +9,7 @@ CWD = pathlib.Path(__file__).absolute().parent
 
 
 def get_version():
-    """Gets the gymnasium version."""
+    """Gets the Minari version."""
     path = CWD / "minari" / "__init__.py"
     content = path.read_text()
 
