@@ -14,7 +14,7 @@ import h5py
 import numpy as np
 from gymnasium.core import ActType, ObsType
 from gymnasium.envs.registration import EnvSpec
-from packaging.specifiers import InvalidSpecifier, Specifier, SpecifierSet
+from packaging.specifiers import InvalidSpecifier, SpecifierSet
 from packaging.version import Version
 
 from minari import DataCollectorV0
@@ -441,7 +441,7 @@ def create_dataset_from_buffers(
         )
     # Check if the installed Minari version falls inside the minari_version specifier
     try:
-        assert Version(__version__) in Specifier(
+        assert Version(__version__) in SpecifierSet(
             minari_version
         ), f"The installed Minari version {__version__} is not contained in the dataset version specifier {minari_version}."
     except InvalidSpecifier:
@@ -602,7 +602,7 @@ def create_dataset_from_collector_env(
         )
     # Check if the installed Minari version falls inside the minari_version specifier
     try:
-        assert Version(__version__) in Specifier(
+        assert Version(__version__) in SpecifierSet(
             minari_version
         ), f"The installed Minari version {__version__} is not contained in the dataset version specifier {minari_version}."
     except InvalidSpecifier:
