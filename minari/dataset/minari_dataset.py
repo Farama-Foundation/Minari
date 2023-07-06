@@ -175,6 +175,11 @@ class MinariDataset:
     def total_steps(self):
         """Total episodes steps in the Minari dataset."""
         return self._total_steps
+    
+    @property
+    def episode_indices(self) -> np.ndarray:
+        """Indices of the available episodes to sample within the Minari dataset."""
+        return self._episode_indices
 
     def recover_environment(self):
         """Recover the Gymnasium environment used to create the dataset.

@@ -374,6 +374,14 @@ def test_iterate_episodes(dataset_id, env_id):
     assert len(all_episodes) == 10
     assert {0, 1, 2, 3, 4, 5, 6, 7, 8, 9} == {episode.id for episode in all_episodes}
 
+    length = 0
+    for i, ep in enumerate(dataset):
+        assert dataset[i].id == i
+        assert ep.id == i
+        length += 1
+    assert length == 10
+    assert len(dataset) == 10
+
     env.close()
 
 
