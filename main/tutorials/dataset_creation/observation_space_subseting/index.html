@@ -7,12 +7,12 @@
     <meta property="og:title" content="Minari Documentation" />
     <meta property="og:type" content="website" />
     <meta property="og:description" content="Minari is a Python library for conducting research in offline reinforcement learning." />
-    <meta property="og:url" content="https://minari.farama.org/datasets/door/expert.html" /><meta property="og:image" content="https://minari.farama.org/_static/img/robotics-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Cloned" href="../cloned/" /><link rel="prev" title="Human" href="../human/" />
-        <link rel="canonical" href="https://minari.farama.org/datasets/door/expert.html" />
+    <meta property="og:url" content="https://minari.farama.org/tutorials/dataset_creation/observation_space_subseting.html" /><meta property="og:image" content="https://minari.farama.org/_static/img/robotics-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="PointMaze D4RL dataset" href="../point_maze_dataset/" /><link rel="prev" title="Dataset Creation" href="../" />
+        <link rel="canonical" href="https://minari.farama.org/tutorials/dataset_creation/observation_space_subseting.html" />
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20.dev1 -->
-        <title>Expert - Minari Documentation</title>
+        <title>Collecting a subset of a dictionary space with StepDataCallback - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?digest=a022fd11c0d7e10ac71ac296890386cea7a2fa24" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css" />
@@ -210,7 +210,7 @@
           <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
         </button>
       </div>
-      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
         <div class="visually-hidden">Toggle table of contents sidebar</div>
         <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
       </label>
@@ -249,54 +249,54 @@
 </li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
-<ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../tutorials/dataset_creation/">Dataset Creation</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Dataset Creation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/dataset_creation/observation_space_subseting/">Collecting a subset of a dictionary space with StepDataCallback</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/dataset_creation/point_maze_dataset/">PointMaze D4RL dataset</a></li>
+<ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../">Dataset Creation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Dataset Creation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Collecting a subset of a dictionary space with StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../point_maze_dataset/">PointMaze D4RL dataset</a></li>
 </ul>
 </li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
-<ul class="current">
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../">Door</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Door</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2"><a class="reference internal" href="../human/">Human</a></li>
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../cloned/">Cloned</a></li>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/door/">Door</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Door</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/door/human/">Human</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/door/expert/">Expert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/door/cloned/">Cloned</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../hammer/">Hammer</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Hammer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../hammer/human/">Human</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../hammer/expert/">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../hammer/cloned/">Cloned</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/hammer/">Hammer</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Hammer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/hammer/human/">Human</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/hammer/expert/">Expert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/hammer/cloned/">Cloned</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../relocate/">Relocate</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Relocate</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../relocate/human/">Human</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../relocate/expert/">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../relocate/cloned/">Cloned</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/relocate/">Relocate</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Relocate</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/relocate/human/">Human</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/relocate/expert/">Expert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/relocate/cloned/">Cloned</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../pen/">Pen</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Pen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../pen/human/">Human</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../pen/expert/">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../pen/cloned/">Cloned</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/pen/">Pen</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Pen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pen/human/">Human</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pen/expert/">Expert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pen/cloned/">Cloned</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../pointmaze/">Point Maze</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Point Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../pointmaze/open/">Open</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../pointmaze/umaze/">Umaze</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../pointmaze/medium/">Medium</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../pointmaze/large/">Large</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../pointmaze/open-dense/">Open-Dense</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../pointmaze/umaze-dense/">Umaze-Dense</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../pointmaze/medium-dense/">Medium-Dense</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../pointmaze/large-dense/">Large-Dense</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/pointmaze/">Point Maze</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Point Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/open/">Open</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/umaze/">Umaze</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/medium/">Medium</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/large/">Large</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/open-dense/">Open-Dense</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/umaze-dense/">Umaze-Dense</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/medium-dense/">Medium-Dense</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/large-dense/">Large-Dense</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../kitchen/partial/">Partial</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../kitchen/complete/">Complete</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../kitchen/mixed/">Mixed</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/kitchen/partial/">Partial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/kitchen/complete/">Complete</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/kitchen/mixed/">Mixed</a></li>
 </ul>
 </li>
 </ul>
@@ -329,7 +329,17 @@
             </svg>
             <span>Back to top</span>
           </a>
-          <div class="content-icon-container"><div class="theme-toggle-container theme-toggle-content">
+          <div class="content-icon-container">
+      <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/Farama-Foundation/Minari/edit/main/docs/tutorials/dataset_creation/observation_space_subseting.py" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
               <button class="theme-toggle" title="Toggle color theme">
                 <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
                 <svg class="theme-icon-when-auto">
@@ -343,7 +353,7 @@
                 </svg>
               </button>
             </div>
-            <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
               <div class="visually-hidden">Toggle table of contents sidebar</div>
               <i class="icon"><svg>
                   <use href="#svg-toc"></use>
@@ -352,71 +362,115 @@
           </div>
           <article role="main">
             
-            <section id="expert">
-<h1>Expert<a class="headerlink" href="#expert" title="Permalink to this heading">#</a></h1>
-<img src="https://storage.googleapis.com/minari-datasets/door-expert-v0/_docs/_imgs/door-expert-v0.gif" width="200" style="display: block; margin:0 auto"/>
-<section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">#</a></h2>
-<p>Trajectories have expert data from a fine-tuned RL policy provided in the <a class="reference external" href="https://github.com/aravindr93/hand_dapg">DAPG</a> repository. The environment used to collect the dataset is <a class="reference external" href="https://robotics.farama.org/envs/adroit_hand/adroit_door/"><code class="docutils literal notranslate"><span class="pre">AdroitHandDoor-v1</span></code></a>.</p>
-</section>
-<section id="dataset-specs">
-<h2>Dataset Specs<a class="headerlink" href="#dataset-specs" title="Permalink to this heading">#</a></h2>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p></p></th>
-<th class="head"><p></p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>Total Timesteps</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">1000000</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p>Total Episodes</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">5000</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p>Algorithm</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p>Author</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">Rodrigo</span> <span class="pre">de</span> <span class="pre">Lazcano</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p>Email</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">rperezvicente&#64;farama.org</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p>Code Permalink</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">https://github.com/rodrigodelazcano/d4rl-minari-dataset-generation</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p>download</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">minari.download_dataset(&quot;door-expert-v0&quot;)</span></code></p></td>
-</tr>
-</tbody>
-</table>
+            <section class="sphx-glr-example-title" id="collecting-a-subset-of-a-dictionary-space-with-stepdatacallback">
+<span id="sphx-glr-tutorials-dataset-creation-observation-space-subseting-py"></span><h1>Collecting a subset of a dictionary space with StepDataCallback<a class="headerlink" href="#collecting-a-subset-of-a-dictionary-space-with-stepdatacallback" title="Permalink to this heading">#</a></h1>
+<p>In this tutorial you’ll learn how to have <a class="reference internal" href="../../../api/data_collector/#minari.DataCollectorV0" title="minari.DataCollectorV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollectorV0</span></code></a> only collect a subset
+of the observation space in PointMaze. Specifically, we’ll be collecting observations using
+random actions on PointMaze_UMaze-v3 from <a class="reference external" href="https://robotics.farama.org/envs/maze/point_maze/">Gymnasium-Robotics</a>
+and omitting <code class="docutils literal notranslate"><span class="pre">achieved_goal</span></code> from the observation space of PointMaze.
+This would be useful if you don’t plan on training goal oriented learning agents
+on the Minari dataset generated and <a class="reference external" href="https://github.com/Farama-Foundation/Minari/issues/57">need to minimize the space taken up
+by the final dataset</a>.</p>
+<p>Please note that while only a subset of the observation space of PointMaze is touched on in
+this tutorial, the outlined procedure can be extended to both action/observation spaces
+of any other environment.</p>
+<p>Let’s get started by importing the required modules:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">gymnasium</span> <span class="kn">import</span> <span class="n">spaces</span>
+
+<span class="kn">import</span> <span class="nn">minari</span>
+<span class="kn">from</span> <span class="nn">minari</span> <span class="kn">import</span> <span class="n">DataCollectorV0</span>
+<span class="kn">from</span> <span class="nn">minari.data_collector.callbacks</span> <span class="kn">import</span> <span class="n">StepDataCallback</span>
+</pre></div>
 </div>
-</section>
-<section id="environment-specs">
-<h2>Environment Specs<a class="headerlink" href="#environment-specs" title="Permalink to this heading">#</a></h2>
-<div class="table-wrapper colwidths-auto docutils container">
-<table class="docutils align-default">
-<thead>
-<tr class="row-odd"><th class="head"><p></p></th>
-<th class="head"><p></p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p>ID</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">AdroitHandDoor-v1</span></code></p></td>
-</tr>
-<tr class="row-odd"><td><p>Action Space</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">Box(-1.0,</span> <span class="pre">1.0,</span> <span class="pre">(28,),</span> <span class="pre">float32)</span></code></p></td>
-</tr>
-<tr class="row-even"><td><p>Observation Space</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(39,),</span> <span class="pre">float64)</span></code></p></td>
-</tr>
-</tbody>
-</table>
+<p>We’ll first need to initialize our PointMaze_UMaze environment and find
+the shape of the observation space</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;PointMaze_UMaze-v3&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Observation space: </span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
 </div>
-</section>
+<p>Which should output:</p>
+<div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="n">Observation</span> <span class="n">space</span><span class="p">:</span> <span class="n">Dict</span><span class="p">(</span><span class="s1">&#39;achieved_goal&#39;</span><span class="p">:</span> <span class="n">Box</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,),</span> <span class="n">float64</span><span class="p">),</span> <span class="s1">&#39;desired_goal&#39;</span><span class="p">:</span> <span class="n">Box</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,),</span> <span class="n">float64</span><span class="p">),</span> <span class="s1">&#39;observation&#39;</span><span class="p">:</span> <span class="n">Box</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">,</span> <span class="p">(</span><span class="mi">4</span><span class="p">,),</span> <span class="n">float64</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>We now need to create a version of the observation space with <code class="docutils literal notranslate"><span class="pre">achieved_goal</span></code> omitted
+using Gymnasium spaces. This will be compared with <code class="docutils literal notranslate"><span class="pre">step_data</span></code> in each step to validate that it
+fits with the expected observation space. When saving the final HDF5 dataset file generated by Mirana to disk, this
+will be added as metadata.</p>
+<p>We’ll also need to define a <a class="reference internal" href="../../../api/data_collector_callbacks/step_data_callback/#minari.StepDataCallback" title="minari.StepDataCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.StepDataCallback</span></code></a> in order
+to modify <code class="docutils literal notranslate"><span class="pre">step_data</span></code> to delete <code class="docutils literal notranslate"><span class="pre">achieved_goal</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">observation_space_subset</span> <span class="o">=</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Dict</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="c1"># &quot;achieved_goal&quot;: spaces.Box(low=float(&#39;-inf&#39;), high=float(&#39;inf&#39;), shape=(2,), dtype=np.float64),</span>
+        <span class="s2">&quot;desired_goal&quot;</span><span class="p">:</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span>
+            <span class="n">low</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;-inf&quot;</span><span class="p">),</span> <span class="n">high</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span>
+        <span class="p">),</span>
+        <span class="s2">&quot;observation&quot;</span><span class="p">:</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span>
+            <span class="n">low</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;-inf&quot;</span><span class="p">),</span> <span class="n">high</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;inf&quot;</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span>
+        <span class="p">),</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">CustomSubsetStepDataCallback</span><span class="p">(</span><span class="n">StepDataCallback</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">step_data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">del</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;observations&quot;</span><span class="p">][</span><span class="s2">&quot;achieved_goal&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">step_data</span>
+</pre></div>
+</div>
+<p>Finally we’ll record 10 episodes with our observation space subset and
+callback passed to <a class="reference internal" href="../../../api/data_collector/#minari.DataCollectorV0" title="minari.DataCollectorV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollectorV0</span></code></a>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dataset_id</span> <span class="o">=</span> <span class="s2">&quot;point-maze-subseted-v3&quot;</span>
+
+<span class="c1"># delete the test dataset if it already exists</span>
+<span class="n">local_datasets</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">list_local_datasets</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">dataset_id</span> <span class="ow">in</span> <span class="n">local_datasets</span><span class="p">:</span>
+    <span class="n">minari</span><span class="o">.</span><span class="n">delete_dataset</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
+
+<span class="n">env</span> <span class="o">=</span> <span class="n">DataCollectorV0</span><span class="p">(</span>
+    <span class="n">env</span><span class="p">,</span>
+    <span class="n">observation_space</span><span class="o">=</span><span class="n">observation_space_subset</span><span class="p">,</span>
+    <span class="c1"># action_space=action_space_subset,</span>
+    <span class="n">step_data_callback</span><span class="o">=</span><span class="n">CustomSubsetStepDataCallback</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">num_episodes</span> <span class="o">=</span> <span class="mi">10</span>
+
+<span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">episode</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_episodes</span><span class="p">):</span>
+    <span class="n">terminated</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">truncated</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">terminated</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">truncated</span><span class="p">:</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>  <span class="c1"># Choose random actions</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+    <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+<span class="c1"># Create Minari dataset and store locally</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">create_dataset_from_collector_env</span><span class="p">(</span>
+    <span class="n">dataset_id</span><span class="o">=</span><span class="n">dataset_id</span><span class="p">,</span>
+    <span class="n">collector_env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+    <span class="n">algorithm_name</span><span class="o">=</span><span class="s2">&quot;random_policy&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">sample_episodes</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">observations</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>The output from the final line above, should be</p>
+<div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="n">dict_keys</span><span class="p">([</span><span class="s1">&#39;desired_goal&#39;</span><span class="p">,</span> <span class="s1">&#39;observation&#39;</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Showing that we have successfully omitted <code class="docutils literal notranslate"><span class="pre">achieved_goal</span></code> from the observations.</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-tutorials-dataset-creation-observation-space-subseting-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/fedc25af3a1c2e1e2bafa18080b4aabb/observation_space_subseting.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">observation_space_subseting.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/4309a2a5710b4a8d568d698c8b7a60be/observation_space_subseting.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">observation_space_subseting.ipynb</span></code></a></p>
+</div>
+</div>
 </section>
 
           </article>
@@ -424,18 +478,18 @@
         <footer>
           
           <div class="related-pages">
-            <a class="next-page" href="../cloned/">
+            <a class="next-page" href="../point_maze_dataset/">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Cloned</div>
+                <div class="title">PointMaze D4RL dataset</div>
               </div>
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
               </svg>
             </a>
-            <a class="prev-page" href="../human/">
+            <a class="prev-page" href="../">
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
               </svg>
@@ -444,7 +498,7 @@
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Human</div>
+                <div class="title">Dataset Creation</div>
                 
               </div>
             </a>
@@ -476,29 +530,8 @@
           
         </footer>
       </div>
-      <aside class="toc-drawer">
+      <aside class="toc-drawer no-toc">
         
-        
-        <div class="toc-sticky toc-scroll">
-          <div class="toc-title-container">
-            <span class="toc-title">
-              On this page
-            </span>
-          </div>
-          <div class="toc-tree-container">
-            <div class="toc-tree">
-              <ul>
-<li><a class="reference internal" href="#">Expert</a><ul>
-<li><a class="reference internal" href="#description">Description</a></li>
-<li><a class="reference internal" href="#dataset-specs">Dataset Specs</a></li>
-<li><a class="reference internal" href="#environment-specs">Environment Specs</a></li>
-</ul>
-</li>
-</ul>
-
-            </div>
-          </div>
-        </div>
         
         
       </aside>
