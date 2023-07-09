@@ -226,7 +226,7 @@ class MinariDataset:
             n_episodes (Optional[int], optional): number of episodes to sample.
         """
         indices = self._generator.choice(
-            self._episode_indices, size=n_episodes, replace=False
+            self.episode_indices, size=n_episodes, replace=False
         )
         episodes = self._data.get_episodes(indices)
         return list(map(lambda data: EpisodeData(**data), episodes))
@@ -240,9 +240,9 @@ class MinariDataset:
             episode_indices (Optional[List[int]], optional): episode indices to iterate over.
         """
         if episode_indices is None:
-            assert self._episode_indices is not None
-            assert self._episode_indices.ndim == 1
-            episode_indices = self._episode_indices.tolist()
+            assert self.episode_indices is not None
+            assert self.episode_indices.ndim == 1
+            episode_indices = self.episode_indices.tolist()
 
         assert episode_indices is not None
 
@@ -325,3 +325,11 @@ class MinariDataset:
 
     def __iter__(self):
         return self.iterate_episodes()
+
+    def __getitem__(self, idx: int) -> EpisodeData:
+        episodes_data = self._data.get_episodes([self.episode_indices[idx]])
+        assert len(episodes_data) == 1
+        return EpisodeData(**episodes_data[0])
+
+    def __len__(self) -> int:
+        return self.total_episodes
