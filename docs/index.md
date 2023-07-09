@@ -25,7 +25,6 @@ api/data_collector
 :glob:
 :caption: Tutorials
 tutorials/**/index
-tutorials/behavioral_cloning
 ```
 
 ```{toctree}

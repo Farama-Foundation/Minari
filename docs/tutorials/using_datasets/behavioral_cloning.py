@@ -6,12 +6,13 @@ Behavioral cloning with PyTorch
 # %%%
 # We present here how to perform behavioral cloning on a Minari dataset using PyTorch.
 # We will start generating the dataset of the expert policy for the `CartPole-v1 <https://gymnasium.farama.org/environments/classic_control/cart_pole/>`_ environment, which is a classic control problem.
+# The objective is to balance the pole on the cart, and we receive a reward of +1 for each successful timestep.
 
 # %%
 # Policy training
 # ~~~~~~~~~~~~~~~~~~~
 # To train the expert policy, we use the library rl_zoo3.
-# After installing the lirbary with ``pip install rl_zoo3``,
+# After installing the library with ``pip install rl_zoo3``,
 # we train a PPO agent on the environment with the following command:
 #
 # ``python -m rl_zoo3.train --algo ppo --env CartPole-v1``
@@ -22,7 +23,7 @@ Behavioral cloning with PyTorch
 # %%
 # Imports
 # ~~~~~~~~~~~~~~~~~~~
-# Let's import all the occurrences and set the random seed for reproducibility:
+# Let's import all the required packages and set the random seed for reproducibility:
 
 
 import os
@@ -181,5 +182,5 @@ env.close()
 print("Accumulated rew: ", accumulated_rew)
 
 # %%
-# We can visually observe that the learned policy aces this simple control task, and we get the maximum reward.
+# We can visually observe that the learned policy aces this simple control task, and we get the maximum reward 500, as the episode is truncated after 500 steps.
 #
