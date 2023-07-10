@@ -443,26 +443,39 @@ def create_dataset_from_collector_env(
         )
 
 
-def get_policy_normalized_score(
-    dataset: MinariDataset, eval_policy: Callable[[ObsType], ActType]
-) -> float:
+def get_normalized_score(
+    dataset: MinariDataset, returns: Union[float, np.float32]
+) -> Union[float, np.float32]:
+    r"""Normalize undiscounted return of an episode.
+
+    This function was originally provided in the `D4RL repository <https://github.com/Farama-Foundation/D4RL/blob/71a9549f2091accff93eeff68f1f3ab2c0e0a288/d4rl/offline_env.py#L71>`_.
+    The computed normalized episode return (normalized score) facilitates the comparison of algorithm performance across different tasks. The returned normalized score will be in a range between 0 and 1.
+    Where 0 corresponds to the minimum reference score calculated as the average of episode returns collected from a random policy in the environment, and 1 corresponds to a maximum reference score computed as
+    the average of episode returns from an hypothetical expert policy. These two values are stored as optional attributes in a MinariDataset as `ref_min_score` and `ref_max_score` respectively.
+
+    The formula to normalize an episode return is:
+
+    .. math:: normalize\_score = \frac{return - ref\_min\_score}{ref\_max\_score - ref\_min\_score}
+
+    .. warning:: This utility function is under testing and will not be available in every Minari dataset. For now, only the datasets imported from D4RL will contain the `ref_min_score` and `ref_max_score` attributes.
+
+    Args:
+        dataset (MinariDataset): the MinariDataset with respect to which normalize the score. Must contain the reference score attributes `ref_min_score` and `ref_max_score`.
+        returns (float | np.float32): a single value or array of episode undiscounted returns to normalize.
+
+    Returns:
+        normalized_scores
+    """
     with h5py.File(dataset.spec.data_path, "r") as f:
         ref_min_score = f.get("ref_min_score", default=None)
         ref_max_score = f.get("ref_max_score", default=None)
-        num_episodes = f.get("num_episodes_average_score", default=None)
 
     if ref_min_score is None or ref_max_score is None:
         raise ValueError(
             f"Reference score not provided for dataset {dataset.spec.dataset_id}. Can't compute the normalized score."
         )
 
-    assert isinstance(num_episodes, int)
     assert isinstance(ref_min_score, float)
     assert isinstance(ref_max_score, float)
 
-    env = dataset.recover_environment()
-    eval_policy_average_score = _get_average_reference_score(
-        env, eval_policy, num_episodes
-    )
-
-    return (eval_policy_average_score - ref_min_score) / (ref_max_score - ref_min_score)
+    return (returns - ref_min_score) / (ref_max_score - ref_min_score)
