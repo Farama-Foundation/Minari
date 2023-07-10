@@ -556,13 +556,15 @@ sampled_episodes = dataset.sample_episodes(10)
 
 The `sampled_episodes` variable will be a list of 10 `EpisodeData` elements, each containing episode data. An `EpisodeData` element is a data class consisting of the following fields:
 
-| Field             | Type         | Description                                                   |
-| ----------------- | ------------ | ------------------------------------------------------------- |
-| `id`              | `np.int64`   | ID of the episode.                                            |
-| `seed`            | `np.int64`   | Seed used to reset the episode.                               |
-| `total_timesteps` | `np.int64`   | Number of timesteps in the episode.                           |
-| `observations`    | `np.ndarray` | Observations for each timestep including initial observation. |
-| `actions`         | `np.ndarray` | Actions for each timestep.                                    |
-| `rewards`         | `np.ndarray` | Rewards for each timestep.                                    |
-| `terminations`    | `np.ndarray` | Terminations for each timestep.                               |
-| `truncations`     | `np.ndarray` | Truncations for each timestep.                                |
+| Field             | Type                                 | Description                                                   |
+| ----------------- | ------------------------------------ | ------------------------------------------------------------- |
+| `id`              | `np.int64`                           | ID of the episode.                                            |
+| `seed`            | `np.int64`                           | Seed used to reset the episode.                               |
+| `total_timesteps` | `np.int64`                           | Number of timesteps in the episode.                           |
+| `observations`    | `np.ndarray`, `str`, `tuple`, `dict` | Observations for each timestep including initial observation. |
+| `actions`         | `np.ndarray`, `str`, `tuple`, `dict` | Actions for each timestep.                                    |
+| `rewards`         | `np.ndarray`                         | Rewards for each timestep.                                    |
+| `terminations`    | `np.ndarray`                         | Terminations for each timestep.                               |
+| `truncations`     | `np.ndarray`                         | Truncations for each timestep.                                |
+
+As mentioned in the `Supported Spaces` section, many different observation and action spaces are supported so the data type for these fields are dependent on the environment being used.
