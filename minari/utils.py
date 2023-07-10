@@ -2,18 +2,33 @@ from __future__ import annotations
 
 import os
 import warnings
-from typing import Dict, List, Optional, Union
+from typing import Callable, Dict, List, Optional, Tuple, Union
 
 import gymnasium as gym
 import h5py
 import numpy as np
+import copy
+from gymnasium.core import ActType, ObsType
 from gymnasium.envs.registration import EnvSpec
+from gymnasium.wrappers import RecordEpisodeStatistics
+
 
 from minari import DataCollectorV0
 from minari.dataset.minari_dataset import MinariDataset
 from minari.dataset.minari_storage import clear_episode_buffer
 from minari.serialization import serialize_space
 from minari.storage.datasets_root_dir import get_dataset_path
+
+
+class RandomPolicy:
+    def __init__(self, env: gym.Env):
+        self.action_space = env.action_space
+        self.action_space.seed(123)
+        self.observation_space = env.observation_space
+
+    def __call__(self, observation: ObsType) -> ActType:
+        assert self.observation_space.contains(observation)
+        return self.action_space.sample()
 
 
 def combine_datasets(
@@ -163,6 +178,28 @@ def split_dataset(
     return out_datasets
 
 
+def _get_mean_reference_scores(
+    env: gym.Env,
+    policy: Callable[[ObsType], ActType],
+    num_episodes: int,
+) -> float:
+
+    env = RecordEpisodeStatistics(env, num_episodes)
+    episode_returns = []
+    for _ in range(num_episodes):
+        obs, _ = env.reset(123)
+        while True:
+            action = policy(obs)
+            obs, _, terminated, truncated, info = env.step(action)
+            if terminated or truncated:
+                episode_returns.append(info['episode']['r'])
+                break
+    
+    mean_ref_score = np.mean(episode_returns)
+
+    return mean_ref_score
+
+
 def create_dataset_from_buffers(
     dataset_id: str,
     env: gym.Env,
@@ -173,6 +210,9 @@ def create_dataset_from_buffers(
     code_permalink: Optional[str] = None,
     action_space: Optional[gym.spaces.Space] = None,
     observation_space: Optional[gym.spaces.Space] = None,
+    ref_max_score: Optional[float] = None,
+    expert_policy: Optional[Callable[[ObsType], ActType]] = None,
+    num_episodes_mean_score: int = 100,
 ):
     """Create Minari dataset from a list of episode dictionary buffers.
 
@@ -222,6 +262,8 @@ def create_dataset_from_buffers(
         observation_space = env.observation_space
     if action_space is None:
         action_space = env.action_space
+    
+    assert (expert_policy is not None and ref_max_score is not None), "Can't pass a value for `expert_policy` and `ref_max_score` at the same time."    
 
     dataset_path = get_dataset_path(dataset_id)
 
@@ -275,6 +317,37 @@ def create_dataset_from_buffers(
             file.attrs["action_space"] = action_space_str
             file.attrs["observation_space"] = observation_space_str
 
+            if ref_max_score is None and ref_min_score is None:
+                file.attrs["ref_max_score"] = str(None)
+                file.attrs["ref_min_score"] = str(None)
+                file.attrs["num_episodes_mean_score"] = str(None)
+            else:
+                assert isinstance(ref_max_score, float)
+                assert isinstance(ref_min_score, float)
+                assert isinstance(num_episodes_mean_score, int)
+                file.attrs["ref_max_score"] = ref_max_score
+                file.attrs["ref_min_score"] = ref_min_score
+                file.attrs["num_episodes_mean_score"] = str(None)
+            if expert_policy is None and ref_max_score is None:
+                warnings.warn(
+                    "`expert_policy` and `ref_max_score` are set to None", UserWarning
+                )  # TODO: more descriptive warning message.
+                file.attrs["ref_max_score"] = str(None)
+                file.attrs["ref_min_score"] = str(None)
+                file.attrs["num_episodes_mean_score"] = str(None)
+            else:
+                env = copy.deepcopy(env)
+                ref_min_score = _get_mean_reference_scores(env, RandomPolicy(env), num_episodes_mean_score)
+
+                if ref_max_score is None:
+                    ref_max_score = _get_mean_reference_scores(
+                        env, expert_policy, num_episodes_mean_score
+                    )
+
+                file.attrs["ref_max_score"] = ref_max_score
+                file.attrs["ref_min_score"] = ref_min_score
+                file.attrs["num_episodes_mean_score"] = num_episodes_mean_score
+
         return MinariDataset(data_path)
     else:
         raise ValueError(
@@ -289,6 +362,9 @@ def create_dataset_from_collector_env(
     author: Optional[str] = None,
     author_email: Optional[str] = None,
     code_permalink: Optional[str] = None,
+    ref_max_score: Optional[float] = None,
+    expert_policy: Optional[Callable[[ObsType], ActType]] = None,
+    num_episodes_mean_score: int = 100,
 ):
     """Create a Minari dataset using the data collected from stepping with a Gymnasium environment wrapped with a `DataCollectorV0` Minari wrapper.
 
