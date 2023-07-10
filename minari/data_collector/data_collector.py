@@ -447,7 +447,9 @@ class DataCollectorV0(gym.Wrapper):
         # Clear in-memory buffers
         self._buffer.clear()
 
-    def save_to_disk(self, path: str, dataset_metadata: Optional[Dict] = None):
+    def save_to_disk(
+        self, path: str, dataset_metadata: Optional[Dict[str, Any]] = None
+    ):
         """Save all in-memory buffer data and move temporary HDF5 file to a permanent location in disk.
 
         Args:
