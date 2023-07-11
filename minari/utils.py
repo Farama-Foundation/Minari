@@ -270,9 +270,8 @@ def create_dataset_from_buffers(
     if action_space is None:
         action_space = env.action_space
 
-    assert (
-        expert_policy is not None and ref_max_score is not None
-    ), "Can't pass a value for `expert_policy` and `ref_max_score` at the same time."
+    if expert_policy is not None and ref_max_score is not None:
+        raise ValueError("Can't pass a value for `expert_policy` and `ref_max_score` at the same time.")
 
     dataset_path = get_dataset_path(dataset_id)
 
@@ -400,9 +399,8 @@ def create_dataset_from_collector_env(
             "`author_email` is set to None. For longevity purposes it is highly recommended to provide an author email, or some other obvious contact information.",
             UserWarning,
         )
-    # assert (
-    #     expert_policy is not None and ref_max_score is not None
-    # ), "Can't pass a value for `expert_policy` and `ref_max_score` at the same time."
+    if expert_policy is not None and ref_max_score is not None:
+        raise ValueError("Can't pass a value for `expert_policy` and `ref_max_score` at the same time.")
 
     assert collector_env.datasets_path is not None
     dataset_path = os.path.join(collector_env.datasets_path, dataset_id)
