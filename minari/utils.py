@@ -20,8 +20,8 @@ from minari.storage.datasets_root_dir import get_dataset_path
 
 
 class RandomPolicy:
-    """A random action selection policy to compute `ref_min_score`.
-    """
+    """A random action selection policy to compute `ref_min_score`."""
+
     def __init__(self, env: gym.Env):
         self.action_space = env.action_space
         self.action_space.seed(123)
@@ -271,7 +271,9 @@ def create_dataset_from_buffers(
         action_space = env.action_space
 
     if expert_policy is not None and ref_max_score is not None:
-        raise ValueError("Can't pass a value for `expert_policy` and `ref_max_score` at the same time.")
+        raise ValueError(
+            "Can't pass a value for `expert_policy` and `ref_max_score` at the same time."
+        )
 
     dataset_path = get_dataset_path(dataset_id)
 
@@ -400,7 +402,9 @@ def create_dataset_from_collector_env(
             UserWarning,
         )
     if expert_policy is not None and ref_max_score is not None:
-        raise ValueError("Can't pass a value for `expert_policy` and `ref_max_score` at the same time.")
+        raise ValueError(
+            "Can't pass a value for `expert_policy` and `ref_max_score` at the same time."
+        )
 
     assert collector_env.datasets_path is not None
     dataset_path = os.path.join(collector_env.datasets_path, dataset_id)

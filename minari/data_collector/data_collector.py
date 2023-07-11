@@ -176,7 +176,7 @@ class DataCollectorV0(gym.Wrapper):
                     assert isinstance(
                         episode_buffer[key], dict
                     ), f"Element to be inserted is type 'dict', but buffer accepts type {type(episode_buffer[key])}"
-                    
+
                     episode_buffer[key] = self._add_to_episode_buffer(
                         episode_buffer[key], value
                     )
@@ -231,7 +231,9 @@ class DataCollectorV0(gym.Wrapper):
         # certain conditions.
         if self._new_episode and not self._reset_called:
             if isinstance(self._previous_eps_final_obs, dict):
-                self._buffer[-1]["observations"] = self._add_to_episode_buffer({}, self._previous_eps_final_obs)
+                self._buffer[-1]["observations"] = self._add_to_episode_buffer(
+                    {}, self._previous_eps_final_obs
+                )
             else:
                 self._buffer[-1]["observations"] = [self._previous_eps_final_obs]
             if self._record_infos:
