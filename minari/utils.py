@@ -20,6 +20,8 @@ from minari.storage.datasets_root_dir import get_dataset_path
 
 
 class RandomPolicy:
+    """A random action selection policy to compute `ref_min_score`.
+    """
     def __init__(self, env: gym.Env):
         self.action_space = env.action_space
         self.action_space.seed(123)
@@ -177,7 +179,7 @@ def split_dataset(
     return out_datasets
 
 
-def _get_average_reference_score(
+def get_average_reference_score(
     env: gym.Env,
     policy: Callable[[ObsType], ActType],
     num_episodes: int,
@@ -185,17 +187,17 @@ def _get_average_reference_score(
 
     env = RecordEpisodeStatistics(env, num_episodes)
     episode_returns = []
+    obs, _ = env.reset(seed=123)
     for _ in range(num_episodes):
-        obs, _ = env.reset(seed=123)
         while True:
             action = policy(obs)
             obs, _, terminated, truncated, info = env.step(action)
             if terminated or truncated:
                 episode_returns.append(info["episode"]["r"])
+                obs, _ = env.reset()
                 break
 
     mean_ref_score = np.mean(episode_returns, dtype=np.float32)
-
     return float(mean_ref_score)
 
 
@@ -209,6 +211,7 @@ def create_dataset_from_buffers(
     code_permalink: Optional[str] = None,
     action_space: Optional[gym.spaces.Space] = None,
     observation_space: Optional[gym.spaces.Space] = None,
+    ref_min_score: Optional[float] = None,
     ref_max_score: Optional[float] = None,
     expert_policy: Optional[Callable[[ObsType], ActType]] = None,
     num_episodes_average_score: int = 100,
@@ -236,6 +239,7 @@ def create_dataset_from_buffers(
         author (Optional[str], optional): author that generated the dataset. Defaults to None.
         author_email (Optional[str], optional): email of the author that generated the dataset. Defaults to None.
         code_permalink (Optional[str], optional): link to relevant code used to generate the dataset. Defaults to None.
+        ref_min_score( Optional[float], optional): minimum reference score from the average returns of a random policy. This value is later used to normalize a score with :meth:`minari.get_normalized_score`. If default None the value will be estimated with a default random policy.
         ref_max_score (Optional[float], optional: maximum reference score from the average returns of a hypothetical expert policy. This value is used in `MinariDataset.get_normalized_score()`. Default None.
         expert_policy (Optional[Callable[[ObsType], ActType], optional): policy to compute `ref_max_score` by averaging the returns over a number of episodes equal to  `num_episodes_average_score`.
                                                                         `ref_max_score` and `expert_policy` can't be passed at the same time. Default to None
@@ -324,12 +328,13 @@ def create_dataset_from_buffers(
 
             if expert_policy is not None or ref_max_score is not None:
                 env = copy.deepcopy(env)
-                ref_min_score = _get_average_reference_score(
-                    env, RandomPolicy(env), num_episodes_average_score
-                )
+                if ref_min_score is None:
+                    ref_min_score = get_average_reference_score(
+                        env, RandomPolicy(env), num_episodes_average_score
+                    )
 
                 if expert_policy is not None:
-                    ref_max_score = _get_average_reference_score(
+                    ref_max_score = get_average_reference_score(
                         env, expert_policy, num_episodes_average_score
                     )
 
@@ -351,6 +356,7 @@ def create_dataset_from_collector_env(
     author: Optional[str] = None,
     author_email: Optional[str] = None,
     code_permalink: Optional[str] = None,
+    ref_min_score: Optional[float] = None,
     ref_max_score: Optional[float] = None,
     expert_policy: Optional[Callable[[ObsType], ActType]] = None,
     num_episodes_average_score: int = 100,
@@ -369,7 +375,8 @@ def create_dataset_from_collector_env(
         author (Optional[str], optional): author that generated the dataset. Defaults to None.
         author_email (Optional[str], optional): email of the author that generated the dataset. Defaults to None.
         code_permalink (Optional[str], optional): link to relevant code used to generate the dataset. Defaults to None.
-        ref_max_score (Optional[float], optional: maximum reference score from the average returns of a hypothetical expert policy. This value is used in `MinariDataset.get_normalized_score()`. Default None.
+        ref_min_score( Optional[float], optional): minimum reference score from the average returns of a random policy. This value is later used to normalize a score with :meth:`minari.get_normalized_score`. If default None the value will be estimated with a default random policy.
+        ref_max_score (Optional[float], optional: maximum reference score from the average returns of a hypothetical expert policy. This value is used in :meth:`minari.get_normalized_score`. Default None.
         expert_policy (Optional[Callable[[ObsType], ActType], optional): policy to compute `ref_max_score` by averaging the returns over a number of episodes equal to  `num_episodes_average_score`.
                                                                         `ref_max_score` and `expert_policy` can't be passed at the same time. Default to None
         num_episodes_average_score (int): number of episodes to average over the returns to compute `ref_min_score` and `ref_max_score`. Default to 100.
@@ -393,10 +400,9 @@ def create_dataset_from_collector_env(
             "`author_email` is set to None. For longevity purposes it is highly recommended to provide an author email, or some other obvious contact information.",
             UserWarning,
         )
-
-    assert (
-        expert_policy is not None and ref_max_score is not None
-    ), "Can't pass a value for `expert_policy` and `ref_max_score` at the same time."
+    # assert (
+    #     expert_policy is not None and ref_max_score is not None
+    # ), "Can't pass a value for `expert_policy` and `ref_max_score` at the same time."
 
     assert collector_env.datasets_path is not None
     dataset_path = os.path.join(collector_env.datasets_path, dataset_id)
@@ -416,12 +422,13 @@ def create_dataset_from_collector_env(
 
         if expert_policy is not None or ref_max_score is not None:
             env = copy.deepcopy(collector_env.env)
-            ref_min_score = _get_average_reference_score(
-                env, RandomPolicy(env), num_episodes_average_score
-            )
+            if ref_min_score is None:
+                ref_min_score = get_average_reference_score(
+                    env, RandomPolicy(env), num_episodes_average_score
+                )
 
             if expert_policy is not None:
-                ref_max_score = _get_average_reference_score(
+                ref_max_score = get_average_reference_score(
                     env, expert_policy, num_episodes_average_score
                 )
             dataset_metadata.update(
@@ -467,9 +474,8 @@ def get_normalized_score(
         normalized_scores
     """
     with h5py.File(dataset.spec.data_path, "r") as f:
-        ref_min_score = f.get("ref_min_score", default=None)
-        ref_max_score = f.get("ref_max_score", default=None)
-
+        ref_min_score = f.attrs.get("ref_min_score", default=None)
+        ref_max_score = f.attrs.get("ref_max_score", default=None)
     if ref_min_score is None or ref_max_score is None:
         raise ValueError(
             f"Reference score not provided for dataset {dataset.spec.dataset_id}. Can't compute the normalized score."
