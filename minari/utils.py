@@ -239,7 +239,8 @@ def create_dataset_from_buffers(
         author (Optional[str], optional): author that generated the dataset. Defaults to None.
         author_email (Optional[str], optional): email of the author that generated the dataset. Defaults to None.
         code_permalink (Optional[str], optional): link to relevant code used to generate the dataset. Defaults to None.
-        ref_min_score( Optional[float], optional): minimum reference score from the average returns of a random policy. This value is later used to normalize a score with :meth:`minari.get_normalized_score`. If default None the value will be estimated with a default random policy.
+        ref_min_score (Optional[float], optional): minimum reference score from the average returns of a random policy. This value is later used to normalize a score with :meth:`minari.get_normalized_score`. If default None the value will be estimated with a default random policy.
+                                                    Also note that this attribute will be added to the Minari dataset only if `ref_max_score` or `expert_policy` are assigned a valid value other than None.
         ref_max_score (Optional[float], optional: maximum reference score from the average returns of a hypothetical expert policy. This value is used in `MinariDataset.get_normalized_score()`. Default None.
         expert_policy (Optional[Callable[[ObsType], ActType], optional): policy to compute `ref_max_score` by averaging the returns over a number of episodes equal to  `num_episodes_average_score`.
                                                                         `ref_max_score` and `expert_policy` can't be passed at the same time. Default to None
