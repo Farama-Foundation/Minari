@@ -327,15 +327,6 @@ class DataCollectorV0(gym.Wrapper):
         self._reset_called = True
 
         return obs, info
-    
-    def _get_h5py_subgroup(self, group: h5py.Group, name: str) -> h5py.Group:
-        if name in group:
-            subgroup = group.get(name)
-            assert isinstance(subgroup, h5py.Group)
-        else:
-            subgroup = group.create_group(name)
-        
-        return subgroup
 
     def clear_buffer_to_tmp_file(self, truncate_last_episode: bool = False):
         """Save the global buffer in-memory to a temporary HDF5 file in disk.
@@ -343,6 +334,7 @@ class DataCollectorV0(gym.Wrapper):
         Args:
             truncate_last_episode (bool, optional): If True the last episode from the buffer will be truncated before saving to disk. Defaults to False.
         """
+
         def get_h5py_subgroup(group: h5py.Group, name: str) -> h5py.Group:
             """Get a subgroup from an h5py group.
 
@@ -351,7 +343,7 @@ class DataCollectorV0(gym.Wrapper):
             Args:
                 group (h5py.Group): the h5py group object to look for/create the subgroup.
                 name (str): name of the subgroup.
-            
+
             Returns:
                 subgroup (h5py.Group)
             """
@@ -360,7 +352,7 @@ class DataCollectorV0(gym.Wrapper):
                 assert isinstance(subgroup, h5py.Group)
             else:
                 subgroup = group.create_group(name)
-            
+
             return subgroup
 
         def clear_buffer(dictionary_buffer: EpisodeBuffer, episode_group: h5py.Group):
