@@ -8,7 +8,7 @@ from tests.common import check_data_integrity
 
 @pytest.mark.parametrize(
     "dataset_id",
-    ["pen-human-v0", "door-human-v0", "hammer-human-v0", "relocate-human-v0"],
+    ["pen-human-v1", "door-human-v1", "hammer-human-v1", "relocate-human-v1"],
 )
 def test_download_dataset_from_farama_server(dataset_id: str):
     """Test downloading Minari datasets from remote server.
