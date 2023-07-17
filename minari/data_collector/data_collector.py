@@ -340,6 +340,26 @@ class DataCollectorV0(gym.Wrapper):
             truncate_last_episode (bool, optional): If True the last episode from the buffer will be truncated before saving to disk. Defaults to False.
         """
 
+        def get_h5py_subgroup(group: h5py.Group, name: str) -> h5py.Group:
+            """Get a subgroup from an h5py group.
+
+            If the subgroup does not exist, create and return and empty group with the given name.
+
+            Args:
+                group (h5py.Group): the h5py group object to look for/create the subgroup.
+                name (str): name of the subgroup.
+
+            Returns:
+                subgroup (h5py.Group)
+            """
+            if name in group:
+                subgroup = group.get(name)
+                assert isinstance(subgroup, h5py.Group)
+            else:
+                subgroup = group.create_group(name)
+
+            return subgroup
+
         def clear_buffer(dictionary_buffer: EpisodeBuffer, episode_group: h5py.Group):
             """Inner function to recursively save the nested data dictionaries in an episode buffer.
 
@@ -350,9 +370,7 @@ class DataCollectorV0(gym.Wrapper):
             """
             for key, data in dictionary_buffer.items():
                 if isinstance(data, dict):
-                    eps_group_to_clear = episode_group.get(
-                        key, episode_group.create_group(key)
-                    )
+                    eps_group_to_clear = get_h5py_subgroup(episode_group, key)
                     clear_buffer(data, eps_group_to_clear)
                 elif all(map(lambda elem: isinstance(elem, tuple), data)):
                     # we have a list of tuples, so we need to act appropriately
@@ -360,9 +378,7 @@ class DataCollectorV0(gym.Wrapper):
                         f"_index_{str(i)}": [entry[i] for entry in data]
                         for i, _ in enumerate(data[0])
                     }
-                    eps_group_to_clear = episode_group.get(
-                        key, episode_group.create_group(key)
-                    )
+                    eps_group_to_clear = get_h5py_subgroup(episode_group, key)
                     clear_buffer(dict_data, eps_group_to_clear)
                 elif all(map(lambda elem: isinstance(elem, OrderedDict), data)):
                     # we have a list of OrderedDicts, so we need to act appropriately
@@ -370,9 +386,7 @@ class DataCollectorV0(gym.Wrapper):
                         key: [entry[key] for entry in data]
                         for key, value in data[0].items()
                     }
-                    eps_group_to_clear = episode_group.get(
-                        key, episode_group.create_group(key)
-                    )
+                    eps_group_to_clear = get_h5py_subgroup(episode_group, key)
                     clear_buffer(dict_data, eps_group_to_clear)
                 else:
                     if all(map(lambda elem: isinstance(elem, str), data)):
