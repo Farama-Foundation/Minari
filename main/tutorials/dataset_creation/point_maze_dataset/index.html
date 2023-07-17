@@ -522,15 +522,70 @@ such as:</p>
 </section>
 <section id="waypoint-controller">
 <h2>Waypoint Controller<a class="headerlink" href="#waypoint-controller" title="Permalink to this heading">#</a></h2>
-<p>Next step will be to create a controller to allow the agent to follow the waypoint trajectory.
-D4RL uses a PD controller to output continuous force actions from position and velocity
-references.</p>
+<p>The step will be to create a controller to allow the agent to follow the waypoint trajectory.
+D4RL uses a PD controller to output continuous force actions from position and velocity.
+A PD controller is a variation of the PID controller often used in classical Control Theory.
+PID combines three components: a Proportial Term(P), Integral Term(I) and Derivative Term (D)</p>
+<section id="proportional-term-p">
+<h3>1. Proportional Term (P)<a class="headerlink" href="#proportional-term-p" title="Permalink to this heading">#</a></h3>
+<p>The proportional term in a PID controller adjusts the control action based on the current error, which
+is the difference between the desired value (setpoint) and the current value of the process variable.
+The control action is directly proportional to the error. A higher error results in a stronger control action.
+However, the proportional term alone can lead to overshooting or instability. Note <span class="math notranslate nohighlight">\(\tau\)</span> is our control value.</p>
 <div class="math-wrapper docutils container">
 <div class="math notranslate nohighlight">
-\[\tau = k_{p}(p_{goal} - p_{agent}) + k_{d}v_{agent}\]</div>
+\[\tau = k_{p}(\text{Error})\]</div>
 </div>
-<p>Each target position in the waypoint trajectory is converted from discrete to a continuous value by adding some noise to
-the <code class="docutils literal notranslate"><span class="pre">x</span></code> and <code class="docutils literal notranslate"><span class="pre">y</span></code> coordinates. This will allow to add more variance in the trajectories generated for the offline dataset.</p>
+</section>
+<section id="derivative-term-d">
+<h3>2. Derivative Term (D)<a class="headerlink" href="#derivative-term-d" title="Permalink to this heading">#</a></h3>
+<p>The derivative term in a PD controller considers the rate of change of the error over time.
+It helps to predict the future behavior of the error. By dampening the control action based
+on the rate of change of the error, the derivative term contributes to system stability and reduces overshooting.
+It also helps the system respond quickly to changes in the error.</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\tau = k_{d}(d(\text{Error}) / dt)\]</div>
+</div>
+<p>So for a PD controller we have the equation below. We explain what the values <span class="math notranslate nohighlight">\(k_{d}\)</span> and <span class="math notranslate nohighlight">\(k_{p}\)</span> mean in a bit</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\tau = k_{p}(\text{Error})  + k_{d}(d(\text{Error}) / dt)\]</div>
+</div>
+</section>
+<section id="integral-term-i">
+<h3>3. Integral Term (I)<a class="headerlink" href="#integral-term-i" title="Permalink to this heading">#</a></h3>
+<p>The integral term in a PID controller integrates the cumulative error over time.
+It helps to address steady-state errors or biases that may exist in the system.
+The integral term continuously adjusts the control action based on the accumulated error,
+aiming to eliminate any long-term deviations between the desired setpoint and the actual process variable.</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\tau = k_{I}{\int}_0^t(\text{Error}) dt\]</div>
+</div>
+<p>Finally for a PID controller we have the equation below</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\tau = k_{p}(\text{Error})  + k_{d}(d(\text{Error}) / dt) +  k_{I}\int_{0}^{t}(\text{Error}) dt\]</div>
+</div>
+<p>In the PID controller formula, <span class="math notranslate nohighlight">\(K_p\)</span>, <span class="math notranslate nohighlight">\(K_i\)</span>, and <span class="math notranslate nohighlight">\(K_d\)</span> are the respective gains for the proportional, integral, and derivative terms.
+These gains determine the influence of each term on the control action.
+The optimal values for these gains are typically determined through tuning, which involves adjusting
+the gains to achieve the desired control performance.</p>
+<p>Now back to our controller as stated previously, for the D4RL task we use a PD controller and we
+follow the same theme as what we have stated before as can be seen below. The <span class="math notranslate nohighlight">\(Error\)</span> is equlivalent
+to the difference between the <span class="math notranslate nohighlight">\(\text{goal}_\text{pose}\)</span> and <span class="math notranslate nohighlight">\(\text{agent}_\text{pose}\)</span> and we replace the derivative term <span class="math notranslate nohighlight">\((d(\text{Error}) / dt)\)</span> with
+the velocity of the the agent <span class="math notranslate nohighlight">\(v_{\text{agent}}\)</span>, we can think of this as a measure of the speed at which the agent
+is approaching the target position. When the agent is moving quickly towards the target, the
+derivative term will be larger, contributing to a stronger corrective action from the controller.
+On the other hand, if the agent is already close to the target and moving slowly, the derivative term will be smaller,
+resulting in a less aggressive control action.</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\tau = k_{p}(p_{\text{goal}} - p_{\text{agent}}) + k_{d}v_{\text{agent}}\]</div>
+</div>
+<p>Each target position in the waypoint trajectory is converted from discrete to a continuous value and we also add some noise to
+the <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> coordinates to add more variance in the trajectories generated for the offline dataset.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">WaypointController</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Agent controller to follow waypoints in the maze.</span>
 
@@ -582,6 +637,7 @@ the <code class="docutils literal notranslate"><span class="pre">x</span></code>
         <span class="k">return</span> <span class="n">action</span>
 </pre></div>
 </div>
+</section>
 </section>
 <section id="modified-stepdatacallback">
 <h2>Modified StepDataCallback<a class="headerlink" href="#modified-stepdatacallback" title="Permalink to this heading">#</a></h2>
@@ -758,7 +814,12 @@ Apr 8, 2020, <a class="reference external" href="https://towardsdatascience.com/
               <ul>
 <li><a class="reference internal" href="#">PointMaze D4RL dataset</a><ul>
 <li><a class="reference internal" href="#waypoint-planner">WayPoint Planner</a></li>
-<li><a class="reference internal" href="#waypoint-controller">Waypoint Controller</a></li>
+<li><a class="reference internal" href="#waypoint-controller">Waypoint Controller</a><ul>
+<li><a class="reference internal" href="#proportional-term-p">1. Proportional Term (P)</a></li>
+<li><a class="reference internal" href="#derivative-term-d">2. Derivative Term (D)</a></li>
+<li><a class="reference internal" href="#integral-term-i">3. Integral Term (I)</a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#modified-stepdatacallback">Modified StepDataCallback</a></li>
 <li><a class="reference internal" href="#collect-data-and-create-minari-dataset">Collect Data and Create Minari Dataset</a></li>
 <li><a class="reference internal" href="#references">References</a></li>
