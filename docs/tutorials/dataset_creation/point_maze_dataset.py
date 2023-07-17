@@ -225,7 +225,6 @@ class QIteration:
 # derivative term will be larger, contributing to a stronger corrective action from the controller.
 # On the other hand, if the agent is already close to the target and moving slowly, the derivative term will be smaller,
 # resulting in a less aggressive control action.
-# references.
 #
 # .. math ::
 #   \tau = k_{p}(p_{\text{goal}} - p_{\text{agent}}) + k_{d}v_{\text{agent}}
