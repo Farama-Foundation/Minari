@@ -534,6 +534,7 @@
                     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
                         <span class="n">episode_buffer</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="nb">dict</span>
                     <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Element to be inserted is type &#39;dict&#39;, but buffer accepts type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">episode_buffer</span><span class="p">[</span><span class="n">key</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span>
+
                     <span class="n">episode_buffer</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_to_episode_buffer</span><span class="p">(</span>
                         <span class="n">episode_buffer</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">value</span>
                     <span class="p">)</span>
@@ -561,7 +562,6 @@
             <span class="n">terminated</span><span class="o">=</span><span class="n">terminated</span><span class="p">,</span>
             <span class="n">truncated</span><span class="o">=</span><span class="n">truncated</span><span class="p">,</span>
         <span class="p">)</span>
-
         <span class="c1"># Force step data dictionary to include keys corresponding to Gymnasium step returns:</span>
         <span class="c1"># actions, observations, rewards, terminations, truncations, and infos</span>
         <span class="k">assert</span> <span class="n">STEP_DATA_KEYS</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span>
@@ -588,7 +588,12 @@
         <span class="c1"># or truncation. This may happen if the step_data_callback truncates or terminates the episode under</span>
         <span class="c1"># certain conditions.</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_episode</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reset_called</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;observations&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_previous_eps_final_obs</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_previous_eps_final_obs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;observations&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_to_episode_buffer</span><span class="p">(</span>
+                    <span class="p">{},</span> <span class="bp">self</span><span class="o">.</span><span class="n">_previous_eps_final_obs</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;observations&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_previous_eps_final_obs</span><span class="p">]</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_record_infos</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;infos&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_to_episode_buffer</span><span class="p">(</span>
                     <span class="p">{},</span> <span class="bp">self</span><span class="o">.</span><span class="n">_previous_eps_final_info</span>
@@ -805,7 +810,9 @@
         <span class="c1"># Clear in-memory buffers</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">save_to_disk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dataset_metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">save_to_disk</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dataset_metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Save all in-memory buffer data and move temporary HDF5 file to a permanent location in disk.</span>
 
 <span class="sd">        Args:</span>

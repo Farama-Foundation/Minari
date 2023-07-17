@@ -358,20 +358,36 @@
             <h1>Source code for minari.utils</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
+<span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="kn">import</span> <span class="nn">h5py</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">gymnasium.core</span> <span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span>
 <span class="kn">from</span> <span class="nn">gymnasium.envs.registration</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
+<span class="kn">from</span> <span class="nn">gymnasium.wrappers</span> <span class="kn">import</span> <span class="n">RecordEpisodeStatistics</span>
 
 <span class="kn">from</span> <span class="nn">minari</span> <span class="kn">import</span> <span class="n">DataCollectorV0</span>
 <span class="kn">from</span> <span class="nn">minari.dataset.minari_dataset</span> <span class="kn">import</span> <span class="n">MinariDataset</span>
 <span class="kn">from</span> <span class="nn">minari.dataset.minari_storage</span> <span class="kn">import</span> <span class="n">clear_episode_buffer</span>
 <span class="kn">from</span> <span class="nn">minari.serialization</span> <span class="kn">import</span> <span class="n">serialize_space</span>
 <span class="kn">from</span> <span class="nn">minari.storage.datasets_root_dir</span> <span class="kn">import</span> <span class="n">get_dataset_path</span>
+
+
+<span class="k">class</span> <span class="nc">RandomPolicy</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A random action selection policy to compute `ref_min_score`.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">:</span> <span class="n">ObsType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ActType</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="combine_datasets"><a class="viewcode-back" href="../../../api/minari_functions/#minari.combine_datasets">[docs]</a><span class="k">def</span> <span class="nf">combine_datasets</span><span class="p">(</span>
@@ -521,6 +537,28 @@
     <span class="k">return</span> <span class="n">out_datasets</span></div>
 
 
+<span class="k">def</span> <span class="nf">get_average_reference_score</span><span class="p">(</span>
+    <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">,</span>
+    <span class="n">policy</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">ObsType</span><span class="p">],</span> <span class="n">ActType</span><span class="p">],</span>
+    <span class="n">num_episodes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+
+    <span class="n">env</span> <span class="o">=</span> <span class="n">RecordEpisodeStatistics</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">num_episodes</span><span class="p">)</span>
+    <span class="n">episode_returns</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_episodes</span><span class="p">):</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">policy</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+            <span class="n">obs</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span><span class="p">:</span>
+                <span class="n">episode_returns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;episode&quot;</span><span class="p">][</span><span class="s2">&quot;r&quot;</span><span class="p">])</span>
+                <span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+                <span class="k">break</span>
+
+    <span class="n">mean_ref_score</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">episode_returns</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">mean_ref_score</span><span class="p">)</span>
+
+
 <div class="viewcode-block" id="create_dataset_from_buffers"><a class="viewcode-back" href="../../../api/minari_functions/#minari.create_dataset_from_buffers">[docs]</a><span class="k">def</span> <span class="nf">create_dataset_from_buffers</span><span class="p">(</span>
     <span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">,</span>
@@ -531,6 +569,10 @@
     <span class="n">code_permalink</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">action_space</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Space</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">observation_space</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Space</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">ref_min_score</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">ref_max_score</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">expert_policy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">ObsType</span><span class="p">],</span> <span class="n">ActType</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">num_episodes_average_score</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create Minari dataset from a list of episode dictionary buffers.</span>
 
@@ -555,6 +597,12 @@
 <span class="sd">        author (Optional[str], optional): author that generated the dataset. Defaults to None.</span>
 <span class="sd">        author_email (Optional[str], optional): email of the author that generated the dataset. Defaults to None.</span>
 <span class="sd">        code_permalink (Optional[str], optional): link to relevant code used to generate the dataset. Defaults to None.</span>
+<span class="sd">        ref_min_score (Optional[float], optional): minimum reference score from the average returns of a random policy. This value is later used to normalize a score with :meth:`minari.get_normalized_score`. If default None the value will be estimated with a default random policy.</span>
+<span class="sd">                                                    Also note that this attribute will be added to the Minari dataset only if `ref_max_score` or `expert_policy` are assigned a valid value other than None.</span>
+<span class="sd">        ref_max_score (Optional[float], optional: maximum reference score from the average returns of a hypothetical expert policy. This value is used in `MinariDataset.get_normalized_score()`. Default None.</span>
+<span class="sd">        expert_policy (Optional[Callable[[ObsType], ActType], optional): policy to compute `ref_max_score` by averaging the returns over a number of episodes equal to  `num_episodes_average_score`.</span>
+<span class="sd">                                                                        `ref_max_score` and `expert_policy` can&#39;t be passed at the same time. Default to None</span>
+<span class="sd">        num_episodes_average_score (int): number of episodes to average over the returns to compute `ref_min_score` and `ref_max_score`. Default to 100.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        MinariDataset</span>
@@ -580,6 +628,11 @@
         <span class="n">observation_space</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
     <span class="k">if</span> <span class="n">action_space</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">action_space</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span>
+
+    <span class="k">if</span> <span class="n">expert_policy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">ref_max_score</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Can&#39;t pass a value for `expert_policy` and `ref_max_score` at the same time.&quot;</span>
+        <span class="p">)</span>
 
     <span class="n">dataset_path</span> <span class="o">=</span> <span class="n">get_dataset_path</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
 
@@ -633,6 +686,22 @@
             <span class="n">file</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;action_space&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">action_space_str</span>
             <span class="n">file</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;observation_space&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">observation_space_str</span>
 
+            <span class="k">if</span> <span class="n">expert_policy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">ref_max_score</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">env</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">ref_min_score</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">ref_min_score</span> <span class="o">=</span> <span class="n">get_average_reference_score</span><span class="p">(</span>
+                        <span class="n">env</span><span class="p">,</span> <span class="n">RandomPolicy</span><span class="p">(</span><span class="n">env</span><span class="p">),</span> <span class="n">num_episodes_average_score</span>
+                    <span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">expert_policy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">ref_max_score</span> <span class="o">=</span> <span class="n">get_average_reference_score</span><span class="p">(</span>
+                        <span class="n">env</span><span class="p">,</span> <span class="n">expert_policy</span><span class="p">,</span> <span class="n">num_episodes_average_score</span>
+                    <span class="p">)</span>
+
+                <span class="n">file</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;ref_max_score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ref_max_score</span>
+                <span class="n">file</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;ref_min_score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ref_min_score</span>
+                <span class="n">file</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;num_episodes_average_score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">num_episodes_average_score</span>
+
         <span class="k">return</span> <span class="n">MinariDataset</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -647,6 +716,10 @@
     <span class="n">author</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">author_email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">code_permalink</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">ref_min_score</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">ref_max_score</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">expert_policy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">ObsType</span><span class="p">],</span> <span class="n">ActType</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">num_episodes_average_score</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a Minari dataset using the data collected from stepping with a Gymnasium environment wrapped with a `DataCollectorV0` Minari wrapper.</span>
 
@@ -662,6 +735,11 @@
 <span class="sd">        author (Optional[str], optional): author that generated the dataset. Defaults to None.</span>
 <span class="sd">        author_email (Optional[str], optional): email of the author that generated the dataset. Defaults to None.</span>
 <span class="sd">        code_permalink (Optional[str], optional): link to relevant code used to generate the dataset. Defaults to None.</span>
+<span class="sd">        ref_min_score( Optional[float], optional): minimum reference score from the average returns of a random policy. This value is later used to normalize a score with :meth:`minari.get_normalized_score`. If default None the value will be estimated with a default random policy.</span>
+<span class="sd">        ref_max_score (Optional[float], optional: maximum reference score from the average returns of a hypothetical expert policy. This value is used in :meth:`minari.get_normalized_score`. Default None.</span>
+<span class="sd">        expert_policy (Optional[Callable[[ObsType], ActType], optional): policy to compute `ref_max_score` by averaging the returns over a number of episodes equal to  `num_episodes_average_score`.</span>
+<span class="sd">                                                                        `ref_max_score` and `expert_policy` can&#39;t be passed at the same time. Default to None</span>
+<span class="sd">        num_episodes_average_score (int): number of episodes to average over the returns to compute `ref_min_score` and `ref_max_score`. Default to 100.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        MinariDataset</span>
@@ -682,6 +760,10 @@
             <span class="s2">&quot;`author_email` is set to None. For longevity purposes it is highly recommended to provide an author email, or some other obvious contact information.&quot;</span><span class="p">,</span>
             <span class="ne">UserWarning</span><span class="p">,</span>
         <span class="p">)</span>
+    <span class="k">if</span> <span class="n">expert_policy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">ref_max_score</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Can&#39;t pass a value for `expert_policy` and `ref_max_score` at the same time.&quot;</span>
+        <span class="p">)</span>
 
     <span class="k">assert</span> <span class="n">collector_env</span><span class="o">.</span><span class="n">datasets_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
     <span class="n">dataset_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">collector_env</span><span class="o">.</span><span class="n">datasets_path</span><span class="p">,</span> <span class="n">dataset_id</span><span class="p">)</span>
@@ -691,21 +773,79 @@
         <span class="n">dataset_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">)</span>
         <span class="n">data_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">,</span> <span class="s2">&quot;main_data.hdf5&quot;</span><span class="p">)</span>
+        <span class="n">dataset_metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;dataset_id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">),</span>
+            <span class="s2">&quot;algorithm_name&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">algorithm_name</span><span class="p">),</span>
+            <span class="s2">&quot;author&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">author</span><span class="p">),</span>
+            <span class="s2">&quot;author_email&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">author_email</span><span class="p">),</span>
+            <span class="s2">&quot;code_permalink&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">code_permalink</span><span class="p">),</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">expert_policy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">ref_max_score</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">env</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">collector_env</span><span class="o">.</span><span class="n">env</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">ref_min_score</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ref_min_score</span> <span class="o">=</span> <span class="n">get_average_reference_score</span><span class="p">(</span>
+                    <span class="n">env</span><span class="p">,</span> <span class="n">RandomPolicy</span><span class="p">(</span><span class="n">env</span><span class="p">),</span> <span class="n">num_episodes_average_score</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">expert_policy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">ref_max_score</span> <span class="o">=</span> <span class="n">get_average_reference_score</span><span class="p">(</span>
+                    <span class="n">env</span><span class="p">,</span> <span class="n">expert_policy</span><span class="p">,</span> <span class="n">num_episodes_average_score</span>
+                <span class="p">)</span>
+            <span class="n">dataset_metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;ref_max_score&quot;</span><span class="p">:</span> <span class="n">ref_max_score</span><span class="p">,</span>
+                    <span class="s2">&quot;ref_min_score&quot;</span><span class="p">:</span> <span class="n">ref_min_score</span><span class="p">,</span>
+                    <span class="s2">&quot;num_episodes_average_score&quot;</span><span class="p">:</span> <span class="n">num_episodes_average_score</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+
         <span class="n">collector_env</span><span class="o">.</span><span class="n">save_to_disk</span><span class="p">(</span>
             <span class="n">data_path</span><span class="p">,</span>
-            <span class="n">dataset_metadata</span><span class="o">=</span><span class="p">{</span>
-                <span class="s2">&quot;dataset_id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">),</span>
-                <span class="s2">&quot;algorithm_name&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">algorithm_name</span><span class="p">),</span>
-                <span class="s2">&quot;author&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">author</span><span class="p">),</span>
-                <span class="s2">&quot;author_email&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">author_email</span><span class="p">),</span>
-                <span class="s2">&quot;code_permalink&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">code_permalink</span><span class="p">),</span>
-            <span class="p">},</span>
+            <span class="n">dataset_metadata</span><span class="o">=</span><span class="n">dataset_metadata</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">MinariDataset</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;A Minari dataset with ID </span><span class="si">{</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2"> already exists and it cannot be overridden. Please use a different dataset name or version.&quot;</span>
         <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_normalized_score"><a class="viewcode-back" href="../../../api/minari_functions/#minari.get_normalized_score">[docs]</a><span class="k">def</span> <span class="nf">get_normalized_score</span><span class="p">(</span>
+    <span class="n">dataset</span><span class="p">:</span> <span class="n">MinariDataset</span><span class="p">,</span> <span class="n">returns</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Normalize undiscounted return of an episode.</span>
+
+<span class="sd">    This function was originally provided in the `D4RL repository &lt;https://github.com/Farama-Foundation/D4RL/blob/71a9549f2091accff93eeff68f1f3ab2c0e0a288/d4rl/offline_env.py#L71&gt;`_.</span>
+<span class="sd">    The computed normalized episode return (normalized score) facilitates the comparison of algorithm performance across different tasks. The returned normalized score will be in a range between 0 and 1.</span>
+<span class="sd">    Where 0 corresponds to the minimum reference score calculated as the average of episode returns collected from a random policy in the environment, and 1 corresponds to a maximum reference score computed as</span>
+<span class="sd">    the average of episode returns from an hypothetical expert policy. These two values are stored as optional attributes in a MinariDataset as `ref_min_score` and `ref_max_score` respectively.</span>
+
+<span class="sd">    The formula to normalize an episode return is:</span>
+
+<span class="sd">    .. math:: normalize\_score = \frac{return - ref\_min\_score}{ref\_max\_score - ref\_min\_score}</span>
+
+<span class="sd">    .. warning:: This utility function is under testing and will not be available in every Minari dataset. For now, only the datasets imported from D4RL will contain the `ref_min_score` and `ref_max_score` attributes.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dataset (MinariDataset): the MinariDataset with respect to which normalize the score. Must contain the reference score attributes `ref_min_score` and `ref_max_score`.</span>
+<span class="sd">        returns (float | np.float32): a single value or array of episode undiscounted returns to normalize.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        normalized_scores</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">data_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">ref_min_score</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ref_min_score&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="n">ref_max_score</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ref_max_score&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ref_min_score</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">ref_max_score</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Reference score not provided for dataset </span><span class="si">{</span><span class="n">dataset</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2">. Can&#39;t compute the normalized score.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ref_min_score</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ref_max_score</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">returns</span> <span class="o">-</span> <span class="n">ref_min_score</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">ref_max_score</span> <span class="o">-</span> <span class="n">ref_min_score</span><span class="p">)</span></div>
 </pre></div>
           </article>
         </div>
