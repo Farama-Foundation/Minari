@@ -18,11 +18,11 @@ def serialize_space(space: spaces.Space, to_string=True) -> Union[Dict, str]:
 def _serialize_box(space: spaces.Box, to_string=True) -> Union[Dict, str]:
     result = {}
     result["type"] = "Box"
-    result["dtype"] = str(space.dtype)
+    result["dtype"] = str(space.dtype.name)
     result["shape"] = list(space.shape)
     # we have to use python float type to serialze the np.float32 types
-    result["low"] = space.low.tolist()
-    result["high"] = space.high.tolist()
+    result["low"] = space.low.astype(float).tolist()
+    result["high"] = space.high.astype(float).tolist()
 
     if to_string:
         result = json.dumps(result)
@@ -33,7 +33,7 @@ def _serialize_box(space: spaces.Box, to_string=True) -> Union[Dict, str]:
 def _serialize_discrete(space: spaces.Discrete, to_string=True) -> Union[Dict, str]:
     result = {}
     result["type"] = "Discrete"
-    result["dtype"] = "int64"  # this seems to be hardcoded in Gymnasium
+    result["dtype"] = str(space.dtype.name)  # this seems to be hardcoded in Gymnasium
     # we need to cast from np.int64 to python's int type in order to serialize
     result["start"] = int(space.start)
     result["n"] = int(space.n)
@@ -130,8 +130,8 @@ def _deserialize_dict(space_dict: Dict) -> spaces.Dict:
 def _deserialize_box(space_dict: Dict) -> spaces.Box:
     assert space_dict["type"] == "Box"
     shape = tuple(space_dict["shape"])
-    low = np.array(space_dict["low"])
-    high = np.array(space_dict["high"])
+    low = np.array(space_dict["low"], dtype=np.float64)
+    high = np.array(space_dict["high"], dtype=np.float64)
     dtype = np.dtype(space_dict["dtype"])
     return spaces.Box(low=low, high=high, shape=shape, dtype=dtype)  # type: ignore
 
@@ -141,6 +141,7 @@ def _deserialize_discrete(space_dict: Dict) -> spaces.Discrete:
     assert space_dict["type"] == "Discrete"
     n = space_dict["n"]
     start = space_dict["start"]
+    dtype = np.dtype(space_dict["dtype"])
     return spaces.Discrete(n=n, start=start)
 
 

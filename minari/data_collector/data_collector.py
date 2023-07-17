@@ -470,8 +470,10 @@ class DataCollectorV0(gym.Wrapper):
             "action_space" not in dataset_metadata.keys()
         ), "'action_space' is not allowed as an optional key."
 
-        action_space_str = serialize_space(self.dataset_action_space)
-        observation_space_str = serialize_space(self.dataset_observation_space)
+        action_space_str = serialize_space(self.dataset_action_space, to_string=True)
+        observation_space_str = serialize_space(
+            self.dataset_observation_space, to_string=True
+        )
 
         self._tmp_f.attrs["action_space"] = action_space_str
         self._tmp_f.attrs["observation_space"] = observation_space_str

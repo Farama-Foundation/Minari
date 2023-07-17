@@ -220,6 +220,46 @@ class DummyComboEnv(gym.Env):
         return self.observation_space.sample(), {}
 
 
+class DummyMinariEnv(gym.Env):
+    def __init__(self):
+        self.action_space = spaces.Dict(
+            {
+                "component_1": spaces.Box(low=-1, high=1, dtype=np.float32),
+                "component_2": spaces.Dict(
+                    {
+                        "subcomponent_1": spaces.Box(low=2, high=3, dtype=np.float32),
+                        "subcomponent_2": spaces.Tuple(
+                            (
+                                spaces.Box(low=4, high=5, dtype=np.float32),
+                                spaces.Box(low=-1, high=1, dtype=np.float16),
+                                spaces.Discrete(10),
+                            )
+                        ),
+                        "subcomponent_3": spaces.Box(low=6, high=7, dtype=np.float32),
+                    }
+                ),
+            }
+        )
+        self.observation_space = spaces.Dict(
+            {
+                "component_1": spaces.Box(low=-1, high=1, dtype=np.float32),
+                "component_2": spaces.Dict(
+                    {
+                        "subcomponent_1": spaces.Box(low=2, high=3, dtype=np.float32),
+                        "subcomponent_2": spaces.Tuple(
+                            (
+                                spaces.Box(low=4, high=5, dtype=np.float32),
+                                spaces.Box(low=-1, high=1, dtype=np.float16),
+                                spaces.Discrete(10),
+                            )
+                        ),
+                        "subcomponent_3": spaces.Box(low=6, high=7, dtype=np.float32),
+                    }
+                ),
+            }
+        )
+
+
 def register_dummy_envs():
 
     register(
@@ -450,6 +490,30 @@ def check_env_recovery(gymnasium_environment: gym.Env, dataset: MinariDataset):
     )
 
 
+def check_component_dtype(component, expected_dtype):
+    """Performs the dtype checks for a given component.
+
+    Args:
+        component: a component that you want to check the dtype for
+        expected_dtype: the expected dtype that you want to check against
+    """
+    assert isinstance(component, np.ndarray)
+    assert component.dtype == expected_dtype
+
+
+def validate_component_dtype(component, expected_dtype, expected_type):
+    """Performs the dtype and type checks for a given component.
+
+    Args:
+        component: a component that you want to check the dtype and type for
+        expected_dtype: the expected dtype that you want to check against
+        expected_type: the expected type that you want to check against
+    """
+    assert isinstance(component, np.ndarray)
+    assert component.dtype == expected_dtype
+    assert component.dtype.type == expected_type
+
+
 def check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
     """Checks to see if a MinariStorage episode has consistent data and has episodes at the expected indices.
 
@@ -477,9 +541,76 @@ def check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
                 episode["observations"], i
             )
             assert data.observation_space.contains(obs)
+            validate_component_dtype(
+                obs, data.observation_space["component_1"], np.float32
+            )
+
+            subcomponent_1 = obs["component_2"]["subcomponent_1"]
+            validate_component_dtype(
+                subcomponent_1,
+                data.observation_space["component_2"]["subcomponent_1"],
+                np.float32,
+            )
+
+            subcomponent_2 = obs["component_2"]["subcomponent_2"]
+            validate_component_dtype(
+                subcomponent_2[0],
+                data.observation_space["component_2"]["subcomponent_2"][0],
+                np.float32,
+            )
+            validate_component_dtype(
+                subcomponent_2[1],
+                data.observation_space["component_2"]["subcomponent_2"][1],
+                np.float16,
+            )
+            validate_component_dtype(
+                subcomponent_2[2],
+                data.observation_space["component_2"]["subcomponent_2"][2],
+                np.int32,
+            )
+
+            validate_component_dtype(
+                obs["component_2"]["subcomponent_3"],
+                data.observation_space["component_2"]["subcomponent_3"],
+                np.float32,
+            )
         for i in range(episode["total_timesteps"]):
             action = _reconstuct_obs_or_action_at_index_recursive(episode["actions"], i)
             assert data.action_space.contains(action)
+
+            validate_component_dtype(
+                action, data.action_space["component_1"], np.float32
+            )
+
+            subcomponent_1 = action["component_2"]["subcomponent_1"]
+            validate_component_dtype(
+                subcomponent_1,
+                data.action_space["component_2"]["subcomponent_1"],
+                np.float32,
+            )
+
+            subcomponent_2 = action["component_2"]["subcomponent_2"]
+            validate_component_dtype(
+                subcomponent_2[0],
+                data.action_space["component_2"]["subcomponent_2"][0],
+                np.float32,
+            )
+            validate_component_dtype(
+                subcomponent_2[1],
+                data.action_space["component_2"]["subcomponent_2"][1],
+                np.float16,
+            )
+            validate_component_dtype(
+                subcomponent_2[2],
+                data.action_space["component_2"]["subcomponent_2"][2],
+                np.int32,
+            )
+
+            validate_component_dtype(
+                action["component_2"]["subcomponent_3"],
+                data.action_space["component_2"]["subcomponent_3"],
+                np.float32,
+            )
 
         assert episode["total_timesteps"] == len(episode["rewards"])
         assert episode["total_timesteps"] == len(episode["terminations"])

@@ -269,8 +269,8 @@ def create_dataset_from_buffers(
             ] = env.spec.to_json()  # pyright: ignore [reportOptionalMemberAccess]
             file.attrs["dataset_id"] = dataset_id
 
-            action_space_str = serialize_space(action_space)
-            observation_space_str = serialize_space(observation_space)
+            action_space_str = serialize_space(action_space, to_string=True)
+            observation_space_str = serialize_space(observation_space, to_string=True)
 
             file.attrs["action_space"] = action_space_str
             file.attrs["observation_space"] = observation_space_str
