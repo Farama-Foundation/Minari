@@ -540,3 +540,31 @@ The Minari storage format supports the following observation and action spaces:
 
 #### Space Serialization
 Spaces are serialized to a JSON format when saving to disk. This serialization supports all space types supported by Minari, and aims to be both human, and machine readable. The serialized action and observation spaces for the episodes in the dataset are saved as strings in the global HDF5 group metadata in `main_data.hdf5` for a particular dataset as `action_space` and `observation_space` respectively. All episodes in `main_data.hdf5` must have observations and actions that comply with these action and observation spaces. 
+
+## Minari Data Structures
+
+A Minari dataset is encapsulated in the `MinariDataset` class which allows for iterating and sampling through episodes which are defined as `EpisodeData` data class.
+
+### EpisodeData Structure
+
+Episodes can be accessed from a Minari dataset through iteration, random sampling, or even filtering episodes from a dataset through an arbitrary condition via the `filter_episodes` method. Take the following example where we load the `door-human-v0` dataset and randomly sample 10 episodes:
+
+```python
+dataset = minari.load_dataset("door-human-v0")
+sampled_episodes = dataset.sample_episodes(10)
+```
+
+The `sampled_episodes` variable will be a list of 10 `EpisodeData` elements, each containing episode data. An `EpisodeData` element is a data class consisting of the following fields:
+
+| Field             | Type                                 | Description                                                   |
+| ----------------- | ------------------------------------ | ------------------------------------------------------------- |
+| `id`              | `np.int64`                           | ID of the episode.                                            |
+| `seed`            | `np.int64`                           | Seed used to reset the episode.                               |
+| `total_timesteps` | `np.int64`                           | Number of timesteps in the episode.                           |
+| `observations`    | `np.ndarray`, `list`, `tuple`, `dict` | Observations for each timestep including initial observation. |
+| `actions`         | `np.ndarray`, `list`, `tuple`, `dict` | Actions for each timestep.                                    |
+| `rewards`         | `np.ndarray`                         | Rewards for each timestep.                                    |
+| `terminations`    | `np.ndarray`                         | Terminations for each timestep.                               |
+| `truncations`     | `np.ndarray`                         | Truncations for each timestep.                                |
+
+As mentioned in the `Supported Spaces` section, many different observation and action spaces are supported so the data type for these fields are dependent on the environment being used.
