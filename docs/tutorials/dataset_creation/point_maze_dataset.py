@@ -174,7 +174,6 @@ class QIteration:
 # is the difference between the desired value (setpoint) and the current value of the process variable.
 # The control action is directly proportional to the error. A higher error results in a stronger control action.
 # However, the proportional term alone can lead to overshooting or instability. Note :math:`\tau` is our control value.
-# references.
 #
 # .. math ::
 #   \tau = k_{p}(\text{Error})
@@ -185,13 +184,11 @@ class QIteration:
 # It helps to predict the future behavior of the error. By dampening the control action based
 # on the rate of change of the error, the derivative term contributes to system stability and reduces overshooting.
 # It also helps the system respond quickly to changes in the error.
-# references.
 #
 # .. math ::
 #   \tau = k_{d}(d(\text{Error}) / dt)
 #
 # So for a PD controller we have the equation below. We explain what the values :math:`k_{d}` and :math:`k_{p}` mean in a bit
-# references.
 #
 # .. math ::
 #   \tau = k_{p}(\text{Error})  + k_{d}(d(\text{Error}) / dt)
@@ -202,7 +199,6 @@ class QIteration:
 # It helps to address steady-state errors or biases that may exist in the system.
 # The integral term continuously adjusts the control action based on the accumulated error,
 # aiming to eliminate any long-term deviations between the desired setpoint and the actual process variable.
-# references.
 #
 # .. math ::
 #   \tau = k_{I}{\int}_0^t(\text{Error}) dt
@@ -225,7 +221,6 @@ class QIteration:
 # derivative term will be larger, contributing to a stronger corrective action from the controller.
 # On the other hand, if the agent is already close to the target and moving slowly, the derivative term will be smaller,
 # resulting in a less aggressive control action.
-# references.
 #
 # .. math ::
 #   \tau = k_{p}(p_{\text{goal}} - p_{\text{agent}}) + k_{d}v_{\text{agent}}
