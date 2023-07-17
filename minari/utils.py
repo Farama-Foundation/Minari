@@ -460,9 +460,7 @@ def create_dataset_from_buffers(
                 ), "Each episode must be terminated or truncated before adding it to a Minari dataset"
                 assert len(eps_buff["actions"]) + 1 == len(
                     eps_buff["observations"]
-                ), f"Number of observations {len(eps_buff['observations'])} must have an additional \
-                                                                                        element compared to the number of action steps {len(eps_buff['actions'])} \
-                                                                                        The initial and final observation must be included"
+                ), f"Number of observations {len(eps_buff['observations'])} must have an additional element compared to the number of action steps {len(eps_buff['actions'])}. The initial and final observation must be included"
                 seed = eps_buff.pop("seed", None)
                 eps_group = clear_episode_buffer(
                     eps_buff, file.create_group(f"episode_{i}")
@@ -511,7 +509,7 @@ def create_dataset_from_buffers(
                 file.attrs["ref_min_score"] = ref_min_score
                 file.attrs["num_episodes_average_score"] = num_episodes_average_score
 
-            file["minari_version"] = minari_version
+            file.attrs["minari_version"] = minari_version
 
         return MinariDataset(data_path)
     else:
