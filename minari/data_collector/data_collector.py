@@ -176,6 +176,7 @@ class DataCollectorV0(gym.Wrapper):
                     assert isinstance(
                         episode_buffer[key], dict
                     ), f"Element to be inserted is type 'dict', but buffer accepts type {type(episode_buffer[key])}"
+
                     episode_buffer[key] = self._add_to_episode_buffer(
                         episode_buffer[key], value
                     )
@@ -203,7 +204,6 @@ class DataCollectorV0(gym.Wrapper):
             terminated=terminated,
             truncated=truncated,
         )
-
         # Force step data dictionary to include keys corresponding to Gymnasium step returns:
         # actions, observations, rewards, terminations, truncations, and infos
         assert STEP_DATA_KEYS.issubset(
@@ -230,7 +230,12 @@ class DataCollectorV0(gym.Wrapper):
         # or truncation. This may happen if the step_data_callback truncates or terminates the episode under
         # certain conditions.
         if self._new_episode and not self._reset_called:
-            self._buffer[-1]["observations"] = [self._previous_eps_final_obs]
+            if isinstance(self._previous_eps_final_obs, dict):
+                self._buffer[-1]["observations"] = self._add_to_episode_buffer(
+                    {}, self._previous_eps_final_obs
+                )
+            else:
+                self._buffer[-1]["observations"] = [self._previous_eps_final_obs]
             if self._record_infos:
                 self._buffer[-1]["infos"] = self._add_to_episode_buffer(
                     {}, self._previous_eps_final_info
@@ -447,7 +452,9 @@ class DataCollectorV0(gym.Wrapper):
         # Clear in-memory buffers
         self._buffer.clear()
 
-    def save_to_disk(self, path: str, dataset_metadata: Optional[Dict] = None):
+    def save_to_disk(
+        self, path: str, dataset_metadata: Optional[Dict[str, Any]] = None
+    ):
         """Save all in-memory buffer data and move temporary HDF5 file to a permanent location in disk.
 
         Args:

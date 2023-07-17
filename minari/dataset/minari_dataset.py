@@ -181,7 +181,7 @@ class MinariDataset:
         """Indices of the available episodes to sample within the Minari dataset."""
         return self._episode_indices
 
-    def recover_environment(self):
+    def recover_environment(self) -> gym.Env:
         """Recover the Gymnasium environment used to create the dataset.
 
         Returns:

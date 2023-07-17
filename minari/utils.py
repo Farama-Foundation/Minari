@@ -1,19 +1,35 @@
 from __future__ import annotations
 
+import copy
 import os
 import warnings
-from typing import Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 
 import gymnasium as gym
 import h5py
 import numpy as np
+from gymnasium.core import ActType, ObsType
 from gymnasium.envs.registration import EnvSpec
+from gymnasium.wrappers import RecordEpisodeStatistics
 
 from minari import DataCollectorV0
 from minari.dataset.minari_dataset import MinariDataset
 from minari.dataset.minari_storage import clear_episode_buffer
 from minari.serialization import serialize_space
 from minari.storage.datasets_root_dir import get_dataset_path
+
+
+class RandomPolicy:
+    """A random action selection policy to compute `ref_min_score`."""
+
+    def __init__(self, env: gym.Env):
+        self.action_space = env.action_space
+        self.action_space.seed(123)
+        self.observation_space = env.observation_space
+
+    def __call__(self, observation: ObsType) -> ActType:
+        assert self.observation_space.contains(observation)
+        return self.action_space.sample()
 
 
 def combine_datasets(
@@ -163,6 +179,28 @@ def split_dataset(
     return out_datasets
 
 
+def get_average_reference_score(
+    env: gym.Env,
+    policy: Callable[[ObsType], ActType],
+    num_episodes: int,
+) -> float:
+
+    env = RecordEpisodeStatistics(env, num_episodes)
+    episode_returns = []
+    obs, _ = env.reset(seed=123)
+    for _ in range(num_episodes):
+        while True:
+            action = policy(obs)
+            obs, _, terminated, truncated, info = env.step(action)
+            if terminated or truncated:
+                episode_returns.append(info["episode"]["r"])
+                obs, _ = env.reset()
+                break
+
+    mean_ref_score = np.mean(episode_returns, dtype=np.float32)
+    return float(mean_ref_score)
+
+
 def create_dataset_from_buffers(
     dataset_id: str,
     env: gym.Env,
@@ -173,6 +211,10 @@ def create_dataset_from_buffers(
     code_permalink: Optional[str] = None,
     action_space: Optional[gym.spaces.Space] = None,
     observation_space: Optional[gym.spaces.Space] = None,
+    ref_min_score: Optional[float] = None,
+    ref_max_score: Optional[float] = None,
+    expert_policy: Optional[Callable[[ObsType], ActType]] = None,
+    num_episodes_average_score: int = 100,
 ):
     """Create Minari dataset from a list of episode dictionary buffers.
 
@@ -197,6 +239,12 @@ def create_dataset_from_buffers(
         author (Optional[str], optional): author that generated the dataset. Defaults to None.
         author_email (Optional[str], optional): email of the author that generated the dataset. Defaults to None.
         code_permalink (Optional[str], optional): link to relevant code used to generate the dataset. Defaults to None.
+        ref_min_score (Optional[float], optional): minimum reference score from the average returns of a random policy. This value is later used to normalize a score with :meth:`minari.get_normalized_score`. If default None the value will be estimated with a default random policy.
+                                                    Also note that this attribute will be added to the Minari dataset only if `ref_max_score` or `expert_policy` are assigned a valid value other than None.
+        ref_max_score (Optional[float], optional: maximum reference score from the average returns of a hypothetical expert policy. This value is used in `MinariDataset.get_normalized_score()`. Default None.
+        expert_policy (Optional[Callable[[ObsType], ActType], optional): policy to compute `ref_max_score` by averaging the returns over a number of episodes equal to  `num_episodes_average_score`.
+                                                                        `ref_max_score` and `expert_policy` can't be passed at the same time. Default to None
+        num_episodes_average_score (int): number of episodes to average over the returns to compute `ref_min_score` and `ref_max_score`. Default to 100.
 
     Returns:
         MinariDataset
@@ -222,6 +270,11 @@ def create_dataset_from_buffers(
         observation_space = env.observation_space
     if action_space is None:
         action_space = env.action_space
+
+    if expert_policy is not None and ref_max_score is not None:
+        raise ValueError(
+            "Can't pass a value for `expert_policy` and `ref_max_score` at the same time."
+        )
 
     dataset_path = get_dataset_path(dataset_id)
 
@@ -275,6 +328,22 @@ def create_dataset_from_buffers(
             file.attrs["action_space"] = action_space_str
             file.attrs["observation_space"] = observation_space_str
 
+            if expert_policy is not None or ref_max_score is not None:
+                env = copy.deepcopy(env)
+                if ref_min_score is None:
+                    ref_min_score = get_average_reference_score(
+                        env, RandomPolicy(env), num_episodes_average_score
+                    )
+
+                if expert_policy is not None:
+                    ref_max_score = get_average_reference_score(
+                        env, expert_policy, num_episodes_average_score
+                    )
+
+                file.attrs["ref_max_score"] = ref_max_score
+                file.attrs["ref_min_score"] = ref_min_score
+                file.attrs["num_episodes_average_score"] = num_episodes_average_score
+
         return MinariDataset(data_path)
     else:
         raise ValueError(
@@ -289,6 +358,10 @@ def create_dataset_from_collector_env(
     author: Optional[str] = None,
     author_email: Optional[str] = None,
     code_permalink: Optional[str] = None,
+    ref_min_score: Optional[float] = None,
+    ref_max_score: Optional[float] = None,
+    expert_policy: Optional[Callable[[ObsType], ActType]] = None,
+    num_episodes_average_score: int = 100,
 ):
     """Create a Minari dataset using the data collected from stepping with a Gymnasium environment wrapped with a `DataCollectorV0` Minari wrapper.
 
@@ -304,6 +377,11 @@ def create_dataset_from_collector_env(
         author (Optional[str], optional): author that generated the dataset. Defaults to None.
         author_email (Optional[str], optional): email of the author that generated the dataset. Defaults to None.
         code_permalink (Optional[str], optional): link to relevant code used to generate the dataset. Defaults to None.
+        ref_min_score( Optional[float], optional): minimum reference score from the average returns of a random policy. This value is later used to normalize a score with :meth:`minari.get_normalized_score`. If default None the value will be estimated with a default random policy.
+        ref_max_score (Optional[float], optional: maximum reference score from the average returns of a hypothetical expert policy. This value is used in :meth:`minari.get_normalized_score`. Default None.
+        expert_policy (Optional[Callable[[ObsType], ActType], optional): policy to compute `ref_max_score` by averaging the returns over a number of episodes equal to  `num_episodes_average_score`.
+                                                                        `ref_max_score` and `expert_policy` can't be passed at the same time. Default to None
+        num_episodes_average_score (int): number of episodes to average over the returns to compute `ref_min_score` and `ref_max_score`. Default to 100.
 
     Returns:
         MinariDataset
@@ -324,6 +402,10 @@ def create_dataset_from_collector_env(
             "`author_email` is set to None. For longevity purposes it is highly recommended to provide an author email, or some other obvious contact information.",
             UserWarning,
         )
+    if expert_policy is not None and ref_max_score is not None:
+        raise ValueError(
+            "Can't pass a value for `expert_policy` and `ref_max_score` at the same time."
+        )
 
     assert collector_env.datasets_path is not None
     dataset_path = os.path.join(collector_env.datasets_path, dataset_id)
@@ -333,18 +415,76 @@ def create_dataset_from_collector_env(
         dataset_path = os.path.join(dataset_path, "data")
         os.makedirs(dataset_path)
         data_path = os.path.join(dataset_path, "main_data.hdf5")
+        dataset_metadata: Dict[str, Any] = {
+            "dataset_id": str(dataset_id),
+            "algorithm_name": str(algorithm_name),
+            "author": str(author),
+            "author_email": str(author_email),
+            "code_permalink": str(code_permalink),
+        }
+
+        if expert_policy is not None or ref_max_score is not None:
+            env = copy.deepcopy(collector_env.env)
+            if ref_min_score is None:
+                ref_min_score = get_average_reference_score(
+                    env, RandomPolicy(env), num_episodes_average_score
+                )
+
+            if expert_policy is not None:
+                ref_max_score = get_average_reference_score(
+                    env, expert_policy, num_episodes_average_score
+                )
+            dataset_metadata.update(
+                {
+                    "ref_max_score": ref_max_score,
+                    "ref_min_score": ref_min_score,
+                    "num_episodes_average_score": num_episodes_average_score,
+                }
+            )
+
         collector_env.save_to_disk(
             data_path,
-            dataset_metadata={
-                "dataset_id": str(dataset_id),
-                "algorithm_name": str(algorithm_name),
-                "author": str(author),
-                "author_email": str(author_email),
-                "code_permalink": str(code_permalink),
-            },
+            dataset_metadata=dataset_metadata,
         )
         return MinariDataset(data_path)
     else:
         raise ValueError(
             f"A Minari dataset with ID {dataset_id} already exists and it cannot be overridden. Please use a different dataset name or version."
         )
+
+
+def get_normalized_score(
+    dataset: MinariDataset, returns: Union[float, np.float32]
+) -> Union[float, np.float32]:
+    r"""Normalize undiscounted return of an episode.
+
+    This function was originally provided in the `D4RL repository <https://github.com/Farama-Foundation/D4RL/blob/71a9549f2091accff93eeff68f1f3ab2c0e0a288/d4rl/offline_env.py#L71>`_.
+    The computed normalized episode return (normalized score) facilitates the comparison of algorithm performance across different tasks. The returned normalized score will be in a range between 0 and 1.
+    Where 0 corresponds to the minimum reference score calculated as the average of episode returns collected from a random policy in the environment, and 1 corresponds to a maximum reference score computed as
+    the average of episode returns from an hypothetical expert policy. These two values are stored as optional attributes in a MinariDataset as `ref_min_score` and `ref_max_score` respectively.
+
+    The formula to normalize an episode return is:
+
+    .. math:: normalize\_score = \frac{return - ref\_min\_score}{ref\_max\_score - ref\_min\_score}
+
+    .. warning:: This utility function is under testing and will not be available in every Minari dataset. For now, only the datasets imported from D4RL will contain the `ref_min_score` and `ref_max_score` attributes.
+
+    Args:
+        dataset (MinariDataset): the MinariDataset with respect to which normalize the score. Must contain the reference score attributes `ref_min_score` and `ref_max_score`.
+        returns (float | np.float32): a single value or array of episode undiscounted returns to normalize.
+
+    Returns:
+        normalized_scores
+    """
+    with h5py.File(dataset.spec.data_path, "r") as f:
+        ref_min_score = f.attrs.get("ref_min_score", default=None)
+        ref_max_score = f.attrs.get("ref_max_score", default=None)
+    if ref_min_score is None or ref_max_score is None:
+        raise ValueError(
+            f"Reference score not provided for dataset {dataset.spec.dataset_id}. Can't compute the normalized score."
+        )
+
+    assert isinstance(ref_min_score, float)
+    assert isinstance(ref_max_score, float)
+
+    return (returns - ref_min_score) / (ref_max_score - ref_min_score)

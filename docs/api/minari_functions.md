@@ -50,3 +50,9 @@ minari_dataset/episode_data
 ```{eval-rst}
 .. autofunction:: minari.combine_datasets
 ```
+
+## Normalize Score
+
+```{eval-rst}
+.. autofunction:: minari.get_normalized_score
+```

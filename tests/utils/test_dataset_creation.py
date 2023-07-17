@@ -30,7 +30,7 @@ register_dummy_envs()
         ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
         ("dummy-text-test-v0", "DummyTextEnv-v0"),
         ("dummy-combo-test-v0", "DummyComboEnv-v0"),
-        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDisceteBoxEnv-v0"),
+        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
     ],
 )
 def test_generate_dataset_with_collector_env(dataset_id, env_id):
@@ -95,7 +95,7 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
         ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
         ("dummy-text-test-v0", "DummyTextEnv-v0"),
         ("dummy-combo-test-v0", "DummyComboEnv-v0"),
-        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDisceteBoxEnv-v0"),
+        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
     ],
 )
 def test_generate_dataset_with_external_buffer(dataset_id, env_id):
