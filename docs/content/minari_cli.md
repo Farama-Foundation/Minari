@@ -52,7 +52,14 @@ The `minari list COMMAND` command shows a table with the existing Minari dataset
 This command comes with other two required sub-commands:
 
 - `remote`: the Minari dataset table shows the datasets currently available in the remote Farama server.
-- `local`: the Minari dataset table shows the datasets currently accessible in the local device. 
+- `local`: the Minari dataset table shows the datasets currently accessible in the local device.
+
+```{eval-rst}
+
+.. note::
+   These commands will list the latest remote/local dataset versions that are compatible with your local installed Minari version. To list all the dataset versions (also incompatible) add the option :code:`--all` or :code:`-a` to the command.
+
+```
 
 <div class="termy">
 
@@ -92,6 +99,13 @@ $ minari list remote
 
 With the command `minari download DATASETS` you can download a group of datasets that are available in the remote Farama server. If the dataset name already exist locally, the Minari CLI will prompt you to override the
 current content of the local dataset.
+
+```{eval-rst}
+
+.. note::
+   The download is aborted if the remote dataset is not compatible with your local installed Minari version or through a warning if the dataset already exists locally. To perform a force download add :code:`--force` or :code: `-f` to the download command.
+
+```
 
 <div class="termy">
 

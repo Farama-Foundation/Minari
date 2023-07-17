@@ -1,3 +1,4 @@
+import importlib.metadata
 import json
 import os
 from collections import OrderedDict
@@ -7,10 +8,15 @@ import gymnasium as gym
 import h5py
 import numpy as np
 from gymnasium.envs.registration import EnvSpec
+from packaging.specifiers import InvalidSpecifier, SpecifierSet
+from packaging.version import Version
 
 from minari.data_collector import DataCollectorV0
 from minari.serialization import deserialize_space
 
+
+# Use importlib due to circular import when: "from minari import __version__"
+__version__ = importlib.metadata.version("minari")
 
 PathLike = Union[str, bytes, os.PathLike]
 
@@ -38,6 +44,18 @@ class MinariStorage:
             dataset_id = f.attrs["dataset_id"]
             assert isinstance(dataset_id, str)
             self._dataset_id = dataset_id
+
+            minari_version = f.attrs["minari_version"]
+            assert isinstance(minari_version, str)
+
+            # Check that the dataset is compatible with the current version of Minari
+            try:
+                assert Version(__version__) in SpecifierSet(
+                    minari_version
+                ), f"The installed Minari version {__version__} is not contained in the dataset version specifier {minari_version}."
+                self._minari_version = minari_version
+            except InvalidSpecifier:
+                print(f"{minari_version} is not a version specifier.")
 
             self._combined_datasets = f.attrs.get("combined_datasets", default=[])
 
@@ -278,6 +296,11 @@ class MinariStorage:
     def id(self) -> str:
         """Name of the Minari dataset."""
         return self._dataset_id
+
+    @property
+    def minari_version(self) -> str:
+        """Version of Minari the dataset is compatible with."""
+        return self._minari_version
 
 
 def clear_episode_buffer(episode_buffer: Dict, episode_group: h5py.Group) -> h5py.Group:

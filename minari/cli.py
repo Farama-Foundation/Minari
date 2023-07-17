@@ -1,6 +1,7 @@
 """Minari CLI commands."""
 import os
 from typing import List, Optional
+from typing_extensions import Annotated
 
 import typer
 from rich import print
@@ -52,30 +53,50 @@ def _show_dataset_table(datasets, table_title):
 
 @app.callback()
 def common(
-    version: Optional[bool] = typer.Option(
-        None,
-        "--version",
-        "-v",
-        callback=_version_callback,
-        help="Show installed Minari version.",
-    )
+    version: Annotated[
+        Optional[bool],
+        typer.Option(
+            "--version",
+            "-v",
+            callback=_version_callback,
+            help="Show installed Minari version.",
+        ),
+    ] = None,
 ):
     """Minari is a tool for collecting and hosting Offline datasets for Reinforcement Learning environments based on the Gymnaisum API."""
     pass
 
 
 @list_app.command("remote")
-def list_remote():
+def list_remote(
+    all: Annotated[
+        bool, typer.Option("--all", "-a", help="Show all dataset versions.")
+    ] = False
+):
     """List Minari datasets hosted in the Farama server."""
-    datasets = hosting.list_remote_datasets()
+    if all:
+        datasets = hosting.list_remote_datasets()
+    else:
+        datasets = hosting.list_remote_datasets(
+            latest_version=True, compatible_minari_version=True
+        )
     table_title = "Minari datasets in Farama server"
     _show_dataset_table(datasets, table_title)
 
 
 @list_app.command("local")
-def list_local():
+def list_local(
+    all: Annotated[
+        bool, typer.Option("--all", "-a", help="Show all dataset versions.")
+    ] = False
+):
     """List local Minari datasets."""
-    datasets = local.list_local_datasets()
+    if all:
+        datasets = local.list_local_datasets()
+    else:
+        datasets = local.list_local_datasets(
+            latest_version=True, compatible_minari_version=True
+        )
     dataset_dir = os.environ.get(
         "MINARI_DATASETS_PATH",
         os.path.join(os.path.expanduser("~"), ".minari/datasets/"),
@@ -85,7 +106,7 @@ def list_local():
 
 
 @app.command()
-def delete(datasets: List[str]):
+def delete(datasets: Annotated[List[str], typer.Argument()]):
     """Delete datasets from local database."""
     # check that the given local datasets exist
     local_dsts = local.list_local_datasets()
@@ -115,10 +136,16 @@ def delete(datasets: List[str]):
 
 
 @app.command()
-def download(datasets: List[str]):
+def download(
+    datasets: Annotated[List[str], typer.Argument()],
+    force: Annotated[
+        bool, typer.Option("--force", "-f", help="Perform a force download.")
+    ] = False,
+):
     """Download Minari datasets from Farama server."""
     # check if datasets exist in remote server
     remote_dsts = hosting.list_remote_datasets()
+
     non_matching_remote = [dst for dst in datasets if dst not in remote_dsts]
     if len(non_matching_remote) > 0:
         tree = Tree(
@@ -138,7 +165,7 @@ def download(datasets: List[str]):
         if local_name in datasets
     }
 
-    if len(datasets_to_override) > 0:
+    if len(datasets_to_override) > 0 and not force:
         _show_dataset_table(datasets_to_override, "Download remote Minari datasets")
         typer.confirm(
             "Are you sure you want to download and override these local datasets?",
@@ -147,11 +174,14 @@ def download(datasets: List[str]):
 
     # download datastets
     for dst in datasets:
-        hosting.download_dataset(dst, force_download=True)
+        hosting.download_dataset(dst, force_download=force)
 
 
 @app.command()
-def upload(datasets: List[str], key_path: str = typer.Option(...)):
+def upload(
+    datasets: Annotated[List[str], typer.Argument()],
+    key_path: Annotated[str, typer.Option()],
+):
     """Upload Minari datasets to the remote Farama server."""
     local_dsts = local.list_local_datasets()
     remote_dsts = hosting.list_remote_datasets()
@@ -188,7 +218,10 @@ def upload(datasets: List[str], key_path: str = typer.Option(...)):
 
 
 @app.command()
-def combine(datasets: List[str], dataset_id: str = typer.Option(...)):
+def combine(
+    datasets: Annotated[List[str], typer.Argument()],
+    dataset_id: Annotated[str, typer.Option()],
+):
     """Combine multiple datasets into a single Minari dataset."""
     local_dsts = local.list_local_datasets()
     # check dataset name doesn't exist locally
