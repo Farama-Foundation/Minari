@@ -584,7 +584,7 @@ def check_episode_data_integrity(
     observation_space: gym.spaces.Space,
     action_space: gym.spaces.Space,
 ):
-    """Checks to see if a list of EpisodeData insteances has consistent data and that the observations and actions are in the appropriate spaces.
+    """Checks to see if a list of EpisodeData instances has consistent data and that the observations and actions are in the appropriate spaces.
 
     Args:
         episode_data_list (List[EpisodeData]): A list of EpisodeData instances representing episodes.
