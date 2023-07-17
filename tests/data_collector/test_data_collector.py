@@ -128,7 +128,6 @@ def test_truncation_without_reset(dataset_id, env_id):
     last_step = None
     for episode in episodes_generator:
         assert episode.total_timesteps == ForceTruncateStepDataCallback.episode_steps
-        assert episode.truncations[-1] is True
         if last_step is not None:
             first_step = get_single_step_from_episode(episode, 0)
             # Check that the last observation of the previous episode is carried over to the next episode
@@ -140,6 +139,8 @@ def test_truncation_without_reset(dataset_id, env_id):
             else:
                 assert np.array_equal(first_step.observations, last_step.observations)
         last_step = get_single_step_from_episode(episode, -1)
+        print(last_step.truncations)
+        assert bool(last_step.truncations) is True
 
     # check load and delete local dataset
     check_load_and_delete_dataset(dataset_id)
