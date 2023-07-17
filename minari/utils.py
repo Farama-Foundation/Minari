@@ -5,14 +5,14 @@ import importlib.metadata
 import os
 import warnings
 from typing import Any, Callable, Dict, List, Optional, Union
-import portion as P
-import copy
 
 import gymnasium as gym
 import h5py
 import numpy as np
+import portion as P
 from gymnasium.core import ActType, ObsType
 from gymnasium.envs.registration import EnvSpec
+from gymnasium.wrappers.record_episode_statistics import RecordEpisodeStatistics
 from packaging.specifiers import InvalidSpecifier, SpecifierSet
 from packaging.version import Version
 
@@ -510,7 +510,7 @@ def create_dataset_from_buffers(
                 file.attrs["ref_max_score"] = ref_max_score
                 file.attrs["ref_min_score"] = ref_min_score
                 file.attrs["num_episodes_average_score"] = num_episodes_average_score
-            
+
             file["minari_version"] = minari_version
 
         return MinariDataset(data_path)
@@ -531,7 +531,7 @@ def create_dataset_from_collector_env(
     ref_max_score: Optional[float] = None,
     expert_policy: Optional[Callable[[ObsType], ActType]] = None,
     num_episodes_average_score: int = 100,
-    minari_version: Optional[str] = None
+    minari_version: Optional[str] = None,
 ):
     """Create a Minari dataset using the data collected from stepping with a Gymnasium environment wrapped with a `DataCollectorV0` Minari wrapper.
 
