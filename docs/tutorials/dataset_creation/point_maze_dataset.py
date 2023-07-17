@@ -163,21 +163,21 @@ class QIteration:
 # %%
 # Waypoint Controller
 # ~~~~~~~~~~~~~~~~~~~
-# Next step will be to create a controller to allow the agent to follow the waypoint trajectory.
+# The step will be to create a controller to allow the agent to follow the waypoint trajectory.
 # D4RL uses a PD controller to output continuous force actions from position and velocity.
 # A PD controller is a variation of the PID controller often used in classical Control Theory.
-# PID combines three components Proportial Term(P), Integral Term(I) and Derivative Term (D)
+# PID combines three components: a Proportial Term(P), Integral Term(I) and Derivative Term (D)
 #
 # 1. Proportional Term (P)
 # -------------------
 # The proportional term in a PID controller adjusts the control action based on the current error, which
 # is the difference between the desired value (setpoint) and the current value of the process variable.
 # The control action is directly proportional to the error. A higher error results in a stronger control action.
-# However, the proportional term alone can lead to overshooting or instability. Note ``\tau`` is our control value.
+# However, the proportional term alone can lead to overshooting or instability. Note :math:`\tau` is our control value.
 # references.
 #
 # .. math ::
-#   \tau = k_{p}(Error)
+#   \tau = k_{p}(\text{Error})
 #
 # 2. Derivative Term (D)
 # -------------------
@@ -188,13 +188,13 @@ class QIteration:
 # references.
 #
 # .. math ::
-#   \tau = k_{d}(d(Error) / dt)
+#   \tau = k_{d}(d(\text{Error}) / dt)
 #
-# So for a PD controller we have the equation below. We explain what the values ``k_{d}`` and ``k_{p}`` mean in a bit
+# So for a PD controller we have the equation below. We explain what the values :math:`k_{d}` and :math:`k_{p}` mean in a bit
 # references.
 #
 # .. math ::
-#   \tau = k_{p}(Error)  + k_{d}(d(Error) / dt)
+#   \tau = k_{p}(\text{Error})  + k_{d}(d(\text{Error}) / dt)
 #
 # 3. Integral Term (I)
 # -------------------
@@ -205,32 +205,33 @@ class QIteration:
 # references.
 #
 # .. math ::
-#   \tau = k_{I}(\int)(Error) dt
+#   \tau = k_{I}{\int}_0^t(\text{Error}) dt
 #
 # Finally for a PID controller we have the equation below
 #
 # .. math ::
-#   \tau = k_{p}(Error)  + k_{d}(d(Error) / dt) +  k_{I}(\int) Error dt
+#   \tau = k_{p}(\text{Error})  + k_{d}(d(\text{Error}) / dt) +  k_{I}\int_{0}^{t}(\text{Error}) dt
 #
-# In the PID controller formula, Kp, Ki, and Kd are the respective gains for the proportional, integral, and derivative terms.
+# In the PID controller formula, :math:`K_p`, :math:`K_i`, and :math:`K_d` are the respective gains for the proportional, integral, and derivative terms.
 # These gains determine the influence of each term on the control action.
 # The optimal values for these gains are typically determined through tuning, which involves adjusting
 # the gains to achieve the desired control performance.
+#
 # Now back to our controller as stated previously, for the D4RL task we use a PD controller and we
-# follow the same theme as what we have stated before as can be seen below. The ``Error`` is equlivalent
-# to the difference between the `goal_{pose}`` and ``agent_{pose}`` and we replace the derivative term ``(d(Error) / dt)`` with
-# the velocity of the the agent ``v_{agent}``, we can think of this as a measure of the speed at which the agent
+# follow the same theme as what we have stated before as can be seen below. The :math:`Error` is equlivalent
+# to the difference between the :math:`\text{goal}_\text{pose}` and :math:`\text{agent}_\text{pose}` and we replace the derivative term :math:`(d(\text{Error}) / dt)` with
+# the velocity of the the agent :math:`v_{\text{agent}}`, we can think of this as a measure of the speed at which the agent
 # is approaching the target position. When the agent is moving quickly towards the target, the
 # derivative term will be larger, contributing to a stronger corrective action from the controller.
-#  On the other hand, if the agent is already close to the target and moving slowly, the derivative term will be smaller,
-#  resulting in a less aggressive control action.
+# On the other hand, if the agent is already close to the target and moving slowly, the derivative term will be smaller,
+# resulting in a less aggressive control action.
 # references.
 #
 # .. math ::
-#   \tau = k_{p}(p_{goal} - p_{agent}) + k_{d}v_{agent}
+#   \tau = k_{p}(p_{\text{goal}} - p_{\text{agent}}) + k_{d}v_{\text{agent}}
 #
 # Each target position in the waypoint trajectory is converted from discrete to a continuous value and we also add some noise to
-# the ``x`` and ``y`` coordinates to add more variance in the trajectories generated for the offline dataset.
+# the :math:`x` and :math:`y` coordinates to add more variance in the trajectories generated for the offline dataset.
 
 
 class WaypointController:
