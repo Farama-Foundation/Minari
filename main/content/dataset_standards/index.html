@@ -977,6 +977,64 @@
 </section>
 </section>
 </section>
+<section id="minari-data-structures">
+<h2>Minari Data Structures<a class="headerlink" href="#minari-data-structures" title="Permalink to this heading">#</a></h2>
+<p>A Minari dataset is encapsulated in the <code class="docutils literal notranslate"><span class="pre">MinariDataset</span></code> class which allows for iterating and sampling through episodes which are defined as <code class="docutils literal notranslate"><span class="pre">EpisodeData</span></code> data class.</p>
+<section id="episodedata-structure">
+<h3>EpisodeData Structure<a class="headerlink" href="#episodedata-structure" title="Permalink to this heading">#</a></h3>
+<p>Episodes can be accessed from a Minari dataset through iteration, random sampling, or even filtering episodes from a dataset through an arbitrary condition via the <code class="docutils literal notranslate"><span class="pre">filter_episodes</span></code> method. Take the following example where we load the <code class="docutils literal notranslate"><span class="pre">door-human-v0</span></code> dataset and randomly sample 10 episodes:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;door-human-v0&quot;</span><span class="p">)</span>
+<span class="n">sampled_episodes</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">sample_episodes</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">sampled_episodes</span></code> variable will be a list of 10 <code class="docutils literal notranslate"><span class="pre">EpisodeData</span></code> elements, each containing episode data. An <code class="docutils literal notranslate"><span class="pre">EpisodeData</span></code> element is a data class consisting of the following fields:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">id</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">np.int64</span></code></p></td>
+<td><p>ID of the episode.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">seed</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">np.int64</span></code></p></td>
+<td><p>Seed used to reset the episode.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">total_timesteps</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">np.int64</span></code></p></td>
+<td><p>Number of timesteps in the episode.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">observations</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code>, <code class="docutils literal notranslate"><span class="pre">list</span></code>, <code class="docutils literal notranslate"><span class="pre">tuple</span></code>, <code class="docutils literal notranslate"><span class="pre">dict</span></code></p></td>
+<td><p>Observations for each timestep including initial observation.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">actions</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code>, <code class="docutils literal notranslate"><span class="pre">list</span></code>, <code class="docutils literal notranslate"><span class="pre">tuple</span></code>, <code class="docutils literal notranslate"><span class="pre">dict</span></code></p></td>
+<td><p>Actions for each timestep.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rewards</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code></p></td>
+<td><p>Rewards for each timestep.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">terminations</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code></p></td>
+<td><p>Terminations for each timestep.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">truncations</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code></p></td>
+<td><p>Truncations for each timestep.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>As mentioned in the <code class="docutils literal notranslate"><span class="pre">Supported</span> <span class="pre">Spaces</span></code> section, many different observation and action spaces are supported so the data type for these fields are dependent on the environment being used.</p>
+</section>
+</section>
 </section>
 
           </article>
@@ -1064,6 +1122,10 @@
 <li><a class="reference internal" href="#space-serialization">Space Serialization</a></li>
 </ul>
 </li>
+</ul>
+</li>
+<li><a class="reference internal" href="#minari-data-structures">Minari Data Structures</a><ul>
+<li><a class="reference internal" href="#episodedata-structure">EpisodeData Structure</a></li>
 </ul>
 </li>
 </ul>

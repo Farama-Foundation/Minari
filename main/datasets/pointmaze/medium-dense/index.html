@@ -358,10 +358,8 @@
             
             <section id="medium-dense">
 <h1>Medium-Dense<a class="headerlink" href="#medium-dense" title="Permalink to this heading">#</a></h1>
-<img src="https://storage.googleapis.com/minari-datasets/pointmaze-medium-dense-v1/_docs/_imgs/pointmaze-medium-dense-v1.gif" width="200" style="display: block; margin:0 auto"/>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Permalink to this heading">#</a></h2>
-<p>The data is collected from the <a class="reference external" href="https://robotics.farama.org/envs/maze/point_maze/"><code class="docutils literal notranslate"><span class="pre">PointMaze_MediumDense-v3</span></code></a> environment. The agent uses a PD controller to follow a path of waypoints generated with QIteration until it reaches the goal. The task is continuing which means that when the agent reaches the goal the environment generates a new random goal without resetting the location of the agent. The reward function is dense, being the negative Euclidean distance between the goal and the agent. To add variance to the collected paths random noise is added to the actions taken by the agent.</p>
 </section>
 <section id="dataset-specs">
 <h2>Dataset Specs<a class="headerlink" href="#dataset-specs" title="Permalink to this heading">#</a></h2>
@@ -374,10 +372,10 @@
 </thead>
 <tbody>
 <tr class="row-even"><td><p>Total Timesteps</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">50000</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1000000</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Total Episodes</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">239</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">4772</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>Algorithm</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">QIteration</span></code></p></td>
