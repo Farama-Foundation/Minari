@@ -44,6 +44,8 @@ for env_name, datasets in filtered_datasets.items():
         dataset_id = dataset_spec["dataset_id"]
         total_timesteps = dataset_spec["total_steps"]
         total_episodes = dataset_spec["total_episodes"]
+        dataset_action_space = dataset_spec["action_space"]
+        dataset_observation_space = dataset_spec["observation_space"]
         author = dataset_spec["author"]
         email = dataset_spec["author_email"]
         algo_name = dataset_spec["algorithm_name"]
@@ -97,6 +99,8 @@ title: {dataset_name.title()}
 |----|----|
 |Total Timesteps| `{total_timesteps}`|
 |Total Episodes | `{total_episodes}` |
+| Dataset Observation Space | `{dataset_observation_space}` |
+| Dataset Action Space | `{dataset_action_space}` |
 | Algorithm           | `{algo_name}`           |
 | Author              | `{author}`              |
 | Email               | `{email}`               |
