@@ -44,8 +44,10 @@ for env_name, datasets in filtered_datasets.items():
         dataset_id = dataset_spec["dataset_id"]
         total_timesteps = dataset_spec["total_steps"]
         total_episodes = dataset_spec["total_episodes"]
-        dataset_action_space = dataset_spec["action_space"]
-        dataset_observation_space = dataset_spec["observation_space"]
+        dataset_action_space = dataset_spec["action_space"].__repr__().replace("\n", "")
+        dataset_observation_space = (
+            dataset_spec["observation_space"].__repr__().replace("\n", "")
+        )
         author = dataset_spec["author"]
         email = dataset_spec["author_email"]
         algo_name = dataset_spec["algorithm_name"]
