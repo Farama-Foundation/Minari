@@ -22,7 +22,6 @@ jobs:
     strategy:
       matrix:
         include:
-          platform: manylinux_x86_64
         - os: ubuntu-latest
           python: 38
           platform: manylinux_x86_64
