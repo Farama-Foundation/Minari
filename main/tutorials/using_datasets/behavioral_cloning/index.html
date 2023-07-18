@@ -373,7 +373,7 @@ We will start generating the dataset of the expert policy for the <a class="refe
 The objective is to balance the pole on the cart, and we receive a reward of +1 for each successful timestep.</p>
 <section id="policy-training">
 <h2>Policy training<a class="headerlink" href="#policy-training" title="Permalink to this heading">#</a></h2>
-<p>To train the expert policy, we use <a class="reference external" href="https://github.com/DLR-RM/stable-baselines3">SB3</a>’s &lt;rl-zoo3 &lt;<a class="reference external" href="https://github.com/DLR-RM/rl-baselines3-zoo">https://github.com/DLR-RM/rl-baselines3-zoo</a>&gt;`_ library.
+<p>To train the expert policy, we use <a class="reference external" href="https://github.com/DLR-RM/stable-baselines3">SB3</a>’s <a class="reference external" href="https://github.com/DLR-RM/rl-baselines3-zoo">rl-zoo3</a> library.
 After installing the library with <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">rl_zoo3</span></code>,
 we train a PPO agent on the environment with the following command:</p>
 <p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">rl_zoo3.train</span> <span class="pre">--algo</span> <span class="pre">ppo</span> <span class="pre">--env</span> <span class="pre">CartPole-v1</span></code></p>
