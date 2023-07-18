@@ -4,14 +4,14 @@ Behavioral cloning with PyTorch
 =========================================
 """
 # %%%
-# We present here how to perform behavioral cloning on a Minari dataset using PyTorch.
+# We present here how to perform behavioral cloning on a Minari dataset using `PyTorch <https://pytorch.org/>`_.
 # We will start generating the dataset of the expert policy for the `CartPole-v1 <https://gymnasium.farama.org/environments/classic_control/cart_pole/>`_ environment, which is a classic control problem.
 # The objective is to balance the pole on the cart, and we receive a reward of +1 for each successful timestep.
 
 # %%
 # Policy training
 # ~~~~~~~~~~~~~~~~~~~
-# To train the expert policy, we use the library rl_zoo3.
+# To train the expert policy, we use `SB3 <https://github.com/DLR-RM/stable-baselines3>`_'s <rl-zoo3 <https://github.com/DLR-RM/rl-baselines3-zoo>`_ library.
 # After installing the library with ``pip install rl_zoo3``,
 # we train a PPO agent on the environment with the following command:
 #
@@ -97,7 +97,7 @@ class PolicyNetwork(nn.Module):
 
 # %%
 # In this scenario, the output dimension will be two, as previously mentioned. As for the input dimension, it will be four, corresponding to the observation space of ``CartPole-v1``.
-# Our next step is to load the dataset and set up the training loop. The ``MinariDataset`` is compatible with the PyTorch Dataset API, allowing us to load it directly using PyTorch DataLoader.
+# Our next step is to load the dataset and set up the training loop. The ``MinariDataset`` is compatible with the PyTorch Dataset API, allowing us to load it directly using `PyTorch DataLoader <https://pytorch.org/docs/stable/data.html>`_.
 # However, since each episode can have a varying length, we need to pad them.
 # To achieve this, we can utilize the `collate_fn <https://pytorch.org/docs/stable/data.html#working-with-collate-fn>`_ feature of PyTorch DataLoader. Let's create the ``collate_fn`` function:
 
