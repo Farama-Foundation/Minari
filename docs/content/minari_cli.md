@@ -103,7 +103,7 @@ current content of the local dataset.
 ```{eval-rst}
 
 .. note::
-   The download is aborted if the remote dataset is not compatible with your local installed Minari version or through a warning if the dataset already exists locally. To perform a force download add :code:`--force` or :code: `-f` to the download command.
+   The download is aborted if the remote dataset is not compatible with your local installed Minari version or through a warning if the dataset already exists locally. To perform a force download add :code:`--force` or :code:`-f` to the download command.
 
 ```
 
