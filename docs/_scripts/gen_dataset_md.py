@@ -8,7 +8,7 @@ from google.cloud import storage  # pyright: ignore [reportGeneralTypeIssues]
 
 from minari import list_remote_datasets
 from minari.dataset.minari_dataset import parse_dataset_id
-from minari.storage.hosting import find_highest_remote_version
+from minari.storage.hosting import get_remote_dataset_versions
 
 
 filtered_datasets = defaultdict(defaultdict)
@@ -19,7 +19,7 @@ for dataset_id in all_remote_datasets.keys():
     env_name, dataset_name, version = parse_dataset_id(dataset_id)
 
     if dataset_name not in filtered_datasets[env_name]:
-        max_version = find_highest_remote_version(env_name, dataset_name)
+        max_version = get_remote_dataset_versions(env_name, dataset_name, True)[0]
         max_version_dataset_id = "-".join([env_name, dataset_name, f"v{max_version}"])
         filtered_datasets[env_name][dataset_name] = all_remote_datasets[
             max_version_dataset_id
