@@ -368,12 +368,12 @@
             
             <section class="sphx-glr-example-title" id="behavioral-cloning-with-pytorch">
 <span id="sphx-glr-tutorials-using-datasets-behavioral-cloning-py"></span><h1>Behavioral cloning with PyTorch<a class="headerlink" href="#behavioral-cloning-with-pytorch" title="Permalink to this heading">#</a></h1>
-<p>We present here how to perform behavioral cloning on a Minari dataset using PyTorch.
+<p>We present here how to perform behavioral cloning on a Minari dataset using <a class="reference external" href="https://pytorch.org/">PyTorch</a>.
 We will start generating the dataset of the expert policy for the <a class="reference external" href="https://gymnasium.farama.org/environments/classic_control/cart_pole/">CartPole-v1</a> environment, which is a classic control problem.
 The objective is to balance the pole on the cart, and we receive a reward of +1 for each successful timestep.</p>
 <section id="policy-training">
 <h2>Policy training<a class="headerlink" href="#policy-training" title="Permalink to this heading">#</a></h2>
-<p>To train the expert policy, we use the library rl_zoo3.
+<p>To train the expert policy, we use <a class="reference external" href="https://github.com/DLR-RM/stable-baselines3">SB3</a>’s &lt;rl-zoo3 &lt;<a class="reference external" href="https://github.com/DLR-RM/rl-baselines3-zoo">https://github.com/DLR-RM/rl-baselines3-zoo</a>&gt;`_ library.
 After installing the library with <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">rl_zoo3</span></code>,
 we train a PPO agent on the environment with the following command:</p>
 <p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">rl_zoo3.train</span> <span class="pre">--algo</span> <span class="pre">ppo</span> <span class="pre">--env</span> <span class="pre">CartPole-v1</span></code></p>
@@ -449,7 +449,7 @@ Let’s define the policy network:</p>
 </pre></div>
 </div>
 <p>In this scenario, the output dimension will be two, as previously mentioned. As for the input dimension, it will be four, corresponding to the observation space of <code class="docutils literal notranslate"><span class="pre">CartPole-v1</span></code>.
-Our next step is to load the dataset and set up the training loop. The <code class="docutils literal notranslate"><span class="pre">MinariDataset</span></code> is compatible with the PyTorch Dataset API, allowing us to load it directly using PyTorch DataLoader.
+Our next step is to load the dataset and set up the training loop. The <code class="docutils literal notranslate"><span class="pre">MinariDataset</span></code> is compatible with the PyTorch Dataset API, allowing us to load it directly using <a class="reference external" href="https://pytorch.org/docs/stable/data.html">PyTorch DataLoader</a>.
 However, since each episode can have a varying length, we need to pad them.
 To achieve this, we can utilize the <a class="reference external" href="https://pytorch.org/docs/stable/data.html#working-with-collate-fn">collate_fn</a> feature of PyTorch DataLoader. Let’s create the <code class="docutils literal notranslate"><span class="pre">collate_fn</span></code> function:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">collate_fn</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
