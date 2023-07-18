@@ -413,6 +413,10 @@ This command comes with other two required sub-commands:</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">remote</span></code>: the Minari dataset table shows the datasets currently available in the remote Farama server.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">local</span></code>: the Minari dataset table shows the datasets currently accessible in the local device.</p></li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>These commands will list the latest remote/local dataset versions that are compatible with your local installed Minari version. To list all the dataset versions (also incompatible) add the option <code class="code docutils literal notranslate"><span class="pre">--all</span></code> or <code class="code docutils literal notranslate"><span class="pre">-a</span></code> to the command.</p>
+</div>
 <div class="termy">
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">// Show local datasets.</span>
 <span class="gp">$ </span>minari<span class="w"> </span>list<span class="w"> </span><span class="nb">local</span>
@@ -450,6 +454,10 @@ This command comes with other two required sub-commands:</p>
 <h2>Download datasets<a class="headerlink" href="#download-datasets" title="Permalink to this heading">#</a></h2>
 <p>With the command <code class="docutils literal notranslate"><span class="pre">minari</span> <span class="pre">download</span> <span class="pre">DATASETS</span></code> you can download a group of datasets that are available in the remote Farama server. If the dataset name already exist locally, the Minari CLI will prompt you to override the
 current content of the local dataset.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The download is aborted if the remote dataset is not compatible with your local installed Minari version or through a warning if the dataset already exists locally. To perform a force download add <code class="code docutils literal notranslate"><span class="pre">--force</span></code> or :code: <cite>-f</cite> to the download command.</p>
+</div>
 <div class="termy">
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">// Download datasets pen-cloned-v0 and door-human-v0</span>
 <span class="gp">$ </span>minari<span class="w"> </span>download<span class="w"> </span>pen-cloned-v0<span class="w"> </span>door-human-v0
