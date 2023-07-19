@@ -19,7 +19,7 @@ cd Minari
 pip install -e .
 ```
 
-We support Python 3.7, 3.8, 3.9, 3.10 and 3.11 on Linux and macOS.
+We support Python 3.8, 3.9, 3.10 and 3.11 on Linux and macOS.
 
 ## Create Minari Dataset
 

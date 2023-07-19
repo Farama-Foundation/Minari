@@ -313,10 +313,10 @@ In this case, the resulting Minari dataset `HDF5` file will end up looking as fo
                 <li class="folder">actions
                 <ul>
                     <li class="dataset">_index_0</li>
-                    <li class="folder">_index_1_
+                    <li class="folder">_index_1
                     <ul>
                     <li class="dataset"> _index_0 </li>
-                    <li class="dataset"> _index_1_ </li>
+                    <li class="dataset"> _index_1 </li>
                     </ul>
                     </li>
                 </ul>
@@ -360,10 +360,10 @@ In this case, the resulting Minari dataset `HDF5` file will end up looking as fo
                     <li class="folder-white">actions
                         <ul>
                             <li class="dataset-white">_index_0</li>
-                            <li class="folder-white">_index_1_
+                            <li class="folder-white">_index_1
                             <ul>
                             <li class="dataset-white"> _index_0 </li>
-                            <li class="dataset-white"> _index_1_ </li>
+                            <li class="dataset-white"> _index_1 </li>
                             </ul>
                             </li>
                         </ul>
