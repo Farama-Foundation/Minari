@@ -367,6 +367,216 @@
             
             <section id="release-notes">
 <h1>Release Notes<a class="headerlink" href="#release-notes" title="Permalink to this heading">#</a></h1>
+<section id="release-v0-4-0">
+<h2>v0.4.0<a class="headerlink" href="#release-v0-4-0" title="Permalink to this heading">#</a></h2>
+<p><em>Released on 2023-07-19 - <a class="reference external" href="https://github.com/Farama-Foundation/Minari/releases/tag/v0.4.0">GitHub</a> - <a class="reference external" href="https://pypi.org/project/minari/v0.4.0/">PyPI</a></em></p>
+<h1>v0.4.0 Release Notes</h1>
+<p>Important changes from this PR include the move away from observation and action flattening, the move to explicitly and fully support <code>Dict</code>, <code>Tuple</code>, <code>Box</code>, <code>Discrete</code>, and <code>Text</code> spaces, and the move to explicit dataset versioning. Additionally, we have added support for using a subset of an environment's action/observation spaces when creating a dataset.</p>
+<p>Finally, we have released new versions of each dataset to make them compliant with our new dataset format. This includes all the changes listed in the "Dataset Updates" section of the release notes.</p>
+<p>We have two new tutorials:</p>
+<ul>
+<li><a href="https://minari.farama.org/tutorials/dataset_creation/observation_space_subseting/" rel="nofollow">Creating datasets with subset of observation space of environment</a></li>
+<li><a href="https://minari.farama.org/tutorials/using_datasets/behavioral_cloning/" rel="nofollow">Behavior cloning with rl_zoo3 and PyTorch <code>DataLoader</code><br>
+</a></li>
+</ul>
+<h3>Unflattened <code>Dict</code> and <code>Tuple</code> space support</h3>
+<p>The following exerpt from our documentation shows how unflattened <code>gymnasium.spaces.Dict</code> and <code>gymnasium.spaces.Tuple</code> are now supported.</p>
+<p>In the case where, the observation space is a relatively complex <code>Dict</code> space with the following definition:</p>
+<div class="highlight highlight-source-python notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="spaces.Dict(
+    {
+        &quot;component_1&quot;: spaces.Box(low=-1, high=1, dtype=np.float32),
+        &quot;component_2&quot;: spaces.Dict(
+            {
+                &quot;subcomponent_1&quot;: spaces.Box(low=2, high=3, dtype=np.float32),
+                &quot;subcomponent_2&quot;: spaces.Box(low=4, high=5, dtype=np.float32),
+            }
+        ),
+    }
+)"><pre><span class="pl-s1">spaces</span>.<span class="pl-v">Dict</span>(
+    {
+        <span class="pl-s">"component_1"</span>: <span class="pl-s1">spaces</span>.<span class="pl-v">Box</span>(<span class="pl-s1">low</span><span class="pl-c1">=</span><span class="pl-c1">-</span><span class="pl-c1">1</span>, <span class="pl-s1">high</span><span class="pl-c1">=</span><span class="pl-c1">1</span>, <span class="pl-s1">dtype</span><span class="pl-c1">=</span><span class="pl-s1">np</span>.<span class="pl-s1">float32</span>),
+        <span class="pl-s">"component_2"</span>: <span class="pl-s1">spaces</span>.<span class="pl-v">Dict</span>(
+            {
+                <span class="pl-s">"subcomponent_1"</span>: <span class="pl-s1">spaces</span>.<span class="pl-v">Box</span>(<span class="pl-s1">low</span><span class="pl-c1">=</span><span class="pl-c1">2</span>, <span class="pl-s1">high</span><span class="pl-c1">=</span><span class="pl-c1">3</span>, <span class="pl-s1">dtype</span><span class="pl-c1">=</span><span class="pl-s1">np</span>.<span class="pl-s1">float32</span>),
+                <span class="pl-s">"subcomponent_2"</span>: <span class="pl-s1">spaces</span>.<span class="pl-v">Box</span>(<span class="pl-s1">low</span><span class="pl-c1">=</span><span class="pl-c1">4</span>, <span class="pl-s1">high</span><span class="pl-c1">=</span><span class="pl-c1">5</span>, <span class="pl-s1">dtype</span><span class="pl-c1">=</span><span class="pl-s1">np</span>.<span class="pl-s1">float32</span>),
+            }
+        ),
+    }
+)</pre></div>
+<p>and the action space is <code>Box</code> space, the resulting <code>HDF5</code> file will end up looking as follows:</p>
+<p><g-emoji class="g-emoji" alias="page_facing_up" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c4.png">📄</g-emoji> main_data.hdf5<br>
+├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> episode_0<br>
+│   ├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> observations<br>
+│   │   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> component_1<br>
+│   │   └ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> component_2<br>
+│   │      ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> subcomponent_1<br>
+│   │      └ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> subcomponent_2<br>
+│   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> actions<br>
+│   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> terminations<br>
+│   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> truncations<br>
+│   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> rewards<br>
+│   ├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> infos<br>
+│   │   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> infos_datasets<br>
+│   │   └ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> infos_subgroup<br>
+│   │      └ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> more_datasets<br>
+│   └ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> additional_groups<br>
+│       └ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> additional_datasets<br>
+├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> episode_1<br>
+├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> episode_2<br>
+│<br>
+└ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> last_episode_id</p>
+<p>Similarly, consider the case where we have a <code>Box</code> space as an observation space and a relatively complex <code>Tuple</code> space as an action space with the following definition:</p>
+<div class="highlight highlight-source-python notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="spaces.Tuple(
+    (
+        spaces.Box(low=2, high=3, dtype=np.float32),
+        spaces.Tuple(
+            (
+                spaces.Box(low=2, high=3, dtype=np.float32),
+                spaces.Box(low=4, high=5, dtype=np.float32),
+            )
+        ),
+    )
+)"><pre><span class="pl-s1">spaces</span>.<span class="pl-v">Tuple</span>(
+    (
+        <span class="pl-s1">spaces</span>.<span class="pl-v">Box</span>(<span class="pl-s1">low</span><span class="pl-c1">=</span><span class="pl-c1">2</span>, <span class="pl-s1">high</span><span class="pl-c1">=</span><span class="pl-c1">3</span>, <span class="pl-s1">dtype</span><span class="pl-c1">=</span><span class="pl-s1">np</span>.<span class="pl-s1">float32</span>),
+        <span class="pl-s1">spaces</span>.<span class="pl-v">Tuple</span>(
+            (
+                <span class="pl-s1">spaces</span>.<span class="pl-v">Box</span>(<span class="pl-s1">low</span><span class="pl-c1">=</span><span class="pl-c1">2</span>, <span class="pl-s1">high</span><span class="pl-c1">=</span><span class="pl-c1">3</span>, <span class="pl-s1">dtype</span><span class="pl-c1">=</span><span class="pl-s1">np</span>.<span class="pl-s1">float32</span>),
+                <span class="pl-s1">spaces</span>.<span class="pl-v">Box</span>(<span class="pl-s1">low</span><span class="pl-c1">=</span><span class="pl-c1">4</span>, <span class="pl-s1">high</span><span class="pl-c1">=</span><span class="pl-c1">5</span>, <span class="pl-s1">dtype</span><span class="pl-c1">=</span><span class="pl-s1">np</span>.<span class="pl-s1">float32</span>),
+            )
+        ),
+    )
+)</pre></div>
+<p>In this case, the resulting Minari dataset <code>HDF5</code> file will end up looking as follows:</p>
+<p><g-emoji class="g-emoji" alias="page_facing_up" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c4.png">📄</g-emoji> main_data.hdf5<br>
+├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> episode_0<br>
+│   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> observations<br>
+│   ├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> actions<br>
+│   │   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> _index_0<br>
+│   │   └ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> _index_1<br>
+│   │      ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> _index_0<br>
+│   │      └ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> _index_0<br>
+│   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> terminations<br>
+│   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> truncations<br>
+│   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> rewards<br>
+│   ├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> infos<br>
+│   │   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> infos_datasets<br>
+│   │   └ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> infos_subgroup<br>
+│   │      └ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> more_datasets<br>
+│   └ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> additional_groups<br>
+│       └ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> additional_datasets<br>
+├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> episode_1<br>
+├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> episode_2<br>
+│<br>
+└ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> last_episode_id</p>
+<h3>EpisodeData: Data format when sampling episodes</h3>
+<p>Episodes are now sampled as <code>EpisodeData</code> Instances that comply with the following format:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>id</code></td>
+<td><code>np.int64</code></td>
+<td>ID of the episode.</td>
+</tr>
+<tr>
+<td><code>seed</code></td>
+<td><code>np.int64</code></td>
+<td>Seed used to reset the episode.</td>
+</tr>
+<tr>
+<td><code>total_timesteps</code></td>
+<td><code>np.int64</code></td>
+<td>Number of timesteps in the episode.</td>
+</tr>
+<tr>
+<td><code>observations</code></td>
+<td><code>np.ndarray</code>, <code>list</code>, <code>tuple</code>, <code>dict</code></td>
+<td>Observations for each timestep including initial observation.</td>
+</tr>
+<tr>
+<td><code>actions</code></td>
+<td><code>np.ndarray</code>, <code>list</code>, <code>tuple</code>, <code>dict</code></td>
+<td>Actions for each timestep.</td>
+</tr>
+<tr>
+<td><code>rewards</code></td>
+<td><code>np.ndarray</code></td>
+<td>Rewards for each timestep.</td>
+</tr>
+<tr>
+<td><code>terminations</code></td>
+<td><code>np.ndarray</code></td>
+<td>Terminations for each timestep.</td>
+</tr>
+<tr>
+<td><code>truncations</code></td>
+<td><code>np.ndarray</code></td>
+<td>Truncations for each timestep.</td>
+</tr>
+</tbody>
+</table>
+<h2>Breaking Changes</h2>
+<ul>
+<li>Changed dataset format to support storing unflattened spaces and also subset spaces by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/rodrigodelazcano/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/rodrigodelazcano">@rodrigodelazcano</a>, <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/balisujohn/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/balisujohn">@balisujohn</a>, and <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/younik/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/younik">@younik</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1724098493" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/77" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/77/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/77">#77</a></li>
+<li>Refactored <code>minari_dataset.py</code> to not use h5py directly. This meant moving public function <code>clear_episode_buffer</code> to <code>minari_storage.py</code> by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/balisujohn/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/balisujohn">@balisujohn</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1778494350" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/101" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/101/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/101">#101</a></li>
+<li>Removed Python 3.7 compatibility due to EOL by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/rodrigodelazcano/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/rodrigodelazcano">@rodrigodelazcano</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1788295008" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/107" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/107/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/107">#107</a></li>
+</ul>
+<h2>New Features</h2>
+<ul>
+<li>Added Python 3.11 support by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/rodrigodelazcano/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/rodrigodelazcano">@rodrigodelazcano</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1717210460" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/73" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/73/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/73">#73</a></li>
+<li>Reorganized tests and added more thorough testing of <code>MinariStorage</code> by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/balisujohn/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/balisujohn">@balisujohn</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1721100787" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/75" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/75/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/75">#75</a></li>
+<li>Added option to copy data(instead of reference based copy) when combining datasets  by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/Howuhh/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/Howuhh">@Howuhh</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1729488238" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/82" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/82/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/82">#82</a></li>
+<li>Fail with a descriptive error if dataset env base library not installed by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/shreyansjainn/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/shreyansjainn">@shreyansjainn</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1732809901" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/86" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/86/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/86">#86</a></li>
+<li>Made <code>EpisodeData</code> into a dataclass by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/younik/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/younik">@younik</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1748221332" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/88" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/88/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/88">#88</a></li>
+<li>Added <code>force_download</code> flag for locally existing datasets by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/shreyansjainn/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/shreyansjainn">@shreyansjainn</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1755085927" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/90" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/90/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/90">#90</a></li>
+<li>Added support for text spaces by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/younik/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/younik">@younik</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1771858373" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/99" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/99/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/99">#99</a></li>
+<li>Added <code>minari.get_normalized_scores</code> that follows the evaluation process in the D4RL datasets. by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/rodrigodelazcano/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/rodrigodelazcano">@rodrigodelazcano</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1799299514" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/110" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/110/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/110">#110</a></li>
+<li>Added code to support Minari dataset version specifiers by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/rodrigodelazcano/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/rodrigodelazcano">@rodrigodelazcano</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1788295008" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/107" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/107/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/107">#107</a></li>
+</ul>
+<h2>Bug Fixes</h2>
+<ul>
+<li>Fixed path printing in the CLI(previously incorrect) by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/Howuhh/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/Howuhh">@Howuhh</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1729511266" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/83" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/83/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/83">#83</a></li>
+<li>Copy infos from the previous episode if truncated or terminated without reset by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/Howuhh/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/Howuhh">@Howuhh</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1766335812" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/96" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/96/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/96">#96</a></li>
+<li>Ignore hidden files when listing local datasets by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/enerrio/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/enerrio">@enerrio</a> <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1785349605" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/104" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/104/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/104">#104</a></li>
+<li><code>h5py</code> group creation bug fix by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/rodrigodelazcano/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/rodrigodelazcano">@rodrigodelazcano</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1805390331" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/111" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/111/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/111">#111</a></li>
+</ul>
+<h2>Documentation Changes</h2>
+<ul>
+<li>Adding a table describing supported action and oibservation spaces by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/tohsin/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/tohsin">@tohsin</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1731452150" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/84" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/84/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/84">#84</a></li>
+<li>Adds test instructions to contributing.MD by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/shreyansjainn/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/shreyansjainn">@shreyansjainn</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1732809901" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/86" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/86/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/86">#86</a></li>
+<li>Adds installation instructions to basic usage section of doc and also doc build instructions to documentation by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/enerrio/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/enerrio">@enerrio</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1786735194" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/105" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/105/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/105">#105</a></li>
+<li>Added tutorial for space subsetting by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/Bamboofungus/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/Bamboofungus">@Bamboofungus</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1790825018" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/108" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/108/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/108">#108</a></li>
+<li>Added description of <code>EpisodeData</code> to documentation by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/enerrio/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/enerrio">@enerrio</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1795533430" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/109" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/109/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/109">#109</a></li>
+<li>Improved background about PID control in pointmaze dataset creation tutorial by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/tohsin/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/tohsin">@tohsin</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1766296994" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/95" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/95/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/95">#95</a></li>
+<li>Docs now show serialized dataset spaces by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/rodrigodelazcano/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/rodrigodelazcano">@rodrigodelazcano</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1809937878" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/116" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/116/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/116">#116</a></li>
+<li>Adds behavior cloning tutorial with Minari and PyTorch<code>DataLoader</code> by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/younik/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/younik">@younik</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1779858637" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/102" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/102/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/102">#102</a></li>
+</ul>
+<h2>Misc Changes</h2>
+<ul>
+<li>Added a citation.cff file  by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/rodrigodelazcano/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/rodrigodelazcano">@rodrigodelazcano</a></li>
+<li>Fixed some typos and type annotations, slightly ruggedized datacollector by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/RedTachyon/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/RedTachyon">@RedTachyon</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1650889839" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/52" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/52/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/52">#52</a></li>
+<li>Froze pyright in pre-commit to version 1.1.305 by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/balisujohn/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/balisujohn">@balisujohn</a></li>
+<li>Updated dataset used in readme example by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/shreyansjainn/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/shreyansjainn">@shreyansjainn</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1729130705" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/80" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/80/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/80">#80</a></li>
+<li>Corrected readme example by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/younik/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/younik">@younik</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1746251262" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/87" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/87/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/87">#87</a></li>
+<li>Added check to make sure observations and actions were in the right space in <code>MinariStorage</code> instances by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/balisujohn/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/balisujohn">@balisujohn</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1762011407" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/92" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/92/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/92">#92</a></li>
+<li>Ruggedized <code>list_remote_datasets</code> by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/balisujohn/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/balisujohn">@balisujohn</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1764284121" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/93" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/93/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/93">#93</a></li>
+<li>Added pre-commit and code-style black badges by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/elliottower/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/elliottower">@elliottower</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1806234487" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/112" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/112/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/112">#112</a></li>
+</ul>
+<h2>Dataset Updates</h2>
+<p>v1 versions of each provided dataset have been released and new dataset format has the following changes.</p>
+<ul>
+<li>Observation and action flattening have been removed for pointmaze datasets, as arbitrary nesting of <code>Dict</code> and <code>Tuple</code> spaces is now supported with the new dataset format.</li>
+<li>v1 and subsequent datasets now have <code>action_space</code> and <code>observation_space</code> fields which store a serialized representation of the observation and action spaces used for observations and actions in the dataset. It's important to note that this can be different from the spaces of the gymnasium environment mentioned in the dataset spec.</li>
+<li>v1 and subsequent datasets  have the <code>minari_version</code> field which specify with which versions of Minari they are compatible.</li>
+<li>v1 pointmaze datasets copies the last info to the next episode as fixed in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1766335812" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/96" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/96/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/96">#96</a></li>
+</ul></section>
 <section id="release-v0-3-1">
 <h2>v0.3.1<a class="headerlink" href="#release-v0-3-1" title="Permalink to this heading">#</a></h2>
 <p><em>Released on 2023-05-19 - <a class="reference external" href="https://github.com/Farama-Foundation/Minari/releases/tag/v0.3.1">GitHub</a> - <a class="reference external" href="https://pypi.org/project/minari/v0.3.1/">PyPI</a></em></p>
@@ -640,6 +850,7 @@ dataset_v3 = minari.combine_datasets(datasets_to_combine = [dataset_v1, dataset_
             <div class="toc-tree">
               <ul>
 <li><a class="reference internal" href="#">Release Notes</a><ul>
+<li><a class="reference internal" href="#release-v0-4-0">v0.4.0</a></li>
 <li><a class="reference internal" href="#release-v0-3-1">v0.3.1</a></li>
 <li><a class="reference internal" href="#release-v0-3-0">v0.3.0</a></li>
 <li><a class="reference internal" href="#release-0-2-2">0.2.2</a></li>
