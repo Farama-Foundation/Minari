@@ -7,19 +7,19 @@
     <meta property="og:title" content="Minari Documentation" />
     <meta property="og:type" content="website" />
     <meta property="og:description" content="Minari is a Python library for conducting research in offline reinforcement learning." />
-    <meta property="og:url" content="https://minari.farama.org/tutorials/dataset_creation/index.html" /><meta property="og:image" content="https://minari.farama.org/_static/img/robotics-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
-<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="PointMaze D4RL dataset" href="point_maze_dataset/" /><link rel="prev" title="EpisodeMetadataCallback" href="../../api/data_collector_callbacks/episode_metadata_callback/" />
+    <meta property="og:url" content="https://minari.farama.org/tutorials/dataset_creation/index.html" /><meta property="og:image" content="https://minari.farama.org/_static/img/robotics-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Collecting a subset of a dictionary space with StepDataCallback" href="observation_space_subseting/" /><link rel="prev" title="EpisodeMetadataCallback" href="../../api/data_collector_callbacks/episode_metadata_callback/" />
         <link rel="canonical" href="https://minari.farama.org/tutorials/dataset_creation/index.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 6.2.1 and Furo 2022.12.07.dev1 -->
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20.dev1 -->
         <title>Dataset Creation - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=cfd2cc3354364f303ef4a892d279bfffada5835d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=a022fd11c0d7e10ac71ac296890386cea7a2fa24" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=6342a809aabeb35cfac296000cfa245808bc1d78" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=093e2efd5a2c7b46ab7c7157e45f5f05a1e0a463" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/termynal.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/directory_tree.css" />
@@ -237,12 +237,12 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/minari_functions/">Minari</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/minari_functions/">Minari</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Minari</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../api/minari_dataset/minari_dataset/">MinariDataset</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/minari_dataset/episode_data/">EpisodeData</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/data_collector/">DataCollectorV0</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/data_collector/">DataCollectorV0</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of DataCollectorV0</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../api/data_collector_callbacks/step_data_callback/">StepDataCallback</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/data_collector_callbacks/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
 </ul>
@@ -250,38 +250,43 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="current">
-<li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">Dataset Creation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">Dataset Creation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Dataset Creation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="observation_space_subseting/">Collecting a subset of a dictionary space with StepDataCallback</a></li>
 <li class="toctree-l2"><a class="reference internal" href="point_maze_dataset/">PointMaze D4RL dataset</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../using_datasets/">Using Datasets</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Using Datasets</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../using_datasets/behavioral_cloning/">Behavioral cloning with PyTorch</a></li>
 </ul>
 </li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
 <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/door/">Door</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/door/">Door</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Door</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/door/human/">Human</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/door/expert/">Expert</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/door/cloned/">Cloned</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/hammer/">Hammer</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/hammer/">Hammer</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Hammer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/hammer/human/">Human</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/hammer/expert/">Expert</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/hammer/cloned/">Cloned</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/relocate/">Relocate</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/relocate/">Relocate</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Relocate</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/relocate/human/">Human</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/relocate/expert/">Expert</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/relocate/cloned/">Cloned</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/pen/">Pen</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/pen/">Pen</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Pen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/pen/human/">Human</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/pen/expert/">Expert</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/pen/cloned/">Cloned</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/pointmaze/">Point Maze</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/pointmaze/">Point Maze</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Point Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/open/">Open</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/umaze/">Umaze</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/medium/">Medium</a></li>
@@ -292,7 +297,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/large-dense/">Large-Dense</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle child pages in navigation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/kitchen/partial/">Partial</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/kitchen/complete/">Complete</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/kitchen/mixed/">Mixed</a></li>
@@ -363,7 +368,10 @@
             
             <section id="dataset-creation">
 <span id="sphx-glr-tutorials-dataset-creation"></span><h1>Dataset Creation<a class="headerlink" href="#dataset-creation" title="Permalink to this heading">#</a></h1>
-<div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="PointMaze D4RL dataset"><img alt="PointMaze D4RL dataset" src="../../_images/sphx_glr_point_maze_dataset_thumb.png" />
+<div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="Collecting a subset of a dictionary space with StepDataCallback"><img alt="Collecting a subset of a dictionary space with StepDataCallback" src="../../_images/sphx_glr_observation_space_subseting_thumb.png" />
+<p><a class="reference internal" href="observation_space_subseting/#sphx-glr-tutorials-dataset-creation-observation-space-subseting-py"><span class="std std-ref">Collecting a subset of a dictionary space with StepDataCallback</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Collecting a subset of a dictionary space with StepDataCallback</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="PointMaze D4RL dataset"><img alt="PointMaze D4RL dataset" src="../../_images/sphx_glr_point_maze_dataset_thumb.png" />
 <p><a class="reference internal" href="point_maze_dataset/#sphx-glr-tutorials-dataset-creation-point-maze-dataset-py"><span class="std std-ref">PointMaze D4RL dataset</span></a></p>
   <div class="sphx-glr-thumbnail-title">PointMaze D4RL dataset</div>
 </div></div><div class="toctree-wrapper compound">
@@ -375,12 +383,12 @@
         <footer>
           
           <div class="related-pages">
-            <a class="next-page" href="point_maze_dataset/">
+            <a class="next-page" href="observation_space_subseting/">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">PointMaze D4RL dataset</div>
+                <div class="title">Collecting a subset of a dictionary space with StepDataCallback</div>
               </div>
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
