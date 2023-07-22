@@ -225,33 +225,29 @@ def list_remote_datasets(
        Dict[str, Dict[str, str]]: keys the names of the Minari datasets and values the metadata
     """
     client = storage.Client.create_anonymous_client()
-    bucket = client.bucket("minari-datasets")
-    blobs = bucket.list_blobs(delimiter="main_data.hdf5")
-
-    # Necessary to get prefixes iterable
-    next(blobs)
+    blobs = client.list_blobs(bucket_or_name="minari-datasets")
 
     # Generate dict = {'env_name-dataset_name': (version, metadata)}
     remote_datasets = {}
-    for prefix in sorted(blobs.prefixes):
-        blob = bucket.get_blob(prefix)
+    for blob in blobs:
         try:
-            metadata = blob.metadata
-            if compatible_minari_version and __version__ not in SpecifierSet(
-                metadata["minari_version"]
-            ):
-                continue
-            dataset_id = metadata["dataset_id"]
-            env_name, dataset_name, version = parse_dataset_id(dataset_id)
-            dataset = f"{env_name}-{dataset_name}"
-            if latest_version:
-                if (
-                    dataset not in remote_datasets
-                    or version > remote_datasets[dataset][0]
+            if blob.name.endswith("main_data.hdf5"):
+                metadata = blob.metadata
+                if compatible_minari_version and __version__ not in SpecifierSet(
+                    metadata["minari_version"]
                 ):
-                    remote_datasets[dataset] = (version, metadata)
-            else:
-                remote_datasets[dataset_id] = metadata
+                    continue
+                dataset_id = metadata["dataset_id"]
+                env_name, dataset_name, version = parse_dataset_id(dataset_id)
+                dataset = f"{env_name}-{dataset_name}"
+                if latest_version:
+                    if (
+                        dataset not in remote_datasets
+                        or version > remote_datasets[dataset][0]
+                    ):
+                        remote_datasets[dataset] = (version, metadata)
+                else:
+                    remote_datasets[dataset_id] = metadata
         except Exception:
             warnings.warn(f"Misconfigured dataset named {blob.name} on remote")
 
