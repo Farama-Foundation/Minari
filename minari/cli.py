@@ -34,7 +34,6 @@ def _show_dataset_table(datasets, table_title):
     table.add_column("Author", justify="left", style="magenta")
     table.add_column("Email", justify="left", style="magenta")
     table.add_column("Env ID", justify="left", style="yellow")
-    table.add_column("File size on disk", justify="left", style="cyan")
     table.add_column("Dataset Group", justify="left", style="green")
 
     for dst_metadata in datasets.values():
@@ -51,7 +50,6 @@ def _show_dataset_table(datasets, table_title):
             dst_metadata["author"],
             dst_metadata["author_email"],
             str(dst_metadata["env_id"]),
-            str(dst_metadata["file_size"]),
             "Unknown..",
         )
 
