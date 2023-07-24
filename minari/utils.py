@@ -318,12 +318,7 @@ def create_dataset_from_collector_env(
             "`author` is set to None. For longevity purposes it is highly recommended to provide an author name.",
             UserWarning,
         )
-    if author_email is None:
-        warnings.warn(
-            "`author_email` is set to None. For longevity purposes it is highly recommended to provide an author email, or some other obvious contact information.",
-            UserWarning,
-        )
-        
+  
 
     assert collector_env.datasets_path is not None
     dataset_path = os.path.join(collector_env.datasets_path, dataset_id)
