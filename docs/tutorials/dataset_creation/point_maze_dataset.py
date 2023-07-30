@@ -356,6 +356,7 @@ for n_step in range(int(1e6)):
     action = waypoint_controller.compute_action(obs)
     # Add some noise to each step action
     action += np.random.randn(*action.shape)*0.5
+    action = np.clip(action, env.action_space.low, env.action_space.high, dtype=np.float32)
 
     obs, rew, terminated, truncated, info = collector_env.step(action)
     if (n_step + 1) % 200000 == 0:
