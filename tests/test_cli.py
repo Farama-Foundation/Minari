@@ -25,10 +25,10 @@ def test_list_app():
     [get_latest_compatible_dataset_id(env_name="pen", dataset_name="human")],
 )
 def test_dataset_download_then_delete(dataset_id: str):
-    """test download dataset invocation from CLI.
+    """Test download dataset invocation from CLI.
+
     the downloading functionality is already tested in test_dataset_download.py so this is primarily to assert that the CLI is working as expected.
     """
-
     # might have to clear up the local dataset first.
     # ideally this seems like it could just be handled by the tests
     if dataset_id in list_local_datasets():
