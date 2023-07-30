@@ -59,8 +59,9 @@ def list_local_datasets(
         main_file_path = os.path.join(datasets_path, dst_id, "data/main_data.hdf5")
         with h5py.File(main_file_path, "r") as f:
             metadata = dict(f.attrs.items())
-            if compatible_minari_version and __version__ not in SpecifierSet(
-                metadata["minari_version"]
+            if ("minari_version" not in metadata) or (
+                compatible_minari_version
+                and __version__ not in SpecifierSet(metadata["minari_version"])
             ):
                 continue
             env_name, dataset_name, version = parse_dataset_id(dst_id)

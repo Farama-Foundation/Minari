@@ -36,16 +36,19 @@ def _show_dataset_table(datasets, table_title):
     table.add_column("Email", justify="left", style="magenta")
 
     for dst_metadata in datasets.values():
+        author = dst_metadata.get("author", "Unknown")
+        author_email = dst_metadata.get("author_email", "Unknown")
+
         assert isinstance(dst_metadata["dataset_id"], str)
-        assert isinstance(dst_metadata["author"], str)
-        assert isinstance(dst_metadata["author_email"], str)
+        assert isinstance(author, str)
+        assert isinstance(author_email, str)
         table.add_row(
             dst_metadata["dataset_id"],
             str(dst_metadata["total_episodes"]),
             str(dst_metadata["total_steps"]),
             "Coming soon ...",
-            dst_metadata["author"],
-            dst_metadata["author_email"],
+            author,
+            author_email,
         )
 
     print(table)
