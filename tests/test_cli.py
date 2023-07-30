@@ -9,16 +9,15 @@ from tests.dataset.test_dataset_download import get_latest_compatible_dataset_id
 runner = CliRunner()
 
 
-def test_list():
-    # local test
+def test_list_app():
     result = runner.invoke(app, ["list", "local", "--all"])
     assert result.exit_code == 0
-
     # some of the other columns may be cut off by Rich
     assert "Name" in result.stdout
 
     result = runner.invoke(app, ["list", "remote"])
     assert result.exit_code == 0
+    assert "Minari datasets in Farama server" in result.stdout
 
 
 @pytest.mark.parametrize(
