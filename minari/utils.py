@@ -467,9 +467,9 @@ def create_dataset_from_buffers(
                 )
 
                 eps_group.attrs["id"] = i
-                total_steps = len(eps_buff["actions"])
-                eps_group.attrs["total_steps"] = total_steps
-                total_steps += total_steps
+                episode_total_steps = len(eps_buff["actions"])
+                eps_group.attrs["total_steps"] = episode_total_steps
+                total_steps += episode_total_steps
 
                 if seed is None:
                     eps_group.attrs["seed"] = str(None)

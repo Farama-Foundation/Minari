@@ -205,14 +205,17 @@ class MinariStorage:
                     "id", last_episode_id + id
                 )
 
+            self._total_steps = file.attrs["total_steps"] + new_data_total_steps
+
             # Update metadata of minari dataset
             file.attrs.modify(
                 "total_episodes", last_episode_id + new_data_total_episodes
             )
             file.attrs.modify(
-                "total_steps", file.attrs["total_steps"] + new_data_total_steps
+                "total_steps", self._total_steps
             )
             self._total_episodes = int(file.attrs["total_episodes"].item())
+
 
     def update_from_buffer(self, buffer: List[dict], data_path: str):
         additional_steps = 0
@@ -247,9 +250,12 @@ class MinariStorage:
 
                 # TODO: save EpisodeMetadataCallback callback in MinariDataset and update new episode group metadata
 
-            file.attrs.modify("total_episodes", last_episode_id + len(buffer))
+            self._total_steps = file.attrs["total_steps"] + additional_steps
+            self._total_episodes = last_episode_id + len(buffer)
+
+            file.attrs.modify("total_episodes", self._total_episodes)
             file.attrs.modify(
-                "total_steps", file.attrs["total_steps"] + additional_steps
+                "total_steps", self._total_steps
             )
 
             self._total_episodes = int(file.attrs["total_episodes"].item())
