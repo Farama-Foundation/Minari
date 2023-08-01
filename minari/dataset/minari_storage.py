@@ -211,11 +211,8 @@ class MinariStorage:
             file.attrs.modify(
                 "total_episodes", last_episode_id + new_data_total_episodes
             )
-            file.attrs.modify(
-                "total_steps", self._total_steps
-            )
+            file.attrs.modify("total_steps", self._total_steps)
             self._total_episodes = int(file.attrs["total_episodes"].item())
-
 
     def update_from_buffer(self, buffer: List[dict], data_path: str):
         additional_steps = 0
@@ -254,9 +251,7 @@ class MinariStorage:
             self._total_episodes = last_episode_id + len(buffer)
 
             file.attrs.modify("total_episodes", self._total_episodes)
-            file.attrs.modify(
-                "total_steps", self._total_steps
-            )
+            file.attrs.modify("total_steps", self._total_steps)
 
             self._total_episodes = int(file.attrs["total_episodes"].item())
 

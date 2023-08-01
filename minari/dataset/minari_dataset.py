@@ -144,17 +144,15 @@ class MinariDataset:
             total_steps = self._data.total_steps
         else:
             total_steps = sum(
-            self._data.apply(
-                lambda episode: episode["total_timesteps"],
-                episode_indices=episode_indices,
+                self._data.apply(
+                    lambda episode: episode["total_timesteps"],
+                    episode_indices=episode_indices,
+                )
             )
-        )
 
         self._episode_indices = episode_indices
 
         assert self._episode_indices is not None
-
-        
 
         self.spec = MinariDatasetSpec(
             env_spec=self._data.env_spec,
