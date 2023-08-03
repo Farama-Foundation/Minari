@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../genindex/" /><link rel="search" title="Search" href="../search/" /><link rel="prev" title="Mixed" href="../datasets/kitchen/mixed/" />
         <link rel="canonical" href="https://minari.farama.org/release_notes/index.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.png"/><!-- Generated with Sphinx 7.1.1 and Furo 2023.05.20.dev1 -->
+    <link rel="shortcut icon" href="../_static/favicon.png"/><!-- Generated with Sphinx 7.1.2 and Furo 2023.05.20.dev1 -->
         <title>Release Notes - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=362ab14a" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=2b6f8eb5452c44539a42dd9ada0a48f56e5f404d" />
@@ -399,23 +399,23 @@
 <p>and the action space is <code>Box</code> space, the resulting <code>HDF5</code> file will end up looking as follows:</p>
 <p><g-emoji class="g-emoji" alias="page_facing_up" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c4.png">📄</g-emoji> main_data.hdf5<br>
 ├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> episode_0<br>
-│   ├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> observations<br>
-│   │   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> component_1<br>
+│   ├ 📁 observations<br>
+│   │   ├ 💾 component_1<br>
 │   │   └ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> component_2<br>
 │   │      ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> subcomponent_1<br>
-│   │      └ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> subcomponent_2<br>
+│   │      └ 💾 subcomponent_2<br>
 │   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> actions<br>
 │   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> terminations<br>
-│   ├ 💾 truncations<br>
+│   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> truncations<br>
 │   ├ 💾 rewards<br>
-│   ├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> infos<br>
-│   │   ├ 💾 infos_datasets<br>
+│   ├ 📁 infos<br>
+│   │   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> infos_datasets<br>
 │   │   └ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> infos_subgroup<br>
 │   │      └ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> more_datasets<br>
-│   └ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> additional_groups<br>
+│   └ 📁 additional_groups<br>
 │       └ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> additional_datasets<br>
-├ 📁 episode_1<br>
-├ 📁 episode_2<br>
+├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> episode_1<br>
+├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> episode_2<br>
 │<br>
 └ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> last_episode_id</p>
 <p>Similarly, consider the case where we have a <code>Box</code> space as an observation space and a relatively complex <code>Tuple</code> space as an action space with the following definition:</p>
@@ -441,9 +441,9 @@
     )
 )</pre></div>
 <p>In this case, the resulting Minari dataset <code>HDF5</code> file will end up looking as follows:</p>
-<p>📄 main_data.hdf5<br>
-├ 📁 episode_0<br>
-│   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> observations<br>
+<p><g-emoji class="g-emoji" alias="page_facing_up" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c4.png">📄</g-emoji> main_data.hdf5<br>
+├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> episode_0<br>
+│   ├ 💾 observations<br>
 │   ├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> actions<br>
 │   │   ├ 💾 _index_0<br>
 │   │   └ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> _index_1<br>
@@ -454,14 +454,14 @@
 │   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> rewards<br>
 │   ├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> infos<br>
 │   │   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> infos_datasets<br>
-│   │   └ 📁 infos_subgroup<br>
+│   │   └ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> infos_subgroup<br>
 │   │      └ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> more_datasets<br>
 │   └ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> additional_groups<br>
-│       └ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> additional_datasets<br>
-├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> episode_1<br>
+│       └ 💾 additional_datasets<br>
+├ 📁 episode_1<br>
 ├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> episode_2<br>
 │<br>
-└ 📁 last_episode_id</p>
+└ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> last_episode_id</p>
 <h3>EpisodeData: Data format when sampling episodes</h3>
 <p>Episodes are now sampled as <code>EpisodeData</code> Instances that comply with the following format:</p>
 <table>
@@ -599,10 +599,10 @@
 │   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> terminations<br>
 │   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> truncations<br>
 │   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> rewards<br>
-│   ├ 📁 infos<br>
-│   │   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> info datasets<br>
+│   ├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> infos<br>
+│   │   ├ 💾 info datasets<br>
 │   │   └ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> info subgroup<br>
-│   │      └ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> info subgroup dataset<br>
+│   │      └ 💾 info subgroup dataset<br>
 │   └ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> extra dataset group<br>
 │       └ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> extra datasets<br>
 └ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> next_episode_id</p>
