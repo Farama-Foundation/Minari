@@ -7,6 +7,7 @@ import h5py
 from packaging.specifiers import SpecifierSet
 
 from minari.dataset.minari_dataset import MinariDataset, parse_dataset_id
+from minari.storage import hosting
 from minari.storage.datasets_root_dir import get_dataset_path
 
 
@@ -14,17 +15,27 @@ from minari.storage.datasets_root_dir import get_dataset_path
 __version__ = importlib.metadata.version("minari")
 
 
-def load_dataset(dataset_id: str):
+def load_dataset(dataset_id: str, download: bool = False):
     """Retrieve Minari dataset from local database.
 
     Args:
         dataset_id (str): name id of Minari dataset
+        download (bool): if `True` download the dataset if it is not found locally. Default to `False`.
 
     Returns:
         MinariDataset
     """
     file_path = get_dataset_path(dataset_id)
     data_path = os.path.join(file_path, "data", "main_data.hdf5")
+
+    if not os.path.exists(data_path):
+        if not download:
+            raise FileNotFoundError(
+                f"Dataset {dataset_id} not found locally at {file_path}. Use download=True to download the dataset."
+            )
+
+        hosting.download_dataset(dataset_id)
+
     return MinariDataset(data_path)
 
 

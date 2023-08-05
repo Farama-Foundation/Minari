@@ -61,3 +61,21 @@ def test_download_dataset_from_farama_server(dataset_id: str):
     minari.delete_dataset(dataset_id)
     local_datasets = minari.list_local_datasets()
     assert dataset_id not in local_datasets
+
+
+@pytest.mark.parametrize(
+    "dataset_id",
+    [
+        get_latest_compatible_dataset_id(env_name=env_name, dataset_name="human")
+        for env_name in env_names
+    ],
+)
+def test_load_dataset_with_download(dataset_id: str):
+    """Test load dataset with and without download."""
+    with pytest.raises(FileNotFoundError):
+        dataset = minari.load_dataset(dataset_id)
+
+    dataset = minari.load_dataset(dataset_id, download=True)
+    assert isinstance(dataset, MinariDataset)
+
+    minari.delete_dataset(dataset_id)
