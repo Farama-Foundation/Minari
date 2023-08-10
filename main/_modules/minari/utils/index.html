@@ -813,9 +813,9 @@
                 <span class="p">)</span>
 
                 <span class="n">eps_group</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">i</span>
-                <span class="n">total_steps</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">eps_buff</span><span class="p">[</span><span class="s2">&quot;actions&quot;</span><span class="p">])</span>
-                <span class="n">eps_group</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;total_steps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_steps</span>
-                <span class="n">total_steps</span> <span class="o">+=</span> <span class="n">total_steps</span>
+                <span class="n">episode_total_steps</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">eps_buff</span><span class="p">[</span><span class="s2">&quot;actions&quot;</span><span class="p">])</span>
+                <span class="n">eps_group</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;total_steps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">episode_total_steps</span>
+                <span class="n">total_steps</span> <span class="o">+=</span> <span class="n">episode_total_steps</span>
 
                 <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="n">eps_group</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;seed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>

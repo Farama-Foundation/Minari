@@ -487,17 +487,18 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_additional_data_id</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">if</span> <span class="n">episode_indices</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">episode_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">total_episodes</span><span class="p">)</span>
+            <span class="n">total_steps</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">total_steps</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">total_steps</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+                    <span class="k">lambda</span> <span class="n">episode</span><span class="p">:</span> <span class="n">episode</span><span class="p">[</span><span class="s2">&quot;total_timesteps&quot;</span><span class="p">],</span>
+                    <span class="n">episode_indices</span><span class="o">=</span><span class="n">episode_indices</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_episode_indices</span> <span class="o">=</span> <span class="n">episode_indices</span>
 
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_episode_indices</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-
-        <span class="n">total_steps</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
-                <span class="k">lambda</span> <span class="n">episode</span><span class="p">:</span> <span class="n">episode</span><span class="p">[</span><span class="s2">&quot;total_timesteps&quot;</span><span class="p">],</span>
-                <span class="n">episode_indices</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_episode_indices</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">spec</span> <span class="o">=</span> <span class="n">MinariDatasetSpec</span><span class="p">(</span>
             <span class="n">env_spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">env_spec</span><span class="p">,</span>
