@@ -336,6 +336,46 @@ def test_sample_episodes(dataset_id, env_id):
     env.close()
 
 
+
+@pytest.mark.parametrize(
+    "dataset_id,env_id",
+    [
+        ("cartpole-test-v0", "CartPole-v1"),
+        ("dummy-dict-test-v0", "DummyDictEnv-v0"),
+        ("dummy-box-test-v0", "DummyBoxEnv-v0"),
+        ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
+        ("dummy-combo-test-v0", "DummyComboEnv-v0"),
+        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
+    ],
+)
+def test_sample_trajectories(dataset_id, env_id):
+    local_datasets = minari.list_local_datasets()
+    if dataset_id in local_datasets:
+        minari.delete_dataset(dataset_id)
+
+    env = gym.make(env_id)
+
+    env = DataCollectorV0(env)
+    num_episodes = 10
+
+    dataset = create_dummy_dataset_with_collecter_env_helper(
+        dataset_id, env, num_episodes=num_episodes
+    )
+
+
+    episodes = dataset.sample_trajectories(4,5)
+    
+    
+    check_episode_data_integrity(
+        episodes,
+        dataset.spec.observation_space,
+        dataset.spec.action_space,
+    )
+
+    env.close()
+    
+    
+
 @pytest.mark.parametrize(
     "dataset_id,env_id",
     [

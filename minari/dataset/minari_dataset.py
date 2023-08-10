@@ -4,6 +4,9 @@ import os
 import re
 from dataclasses import dataclass, field
 from typing import Callable, Iterable, Iterator, List, Optional, Union
+from random import choices, randrange, choice
+from collections import Counter
+
 
 import gymnasium as gym
 import numpy as np
@@ -41,11 +44,15 @@ def parse_dataset_id(dataset_id: str) -> tuple[str | None, str, int]:
     return env_name, dataset_name, version
 
 
+
+
 @dataclass(frozen=True)
 class EpisodeData:
     """Contains the datasets data for a single episode.
 
-    This is the object returned by :class:`minari.MinariDataset.sample_episodes`.
+    This is the object returned by :class:`minari.MinariDataset.sample_episodes` and :class:`minari.MinariDataset.sample_trajectories`.
+
+    In instances of `EpisodeData` returned by :class:`minari.MinariDataset.sample_trajectories`, `id` refers to the id of the starting episode.
     """
 
     id: int
@@ -235,6 +242,53 @@ class MinariDataset:
         )
         episodes = self._data.get_episodes(indices)
         return list(map(lambda data: EpisodeData(**data), episodes))
+
+
+    def sample_trajectories(self, n_trajectories, trajectory_length, allow_restarts=False):
+        if allow_restarts:
+            total_steps = self.spec.total_steps
+
+            starts = choices(0,total_steps-trajectory_length, k=n_trajectories)
+            assert False
+        else:
+
+
+            #We only want to load each episode once. We need to discard episodes that are too short for our trajectory length.
+            #We mark such episodes so they will not be sampled again, while always preserving uniform random sampling overal all 
+            #samples not known to be invalid. 
+            valid_episode_indices = {key:1 for key in range(0,self.spec.total_episodes)}
+            counts = {}
+            episodes = []
+            samples = 0
+            while samples < n_trajectories:
+                index = choice(list(valid_episode_indices.keys()))
+                if index in counts:
+                    counts[index] += 1
+                else:
+                    sampled_episode = self._data.get_episodes([index])[0]
+                    print(sampled_episode.keys())
+                    if sampled_episode["total_timesteps"] < n_trajectories:
+                        del valid_episode_indices[index]
+                    else:
+                        episodes.append(sampled_episode)
+                        samples += 1
+                        counts[index] = 1
+
+            result = []
+            for episode in episodes:
+                for i in range(counts[episode["id"]]):
+                    print(episode["total_timesteps"])
+                    print(trajectory_length)
+                    if episode["total_timesteps"] == trajectory_length:
+                        result.append(EpisodeData(** episode))
+                    elif episode["total_timesteps"] > trajectory_length:
+                        start = randrange(0, episode["total_timesteps"]-trajectory_length)
+                        trajectory = EpisodeData( id= episode["id"], actions = episode["actions"][start:start+trajectory_length],seed=  episode["seed"], observations = episode["observations"][start:start+trajectory_length+1], truncations = episode["truncations"][start:start+trajectory_length],terminations = episode["terminations"][start:start+trajectory_length], rewards = episode["rewards"][start:start+trajectory_length],total_timesteps = trajectory_length)
+                        result.append(trajectory)
+                    else:
+                        assert False
+            return result
+            
 
     def iterate_episodes(
         self, episode_indices: Optional[List[int]] = None
