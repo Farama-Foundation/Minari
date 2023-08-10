@@ -141,17 +141,18 @@ class MinariDataset:
         self._additional_data_id = 0
         if episode_indices is None:
             episode_indices = np.arange(self._data.total_episodes)
+            total_steps = self._data.total_steps
+        else:
+            total_steps = sum(
+                self._data.apply(
+                    lambda episode: episode["total_timesteps"],
+                    episode_indices=episode_indices,
+                )
+            )
 
         self._episode_indices = episode_indices
 
         assert self._episode_indices is not None
-
-        total_steps = sum(
-            self._data.apply(
-                lambda episode: episode["total_timesteps"],
-                episode_indices=self._episode_indices,
-            )
-        )
 
         self.spec = MinariDatasetSpec(
             env_spec=self._data.env_spec,
