@@ -254,8 +254,8 @@ class MinariDataset:
 
 
             #We only want to load each episode once. We need to discard episodes that are too short for our trajectory length.
-            #We mark such episodes so they will not be sampled again, while always preserving uniform random sampling overal all 
-            #samples not known to be invalid. 
+            #We mark such episodes so they will not be sampled again, while always preserving uniform random sampling over all 
+            #episodes not known to be invalid. 
             valid_episode_indices = {key:1 for key in range(0,self.spec.total_episodes)}
             counts = {}
             episodes = []
