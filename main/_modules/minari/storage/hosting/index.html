@@ -571,33 +571,29 @@
 <span class="sd">       Dict[str, Dict[str, str]]: keys the names of the Minari datasets and values the metadata</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">client</span> <span class="o">=</span> <span class="n">storage</span><span class="o">.</span><span class="n">Client</span><span class="o">.</span><span class="n">create_anonymous_client</span><span class="p">()</span>
-    <span class="n">bucket</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">bucket</span><span class="p">(</span><span class="s2">&quot;minari-datasets&quot;</span><span class="p">)</span>
-    <span class="n">blobs</span> <span class="o">=</span> <span class="n">bucket</span><span class="o">.</span><span class="n">list_blobs</span><span class="p">(</span><span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;main_data.hdf5&quot;</span><span class="p">)</span>
-
-    <span class="c1"># Necessary to get prefixes iterable</span>
-    <span class="nb">next</span><span class="p">(</span><span class="n">blobs</span><span class="p">)</span>
+    <span class="n">blobs</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">list_blobs</span><span class="p">(</span><span class="n">bucket_or_name</span><span class="o">=</span><span class="s2">&quot;minari-datasets&quot;</span><span class="p">)</span>
 
     <span class="c1"># Generate dict = {&#39;env_name-dataset_name&#39;: (version, metadata)}</span>
     <span class="n">remote_datasets</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="k">for</span> <span class="n">prefix</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">blobs</span><span class="o">.</span><span class="n">prefixes</span><span class="p">):</span>
-        <span class="n">blob</span> <span class="o">=</span> <span class="n">bucket</span><span class="o">.</span><span class="n">get_blob</span><span class="p">(</span><span class="n">prefix</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">blob</span> <span class="ow">in</span> <span class="n">blobs</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">metadata</span> <span class="o">=</span> <span class="n">blob</span><span class="o">.</span><span class="n">metadata</span>
-            <span class="k">if</span> <span class="n">compatible_minari_version</span> <span class="ow">and</span> <span class="n">__version__</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SpecifierSet</span><span class="p">(</span>
-                <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;minari_version&quot;</span><span class="p">]</span>
-            <span class="p">):</span>
-                <span class="k">continue</span>
-            <span class="n">dataset_id</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;dataset_id&quot;</span><span class="p">]</span>
-            <span class="n">env_name</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">parse_dataset_id</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
-            <span class="n">dataset</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">env_name</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">if</span> <span class="n">latest_version</span><span class="p">:</span>
-                <span class="k">if</span> <span class="p">(</span>
-                    <span class="n">dataset</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">remote_datasets</span>
-                    <span class="ow">or</span> <span class="n">version</span> <span class="o">&gt;</span> <span class="n">remote_datasets</span><span class="p">[</span><span class="n">dataset</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">blob</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;main_data.hdf5&quot;</span><span class="p">):</span>
+                <span class="n">metadata</span> <span class="o">=</span> <span class="n">blob</span><span class="o">.</span><span class="n">metadata</span>
+                <span class="k">if</span> <span class="n">compatible_minari_version</span> <span class="ow">and</span> <span class="n">__version__</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SpecifierSet</span><span class="p">(</span>
+                    <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;minari_version&quot;</span><span class="p">]</span>
                 <span class="p">):</span>
-                    <span class="n">remote_datasets</span><span class="p">[</span><span class="n">dataset</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">version</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">remote_datasets</span><span class="p">[</span><span class="n">dataset_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">metadata</span>
+                    <span class="k">continue</span>
+                <span class="n">dataset_id</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;dataset_id&quot;</span><span class="p">]</span>
+                <span class="n">env_name</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">parse_dataset_id</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
+                <span class="n">dataset</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">env_name</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="k">if</span> <span class="n">latest_version</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="p">(</span>
+                        <span class="n">dataset</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">remote_datasets</span>
+                        <span class="ow">or</span> <span class="n">version</span> <span class="o">&gt;</span> <span class="n">remote_datasets</span><span class="p">[</span><span class="n">dataset</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="p">):</span>
+                        <span class="n">remote_datasets</span><span class="p">[</span><span class="n">dataset</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">version</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">remote_datasets</span><span class="p">[</span><span class="n">dataset_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">metadata</span>
         <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Misconfigured dataset named </span><span class="si">{</span><span class="n">blob</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> on remote&quot;</span><span class="p">)</span>
 
