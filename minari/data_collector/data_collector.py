@@ -154,6 +154,9 @@ class DataCollector(gym.Wrapper):
             if (not self._record_infos and key == "infos") or (value is None):
                 continue
 
+            if key == "infos":
+                print("infos time")
+
             if key not in episode_buffer:
                 if isinstance(value, dict):
                     episode_buffer[key] = self._add_to_episode_buffer({}, value)

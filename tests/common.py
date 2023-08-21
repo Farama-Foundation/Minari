@@ -32,12 +32,12 @@ class DummyBoxEnv(gym.Env):
         terminated = self.timestep > 5
         self.timestep += 1
 
-        return self.observation_space.sample(), 0, terminated, False, {}
+        return self.observation_space.sample(), 0, terminated, False,  {"timestep" : self.timestep}
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
         self.observation_space.seed(seed)
-        return self.observation_space.sample(), {}
+        return self.observation_space.sample(), {"timestep" : self.timestep}
 
 
 class DummyMultiDimensionalBoxEnv(gym.Env):
@@ -604,7 +604,7 @@ def create_dummy_dataset_with_collecter_env_helper(
 
 
 def check_episode_data_integrity(
-    episode_data_list: List[EpisodeData],
+    episode_data_list: Union[List[EpisodeData],MinariDataset],
     observation_space: gym.spaces.Space,
     action_space: gym.spaces.Space,
 ):
@@ -627,7 +627,12 @@ def check_episode_data_integrity(
 
         for i in range(episode.total_timesteps + 1):
             obs = _reconstuct_obs_or_action_at_index_recursive(episode.observations, i)
+            print(episode)
+            print(episode.observations)
+            print(obs)
+            print(observation_space)
             assert observation_space.contains(obs)
+            
         for i in range(episode.total_timesteps):
             action = _reconstuct_obs_or_action_at_index_recursive(episode.actions, i)
             assert action_space.contains(action)
