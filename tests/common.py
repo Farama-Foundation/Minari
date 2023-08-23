@@ -570,7 +570,7 @@ def create_dummy_dataset_with_collecter_env_helper(
         env.reset()
 
     # Create Minari dataset and store locally
-    return minari.create_dataset_from_collector_env(
+    dataset = minari.create_dataset_from_collector_env(
         dataset_id=dataset_id,
         collector_env=env,
         algorithm_name="random_policy",
@@ -579,7 +579,7 @@ def create_dummy_dataset_with_collecter_env_helper(
         author_email="wdudley@farama.org",
     )
     env.close()
-
+    return dataset
 
 def check_episode_data_integrity(
     episode_data_list: List[EpisodeData],

@@ -67,6 +67,7 @@ def list_local_datasets(
             # Minari datasets must contain the data directory.
             continue
 
+        # TODO: remove hdf5 references
         main_file_path = os.path.join(datasets_path, dst_id, "data/main_data.hdf5")
         with h5py.File(main_file_path, "r") as f:
             metadata = dict(f.attrs.items())
