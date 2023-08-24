@@ -19,6 +19,7 @@ STEP_DATA_KEYS = {
     "rewards",
     "truncations",
     "terminations",
+    "infos"
 }
 
 
@@ -58,8 +59,8 @@ class StepDataCallback:
 
                     return step_data
 
-        The episode groups in the HDF5 file of this Minari dataset will contain a subgroup called `environment_states` with dataset `velocity` and another subgroup called `pose`
-        with datasets `position` and `orientation`
+        The Minari dataset will contain a dictionary called `environment_states` with `velocity` value and another dictionary `pose`
+        with `position` and `orientation`
 
         Args:
             env (gym.Env): current Gymnasium environment.

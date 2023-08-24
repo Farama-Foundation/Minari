@@ -14,25 +14,41 @@ PathLike = Union[str, bytes, os.PathLike]
 
 class MinariStorage:
     def __init__(self, data_path: PathLike):
-        self._data_path = os.path.join(str(data_path), "main_data.hdf5")
+        base_path, ext = os.path.splitext(str(data_path))
+        if ext != "" and ext != ".hdf5":
+            raise ValueError(f"Only hdf5 extension is supported, found {ext}")
+        self._data_path = base_path + ".hdf5"
+    
+    @classmethod
+    def new(cls, data_path: PathLike, action_space, observation_space, env_spec):
+        obj = cls(data_path)
+        obj.update_metadata({
+            "action_space": action_space,
+            "observation_space": observation_space,
+            "env_spec": env_spec,
+            "total_episodes": 0,
+            "total_steps": 0
+        })
+        return obj
 
     @property
     def metadata(self) -> Dict:
+        metadata = {}
         with h5py.File(self.data_path, "r") as file:
-            metadata = file.attrs
+            metadata.update(file.attrs)
             if "observation_space" in metadata.keys():
                 space_serialization = metadata["observation_space"]
-                assert isinstance(space_serialization, Dict)
+                assert isinstance(space_serialization, str)
                 metadata["observation_space"] = deserialize_space(space_serialization)            
             if "action_space" in metadata.keys():
                 space_serialization = metadata["action_space"]
-                assert isinstance(space_serialization, Dict)
+                assert isinstance(space_serialization, str)
                 metadata["action_space"] = deserialize_space(space_serialization)
             
-            return dict(metadata)
+            return metadata
     
     def update_metadata(self, metadata: Dict):
-        with h5py.File(self.data_path, "w") as file:
+        with h5py.File(self.data_path, "a") as file:
             file.attrs.update(metadata)
 
     def update_episode_metadata(self, metadatas: List[Dict], episode_indices: Optional[Iterable] = None):
@@ -41,7 +57,7 @@ class MinariStorage:
         if len(metadatas) != len(list(episode_indices)):
             raise ValueError("The number of metadatas doesn't match the number of episodes in the dataset.")
     
-        with h5py.File(self.data_path, "w") as file:
+        with h5py.File(self.data_path, "a") as file:
             for metadata, episode_id in zip(metadatas, episode_indices):
                 ep_group = file[f"episode_{episode_id}"]
                 ep_group.attrs.update(metadata)
@@ -149,22 +165,13 @@ class MinariStorage:
         additional_steps = 0
         with h5py.File(self.data_path, "a", track_order=True) as file:
             for eps_buff in episodes:
-                # check episode terminated or truncated
-                assert (
-                    eps_buff["terminations"][-1] or eps_buff["truncations"][-1]
-                ), "Each episode must be terminated or truncated before adding it to a Minari dataset"
-                assert len(eps_buff["actions"]) + 1 == len(
-                    eps_buff["observations"]
-                ), f"Number of observations {len(eps_buff['observations'])} must have an additional \
-                                                                                        element compared to the number of action steps {len(eps_buff['actions'])} \
-                                                                                        The initial and final observation must be included"
-                episode_id = eps_buff["id"]
+                episode_id = eps_buff.pop("id")
                 episode_group = get_h5py_subgroup(file, f"episode_{episode_id}")
                 episode_group.attrs["id"] = episode_id
                 if "seed" in eps_buff.keys():
                     assert not "seed" in episode_group.attrs.keys()
-                    episode_group.attrs["seed"] = eps_buff["seed"]
-                total_steps = len(eps_buff["actions"])
+                    episode_group.attrs["seed"] = eps_buff.pop("seed")
+                total_steps = len(eps_buff["rewards"])
                 episode_group.attrs["total_steps"] = total_steps
                 additional_steps += total_steps
 
@@ -183,19 +190,16 @@ class MinariStorage:
         return self._data_path
 
     @property
-    def total_episodes(self) -> int:
+    def total_episodes(self) -> np.int64:
         """Total episodes in the dataset."""
         with h5py.File(self.data_path, "r") as file:
             total_episodes = file.attrs["total_episodes"]
-            assert isinstance(total_episodes, np.ndarray)
-            total_episodes = total_episodes.item()
-            assert isinstance(total_episodes, int)
+            assert type(total_episodes) == np.int64
             return total_episodes
 
-def get_h5py_subgroup(group: h5py.Group, name: str) -> h5py.Group:
+def get_h5py_subgroup(group: h5py.Group, name: str):
     if name in group:
         subgroup = group.get(name)
-        # assert isinstance(subgroup, h5py.Group)
     else:
         subgroup = group.create_group(name)
 

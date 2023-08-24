@@ -152,11 +152,8 @@ class MinariDataset:
 
         if episode_indices is None:
             total_episodes = metadata["total_episodes"]
-            assert isinstance(total_episodes, np.ndarray)
-            episode_indices = np.arange(total_episodes.item())
+            episode_indices = np.arange(total_episodes)
             total_steps = metadata["total_steps"]
-            assert isinstance(total_steps, np.ndarray)
-            total_steps = total_steps.item()
         else:
             total_steps = sum(
                 self._data.apply(
@@ -167,7 +164,6 @@ class MinariDataset:
         
         assert isinstance(episode_indices, np.ndarray)
         self._episode_indices: np.ndarray = episode_indices
-        assert isinstance(total_steps, int)
         self._total_steps = total_steps
 
         assert self._episode_indices is not None
@@ -334,12 +330,16 @@ class MinariDataset:
         return EpisodeData(**episodes_data[0])
 
     def __len__(self) -> int:
+        return self.total_episodes
+    
+    @property
+    def total_episodes(self) -> int:
         return len(self.episode_indices)
 
     @property
-    def total_steps(self):
+    def total_steps(self) -> int:
         """Total episodes steps in the Minari dataset."""
-        return self._total_steps
+        return int(self._total_steps)
 
     @property
     def episode_indices(self) -> np.ndarray:

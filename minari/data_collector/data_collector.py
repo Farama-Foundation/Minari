@@ -117,13 +117,13 @@ class DataCollectorV0(gym.Wrapper):
             os.makedirs(self.datasets_path)
 
         self._tmp_dir = tempfile.TemporaryDirectory(dir=self.datasets_path)
-        self._storage = MinariStorage(self._tmp_dir.name)
         assert self.env.spec is not None, "Env Spec is None"
-        self._storage.update_metadata({
-            "action_space": serialize_space(self.dataset_action_space),
-            "observation_space": serialize_space(self.dataset_observation_space),
-            "env_spec": self.env.spec.to_json()
-        })
+        self._storage = MinariStorage.new(
+            os.path.join(self._tmp_dir.name, "main_data"),
+            action_space=serialize_space(self.dataset_action_space),
+            observation_space=serialize_space(self.dataset_observation_space),
+            env_spec=self.env.spec.to_json()
+        )
 
     def _add_to_episode_buffer(
         self,
@@ -141,8 +141,6 @@ class DataCollectorV0(gym.Wrapper):
         """
         for key, value in step_data.items():
             if (not self._record_infos and key == "infos") or (value is None):
-                # if the step data comes from a reset call: skip actions, rewards,
-                # terminations, and truncations their values are set to None in the StepDataCallback
                 continue
 
             if key not in episode_buffer:
@@ -193,6 +191,8 @@ class DataCollectorV0(gym.Wrapper):
         ), "Actions are not in action space."
 
         self._step_id += 1
+        self._buffer[-1] = self._add_to_episode_buffer(self._buffer[-1], step_data)
+
         if (
             self.max_buffer_steps is not None 
             and self._step_id != 0 
@@ -200,8 +200,15 @@ class DataCollectorV0(gym.Wrapper):
         ):
             self._storage.update_episodes(self._buffer)
             self._buffer = [{"id": self._episode_id}]
-
-        self._buffer[-1] = self._add_to_episode_buffer(self._buffer[-1], step_data)
+        if step_data["terminations"] or step_data["truncations"]:
+            self._episode_id += 1
+            eps_buff = {"id": self._episode_id}
+            previous_data = {
+                "observations": step_data["observations"],
+                "infos": step_data["infos"]
+                }
+            eps_buff = self._add_to_episode_buffer(eps_buff, previous_data)
+            self._buffer.append(eps_buff)
 
         return obs, rew, terminated, truncated, info
 
@@ -220,14 +227,7 @@ class DataCollectorV0(gym.Wrapper):
             step_data.keys()
         ), "One or more required keys is missing from 'step-data'"
 
-        # Truncate the last episode in the buffer if it is not done
-        if (
-            len(self._buffer) > 0 
-            and not self._buffer[-1]["terminations"][-1] 
-            and not self._buffer[-1]["truncations"][-1]
-        ):
-            self._buffer[-1]["truncations"][-1] = True
-
+        self._validate_buffer() 
         episode_buffer = {
             "seed": seed if seed else str(None),
             "id": self._episode_id
@@ -236,6 +236,14 @@ class DataCollectorV0(gym.Wrapper):
         self._buffer.append(episode_buffer)
         return obs, info
 
+    def _validate_buffer(self):
+        if len(self._buffer) > 0:
+            if "actions" not in self._buffer[-1].keys():
+                self._buffer.pop()
+                self._episode_id -= 1
+            elif not self._buffer[-1]["terminations"][-1]:
+                self._buffer[-1]["truncations"][-1] = True
+
     def save_to_disk(self, path: str, dataset_metadata: Dict[str, Any] = {}):
         """Save all in-memory buffer data and move temporary HDF5 file to a permanent location in disk.
 
@@ -243,11 +251,8 @@ class DataCollectorV0(gym.Wrapper):
             path (str): path to store permanent HDF5, i.e: '/home/foo/datasets/data.hdf5'
             dataset_metadata (Dict, optional): additional metadata to add to HDF5 dataset file as attributes. Defaults to {}.
         """
-        # truncate last episode
-        if not self._buffer[-1]["terminations"][-1] and not self._buffer[-1]["truncations"][-1]:
-            self._buffer[-1]["truncations"][-1] = True
-        
-        self._storage.update_episodes(self._buffer) #TODO: update add episode to use episode_id
+        self._validate_buffer()
+        self._storage.update_episodes(self._buffer)
         self._buffer.clear()
 
         assert (
