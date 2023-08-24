@@ -6,13 +6,13 @@ import os
 import warnings
 from typing import Dict, List
 
-import h5py
 from google.cloud import storage  # pyright: ignore [reportGeneralTypeIssues]
 from gymnasium import logger
 from packaging.specifiers import SpecifierSet
 from tqdm.auto import tqdm  # pyright: ignore [reportMissingModuleSource]
 
 from minari.dataset.minari_dataset import parse_dataset_id
+from minari.dataset.minari_storage import MinariStorage
 from minari.storage.datasets_root_dir import get_dataset_path
 from minari.storage.local import load_dataset
 
@@ -56,8 +56,7 @@ def upload_dataset(dataset_id: str, path_to_private_key: str):
 
         dataset = load_dataset(dataset_id)
 
-        with h5py.File(dataset.spec.data_path, "r") as f:
-            metadata = dict(f.attrs.items())
+        metadata = MinariStorage(dataset.spec.data_path).metadata
 
         # See https://github.com/googleapis/python-storage/issues/27 for discussion on progress bars
         _upload_local_directory_to_gcs(str(file_path), bucket, dataset_id)
