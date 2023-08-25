@@ -28,7 +28,7 @@ class ForceTruncateStepDataCallback(StepDataCallback):
         return step_data
 
 
-def _get_step_from_infos(infos, step_index):
+def _get_step_from_infos(infos, step_index: int):
     result = {}
     for key in infos.keys():
         if isinstance(infos[key], h5py.Group):
