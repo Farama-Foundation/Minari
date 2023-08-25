@@ -161,6 +161,19 @@ class MinariStorage:
         ep_dicts = self.get_episodes(episode_indices)
         return map(function, ep_dicts)
 
+    def _decode_infos(self, infos: h5py.Group):
+        result = {}
+        for key in infos.keys():
+            if isinstance(infos[key], h5py.Group):
+                result[key] = self._decode_infos(infos[key])
+            elif isinstance(infos[key], h5py.Dataset):
+                result[key] = infos[key][()]
+            else:
+                raise ValueError(
+                    "Infos are in an unsupported format; see Minari documentation for supported formats."
+                )
+        return result
+
     def _decode_space(
         self,
         hdf_ref: Union[h5py.Group, h5py.Dataset, h5py.Datatype],
@@ -219,6 +232,9 @@ class MinariStorage:
                     "actions": self._decode_space(
                         ep_group["actions"], self.action_space
                     ),
+                    "infos": self._decode_infos(ep_group["infos"])
+                    if "infos" in ep_group
+                    else {},
                 }
                 for key in {"rewards", "terminations", "truncations"}:
                     group_value = ep_group[key]

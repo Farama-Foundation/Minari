@@ -32,7 +32,13 @@ class DummyBoxEnv(gym.Env):
         terminated = self.timestep > 5
         self.timestep += 1
 
-        return self.observation_space.sample(), 0, terminated, False,  {"timestep" : self.timestep}
+        return (
+            self.observation_space.sample(),
+            0,
+            terminated,
+            False,
+            {"timestep": self.timestep},
+        )
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
@@ -117,12 +123,28 @@ class DummyDictEnv(gym.Env):
         terminated = self.timestep > 5
         self.timestep += 1
 
-        return self.observation_space.sample(), 0, terminated, False, {}
+        return (
+            self.observation_space.sample(),
+            0,
+            terminated,
+            False,
+            {
+                "timestep": self.timestep,
+                "component_1": {"next_timestep": self.timestep + 1},
+            },
+        )
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
+<<<<<<< HEAD
         self.observation_space.seed(seed)
         return self.observation_space.sample(), {}
+=======
+        return self.observation_space.sample(), {
+            "timestep": self.timestep,
+            "component_1": {"next_timestep": self.timestep + 1},
+        }
+>>>>>>> 4367f79 (tentative draft of info support for EpisodeData)
 
 
 class DummyTupleEnv(gym.Env):
@@ -150,12 +172,26 @@ class DummyTupleEnv(gym.Env):
         terminated = self.timestep > 5
         self.timestep += 1
 
-        return self.observation_space.sample(), 0, terminated, False, {}
+        info = {
+            "info_1": np.ones((2, 2)),
+            "component_1": {"component_1_info_1": np.ones((2,))},
+        }
+
+        return self.observation_space.sample(), 0, terminated, False, info
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
+<<<<<<< HEAD
         self.observation_space.seed(seed)
         return self.observation_space.sample(), {}
+=======
+
+        info = {
+            "info_1": np.ones((2, 2)),
+            "component_1": {"component_1_info_1": np.ones((2,))},
+        }
+        return self.observation_space.sample(), info
+>>>>>>> 4367f79 (tentative draft of info support for EpisodeData)
 
 
 class DummyTextEnv(gym.Env):
@@ -512,6 +548,45 @@ def check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
     assert total_steps == data.total_steps
 
 
+def assert_infos_same_shape(info_1, info_2):
+    for key in info_1.keys():
+        if isinstance(info_1[key], dict):
+            if not assert_infos_same_shape(info_1[key], info_2[key]):
+                return False
+        elif isinstance(info_1[key], np.ndarray):
+            if not (info_1[key].shape == info_2[key].shape) and (
+                info_1[key].dtype == info_2[key].dtype
+            ):
+                return False
+        elif np.issubdtype(type(info_1[key]), np.integer) and np.issubdtype(
+            type(info_2[key]), np.integer
+        ):
+            pass
+        elif np.issubdtype(type(info_1[key]), np.float) and np.issubdtype(
+            type(info_2[key]), np.float
+        ):
+            pass
+        else:
+            raise ValueError(
+                "Infos are in an unsupported format; see Minari documentation for supported formats."
+            )
+    return True
+
+
+def _get_step_from_infos_dict(infos, step_index):
+    result = {}
+    for key in infos.keys():
+        if isinstance(infos[key], dict):
+            result[key] = _get_step_from_infos_dict(infos[key], step_index)
+        elif isinstance(infos[key], np.ndarray):
+            result[key] = infos[key][step_index]
+        else:
+            raise ValueError(
+                "Infos are in an unsupported format; see Minari documentation for supported formats."
+            )
+    return result
+
+
 def _reconstuct_obs_or_action_at_index_recursive(
     data: Union[dict, tuple, np.ndarray], index: int
 ) -> Union[np.ndarray, dict, tuple]:
@@ -604,9 +679,10 @@ def create_dummy_dataset_with_collecter_env_helper(
 
 
 def check_episode_data_integrity(
-    episode_data_list: Union[List[EpisodeData],MinariDataset],
+    episode_data_list: Union[List[EpisodeData], MinariDataset],
     observation_space: gym.spaces.Space,
     action_space: gym.spaces.Space,
+    info_sample: Optional[dict] = None,
 ):
     """Checks to see if a list of EpisodeData instances has consistent data and that the observations and actions are in the appropriate spaces.
 
@@ -614,7 +690,7 @@ def check_episode_data_integrity(
         episode_data_list (List[EpisodeData]): A list of EpisodeData instances representing episodes.
         observation_space(gym.spaces.Space): The environment's observation space.
         action_space(gym.spaces.Space): The environment's action space.
-
+        info_sample(dict): An info returned by the environment used to build the dataset.
     """
     # verify the actions and observations are in the appropriate action space and observation space, and that the episode lengths are correct
     for episode in episode_data_list:
@@ -627,12 +703,12 @@ def check_episode_data_integrity(
 
         for i in range(episode.total_timesteps + 1):
             obs = _reconstuct_obs_or_action_at_index_recursive(episode.observations, i)
-            print(episode)
-            print(episode.observations)
-            print(obs)
-            print(observation_space)
+
+            assert assert_infos_same_shape(
+                _get_step_from_infos_dict(episode.infos, i), info_sample
+            )
             assert observation_space.contains(obs)
-            
+
         for i in range(episode.total_timesteps):
             action = _reconstuct_obs_or_action_at_index_recursive(episode.actions, i)
             assert action_space.contains(action)

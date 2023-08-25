@@ -44,6 +44,7 @@ def test_episode_data(space: gym.Space):
         rewards=rewards,
         terminations=terminations,
         truncations=truncations,
+        infos={},
     )
 
     pattern = r"EpisodeData\("
@@ -55,6 +56,7 @@ def test_episode_data(space: gym.Space):
     pattern += r"rewards=.+, "
     pattern += r"terminations=.+, "
     pattern += r"truncations=.+"
+    pattern += r"infos=.+"
     pattern += r"\)"
     assert re.fullmatch(pattern, repr(episode_data))
 
