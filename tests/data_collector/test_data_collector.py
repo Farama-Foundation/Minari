@@ -34,7 +34,7 @@ def _get_step_from_infos(infos, step_index: int):
     result = {}
     for key in infos.keys():
         if isinstance(infos[key], h5py.Group):
-            result[key] = _get_step_from_infos(infos[key])
+            result[key] = _get_step_from_infos(infos[key], step_index)
         elif isinstance(infos[key], h5py.Dataset):
             result[key] = infos[key][step_index]
         else:
