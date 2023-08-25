@@ -11,10 +11,10 @@ from tests.common import (
     check_data_integrity,
     check_env_recovery,
     check_env_recovery_with_subset_spaces,
+    check_episode_data_integrity,
     check_load_and_delete_dataset,
     get_sample_buffer_for_dataset_from_env,
     register_dummy_envs,
-    check_episode_data_integrity
 )
 
 
@@ -84,7 +84,9 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
     assert len(dataset.episode_indices) == num_episodes
 
     check_data_integrity(dataset._data, dataset.episode_indices)
-    check_episode_data_integrity(dataset, dataset.spec.observation_space, dataset.spec.action_space)
+    check_episode_data_integrity(
+        dataset, dataset.spec.observation_space, dataset.spec.action_space
+    )
 
     # check that the environment can be recovered from the dataset
     check_env_recovery(env.env, dataset, eval_env)
@@ -94,10 +96,13 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
     # check load and delete local dataset
     check_load_and_delete_dataset(dataset_id)
 
+
 @pytest.mark.parametrize(
     "dataset_id,env_id",
     [
+        ("dummy-dict-test-v0", "DummyDictEnv-v0"),
         ("dummy-box-test-v0", "DummyBoxEnv-v0"),
+        ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
     ],
 )
 def test_generate_dataset_with_collector_env_infos(dataset_id, env_id):
@@ -110,19 +115,18 @@ def test_generate_dataset_with_collector_env_infos(dataset_id, env_id):
 
     env = gym.make(env_id)
 
-    env = DataCollectorV0(env, record_infos = True)
+    env = DataCollectorV0(env, record_infos=True)
     num_episodes = 10
 
     # Step the environment, DataCollectorV0 wrapper will do the data collection job
-    env.reset(seed=42)
+    _, info_sample = env.reset(seed=42)
 
     for episode in range(num_episodes):
         terminated = False
         truncated = False
         while not terminated and not truncated:
             action = env.action_space.sample()  # User-defined policy function
-            _, _, terminated, truncated, info = env.step(action)
-            print(info)
+            _, _, terminated, truncated, _ = env.step(action)
             if terminated or truncated:
                 assert not env._buffer[-1]
             else:
@@ -146,16 +150,18 @@ def test_generate_dataset_with_collector_env_infos(dataset_id, env_id):
     assert len(dataset.episode_indices) == num_episodes
 
     check_data_integrity(dataset._data, dataset.episode_indices)
-    check_episode_data_integrity(dataset, dataset.spec.observation_space, dataset.spec.action_space)
-
+    check_episode_data_integrity(
+        dataset,
+        dataset.spec.observation_space,
+        dataset.spec.action_space,
+        info_sample=info_sample,
+    )
 
     # check that the environment can be recovered from the dataset
     check_env_recovery(env.env, dataset)
-    print("episodedata")
-    print(dataset[0])
 
     env.close()
-    # check load and delete local dataset
+
     check_load_and_delete_dataset(dataset_id)
 
 
