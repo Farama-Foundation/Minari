@@ -353,8 +353,8 @@ def get_average_reference_score(
 
 def create_dataset_from_buffers(
     dataset_id: str,
-    env: gym.Env,
     buffer: List[Dict[str, Union[list, Dict]]],
+    env: Optional[gym.Env] = None,
     algorithm_name: Optional[str] = None,
     author: Optional[str] = None,
     author_email: Optional[str] = None,
@@ -384,8 +384,8 @@ def create_dataset_from_buffers(
 
     Args:
         dataset_id (str): name id to identify Minari dataset
-        env (gym.Env): Gymnasium environment used to collect the buffer data
         buffer (list[Dict[str, Union[list, Dict]]]): list of episode dictionaries with data
+        env (Optional[gym.Env], optional): Gymnasium environment used to collect the buffer data
         algorithm_name (Optional[str], optional): name of the algorithm used to collect the data. Defaults to None.
         author (Optional[str], optional): author that generated the dataset. Defaults to None.
         author_email (Optional[str], optional): email of the author that generated the dataset. Defaults to None.
@@ -433,10 +433,11 @@ def create_dataset_from_buffers(
     except InvalidSpecifier:
         print(f"{minari_version} is not a version specifier.")
 
-    if observation_space is None:
-        observation_space = env.observation_space
-    if action_space is None:
-        action_space = env.action_space
+    if env is not None:
+        if observation_space is None:
+            observation_space = env.observation_space
+        if action_space is None:
+            action_space = env.action_space
 
     if expert_policy is not None and ref_max_score is not None:
         raise ValueError(
@@ -482,18 +483,22 @@ def create_dataset_from_buffers(
             file.attrs["total_episodes"] = len(buffer)
             file.attrs["total_steps"] = total_steps
 
-            file.attrs[
-                "env_spec"
-            ] = env.spec.to_json()  # pyright: ignore [reportOptionalMemberAccess]
+            if env is not None:
+                file.attrs[
+                    "env_spec"
+                ] = env.spec.to_json()  # pyright: ignore [reportOptionalMemberAccess]
             file.attrs["dataset_id"] = dataset_id
 
-            action_space_str = serialize_space(action_space)
-            observation_space_str = serialize_space(observation_space)
+            if action_space is not None:
+                action_space_str = serialize_space(action_space)
+                file.attrs["action_space"] = action_space_str
+            if observation_space is not None:
+                observation_space_str = serialize_space(observation_space)
+                file.attrs["observation_space"] = observation_space_str
 
-            file.attrs["action_space"] = action_space_str
-            file.attrs["observation_space"] = observation_space_str
-
-            if expert_policy is not None or ref_max_score is not None:
+            if env is not None and (
+                expert_policy is not None or ref_max_score is not None
+            ):
                 env = copy.deepcopy(env)
                 if ref_min_score is None:
                     ref_min_score = get_average_reference_score(

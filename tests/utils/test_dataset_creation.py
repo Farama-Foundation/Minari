@@ -157,8 +157,8 @@ def test_generate_dataset_with_external_buffer(dataset_id, env_id):
     # Create Minari dataset and store locally
     dataset = minari.create_dataset_from_buffers(
         dataset_id=dataset_id,
-        env=env,
         buffer=buffer,
+        env=env,
         algorithm_name="random_policy",
         code_permalink="https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
         author="WillDudley",
@@ -269,8 +269,8 @@ def test_generate_dataset_with_space_subset_external_buffer():
     # Create Minari dataset and store locally
     dataset = minari.create_dataset_from_buffers(
         dataset_id=dataset_id,
-        env=env,
         buffer=buffer,
+        env=env,
         algorithm_name="random_policy",
         code_permalink="https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
         author="WillDudley",
