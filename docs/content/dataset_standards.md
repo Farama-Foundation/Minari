@@ -554,5 +554,15 @@ The `sampled_episodes` variable will be a list of 10 `EpisodeData` elements, eac
 | `rewards`         | `np.ndarray`                         | Rewards for each timestep.                                    |
 | `terminations`    | `np.ndarray`                         | Terminations for each timestep.                               |
 | `truncations`     | `np.ndarray`                         | Truncations for each timestep.                                |
+| `infos`     | `dict`                         | A dictionary containing additional information.                                |
 
 As mentioned in the `Supported Spaces` section, many different observation and action spaces are supported so the data type for these fields are dependent on the environment being used.
+
+## Additional Information Formatting
+
+
+
+
+When creating a dataset with `DataCollectorV0` the additional information stored in the `infos` group of the hdf5 file must be provided to Minari as a dict, which can only contain other dictionaries or `np.ndarray` as values. An info dict must be provided with every observation(including the one from the initial reset), and the shape of each `np.ndarray` must stay the same across timesteps.
+
+Since it is not guaranteed that all Gymnasium environments provide infos at every timestep, we provide a wrapper to allow for creating infos for environments which do not comply with the info format by default. 

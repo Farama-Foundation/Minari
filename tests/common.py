@@ -84,11 +84,12 @@ class DummyTupleDiscreteBoxEnv(gym.Env):
         terminated = self.timestep > 5
         self.timestep += 1
 
-        return self.observation_space.sample(), 0, terminated, False, {}
+        return self.observation_space.sample(), 0, terminated, False, {"timestep": self.timestep} if self.timestep %2 == 0 else {}
+
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
-        return self.observation_space.sample(), {}
+        return self.observation_space.sample(), {"timestep": self.timestep} if self.timestep %2 == 0 else {}
 
 
 class DummyDictEnv(gym.Env):
