@@ -86,12 +86,13 @@ class DummyTupleDiscreteBoxEnv(gym.Env):
         terminated = self.timestep > 5
         self.timestep += 1
 
-        return self.observation_space.sample(), 0, terminated, False, {}
+        return self.observation_space.sample(), 0, terminated, False, {"timestep": self.timestep} if self.timestep %2 == 0 else {}
+
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
         self.observation_space.seed(seed)
-        return self.observation_space.sample(), {}
+        return self.observation_space.sample(), {"timestep": self.timestep} if self.timestep %2 == 0 else {}
 
 
 class DummyDictEnv(gym.Env):
@@ -136,15 +137,12 @@ class DummyDictEnv(gym.Env):
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
-<<<<<<< HEAD
         self.observation_space.seed(seed)
-        return self.observation_space.sample(), {}
-=======
+
         return self.observation_space.sample(), {
             "timestep": self.timestep,
             "component_1": {"next_timestep": self.timestep + 1},
         }
->>>>>>> 4367f79 (tentative draft of info support for EpisodeData)
 
 
 class DummyTupleEnv(gym.Env):
@@ -181,17 +179,13 @@ class DummyTupleEnv(gym.Env):
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
-<<<<<<< HEAD
         self.observation_space.seed(seed)
-        return self.observation_space.sample(), {}
-=======
 
         info = {
             "info_1": np.ones((2, 2)),
             "component_1": {"component_1_info_1": np.ones((2,))},
         }
         return self.observation_space.sample(), info
->>>>>>> 4367f79 (tentative draft of info support for EpisodeData)
 
 
 class DummyTextEnv(gym.Env):
