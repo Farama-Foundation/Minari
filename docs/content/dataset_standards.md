@@ -565,4 +565,4 @@ As mentioned in the `Supported Spaces` section, many different observation and a
 
 When creating a dataset with `DataCollectorV0` the additional information stored in the `infos` group of the hdf5 file must be provided to Minari as a dict, which can only contain other dictionaries or `np.ndarray` as values. An info dict must be provided with every observation(including the one from the initial reset), and the shape of each `np.ndarray` must stay the same across timesteps.
 
-Since it is not guaranteed that all Gymnasium environments provide infos at every timestep, we provide a wrapper to allow for creating infos for environments which do not comply with the info format by default. 
+Since it is not guaranteed that all Gymnasium environments provide infos at every timestep, we provide the `StepDataCallback` which can modify the info's from a non-compliant environment so they are the same shape at every timestep. An example of this pattern is available in our test `test_data_collector_step_data_callback_info_correction` in test_step_data_callback.py.

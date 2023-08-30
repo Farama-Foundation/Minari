@@ -226,6 +226,17 @@ class DataCollector(gym.Wrapper):
         step_data = self._step_data_callback(env=self.env, obs=obs, info=info)
         self._episode_id += 1
 
+        if self._record_infos:
+            if self._reference_info is None:
+                self._reference_info = step_data["infos"]
+            else:
+                if not self.check_infos_same_shape(
+                    self._reference_info, step_data["infos"]
+                ):
+                    raise ValueError(
+                        "Info structure inconsistent with info structure returned by original reset."
+                    )
+
         assert STEP_DATA_KEYS.issubset(
             step_data.keys()
         ), "One or more required keys is missing from 'step-data'"
@@ -378,6 +389,32 @@ class DataCollector(gym.Wrapper):
             action_space=self._storage.action_space,
             env_spec=self.env.spec,
         )
+
+    def check_infos_same_shape(self, info_1, info_2):
+        if len(info_1.keys()) != len(info_2.keys()):
+            return False
+        for key in info_1.keys():
+            if isinstance(info_1[key], dict):
+                if not self.check_infos_same_shape(info_1[key], info_2[key]):
+                    return False
+            elif isinstance(info_1[key], np.ndarray):
+                if not (info_1[key].shape == info_2[key].shape) and (
+                    info_1[key].dtype == info_2[key].dtype
+                ):
+                    return False
+            elif np.issubdtype(type(info_1[key]), np.integer) and np.issubdtype(
+                type(info_2[key]), np.integer
+            ):
+                pass
+            elif np.issubdtype(type(info_1[key]), np.float) and np.issubdtype(
+                type(info_2[key]), np.float
+            ):
+                pass
+            else:
+                raise ValueError(
+                    "Infos are in an unsupported format; see Minari documentation for supported formats."
+                )
+        return True
 
     def close(self):
         """Close the DataCollector.

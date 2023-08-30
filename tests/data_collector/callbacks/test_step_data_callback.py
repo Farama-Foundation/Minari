@@ -1,5 +1,6 @@
 import gymnasium as gym
 import numpy as np
+import pytest
 from gymnasium import spaces
 
 import minari
@@ -7,10 +8,10 @@ from minari import DataCollector, MinariDataset
 from minari.data_collector.callbacks import StepDataCallback
 from tests.common import (
     check_data_integrity,
+    check_env_recovery,
     check_env_recovery_with_subset_spaces,
     check_load_and_delete_dataset,
     register_dummy_envs,
-    check_env_recovery,
 )
 
 
@@ -35,6 +36,14 @@ class CustomSubsetStepDataCallback(StepDataCallback):
                     ]
                 }
             }
+        return step_data
+
+
+class CustomSubsetInfoPadStepDataCallback(StepDataCallback):
+    def __call__(self, env, **kwargs):
+        step_data = super().__call__(env, **kwargs)
+        if step_data["infos"] == {}:
+            step_data["infos"] = {"timestep": -1}
         return step_data
 
 
@@ -125,7 +134,8 @@ def test_data_collector_step_data_callback_info_correction():
 
     env = DataCollectorV0(
         env,
-        record_infos = True,
+        record_infos=True,
+        step_data_callback=CustomSubsetInfoPadStepDataCallback,
     )
     num_episodes = 10
 
@@ -159,10 +169,33 @@ def test_data_collector_step_data_callback_info_correction():
     check_data_integrity(dataset._data, dataset.episode_indices)
 
     # check that the environment can be recovered from the dataset
-    check_env_recovery(
-        env.env, dataset
-    )
+    check_env_recovery(env.env, dataset)
 
     env.close()
     # check load and delete local dataset
-    #check_load_and_delete_dataset(dataset_id)
+    check_load_and_delete_dataset(dataset_id)
+
+    env = gym.make("DummyTupleDiscreteBoxEnv-v0")
+
+    env = DataCollectorV0(
+        env,
+        record_infos=True,
+    )
+    # here we are checking to make sure that if we have an environment changing its info
+    # structure across timesteps, it is caught by the data_collector
+    with pytest.raises(ValueError):
+
+        num_episodes = 10
+
+        # Step the environment, DataCollectorV0 wrapper will do the data collection job
+        env.reset(seed=42)
+
+        for episode in range(num_episodes):
+            terminated = False
+            truncated = False
+            while not terminated and not truncated:
+                action = env.action_space.sample()  # User-defined policy function
+                _, _, terminated, truncated, _ = env.step(action)
+
+            env.reset()
+    env.close()
