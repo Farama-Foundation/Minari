@@ -134,6 +134,10 @@ class MinariStorage:
                 ep_group = file[f"episode_{episode_id}"]
                 ep_group.attrs.update(metadata)
 
+            self._eval_env_spec = None
+            if "eval_env_spec" in f.attrs:
+                self._eval_env_spec = EnvSpec.from_json(f.attrs["eval_env_spec"])
+
     def apply(
         self,
         function: Callable[[dict], Any],
@@ -364,7 +368,42 @@ def _get_from_h5py(group: h5py.Group, name: str) -> h5py.Group:
     else:
         subgroup = group.create_group(name)
 
+<<<<<<< HEAD
     return subgroup
+=======
+    @property
+    def total_episodes(self):
+        """Total episodes recorded in the Minari dataset."""
+        return self._total_episodes
+
+    @property
+    def env_spec(self):
+        """Envspec of the environment that has generated the dataset."""
+        return self._env_spec
+
+    @property
+    def eval_env_spec(self):
+        """Envspec of the environment used for evaluation/training."""
+        return self._eval_env_spec
+
+    @property
+    def combined_datasets(self) -> List[str]:
+        """If this Minari dataset is a combination of other subdatasets, return a list with the subdataset names."""
+        if self._combined_datasets is None:
+            return []
+        else:
+            return self._combined_datasets
+
+    @property
+    def id(self) -> str:
+        """Name of the Minari dataset."""
+        return self._dataset_id
+
+    @property
+    def minari_version(self) -> str:
+        """Version of Minari the dataset is compatible with."""
+        return self._minari_version
+>>>>>>> 4d42f88 (recover eval env)
 
 
 def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):

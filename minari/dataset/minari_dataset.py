@@ -139,13 +139,44 @@ class MinariDataset:
 
         self._generator = np.random.default_rng()
 
+<<<<<<< HEAD
     def recover_environment(self) -> gym.Env:
+=======
+    @property
+    def total_episodes(self):
+        """Total episodes recorded in the Minari dataset."""
+        assert self._episode_indices is not None
+        return self._episode_indices.size
+
+    @property
+    def total_steps(self):
+        """Total episodes steps in the Minari dataset."""
+        return self._total_steps
+
+    @property
+    def episode_indices(self) -> np.ndarray:
+        """Indices of the available episodes to sample within the Minari dataset."""
+        return self._episode_indices
+
+    def recover_environment(self, eval_env: bool = False) -> gym.Env:
+>>>>>>> 4d42f88 (recover eval env)
         """Recover the Gymnasium environment used to create the dataset.
+
+        Args:
+            eval_env (bool): if True the returned Gymnasium environment will that to use for evaluation/training. If no eval_env was specified when creating the dataset, the returned environment will be the
+                                same as the one used for creating the dataset. Default False.
 
         Returns:
             environment: Gymnasium environment
         """
+<<<<<<< HEAD
         return gym.make(self.env_spec)
+=======
+        if eval_env and self._data.eval_env_spec is not None:
+            return gym.make(self._data.eval_env_spec)
+
+        return gym.make(self._data.env_spec)
+>>>>>>> 4d42f88 (recover eval env)
 
     def set_seed(self, seed: int):
         """Set seed for random episode sampling generator."""
