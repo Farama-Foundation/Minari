@@ -306,6 +306,7 @@ def create_dataset_from_buffers(
     dataset_id: str,
     env: gym.Env,
     buffer: List[Dict[str, Union[list, Dict]]],
+    eval_env: Optional[gym.Env | EnvSpec] = None,
     algorithm_name: Optional[str] = None,
     author: Optional[str] = None,
     author_email: Optional[str] = None,
@@ -334,9 +335,11 @@ def create_dataset_from_buffers(
     Other additional items can be added as long as the values are np.ndarray's or other nested dictionaries.
 
     Args:
-        dataset_id (str): name id to identify Minari dataset
-        env (gym.Env): Gymnasium environment used to collect the buffer data
-        buffer (list[Dict[str, Union[list, Dict]]]): list of episode dictionaries with data
+        dataset_id (str): name id to identify Minari dataset.
+        env (gym.Env): Gymnasium environment used to collect the buffer data.
+        buffer (list[Dict[str, Union[list, Dict]]]): list of episode dictionaries with data.
+        eval_env (Optional[gym.Env|EnvSpec]): the Gymnasium environment or environment spec to use for evaluation/training with the dataset. After loading the dataset, the environment can be recovered as follows: `MinariDataset.recover_environment(eval_env=True).
+                                                If None the `env` used to collect the buffer data should be used for evaluation/training.
         algorithm_name (Optional[str], optional): name of the algorithm used to collect the data. Defaults to None.
         author (Optional[str], optional): author that generated the dataset. Defaults to None.
         author_email (Optional[str], optional): email of the author that generated the dataset. Defaults to None.
@@ -356,6 +359,11 @@ def create_dataset_from_buffers(
         MinariDataset
     """
     # NoneType warnings
+    if eval_env is None:
+        warnings.warn(
+            f"`eval_env` is set to None. If another environment is intended to be used for evaluation/training please specify corresponding Gymnasium environment (gym.Env | gym.envs.registration.EnvSpec). If None the environment used to collect the data (`env={env}`) will be used for this purpose.",
+            UserWarning,
+        )
     if code_permalink is None:
         warnings.warn(
             "`code_permalink` is set to None. For reproducibility purposes it is highly recommended to link your dataset to versioned code.",
@@ -457,6 +465,7 @@ def create_dataset_from_buffers(
 def create_dataset_from_collector_env(
     dataset_id: str,
     collector_env: DataCollectorV0,
+    eval_env: Optional[gym.Env | EnvSpec] = None,
     algorithm_name: Optional[str] = None,
     author: Optional[str] = None,
     author_email: Optional[str] = None,
@@ -492,6 +501,12 @@ def create_dataset_from_collector_env(
         MinariDataset
     """
     # NoneType warnings
+    if eval_env is None:
+        warnings.warn(
+            f"`eval_env` is set to None. If another environment is intended to be used for evaluation/training please specify corresponding Gymnasium environment (gym.Env | gym.envs.registration.EnvSpec).\
+                  If None the environment used to collect the data (`env={collector_env}`) will be used for this purpose.",
+            UserWarning,
+        )
     if code_permalink is None:
         warnings.warn(
             "`code_permalink` is set to None. For reproducibility purposes it is highly recommended to link your dataset to versioned code.",
