@@ -383,7 +383,7 @@ def _get_from_h5py(group: h5py.Group, name: str) -> h5py.Group:
 
     @property
     def eval_env_spec(self):
-        """Envspec of the environment used for evaluation/training."""
+        """Envspec of the environment used for evaluation."""
         return self._eval_env_spec
 
     @property

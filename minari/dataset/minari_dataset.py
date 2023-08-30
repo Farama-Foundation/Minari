@@ -163,7 +163,7 @@ class MinariDataset:
         """Recover the Gymnasium environment used to create the dataset.
 
         Args:
-            eval_env (bool): if True the returned Gymnasium environment will that to use for evaluation/training. If no eval_env was specified when creating the dataset, the returned environment will be the
+            eval_env (bool): if True the returned Gymnasium environment will be that intended to be used for evaluation. If no eval_env was specified when creating the dataset, the returned environment will be the
                                 same as the one used for creating the dataset. Default False.
 
         Returns:
