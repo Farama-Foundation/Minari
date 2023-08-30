@@ -86,13 +86,21 @@ class DummyTupleDiscreteBoxEnv(gym.Env):
         terminated = self.timestep > 5
         self.timestep += 1
 
-        return self.observation_space.sample(), 0, terminated, False, {"timestep": self.timestep} if self.timestep %2 == 0 else {}
-
+        return (
+            self.observation_space.sample(),
+            0,
+            terminated,
+            False,
+            {"timestep": self.timestep} if self.timestep % 2 == 0 else {},
+        )
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
         self.observation_space.seed(seed)
-        return self.observation_space.sample(), {"timestep": self.timestep} if self.timestep %2 == 0 else {}
+        return (
+            self.observation_space.sample(),
+            {"timestep": self.timestep} if self.timestep % 2 == 0 else {},
+        )
 
 
 class DummyDictEnv(gym.Env):
@@ -543,6 +551,8 @@ def check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
 
 
 def assert_infos_same_shape(info_1, info_2):
+    if len(info_1.keys()) != len(info_2.keys()):
+        return False
     for key in info_1.keys():
         if isinstance(info_1[key], dict):
             if not assert_infos_same_shape(info_1[key], info_2[key]):
@@ -697,10 +707,10 @@ def check_episode_data_integrity(
 
         for i in range(episode.total_timesteps + 1):
             obs = _reconstuct_obs_or_action_at_index_recursive(episode.observations, i)
-
-            assert assert_infos_same_shape(
-                _get_step_from_infos_dict(episode.infos, i), info_sample
-            )
+            if info_sample is not None:
+                assert assert_infos_same_shape(
+                    _get_step_from_infos_dict(episode.infos, i), info_sample
+                )
             assert observation_space.contains(obs)
 
         for i in range(episode.total_timesteps):
