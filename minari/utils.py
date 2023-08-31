@@ -304,9 +304,9 @@ def get_average_reference_score(
 
 def create_dataset_from_buffers(
     dataset_id: str,
-    env: gym.Env,
+    env: str | gym.Env | EnvSpec,
     buffer: List[Dict[str, Union[list, Dict]]],
-    eval_env: Optional[gym.Env | EnvSpec] = None,
+    eval_env: Optional[str | gym.Env | EnvSpec] = None,
     algorithm_name: Optional[str] = None,
     author: Optional[str] = None,
     author_email: Optional[str] = None,
@@ -336,9 +336,9 @@ def create_dataset_from_buffers(
 
     Args:
         dataset_id (str): name id to identify Minari dataset.
-        env (gym.Env): Gymnasium environment used to collect the buffer data.
+        env (str|gym.Env|EnvSpec): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) used to collect the buffer data.
         buffer (list[Dict[str, Union[list, Dict]]]): list of episode dictionaries with data.
-        eval_env (Optional[gym.Env|EnvSpec]): the Gymnasium environment or environment spec to use for evaluation with the dataset. After loading the dataset, the environment can be recovered as follows: `MinariDataset.recover_environment(eval_env=True).
+        eval_env (Optional[str|gym.Env|EnvSpec]): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) to use for evaluation with the dataset. After loading the dataset, the environment can be recovered as follows: `MinariDataset.recover_environment(eval_env=True).
                                                 If None the `env` used to collect the buffer data should be used for evaluation.
         algorithm_name (Optional[str], optional): name of the algorithm used to collect the data. Defaults to None.
         author (Optional[str], optional): author that generated the dataset. Defaults to None.
@@ -401,11 +401,6 @@ def create_dataset_from_buffers(
         ), f"The installed Minari version {__version__} is not contained in the dataset version specifier {minari_version}."
     except InvalidSpecifier:
         print(f"{minari_version} is not a version specifier.")
-
-    if observation_space is None:
-        observation_space = env.observation_space
-    if action_space is None:
-        action_space = env.action_space
 
     if expert_policy is not None and ref_max_score is not None:
         raise ValueError(
