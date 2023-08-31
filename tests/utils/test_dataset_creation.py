@@ -58,10 +58,15 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
 
         env.reset()
 
+    # Save a different environment spec for evaluation (different max_episode_steps)
+    eval_env_spec = gym.spec(env_id)
+    eval_env_spec.max_episode_steps = 123
+
     # Create Minari dataset and store locally
     codelink = "https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/test_dataset_combine.py"
     dataset = minari.create_dataset_from_collector_env(
         dataset_id=dataset_id,
+        eval_env=eval_env_spec,
         collector_env=env,
         algorithm_name="random_policy",
         code_permalink=codelink,
@@ -84,7 +89,7 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
     check_data_integrity(dataset.storage, dataset.episode_indices)
 
     # check that the environment can be recovered from the dataset
-    check_env_recovery(env.env, dataset)
+    check_env_recovery(env.env, dataset, eval_env_spec)
 
     env.close()
     # check load and delete local dataset
@@ -158,10 +163,15 @@ def test_generate_dataset_with_external_buffer(dataset_id, env_id):
         observation, _ = env.reset()
         observations.append(observation)
 
+    # Save a different environment spec for evaluation (different max_episode_steps)
+    eval_env_spec = gym.spec(env_id)
+    eval_env_spec.max_episode_steps = 123
+
     # Create Minari dataset and store locally
     dataset = minari.create_dataset_from_buffers(
         dataset_id=dataset_id,
         env=env,
+        eval_env=eval_env_spec,
         buffer=buffer,
         algorithm_name="random_policy",
         code_permalink="https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
@@ -174,8 +184,13 @@ def test_generate_dataset_with_external_buffer(dataset_id, env_id):
     assert dataset.spec.total_episodes == num_episodes
     assert len(dataset.episode_indices) == num_episodes
 
+<<<<<<< HEAD
     check_data_integrity(dataset.storage, dataset.episode_indices)
     check_env_recovery(env, dataset)
+=======
+    check_data_integrity(dataset._data, dataset.episode_indices)
+    check_env_recovery(env, dataset, eval_env_spec)
+>>>>>>> f148956 (add recover eval env tests)
 
     env.close()
 
