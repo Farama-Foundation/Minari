@@ -390,6 +390,7 @@ class DataCollector(gym.Wrapper):
             env_spec=self.env.spec,
         )
 
+    # This function is designed the same way as `assert_infos_same_shape` in tests/common.py, but is a class function so has a `self` argument.
     def check_infos_same_shape(self, info_1, info_2):
         if len(info_1.keys()) != len(info_2.keys()):
             return False
@@ -402,17 +403,9 @@ class DataCollector(gym.Wrapper):
                     info_1[key].dtype == info_2[key].dtype
                 ):
                     return False
-            elif np.issubdtype(type(info_1[key]), np.integer) and np.issubdtype(
-                type(info_2[key]), np.integer
-            ):
-                pass
-            elif np.issubdtype(type(info_1[key]), np.float) and np.issubdtype(
-                type(info_2[key]), np.float
-            ):
-                pass
             else:
                 raise ValueError(
-                    "Infos are in an unsupported format; see Minari documentation for supported formats."
+                    "Infos are in an unsupported format; see [Minari documentation](http://minari.farama.org/content/dataset_standards/) for supported formats."
                 )
         return True
 
