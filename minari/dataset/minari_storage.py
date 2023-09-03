@@ -197,6 +197,14 @@ class MinariStorage:
             assert type(total_episodes) == np.int64
             return total_episodes
 
+    @property
+    def total_steps(self) -> np.int64:
+        """Total steps in the dataset."""
+        with h5py.File(self.data_path, "r") as file:
+            total_episodes = file.attrs["total_steps"]
+            assert type(total_episodes) == np.int64
+            return total_episodes
+
 def get_h5py_subgroup(group: h5py.Group, name: str):
     if name in group:
         subgroup = group.get(name)

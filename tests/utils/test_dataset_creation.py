@@ -50,15 +50,11 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
     env.reset(seed=42)
 
     for episode in range(num_episodes):
-        terminated = False
-        truncated = False
-        while not terminated and not truncated:
+        done = False
+        while not done:
             action = env.action_space.sample()  # User-defined policy function
             _, _, terminated, truncated, _ = env.step(action)
-            if terminated or truncated:
-                assert not env._buffer[-1]
-            else:
-                assert env._buffer[-1]
+            done = terminated or truncated
 
         env.reset()
 
