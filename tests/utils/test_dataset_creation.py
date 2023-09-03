@@ -98,14 +98,79 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
 
 
 @pytest.mark.parametrize(
-    "dataset_id,env_id",
+    "dataset_id,env_id,info_override",
     [
-        ("dummy-dict-test-v0", "DummyDictEnv-v0"),
-        ("dummy-box-test-v0", "DummyBoxEnv-v0"),
-        ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
+        ("dummy-dict-test-v0", "DummyDictEnv-v0", None),
+        ("dummy-box-test-v0", "DummyBoxEnv-v0", None),
+        (
+            "dummy-mutable-info-box-test-v0",
+            "DummyMutableInfoBoxEnv-v0",
+            {"misc": np.ones((5, 5), np.int64)},
+        ),
+        (
+            "dummy-mutable-info-box-test-v0",
+            "DummyMutableInfoBoxEnv-v0",
+            {"misc": np.ones((5, 5), np.int32)},
+        ),
+        (
+            "dummy-mutable-info-box-test-v0",
+            "DummyMutableInfoBoxEnv-v0",
+            {"misc": np.ones((5, 5), np.int16)},
+        ),
+        (
+            "dummy-mutable-info-box-test-v0",
+            "DummyMutableInfoBoxEnv-v0",
+            {"misc": np.ones((5, 5), np.int8)},
+        ),
+        (
+            "dummy-mutable-info-box-test-v0",
+            "DummyMutableInfoBoxEnv-v0",
+            {"misc": np.ones((5, 5), np.uint64)},
+        ),
+        (
+            "dummy-mutable-info-box-test-v0",
+            "DummyMutableInfoBoxEnv-v0",
+            {"misc": np.ones((5, 5), np.uint32)},
+        ),
+        (
+            "dummy-mutable-info-box-test-v0",
+            "DummyMutableInfoBoxEnv-v0",
+            {"misc": np.ones((5, 5), np.uint16)},
+        ),
+        (
+            "dummy-mutable-info-box-test-v0",
+            "DummyMutableInfoBoxEnv-v0",
+            {"misc": np.ones((5, 5), np.uint8)},
+        ),
+        (
+            "dummy-mutable-info-box-test-v0",
+            "DummyMutableInfoBoxEnv-v0",
+            {"misc": np.ones((5, 5), np.float64)},
+        ),
+        (
+            "dummy-mutable-info-box-test-v0",
+            "DummyMutableInfoBoxEnv-v0",
+            {"misc": np.ones((5, 5), np.float32)},
+        ),
+        (
+            "dummy-mutable-info-box-test-v0",
+            "DummyMutableInfoBoxEnv-v0",
+            {"misc": np.ones((5, 5), np.float16)},
+        ),
+        (
+            "dummy-mutable-info-box-test-v0",
+            "DummyMutableInfoBoxEnv-v0",
+            {"misc": np.array([1])},
+        ),
+        (
+            "dummy-mutable-info-box-test-v0",
+            "DummyMutableInfoBoxEnv-v0",
+            {"misc": np.array([1])},
+        ),
+        ("dummy-tuple-test-v0", "DummyTupleEnv-v0", None),
     ],
 )
-def test_generate_dataset_with_collector_env_infos(dataset_id, env_id):
+def test_generate_dataset_with_collector_env_infos(dataset_id, env_id, info_override):
     """Test DataCollectorV0 wrapper and Minari dataset creation."""
     # dataset_id = "cartpole-test-v0"
     # delete the test dataset if it already exists
@@ -115,11 +180,15 @@ def test_generate_dataset_with_collector_env_infos(dataset_id, env_id):
 
     env = gym.make(env_id)
 
+    if env_id == "DummyMutableInfoBoxEnv-v0":
+        env.unwrapped.info = info_override
+
     env = DataCollectorV0(env, record_infos=True)
     num_episodes = 10
 
     # Step the environment, DataCollectorV0 wrapper will do the data collection job
     _, info_sample = env.reset(seed=42)
+    print(info_sample)
 
     for episode in range(num_episodes):
         terminated = False

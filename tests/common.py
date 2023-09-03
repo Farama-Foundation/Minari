@@ -37,13 +37,33 @@ class DummyBoxEnv(gym.Env):
             0,
             terminated,
             False,
-            {"timestep": self.timestep},
+            {"timestep": np.array([self.timestep])},
         )
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
         self.observation_space.seed(seed)
-        return self.observation_space.sample(), {"timestep" : self.timestep}
+        return self.observation_space.sample(), {"timestep": np.array([self.timestep])}
+
+
+# this returns whatever is set to `self.info` as the info, making it easy to create parameterized tests with a lot of different info datatypes.
+class DummyMutableInfoBoxEnv(gym.Env):
+    def __init__(self):
+        self.action_space = spaces.Box(low=-1, high=4, shape=(2,), dtype=np.float32)
+        self.observation_space = spaces.Box(
+            low=-1, high=4, shape=(3,), dtype=np.float32
+        )
+        self.info = {}
+
+    def step(self, action):
+        terminated = self.timestep > 5
+        self.timestep += 1
+
+        return (self.observation_space.sample(), 0, terminated, False, self.info)
+
+    def reset(self, seed=None, options=None):
+        self.timestep = 0
+        return self.observation_space.sample(), self.info
 
 
 class DummyMultiDimensionalBoxEnv(gym.Env):
@@ -91,7 +111,7 @@ class DummyTupleDiscreteBoxEnv(gym.Env):
             0,
             terminated,
             False,
-            {"timestep": self.timestep} if self.timestep % 2 == 0 else {},
+            {"timestep": np.array([self.timestep])} if self.timestep % 2 == 0 else {},
         )
 
     def reset(self, seed=None, options=None):
@@ -99,7 +119,7 @@ class DummyTupleDiscreteBoxEnv(gym.Env):
         self.observation_space.seed(seed)
         return (
             self.observation_space.sample(),
-            {"timestep": self.timestep} if self.timestep % 2 == 0 else {},
+            {"timestep": np.array([self.timestep])} if self.timestep % 2 == 0 else {},
         )
 
 
@@ -138,8 +158,8 @@ class DummyDictEnv(gym.Env):
             terminated,
             False,
             {
-                "timestep": self.timestep,
-                "component_1": {"next_timestep": self.timestep + 1},
+                "timestep": np.array([self.timestep]),
+                "component_1": {"next_timestep": np.array([self.timestep + 1])},
             },
         )
 
@@ -148,8 +168,8 @@ class DummyDictEnv(gym.Env):
         self.observation_space.seed(seed)
 
         return self.observation_space.sample(), {
-            "timestep": self.timestep,
-            "component_1": {"next_timestep": self.timestep + 1},
+            "timestep": np.array([self.timestep]),
+            "component_1": {"next_timestep": np.array([self.timestep + 1])},
         }
 
 
@@ -272,6 +292,12 @@ def register_dummy_envs():
     register(
         id="DummyBoxEnv-v0",
         entry_point="tests.common:DummyBoxEnv",
+        max_episode_steps=5,
+    )
+
+    register(
+        id="DummyMutableInfoBoxEnv-v0",
+        entry_point="tests.common:DummyMutableInfoBoxEnv",
         max_episode_steps=5,
     )
 
@@ -562,17 +588,9 @@ def assert_infos_same_shape(info_1, info_2):
                 info_1[key].dtype == info_2[key].dtype
             ):
                 return False
-        elif np.issubdtype(type(info_1[key]), np.integer) and np.issubdtype(
-            type(info_2[key]), np.integer
-        ):
-            pass
-        elif np.issubdtype(type(info_1[key]), np.float) and np.issubdtype(
-            type(info_2[key]), np.float
-        ):
-            pass
         else:
             raise ValueError(
-                "Infos are in an unsupported format; see Minari documentation for supported formats."
+                "Infos are in an unsupported format; see [Minari documentation](http://minari.farama.org/content/dataset_standards/) for supported formats."
             )
     return True
 

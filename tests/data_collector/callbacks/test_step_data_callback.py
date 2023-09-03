@@ -43,7 +43,7 @@ class CustomSubsetInfoPadStepDataCallback(StepDataCallback):
     def __call__(self, env, **kwargs):
         step_data = super().__call__(env, **kwargs)
         if step_data["infos"] == {}:
-            step_data["infos"] = {"timestep": -1}
+            step_data["infos"] = {"timestep": np.array([-1])}
         return step_data
 
 
