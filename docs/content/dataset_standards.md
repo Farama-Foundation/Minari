@@ -562,8 +562,17 @@ As mentioned in the `Supported Spaces` section, many different observation and a
 
 
 
-When creating a dataset with `DataCollectorV0`, the additional information stored in the `infos` group of the hdf5 file must be provided to Minari as a dict, which can only contain strings as keys and other dictionaries or `np.ndarray` as values. An info dict must be provided for every observation(including the one from the initial reset), and the shape of each `np.ndarray` must stay the same across timesteps, and the keys must remain the same in all `dicts` across timesteps. 
+When creating a dataset with `DataCollectorV0`, if the `DataCollectorV0` is initialized with `record_infos=True`, the additional information stored as step infos must be provided to Minari as a dict, which can only contain strings as keys and other dictionaries or `np.ndarray` as values. An info dict must be provided from every call to the wrapped evironment's `step` and `reset` function, and the shape of each `np.ndarray` must stay the same across timesteps, and the keys must remain the same in all `dicts` across timesteps. 
+
+Here is an example of what a valid `info` might look like:
+
+
+```python
+info = {'value_1':np.array([1]), 'value_2': {"sub_value_1":np.asarray([[2.3],[4.5]])}}
+```
+
+Note that this shows how `infos` can be structured hierarchically, and that the nesting of dicts can go to arbitrary depth. 
 
 Given that it is not guaranteed that all Gymnasium environments provide infos at every timestep, we provide the `StepDataCallback` which can modify the infos from a non-compliant environment so they have the same structure at every timestep. An example of this pattern is available in our test `test_data_collector_step_data_callback_info_correction` in test_step_data_callback.py.
 
-For `np.ndarray` typed arrays including in an info, we support the list of data data types supported by [h5py](https://docs.h5py.org/en/stable/faq.html#faq). We provide tests to guarantee support for the following numpy data types: `np.int8`,`np.int16`,`np.int32`,`np.int64`, `np.uint8`,`np.uint16`,`np.uint32`,`np.iunt64`,`np.float16`,`np.float32`,`np.float64`. In addition, the info values can contain `int`, or `float` types, and these will be promoted to `np.int64` and `np.float64` respectively.
+We provide tests to guarantee support for the following `numpy.ndarray` data types: `np.int8`,`np.int16`,`np.int32`,`np.int64`, `np.uint8`,`np.uint16`,`np.uint32`,`np.iunt64`,`np.float16`,`np.float32`,`np.float64`. 
