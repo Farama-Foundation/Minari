@@ -554,7 +554,7 @@ The `sampled_episodes` variable will be a list of 10 `EpisodeData` elements, eac
 | `rewards`         | `np.ndarray`                         | Rewards for each timestep.                                    |
 | `terminations`    | `np.ndarray`                         | Terminations for each timestep.                               |
 | `truncations`     | `np.ndarray`                         | Truncations for each timestep.                                |
-| `infos`     | `dict`                         | A dictionary containing additional information.                                |
+| `infos`           | `dict`                               | A dictionary containing additional information.               |
 
 As mentioned in the `Supported Spaces` section, many different observation and action spaces are supported so the data type for these fields are dependent on the environment being used.
 
