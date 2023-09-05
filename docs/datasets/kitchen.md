@@ -22,3 +22,73 @@ kitchen/mixed.md
 
 [2] Gupta, A., Kumar, V., Lynch, C., Levine, S., & Hausman, K. (2019). Relay policy learning: Solving long-horizon tasks via imitation and reinforcement learning. arXiv preprint arXiv:1910.11956.
 
+
+## Available Datasets
+| Dataset ID | Description |
+| ---------- | ----------- |
+| <a href="../kitchen/complete" title="kitchen-complete-v1">kitchen-complete-v1</a> | The complete dataset includes demonstrations of all 4 target subtasks being completed, in order. |
+| <a href="../kitchen/mixed" title="kitchen-mixed-v1">kitchen-mixed-v1</a> | The mixed dataset contains various subtasks being performed, but the 4 target subtasks are never completed in sequence together. |
+| <a href="../kitchen/partial" title="kitchen-partial-v1">kitchen-partial-v1</a> | The partial dataset includes other tasks being performed, but there are subtrajectories where the 4 target subtasks are completed in sequence. |
+
+## Available Datasets
+| Dataset ID | Description |
+| ---------- | ----------- |
+| <a href="../kitchen/complete" title="kitchen-complete-v1">kitchen-complete-v1</a> | The complete dataset includes demonstrations of all 4 target subtasks being completed, in order. |
+| <a href="../kitchen/mixed" title="kitchen-mixed-v1">kitchen-mixed-v1</a> | The mixed dataset contains various subtasks being performed, but the 4 target subtasks are never completed in sequence together. |
+| <a href="../kitchen/partial" title="kitchen-partial-v1">kitchen-partial-v1</a> | The partial dataset includes other tasks being performed, but there are subtrajectories where the 4 target subtasks are completed in sequence. |
+
+## Available Datasets
+| Dataset ID | Description |
+| ---------- | ----------- |
+| <a href="../kitchen/complete" title="kitchen-complete-v1">kitchen-complete-v1</a> | The complete dataset includes demonstrations of all 4 target subtasks being completed, in order. |
+| <a href="../kitchen/mixed" title="kitchen-mixed-v1">kitchen-mixed-v1</a> | The mixed dataset contains various subtasks being performed, but the 4 target subtasks are never completed in sequence together. |
+| <a href="../kitchen/partial" title="kitchen-partial-v1">kitchen-partial-v1</a> | The partial dataset includes other tasks being performed, but there are subtrajectories where the 4 target subtasks are completed in sequence. |
+
+## Available Datasets
+| Dataset ID | Description |
+| ---------- | ----------- |
+| <a href="../kitchen/complete" title="kitchen-complete-v1">kitchen-complete-v1</a> | The complete dataset includes demonstrations of all 4 target subtasks being completed, in order. |
+| <a href="../kitchen/mixed" title="kitchen-mixed-v1">kitchen-mixed-v1</a> | The mixed dataset contains various subtasks being performed, but the 4 target subtasks are never completed in sequence together. |
+| <a href="../kitchen/partial" title="kitchen-partial-v1">kitchen-partial-v1</a> | The partial dataset includes other tasks being performed, but there are subtrajectories where the 4 target subtasks are completed in sequence. |
+
+## Available Datasets
+| Dataset ID | Description |
+| ---------- | ----------- |
+| <a href="../kitchen/complete" title="kitchen-complete-v1">kitchen-complete-v1</a> | The complete dataset includes demonstrations of all 4 target subtasks being completed, in order. |
+| <a href="../kitchen/mixed" title="kitchen-mixed-v1">kitchen-mixed-v1</a> | The mixed dataset contains various subtasks being performed, but the 4 target subtasks are never completed in sequence together. |
+| <a href="../kitchen/partial" title="kitchen-partial-v1">kitchen-partial-v1</a> | The partial dataset includes other tasks being performed, but there are subtrajectories where the 4 target subtasks are completed in sequence. |
+
+## Available Datasets
+| Dataset ID | Description |
+| ---------- | ----------- |
+| <a href="../kitchen/complete" title="kitchen-complete-v1">kitchen-complete-v1</a> | The complete dataset includes demonstrations of all 4 target subtasks being completed, in order. |
+| <a href="../kitchen/mixed" title="kitchen-mixed-v1">kitchen-mixed-v1</a> | The mixed dataset contains various subtasks being performed, but the 4 target subtasks are never completed in sequence together. |
+| <a href="../kitchen/partial" title="kitchen-partial-v1">kitchen-partial-v1</a> | The partial dataset includes other tasks being performed, but there are subtrajectories where the 4 target subtasks are completed in sequence. |
+
+## Available Datasets
+| Dataset ID | Description |
+| ---------- | ----------- |
+| <a href="../kitchen/complete" title="kitchen-complete-v1">kitchen-complete-v1</a> | The complete dataset includes demonstrations of all 4 target subtasks being completed, in order. |
+| <a href="../kitchen/mixed" title="kitchen-mixed-v1">kitchen-mixed-v1</a> | The mixed dataset contains various subtasks being performed, but the 4 target subtasks are never completed in sequence together. |
+| <a href="../kitchen/partial" title="kitchen-partial-v1">kitchen-partial-v1</a> | The partial dataset includes other tasks being performed, but there are subtrajectories where the 4 target subtasks are completed in sequence. |
+
+## Available Datasets
+| Dataset ID | Description |
+| ---------- | ----------- |
+| <a href="../kitchen/complete" title="kitchen-complete-v1">kitchen-complete-v1</a> | The complete dataset includes demonstrations of all 4 target subtasks being completed, in order. |
+| <a href="../kitchen/mixed" title="kitchen-mixed-v1">kitchen-mixed-v1</a> | The mixed dataset contains various subtasks being performed, but the 4 target subtasks are never completed in sequence together. |
+| <a href="../kitchen/partial" title="kitchen-partial-v1">kitchen-partial-v1</a> | The partial dataset includes other tasks being performed, but there are subtrajectories where the 4 target subtasks are completed in sequence. |
+
+## Available Datasets
+| Dataset ID | Description |
+| ---------- | ----------- |
+| <a href="../kitchen/complete" title="kitchen-complete-v1">kitchen-complete-v1</a> | The complete dataset includes demonstrations of all 4 target subtasks being completed, in order. |
+| <a href="../kitchen/mixed" title="kitchen-mixed-v1">kitchen-mixed-v1</a> | The mixed dataset contains various subtasks being performed, but the 4 target subtasks are never completed in sequence together. |
+| <a href="../kitchen/partial" title="kitchen-partial-v1">kitchen-partial-v1</a> | The partial dataset includes other tasks being performed, but there are subtrajectories where the 4 target subtasks are completed in sequence. |
+
+## Available Datasets
+| Dataset ID | Description |
+| ---------- | ----------- |
+| <a href="../kitchen/complete" title="kitchen-complete-v1">kitchen-complete-v1</a> | The complete dataset includes demonstrations of all 4 target subtasks being completed, in order. |
+| <a href="../kitchen/mixed" title="kitchen-mixed-v1">kitchen-mixed-v1</a> | The mixed dataset contains various subtasks being performed, but the 4 target subtasks are never completed in sequence together. |
+| <a href="../kitchen/partial" title="kitchen-partial-v1">kitchen-partial-v1</a> | The partial dataset includes other tasks being performed, but there are subtrajectories where the 4 target subtasks are completed in sequence. |

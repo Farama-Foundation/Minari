@@ -343,7 +343,7 @@ for _ in range(100):
         dataset = minari.load_dataset('LunarLander-v2-test-v0')
         eval_env = dataset.recover_environment(eval_env=True)
 
-   If the dataset doesn't have an `eval_env` attribute, the environment used for collecting the data will be retrieved by default.
+   If the dataset doesn't have an `eval_env_spec` attribute, the environment used for collecting the data will be retrieved by default.
 ```
 
 ### Combine Minari Datasets

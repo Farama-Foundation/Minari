@@ -22,3 +22,73 @@ hammer/cloned.md
 
 [2] Fu, Justin, et al. ‘D4RL: Datasets for Deep Data-Driven Reinforcement Learning’. CoRR, vol. abs/2004.07219, 2020, https://arxiv.org/abs/2004.07219.
 
+
+## Available Datasets
+| Dataset ID | Description |
+| ---------- | ----------- |
+| <a href="../hammer/cloned" title="hammer-cloned-v1">hammer-cloned-v1</a> | Data obtained by training an imitation policy on the demonstrations from `expert` and `human`, then running the policy, and mixing data at a 50-50 ratio with the demonstrations |
+| <a href="../hammer/expert" title="hammer-expert-v1">hammer-expert-v1</a> | Trajectories have expert data from a fine-tuned RL policy provided in the [DAPG](https://github.com/aravindr93/hand_dapg) repository |
+| <a href="../hammer/human" title="hammer-human-v1">hammer-human-v1</a> | 25 human demonstrations provided in the [DAPG](https://github.com/aravindr93/hand_dapg) repository |
+
+## Available Datasets
+| Dataset ID | Description |
+| ---------- | ----------- |
+| <a href="../hammer/cloned" title="hammer-cloned-v1">hammer-cloned-v1</a> | Data obtained by training an imitation policy on the demonstrations from `expert` and `human`, then running the policy, and mixing data at a 50-50 ratio with the demonstrations |
+| <a href="../hammer/expert" title="hammer-expert-v1">hammer-expert-v1</a> | Trajectories have expert data from a fine-tuned RL policy provided in the [DAPG](https://github.com/aravindr93/hand_dapg) repository |
+| <a href="../hammer/human" title="hammer-human-v1">hammer-human-v1</a> | 25 human demonstrations provided in the [DAPG](https://github.com/aravindr93/hand_dapg) repository |
+
+## Available Datasets
+| Dataset ID | Description |
+| ---------- | ----------- |
+| <a href="../hammer/cloned" title="hammer-cloned-v1">hammer-cloned-v1</a> | Data obtained by training an imitation policy on the demonstrations from `expert` and `human`, then running the policy, and mixing data at a 50-50 ratio with the demonstrations |
+| <a href="../hammer/expert" title="hammer-expert-v1">hammer-expert-v1</a> | Trajectories have expert data from a fine-tuned RL policy provided in the [DAPG](https://github.com/aravindr93/hand_dapg) repository |
+| <a href="../hammer/human" title="hammer-human-v1">hammer-human-v1</a> | 25 human demonstrations provided in the [DAPG](https://github.com/aravindr93/hand_dapg) repository |
+
+## Available Datasets
+| Dataset ID | Description |
+| ---------- | ----------- |
+| <a href="../hammer/cloned" title="hammer-cloned-v1">hammer-cloned-v1</a> | Data obtained by training an imitation policy on the demonstrations from `expert` and `human`, then running the policy, and mixing data at a 50-50 ratio with the demonstrations |
+| <a href="../hammer/expert" title="hammer-expert-v1">hammer-expert-v1</a> | Trajectories have expert data from a fine-tuned RL policy provided in the [DAPG](https://github.com/aravindr93/hand_dapg) repository |
+| <a href="../hammer/human" title="hammer-human-v1">hammer-human-v1</a> | 25 human demonstrations provided in the [DAPG](https://github.com/aravindr93/hand_dapg) repository |
+
+## Available Datasets
+| Dataset ID | Description |
+| ---------- | ----------- |
+| <a href="../hammer/cloned" title="hammer-cloned-v1">hammer-cloned-v1</a> | Data obtained by training an imitation policy on the demonstrations from `expert` and `human`, then running the policy, and mixing data at a 50-50 ratio with the demonstrations |
+| <a href="../hammer/expert" title="hammer-expert-v1">hammer-expert-v1</a> | Trajectories have expert data from a fine-tuned RL policy provided in the [DAPG](https://github.com/aravindr93/hand_dapg) repository |
+| <a href="../hammer/human" title="hammer-human-v1">hammer-human-v1</a> | 25 human demonstrations provided in the [DAPG](https://github.com/aravindr93/hand_dapg) repository |
+
+## Available Datasets
+| Dataset ID | Description |
+| ---------- | ----------- |
+| <a href="../hammer/cloned" title="hammer-cloned-v1">hammer-cloned-v1</a> | Data obtained by training an imitation policy on the demonstrations from `expert` and `human`, then running the policy, and mixing data at a 50-50 ratio with the demonstrations |
+| <a href="../hammer/expert" title="hammer-expert-v1">hammer-expert-v1</a> | Trajectories have expert data from a fine-tuned RL policy provided in the [DAPG](https://github.com/aravindr93/hand_dapg) repository |
+| <a href="../hammer/human" title="hammer-human-v1">hammer-human-v1</a> | 25 human demonstrations provided in the [DAPG](https://github.com/aravindr93/hand_dapg) repository |
+
+## Available Datasets
+| Dataset ID | Description |
+| ---------- | ----------- |
+| <a href="../hammer/cloned" title="hammer-cloned-v1">hammer-cloned-v1</a> | Data obtained by training an imitation policy on the demonstrations from `expert` and `human`, then running the policy, and mixing data at a 50-50 ratio with the demonstrations |
+| <a href="../hammer/expert" title="hammer-expert-v1">hammer-expert-v1</a> | Trajectories have expert data from a fine-tuned RL policy provided in the [DAPG](https://github.com/aravindr93/hand_dapg) repository |
+| <a href="../hammer/human" title="hammer-human-v1">hammer-human-v1</a> | 25 human demonstrations provided in the [DAPG](https://github.com/aravindr93/hand_dapg) repository |
+
+## Available Datasets
+| Dataset ID | Description |
+| ---------- | ----------- |
+| <a href="../hammer/cloned" title="hammer-cloned-v1">hammer-cloned-v1</a> | Data obtained by training an imitation policy on the demonstrations from `expert` and `human`, then running the policy, and mixing data at a 50-50 ratio with the demonstrations |
+| <a href="../hammer/expert" title="hammer-expert-v1">hammer-expert-v1</a> | Trajectories have expert data from a fine-tuned RL policy provided in the [DAPG](https://github.com/aravindr93/hand_dapg) repository |
+| <a href="../hammer/human" title="hammer-human-v1">hammer-human-v1</a> | 25 human demonstrations provided in the [DAPG](https://github.com/aravindr93/hand_dapg) repository |
+
+## Available Datasets
+| Dataset ID | Description |
+| ---------- | ----------- |
+| <a href="../hammer/cloned" title="hammer-cloned-v1">hammer-cloned-v1</a> | Data obtained by training an imitation policy on the demonstrations from `expert` and `human`, then running the policy, and mixing data at a 50-50 ratio with the demonstrations |
+| <a href="../hammer/expert" title="hammer-expert-v1">hammer-expert-v1</a> | Trajectories have expert data from a fine-tuned RL policy provided in the [DAPG](https://github.com/aravindr93/hand_dapg) repository |
+| <a href="../hammer/human" title="hammer-human-v1">hammer-human-v1</a> | 25 human demonstrations provided in the [DAPG](https://github.com/aravindr93/hand_dapg) repository |
+
+## Available Datasets
+| Dataset ID | Description |
+| ---------- | ----------- |
+| <a href="../hammer/cloned" title="hammer-cloned-v1">hammer-cloned-v1</a> | Data obtained by training an imitation policy on the demonstrations from `expert` and `human`, then running the policy, and mixing data at a 50-50 ratio with the demonstrations |
+| <a href="../hammer/expert" title="hammer-expert-v1">hammer-expert-v1</a> | Trajectories have expert data from a fine-tuned RL policy provided in the [DAPG](https://github.com/aravindr93/hand_dapg) repository |
+| <a href="../hammer/human" title="hammer-human-v1">hammer-human-v1</a> | 25 human demonstrations provided in the [DAPG](https://github.com/aravindr93/hand_dapg) repository |
