@@ -1,6 +1,6 @@
 ---
 name: Proposal
-about: Propose changes that are not fixes bugs
+about: Propose changes that do not fix bugs
 title: "[Proposal] Proposal title"
 ---
 
@@ -28,4 +28,4 @@ Add any other context or screenshots about the feature request here.
 
 ### Checklist
 
-- [ ] I have checked that there is no similar [issue](https://github.com/Farama-Foundation/PettingZoo/issues) in the repo (**required**)
+- [ ] I have checked that there is no similar [issue](https://github.com/Farama-Foundation/Minari/issues) in the repo (**required**)
