@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js" lang="en" data-content_root="../../../../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark">
@@ -10,15 +10,15 @@
     <meta property="og:url" content="https://minari.farama.org/_modules/minari/data_collector/data_collector.html" /><meta property="og:image" content="https://minari.farama.org/_static/img/robotics-github.png" /><meta name="twitter:card" content="summary_large_image"><link rel="index" title="Index" href="../../../../genindex/" /><link rel="search" title="Search" href="../../../../search/" />
         <link rel="canonical" href="https://minari.farama.org/_modules/minari/data_collector/data_collector.html" />
 
-    <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.1.2 and Furo 2023.05.20.dev1 -->
+    <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.5 and Furo 2023.08.19.dev1 -->
         <title>minari.data_collector.data_collector - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?digest=2b6f8eb5452c44539a42dd9ada0a48f56e5f404d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=ca3c1c84" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=e5fbc548" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?digest=5d0deb98f4b2e6cecaee64745957f1068f205919" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo-extensions.css?v=49cbaffd" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/css/termynal.css?v=d6ad0c61" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/css/custom.css?v=befa2ef3" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/css/directory_tree.css?v=2ab1fc38" />
@@ -369,7 +369,9 @@
 <span class="n">EpisodeBuffer</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>  <span class="c1"># TODO: narrow this down</span>
 
 
-<div class="viewcode-block" id="DataCollectorV0"><a class="viewcode-back" href="../../../../api/data_collector/#minari.DataCollectorV0">[docs]</a><span class="k">class</span> <span class="nc">DataCollectorV0</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">):</span>
+<div class="viewcode-block" id="DataCollectorV0">
+<a class="viewcode-back" href="../../../../api/data_collector/#minari.DataCollectorV0">[docs]</a>
+<span class="k">class</span> <span class="nc">DataCollectorV0</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Gymnasium environment wrapper that collects step data.</span>
 
 <span class="sd">    This wrapper is meant to work as a temporary buffer of the environment data before creating a Minari dataset. The creation of the buffers</span>
@@ -879,6 +881,7 @@
         <span class="c1"># Close tmp_dataset.hdf5</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tmp_f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tmp_dir</span><span class="o">.</span><span class="n">name</span><span class="p">)</span></div>
+
 </pre></div>
           </article>
         </div>
@@ -996,9 +999,9 @@
         })()
       </script>
 
-    <script data-url_root="../../../../" id="documentation_options" src="../../../../_static/documentation_options.js?v=239dc20c"></script>
+    <script src="../../../../_static/documentation_options.js?v=f4892bc4"></script>
     <script src="../../../../_static/doctools.js?v=888ff710"></script>
-    <script src="../../../../_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/scripts/furo.js?v=7660844c"></script>
     <script src="../../../../_static/js/termynal.js?v=ff4c6923"></script>
     <script src="../../../../_static/js/custom.js?v=e881c6cc"></script>
