@@ -173,7 +173,7 @@ title: {dataset_name.title()}
 | Algorithm           | `{algo_name}`           |
 | Author              | `{author}`              |
 | Email               | `{email}`               |
-| Code Permalink      | `{code}`                |
+| Code Permalink      | <a href={code}>`{code}`</a> |
 | Minari Version      | `{minari_version}`      |
 | download            | `minari.download_dataset("{dataset_id}")` |
 
