@@ -48,7 +48,7 @@ class EpisodeData:
     This is the object returned by :class:`minari.MinariDataset.sample_episodes`.
     """
 
-    id: int
+    id: Optional[int]
     seed: Optional[int]
     total_timesteps: int
     observations: np.ndarray
@@ -87,6 +87,22 @@ class EpisodeData:
             return "(" + values_repr + ")"
         else:
             return repr(value)
+
+
+@dataclass(frozen=True)
+class SubTrajectoryData:
+    """
+        Contains the datasets data for subtrajectories.
+    """
+    total_timesteps: int
+    observations: np.ndarray
+    actions: np.ndarray
+    rewards: np.ndarray
+    terminations: np.ndarray
+    truncations: np.ndarray
+    episode_ids: int
+    next_observations: np.ndarray
+    timestep_ranges: np.ndarray
 
 
 @dataclass
@@ -325,6 +341,70 @@ class MinariDataset:
                 episode_indices=self._episode_indices,
             )
         )
+
+    def sample_subtrajectories(
+        self,
+        n_episodes: int,
+        subseq_len: int,
+    ) -> SubTrajectoryData:
+
+        episodes = self.sample_episodes(n_episodes)
+
+        _thresholds = np.array([ep.total_timesteps - 1 for ep in episodes])
+        start_idxs = self._generator.integers(0, _thresholds)
+
+        # Pre-allocate numpy arrays
+        total_timesteps_batch = np.empty((n_episodes,), dtype=int)
+        observations_batch = np.empty((n_episodes, subseq_len, episodes[0].observations.shape[-1]))
+        next_observations_batch = np.empty_like(observations_batch)
+        actions_batch = np.empty((n_episodes, subseq_len, episodes[0].actions.shape[-1]))
+        rewards_batch = np.empty((n_episodes, subseq_len))
+        terminations_batch = np.empty((n_episodes, subseq_len))
+        truncations_batch = np.empty((n_episodes, subseq_len))
+        episode_ids_batch = np.empty((n_episodes,), dtype=int)
+        timestep_ranges_batch = np.empty((n_episodes, subseq_len), dtype=int)
+
+        for i, (ep, start_idx) in enumerate(zip(episodes, start_idxs)):
+            end_idx = start_idx + subseq_len
+
+            obs = ep.observations[start_idx: end_idx, ...]
+            act = ep.actions[start_idx: end_idx, ...]
+            next_obs = ep.observations[start_idx + 1: end_idx + 1, ...]
+            rew = ep.rewards[start_idx: end_idx, ...]
+            terminations = ep.terminations[start_idx: end_idx, ...]
+            truncations = ep.truncations[start_idx: end_idx, ...]
+
+            pad_size = subseq_len - len(act)
+            obs_padding = np.zeros((subseq_len - len(obs), obs.shape[-1]))
+            next_obs_padding = np.zeros((subseq_len - len(next_obs), obs.shape[-1]))
+            act_padding = np.zeros((pad_size, act.shape[-1]))
+            rew_padding = np.zeros((pad_size,))
+            terminations_padding = np.zeros((pad_size,))
+            truncations_padding = np.zeros((pad_size,))
+
+            total_timesteps_batch[i] = subseq_len
+            observations_batch[i] = np.concatenate((obs, obs_padding), axis=0)
+            next_observations_batch[i] = np.concatenate((next_obs, next_obs_padding.copy()), axis=0)
+            actions_batch[i] = np.concatenate((act, act_padding), axis=0)
+            rewards_batch[i] = np.concatenate((rew, rew_padding), axis=0)
+            terminations_batch[i] = np.concatenate((terminations, terminations_padding), axis=0)
+            truncations_batch[i] = np.concatenate((truncations, truncations_padding), axis=0)
+            episode_ids_batch[i] = ep.id
+            timestep_ranges_batch[i] = np.arange(start_idx, end_idx)
+
+        data = {
+            "total_timesteps": total_timesteps_batch,
+            "observations": observations_batch,
+            "next_observations": next_observations_batch,
+            "actions": actions_batch,
+            "rewards": rewards_batch,
+            "terminations": terminations_batch,
+            "truncations": truncations_batch,
+            "episode_ids": episode_ids_batch,
+            "timestep_ranges": timestep_ranges_batch,
+        }
+
+        return SubTrajectoryData(**data)
 
     def __iter__(self):
         return self.iterate_episodes()
