@@ -208,6 +208,13 @@ for i in range(5):
     # get id's from the sampled episodes
     ids = list(map(lambda ep: ep.id, episodes))
     print(f"EPISODE ID'S SAMPLE {i}: {ids}")
+
+for i in range(5):
+    # Randomly sampling sub-trajectories of length 7 from 11 episodes
+    subtraj = dataset.sample_subtrajectories(n_episodes=11, subseq_len=7)
+    print(f"Parent episode ID: {subtraj.episode_ids}")
+    print(f"Timesteps that the subtrajectory occupied in the episode: {subtraj.timestep_ranges}")
+    print(f"Observations shape: {subtraj.observations.shape}")
 ```
 
 ```{eval-rst}
