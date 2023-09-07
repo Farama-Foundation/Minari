@@ -18,6 +18,7 @@ from packaging.version import Version
 
 from minari import DataCollectorV0
 from minari.dataset.minari_dataset import MinariDataset
+from minari.dataset.minari_storage import MinariStorage
 # from minari.dataset.minari_storage import clear_episode_buffer
 from minari.serialization import serialize_space
 from minari.storage.datasets_root_dir import get_dataset_path
@@ -203,6 +204,7 @@ class RandomPolicy:
         return self.action_space.sample()
 
 
+# TODO: factor h5py out
 def combine_datasets(
     datasets_to_combine: List[MinariDataset], new_dataset_id: str, copy: bool = False
 ):
@@ -236,13 +238,13 @@ def combine_datasets(
     if not os.path.exists(new_dataset_path):
         new_dataset_path = os.path.join(new_dataset_path, "data")
         os.makedirs(new_dataset_path)
-        new_data_path = os.path.join(new_dataset_path, "main_data.hdf5")
+        new_file_path = os.path.join(new_dataset_path, "main_data.hdf5")
     else:
         raise ValueError(
             f"A Minari dataset with ID {new_dataset_id} already exists and it cannot be overridden. Please use a different dataset name or version."
         )
 
-    with h5py.File(new_data_path, "a", track_order=True) as combined_data_file:
+    with h5py.File(new_file_path, "a", track_order=True) as combined_data_file:
         combined_data_file.attrs["total_episodes"] = 0
         combined_data_file.attrs["total_steps"] = 0
         combined_data_file.attrs["dataset_id"] = new_dataset_id
@@ -253,8 +255,9 @@ def combine_datasets(
 
         for dataset in datasets_to_combine:
             last_episode_id = combined_data_file.attrs["total_episodes"]
+            file_path = f"{dataset.spec.data_path}/main_data.hdf5"
             if copy:
-                with h5py.File(dataset.spec.data_path, "r") as dataset_file:
+                with h5py.File(file_path, "r") as dataset_file:
                     for id in range(dataset.total_episodes):
                         dataset_file.copy(
                             dataset_file[f"episode_{id}"],
@@ -268,7 +271,7 @@ def combine_datasets(
                 for id in range(dataset.total_episodes):
                     combined_data_file[
                         f"episode_{last_episode_id + id}"
-                    ] = h5py.ExternalLink(dataset.spec.data_path, f"/episode_{id}")
+                    ] = h5py.ExternalLink(file_path, f"/episode_{id}")
                     combined_data_file[f"episode_{last_episode_id + id}"].attrs.modify(
                         "id", last_episode_id + id
                     )
@@ -283,7 +286,7 @@ def combine_datasets(
             )
 
             # TODO: list of authors, and emails
-            with h5py.File(dataset.spec.data_path, "r") as dataset_file:
+            with h5py.File(file_path, "r") as dataset_file:
                 combined_data_file.attrs.modify("author", dataset_file.attrs["author"])
                 combined_data_file.attrs.modify(
                     "author_email", dataset_file.attrs["author_email"]
@@ -293,7 +296,7 @@ def combine_datasets(
         combined_data_file.attrs["env_spec"] = combined_dataset_env_spec.to_json()
         combined_data_file.attrs["minari_version"] = str(minari_version_specifier)
 
-    return MinariDataset(new_data_path)
+    return MinariDataset(new_dataset_path)
 
 
 def split_dataset(
@@ -351,171 +354,141 @@ def get_average_reference_score(
     return float(mean_ref_score)
 
 
-# def create_dataset_from_buffers(
-#     dataset_id: str,
-#     env: gym.Env,
-#     buffer: List[Dict[str, Union[list, Dict]]],
-#     algorithm_name: Optional[str] = None,
-#     author: Optional[str] = None,
-#     author_email: Optional[str] = None,
-#     code_permalink: Optional[str] = None,
-#     minari_version: Optional[str] = None,
-#     action_space: Optional[gym.spaces.Space] = None,
-#     observation_space: Optional[gym.spaces.Space] = None,
-#     ref_min_score: Optional[float] = None,
-#     ref_max_score: Optional[float] = None,
-#     expert_policy: Optional[Callable[[ObsType], ActType]] = None,
-#     num_episodes_average_score: int = 100,
-# ):
-#     """Create Minari dataset from a list of episode dictionary buffers.
+def create_dataset_from_buffers(
+    dataset_id: str,
+    env: gym.Env,
+    buffer: List[Dict[str, Union[list, Dict]]],
+    algorithm_name: Optional[str] = None,
+    author: Optional[str] = None,
+    author_email: Optional[str] = None,
+    code_permalink: Optional[str] = None,
+    minari_version: Optional[str] = None,
+    action_space: Optional[gym.spaces.Space] = None,
+    observation_space: Optional[gym.spaces.Space] = None,
+    ref_min_score: Optional[float] = None,
+    ref_max_score: Optional[float] = None,
+    expert_policy: Optional[Callable[[ObsType], ActType]] = None,
+    num_episodes_average_score: int = 100,
+):
+    """Create Minari dataset from a list of episode dictionary buffers.
 
-#     The ``dataset_id`` parameter corresponds to the name of the dataset, with the syntax as follows:
-#     ``(env_name-)(dataset_name)(-v(version))`` where ``env_name`` identifies the name of the environment used to generate the dataset ``dataset_name``.
-#     This ``dataset_id`` is used to load the Minari datasets with :meth:`minari.load_dataset`.
+    The ``dataset_id`` parameter corresponds to the name of the dataset, with the syntax as follows:
+    ``(env_name-)(dataset_name)(-v(version))`` where ``env_name`` identifies the name of the environment used to generate the dataset ``dataset_name``.
+    This ``dataset_id`` is used to load the Minari datasets with :meth:`minari.load_dataset`.
 
-#     Each episode dictionary buffer must have the following items:
-#         * `observations`: np.ndarray of step observations. shape = (total_episode_steps + 1, (observation_shape)). Should include initial and final observation
-#         * `actions`: np.ndarray of step action. shape = (total_episode_steps + 1, (action_shape)).
-#         * `rewards`: np.ndarray of step rewards. shape = (total_episode_steps + 1, 1).
-#         * `terminations`: np.ndarray of step terminations. shape = (total_episode_steps + 1, 1).
-#         * `truncations`: np.ndarray of step truncations. shape = (total_episode_steps + 1, 1).
+    Each episode dictionary buffer must have the following items:
+        * `observations`: np.ndarray of step observations. shape = (total_episode_steps + 1, (observation_shape)). Should include initial and final observation
+        * `actions`: np.ndarray of step action. shape = (total_episode_steps + 1, (action_shape)).
+        * `rewards`: np.ndarray of step rewards. shape = (total_episode_steps + 1, 1).
+        * `terminations`: np.ndarray of step terminations. shape = (total_episode_steps + 1, 1).
+        * `truncations`: np.ndarray of step truncations. shape = (total_episode_steps + 1, 1).
 
-#     Other additional items can be added as long as the values are np.ndarray's or other nested dictionaries.
+    Other additional items can be added as long as the values are np.ndarray's or other nested dictionaries.
 
-#     Args:
-#         dataset_id (str): name id to identify Minari dataset
-#         env (gym.Env): Gymnasium environment used to collect the buffer data
-#         buffer (list[Dict[str, Union[list, Dict]]]): list of episode dictionaries with data
-#         algorithm_name (Optional[str], optional): name of the algorithm used to collect the data. Defaults to None.
-#         author (Optional[str], optional): author that generated the dataset. Defaults to None.
-#         author_email (Optional[str], optional): email of the author that generated the dataset. Defaults to None.
-#         code_permalink (Optional[str], optional): link to relevant code used to generate the dataset. Defaults to None.
-#         ref_min_score (Optional[float], optional): minimum reference score from the average returns of a random policy. This value is later used to normalize a score with :meth:`minari.get_normalized_score`. If default None the value will be estimated with a default random policy.
-#                                                     Also note that this attribute will be added to the Minari dataset only if `ref_max_score` or `expert_policy` are assigned a valid value other than None.
-#         ref_max_score (Optional[float], optional: maximum reference score from the average returns of a hypothetical expert policy. This value is used in `MinariDataset.get_normalized_score()`. Default None.
-#         expert_policy (Optional[Callable[[ObsType], ActType], optional): policy to compute `ref_max_score` by averaging the returns over a number of episodes equal to  `num_episodes_average_score`.
-#                                                                         `ref_max_score` and `expert_policy` can't be passed at the same time. Default to None
-#         num_episodes_average_score (int): number of episodes to average over the returns to compute `ref_min_score` and `ref_max_score`. Default to 100.
+    Args:
+        dataset_id (str): name id to identify Minari dataset
+        env (gym.Env): Gymnasium environment used to collect the buffer data
+        buffer (list[Dict[str, Union[list, Dict]]]): list of episode dictionaries with data
+        algorithm_name (Optional[str], optional): name of the algorithm used to collect the data. Defaults to None.
+        author (Optional[str], optional): author that generated the dataset. Defaults to None.
+        author_email (Optional[str], optional): email of the author that generated the dataset. Defaults to None.
+        code_permalink (Optional[str], optional): link to relevant code used to generate the dataset. Defaults to None.
+        ref_min_score (Optional[float], optional): minimum reference score from the average returns of a random policy. This value is later used to normalize a score with :meth:`minari.get_normalized_score`. If default None the value will be estimated with a default random policy.
+                                                    Also note that this attribute will be added to the Minari dataset only if `ref_max_score` or `expert_policy` are assigned a valid value other than None.
+        ref_max_score (Optional[float], optional: maximum reference score from the average returns of a hypothetical expert policy. This value is used in `MinariDataset.get_normalized_score()`. Default None.
+        expert_policy (Optional[Callable[[ObsType], ActType], optional): policy to compute `ref_max_score` by averaging the returns over a number of episodes equal to  `num_episodes_average_score`.
+                                                                        `ref_max_score` and `expert_policy` can't be passed at the same time. Default to None
+        num_episodes_average_score (int): number of episodes to average over the returns to compute `ref_min_score` and `ref_max_score`. Default to 100.
 
-#     Returns:
-#         MinariDataset
-#     """
-#     # NoneType warnings
-#     if code_permalink is None:
-#         warnings.warn(
-#             "`code_permalink` is set to None. For reproducibility purposes it is highly recommended to link your dataset to versioned code.",
-#             UserWarning,
-#         )
-#     if author is None:
-#         warnings.warn(
-#             "`author` is set to None. For longevity purposes it is highly recommended to provide an author name.",
-#             UserWarning,
-#         )
-#     if author_email is None:
-#         warnings.warn(
-#             "`author_email` is set to None. For longevity purposes it is highly recommended to provide an author email, or some other obvious contact information.",
-#             UserWarning,
-#         )
-#     if minari_version is None:
-#         version = Version(__version__)
-#         release = version.release
-#         # For __version__ = X.Y.Z, set version specifier by default to compatibility with version X.Y or later, but not (X+1).0 or later.
-#         minari_version = f"~={'.'.join(str(x) for x in release[:2])}"
-#         warnings.warn(
-#             f"`minari_version` is set to None. The compatible dataset version specifier for Minari will be set to {minari_version}.",
-#             UserWarning,
-#         )
-#     # Check if the installed Minari version falls inside the minari_version specifier
-#     try:
-#         assert Version(__version__) in SpecifierSet(
-#             minari_version
-#         ), f"The installed Minari version {__version__} is not contained in the dataset version specifier {minari_version}."
-#     except InvalidSpecifier:
-#         print(f"{minari_version} is not a version specifier.")
+    Returns:
+        MinariDataset
+    """
+    # NoneType warnings
+    if code_permalink is None:
+        warnings.warn(
+            "`code_permalink` is set to None. For reproducibility purposes it is highly recommended to link your dataset to versioned code.",
+            UserWarning,
+        )
+    if author is None:
+        warnings.warn(
+            "`author` is set to None. For longevity purposes it is highly recommended to provide an author name.",
+            UserWarning,
+        )
+    if author_email is None:
+        warnings.warn(
+            "`author_email` is set to None. For longevity purposes it is highly recommended to provide an author email, or some other obvious contact information.",
+            UserWarning,
+        )
+    if minari_version is None:
+        version = Version(__version__)
+        release = version.release
+        # For __version__ = X.Y.Z, set version specifier by default to compatibility with version X.Y or later, but not (X+1).0 or later.
+        minari_version = f"~={'.'.join(str(x) for x in release[:2])}"
+        warnings.warn(
+            f"`minari_version` is set to None. The compatible dataset version specifier for Minari will be set to {minari_version}.",
+            UserWarning,
+        )
+    # Check if the installed Minari version falls inside the minari_version specifier
+    try:
+        assert Version(__version__) in SpecifierSet(
+            minari_version
+        ), f"The installed Minari version {__version__} is not contained in the dataset version specifier {minari_version}."
+    except InvalidSpecifier:
+        print(f"{minari_version} is not a version specifier.")
 
-#     if observation_space is None:
-#         observation_space = env.observation_space
-#     if action_space is None:
-#         action_space = env.action_space
+    if observation_space is None:
+        observation_space = env.observation_space
+    if action_space is None:
+        action_space = env.action_space
 
-#     if expert_policy is not None and ref_max_score is not None:
-#         raise ValueError(
-#             "Can't pass a value for `expert_policy` and `ref_max_score` at the same time."
-#         )
+    if expert_policy is not None and ref_max_score is not None:
+        raise ValueError(
+            "Can't pass a value for `expert_policy` and `ref_max_score` at the same time."
+        )
 
-#     dataset_path = get_dataset_path(dataset_id)
+    dataset_path = get_dataset_path(dataset_id)
 
-#     # Check if dataset already exists
-#     if not os.path.exists(dataset_path):
-#         dataset_path = os.path.join(dataset_path, "data")
-#         os.makedirs(dataset_path)
-#         data_path = os.path.join(dataset_path, "main_data.hdf5")
+    # Check if dataset already exists
+    if os.path.exists(dataset_path):
+        raise ValueError(
+            f"A Minari dataset with ID {dataset_id} already exists and it cannot be overridden. Please use a different dataset name or version."
+        )
+    dataset_path.mkdir()
 
-#         total_steps = 0
-#         with h5py.File(data_path, "w", track_order=True) as file:
-#             for i, eps_buff in enumerate(buffer):
-#                 # check episode terminated or truncated
-#                 assert (
-#                     eps_buff["terminations"][-1] or eps_buff["truncations"][-1]
-#                 ), "Each episode must be terminated or truncated before adding it to a Minari dataset"
-#                 assert len(eps_buff["actions"]) + 1 == len(
-#                     eps_buff["observations"]
-#                 ), f"Number of observations {len(eps_buff['observations'])} must have an additional element compared to the number of action steps {len(eps_buff['actions'])}. The initial and final observation must be included"
-#                 seed = eps_buff.pop("seed", None)
-#                 eps_group = clear_episode_buffer(
-#                     eps_buff, file.create_group(f"episode_{i}")
-#                 )
+    dataset_path = os.path.join(dataset_path, "data")
+    storage = MinariStorage.new(dataset_path, action_space, observation_space, env_spec=env.spec)
 
-#                 eps_group.attrs["id"] = i
-#                 episode_total_steps = len(eps_buff["actions"])
-#                 eps_group.attrs["total_steps"] = episode_total_steps
-#                 total_steps += episode_total_steps
+    metadata: Dict[str, Any] = {
+        "dataset_id": dataset_id,
+        "minari_version": minari_version
+    }
+    if algorithm_name is not None:
+        metadata["algorithm_name"] = algorithm_name
+    if author is not None:
+        metadata["author"] = author
+    if author_email is not None:
+        metadata["author_email"] = author_email
+    if code_permalink is not None:
+        metadata["code_permalink"] = code_permalink 
+    if expert_policy is not None or ref_max_score is not None:
+        env = copy.deepcopy(env)
+        if ref_min_score is None:
+            ref_min_score = get_average_reference_score(
+                env, RandomPolicy(env), num_episodes_average_score
+            )
 
-#                 if seed is None:
-#                     eps_group.attrs["seed"] = str(None)
-#                 else:
-#                     assert isinstance(seed, int)
-#                     eps_group.attrs["seed"] = seed
+        if expert_policy is not None:
+            ref_max_score = get_average_reference_score(
+                env, expert_policy, num_episodes_average_score
+            )
 
-#                 # TODO: save EpisodeMetadataCallback callback in MinariDataset and update new episode group metadata
+        metadata["ref_max_score"] = ref_max_score
+        metadata["ref_min_score"] = ref_min_score
+        metadata["num_episodes_average_score"] = num_episodes_average_score
 
-#             file.attrs["total_episodes"] = len(buffer)
-#             file.attrs["total_steps"] = total_steps
-
-#             file.attrs[
-#                 "env_spec"
-#             ] = env.spec.to_json()  # pyright: ignore [reportOptionalMemberAccess]
-#             file.attrs["dataset_id"] = dataset_id
-
-#             action_space_str = serialize_space(action_space)
-#             observation_space_str = serialize_space(observation_space)
-
-#             file.attrs["action_space"] = action_space_str
-#             file.attrs["observation_space"] = observation_space_str
-
-#             if expert_policy is not None or ref_max_score is not None:
-#                 env = copy.deepcopy(env)
-#                 if ref_min_score is None:
-#                     ref_min_score = get_average_reference_score(
-#                         env, RandomPolicy(env), num_episodes_average_score
-#                     )
-
-#                 if expert_policy is not None:
-#                     ref_max_score = get_average_reference_score(
-#                         env, expert_policy, num_episodes_average_score
-#                     )
-
-#                 file.attrs["ref_max_score"] = ref_max_score
-#                 file.attrs["ref_min_score"] = ref_min_score
-#                 file.attrs["num_episodes_average_score"] = num_episodes_average_score
-
-#             file.attrs["minari_version"] = minari_version
-
-#         return MinariDataset(data_path)
-#     else:
-#         raise ValueError(
-#             f"A Minari dataset with ID {dataset_id} already exists and it cannot be overridden. Please use a different dataset name or version."
-#         )
+    storage.update_metadata(metadata)
+    storage.update_episodes(buffer)
+    return MinariDataset(storage)
 
 
 def create_dataset_from_collector_env(
@@ -596,54 +569,42 @@ def create_dataset_from_collector_env(
     dataset_path = os.path.join(collector_env.datasets_path, dataset_id)
 
     # Check if dataset already exists
-    if not os.path.exists(dataset_path):
-        dataset_path = os.path.join(dataset_path, "data")
-        os.makedirs(dataset_path)
-        data_path = os.path.join(dataset_path, "main_data.hdf5")
-        dataset_metadata: Dict[str, Any] = {
-            "dataset_id": str(dataset_id),
-            "algorithm_name": str(algorithm_name),
-            "author": str(author),
-            "author_email": str(author_email),
-            "code_permalink": str(code_permalink),
-        }
-
-        if expert_policy is not None or ref_max_score is not None:
-            env = copy.deepcopy(collector_env.env)
-            if ref_min_score is None:
-                ref_min_score = get_average_reference_score(
-                    env, RandomPolicy(env), num_episodes_average_score
-                )
-
-            if expert_policy is not None:
-                ref_max_score = get_average_reference_score(
-                    env, expert_policy, num_episodes_average_score
-                )
-            dataset_metadata.update(
-                {
-                    "ref_max_score": ref_max_score,
-                    "ref_min_score": ref_min_score,
-                    "num_episodes_average_score": num_episodes_average_score,
-                }
-            )
-
-        collector_env.save_to_disk(
-            data_path,
-            dataset_metadata={
-                "dataset_id": str(dataset_id),
-                "algorithm_name": str(algorithm_name),
-                "author": str(author),
-                "author_email": str(author_email),
-                "code_permalink": str(code_permalink),
-                "minari_version": minari_version,
-            },
-        )
-        return MinariDataset(data_path)
-    else:
+    if os.path.exists(dataset_path):
         raise ValueError(
             f"A Minari dataset with ID {dataset_id} already exists and it cannot be overridden. Please use a different dataset name or version."
         )
+    
+    dataset_path = os.path.join(dataset_path, "data")
+    os.makedirs(dataset_path)
+    dataset_metadata: Dict[str, Any] = {
+        "dataset_id": dataset_id,
+        "minari_version": minari_version,
+    }
+    if algorithm_name is not None:
+        dataset_metadata["algorithm_name"] = algorithm_name
+    if author is not None:
+        dataset_metadata["author"] = author
+    if author_email is not None:
+        dataset_metadata["author_email"] = author_email
+    if code_permalink is not None:
+        dataset_metadata["code_permalink"] = code_permalink    
+    if expert_policy is not None or ref_max_score is not None:
+        env = copy.deepcopy(collector_env.env)
+        if ref_min_score is None:
+            ref_min_score = get_average_reference_score(
+                env, RandomPolicy(env), num_episodes_average_score
+            )
 
+        if expert_policy is not None:
+            ref_max_score = get_average_reference_score(
+                env, expert_policy, num_episodes_average_score
+            )
+        dataset_metadata["ref_max_score"] = ref_max_score
+        dataset_metadata["ref_min_score"] = ref_min_score
+        dataset_metadata["num_episodes_average_score"] = num_episodes_average_score
+
+    collector_env.save_to_disk(dataset_path, dataset_metadata)
+    return MinariDataset(dataset_path)
 
 def get_normalized_score(
     dataset: MinariDataset, returns: Union[float, np.float32]

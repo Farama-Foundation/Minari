@@ -26,7 +26,7 @@ def load_dataset(dataset_id: str, download: bool = False):
         MinariDataset
     """
     file_path = get_dataset_path(dataset_id)
-    data_path = os.path.join(file_path, "data", "main_data.hdf5")
+    data_path = os.path.join(file_path, "data")
 
     if not os.path.exists(data_path):
         if not download:

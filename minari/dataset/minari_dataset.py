@@ -89,11 +89,7 @@ class MinariDataset:
         """
         if isinstance(data, MinariStorage):
             self._data = data
-        elif (
-            isinstance(data, str)
-            or isinstance(data, os.PathLike)
-            or isinstance(data, bytes)
-        ):
+        elif isinstance(data, PathLike):
             self._data = MinariStorage(data)
         else:
             raise ValueError(f"Unrecognized type {type(data)} for data")
@@ -314,6 +310,7 @@ class MinariDataset:
 
         self.spec.total_episodes = self._episode_indices.size
 
+        # TODO: avoid this
         self.spec.total_steps = sum(
             self._data.apply(
                 lambda episode: episode["total_timesteps"],

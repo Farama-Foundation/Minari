@@ -566,10 +566,6 @@ def create_dummy_dataset_with_collecter_env_helper(
         while not terminated and not truncated:
             action = env.action_space.sample()  # User-defined policy function
             _, _, terminated, truncated, _ = env.step(action)
-            if terminated or truncated:
-                assert not env._buffer[-1]
-            else:
-                assert env._buffer[-1]
 
         env.reset()
 
@@ -583,6 +579,8 @@ def create_dummy_dataset_with_collecter_env_helper(
         author_email="wdudley@farama.org",
     )
     env.close()
+
+    assert dataset_id in minari.list_local_datasets()
     return dataset
 
 def check_episode_data_integrity(

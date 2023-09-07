@@ -15,7 +15,6 @@ from minari.data_collector.callbacks import (
     StepDataCallback,
 )
 from minari.dataset.minari_storage import MinariStorage
-from minari.serialization import serialize_space
 
 
 EpisodeBuffer = Dict[str, Any]  # TODO: narrow this down
@@ -119,10 +118,10 @@ class DataCollectorV0(gym.Wrapper):
         self._tmp_dir = tempfile.TemporaryDirectory(dir=self.datasets_path)
         assert self.env.spec is not None, "Env Spec is None"
         self._storage = MinariStorage.new(
-            os.path.join(self._tmp_dir.name, "main_data"),
-            action_space=serialize_space(self.dataset_action_space),
-            observation_space=serialize_space(self.dataset_observation_space),
-            env_spec=self.env.spec.to_json()
+            self._tmp_dir.name,
+            action_space=self.dataset_action_space,
+            observation_space=self.dataset_observation_space,
+            env_spec=self.env.spec
         )
 
     def _add_to_episode_buffer(
@@ -248,7 +247,7 @@ class DataCollectorV0(gym.Wrapper):
         """Save all in-memory buffer data and move temporary HDF5 file to a permanent location in disk.
 
         Args:
-            path (str): path to store permanent HDF5, i.e: '/home/foo/datasets/data.hdf5'
+            path (str): path to store the dataset, e.g.: '/home/foo/datasets/data'
             dataset_metadata (Dict, optional): additional metadata to add to HDF5 dataset file as attributes. Defaults to {}.
         """
         self._validate_buffer()
@@ -269,13 +268,18 @@ class DataCollectorV0(gym.Wrapper):
         episode_metadata = self._storage.apply(self._episode_metadata_callback)
         self._storage.update_episode_metadata(episode_metadata)
 
-        shutil.move(str(self._storage.data_path), path)
+        files = os.listdir(self._storage.data_path)
+        for file in files:
+            shutil.move(
+                os.path.join(self._storage.data_path, file),
+                os.path.join(path, file),
+            )
         
         # Reset episode count
         self._episode_id = 0
 
     def close(self):
-        """Close the Gymnasium environment.
+        """Close the DataCollector.
 
         Clear buffer and close temporary directory.
         """

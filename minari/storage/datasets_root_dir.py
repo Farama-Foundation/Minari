@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 
-def get_dataset_path(dataset_id):
+def get_dataset_path(dataset_id: str) -> Path:
     """Get the path to a dataset main directory."""
     datasets_path = os.environ.get("MINARI_DATASETS_PATH")
     if datasets_path is not None:
