@@ -9,7 +9,11 @@ Minari is a standard dataset hosting interface for Offline Reinforcement Learnin
 
 ## Installation
 
-To install the most recent version of the Minari library run this command: `pip install minari`
+To install the most recent version of the Minari library run this command:
+
+```bash
+pip install minari
+```
 
 The beta release is currently under development. If you'd like to start testing or contribute to Minari then please install this project from source with:
 
@@ -29,6 +33,10 @@ We support Python 3.8, 3.9, 3.10 and 3.11 on Linux and macOS.
 Minari can abstract the data collection process. This is achieved by using the :class:`minari.DataCollectorV0` wrapper which stores the environments stepping data in internal memory buffers before saving the dataset into disk. The :class:`minari.DataCollectorV0` wrapper can also perform caching by scheduling the amount of episodes or steps that are stored in-memory before saving the data in a temporary `Minari dataset file </content/dataset_standards>`_ . This wrapper also computes relevant metadata of the dataset while collecting the data. 
 
 The wrapper is very simple to initialize:
+```
+
+```bash
+pip install gymnasium
 ```
 
 ```python
