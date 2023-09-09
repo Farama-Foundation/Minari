@@ -12,6 +12,7 @@ from gymnasium.envs.registration import EnvSpec
 
 from minari.data_collector import DataCollectorV0
 from minari.dataset.minari_storage import MinariStorage, PathLike
+from minari.helpers import get_dataset_size
 
 
 DATASET_ID_RE = re.compile(
@@ -167,6 +168,7 @@ class MinariDataset:
         )
         self._total_steps = total_steps
         self._generator = np.random.default_rng()
+        self._size = get_dataset_size(self._data.id)
 
     @property
     def total_episodes(self):
