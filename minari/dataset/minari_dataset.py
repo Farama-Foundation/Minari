@@ -202,7 +202,7 @@ class MinariDataset:
         ```
 
         Args:
-            condition (Callable[[EpisodeData], bool]): callable that accepts any type(For our current backend, an h5py episode group) and returns True if certain condition is met.
+            condition (Callable[[EpisodeData], bool]): function that gets in input an EpisodeData object and returns True if certain condition is met.
         """
 
         def dict_to_episode_data_condition(episode: dict) -> bool:
