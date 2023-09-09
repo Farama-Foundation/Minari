@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import importlib.metadata 
 import json
-import os
 import re
 from dataclasses import dataclass, field
 from typing import Callable, Iterable, Iterator, List, Optional, Union
@@ -84,7 +83,7 @@ class MinariDataset:
         """Initialize properties of the Minari Dataset.
 
         Args:
-            data (Union[MinariStorage, _PathLike]): source of data.
+            data (Union[MinariStorage, PathLike]): source of data.
             episode_indices (Optiona[np.ndarray]): slice of episode indices this dataset is pointing to.
         """
         if isinstance(data, MinariStorage):

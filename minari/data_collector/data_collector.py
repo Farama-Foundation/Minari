@@ -119,8 +119,8 @@ class DataCollectorV0(gym.Wrapper):
         assert self.env.spec is not None, "Env Spec is None"
         self._storage = MinariStorage.new(
             self._tmp_dir.name,
-            action_space=self.dataset_action_space,
             observation_space=self.dataset_observation_space,
+            action_space=self.dataset_action_space,
             env_spec=self.env.spec
         )
 

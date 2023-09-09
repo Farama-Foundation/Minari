@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 import os
 import pathlib
 from collections import OrderedDict
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
 
 import gymnasium as gym
+from gymnasium.envs.registration import EnvSpec
 import h5py
 import numpy as np
 
@@ -14,24 +17,53 @@ PathLike = Union[str, os.PathLike]
 
 
 class MinariStorage:
+    """Class that handles disk access to the data."""
+
     def __init__(self, data_path: PathLike):
+        """Initialize a MinariStorage with an existing data path.
+        To create a new dataset, use the class method `new`.
+
+        Args:
+            data_path (str or Path): directory containing the data.
+
+        Raises:
+            ValueError: if the specified path doesn't exist or doesn't contain any data.
+
+        """
         if not os.path.exists(data_path) or not os.path.isdir(data_path):
-            raise ValueError(f"The data path {data_path} doesn't exists")
+            raise ValueError(f"The data path {data_path} doesn't exist")
         file_path = os.path.join(str(data_path), "main_data.hdf5")
         if not os.path.exists(file_path):
             raise ValueError(f"No data found in data path {data_path}")
         self._file_path = file_path
 
     @classmethod
-    def new(cls, data_path: PathLike, action_space, observation_space, env_spec=None):
+    def new(
+        cls,
+        data_path: PathLike,
+        observation_space: gym.Space,
+        action_space: gym.Space,
+        env_spec: Optional[EnvSpec] = None
+    ) -> MinariStorage:
+        """Class method to create a new data storage. 
+
+        Args:
+            data_path (str or Path): directory where the data will be stored. 
+            observation_space (gymnasium.Space): Gymnasium observation space of the dataset.
+            action_space (gymnasium.Space): Gymnasium action space of the dataset.
+            env_spec (EnvSpec): Gymnasium EnvSpec of the environment that generates the dataset.
+
+        Returns:
+            A new MinariStorage object. 
+        """
         data_path = pathlib.Path(data_path)
         data_path.mkdir(exist_ok=True)
         data_path.joinpath("main_data.hdf5").touch(exist_ok=False)
     
         obj = cls(data_path)
         metadata = {
-            "action_space": serialize_space(action_space),
             "observation_space": serialize_space(observation_space),
+            "action_space": serialize_space(action_space),
             "total_episodes": 0,
             "total_steps": 0
         }
@@ -43,6 +75,7 @@ class MinariStorage:
 
     @property
     def metadata(self) -> Dict:
+        """Metadata of the dataset."""
         metadata = {}
         with h5py.File(self._file_path, "r") as file:
             metadata.update(file.attrs)
@@ -58,14 +91,29 @@ class MinariStorage:
             return metadata
     
     def update_metadata(self, metadata: Dict):
+        """Update the metadata adding/modifying some keys.
+        
+        Args:
+            metadata (dict): dictionary of keys-values to add to the metadata.
+        """
         with h5py.File(self._file_path, "a") as file:
             file.attrs.update(metadata)
 
     def update_episode_metadata(self, metadatas: List[Dict], episode_indices: Optional[Iterable] = None):
+        """Update the metadata of episodes.
+
+        Args:
+            metadatas (List[Dict]): list of metadatas, one for each episode.
+            episode_indices (Iterable, optional): list of episode indices to update. 
+            If not specified, all the episodes are considered.
+        
+        Raises:
+            ValueError: if the lengths of metadatas and episodes to update don't match.
+        """
         if episode_indices is None:
             episode_indices = range(self.total_episodes)
         if len(metadatas) != len(list(episode_indices)):
-            raise ValueError("The number of metadatas doesn't match the number of episodes in the dataset.")
+            raise ValueError("The number of metadatas doesn't match the number of episodes to update.")
     
         with h5py.File(self._file_path, "a") as file:
             for metadata, episode_id in zip(metadatas, episode_indices):
@@ -81,7 +129,7 @@ class MinariStorage:
 
         Args:
             function (Callable): function to apply to episodes
-            episode_indices (Optional[Iterable]): epsiodes id to consider
+            episode_indices (Optional[Iterable]): episodes id to consider
 
         Returns:
             outs (list): list of outputs returned by the function applied to episodes
@@ -185,7 +233,7 @@ class MinariStorage:
                 total_episodes = len(file.keys())
                 episode_id = eps_buff.pop("id", total_episodes)
                 assert episode_id <= total_episodes, "Invalid episode id; ids must be sequential."
-                episode_group = get_h5py_subgroup(file, f"episode_{episode_id}")
+                episode_group = _get_from_h5py(file, f"episode_{episode_id}")
                 episode_group.attrs["id"] = episode_id
                 if "seed" in eps_buff.keys():
                     assert not "seed" in episode_group.attrs.keys()
@@ -224,9 +272,10 @@ class MinariStorage:
             assert type(total_episodes) == np.int64
             return total_episodes
 
-def get_h5py_subgroup(group: h5py.Group, name: str):
+def _get_from_h5py(group: h5py.Group, name: str) -> h5py.Group:
     if name in group:
         subgroup = group.get(name)
+        assert isinstance(subgroup, h5py.Group)
     else:
         subgroup = group.create_group(name)
 
@@ -235,24 +284,22 @@ def get_h5py_subgroup(group: h5py.Group, name: str):
 def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
     for key, data in episode_buffer.items():
         if isinstance(data, dict):
-            episode_group_to_clear = get_h5py_subgroup(episode_group, key)
+            episode_group_to_clear = _get_from_h5py(episode_group, key)
             _add_episode_to_group(data, episode_group_to_clear)
-        elif isinstance(data, int):
-            import pdb; pdb.set_trace()
         elif all([isinstance(entry, tuple) for entry in data]):
             # we have a list of tuples, so we need to act appropriately
             dict_data = {
                 f"_index_{str(i)}": [entry[i] for entry in data]
                 for i, _ in enumerate(data[0])
             }
-            episode_group_to_clear = get_h5py_subgroup(episode_group, key)
+            episode_group_to_clear = _get_from_h5py(episode_group, key)
             _add_episode_to_group(dict_data, episode_group_to_clear)
         elif all([isinstance(entry, OrderedDict) for entry in data]):
             # we have a list of OrderedDicts, so we need to act appropriately
             dict_data = {
                 key: [entry[key] for entry in data] for key, value in data[0].items()
             }
-            episode_group_to_clear = get_h5py_subgroup(episode_group, key)
+            episode_group_to_clear = _get_from_h5py(episode_group, key)
             _add_episode_to_group(dict_data, episode_group_to_clear)
         else:  # leaf data
             if isinstance(episode_group, h5py.Dataset):

@@ -19,8 +19,6 @@ from packaging.version import Version
 from minari import DataCollectorV0
 from minari.dataset.minari_dataset import MinariDataset
 from minari.dataset.minari_storage import MinariStorage
-# from minari.dataset.minari_storage import clear_episode_buffer
-from minari.serialization import serialize_space
 from minari.storage.datasets_root_dir import get_dataset_path
 
 
@@ -456,7 +454,12 @@ def create_dataset_from_buffers(
     dataset_path.mkdir()
 
     dataset_path = os.path.join(dataset_path, "data")
-    storage = MinariStorage.new(dataset_path, action_space, observation_space, env_spec=env.spec)
+    storage = MinariStorage.new(
+        dataset_path, 
+        observation_space=observation_space,
+        action_space=action_space,
+        env_spec=env.spec
+    )
 
     metadata: Dict[str, Any] = {
         "dataset_id": dataset_id,
