@@ -1,7 +1,7 @@
 import os
 
 import numpy as np
-from google.cloud import storage # pyright: ignore [reportGeneralTypeIssues]
+from google.cloud import storage  # pyright: ignore [reportGeneralTypeIssues]
 
 from minari.storage.datasets_root_dir import get_dataset_path
 
