@@ -375,10 +375,10 @@ def create_dataset_from_buffers(
 
     Each episode dictionary buffer must have the following items:
         * `observations`: np.ndarray of step observations. shape = (total_episode_steps + 1, (observation_shape)). Should include initial and final observation
-        * `actions`: np.ndarray of step action. shape = (total_episode_steps + 1, (action_shape)).
-        * `rewards`: np.ndarray of step rewards. shape = (total_episode_steps + 1, 1).
-        * `terminations`: np.ndarray of step terminations. shape = (total_episode_steps + 1, 1).
-        * `truncations`: np.ndarray of step truncations. shape = (total_episode_steps + 1, 1).
+        * `actions`: np.ndarray of step action. shape = (total_episode_steps, (action_shape)).
+        * `rewards`: np.ndarray of step rewards. shape = (total_episode_steps, 1).
+        * `terminations`: np.ndarray of step terminations. shape = (total_episode_steps, 1).
+        * `truncations`: np.ndarray of step truncations. shape = (total_episode_steps, 1).
 
     Other additional items can be added as long as the values are np.ndarray's or other nested dictionaries.
 
@@ -396,7 +396,10 @@ def create_dataset_from_buffers(
         expert_policy (Optional[Callable[[ObsType], ActType], optional): policy to compute `ref_max_score` by averaging the returns over a number of episodes equal to  `num_episodes_average_score`.
                                                                         `ref_max_score` and `expert_policy` can't be passed at the same time. Default to None
         num_episodes_average_score (int): number of episodes to average over the returns to compute `ref_min_score` and `ref_max_score`. Default to 100.
-
+                observation_space:
+        action_space (Optional[gym.spaces.Space]): action space of the environment. If None (default) use the environment action space.
+        observation_space (Optional[gym.spaces.Space]): observation space of the environment. If None (default) use the environment observation space.
+        minari_version (Optional[str], optional): Minari version specifier compatible with the dataset. If None (default) use the installed Minari version.
     Returns:
         MinariDataset
     """
@@ -486,6 +489,10 @@ def create_dataset_from_buffers(
                 "env_spec"
             ] = env.spec.to_json()  # pyright: ignore [reportOptionalMemberAccess]
             file.attrs["dataset_id"] = dataset_id
+            file.attrs["algorithm_name"] = algorithm_name
+            file.attrs["author"] = author
+            file.attrs["author_email"] = author_email
+            file.attrs["code_permalink"] = code_permalink
 
             action_space_str = serialize_space(action_space)
             observation_space_str = serialize_space(observation_space)
