@@ -455,9 +455,18 @@ def create_dataset_from_buffers(
         with h5py.File(data_path, "w", track_order=True) as file:
             for i, eps_buff in enumerate(buffer):
                 # check episode terminated or truncated
-                assert (
-                    eps_buff["terminations"][-1] or eps_buff["truncations"][-1]
-                ), "Each episode must be terminated or truncated before adding it to a Minari dataset"
+                if_term_or_trunc = eps_buff["terminations"] or eps_buff["truncations"]
+                if_last_eps = (i == (len(buffer) - 1))
+                if if_last_eps and not if_term_or_trunc:
+                    warnings.warn(
+                        f"The last episode {i} is not terminated or truncated. The last step will be marked as truncated.",
+                        UserWarning,
+                    )
+                    eps_buff["truncations"][-1] = True
+                else:
+                    assert (
+                        eps_buff["terminations"][-1] or eps_buff["truncations"][-1]
+                    ), "Each episode must be terminated or truncated before adding it to a Minari dataset"
                 assert len(eps_buff["actions"]) + 1 == len(
                     eps_buff["observations"]
                 ), f"Number of observations {len(eps_buff['observations'])} must have an additional element compared to the number of action steps {len(eps_buff['actions'])}. The initial and final observation must be included"
