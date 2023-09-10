@@ -455,7 +455,7 @@ def create_dataset_from_buffers(
         with h5py.File(data_path, "w", track_order=True) as file:
             for i, eps_buff in enumerate(buffer):
                 # check episode terminated or truncated
-                if_term_or_trunc = eps_buff["terminations"] or eps_buff["truncations"]
+                if_term_or_trunc = eps_buff["terminations"][-1] or eps_buff["truncations"][-1]
                 if_last_eps = (i == (len(buffer) - 1))
                 if if_last_eps and not if_term_or_trunc:
                     warnings.warn(
