@@ -489,10 +489,10 @@ def create_dataset_from_buffers(
                 "env_spec"
             ] = env.spec.to_json()  # pyright: ignore [reportOptionalMemberAccess]
             file.attrs["dataset_id"] = dataset_id
-            file.attrs["algorithm_name"] = algorithm_name
-            file.attrs["author"] = author
-            file.attrs["author_email"] = author_email
-            file.attrs["code_permalink"] = code_permalink
+            file.attrs["algorithm_name"] = str(algorithm_name)
+            file.attrs["author"] = str(author)
+            file.attrs["author_email"] = str(author_email)
+            file.attrs["code_permalink"] = str(code_permalink)
 
             action_space_str = serialize_space(action_space)
             observation_space_str = serialize_space(observation_space)
@@ -613,6 +613,7 @@ def create_dataset_from_collector_env(
             "author": str(author),
             "author_email": str(author_email),
             "code_permalink": str(code_permalink),
+            "minari_version": minari_version,
         }
 
         if expert_policy is not None or ref_max_score is not None:
@@ -636,14 +637,7 @@ def create_dataset_from_collector_env(
 
         collector_env.save_to_disk(
             data_path,
-            dataset_metadata={
-                "dataset_id": str(dataset_id),
-                "algorithm_name": str(algorithm_name),
-                "author": str(author),
-                "author_email": str(author_email),
-                "code_permalink": str(code_permalink),
-                "minari_version": minari_version,
-            },
+            dataset_metadata=dataset_metadata,
         )
         return MinariDataset(data_path)
     else:
