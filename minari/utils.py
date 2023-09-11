@@ -284,10 +284,15 @@ def combine_datasets(
 
             # TODO: list of authors, and emails
             with h5py.File(dataset.spec.data_path, "r") as dataset_file:
-                combined_data_file.attrs.modify("author", dataset_file.attrs["author"])
-                combined_data_file.attrs.modify(
-                    "author_email", dataset_file.attrs["author_email"]
-                )
+                for optional_parameter in ['author', 'author_email', 'code_permalink', 'algorithm_name']:
+                    if optional_parameter in dataset_file.attrs:
+                        combined_data_file.attrs.modify(
+                            optional_parameter, dataset_file.attrs[optional_parameter]
+                        )
+                # combined_data_file.attrs.modify("author", dataset_file.attrs["author"])
+                # combined_data_file.attrs.modify(
+                #     "author_email", dataset_file.attrs["author_email"]
+                # )
 
         assert combined_dataset_env_spec is not None
         combined_data_file.attrs["env_spec"] = combined_dataset_env_spec.to_json()
@@ -400,6 +405,7 @@ def create_dataset_from_buffers(
         action_space (Optional[gym.spaces.Space]): action space of the environment. If None (default) use the environment action space.
         observation_space (Optional[gym.spaces.Space]): observation space of the environment. If None (default) use the environment observation space.
         minari_version (Optional[str], optional): Minari version specifier compatible with the dataset. If None (default) use the installed Minari version.
+
     Returns:
         MinariDataset
     """
@@ -419,6 +425,12 @@ def create_dataset_from_buffers(
             "`author_email` is set to None. For longevity purposes it is highly recommended to provide an author email, or some other obvious contact information.",
             UserWarning,
         )
+    if algorithm_name is None:
+        warnings.warn(
+            "`algorithm_name` is set to None. For reproducibility purpose it's highly recommended to set your algorithm",
+            UserWarning,
+        )
+
     if minari_version is None:
         version = Version(__version__)
         release = version.release
@@ -489,10 +501,19 @@ def create_dataset_from_buffers(
                 "env_spec"
             ] = env.spec.to_json()  # pyright: ignore [reportOptionalMemberAccess]
             file.attrs["dataset_id"] = dataset_id
-            file.attrs["algorithm_name"] = str(algorithm_name)
-            file.attrs["author"] = str(author)
-            file.attrs["author_email"] = str(author_email)
-            file.attrs["code_permalink"] = str(code_permalink)
+            # file.attrs["algorithm_name"] = str(algorithm_name)
+            # file.attrs["author"] = str(author)
+            # file.attrs["author_email"] = str(author_email)
+            # file.attrs["code_permalink"] = str(code_permalink)
+
+            if algorithm_name is not None:
+                file.attrs["algorithm_name"] = str(algorithm_name)
+            if author is not None:
+                file.attrs["author"] = str(author)
+            if author_email is not None:
+                file.attrs["author_email"] = str(author_email)
+            if code_permalink is not None:
+                file.attrs["code_permalink"] = str(code_permalink)
 
             action_space_str = serialize_space(action_space)
             observation_space_str = serialize_space(observation_space)
@@ -578,6 +599,13 @@ def create_dataset_from_collector_env(
             "`author_email` is set to None. For longevity purposes it is highly recommended to provide an author email, or some other obvious contact information.",
             UserWarning,
         )
+
+    if algorithm_name is None:
+        warnings.warn(
+            "`algorithm_name` is set to None. For reproducibility purpose it's highly recommended to set your algorithm",
+            UserWarning,
+        )
+
     if expert_policy is not None and ref_max_score is not None:
         raise ValueError(
             "Can't pass a value for `expert_policy` and `ref_max_score` at the same time."
@@ -609,12 +637,21 @@ def create_dataset_from_collector_env(
         data_path = os.path.join(dataset_path, "main_data.hdf5")
         dataset_metadata: Dict[str, Any] = {
             "dataset_id": str(dataset_id),
-            "algorithm_name": str(algorithm_name),
-            "author": str(author),
-            "author_email": str(author_email),
-            "code_permalink": str(code_permalink),
+            # "algorithm_name": str(algorithm_name),
+            # "author": str(author),
+            # "author_email": str(author_email),
+            # "code_permalink": str(code_permalink),
             "minari_version": minari_version,
         }
+
+        if algorithm_name is not None:
+            dataset_metadata["algorithm_name"] = str(algorithm_name)
+        if author is not None:
+            dataset_metadata["author"] = str(author)
+        if author_email is not None:
+            dataset_metadata["author_email"] = str(author_email)
+        if code_permalink is not None:
+            dataset_metadata["code_permalink"] = str(code_permalink)
 
         if expert_policy is not None or ref_max_score is not None:
             env = copy.deepcopy(collector_env.env)
