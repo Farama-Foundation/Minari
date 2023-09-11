@@ -7,7 +7,7 @@ from tests.common import test_spaces, unsupported_test_spaces
 @pytest.mark.parametrize("space", test_spaces)
 def test_space_serialize_deserialize(space):
 
-    space_str = serialize_space(space)
+    space_str = serialize_space(space, to_string=True)
     reconstructed_space = deserialize_space(space_str)
     reserialized_space_str = serialize_space(reconstructed_space)
     assert space_str == reserialized_space_str
