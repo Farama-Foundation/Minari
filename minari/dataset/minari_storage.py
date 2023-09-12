@@ -99,21 +99,19 @@ class MinariStorage:
         with h5py.File(self._file_path, "a") as file:
             file.attrs.update(metadata)
 
-    def update_episode_metadata(self, metadatas: List[Dict], episode_indices: Optional[Iterable] = None):
+    def update_episode_metadata(self, metadatas: Iterable[Dict], episode_indices: Optional[Iterable] = None):
         """Update the metadata of episodes.
 
         Args:
-            metadatas (List[Dict]): list of metadatas, one for each episode.
-            episode_indices (Iterable, optional): list of episode indices to update. 
+            metadatas (Iterable[Dict]): metadatas, one for each episode.
+            episode_indices (Iterable, optional): episode indices to update. 
             If not specified, all the episodes are considered.
         
-        Raises:
-            ValueError: if the lengths of metadatas and episodes to update don't match.
+        Warning:
+            In case metadatas and episode_indices have different lengths, the longest is truncated silently.
         """
         if episode_indices is None:
             episode_indices = range(self.total_episodes)
-        if len(metadatas) != len(list(episode_indices)):
-            raise ValueError("The number of metadatas doesn't match the number of episodes to update.")
     
         with h5py.File(self._file_path, "a") as file:
             for metadata, episode_id in zip(metadatas, episode_indices):
@@ -124,7 +122,7 @@ class MinariStorage:
         self,
         function: Callable[[dict], Any],
         episode_indices: Optional[Iterable] = None,
-    ) -> List[Any]:
+    ) -> Iterable[Any]:
         """Apply a function to a slice of the data.
 
         Args:
@@ -132,39 +130,21 @@ class MinariStorage:
             episode_indices (Optional[Iterable]): episodes id to consider
 
         Returns:
-            outs (list): list of outputs returned by the function applied to episodes
+            outs (Iterable): outputs returned by the function applied to episodes
         """
         if episode_indices is None:
             episode_indices = range(self.total_episodes)
-        out = []
-        with h5py.File(self._file_path, "r") as file:
-            for ep_idx in episode_indices:
-                ep_group = file[f"episode_{ep_idx}"]
-                assert isinstance(ep_group, h5py.Group)
-                ep_dict = {
-                    "id": ep_group.attrs.get("id"),
-                    "total_timesteps": ep_group.attrs.get("total_steps"),
-                    "seed": ep_group.attrs.get("seed"),
-                    # TODO: self.metadata can be slow for decode space? Cache spaces? Cache metadata?
-                    "observations": self._decode_space(
-                        ep_group["observations"], self.metadata["observation_space"]
-                    ),
-                    "actions": self._decode_space(
-                        ep_group["actions"], self.metadata["action_space"]
-                    ),
-                    "rewards": ep_group["rewards"][()],
-                    "terminations": ep_group["terminations"][()],
-                    "truncations": ep_group["truncations"][()],
-                }
-                out.append(function(ep_dict))
-
-        return out
+        
+        ep_dicts = self.get_episodes(episode_indices)
+        return map(function, ep_dicts)
 
     def _decode_space(
         self,
-        hdf_ref: Union[h5py.Group, h5py.Dataset],
+        hdf_ref: Union[h5py.Group, h5py.Dataset, h5py.Datatype],
         space: gym.spaces.Space,
     ) -> Union[Dict, Tuple, List, np.ndarray]:
+        assert not isinstance(hdf_ref, h5py.Datatype)
+
         if isinstance(space, gym.spaces.Tuple):
             assert isinstance(hdf_ref, h5py.Group)
             result = []
@@ -176,7 +156,7 @@ class MinariStorage:
         elif isinstance(space, gym.spaces.Dict):
             assert isinstance(hdf_ref, h5py.Group)
             result = {}
-            for key in hdf_ref:
+            for key in hdf_ref.keys():
                 result[key] = self._decode_space(hdf_ref[key], space.spaces[key])
             return result
         elif isinstance(space, gym.spaces.Text):
@@ -200,22 +180,25 @@ class MinariStorage:
         with h5py.File(self._file_path, "r") as file:
             for ep_idx in episode_indices:
                 ep_group = file[f"episode_{ep_idx}"]
-                out.append(
-                    {
-                        "id": ep_group.attrs.get("id"),
-                        "total_timesteps": ep_group.attrs.get("total_steps"),
-                        "seed": ep_group.attrs.get("seed"),
-                        "observations": self._decode_space(
-                            ep_group["observations"], self.metadata["observation_space"]
-                        ),
-                        "actions": self._decode_space(
-                            ep_group["actions"], self.metadata["action_space"]
-                        ),
-                        "rewards": ep_group["rewards"][()],
-                        "terminations": ep_group["terminations"][()],
-                        "truncations": ep_group["truncations"][()],
-                    }
-                )
+                assert isinstance(ep_group, h5py.Group)
+                
+                ep_dict = {
+                    "id": ep_group.attrs.get("id"),
+                    "total_timesteps": ep_group.attrs.get("total_steps"),
+                    "seed": ep_group.attrs.get("seed"),
+                    "observations": self._decode_space(
+                        ep_group["observations"], self.metadata["observation_space"]  # TODO: metadata can be slow
+                    ),
+                    "actions": self._decode_space(
+                        ep_group["actions"], self.metadata["action_space"]
+                    ),
+                }
+                for key in {"rewards", "terminations", "truncations"}:
+                    group_value = ep_group[key]
+                    assert isinstance(group_value, h5py.Dataset)
+                    ep_dict[key] = group_value[:]
+
+                out.append(ep_dict)
 
         return out
 
@@ -242,10 +225,11 @@ class MinariStorage:
                 episode_group.attrs["total_steps"] = total_steps
                 additional_steps += total_steps
 
-                # TODO: make it append
                 _add_episode_to_group(eps_buff, episode_group)
 
-            total_steps = file.attrs["total_steps"] + additional_steps
+            current_steps = file.attrs["total_steps"]
+            assert type(current_steps) == np.int64
+            total_steps = current_steps + additional_steps
             total_episodes = len(file.keys())
 
             file.attrs.modify("total_episodes", total_episodes)
@@ -268,9 +252,9 @@ class MinariStorage:
     def total_steps(self) -> np.int64:
         """Total steps in the dataset."""
         with h5py.File(self._file_path, "r") as file:
-            total_episodes = file.attrs["total_steps"]
-            assert type(total_episodes) == np.int64
-            return total_episodes
+            total_steps = file.attrs["total_steps"]
+            assert type(total_steps) == np.int64
+            return total_steps
 
 def _get_from_h5py(group: h5py.Group, name: str) -> h5py.Group:
     if name in group:
@@ -286,27 +270,31 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
         if isinstance(data, dict):
             episode_group_to_clear = _get_from_h5py(episode_group, key)
             _add_episode_to_group(data, episode_group_to_clear)
-        elif all([isinstance(entry, tuple) for entry in data]):
-            # we have a list of tuples, so we need to act appropriately
+        elif all([isinstance(entry, tuple) for entry in data]):  # list of tuples
             dict_data = {
                 f"_index_{str(i)}": [entry[i] for entry in data]
                 for i, _ in enumerate(data[0])
             }
             episode_group_to_clear = _get_from_h5py(episode_group, key)
             _add_episode_to_group(dict_data, episode_group_to_clear)
-        elif all([isinstance(entry, OrderedDict) for entry in data]):
-            # we have a list of OrderedDicts, so we need to act appropriately
+        elif all([isinstance(entry, OrderedDict) for entry in data]):  # list of OrderedDict
             dict_data = {
-                key: [entry[key] for entry in data] for key, value in data[0].items()
+                key: [entry[key] for entry in data] for key in data[0].keys()
             }
             episode_group_to_clear = _get_from_h5py(episode_group, key)
             _add_episode_to_group(dict_data, episode_group_to_clear)
-        else:  # leaf data
-            if isinstance(episode_group, h5py.Dataset):
-                pass #TODO
-            elif all(map(lambda elem: isinstance(elem, str), data)):
+       
+        # leaf data
+        elif key in episode_group:
+            dataset = episode_group[key]
+            assert isinstance(dataset, h5py.Dataset)
+            dataset.resize((dataset.shape[0] + len(data), *dataset.shape[1:]))
+            dataset[-len(data):] = data
+        else:
+            dtype = None
+            if all(map(lambda elem: isinstance(elem, str), data)):
                 dtype = h5py.string_dtype(encoding="utf-8")
-                episode_group.create_dataset(key, data=data, dtype=dtype, chunks=True)
-            else:
-                assert np.all(np.logical_not(np.isnan(data)))
-                episode_group.create_dataset(key, data=data, chunks=True)
+            dshape = ()
+            if hasattr(data[0], "shape"):
+                dshape = data[0].shape
+            episode_group.create_dataset(key, data=data, dtype=dtype, chunks=True, maxshape=(None, *dshape))

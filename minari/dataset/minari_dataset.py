@@ -117,29 +117,17 @@ class MinariDataset:
 
         self._combined_datasets = metadata.get("combined_datasets", [])
 
-        # We will default to using the reconstructed observation and action spaces from the dataset
-        # and fall back to the env spec env if the action and observation spaces are not both present
-        # in the dataset.
+        # By default, we use the observation and action spaces from the dataset and
+        # we fall back to the env if one of them is not in the dataset.
         observation_space = metadata.get("observation_space")
         action_space = metadata.get("action_space")
         if observation_space is None or action_space is None:
-            # Checking if the base library of the environment is present in the environment
-            entry_point = json.loads(env_spec)["entry_point"]
-            lib_full_path = entry_point.split(":")[0]
-            base_lib = lib_full_path.split(".")[0]
-            env_name = self._env_spec.id
-
-            try:
-                env = gym.make(self._env_spec)
-                if observation_space is None:
-                    observation_space = env.observation_space
-                if action_space is None:
-                    action_space = env.action_space
-                env.close()
-            except ModuleNotFoundError as e:
-                raise ModuleNotFoundError(
-                    f"Install {base_lib} for loading {env_name} data"
-                ) from e
+            env = self.recover_environment()
+            if observation_space is None:
+                observation_space = env.observation_space
+            if action_space is None:
+                action_space = env.action_space
+            env.close()
         assert isinstance(observation_space, gym.spaces.Space)
         assert isinstance(action_space, gym.spaces.Space)
         self._observation_space = observation_space
@@ -212,7 +200,8 @@ class MinariDataset:
             dict_to_episode_data_condition, episode_indices=self._episode_indices
         )
         assert self._episode_indices is not None
-        return MinariDataset(self._data, episode_indices=self._episode_indices[mask])
+        filtered_indices = self._episode_indices[list(mask)]
+        return MinariDataset(self._data, episode_indices=filtered_indices)
 
     def sample_episodes(self, n_episodes: int) -> Iterable[EpisodeData]:
         """Sample n number of episodes from the dataset.

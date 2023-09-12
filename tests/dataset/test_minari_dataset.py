@@ -457,28 +457,3 @@ def test_update_dataset_from_buffer(dataset_id, env_id):
 
     env.close()
     check_load_and_delete_dataset(dataset_id)
-
-
-def test_missing_env_module():
-    data_path = os.path.join(os.path.expanduser("~"), ".minari", "datasets", "dummy-test-v0")
-    storage = MinariStorage.new(
-        data_path,
-        observation_space=gym.spaces.Box(-1, 1),
-        action_space=gym.spaces.Box(-1, 1),
-    )
-    storage.update_metadata({
-        "flatten_observation": False,
-        "flatten_action": False,
-        "env_spec": r"""{"id": "DummyEnv-v0", "entry_point": "dummymodule:dummyenv", "reward_threshold": null, "nondeterministic": false, "max_episode_steps": 300, "order_enforce": true, "disable_env_checker": false, "apply_api_compatibility": false, "additional_wrappers": []}""",
-        "total_episodes": 100,
-        "total_steps": 1000,
-        "dataset_id": "dummy-test-v0",
-        "minari_version": f"=={__version__}"
-    })
-
-    with pytest.raises(
-        ModuleNotFoundError, match="Install dummymodule for loading DummyEnv-v0 data"
-    ):
-        MinariDataset(storage.data_path)
-
-    os.remove(data_path)
