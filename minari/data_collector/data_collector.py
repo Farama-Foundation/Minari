@@ -88,13 +88,13 @@ class DataCollectorV0(gym.Wrapper):
         self._step_data_callback = step_data_callback()
         self._episode_metadata_callback = episode_metadata_callback()
 
-        if observation_space is None:
-            observation_space = self.env.observation_space
         self.dataset_observation_space = observation_space
+        if self.dataset_observation_space is None:
+            self.dataset_observation_space = self.env.observation_space
 
-        if action_space is None:
-            action_space = self.env.action_space
         self.dataset_action_space = action_space
+        if self.dataset_action_space is None:
+            self.dataset_action_space = self.env.action_space
 
         self._record_infos = record_infos
         self.max_buffer_steps = max_buffer_steps
@@ -119,8 +119,8 @@ class DataCollectorV0(gym.Wrapper):
         assert self.env.spec is not None, "Env Spec is None"
         self._storage = MinariStorage.new(
             self._tmp_dir.name,
-            observation_space=self.dataset_observation_space,
-            action_space=self.dataset_action_space,
+            observation_space=observation_space,
+            action_space=action_space,
             env_spec=self.env.spec
         )
 

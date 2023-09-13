@@ -202,19 +202,18 @@ class RandomPolicy:
         return self.action_space.sample()
 
 
-# TODO: factor h5py out
 def combine_datasets(
     datasets_to_combine: List[MinariDataset], new_dataset_id: str, copy: bool = False
 ):
     """Combine a group of MinariDataset in to a single dataset with its own name id.
 
-    A new HDF5 metadata attribute will be added to the new dataset called `combined_datasets`. This will
-    contain a list of strings with the dataset names that were combined to form this new Minari dataset.
+    The new dataset will contain a metadata attribute `combined_datasets` containing a list
+    with the dataset names that were combined to form this new Minari dataset.
 
     Args:
         datasets_to_combine (list[MinariDataset]): list of datasets to be combined
         new_dataset_id (str): name id for the newly created dataset
-        copy (bool): whether to copy the data to a new dataset or to create external link (see h5py.ExternalLink)
+        copy (bool): whether to copy the data to a new dataset or to create a link
 
     Returns:
         combined_dataset (MinariDataset): the resulting MinariDataset
@@ -230,71 +229,22 @@ def combine_datasets(
         datasets_minari_version_specifiers
     )
 
-    new_dataset_path = get_dataset_path(new_dataset_id)
+    new_dataset_path = get_dataset_path(new_dataset_id).joinpath("data")
+    new_storage = MinariStorage.new(new_dataset_path)
 
-    # Check if dataset already exists
-    if not os.path.exists(new_dataset_path):
-        new_dataset_path = os.path.join(new_dataset_path, "data")
-        os.makedirs(new_dataset_path)
-        new_file_path = os.path.join(new_dataset_path, "main_data.hdf5")
-    else:
-        raise ValueError(
-            f"A Minari dataset with ID {new_dataset_id} already exists and it cannot be overridden. Please use a different dataset name or version."
-        )
-
-    with h5py.File(new_file_path, "a", track_order=True) as combined_data_file:
-        combined_data_file.attrs["total_episodes"] = 0
-        combined_data_file.attrs["total_steps"] = 0
-        combined_data_file.attrs["dataset_id"] = new_dataset_id
-
-        combined_data_file.attrs["combined_datasets"] = [
+    new_storage.update_metadata({
+        "dataset_id": new_dataset_id,
+        "combined_datasets": [
             dataset.spec.dataset_id for dataset in datasets_to_combine
-        ]
+        ],
+        "env_spec": combined_dataset_env_spec.to_json(),
+        "minari_version": str(minari_version_specifier)
+    })
 
-        for dataset in datasets_to_combine:
-            last_episode_id = combined_data_file.attrs["total_episodes"]
-            file_path = f"{dataset.spec.data_path}/main_data.hdf5"
-            if copy:
-                with h5py.File(file_path, "r") as dataset_file:
-                    for id in range(dataset.total_episodes):
-                        dataset_file.copy(
-                            dataset_file[f"episode_{id}"],
-                            combined_data_file,
-                            name=f"episode_{last_episode_id + id}",
-                        )
-                        combined_data_file[
-                            f"episode_{last_episode_id + id}"
-                        ].attrs.modify("id", last_episode_id + id)
-            else:
-                for id in range(dataset.total_episodes):
-                    combined_data_file[
-                        f"episode_{last_episode_id + id}"
-                    ] = h5py.ExternalLink(file_path, f"/episode_{id}")
-                    combined_data_file[f"episode_{last_episode_id + id}"].attrs.modify(
-                        "id", last_episode_id + id
-                    )
+    for dataset in datasets_to_combine:
+        new_storage.update_from_storage(dataset.storage, copy=copy)      
 
-            # Update metadata of minari dataset
-            combined_data_file.attrs.modify(
-                "total_episodes", last_episode_id + dataset.total_episodes
-            )
-            combined_data_file.attrs.modify(
-                "total_steps",
-                combined_data_file.attrs["total_steps"] + dataset.spec.total_steps,
-            )
-
-            # TODO: list of authors, and emails
-            with h5py.File(file_path, "r") as dataset_file:
-                combined_data_file.attrs.modify("author", dataset_file.attrs["author"])
-                combined_data_file.attrs.modify(
-                    "author_email", dataset_file.attrs["author_email"]
-                )
-
-        assert combined_dataset_env_spec is not None
-        combined_data_file.attrs["env_spec"] = combined_dataset_env_spec.to_json()
-        combined_data_file.attrs["minari_version"] = str(minari_version_specifier)
-
-    return MinariDataset(new_dataset_path)
+    return MinariDataset(new_storage)
 
 
 def split_dataset(

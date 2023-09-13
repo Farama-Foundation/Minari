@@ -363,3 +363,8 @@ class MinariDataset:
     def minari_version(self) -> str:
         """Version of Minari the dataset is compatible with."""
         return self._minari_version
+    
+    @property
+    def storage(self) -> MinariStorage:
+        """MinariStorage managing access to disk."""
+        return self._data

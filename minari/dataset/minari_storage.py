@@ -41,17 +41,17 @@ class MinariStorage:
     def new(
         cls,
         data_path: PathLike,
-        observation_space: gym.Space,
-        action_space: gym.Space,
+        observation_space: Optional[gym.Space] = None,
+        action_space: Optional[gym.Space] = None,
         env_spec: Optional[EnvSpec] = None
     ) -> MinariStorage:
         """Class method to create a new data storage. 
 
         Args:
             data_path (str or Path): directory where the data will be stored. 
-            observation_space (gymnasium.Space): Gymnasium observation space of the dataset.
-            action_space (gymnasium.Space): Gymnasium action space of the dataset.
-            env_spec (EnvSpec): Gymnasium EnvSpec of the environment that generates the dataset.
+            observation_space (gymnasium.Space, optional): Gymnasium observation space of the dataset.
+            action_space (gymnasium.Space, optional): Gymnasium action space of the dataset.
+            env_spec (EnvSpec, optional): Gymnasium EnvSpec of the environment that generates the dataset.
 
         Returns:
             A new MinariStorage object. 
@@ -61,12 +61,14 @@ class MinariStorage:
         data_path.joinpath("main_data.hdf5").touch(exist_ok=False)
     
         obj = cls(data_path)
-        metadata = {
-            "observation_space": serialize_space(observation_space),
-            "action_space": serialize_space(action_space),
+        metadata: Dict[str, Any] = {
             "total_episodes": 0,
             "total_steps": 0
         }
+        if observation_space is not None:
+            metadata["observation_space"] = serialize_space(observation_space)
+        if action_space is not None:
+            metadata["action_space"] = serialize_space(action_space)
         if env_spec is not None: 
             metadata["env_spec"] = env_spec.to_json()
 
@@ -234,6 +236,39 @@ class MinariStorage:
 
             file.attrs.modify("total_episodes", total_episodes)
             file.attrs.modify("total_steps", total_steps)
+
+    def update_from_storage(self, storage: MinariStorage, copy: bool = False):
+        """Update the dataset using another MinariStorage.
+
+        Args:
+            storage (MinariStorage): the other MinariStorage from which the data will be taken
+            copy (bool): whether to copy the data or create a link. Default value is false.
+        """
+        with h5py.File(self._file_path, "a", track_order=True) as file:
+            last_episode_id = file.attrs["total_episodes"]
+            assert type(last_episode_id) == np.int64
+            storage_total_episodes = storage.total_episodes
+
+            if copy:
+                for id in range(storage.total_episodes):
+                    episode = storage.get_episodes([id])
+                    episode[0].pop("id")
+                    self.update_episodes(episode)
+            else:
+                for id in range(storage_total_episodes):
+                    file[f"episode_{last_episode_id + id}"] = h5py.ExternalLink(storage._file_path, f"/episode_{id}")
+                    file[f"episode_{last_episode_id + id}"].attrs.modify(  # TODO: check it doesn't modify original dataset
+                        "id", last_episode_id + id
+                    )             
+
+            file.attrs.modify("total_episodes", last_episode_id + storage_total_episodes)
+            total_steps = file.attrs["total_steps"]
+            assert type(total_steps) == np.int64
+            file.attrs.modify("total_steps", total_steps + storage.total_steps)
+
+            storage_metadata = storage.metadata
+            file.attrs.modify("author", f'{file.attrs["author"]}; {storage_metadata["author"]}')
+            file.attrs.modify("author_email", f'{file.attrs["author_email"]}; {storage_metadata["author_email"]}')
 
     @property
     def data_path(self) -> PathLike:
