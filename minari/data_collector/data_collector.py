@@ -88,23 +88,6 @@ class DataCollectorV0(gym.Wrapper):
         self._step_data_callback = step_data_callback()
         self._episode_metadata_callback = episode_metadata_callback()
 
-        self.dataset_observation_space = observation_space
-        if self.dataset_observation_space is None:
-            self.dataset_observation_space = self.env.observation_space
-
-        self.dataset_action_space = action_space
-        if self.dataset_action_space is None:
-            self.dataset_action_space = self.env.action_space
-
-        self._record_infos = record_infos
-        self.max_buffer_steps = max_buffer_steps
-
-        # Initialzie empty buffer
-        self._buffer: List[EpisodeBuffer] = []
-
-        self._step_id = -1
-        self._episode_id = -1
-
         # get path to minari datasets directory
         self.datasets_path = os.environ.get("MINARI_DATASETS_PATH")
         if self.datasets_path is None:
@@ -123,6 +106,23 @@ class DataCollectorV0(gym.Wrapper):
             action_space=action_space,
             env_spec=self.env.spec
         )
+
+        if observation_space is None:
+            observation_space = self.env.observation_space
+        self.dataset_observation_space = observation_space
+
+        if action_space is None:
+            action_space = self.env.action_space
+        self.dataset_action_space = action_space
+
+        self._record_infos = record_infos
+        self.max_buffer_steps = max_buffer_steps
+
+        # Initialzie empty buffer
+        self._buffer: List[EpisodeBuffer] = []
+
+        self._step_id = -1
+        self._episode_id = -1
 
     def _add_to_episode_buffer(
         self,

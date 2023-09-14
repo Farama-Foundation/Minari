@@ -229,15 +229,19 @@ def combine_datasets(
         datasets_minari_version_specifiers
     )
 
-    new_dataset_path = get_dataset_path(new_dataset_id).joinpath("data")
-    new_storage = MinariStorage.new(new_dataset_path)
+    
+    new_dataset_path = get_dataset_path(new_dataset_id)
+    new_dataset_path.mkdir()
+    new_storage = MinariStorage.new(
+        new_dataset_path.joinpath("data"),
+        env_spec=combined_dataset_env_spec
+    )
 
     new_storage.update_metadata({
         "dataset_id": new_dataset_id,
         "combined_datasets": [
             dataset.spec.dataset_id for dataset in datasets_to_combine
         ],
-        "env_spec": combined_dataset_env_spec.to_json(),
         "minari_version": str(minari_version_specifier)
     })
 

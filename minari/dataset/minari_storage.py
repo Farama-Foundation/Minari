@@ -37,6 +37,9 @@ class MinariStorage:
             raise ValueError(f"No data found in data path {data_path}")
         self._file_path = file_path
 
+        self._observation_space = None
+        self._action_space = None
+
     @classmethod
     def new(
         cls,
@@ -55,7 +58,12 @@ class MinariStorage:
 
         Returns:
             A new MinariStorage object. 
+        
+        Raises:
+            ValueError: if you don't specify the env_spec, you need to specify both observation_space and action_space.
         """
+        if env_spec is None and (observation_space is None or action_space is None):
+            raise ValueError("Since env_spec is not specified, you need to specify both action space and observation space!")
         data_path = pathlib.Path(data_path)
         data_path.mkdir(exist_ok=True)
         data_path.joinpath("main_data.hdf5").touch(exist_ok=False)
@@ -67,12 +75,15 @@ class MinariStorage:
         }
         if observation_space is not None:
             metadata["observation_space"] = serialize_space(observation_space)
+            obj._observation_space = observation_space
         if action_space is not None:
             metadata["action_space"] = serialize_space(action_space)
+            obj._action_space = action_space
         if env_spec is not None: 
             metadata["env_spec"] = env_spec.to_json()
 
-        obj.update_metadata(metadata)
+        with h5py.File(obj._file_path, "a") as file:
+            file.attrs.update(metadata)
         return obj
 
     @property
@@ -81,16 +92,10 @@ class MinariStorage:
         metadata = {}
         with h5py.File(self._file_path, "r") as file:
             metadata.update(file.attrs)
-            if "observation_space" in metadata.keys():
-                space_serialization = metadata["observation_space"]
-                assert isinstance(space_serialization, str)
-                metadata["observation_space"] = deserialize_space(space_serialization)            
-            if "action_space" in metadata.keys():
-                space_serialization = metadata["action_space"]
-                assert isinstance(space_serialization, str)
-                metadata["action_space"] = deserialize_space(space_serialization)
-            
-            return metadata
+
+        metadata["observation_space"] = self.observation_space            
+        metadata["action_space"] = self.action_space
+        return metadata
     
     def update_metadata(self, metadata: Dict):
         """Update the metadata adding/modifying some keys.
@@ -98,6 +103,9 @@ class MinariStorage:
         Args:
             metadata (dict): dictionary of keys-values to add to the metadata.
         """
+        forbidden_keys = {"observation_space", "action_space", "env_spec"}.intersection(metadata.keys())
+        if forbidden_keys:
+            raise ValueError(f"You are not allowed to update values for {', '.join(forbidden_keys)}")
         with h5py.File(self._file_path, "a") as file:
             file.attrs.update(metadata)
 
@@ -188,12 +196,8 @@ class MinariStorage:
                     "id": ep_group.attrs.get("id"),
                     "total_timesteps": ep_group.attrs.get("total_steps"),
                     "seed": ep_group.attrs.get("seed"),
-                    "observations": self._decode_space(
-                        ep_group["observations"], self.metadata["observation_space"]  # TODO: metadata can be slow
-                    ),
-                    "actions": self._decode_space(
-                        ep_group["actions"], self.metadata["action_space"]
-                    ),
+                    "observations": self._decode_space(ep_group["observations"], self.observation_space),
+                    "actions": self._decode_space(ep_group["actions"], self.action_space),
                 }
                 for key in {"rewards", "terminations", "truncations"}:
                     group_value = ep_group[key]
@@ -253,6 +257,7 @@ class MinariStorage:
                 for id in range(storage.total_episodes):
                     episode = storage.get_episodes([id])
                     episode[0].pop("id")
+                    episode[0].pop("total_timesteps")
                     self.update_episodes(episode)
             else:
                 for id in range(storage_total_episodes):
@@ -260,15 +265,16 @@ class MinariStorage:
                     file[f"episode_{last_episode_id + id}"].attrs.modify(  # TODO: check it doesn't modify original dataset
                         "id", last_episode_id + id
                     )             
-
-            file.attrs.modify("total_episodes", last_episode_id + storage_total_episodes)
-            total_steps = file.attrs["total_steps"]
-            assert type(total_steps) == np.int64
-            file.attrs.modify("total_steps", total_steps + storage.total_steps)
+                file.attrs.modify("total_episodes", last_episode_id + storage_total_episodes)
+                total_steps = file.attrs["total_steps"]
+                assert type(total_steps) == np.int64
+                file.attrs.modify("total_steps", total_steps + storage.total_steps)
 
             storage_metadata = storage.metadata
-            file.attrs.modify("author", f'{file.attrs["author"]}; {storage_metadata["author"]}')
-            file.attrs.modify("author_email", f'{file.attrs["author_email"]}; {storage_metadata["author_email"]}')
+            authors = [file.attrs.get("author"), storage_metadata.get("author")]
+            file.attrs.modify("author", '; '.join([aut for aut in authors if aut is not None]))
+            emails = [file.attrs.get("author_email"), storage_metadata.get("author_email")]
+            file.attrs.modify("author_email", '; '.join([e for e in emails if e is not None]))
 
     @property
     def data_path(self) -> PathLike:
@@ -290,6 +296,39 @@ class MinariStorage:
             total_steps = file.attrs["total_steps"]
             assert type(total_steps) == np.int64
             return total_steps
+    
+    @property
+    def observation_space(self) -> gym.Space:
+        """Observation Space of the dataset."""
+        if self._observation_space is None:
+            with h5py.File(self._file_path, "r") as file:
+                if "observation_space" in file.attrs.keys():
+                    serialized_space = file.attrs["observation_space"]
+                    assert isinstance(serialized_space, str)
+                    self._observation_space = deserialize_space(serialized_space)
+                else:
+                    env_spec_str = file.attrs.get("env_spec")
+                    assert isinstance(env_spec_str, str)
+                    env_spec = EnvSpec.from_json(env_spec_str)
+                    self._observation_space = gym.make(env_spec).observation_space
+        return self._observation_space
+
+    @property
+    def action_space(self) -> gym.Space:
+        """Action space of the dataset."""
+        if self._action_space is None:
+            with h5py.File(self._file_path, "r") as file:
+                if "action_space" in file.attrs.keys():
+                    serialized_space = file.attrs["action_space"]
+                    assert isinstance(serialized_space, str)
+                    self._action_space = deserialize_space(serialized_space)
+                else:
+                    env_spec_str = file.attrs.get("env_spec")
+                    assert isinstance(env_spec_str, str)
+                    env_spec = EnvSpec.from_json(env_spec_str)
+                    self._action_space = gym.make(env_spec).action_space
+
+        return self._action_space
 
 def _get_from_h5py(group: h5py.Group, name: str) -> h5py.Group:
     if name in group:

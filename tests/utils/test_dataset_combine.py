@@ -140,9 +140,7 @@ def test_combine_datasets():
     assert isinstance(combined_dataset, MinariDataset)
     assert list(combined_dataset.spec.combined_datasets) == test_datasets_ids
     assert combined_dataset.spec.total_episodes == num_datasets * num_episodes
-    assert combined_dataset.spec.total_steps == sum(
-        d.spec.total_steps for d in test_datasets
-    )
+    assert combined_dataset.spec.total_steps == sum(d.spec.total_steps for d in test_datasets)
     _check_env_recovery(gym.make("CartPole-v1"), combined_dataset)
 
     # deleting test datasets

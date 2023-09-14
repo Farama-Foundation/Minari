@@ -1,9 +1,11 @@
 import copy
 import os
 import re
+import shutil
 from typing import Any
 
 import gymnasium as gym
+from gymnasium.envs.registration import EnvSpec
 import numpy as np
 import pytest
 
@@ -457,3 +459,22 @@ def test_update_dataset_from_buffer(dataset_id, env_id):
 
     env.close()
     check_load_and_delete_dataset(dataset_id)
+
+
+def test_missing_env_module():
+     data_path = os.path.join(os.path.expanduser("~"), ".minari", "datasets", "dummy-test-v0")
+     class FakeEnvSpec(EnvSpec):
+         def to_json(self) -> str:
+             return r"""{"id": "DummyEnv-v0", "entry_point": "dummymodule:dummyenv", "reward_threshold": null, "nondeterministic": false, "max_episode_steps": 300, "order_enforce": true, "disable_env_checker": false, "apply_api_compatibility": false, "additional_wrappers": []}"""
+         
+     storage = MinariStorage.new(
+         data_path,
+         env_spec=FakeEnvSpec("DummyEnv-v0"),
+     )
+
+     with pytest.raises(
+         ModuleNotFoundError, match="No module named 'dummymodule'"
+     ):
+         MinariDataset(storage.data_path)
+
+     shutil.rmtree(data_path)
