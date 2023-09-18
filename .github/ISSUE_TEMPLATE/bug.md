@@ -14,7 +14,7 @@ Save time, add code.
 
 **System Info**
 Describe the characteristic of your environment:
- * Describe how Gymnasium was installed (pip, docker, source, ...)
+ * Describe how Minari was installed (pip, docker, source, ...)
  * Operating system: 
  * Python version:
 
@@ -23,4 +23,4 @@ Add any other context about the problem here.
 
 ### Checklist
 
-- [ ] I have checked that there is no similar [issue](https://github.com/Farama-Foundation/PettingZoo/issues) in the repo (**required**)
+- [ ] I have checked that there is no similar [issue](https://github.com/Farama-Foundation/Minari/issues) in the repo (**required**)
