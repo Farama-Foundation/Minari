@@ -433,7 +433,12 @@ def create_dataset_from_buffers(
     except InvalidSpecifier:
         print(f"{minari_version} is not a version specifier.")
 
-    if env is not None:
+    if env is None:
+        if observation_space is None or action_space is None:
+            raise ValueError(
+                             "Both observation space and action space must be provided, if environment is None"
+            )
+    else:
         if observation_space is None:
             observation_space = env.observation_space
         if action_space is None:
@@ -489,12 +494,10 @@ def create_dataset_from_buffers(
                 ] = env.spec.to_json()  # pyright: ignore [reportOptionalMemberAccess]
             file.attrs["dataset_id"] = dataset_id
 
-            if action_space is not None:
-                action_space_str = serialize_space(action_space)
-                file.attrs["action_space"] = action_space_str
-            if observation_space is not None:
-                observation_space_str = serialize_space(observation_space)
-                file.attrs["observation_space"] = observation_space_str
+            action_space_str = serialize_space(action_space)
+            file.attrs["action_space"] = action_space_str
+            observation_space_str = serialize_space(observation_space)
+            file.attrs["observation_space"] = observation_space_str
 
             if env is not None and (
                 expert_policy is not None or ref_max_score is not None
