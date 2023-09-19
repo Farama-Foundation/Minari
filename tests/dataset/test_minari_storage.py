@@ -1,8 +1,10 @@
 import tempfile
-from minari.dataset.minari_storage import MinariStorage
-from gymnasium import spaces
-import pytest
+
 import numpy as np
+import pytest
+from gymnasium import spaces
+
+from minari.dataset.minari_storage import MinariStorage
 
 
 @pytest.fixture(autouse=True)
@@ -12,7 +14,9 @@ def tmp_dir():
     tmp_dir.cleanup()
 
 
-def _generate_episode_dict(observation_space: spaces.Space, action_space: spaces.Space, length=25):
+def _generate_episode_dict(
+    observation_space: spaces.Space, action_space: spaces.Space, length=25
+):
     terminations = np.zeros(length, dtype=np.bool_)
     truncations = np.zeros(length, dtype=np.bool_)
     terminated = np.random.randint(2, dtype=np.bool_)
@@ -24,15 +28,16 @@ def _generate_episode_dict(observation_space: spaces.Space, action_space: spaces
         "actions": [action_space.sample() for _ in range(length)],
         "rewards": np.random.randn(length),
         "terminations": terminations,
-        "truncations": truncations
+        "truncations": truncations,
     }
+
 
 def test_non_existing_data(tmp_dir):
     with pytest.raises(ValueError, match="The data path foo doesn't exist"):
-         MinariStorage("foo")
-    
+        MinariStorage("foo")
+
     with pytest.raises(ValueError, match="No data found in data path"):
-         MinariStorage(tmp_dir)
+        MinariStorage(tmp_dir)
 
 
 def test_metadata(tmp_dir):
@@ -41,28 +46,23 @@ def test_metadata(tmp_dir):
     storage = MinariStorage.new(
         data_path=tmp_dir,
         observation_space=observation_space,
-        action_space=action_space
+        action_space=action_space,
     )
     assert storage.data_path == tmp_dir
 
-    extra_metadata = {
-        "float": 3.2,
-        "string": "test-value",
-        "int": 2,
-        "bool": True
-    }
+    extra_metadata = {"float": 3.2, "string": "test-value", "int": 2, "bool": True}
     storage.update_metadata(extra_metadata)
 
     storage_metadata = storage.metadata
     assert storage_metadata.keys() == {
-        'action_space',
-        'bool',
-        'float',
-        'int',
-        'observation_space',
-        'string',
-        'total_episodes',
-        'total_steps'
+        "action_space",
+        "bool",
+        "float",
+        "int",
+        "observation_space",
+        "string",
+        "total_episodes",
+        "total_steps",
     }
 
     for key, value in extra_metadata.items():
@@ -78,13 +78,15 @@ def test_add_episodes(tmp_dir):
     n_episodes = 10
     steps_per_episode = 25
     episodes = [
-        _generate_episode_dict(observation_space, action_space, length=steps_per_episode)
+        _generate_episode_dict(
+            observation_space, action_space, length=steps_per_episode
+        )
         for _ in range(n_episodes)
     ]
     storage = MinariStorage.new(
         data_path=tmp_dir,
         observation_space=observation_space,
-        action_space=action_space
+        action_space=action_space,
     )
     storage.update_episodes(episodes)
     del storage
@@ -95,7 +97,7 @@ def test_add_episodes(tmp_dir):
 
     for i, ep in enumerate(episodes):
         storage_ep = storage.get_episodes([i])[0]
-        
+
         assert np.all(ep["observations"] == storage_ep["observations"])
         assert np.all(ep["actions"] == storage_ep["actions"])
         assert np.all(ep["rewards"] == storage_ep["rewards"])
@@ -140,20 +142,18 @@ def test_apply(tmp_dir):
     storage = MinariStorage.new(
         data_path=tmp_dir,
         observation_space=observation_space,
-        action_space=action_space
+        action_space=action_space,
     )
     storage.update_episodes(episodes)
 
     def f(ep):
         return ep["actions"].sum()
-    
+
     episode_indices = [1, 3, 5]
     outs = storage.apply(f, episode_indices=episode_indices)
     assert len(episode_indices) == len(list(outs))
     for i, result in zip(episode_indices, outs):
         assert np.array(episodes[i]["actions"]).sum() == result
-    
-    
 
 
 def test_episode_metadata(tmp_dir):
@@ -167,7 +167,7 @@ def test_episode_metadata(tmp_dir):
     storage = MinariStorage.new(
         data_path=tmp_dir,
         observation_space=observation_space,
-        action_space=action_space
+        action_space=action_space,
     )
     storage.update_episodes(episodes)
 

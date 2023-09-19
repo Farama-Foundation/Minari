@@ -202,9 +202,7 @@ class RandomPolicy:
         return self.action_space.sample()
 
 
-def combine_datasets(
-    datasets_to_combine: List[MinariDataset], new_dataset_id: str
-):
+def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_id: str):
     """Combine a group of MinariDataset in to a single dataset with its own name id.
 
     The new dataset will contain a metadata attribute `combined_datasets` containing a list
@@ -231,20 +229,21 @@ def combine_datasets(
     new_dataset_path = get_dataset_path(new_dataset_id)
     new_dataset_path.mkdir()
     new_storage = MinariStorage.new(
-        new_dataset_path.joinpath("data"),
-        env_spec=combined_dataset_env_spec
+        new_dataset_path.joinpath("data"), env_spec=combined_dataset_env_spec
     )
 
-    new_storage.update_metadata({
-        "dataset_id": new_dataset_id,
-        "combined_datasets": [
-            dataset.spec.dataset_id for dataset in datasets_to_combine
-        ],
-        "minari_version": str(minari_version_specifier)
-    })
+    new_storage.update_metadata(
+        {
+            "dataset_id": new_dataset_id,
+            "combined_datasets": [
+                dataset.spec.dataset_id for dataset in datasets_to_combine
+            ],
+            "minari_version": str(minari_version_specifier),
+        }
+    )
 
     for dataset in datasets_to_combine:
-        new_storage.update_from_storage(dataset.storage)      
+        new_storage.update_from_storage(dataset.storage)
 
     return MinariDataset(new_storage)
 
@@ -407,15 +406,15 @@ def create_dataset_from_buffers(
 
     dataset_path = os.path.join(dataset_path, "data")
     storage = MinariStorage.new(
-        dataset_path, 
+        dataset_path,
         observation_space=observation_space,
         action_space=action_space,
-        env_spec=env.spec
+        env_spec=env.spec,
     )
 
     metadata: Dict[str, Any] = {
         "dataset_id": dataset_id,
-        "minari_version": minari_version
+        "minari_version": minari_version,
     }
     if algorithm_name is not None:
         metadata["algorithm_name"] = algorithm_name
@@ -424,7 +423,7 @@ def create_dataset_from_buffers(
     if author_email is not None:
         metadata["author_email"] = author_email
     if code_permalink is not None:
-        metadata["code_permalink"] = code_permalink 
+        metadata["code_permalink"] = code_permalink
     if expert_policy is not None or ref_max_score is not None:
         env = copy.deepcopy(env)
         if ref_min_score is None:
@@ -528,7 +527,7 @@ def create_dataset_from_collector_env(
         raise ValueError(
             f"A Minari dataset with ID {dataset_id} already exists and it cannot be overridden. Please use a different dataset name or version."
         )
-    
+
     dataset_path = os.path.join(dataset_path, "data")
     os.makedirs(dataset_path)
     dataset_metadata: Dict[str, Any] = {
@@ -542,7 +541,7 @@ def create_dataset_from_collector_env(
     if author_email is not None:
         dataset_metadata["author_email"] = author_email
     if code_permalink is not None:
-        dataset_metadata["code_permalink"] = code_permalink    
+        dataset_metadata["code_permalink"] = code_permalink
     if expert_policy is not None or ref_max_score is not None:
         env = copy.deepcopy(collector_env.env)
         if ref_min_score is None:
@@ -560,6 +559,7 @@ def create_dataset_from_collector_env(
 
     collector_env.save_to_disk(dataset_path, dataset_metadata)
     return MinariDataset(dataset_path)
+
 
 def get_normalized_score(
     dataset: MinariDataset, returns: Union[float, np.float32]

@@ -166,7 +166,7 @@ def test_generate_dataset_with_external_buffer(dataset_id, env_id):
     assert dataset.spec.total_episodes == num_episodes
     assert len(dataset.episode_indices) == num_episodes
 
-    check_data_integrity(dataset._data, dataset.episode_indices)
+    check_data_integrity(dataset.storage, dataset.episode_indices)
     check_env_recovery(env, dataset)
 
     env.close()
@@ -280,7 +280,7 @@ def test_generate_dataset_with_space_subset_external_buffer():
     assert dataset.spec.total_episodes == num_episodes
     assert len(dataset.episode_indices) == num_episodes
 
-    check_data_integrity(dataset._data, dataset.episode_indices)
+    check_data_integrity(dataset.storage, dataset.episode_indices)
     check_env_recovery_with_subset_spaces(
         env, dataset, action_space_subset, observation_space_subset
     )

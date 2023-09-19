@@ -473,9 +473,7 @@ def check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
             observation_space,
             episode["total_timesteps"] + 1,
         )
-        _check_space_elem(
-            episode["actions"], action_space, episode["total_timesteps"]
-        )
+        _check_space_elem(episode["actions"], action_space, episode["total_timesteps"])
 
         for i in range(episode["total_timesteps"] + 1):
             obs = _reconstuct_obs_or_action_at_index_recursive(
@@ -581,6 +579,7 @@ def create_dummy_dataset_with_collecter_env_helper(
 
     assert dataset_id in minari.list_local_datasets()
     return dataset
+
 
 def check_episode_data_integrity(
     episode_data_list: List[EpisodeData],

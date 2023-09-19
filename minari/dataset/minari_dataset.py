@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-import importlib.metadata 
-import json
+import importlib.metadata
+import os
 import re
 from dataclasses import dataclass, field
 from typing import Callable, Iterable, Iterator, List, Optional, Union
@@ -13,9 +13,8 @@ from gymnasium.envs.registration import EnvSpec
 from packaging.specifiers import InvalidSpecifier, SpecifierSet
 from packaging.version import Version
 
-from minari.dataset.minari_storage import MinariStorage, PathLike
 from minari.dataset.episode_data import EpisodeData
-
+from minari.dataset.minari_storage import MinariStorage, PathLike
 
 
 # Use importlib due to circular import when: "from minari import __version__"
@@ -88,13 +87,13 @@ class MinariDataset:
         """
         if isinstance(data, MinariStorage):
             self._data = data
-        elif isinstance(data, PathLike):
+        elif isinstance(data, (str, os.PathLike)):
             self._data = MinariStorage(data)
         else:
             raise ValueError(f"Unrecognized type {type(data)} for data")
 
         if episode_indices is None:
-            episode_indices = np.arange(self._data.total_episodes)        
+            episode_indices = np.arange(self._data.total_episodes)
         self._episode_indices: np.ndarray = episode_indices
         self._total_steps = None
 
@@ -227,7 +226,9 @@ class MinariDataset:
         """
         first_id = self.storage.total_episodes
         self.storage.update_episodes(buffer)
-        self.episode_indices = np.append(self.episode_indices, first_id + np.arange(len(buffer)))
+        self.episode_indices = np.append(
+            self.episode_indices, first_id + np.arange(len(buffer))
+        )
 
     def __iter__(self):
         return self.iterate_episodes()
@@ -239,7 +240,7 @@ class MinariDataset:
 
     def __len__(self) -> int:
         return self.total_episodes
-    
+
     @property
     def total_episodes(self) -> int:
         return len(self.episode_indices)
@@ -263,7 +264,7 @@ class MinariDataset:
     def episode_indices(self) -> np.ndarray:
         """Indices of the available episodes to sample within the Minari dataset."""
         return self._episode_indices
-    
+
     @episode_indices.setter
     def episode_indices(self, new_value: np.ndarray):
         self._total_steps = None  # invalidate cache
@@ -301,12 +302,12 @@ class MinariDataset:
     def minari_version(self) -> str:
         """Version of Minari the dataset is compatible with."""
         return self._minari_version
-    
+
     @property
     def storage(self) -> MinariStorage:
-        """MinariStorage managing access to disk."""
+        """Minari storage managing access to disk."""
         return self._data
-    
+
     @property
     def spec(self) -> MinariDatasetSpec:
         return MinariDatasetSpec(

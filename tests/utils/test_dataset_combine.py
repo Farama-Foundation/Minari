@@ -71,6 +71,7 @@ def _generate_dataset_with_collector_env(
     if max_episode_steps is None:
         # Force None max_episode_steps
         env_spec = gym.make("CartPole-v1").spec
+        assert env_spec is not None
         env_spec.max_episode_steps = None
         env = env_spec.make()
     else:

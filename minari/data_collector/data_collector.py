@@ -6,8 +6,8 @@ import tempfile
 from typing import Any, Dict, List, Optional, SupportsFloat, Type, Union
 
 import gymnasium as gym
-from gymnasium.core import ActType, ObsType
 import numpy as np
+from gymnasium.core import ActType, ObsType
 
 from minari.data_collector.callbacks import (
     STEP_DATA_KEYS,
@@ -105,7 +105,7 @@ class DataCollectorV0(gym.Wrapper):
             self._tmp_dir.name,
             observation_space=observation_space,
             action_space=action_space,
-            env_spec=self.env.spec
+            env_spec=self.env.spec,
         )
 
         if observation_space is None:
@@ -194,8 +194,8 @@ class DataCollectorV0(gym.Wrapper):
         self._buffer[-1] = self._add_to_episode_buffer(self._buffer[-1], step_data)
 
         if (
-            self.max_buffer_steps is not None 
-            and self._step_id != 0 
+            self.max_buffer_steps is not None
+            and self._step_id != 0
             and self._step_id % self.max_buffer_steps == 0
         ):
             self._storage.update_episodes(self._buffer)
@@ -205,8 +205,8 @@ class DataCollectorV0(gym.Wrapper):
             eps_buff = {"id": self._episode_id}
             previous_data = {
                 "observations": step_data["observations"],
-                "infos": step_data["infos"]
-                }
+                "infos": step_data["infos"],
+            }
             eps_buff = self._add_to_episode_buffer(eps_buff, previous_data)
             self._buffer.append(eps_buff)
 
@@ -227,11 +227,8 @@ class DataCollectorV0(gym.Wrapper):
             step_data.keys()
         ), "One or more required keys is missing from 'step-data'"
 
-        self._validate_buffer() 
-        episode_buffer = {
-            "seed": seed if seed else str(None),
-            "id": self._episode_id
-        }
+        self._validate_buffer()
+        episode_buffer = {"seed": seed if seed else str(None), "id": self._episode_id}
         episode_buffer = self._add_to_episode_buffer(episode_buffer, step_data)
         self._buffer.append(episode_buffer)
         return obs, info
@@ -243,7 +240,7 @@ class DataCollectorV0(gym.Wrapper):
                 self._episode_id -= 1
             elif not self._buffer[-1]["terminations"][-1]:
                 self._buffer[-1]["truncations"][-1] = True
-    
+
     def add_to_dataset(self, dataset: MinariDataset):
         """Add extra data to Minari dataset from collector environment buffers (DataCollectorV0).
 
@@ -259,14 +256,14 @@ class DataCollectorV0(gym.Wrapper):
         if dataset.episode_indices is not None:
             new_ids = first_id + np.arange(self._storage.total_episodes)
             dataset.episode_indices = np.append(dataset.episode_indices, new_ids)
-        
+
         self._episode_id = -1
         self._tmp_dir = tempfile.TemporaryDirectory(dir=self.datasets_path)
         self._storage = MinariStorage.new(
             self._tmp_dir.name,
             observation_space=self._storage.observation_space,
             action_space=self._storage.action_space,
-            env_spec=self.env.spec
+            env_spec=self.env.spec,
         )
 
     def save_to_disk(self, path: str, dataset_metadata: Dict[str, Any] = {}):
@@ -285,7 +282,7 @@ class DataCollectorV0(gym.Wrapper):
         ), "'observation_space' is not allowed as an optional key."
         assert (
             "action_space" not in dataset_metadata.keys()
-        ), "'action_space' is not allowed as an optional key."        
+        ), "'action_space' is not allowed as an optional key."
         assert (
             "env_spec" not in dataset_metadata.keys()
         ), "'env_spec' is not allowed as an optional key."
@@ -300,14 +297,14 @@ class DataCollectorV0(gym.Wrapper):
                 os.path.join(self._storage.data_path, file),
                 os.path.join(path, file),
             )
-        
+
         self._episode_id = -1
         self._tmp_dir = tempfile.TemporaryDirectory(dir=self.datasets_path)
         self._storage = MinariStorage.new(
             self._tmp_dir.name,
             observation_space=self._storage.observation_space,
             action_space=self._storage.action_space,
-            env_spec=self.env.spec
+            env_spec=self.env.spec,
         )
 
     def close(self):

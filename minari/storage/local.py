@@ -77,10 +77,7 @@ def list_local_datasets(
         env_name, dataset_name, version = parse_dataset_id(dst_id)
         dataset = f"{env_name}-{dataset_name}"
         if latest_version:
-            if (
-                dataset not in local_datasets
-                or version > local_datasets[dataset][0]
-            ):
+            if dataset not in local_datasets or version > local_datasets[dataset][0]:
                 local_datasets[dataset] = (version, metadata)
         else:
             local_datasets[dst_id] = metadata

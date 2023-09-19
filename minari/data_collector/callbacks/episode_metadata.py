@@ -1,4 +1,5 @@
 from typing import Dict
+
 import numpy as np
 
 
@@ -18,12 +19,12 @@ class EpisodeMetadataCallback:
         Override this method to add custom attribute metadata to the episode group.
 
         Args:
-            eps_group (dict): the dict that contains an episode's data
+            episode (dict): the dict that contains an episode's data
         """
         return {
             "rewards_sum": np.sum(episode["rewards"]),
             "rewards_mean": np.mean(episode["rewards"]),
             "rewards_std": np.std(episode["rewards"]),
             "rewards_max": np.max(episode["rewards"]),
-            "rewards_min": np.min(episode["rewards"])
+            "rewards_min": np.min(episode["rewards"]),
         }

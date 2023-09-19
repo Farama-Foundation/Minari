@@ -19,7 +19,7 @@ STEP_DATA_KEYS = {
     "rewards",
     "truncations",
     "terminations",
-    "infos"
+    "infos",
 }
 
 
