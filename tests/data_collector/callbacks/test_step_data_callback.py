@@ -101,7 +101,7 @@ def test_data_collector_step_data_callback():
     assert dataset.spec.total_episodes == num_episodes
     assert len(dataset.episode_indices) == num_episodes
 
-    check_data_integrity(dataset._data, dataset.episode_indices)
+    check_data_integrity(dataset.storage, dataset.episode_indices)
 
     # check that the environment can be recovered from the dataset
     check_env_recovery_with_subset_spaces(

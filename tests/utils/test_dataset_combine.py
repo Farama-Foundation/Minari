@@ -119,28 +119,16 @@ def test_combine_datasets():
     if "cartpole-combined-test-v0" in local_datasets:
         minari.delete_dataset("cartpole-combined-test-v0")
 
-    # testing without creating a copy
     combined_dataset = combine_datasets(
         test_datasets, new_dataset_id="cartpole-combined-test-v0"
     )
+    assert test_datasets[1][0].id == 0
     assert isinstance(combined_dataset, MinariDataset)
     assert list(combined_dataset.spec.combined_datasets) == test_datasets_ids
     assert combined_dataset.spec.total_episodes == num_datasets * num_episodes
     assert combined_dataset.spec.total_steps == sum(
         d.spec.total_steps for d in test_datasets
     )
-    _check_env_recovery(gym.make("CartPole-v1"), combined_dataset)
-
-    _check_load_and_delete_dataset("cartpole-combined-test-v0")
-
-    # testing with copy
-    combined_dataset = combine_datasets(
-        test_datasets, new_dataset_id="cartpole-combined-test-v0", copy=True
-    )
-    assert isinstance(combined_dataset, MinariDataset)
-    assert list(combined_dataset.spec.combined_datasets) == test_datasets_ids
-    assert combined_dataset.spec.total_episodes == num_datasets * num_episodes
-    assert combined_dataset.spec.total_steps == sum(d.spec.total_steps for d in test_datasets)
     _check_env_recovery(gym.make("CartPole-v1"), combined_dataset)
 
     # deleting test datasets
@@ -171,32 +159,17 @@ def test_combine_datasets():
         minari.load_dataset(dataset_id) for dataset_id in test_datasets_ids
     ]
 
-    # testing without creating a copy
     combined_dataset = combine_datasets(
         test_datasets, new_dataset_id="cartpole-combined-test-v0"
-    )
-    assert combined_dataset.spec.env_spec.max_episode_steps is None
-    _check_load_and_delete_dataset("cartpole-combined-test-v0")
-
-    # testing with copy
-    combined_dataset = combine_datasets(
-        test_datasets, new_dataset_id="cartpole-combined-test-v0", copy=True
     )
     assert combined_dataset.spec.env_spec.max_episode_steps is None
     _check_load_and_delete_dataset("cartpole-combined-test-v0")
 
     # Check that we get max(max_episode_steps) when there is no max_episode_steps=None
     test_datasets.pop()
-    # testing without creating a copy
+
     combined_dataset = combine_datasets(
         test_datasets, new_dataset_id="cartpole-combined-test-v0"
-    )
-    assert combined_dataset.spec.env_spec.max_episode_steps == 10
-    _check_load_and_delete_dataset("cartpole-combined-test-v0")
-
-    # testing with copy
-    combined_dataset = combine_datasets(
-        test_datasets, new_dataset_id="cartpole-combined-test-v0", copy=True
     )
     assert combined_dataset.spec.env_spec.max_episode_steps == 10
     _check_load_and_delete_dataset("cartpole-combined-test-v0")

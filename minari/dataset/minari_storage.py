@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 import pathlib
 from collections import OrderedDict
-from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, Iterable, List, Optional, Sequence, Tuple, Union
 
 import gymnasium as gym
 from gymnasium.envs.registration import EnvSpec
@@ -241,34 +241,37 @@ class MinariStorage:
             file.attrs.modify("total_episodes", total_episodes)
             file.attrs.modify("total_steps", total_steps)
 
-    def update_from_storage(self, storage: MinariStorage, copy: bool = False):
+    def update_from_storage(self, storage: MinariStorage):
         """Update the dataset using another MinariStorage.
 
         Args:
             storage (MinariStorage): the other MinariStorage from which the data will be taken
-            copy (bool): whether to copy the data or create a link. Default value is false.
         """
+        if type(storage) != type(self):
+            # TODO: relax this constraint. In theory one can use MinariStorage API to udpate
+            raise ValueError(f"{type(self)} cannot update from {type(storage)}")
+
         with h5py.File(self._file_path, "a", track_order=True) as file:
             last_episode_id = file.attrs["total_episodes"]
             assert type(last_episode_id) == np.int64
             storage_total_episodes = storage.total_episodes
 
-            if copy:
-                for id in range(storage.total_episodes):
-                    episode = storage.get_episodes([id])
-                    episode[0].pop("id")
-                    episode[0].pop("total_timesteps")
-                    self.update_episodes(episode)
-            else:
-                for id in range(storage_total_episodes):
-                    file[f"episode_{last_episode_id + id}"] = h5py.ExternalLink(storage._file_path, f"/episode_{id}")
-                    file[f"episode_{last_episode_id + id}"].attrs.modify(  # TODO: check it doesn't modify original dataset
-                        "id", last_episode_id + id
-                    )             
-                file.attrs.modify("total_episodes", last_episode_id + storage_total_episodes)
-                total_steps = file.attrs["total_steps"]
-                assert type(total_steps) == np.int64
-                file.attrs.modify("total_steps", total_steps + storage.total_steps)
+            for id in range(storage.total_episodes):
+                with h5py.File(storage._file_path, "r", track_order=True) as storage_file:
+                    storage_file.copy(
+                            storage_file[f"episode_{id}"],
+                            file,
+                            name=f"episode_{last_episode_id + id}",
+                        )
+
+                file[f"episode_{last_episode_id + id}"].attrs.modify(
+                    "id", last_episode_id + id
+                )
+
+            file.attrs.modify("total_episodes", last_episode_id + storage_total_episodes)
+            total_steps = file.attrs["total_steps"]
+            assert type(total_steps) == np.int64
+            file.attrs.modify("total_steps", total_steps + storage.total_steps)
 
             storage_metadata = storage.metadata
             authors = [file.attrs.get("author"), storage_metadata.get("author")]
@@ -371,4 +374,5 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
             dshape = ()
             if hasattr(data[0], "shape"):
                 dshape = data[0].shape
+            
             episode_group.create_dataset(key, data=data, dtype=dtype, chunks=True, maxshape=(None, *dshape))

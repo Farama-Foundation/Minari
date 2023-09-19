@@ -203,7 +203,7 @@ class RandomPolicy:
 
 
 def combine_datasets(
-    datasets_to_combine: List[MinariDataset], new_dataset_id: str, copy: bool = False
+    datasets_to_combine: List[MinariDataset], new_dataset_id: str
 ):
     """Combine a group of MinariDataset in to a single dataset with its own name id.
 
@@ -213,7 +213,6 @@ def combine_datasets(
     Args:
         datasets_to_combine (list[MinariDataset]): list of datasets to be combined
         new_dataset_id (str): name id for the newly created dataset
-        copy (bool): whether to copy the data to a new dataset or to create a link
 
     Returns:
         combined_dataset (MinariDataset): the resulting MinariDataset
@@ -229,7 +228,6 @@ def combine_datasets(
         datasets_minari_version_specifiers
     )
 
-    
     new_dataset_path = get_dataset_path(new_dataset_id)
     new_dataset_path.mkdir()
     new_storage = MinariStorage.new(
@@ -246,7 +244,7 @@ def combine_datasets(
     })
 
     for dataset in datasets_to_combine:
-        new_storage.update_from_storage(dataset.storage, copy=copy)      
+        new_storage.update_from_storage(dataset.storage)      
 
     return MinariDataset(new_storage)
 

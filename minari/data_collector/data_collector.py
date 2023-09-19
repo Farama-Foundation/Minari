@@ -7,6 +7,7 @@ from typing import Any, Dict, List, Optional, SupportsFloat, Type, Union
 
 import gymnasium as gym
 from gymnasium.core import ActType, ObsType
+import numpy as np
 
 from minari.data_collector.callbacks import (
     STEP_DATA_KEYS,
@@ -14,6 +15,7 @@ from minari.data_collector.callbacks import (
     StepData,
     StepDataCallback,
 )
+from minari.dataset.minari_dataset import MinariDataset
 from minari.dataset.minari_storage import MinariStorage
 
 
@@ -99,7 +101,6 @@ class DataCollectorV0(gym.Wrapper):
             os.makedirs(self.datasets_path)
 
         self._tmp_dir = tempfile.TemporaryDirectory(dir=self.datasets_path)
-        assert self.env.spec is not None, "Env Spec is None"
         self._storage = MinariStorage.new(
             self._tmp_dir.name,
             observation_space=observation_space,
@@ -242,13 +243,38 @@ class DataCollectorV0(gym.Wrapper):
                 self._episode_id -= 1
             elif not self._buffer[-1]["terminations"][-1]:
                 self._buffer[-1]["truncations"][-1] = True
+    
+    def add_to_dataset(self, dataset: MinariDataset):
+        """Add extra data to Minari dataset from collector environment buffers (DataCollectorV0).
+
+        Args:
+            dataset (MinariDataset): Dataset to add the data
+        """
+        self._validate_buffer()
+        self._storage.update_episodes(self._buffer)
+        self._buffer.clear()
+
+        first_id = dataset.storage.total_episodes
+        dataset.storage.update_from_storage(self._storage)
+        if dataset.episode_indices is not None:
+            new_ids = first_id + np.arange(self._storage.total_episodes)
+            dataset.episode_indices = np.append(dataset.episode_indices, new_ids)
+        
+        self._episode_id = -1
+        self._tmp_dir = tempfile.TemporaryDirectory(dir=self.datasets_path)
+        self._storage = MinariStorage.new(
+            self._tmp_dir.name,
+            observation_space=self._storage.observation_space,
+            action_space=self._storage.action_space,
+            env_spec=self.env.spec
+        )
 
     def save_to_disk(self, path: str, dataset_metadata: Dict[str, Any] = {}):
-        """Save all in-memory buffer data and move temporary HDF5 file to a permanent location in disk.
+        """Save all in-memory buffer data and move temporary files to a permanent location in disk.
 
         Args:
             path (str): path to store the dataset, e.g.: '/home/foo/datasets/data'
-            dataset_metadata (Dict, optional): additional metadata to add to HDF5 dataset file as attributes. Defaults to {}.
+            dataset_metadata (Dict, optional): additional metadata to add to the dataset file. Defaults to {}.
         """
         self._validate_buffer()
         self._storage.update_episodes(self._buffer)
@@ -275,8 +301,14 @@ class DataCollectorV0(gym.Wrapper):
                 os.path.join(path, file),
             )
         
-        # Reset episode count
-        self._episode_id = 0
+        self._episode_id = -1
+        self._tmp_dir = tempfile.TemporaryDirectory(dir=self.datasets_path)
+        self._storage = MinariStorage.new(
+            self._tmp_dir.name,
+            observation_space=self._storage.observation_space,
+            action_space=self._storage.action_space,
+            env_spec=self.env.spec
+        )
 
     def close(self):
         """Close the DataCollector.
@@ -285,8 +317,5 @@ class DataCollectorV0(gym.Wrapper):
         """
         super().close()
 
-        # Clear buffer
         self._buffer.clear()
-
-        # Close tmp_dataset.hdf5
         shutil.rmtree(self._tmp_dir.name)

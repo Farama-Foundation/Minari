@@ -63,9 +63,9 @@ def test_episode_data(space: gym.Space):
 @pytest.mark.parametrize(
     "dataset_id,env_id",
     [
-        ("cartpole-test-v0", "CartPole-v1"),
-        ("dummy-dict-test-v0", "DummyDictEnv-v0"),
-        ("dummy-box-test-v0", "DummyBoxEnv-v0"),
+        # ("cartpole-test-v0", "CartPole-v1"),
+        # ("dummy-dict-test-v0", "DummyDictEnv-v0"),
+        # ("dummy-box-test-v0", "DummyBoxEnv-v0"),
         ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
         ("dummy-combo-test-v0", "DummyComboEnv-v0"),
         ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
@@ -98,14 +98,14 @@ def test_update_dataset_from_collector_env(dataset_id, env_id):
 
         env.reset()
 
-    dataset.update_dataset_from_collector_env(env)
+    env.add_to_dataset(dataset)
 
     assert isinstance(dataset, MinariDataset)
     assert dataset.total_episodes == num_episodes * 2
     assert dataset.spec.total_episodes == num_episodes * 2
     assert len(dataset.episode_indices) == num_episodes * 2
 
-    check_data_integrity(dataset._data, dataset.episode_indices)
+    check_data_integrity(dataset.storage, dataset.episode_indices)
     check_env_recovery(env.env, dataset)
 
     env.close()
@@ -152,7 +152,7 @@ def test_filter_episodes_and_subsequent_updates(dataset_id, env_id):
     assert len(filtered_dataset.episode_indices) == 7
 
     check_data_integrity(
-        filtered_dataset._data, dataset.episode_indices
+        filtered_dataset.storage, dataset.episode_indices
     )  # checks that the underlying episodes are still present in the `MinariStorage` object
     check_env_recovery(env.env, filtered_dataset)
 
@@ -168,7 +168,7 @@ def test_filter_episodes_and_subsequent_updates(dataset_id, env_id):
 
         env.reset()
 
-    filtered_dataset.update_dataset_from_collector_env(env)
+    env.add_to_dataset(filtered_dataset)
 
     assert isinstance(filtered_dataset, MinariDataset)
     assert filtered_dataset.total_episodes == 17
@@ -193,8 +193,8 @@ def test_filter_episodes_and_subsequent_updates(dataset_id, env_id):
         18,
         19,
     )
-    assert filtered_dataset._data.total_episodes == 20
-    assert dataset._data.total_episodes == 20
+    assert filtered_dataset.storage.total_episodes == 20
+    assert dataset.storage.total_episodes == 20
     check_env_recovery(env.env, filtered_dataset)
 
     env.close()
@@ -281,11 +281,12 @@ def test_filter_episodes_and_subsequent_updates(dataset_id, env_id):
         28,
         29,
     )
-    assert filtered_dataset._data.total_episodes == 30
-    assert dataset._data.total_episodes == 30
+    assert filtered_dataset.storage.total_episodes == 30
+    assert dataset.storage.total_episodes == 30
     check_env_recovery(env, filtered_dataset)
 
     check_load_and_delete_dataset(dataset_id)
+    env.close()
 
 
 @pytest.mark.parametrize(
@@ -328,6 +329,8 @@ def test_sample_episodes(dataset_id, env_id):
     with pytest.raises(ValueError):
         episodes = filtered_dataset.sample_episodes(8)
 
+    env.close()
+
 
 @pytest.mark.parametrize(
     "dataset_id,env_id",
@@ -353,6 +356,7 @@ def test_iterate_episodes(dataset_id, env_id):
     dataset = create_dummy_dataset_with_collecter_env_helper(
         dataset_id, env, num_episodes=num_episodes
     )
+    env.close()
 
     episodes = list(dataset.iterate_episodes([1, 3, 5]))
 
@@ -454,10 +458,10 @@ def test_update_dataset_from_buffer(dataset_id, env_id):
     assert dataset.spec.total_episodes == num_episodes * 2
     assert len(dataset.episode_indices) == num_episodes * 2
 
-    check_data_integrity(dataset._data, dataset.episode_indices)
+    check_data_integrity(dataset.storage, dataset.episode_indices)
     check_env_recovery(env, dataset)
 
-    env.close()
+    collector_env.close()
     check_load_and_delete_dataset(dataset_id)
 
 

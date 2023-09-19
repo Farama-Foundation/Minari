@@ -73,7 +73,7 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
     assert dataset.spec.total_episodes == num_episodes
     assert len(dataset.episode_indices) == num_episodes
 
-    check_data_integrity(dataset._data, dataset.episode_indices)
+    check_data_integrity(dataset.storage, dataset.episode_indices)
 
     # check that the environment can be recovered from the dataset
     check_env_recovery(env.env, dataset)

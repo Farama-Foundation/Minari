@@ -52,7 +52,7 @@ def parse_dataset_id(dataset_id: str) -> tuple[str | None, str, int]:
 class MinariDatasetSpec:
     env_spec: EnvSpec
     total_episodes: int
-    total_steps: int
+    total_steps: np.int64
     dataset_id: str
     combined_datasets: List[str]
     observation_space: gym.Space
@@ -92,6 +92,11 @@ class MinariDataset:
             self._data = MinariStorage(data)
         else:
             raise ValueError(f"Unrecognized type {type(data)} for data")
+
+        if episode_indices is None:
+            episode_indices = np.arange(self._data.total_episodes)        
+        self._episode_indices: np.ndarray = episode_indices
+        self._total_steps = None
 
         metadata = self._data.metadata
 
@@ -133,35 +138,6 @@ class MinariDataset:
         self._observation_space = observation_space
         self._action_space = action_space
 
-        if episode_indices is None:
-            total_episodes = metadata["total_episodes"]
-            episode_indices = np.arange(total_episodes)
-            total_steps = metadata["total_steps"]
-        else:
-            total_steps = sum(
-                self._data.apply(
-                    lambda episode: episode["total_timesteps"],
-                    episode_indices=episode_indices,
-                )
-            )
-        
-        assert isinstance(episode_indices, np.ndarray)
-        self._episode_indices: np.ndarray = episode_indices
-        self._total_steps = total_steps
-
-        assert self._episode_indices is not None
-
-        self.spec = MinariDatasetSpec(
-            env_spec=self.env_spec,
-            total_episodes=self._episode_indices.size,
-            total_steps=total_steps,
-            dataset_id=self.id,
-            combined_datasets=self.combined_datasets,
-            observation_space=self.observation_space,
-            action_space=self.action_space,
-            data_path=str(self._data.data_path),
-            minari_version=str(self.minari_version),
-        )
         self._generator = np.random.default_rng()
 
     def recover_environment(self) -> gym.Env:
@@ -196,12 +172,12 @@ class MinariDataset:
         def dict_to_episode_data_condition(episode: dict) -> bool:
             return condition(EpisodeData(**episode))
 
-        mask = self._data.apply(
-            dict_to_episode_data_condition, episode_indices=self._episode_indices
+        mask = self.storage.apply(
+            dict_to_episode_data_condition, episode_indices=self.episode_indices
         )
-        assert self._episode_indices is not None
-        filtered_indices = self._episode_indices[list(mask)]
-        return MinariDataset(self._data, episode_indices=filtered_indices)
+        assert self.episode_indices is not None
+        filtered_indices = self.episode_indices[list(mask)]
+        return MinariDataset(self.storage, episode_indices=filtered_indices)
 
     def sample_episodes(self, n_episodes: int) -> Iterable[EpisodeData]:
         """Sample n number of episodes from the dataset.
@@ -212,7 +188,7 @@ class MinariDataset:
         indices = self._generator.choice(
             self.episode_indices, size=n_episodes, replace=False
         )
-        episodes = self._data.get_episodes(indices)
+        episodes = self.storage.get_episodes(indices)
         return list(map(lambda data: EpisodeData(**data), episodes))
 
     def iterate_episodes(
@@ -231,47 +207,8 @@ class MinariDataset:
         assert episode_indices is not None
 
         for episode_index in episode_indices:
-            data = self._data.get_episodes([episode_index])[0]
+            data = self.storage.get_episodes([episode_index])[0]
             yield EpisodeData(**data)
-
-    # def update_dataset_from_collector_env(self, collector_env: DataCollectorV0):
-    #     """Add extra data to Minari dataset from collector environment buffers (DataCollectorV0).
-
-    #     This method can be used as a checkpoint when creating a dataset.
-    #     A new HDF5 file will be created with the new dataset file in the same directory as `main_data.hdf5` called
-    #     `additional_data_i.hdf5`. Both datasets are joined together by creating external links to each additional
-    #     episode group: https://docs.h5py.org/en/stable/high/group.html#external-links
-
-    #     Args:
-    #         collector_env (DataCollectorV0): Collector environment
-    #     """
-    #     # check that collector env has the same characteristics as self._env_spec
-    #     new_data_file_path = os.path.join(
-    #         os.path.split(self.spec.data_path)[0],
-    #         f"additional_data_{self._additional_data_id}.hdf5",
-    #     )
-
-    #     old_total_episodes = self._data.total_episodes
-
-    #     self._data.update_from_collector_env(
-    #         collector_env, new_data_file_path, self._additional_data_id
-    #     )
-
-    #     new_total_episodes = self._data._total_episodes
-
-    #     self._additional_data_id += 1
-
-    #     self._episode_indices = np.append(
-    #         self._episode_indices, np.arange(old_total_episodes, new_total_episodes)
-    #     )  # ~= np.append(self._episode_indices,np.arange(self._data.total_episodes))
-
-    #     self.spec.total_episodes = self._episode_indices.size
-    #     self.spec.total_steps = sum(
-    #         self._data.apply(
-    #             lambda episode: episode["total_timesteps"],
-    #             episode_indices=self._episode_indices,
-    #         )
-    #     )
 
     def update_dataset_from_buffer(self, buffer: List[dict]):
         """Additional data can be added to the Minari Dataset from a list of episode dictionary buffers.
@@ -288,29 +225,15 @@ class MinariDataset:
         Args:
             buffer (list[dict]): list of episode dictionary buffers to add to dataset
         """
-        old_total_episodes = self._data.total_episodes
-        self._data.update_episodes(buffer)
-        new_total_episodes = self._data.total_episodes
-
-        self._episode_indices = np.append(
-            self._episode_indices, np.arange(old_total_episodes, new_total_episodes)
-        )  # ~= np.append(self._episode_indices,np.arange(self._data.total_episodes))
-
-        self.spec.total_episodes = self._episode_indices.size
-
-        # TODO: avoid this
-        self.spec.total_steps = sum(
-            self._data.apply(
-                lambda episode: episode["total_timesteps"],
-                episode_indices=self._episode_indices,
-            )
-        )
+        first_id = self.storage.total_episodes
+        self.storage.update_episodes(buffer)
+        self.episode_indices = np.append(self.episode_indices, first_id + np.arange(len(buffer)))
 
     def __iter__(self):
         return self.iterate_episodes()
 
     def __getitem__(self, idx: int) -> EpisodeData:
-        episodes_data = self._data.get_episodes([self.episode_indices[idx]])
+        episodes_data = self.storage.get_episodes([self.episode_indices[idx]])
         assert len(episodes_data) == 1
         return EpisodeData(**episodes_data[0])
 
@@ -322,14 +245,29 @@ class MinariDataset:
         return len(self.episode_indices)
 
     @property
-    def total_steps(self) -> int:
+    def total_steps(self) -> np.int64:
         """Total episodes steps in the Minari dataset."""
-        return int(self._total_steps)
+        if self._total_steps is None:
+            if self.episode_indices is None:
+                self._total_steps = self.storage.total_steps
+            else:
+                self._total_steps = sum(
+                    self.storage.apply(
+                        lambda episode: episode["total_timesteps"],
+                        episode_indices=self.episode_indices,
+                    )
+                )
+        return np.int64(self._total_steps)
 
     @property
     def episode_indices(self) -> np.ndarray:
         """Indices of the available episodes to sample within the Minari dataset."""
         return self._episode_indices
+    
+    @episode_indices.setter
+    def episode_indices(self, new_value: np.ndarray):
+        self._total_steps = None  # invalidate cache
+        self._episode_indices = new_value
 
     @property
     def observation_space(self):
@@ -368,3 +306,17 @@ class MinariDataset:
     def storage(self) -> MinariStorage:
         """MinariStorage managing access to disk."""
         return self._data
+    
+    @property
+    def spec(self) -> MinariDatasetSpec:
+        return MinariDatasetSpec(
+            env_spec=self.env_spec,
+            total_episodes=self._episode_indices.size,
+            total_steps=self.total_steps,
+            dataset_id=self.id,
+            combined_datasets=self.combined_datasets,
+            observation_space=self.observation_space,
+            action_space=self.action_space,
+            data_path=str(self.storage.data_path),
+            minari_version=str(self.minari_version),
+        )

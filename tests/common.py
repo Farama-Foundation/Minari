@@ -578,7 +578,6 @@ def create_dummy_dataset_with_collecter_env_helper(
         author="WillDudley",
         author_email="wdudley@farama.org",
     )
-    env.close()
 
     assert dataset_id in minari.list_local_datasets()
     return dataset
