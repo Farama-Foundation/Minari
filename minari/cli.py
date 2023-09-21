@@ -39,6 +39,8 @@ def _show_dataset_table(datasets, table_title):
     for dst_metadata in datasets.values():
         author = dst_metadata.get("author", "Unknown")
         dataset_size = dst_metadata.get("dataset_size", "Unknown")
+        if dataset_size != "Unknown":
+            dataset_size = f"{str(dataset_size)} MB"
         author_email = dst_metadata.get("author_email", "Unknown")
 
         assert isinstance(dst_metadata["dataset_id"], str)

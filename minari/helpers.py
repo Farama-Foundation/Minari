@@ -34,6 +34,6 @@ def get_dataset_size(dataset_id: str):
             if ".hdf5" in blob.name:
                 datasize_list.append(bucket.get_blob(blob.name).size)
 
-    datasize = np.sum(datasize_list) / 1000000
+    datasize = int(np.sum(datasize_list) / 1000000)
 
     return datasize
