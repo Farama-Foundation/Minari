@@ -18,8 +18,7 @@ from packaging.version import Version
 
 from minari import DataCollectorV0
 from minari.dataset.minari_dataset import MinariDataset
-from minari.dataset.minari_storage import clear_episode_buffer
-from minari.helpers import get_dataset_size
+from minari.dataset.minari_storage import clear_episode_buffer, get_dataset_size
 from minari.serialization import serialize_space
 from minari.storage.datasets_root_dir import get_dataset_path
 
@@ -628,12 +627,10 @@ def create_dataset_from_collector_env(
                     "num_episodes_average_score": num_episodes_average_score,
                 }
             )
-        dataset_size = get_dataset_size(dataset_id)
         collector_env.save_to_disk(
             data_path,
             dataset_metadata={
                 "dataset_id": str(dataset_id),
-                "dataset_size": str(dataset_size),
                 "algorithm_name": str(algorithm_name),
                 "author": str(author),
                 "author_email": str(author_email),
@@ -641,6 +638,9 @@ def create_dataset_from_collector_env(
                 "minari_version": minari_version,
             },
         )
+        with h5py.File(data_path, "r+", track_order=True) as file:
+            file.attrs["dataset_size"] = get_dataset_size(dataset_id)
+
         return MinariDataset(data_path)
     else:
         raise ValueError(
