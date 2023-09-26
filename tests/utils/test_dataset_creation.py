@@ -327,7 +327,7 @@ def test_generate_dataset_with_buffer_incomplete_traj():
                 [_obs_i, _act_i, _rwd_i, _term_i, _trunc_i],
             )
 
-        # last episoode manually change the last truncation and termination to False to verify
+        # in the last episode, manually change the last truncation and termination to False to verify
         if episode == num_episodes - 1:
             terminations[-1] = False
             truncations[-1] = False
