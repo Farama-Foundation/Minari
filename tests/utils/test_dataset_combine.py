@@ -239,7 +239,7 @@ def test_combine_dataset_with_different_metadata():
     n_data = 2
     dataset_list = []
     for i in range(n_data):
-        dataset_id = f'cartpole-test-{i}-v0'
+        dataset_id = f"cartpole-test-{i}-v0"
         env = gym.make("CartPole-v1", max_episode_steps=500)
         env = DataCollectorV0(env)
         env.reset(seed=42)
@@ -266,13 +266,12 @@ def test_combine_dataset_with_different_metadata():
 
     combined_dataset = combine_datasets(dataset_list, new_dataset_id="cartpole-combined-test-v0")
     with h5py.File(combined_dataset.spec.data_path) as dt_file:
-        assert dt_file.attrs['algorithm_name'] == 'random_policy' + str(i)
-        assert dt_file.attrs['code_permalink'] == "https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py" + str(i)
-        assert dt_file.attrs['author'] == "WillDudley" + str(i)
-        assert dt_file.attrs['author_email'] == "wdudley@farama.org" + str(i)
+        assert dt_file.attrs["algorithm_name"] == "random_policy" + str(n_data - 1)
+        assert dt_file.attrs["code_permalink"] == "https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py" + str(n_data - 1)
+        assert dt_file.attrs["author"] == "WillDudley" + str(n_data - 1)
+        assert dt_file.attrs["author_email"] == "wdudley@farama.org" + str(n_data - 1)
 
     for i in range(n_data):
-        minari.delete_dataset(f'cartpole-test-{i}-v0')
-    minari.delete_dataset('cartpole-combined-test-v0')
+        minari.delete_dataset(f"cartpole-test-{i}-v0")
+    minari.delete_dataset("cartpole-combined-test-v0")
     return
-
