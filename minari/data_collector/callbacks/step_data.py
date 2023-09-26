@@ -1,5 +1,5 @@
 from typing import Any, Dict, Optional
-from typing_extensions import TypedDict
+from typing import TypedDict
 
 import gymnasium as gym
 
