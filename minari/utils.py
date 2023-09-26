@@ -289,10 +289,6 @@ def combine_datasets(
                         combined_data_file.attrs.modify(
                             optional_parameter, dataset_file.attrs[optional_parameter]
                         )
-                # combined_data_file.attrs.modify("author", dataset_file.attrs["author"])
-                # combined_data_file.attrs.modify(
-                #     "author_email", dataset_file.attrs["author_email"]
-                # )
 
         assert combined_dataset_env_spec is not None
         combined_data_file.attrs["env_spec"] = combined_dataset_env_spec.to_json()
@@ -637,10 +633,6 @@ def create_dataset_from_collector_env(
         data_path = os.path.join(dataset_path, "main_data.hdf5")
         dataset_metadata: Dict[str, Any] = {
             "dataset_id": str(dataset_id),
-            # "algorithm_name": str(algorithm_name),
-            # "author": str(author),
-            # "author_email": str(author_email),
-            # "code_permalink": str(code_permalink),
             "minari_version": minari_version,
         }
 

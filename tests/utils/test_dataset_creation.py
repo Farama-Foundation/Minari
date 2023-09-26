@@ -6,6 +6,7 @@ import gymnasium as gym
 import numpy as np
 import pytest
 from gymnasium import spaces
+import h5py
 
 import minari
 from minari import DataCollectorV0, MinariDataset
@@ -71,6 +72,13 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
         author="WillDudley",
         author_email="wdudley@farama.org",
     )
+
+    # test metadata
+    with h5py.File(dataset.spec.data_path, 'r') as data_file:
+        assert data_file.attrs['algorithm_name'] == 'random_policy'
+        assert data_file.attrs['code_permalink'] == "https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py"
+        assert data_file.attrs['author'] == 'WillDudley'
+        assert data_file.attrs['author_email'] == "wdudley@farama.org"
 
     assert isinstance(dataset, MinariDataset)
     assert dataset.total_episodes == num_episodes
@@ -278,6 +286,13 @@ def test_generate_dataset_with_space_subset_external_buffer():
         action_space=action_space_subset,
         observation_space=observation_space_subset,
     )
+
+    # test metadata
+    with h5py.File(dataset.spec.data_path, 'r') as data_file:
+        assert data_file.attrs['algorithm_name'] == 'random_policy'
+        assert data_file.attrs['code_permalink'] == "https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py"
+        assert data_file.attrs['author'] == 'WillDudley'
+        assert data_file.attrs['author_email'] == "wdudley@farama.org"
 
     assert isinstance(dataset, MinariDataset)
     assert dataset.total_episodes == num_episodes
