@@ -62,9 +62,9 @@ def test_episode_data(space: gym.Space):
 @pytest.mark.parametrize(
     "dataset_id,env_id",
     [
-        # ("cartpole-test-v0", "CartPole-v1"),
-        # ("dummy-dict-test-v0", "DummyDictEnv-v0"),
-        # ("dummy-box-test-v0", "DummyBoxEnv-v0"),
+        ("cartpole-test-v0", "CartPole-v1"),
+        ("dummy-dict-test-v0", "DummyDictEnv-v0"),
+        ("dummy-box-test-v0", "DummyBoxEnv-v0"),
         ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
         ("dummy-combo-test-v0", "DummyComboEnv-v0"),
         ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
