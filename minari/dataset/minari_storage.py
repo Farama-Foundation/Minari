@@ -87,7 +87,7 @@ class MinariStorage:
         return obj
 
     @property
-    def metadata(self) -> Dict:
+    def metadata(self) -> Dict[str, Any]:
         """Metadata of the dataset."""
         metadata = {}
         with h5py.File(self._file_path, "r") as file:

@@ -7,7 +7,6 @@ import warnings
 from typing import Any, Callable, Dict, List, Optional, Union
 
 import gymnasium as gym
-import h5py
 import numpy as np
 import portion as P
 from gymnasium.core import ActType, ObsType
@@ -561,9 +560,7 @@ def create_dataset_from_collector_env(
     return MinariDataset(dataset_path)
 
 
-def get_normalized_score(
-    dataset: MinariDataset, returns: Union[float, np.float32]
-) -> Union[float, np.float32]:
+def get_normalized_score(dataset: MinariDataset, returns: np.ndarray) -> np.ndarray:
     r"""Normalize undiscounted return of an episode.
 
     This function was originally provided in the `D4RL repository <https://github.com/Farama-Foundation/D4RL/blob/71a9549f2091accff93eeff68f1f3ab2c0e0a288/d4rl/offline_env.py#L71>`_.
@@ -579,20 +576,17 @@ def get_normalized_score(
 
     Args:
         dataset (MinariDataset): the MinariDataset with respect to which normalize the score. Must contain the reference score attributes `ref_min_score` and `ref_max_score`.
-        returns (float | np.float32): a single value or array of episode undiscounted returns to normalize.
+        returns (np.ndarray): a single value or array of episode undiscounted returns to normalize.
 
     Returns:
         normalized_scores
     """
-    with h5py.File(dataset.spec.data_path, "r") as f:
-        ref_min_score = f.attrs.get("ref_min_score", default=None)
-        ref_max_score = f.attrs.get("ref_max_score", default=None)
+    ref_min_score = dataset.storage.metadata.get("ref_min_score")
+    ref_max_score = dataset.storage.metadata.get("ref_max_score")
+
     if ref_min_score is None or ref_max_score is None:
         raise ValueError(
             f"Reference score not provided for dataset {dataset.spec.dataset_id}. Can't compute the normalized score."
         )
-
-    assert isinstance(ref_min_score, float)
-    assert isinstance(ref_max_score, float)
 
     return (returns - ref_min_score) / (ref_max_score - ref_min_score)

@@ -549,7 +549,7 @@ def check_load_and_delete_dataset(dataset_id: str):
 
 
 def create_dummy_dataset_with_collecter_env_helper(
-    dataset_id: str, env: DataCollectorV0, num_episodes: int = 10
+    dataset_id: str, env: DataCollectorV0, num_episodes: int = 10, **kwargs
 ):
     local_datasets = minari.list_local_datasets()
     if dataset_id in local_datasets:
@@ -572,9 +572,10 @@ def create_dummy_dataset_with_collecter_env_helper(
         dataset_id=dataset_id,
         collector_env=env,
         algorithm_name="random_policy",
-        code_permalink="https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
+        code_permalink="https://github.com/Farama-Foundation/Minari/blob/main/tests/common.py",
         author="WillDudley",
         author_email="wdudley@farama.org",
+        **kwargs,
     )
 
     assert dataset_id in minari.list_local_datasets()
