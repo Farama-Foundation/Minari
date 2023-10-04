@@ -284,7 +284,13 @@ def combine_datasets(
 
             # TODO: list of authors, and emails
             with h5py.File(dataset.spec.data_path, "r") as dataset_file:
-                for optional_parameter in ['author', 'author_email', 'code_permalink', 'algorithm_name']:
+                attr_list = [
+                    "author",
+                    "author_email",
+                    "code_permalink",
+                    "algorithm_name",
+                ]
+                for optional_parameter in attr_list:
                     if optional_parameter in dataset_file.attrs:
                         combined_data_file.attrs.modify(
                             optional_parameter, dataset_file.attrs[optional_parameter]
