@@ -1,5 +1,4 @@
-from typing import Any, Dict, Optional
-from typing import TypedDict
+from typing import Any, Dict, Optional, TypedDict
 
 import gymnasium as gym
 
