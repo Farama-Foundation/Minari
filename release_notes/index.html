@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js" lang="en" data-content_root="../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark">
@@ -11,18 +11,18 @@
 <link rel="index" title="Index" href="../genindex/" /><link rel="search" title="Search" href="../search/" /><link rel="prev" title="Mixed" href="../datasets/kitchen/mixed/" />
         <link rel="canonical" href="https://minari.farama.org/release_notes/index.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.png"/><!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20.dev1 -->
+    <link rel="shortcut icon" href="../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
         <title>Release Notes - Minari Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?digest=a022fd11c0d7e10ac71ac296890386cea7a2fa24" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?digest=093e2efd5a2c7b46ab7c7157e45f5f05a1e0a463" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/termynal.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/directory_tree.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=3e7f4c72" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=61a4c737" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=ca3c1c84" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=e5fbc548" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=49cbaffd" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/termynal.css?v=d6ad0c61" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom.css?v=befa2ef3" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/directory_tree.css?v=2ab1fc38" />
     
     
 
@@ -60,18 +60,6 @@
               <line x1="0.232" y1="12" x2="23.5" y2="12"></line>
               <line x1="0.232" y1="20" x2="23.5" y2="20"></line>
             </svg>
-            <!-- <svg viewBox="0 0 24 24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <line x1="0.5" y1="4.5" x2="23.5" y2="4.5" style="fill: none; "></line>
-              <line x1="0.5" y1="12" x2="14" y2="12" ></line>
-              <line x1="0.5" y1="19.5" x2="23.5" y2="19.5"></line>
-              <polyline style="stroke-width: 0px;" points="17 7 22 12 17 17"></polyline>
-            </svg> -->
-            <!-- <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:20px">
-              <defs></defs>
-              <rect y="1" width="22" height="22" rx="2" ry="2" style="fill: none;" x="1"></rect>
-              <line x1="8" y1="1" x2="8" y2="23"></line>
-              <polyline style="stroke-linecap: round; fill: none; stroke-linejoin: round;" points="13 7 17 12 13 17"></polyline>
-            </svg> -->
           </label>
         </div>
         <div class="farama-header__left farama-header__center--mobile">
@@ -366,14 +354,33 @@
           <article role="main">
             
             <section id="release-notes">
-<h1>Release Notes<a class="headerlink" href="#release-notes" title="Permalink to this heading">#</a></h1>
+<h1>Release Notes<a class="headerlink" href="#release-notes" title="Link to this heading">#</a></h1>
+<section id="release-v0-4-2">
+<h2>v0.4.2<a class="headerlink" href="#release-v0-4-2" title="Link to this heading">#</a></h2>
+<p><em>Released on 2023-10-09 - <a class="reference external" href="https://github.com/Farama-Foundation/Minari/releases/tag/v0.4.2">GitHub</a> - <a class="reference external" href="https://pypi.org/project/minari/v0.4.2/">PyPI</a></em></p>
+<h2>Minari 0.4.2 Release Notes</h2>
+<ul>
+<li>Ruggedizes list_local_datasets and adds basic tests for CLI by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/grahamannett/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/grahamannett">@grahamannett</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1827784463" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/126" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/126/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/126">#126</a></li>
+<li>Fix actions with noise type and value needs to be within (low,high) by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/grahamannett/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/grahamannett">@grahamannett</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1828102440" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/128" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/128/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/128">#128</a></li>
+<li>Load dataset with download option by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/grahamannett/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/grahamannett">@grahamannett</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1837527400" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/130" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/130/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/130">#130</a></li>
+<li>Improve speed of list_remote_datasets by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/balisujohn/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/balisujohn">@balisujohn</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1817308795" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/124" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/124/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/124">#124</a></li>
+<li>Improve MinariDataset sampling speed, fixes total_steps bug and adds test coverage by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/balisujohn/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/balisujohn">@balisujohn</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1830252205" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/129" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/129/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/129">#129</a></li>
+<li>Update issue template by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/younik/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/younik">@younik</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1882203074" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/139" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/139/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/139">#139</a></li>
+<li>Loose typing_extensions dependency by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/im-Kitsch/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/im-Kitsch">@im-Kitsch</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1913981171" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/148" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/148/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/148">#148</a></li>
+</ul>
+<h2>New Contributors</h2>
+<ul>
+<li><a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/grahamannett/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/grahamannett">@grahamannett</a> made their first contribution in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1827784463" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/126" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/126/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/126">#126</a></li>
+<li><a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/im-Kitsch/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/im-Kitsch">@im-Kitsch</a> made their first contribution in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1913981171" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/148" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/148/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/148">#148</a></li>
+</ul>
+<p><strong>Full Changelog</strong>: <a class="commit-link" href="https://github.com/Farama-Foundation/Minari/compare/v0.4.1...v0.4.2"><tt>v0.4.1...v0.4.2</tt></a></p></section>
 <section id="release-v0-4-1">
-<h2>v0.4.1<a class="headerlink" href="#release-v0-4-1" title="Permalink to this heading">#</a></h2>
+<h2>v0.4.1<a class="headerlink" href="#release-v0-4-1" title="Link to this heading">#</a></h2>
 <p><em>Released on 2023-07-19 - <a class="reference external" href="https://github.com/Farama-Foundation/Minari/releases/tag/v0.4.1">GitHub</a> - <a class="reference external" href="https://pypi.org/project/minari/v0.4.1/">PyPI</a></em></p>
 <h1>v0.4.1 Release Notes</h1>
 <p>Bugfix: Adds <code>packaging</code> as a dependency for Minari in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1812021795" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/121" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/121/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/121">#121</a>.</p></section>
 <section id="release-v0-4-0">
-<h2>v0.4.0<a class="headerlink" href="#release-v0-4-0" title="Permalink to this heading">#</a></h2>
+<h2>v0.4.0<a class="headerlink" href="#release-v0-4-0" title="Link to this heading">#</a></h2>
 <p><em>Released on 2023-07-19 - <a class="reference external" href="https://github.com/Farama-Foundation/Minari/releases/tag/v0.4.0">GitHub</a> - <a class="reference external" href="https://pypi.org/project/minari/v0.4.0/">PyPI</a></em></p>
 <h1>v0.4.0 Release Notes</h1>
 <p>Important changes from this PR include the move away from observation and action flattening, the move to explicitly and fully support <code>Dict</code>, <code>Tuple</code>, <code>Box</code>, <code>Discrete</code>, and <code>Text</code> spaces, and the move to explicit dataset versioning. Additionally, we have added support for using a subset of an environment's action/observation spaces when creating a dataset.</p>
@@ -409,27 +416,27 @@
     }
 )</pre></div>
 <p>and the action space is <code>Box</code> space, the resulting <code>HDF5</code> file will end up looking as follows:</p>
-<p><g-emoji class="g-emoji" alias="page_facing_up" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c4.png">📄</g-emoji> main_data.hdf5<br>
-├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> episode_0<br>
-│   ├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> observations<br>
-│   │   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> component_1<br>
-│   │   └ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> component_2<br>
-│   │      ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> subcomponent_1<br>
-│   │      └ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> subcomponent_2<br>
-│   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> actions<br>
-│   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> terminations<br>
-│   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> truncations<br>
-│   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> rewards<br>
-│   ├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> infos<br>
-│   │   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> infos_datasets<br>
-│   │   └ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> infos_subgroup<br>
-│   │      └ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> more_datasets<br>
-│   └ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> additional_groups<br>
-│       └ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> additional_datasets<br>
-├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> episode_1<br>
-├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> episode_2<br>
+<p>📄 main_data.hdf5<br>
+├ 📁 episode_0<br>
+│   ├ 📁 observations<br>
+│   │   ├ 💾 component_1<br>
+│   │   └ 📁 component_2<br>
+│   │      ├ 💾 subcomponent_1<br>
+│   │      └ 💾 subcomponent_2<br>
+│   ├ 💾 actions<br>
+│   ├ 💾 terminations<br>
+│   ├ 💾 truncations<br>
+│   ├ 💾 rewards<br>
+│   ├ 📁 infos<br>
+│   │   ├ 💾 infos_datasets<br>
+│   │   └ 📁 infos_subgroup<br>
+│   │      └ 💾 more_datasets<br>
+│   └ 📁 additional_groups<br>
+│       └ 💾 additional_datasets<br>
+├ 📁 episode_1<br>
+├ 📁 episode_2<br>
 │<br>
-└ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> last_episode_id</p>
+└ 📁 last_episode_id</p>
 <p>Similarly, consider the case where we have a <code>Box</code> space as an observation space and a relatively complex <code>Tuple</code> space as an action space with the following definition:</p>
 <div class="highlight highlight-source-python notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="spaces.Tuple(
     (
@@ -453,27 +460,27 @@
     )
 )</pre></div>
 <p>In this case, the resulting Minari dataset <code>HDF5</code> file will end up looking as follows:</p>
-<p><g-emoji class="g-emoji" alias="page_facing_up" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c4.png">📄</g-emoji> main_data.hdf5<br>
-├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> episode_0<br>
-│   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> observations<br>
-│   ├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> actions<br>
-│   │   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> _index_0<br>
-│   │   └ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> _index_1<br>
-│   │      ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> _index_0<br>
-│   │      └ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> _index_0<br>
-│   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> terminations<br>
-│   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> truncations<br>
-│   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> rewards<br>
-│   ├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> infos<br>
-│   │   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> infos_datasets<br>
-│   │   └ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> infos_subgroup<br>
-│   │      └ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> more_datasets<br>
-│   └ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> additional_groups<br>
-│       └ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> additional_datasets<br>
-├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> episode_1<br>
-├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> episode_2<br>
+<p>📄 main_data.hdf5<br>
+├ 📁 episode_0<br>
+│   ├ 💾 observations<br>
+│   ├ 📁 actions<br>
+│   │   ├ 💾 _index_0<br>
+│   │   └ 📁 _index_1<br>
+│   │      ├ 💾 _index_0<br>
+│   │      └ 💾 _index_0<br>
+│   ├ 💾 terminations<br>
+│   ├ 💾 truncations<br>
+│   ├ 💾 rewards<br>
+│   ├ 📁 infos<br>
+│   │   ├ 💾 infos_datasets<br>
+│   │   └ 📁 infos_subgroup<br>
+│   │      └ 💾 more_datasets<br>
+│   └ 📁 additional_groups<br>
+│       └ 💾 additional_datasets<br>
+├ 📁 episode_1<br>
+├ 📁 episode_2<br>
 │<br>
-└ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> last_episode_id</p>
+└ 📁 last_episode_id</p>
 <h3>EpisodeData: Data format when sampling episodes</h3>
 <p>Episodes are now sampled as <code>EpisodeData</code> Instances that comply with the following format:</p>
 <table>
@@ -583,7 +590,7 @@
 <li>v1 pointmaze datasets copies the last info to the next episode as fixed in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1766335812" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/96" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/96/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/96">#96</a></li>
 </ul></section>
 <section id="release-v0-3-1">
-<h2>v0.3.1<a class="headerlink" href="#release-v0-3-1" title="Permalink to this heading">#</a></h2>
+<h2>v0.3.1<a class="headerlink" href="#release-v0-3-1" title="Link to this heading">#</a></h2>
 <p><em>Released on 2023-05-19 - <a class="reference external" href="https://github.com/Farama-Foundation/Minari/releases/tag/v0.3.1">GitHub</a> - <a class="reference external" href="https://pypi.org/project/minari/v0.3.1/">PyPI</a></em></p>
 <h1>v0.3.1 Release notes</h1>
 <p>Minor release for fixing the following bugs:</p>
@@ -593,7 +600,7 @@
 </ul>
 <p><strong>Full Changelog</strong>: <a class="commit-link" href="https://github.com/Farama-Foundation/Minari/compare/v0.3.0...v0.3.1"><tt>v0.3.0...v0.3.1</tt></a></p></section>
 <section id="release-v0-3-0">
-<h2>v0.3.0<a class="headerlink" href="#release-v0-3-0" title="Permalink to this heading">#</a></h2>
+<h2>v0.3.0<a class="headerlink" href="#release-v0-3-0" title="Link to this heading">#</a></h2>
 <p><em>Released on 2023-05-17 - <a class="reference external" href="https://github.com/Farama-Foundation/Minari/releases/tag/v0.3.0">GitHub</a> - <a class="reference external" href="https://pypi.org/project/minari/v0.3.0/">PyPI</a></em></p>
 <h1>v0.3.0: Minari is ready for testing</h1>
 <h2><strong>Minari 0.3.0 Release Notes:</strong></h2>
@@ -603,21 +610,21 @@
 <p>We are constantly developing this library. Please don't hesitate to open a GitHub issue or reach out to us directly. Your ideas and contributions are highly appreciated and will help shape the future of this library. Thank you for using our library!</p>
 <h2>New Features and Improvements</h2>
 <h3>Dataset File Format</h3>
-<p>We are keeping the <a href="https://www.hdfgroup.org/solutions/hdf5/" rel="nofollow">HDF5</a> file format to store the Minari datasets. However, the internal structure of the datasets has been modified. The data is now stored in a per episode basis. Each Minari dataset has a minimum of one HDF5 file (<g-emoji class="g-emoji" alias="page_facing_up" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c4.png">📄</g-emoji>, <code>main_data.hdf5</code>). In the dataset file,  the collected transitions are separated by episode groups (<g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji>) that contain 5 required datasets(<g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji>) : <code>observations</code>, <code>actions</code>, <code>terminations</code>, <code>truncations</code>, and <code>rewards</code>. Other optional group and dataset collections can be included in each episode; such is the case of the <code>infos</code> step return. This structure allows us to store <a href="https://minari.farama.org/main/content/dataset_standards/#default-dataset-metadata" rel="nofollow">metadata</a> for each episode.</p>
-<p><g-emoji class="g-emoji" alias="page_facing_up" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c4.png">📄</g-emoji> main_data.hdf5<br>
-├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> episode_id<br>
-│   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> observations<br>
-│   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> actions<br>
-│   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> terminations<br>
-│   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> truncations<br>
-│   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> rewards<br>
-│   ├ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> infos<br>
-│   │   ├ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> info datasets<br>
-│   │   └ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> info subgroup<br>
-│   │      └ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> info subgroup dataset<br>
-│   └ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> extra dataset group<br>
-│       └ <g-emoji class="g-emoji" alias="floppy_disk" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4be.png">💾</g-emoji> extra datasets<br>
-└ <g-emoji class="g-emoji" alias="file_folder" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/1f4c1.png">📁</g-emoji> next_episode_id</p>
+<p>We are keeping the <a href="https://www.hdfgroup.org/solutions/hdf5/" rel="nofollow">HDF5</a> file format to store the Minari datasets. However, the internal structure of the datasets has been modified. The data is now stored in a per episode basis. Each Minari dataset has a minimum of one HDF5 file (📄, <code>main_data.hdf5</code>). In the dataset file,  the collected transitions are separated by episode groups (📁) that contain 5 required datasets(💾) : <code>observations</code>, <code>actions</code>, <code>terminations</code>, <code>truncations</code>, and <code>rewards</code>. Other optional group and dataset collections can be included in each episode; such is the case of the <code>infos</code> step return. This structure allows us to store <a href="https://minari.farama.org/main/content/dataset_standards/#default-dataset-metadata" rel="nofollow">metadata</a> for each episode.</p>
+<p>📄 main_data.hdf5<br>
+├ 📁 episode_id<br>
+│   ├ 💾 observations<br>
+│   ├ 💾 actions<br>
+│   ├ 💾 terminations<br>
+│   ├ 💾 truncations<br>
+│   ├ 💾 rewards<br>
+│   ├ 📁 infos<br>
+│   │   ├ 💾 info datasets<br>
+│   │   └ 📁 info subgroup<br>
+│   │      └ 💾 info subgroup dataset<br>
+│   └ 📁 extra dataset group<br>
+│       └ 💾 extra datasets<br>
+└ 📁 next_episode_id</p>
 <h3>MinariDataset</h3>
 <p>When <a href="https://minari.farama.org/main/content/basic_usage/#using-minari-datasets" rel="nofollow">loading</a> a dataset, the <a href="https://minari.farama.org/main/api/minari_dataset/minari_dataset/" rel="nofollow">MinariDataset</a> object now delegates the HDF5 file access to a <a href="https://github.com/Farama-Foundation/Minari/blob/901235974ca69b175ddb7de4faff40dba4b13ede/minari/dataset/minari_storage.py#L12">MinariStorage</a> object. The  <a href="https://minari.farama.org/main/api/minari_dataset/minari_dataset/" rel="nofollow">MinariDataset</a> provides new methods (<a href="https://minari.farama.org/main/api/minari_dataset/minari_dataset/#minari.MinariDataset.sample_episodes" rel="nofollow"><code>MinariDataset.sample_episodes()</code></a>(<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1605340486" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/34" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/34/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/34">#34</a>) and <a href="https://minari.farama.org/main/api/minari_dataset/minari_dataset/#minari.MinariDataset.iterate_episodes" rel="nofollow"><code>MinariDataset.iterate_episodes()</code></a>(<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1658034582" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/54" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/54/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/54">#54</a>)) to retrieve <a href="https://minari.farama.org/main/api/minari_dataset/episode_data/" rel="nofollow">EpisodeData</a> from the available episode indices in the dataset.</p>
 <p><strong>NOTE</strong>: for now the user is in charge of creating their own replay buffers with the provided episode <a href="https://minari.farama.org/main/content/basic_usage/#sampling-episodes" rel="nofollow">sampling methods</a>. We are currently working on creating standard replay buffers (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1659055513" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/55" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/55/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/55">#55</a>) and making Minari datasets compatible with other learning Offline RL libraries.</p>
@@ -772,7 +779,7 @@ dataset_v3 = minari.combine_datasets(datasets_to_combine = [dataset_v1, dataset_
 <li><a href="https://minari.farama.org/main/datasets/kitchen/mixed/" rel="nofollow">kitchen-mixed-v0</a></li>
 </ul></section>
 <section id="release-0-2-2">
-<h2>0.2.2<a class="headerlink" href="#release-0-2-2" title="Permalink to this heading">#</a></h2>
+<h2>0.2.2<a class="headerlink" href="#release-0-2-2" title="Link to this heading">#</a></h2>
 <p><em>Released on 2023-01-04 - <a class="reference external" href="https://github.com/Farama-Foundation/Minari/releases/tag/0.2.2">GitHub</a> - <a class="reference external" href="https://pypi.org/project/minari/0.2.2/">PyPI</a></em></p>
 <h2>What's Changed</h2>
 <ul>
@@ -791,7 +798,7 @@ dataset_v3 = minari.combine_datasets(datasets_to_combine = [dataset_v1, dataset_
 </ul>
 <p><strong>Full Changelog</strong>: <a class="commit-link" href="https://github.com/Farama-Foundation/Minari/compare/0.1.0...0.2.2"><tt>0.1.0...0.2.2</tt></a></p></section>
 <section id="release-0-1-0">
-<h2>0.1.0<a class="headerlink" href="#release-0-1-0" title="Permalink to this heading">#</a></h2>
+<h2>0.1.0<a class="headerlink" href="#release-0-1-0" title="Link to this heading">#</a></h2>
 <p><em>Released on 2022-11-04 - <a class="reference external" href="https://github.com/Farama-Foundation/Minari/releases/tag/0.1.0">GitHub</a> - <a class="reference external" href="https://pypi.org/project/minari/0.1.0/">PyPI</a></em></p>
 <h2>What's Changed</h2>
 <ul>
@@ -855,6 +862,7 @@ dataset_v3 = minari.combine_datasets(datasets_to_combine = [dataset_v1, dataset_
             <div class="toc-tree">
               <ul>
 <li><a class="reference internal" href="#">Release Notes</a><ul>
+<li><a class="reference internal" href="#release-v0-4-2">v0.4.2</a></li>
 <li><a class="reference internal" href="#release-v0-4-1">v0.4.1</a></li>
 <li><a class="reference internal" href="#release-v0-4-0">v0.4.0</a></li>
 <li><a class="reference internal" href="#release-v0-3-1">v0.3.1</a></li>
@@ -893,48 +901,99 @@ dataset_v3 = minari.combine_datasets(datasets_to_combine = [dataset_v1, dataset_
     </script>
 
     
-    <script>
-          (() => {
-              if (!localStorage.getItem("shownCookieAlert")) {
-                  const boxElem = document.createElement("div");
-                  boxElem.classList.add("cookie-alert");
-                  const containerElem = document.createElement("div");
-                  containerElem.classList.add("cookie-alert__container");
-                  const textElem = document.createElement("p");
-                  textElem.innerHTML = `This page uses <a href="https://analytics.google.com/">
-                                      Google Analytics</a> to collect statistics. You can disable it by blocking
-                                      the JavaScript coming from www.google-analytics.com.`;
-                                      containerElem.appendChild(textElem);
-                  const closeBtn = document.createElement("button");
-                  closeBtn.innerHTML = `<?xml version="1.0" ?><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><defs><style>.cls-1{fill:none;stroke:#000;stroke-linecap:round;stroke-linejoin:round;stroke-width:2px;}</style></defs><title/><g id="cross"><line class="cls-1" x1="7" x2="25" y1="7" y2="25"/><line class="cls-1" x1="7" x2="25" y1="25" y2="7"/></g></svg>`
-                  closeBtn.onclick = () => {
-                      localStorage.setItem("shownCookieAlert", "true");
-                      boxElem.style.display = "none";
-                  }
-                  containerElem.appendChild(closeBtn);
-                  boxElem.appendChild(containerElem);
-                  document.body.appendChild(boxElem);
-              }
-          })()
-      </script>
-
-      <script async src="https://www.googletagmanager.com/gtag/js?id=G-R5TRTT6R78"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-R5TRTT6R78"></script>
       <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
+        const enableGtag = () => {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-R5TRTT6R78');
+        }
+        (() => {
+            if (!localStorage.getItem("acceptedCookieAlert")) {
+                const boxElem = document.createElement("div");
+                boxElem.classList.add("cookie-alert");
+                const containerElem = document.createElement("div");
+                containerElem.classList.add("cookie-alert__container");
+                const textElem = document.createElement("p");
+                textElem.innerHTML = `This page uses <a href="https://analytics.google.com/">
+                                    Google Analytics</a> to collect statistics.`;
+                                    containerElem.appendChild(textElem);
 
-        gtag('config', 'G-R5TRTT6R78');
+                const declineBtn = Object.assign(document.createElement("button"),
+                  {
+                    innerText: "Deny",
+                    className: "farama-btn cookie-alert__button",
+                    id: "cookie-alert__decline",
+                  }
+                );
+                declineBtn.addEventListener("click", () => {
+                  localStorage.setItem("acceptedCookieAlert", false);
+                  boxElem.remove();
+                });
+
+                const acceptBtn = Object.assign(document.createElement("button"),
+                  {
+                    innerText: "Allow",
+                    className: "farama-btn cookie-alert__button",
+                    id: "cookie-alert__accept",
+                  }
+                );
+                acceptBtn.addEventListener("click", () => {
+                  localStorage.setItem("acceptedCookieAlert", true);
+                  boxElem.remove();
+                  enableGtag();
+                });
+
+                containerElem.appendChild(declineBtn);
+                containerElem.appendChild(acceptBtn);
+                boxElem.appendChild(containerElem);
+                document.body.appendChild(boxElem);
+            } else if (localStorage.getItem("acceptedCookieAlert") === "true") {
+              enableGtag();
+            }
+        })()
       </script>
 
-    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-    <script src="../_static/doctools.js"></script>
-    <script src="../_static/sphinx_highlight.js"></script>
-    <script src="../_static/scripts/furo.js"></script>
-    <script src="../_static/js/termynal.js"></script>
-    <script src="../_static/js/custom.js"></script>
+    <script src="../_static/documentation_options.js?v=28686c4f"></script>
+    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/scripts/furo.js?v=7660844c"></script>
+    <script src="../_static/js/termynal.js?v=ff4c6923"></script>
+    <script src="../_static/js/custom.js?v=e881c6cc"></script>
     
     <script>
+
+      const createProjectsList = (projects, displayImages) => {
+        const ulElem = Object.assign(document.createElement('ul'),
+          {
+            className:'farama-header-menu-list',
+          }
+        )
+        for (let project of projects) {
+          const liElem = document.createElement("li");
+          const aElem = Object.assign(document.createElement("a"),
+            {
+              href: project.link
+            }
+          );
+          liElem.appendChild(aElem);
+          if (displayImages) {
+            const imgElem = Object.assign(document.createElement("img"),
+              {
+                src: project.image ? imagesBasepath + project.image : imagesBasepath + "/farama_black.svg",
+                alt: `${project.name} logo`,
+                className: "farama-black-logo-invert"
+              }
+            );
+            aElem.appendChild(imgElem);
+          }
+          aElem.appendChild(document.createTextNode(project.name));
+          ulElem.appendChild(liElem);
+        }
+        return ulElem;
+      }
+
       // Create menu with Farama projects by using the API at farama.org/api/projects.json
       const createCORSRequest = (method, url) => {
         let xhr = new XMLHttpRequest();
@@ -961,9 +1020,15 @@ dataset_v3 = minari.combine_datasets(datasets_to_combine = [dataset_v1, dataset_
       xhr.onload = () => {
         const jsonResponse = xhr.response;
         const sections = {
-          "Documentation": [],
-          "Mature Projects": [],
-          "Incubating Projects": [],
+          "Core Projects": [],
+          "Mature Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          },
+          "Incubating Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          },
           "Foundation": [
             {
               name: "About",
@@ -979,28 +1044,38 @@ dataset_v3 = minari.combine_datasets(datasets_to_combine = [dataset_v1, dataset_
             }
           ]
         }
+
+        // Categorize projects
         Object.keys(jsonResponse).forEach(key => {
           projectJson = jsonResponse[key];
           if (projectJson.website !== null) {
             projectJson.link = projectJson.website;
-            sections["Documentation"].push(projectJson)
-          } else if (projectJson.type == "mature") {
-            projectJson.link = projectJson.github;
-            sections["Mature Projects"].push(projectJson)
           } else {
             projectJson.link = projectJson.github;
-            sections["Incubating Projects"].push(projectJson)
+          }
+          if (projectJson.type === "core") {
+            sections["Core Projects"].push(projectJson)
+          } else if (projectJson.type == "mature") {
+            if (projectJson.website !== null) {
+              sections["Mature Projects"]["Documentation"].push(projectJson)
+            } else {
+              sections["Mature Projects"]["Repositories"].push(projectJson)
+            }
+          } else {
+            if (projectJson.website !== null) {
+              sections["Incubating Projects"]["Documentation"].push(projectJson)
+            } else {
+              sections["Incubating Projects"]["Repositories"].push(projectJson)
+            }
           }
         })
 
         const menuContainer = document.querySelector(".farama-header-menu__body");
 
         Object.keys(sections).forEach((key, i) => {
-          projects = sections[key];
           const sectionElem = Object.assign(
             document.createElement('div'), {
               className:'farama-header-menu__section',
-              style: "padding-left: 24px"
             }
           )
           sectionElem.appendChild(Object.assign(document.createElement('span'),
@@ -1009,33 +1084,37 @@ dataset_v3 = minari.combine_datasets(datasets_to_combine = [dataset_v1, dataset_
               innerText: key
             }
           ))
-          const ulElem = Object.assign(document.createElement('ul'),
-            {
-              className:'farama-header-menu-list',
-            }
-          )
-          for (let project of projects) {
-            const liElem = document.createElement("li");
-            const aElem = Object.assign(document.createElement("a"),
-              {
-                href: project.link
-              }
-            );
-            liElem.appendChild(aElem);
-            if (key !== "Foundation") {
-              const imgElem = Object.assign(document.createElement("img"),
-                {
-                  src: project.image ? imagesBasepath + project.image : imagesBasepath + "/farama_black.svg",
-                  alt: `${project.name} logo`,
-                  className: "farama-black-logo-invert"
+          // is not a list
+          if (sections[key].constructor !== Array) {
+            const subSections = sections[key];
+            const subSectionContainerElem = Object.assign(
+                document.createElement('div'), {
+                  className:'farama-header-menu__subsections-container',
+                  style: 'display: flex'
                 }
-              );
-              aElem.appendChild(imgElem);
-            }
-            aElem.appendChild(document.createTextNode(project.name));
-            ulElem.appendChild(liElem);
+            )
+            Object.keys(subSections).forEach((subKey, i) => {
+              const subSectionElem = Object.assign(
+                document.createElement('div'), {
+                  className:'farama-header-menu__subsection',
+                }
+              )
+              subSectionElem.appendChild(Object.assign(document.createElement('span'),
+                {
+                  className:'farama-header-menu__subsection-title' ,
+                  innerText: subKey
+                }
+              ))
+              const ulElem = createProjectsList(subSections[subKey], key !== 'Foundation');
+              subSectionElem.appendChild(ulElem);
+              subSectionContainerElem.appendChild(subSectionElem);
+            })
+            sectionElem.appendChild(subSectionContainerElem);
+          } else {
+            const projects = sections[key];
+            const ulElem = createProjectsList(projects, true);
+            sectionElem.appendChild(ulElem);
           }
-          sectionElem.appendChild(ulElem);
           menuContainer.appendChild(sectionElem)
         });
       }

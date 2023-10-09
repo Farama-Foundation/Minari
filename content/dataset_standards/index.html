@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js" lang="en" data-content_root="../../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark">
@@ -11,18 +11,18 @@
 <link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Minari CLI" href="../minari_cli/" /><link rel="prev" title="Basic Usage" href="../basic_usage/" />
         <link rel="canonical" href="https://minari.farama.org/content/dataset_standards.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20.dev1 -->
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
         <title>Dataset Standards - Minari Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=a022fd11c0d7e10ac71ac296890386cea7a2fa24" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=093e2efd5a2c7b46ab7c7157e45f5f05a1e0a463" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/termynal.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/directory_tree.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=3e7f4c72" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=61a4c737" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=ca3c1c84" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=e5fbc548" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=49cbaffd" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/termynal.css?v=d6ad0c61" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=befa2ef3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/directory_tree.css?v=2ab1fc38" />
     
     
 
@@ -60,18 +60,6 @@
               <line x1="0.232" y1="12" x2="23.5" y2="12"></line>
               <line x1="0.232" y1="20" x2="23.5" y2="20"></line>
             </svg>
-            <!-- <svg viewBox="0 0 24 24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <line x1="0.5" y1="4.5" x2="23.5" y2="4.5" style="fill: none; "></line>
-              <line x1="0.5" y1="12" x2="14" y2="12" ></line>
-              <line x1="0.5" y1="19.5" x2="23.5" y2="19.5"></line>
-              <polyline style="stroke-width: 0px;" points="17 7 22 12 17 17"></polyline>
-            </svg> -->
-            <!-- <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:20px">
-              <defs></defs>
-              <rect y="1" width="22" height="22" rx="2" ry="2" style="fill: none;" x="1"></rect>
-              <line x1="8" y1="1" x2="8" y2="23"></line>
-              <polyline style="stroke-linecap: round; fill: none; stroke-linejoin: round;" points="13 7 17 12 13 17"></polyline>
-            </svg> -->
           </label>
         </div>
         <div class="farama-header__left farama-header__center--mobile">
@@ -366,11 +354,11 @@
           <article role="main">
             
             <section id="dataset-standards">
-<h1>Dataset Standards<a class="headerlink" href="#dataset-standards" title="Permalink to this heading">#</a></h1>
+<h1>Dataset Standards<a class="headerlink" href="#dataset-standards" title="Link to this heading">#</a></h1>
 <section id="minari-storage">
-<h2>Minari Storage<a class="headerlink" href="#minari-storage" title="Permalink to this heading">#</a></h2>
+<h2>Minari Storage<a class="headerlink" href="#minari-storage" title="Link to this heading">#</a></h2>
 <section id="minari-root">
-<h3>Minari root<a class="headerlink" href="#minari-root" title="Permalink to this heading">#</a></h3>
+<h3>Minari root<a class="headerlink" href="#minari-root" title="Link to this heading">#</a></h3>
 <p>Minari stores the offline datasets under a common root directory. The root directory path for the local datasets is set by default to <code class="docutils literal notranslate"><span class="pre">~/.minari/datasets/</span></code>. However, this path can be modified by setting the environment variable <code class="docutils literal notranslate"><span class="pre">MINARI_DATASETS_PATH</span></code>.</p>
 <p>The remote datasets are kept in the public Google Cloud Platform (GCP) bucket <a class="reference external" href="https://console.cloud.google.com/storage/browser/minari-datasets;tab=objects?forceOnBucketsSortingFiltering=false&amp;amp;project=mcmes-345620&amp;amp;prefix=&amp;amp;forceOnObjectsSortingFiltering=false"><code class="docutils literal notranslate"><span class="pre">minari-datasets</span></code></a>.</p>
 <p>The first level of the root directory tree contains the Minari dataset directories, which are named after the datasets <code class="docutils literal notranslate"><span class="pre">id</span></code>. The datasets <code class="docutils literal notranslate"><span class="pre">id</span></code> must follow the syntax <code class="docutils literal notranslate"><span class="pre">(env_name-)(dataset_name)(-v(version))</span></code>, where:</p>
@@ -382,7 +370,7 @@
 <p>In the end, the <code class="docutils literal notranslate"><span class="pre">id</span></code> of the dataset for the initial version of the <code class="docutils literal notranslate"><span class="pre">AdroitHandDoor</span></code> environment example will be <code class="docutils literal notranslate"><span class="pre">door-human-v0</span></code>.</p>
 </section>
 <section id="data-files">
-<h3>Data files<a class="headerlink" href="#data-files" title="Permalink to this heading">#</a></h3>
+<h3>Data files<a class="headerlink" href="#data-files" title="Link to this heading">#</a></h3>
 <p>Each Minari dataset directory contains another directory named <code class="docutils literal notranslate"><span class="pre">data</span></code> where the files of the collected offline data are stored (more directories are yet to be included for additional information, <code class="docutils literal notranslate"><span class="pre">_docs</span></code> and <code class="docutils literal notranslate"><span class="pre">policies</span></code> are WIP). The <code class="docutils literal notranslate"><span class="pre">data</span></code> directory can contain multiple <code class="docutils literal notranslate"><span class="pre">.hdf5</span></code> files storing the offline data. When using a Minari dataset the offline data is loaded homogeneously from all <code class="docutils literal notranslate"><span class="pre">.hdf5</span></code> as if it were a single file. The names for these files are:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">main_data.hdf5</span></code>: root file that aside from raw data it also contains all the metadata of the global dataset and external links to the data in the other files. Minari will read this file when a dataset is loaded.</p></li>
@@ -450,11 +438,11 @@
 </section>
 </section>
 <section id="dataset-file-format">
-<h2>Dataset File Format<a class="headerlink" href="#dataset-file-format" title="Permalink to this heading">#</a></h2>
+<h2>Dataset File Format<a class="headerlink" href="#dataset-file-format" title="Link to this heading">#</a></h2>
 <p>Minari datasets are stored in <a class="reference external" href="https://www.hdfgroup.org/solutions/hdf5/"><code class="docutils literal notranslate"><span class="pre">HDF5</span></code></a> file format by using the <a class="reference external" href="https://www.h5py.org/"><code class="docutils literal notranslate"><span class="pre">h5py</span></code></a> Python interface. We leverage the hierarchical structure of <code class="docutils literal notranslate"><span class="pre">HDF5</span></code> files of <a class="reference external" href="https://docs.h5py.org/en/stable/high/group.html"><code class="docutils literal notranslate"><span class="pre">group</span></code></a> and <a class="reference external" href="https://docs.h5py.org/en/stable/high/dataset.html"><code class="docutils literal notranslate"><span class="pre">dataset</span></code></a> elements to clearly divide the recorded step data into episode <code class="docutils literal notranslate"><span class="pre">groups</span></code> and add custom metadata to the whole dataset, to each episode <code class="docutils literal notranslate"><span class="pre">group</span></code>, or to the individual <code class="docutils literal notranslate"><span class="pre">HDF5</span></code> <code class="docutils literal notranslate"><span class="pre">datasets</span></code> that comprise each episode <code class="docutils literal notranslate"><span class="pre">group</span></code>.</p>
 <p>More information about the features that the <code class="docutils literal notranslate"><span class="pre">HDF5</span></code> file format support can be read in this <a class="reference external" href="https://www.neonscience.org/resources/learning-hub/tutorials/about-hdf5">link</a></p>
 <section id="hdf5-file-structure">
-<h3>HDF5 file structure<a class="headerlink" href="#hdf5-file-structure" title="Permalink to this heading">#</a></h3>
+<h3>HDF5 file structure<a class="headerlink" href="#hdf5-file-structure" title="Link to this heading">#</a></h3>
 <p>The offline data is organized inside the <code class="docutils literal notranslate"><span class="pre">main_data.hdf5</span></code> file in episode <a class="reference external" href="https://docs.h5py.org/en/stable/high/dataset.html"><code class="docutils literal notranslate"><span class="pre">groups</span></code></a> named as <code class="docutils literal notranslate"><span class="pre">episode_id</span></code>. Each episode group contains all the stepping data from a Gymnasium environment until the environment is <code class="docutils literal notranslate"><span class="pre">terminated</span></code> or <code class="docutils literal notranslate"><span class="pre">truncated</span></code>.</p>
 <p>The stepping data inside the episode group is divided into some required <code class="docutils literal notranslate"><span class="pre">datasets</span></code> (<code class="docutils literal notranslate"><span class="pre">StepData</span></code>) plus other optional <code class="docutils literal notranslate"><span class="pre">groups</span></code> and nested <code class="docutils literal notranslate"><span class="pre">sub-groups</span></code> such as <code class="docutils literal notranslate"><span class="pre">infos</span></code>. If the action and observation spaces both are simple spaces (not <code class="docutils literal notranslate"><span class="pre">Tuple</span></code> and not <code class="docutils literal notranslate"><span class="pre">Dict</span></code>), then the hierarchical tree of the Minari dataset <code class="docutils literal notranslate"><span class="pre">HDF5</span></code> file will end up looking as follows:</p>
 <div class="only-light">
@@ -821,7 +809,7 @@
 </div>
 </section>
 <section id="default-dataset-metadata">
-<h3>Default dataset metadata<a class="headerlink" href="#default-dataset-metadata" title="Permalink to this heading">#</a></h3>
+<h3>Default dataset metadata<a class="headerlink" href="#default-dataset-metadata" title="Link to this heading">#</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">HDF5</span></code> files can have metadata attached to <code class="docutils literal notranslate"><span class="pre">objects</span></code> as <a class="reference external" href="https://docs.h5py.org/en/stable/high/attr.html"><code class="docutils literal notranslate"><span class="pre">attributes</span></code></a>. Minari uses these <code class="docutils literal notranslate"><span class="pre">attributes</span></code> to add metadata to the global dataset file, to each episode group, as well as to the individual datasets inside each episode. This                                                                                 metadata can be added by the user by overriding the <code class="docutils literal notranslate"><span class="pre">EpisodeMetadataCallback</span></code> in the <code class="docutils literal notranslate"><span class="pre">DataCollectorV0</span></code> wrapper. However, there is also some metadata added by default to every dataset.</p>
 <p>When creating a Minari dataset with the <code class="docutils literal notranslate"><span class="pre">DataCollectorV0</span></code> wrapper the default global metadata will be the following:</p>
 <div class="table-wrapper colwidths-auto docutils container">
@@ -945,10 +933,10 @@
 </section>
 </section>
 <section id="observation-and-action-spaces">
-<h2>Observation and Action Spaces<a class="headerlink" href="#observation-and-action-spaces" title="Permalink to this heading">#</a></h2>
+<h2>Observation and Action Spaces<a class="headerlink" href="#observation-and-action-spaces" title="Link to this heading">#</a></h2>
 <p>The Minari storage format supports the following observation and action spaces:</p>
 <section id="supported-spaces">
-<h3>Supported Spaces<a class="headerlink" href="#supported-spaces" title="Permalink to this heading">#</a></h3>
+<h3>Supported Spaces<a class="headerlink" href="#supported-spaces" title="Link to this heading">#</a></h3>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -976,16 +964,16 @@
 </table>
 </div>
 <section id="space-serialization">
-<h4>Space Serialization<a class="headerlink" href="#space-serialization" title="Permalink to this heading">#</a></h4>
+<h4>Space Serialization<a class="headerlink" href="#space-serialization" title="Link to this heading">#</a></h4>
 <p>Spaces are serialized to a JSON format when saving to disk. This serialization supports all space types supported by Minari, and aims to be both human, and machine readable. The serialized action and observation spaces for the episodes in the dataset are saved as strings in the global HDF5 group metadata in <code class="docutils literal notranslate"><span class="pre">main_data.hdf5</span></code> for a particular dataset as <code class="docutils literal notranslate"><span class="pre">action_space</span></code> and <code class="docutils literal notranslate"><span class="pre">observation_space</span></code> respectively. All episodes in <code class="docutils literal notranslate"><span class="pre">main_data.hdf5</span></code> must have observations and actions that comply with these action and observation spaces.</p>
 </section>
 </section>
 </section>
 <section id="minari-data-structures">
-<h2>Minari Data Structures<a class="headerlink" href="#minari-data-structures" title="Permalink to this heading">#</a></h2>
+<h2>Minari Data Structures<a class="headerlink" href="#minari-data-structures" title="Link to this heading">#</a></h2>
 <p>A Minari dataset is encapsulated in the <code class="docutils literal notranslate"><span class="pre">MinariDataset</span></code> class which allows for iterating and sampling through episodes which are defined as <code class="docutils literal notranslate"><span class="pre">EpisodeData</span></code> data class.</p>
 <section id="episodedata-structure">
-<h3>EpisodeData Structure<a class="headerlink" href="#episodedata-structure" title="Permalink to this heading">#</a></h3>
+<h3>EpisodeData Structure<a class="headerlink" href="#episodedata-structure" title="Link to this heading">#</a></h3>
 <p>Episodes can be accessed from a Minari dataset through iteration, random sampling, or even filtering episodes from a dataset through an arbitrary condition via the <code class="docutils literal notranslate"><span class="pre">filter_episodes</span></code> method. Take the following example where we load the <code class="docutils literal notranslate"><span class="pre">door-human-v0</span></code> dataset and randomly sample 10 episodes:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;door-human-v0&quot;</span><span class="p">)</span>
 <span class="n">sampled_episodes</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">sample_episodes</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
@@ -1164,48 +1152,99 @@
     </script>
 
     
-    <script>
-          (() => {
-              if (!localStorage.getItem("shownCookieAlert")) {
-                  const boxElem = document.createElement("div");
-                  boxElem.classList.add("cookie-alert");
-                  const containerElem = document.createElement("div");
-                  containerElem.classList.add("cookie-alert__container");
-                  const textElem = document.createElement("p");
-                  textElem.innerHTML = `This page uses <a href="https://analytics.google.com/">
-                                      Google Analytics</a> to collect statistics. You can disable it by blocking
-                                      the JavaScript coming from www.google-analytics.com.`;
-                                      containerElem.appendChild(textElem);
-                  const closeBtn = document.createElement("button");
-                  closeBtn.innerHTML = `<?xml version="1.0" ?><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><defs><style>.cls-1{fill:none;stroke:#000;stroke-linecap:round;stroke-linejoin:round;stroke-width:2px;}</style></defs><title/><g id="cross"><line class="cls-1" x1="7" x2="25" y1="7" y2="25"/><line class="cls-1" x1="7" x2="25" y1="25" y2="7"/></g></svg>`
-                  closeBtn.onclick = () => {
-                      localStorage.setItem("shownCookieAlert", "true");
-                      boxElem.style.display = "none";
-                  }
-                  containerElem.appendChild(closeBtn);
-                  boxElem.appendChild(containerElem);
-                  document.body.appendChild(boxElem);
-              }
-          })()
-      </script>
-
-      <script async src="https://www.googletagmanager.com/gtag/js?id=G-R5TRTT6R78"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-R5TRTT6R78"></script>
       <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
+        const enableGtag = () => {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-R5TRTT6R78');
+        }
+        (() => {
+            if (!localStorage.getItem("acceptedCookieAlert")) {
+                const boxElem = document.createElement("div");
+                boxElem.classList.add("cookie-alert");
+                const containerElem = document.createElement("div");
+                containerElem.classList.add("cookie-alert__container");
+                const textElem = document.createElement("p");
+                textElem.innerHTML = `This page uses <a href="https://analytics.google.com/">
+                                    Google Analytics</a> to collect statistics.`;
+                                    containerElem.appendChild(textElem);
 
-        gtag('config', 'G-R5TRTT6R78');
+                const declineBtn = Object.assign(document.createElement("button"),
+                  {
+                    innerText: "Deny",
+                    className: "farama-btn cookie-alert__button",
+                    id: "cookie-alert__decline",
+                  }
+                );
+                declineBtn.addEventListener("click", () => {
+                  localStorage.setItem("acceptedCookieAlert", false);
+                  boxElem.remove();
+                });
+
+                const acceptBtn = Object.assign(document.createElement("button"),
+                  {
+                    innerText: "Allow",
+                    className: "farama-btn cookie-alert__button",
+                    id: "cookie-alert__accept",
+                  }
+                );
+                acceptBtn.addEventListener("click", () => {
+                  localStorage.setItem("acceptedCookieAlert", true);
+                  boxElem.remove();
+                  enableGtag();
+                });
+
+                containerElem.appendChild(declineBtn);
+                containerElem.appendChild(acceptBtn);
+                boxElem.appendChild(containerElem);
+                document.body.appendChild(boxElem);
+            } else if (localStorage.getItem("acceptedCookieAlert") === "true") {
+              enableGtag();
+            }
+        })()
       </script>
 
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
-    <script src="../../_static/scripts/furo.js"></script>
-    <script src="../../_static/js/termynal.js"></script>
-    <script src="../../_static/js/custom.js"></script>
+    <script src="../../_static/documentation_options.js?v=28686c4f"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/furo.js?v=7660844c"></script>
+    <script src="../../_static/js/termynal.js?v=ff4c6923"></script>
+    <script src="../../_static/js/custom.js?v=e881c6cc"></script>
     
     <script>
+
+      const createProjectsList = (projects, displayImages) => {
+        const ulElem = Object.assign(document.createElement('ul'),
+          {
+            className:'farama-header-menu-list',
+          }
+        )
+        for (let project of projects) {
+          const liElem = document.createElement("li");
+          const aElem = Object.assign(document.createElement("a"),
+            {
+              href: project.link
+            }
+          );
+          liElem.appendChild(aElem);
+          if (displayImages) {
+            const imgElem = Object.assign(document.createElement("img"),
+              {
+                src: project.image ? imagesBasepath + project.image : imagesBasepath + "/farama_black.svg",
+                alt: `${project.name} logo`,
+                className: "farama-black-logo-invert"
+              }
+            );
+            aElem.appendChild(imgElem);
+          }
+          aElem.appendChild(document.createTextNode(project.name));
+          ulElem.appendChild(liElem);
+        }
+        return ulElem;
+      }
+
       // Create menu with Farama projects by using the API at farama.org/api/projects.json
       const createCORSRequest = (method, url) => {
         let xhr = new XMLHttpRequest();
@@ -1232,9 +1271,15 @@
       xhr.onload = () => {
         const jsonResponse = xhr.response;
         const sections = {
-          "Documentation": [],
-          "Mature Projects": [],
-          "Incubating Projects": [],
+          "Core Projects": [],
+          "Mature Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          },
+          "Incubating Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          },
           "Foundation": [
             {
               name: "About",
@@ -1250,28 +1295,38 @@
             }
           ]
         }
+
+        // Categorize projects
         Object.keys(jsonResponse).forEach(key => {
           projectJson = jsonResponse[key];
           if (projectJson.website !== null) {
             projectJson.link = projectJson.website;
-            sections["Documentation"].push(projectJson)
-          } else if (projectJson.type == "mature") {
-            projectJson.link = projectJson.github;
-            sections["Mature Projects"].push(projectJson)
           } else {
             projectJson.link = projectJson.github;
-            sections["Incubating Projects"].push(projectJson)
+          }
+          if (projectJson.type === "core") {
+            sections["Core Projects"].push(projectJson)
+          } else if (projectJson.type == "mature") {
+            if (projectJson.website !== null) {
+              sections["Mature Projects"]["Documentation"].push(projectJson)
+            } else {
+              sections["Mature Projects"]["Repositories"].push(projectJson)
+            }
+          } else {
+            if (projectJson.website !== null) {
+              sections["Incubating Projects"]["Documentation"].push(projectJson)
+            } else {
+              sections["Incubating Projects"]["Repositories"].push(projectJson)
+            }
           }
         })
 
         const menuContainer = document.querySelector(".farama-header-menu__body");
 
         Object.keys(sections).forEach((key, i) => {
-          projects = sections[key];
           const sectionElem = Object.assign(
             document.createElement('div'), {
               className:'farama-header-menu__section',
-              style: "padding-left: 24px"
             }
           )
           sectionElem.appendChild(Object.assign(document.createElement('span'),
@@ -1280,33 +1335,37 @@
               innerText: key
             }
           ))
-          const ulElem = Object.assign(document.createElement('ul'),
-            {
-              className:'farama-header-menu-list',
-            }
-          )
-          for (let project of projects) {
-            const liElem = document.createElement("li");
-            const aElem = Object.assign(document.createElement("a"),
-              {
-                href: project.link
-              }
-            );
-            liElem.appendChild(aElem);
-            if (key !== "Foundation") {
-              const imgElem = Object.assign(document.createElement("img"),
-                {
-                  src: project.image ? imagesBasepath + project.image : imagesBasepath + "/farama_black.svg",
-                  alt: `${project.name} logo`,
-                  className: "farama-black-logo-invert"
+          // is not a list
+          if (sections[key].constructor !== Array) {
+            const subSections = sections[key];
+            const subSectionContainerElem = Object.assign(
+                document.createElement('div'), {
+                  className:'farama-header-menu__subsections-container',
+                  style: 'display: flex'
                 }
-              );
-              aElem.appendChild(imgElem);
-            }
-            aElem.appendChild(document.createTextNode(project.name));
-            ulElem.appendChild(liElem);
+            )
+            Object.keys(subSections).forEach((subKey, i) => {
+              const subSectionElem = Object.assign(
+                document.createElement('div'), {
+                  className:'farama-header-menu__subsection',
+                }
+              )
+              subSectionElem.appendChild(Object.assign(document.createElement('span'),
+                {
+                  className:'farama-header-menu__subsection-title' ,
+                  innerText: subKey
+                }
+              ))
+              const ulElem = createProjectsList(subSections[subKey], key !== 'Foundation');
+              subSectionElem.appendChild(ulElem);
+              subSectionContainerElem.appendChild(subSectionElem);
+            })
+            sectionElem.appendChild(subSectionContainerElem);
+          } else {
+            const projects = sections[key];
+            const ulElem = createProjectsList(projects, true);
+            sectionElem.appendChild(ulElem);
           }
-          sectionElem.appendChild(ulElem);
           menuContainer.appendChild(sectionElem)
         });
       }

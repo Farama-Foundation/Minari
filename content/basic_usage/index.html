@@ -1,5 +1,5 @@
 <!doctype html>
-<html class="no-js" lang="en">
+<html class="no-js" lang="en" data-content_root="../../">
   <head><meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <meta name="color-scheme" content="light dark">
@@ -11,18 +11,18 @@
 <link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Dataset Standards" href="../dataset_standards/" /><link rel="prev" title="&lt;no title&gt;" href="../../" />
         <link rel="canonical" href="https://minari.farama.org/content/basic_usage.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.0.1 and Furo 2023.05.20.dev1 -->
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
         <title>Basic Usage - Minari Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?digest=a022fd11c0d7e10ac71ac296890386cea7a2fa24" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?digest=093e2efd5a2c7b46ab7c7157e45f5f05a1e0a463" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/termynal.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/directory_tree.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=3e7f4c72" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=61a4c737" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=ca3c1c84" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=e5fbc548" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=49cbaffd" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/termynal.css?v=d6ad0c61" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=befa2ef3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/directory_tree.css?v=2ab1fc38" />
     
     
 
@@ -60,18 +60,6 @@
               <line x1="0.232" y1="12" x2="23.5" y2="12"></line>
               <line x1="0.232" y1="20" x2="23.5" y2="20"></line>
             </svg>
-            <!-- <svg viewBox="0 0 24 24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <line x1="0.5" y1="4.5" x2="23.5" y2="4.5" style="fill: none; "></line>
-              <line x1="0.5" y1="12" x2="14" y2="12" ></line>
-              <line x1="0.5" y1="19.5" x2="23.5" y2="19.5"></line>
-              <polyline style="stroke-width: 0px;" points="17 7 22 12 17 17"></polyline>
-            </svg> -->
-            <!-- <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" style="width:20px">
-              <defs></defs>
-              <rect y="1" width="22" height="22" rx="2" ry="2" style="fill: none;" x="1"></rect>
-              <line x1="8" y1="1" x2="8" y2="23"></line>
-              <polyline style="stroke-linecap: round; fill: none; stroke-linejoin: round;" points="13 7 17 12 13 17"></polyline>
-            </svg> -->
           </label>
         </div>
         <div class="farama-header__left farama-header__center--mobile">
@@ -366,10 +354,10 @@
           <article role="main">
             
             <section id="basic-usage">
-<h1>Basic Usage<a class="headerlink" href="#basic-usage" title="Permalink to this heading">#</a></h1>
+<h1>Basic Usage<a class="headerlink" href="#basic-usage" title="Link to this heading">#</a></h1>
 <p>Minari is a standard dataset hosting interface for Offline Reinforcement Learning applications. Minari is compatible with most of the RL environments that follow the Gymnasium API and facilitates Offline RL dataset handling by providing data collection, dataset hosting, and dataset sampling capabilities.</p>
 <section id="installation">
-<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">#</a></h2>
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
 <p>To install the most recent version of the Minari library run this command: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">minari</span></code></p>
 <p>The beta release is currently under development. If you’d like to start testing or contribute to Minari then please install this project from source with:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Farama-Foundation/Minari.git
@@ -380,9 +368,9 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 <p>We support Python 3.8, 3.9, 3.10 and 3.11 on Linux and macOS.</p>
 </section>
 <section id="create-minari-dataset">
-<h2>Create Minari Dataset<a class="headerlink" href="#create-minari-dataset" title="Permalink to this heading">#</a></h2>
+<h2>Create Minari Dataset<a class="headerlink" href="#create-minari-dataset" title="Link to this heading">#</a></h2>
 <section id="collecting-data">
-<h3>Collecting Data<a class="headerlink" href="#collecting-data" title="Permalink to this heading">#</a></h3>
+<h3>Collecting Data<a class="headerlink" href="#collecting-data" title="Link to this heading">#</a></h3>
 <p>Minari can abstract the data collection process. This is achieved by using the <a class="reference internal" href="../../api/data_collector/#minari.DataCollectorV0" title="minari.DataCollectorV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollectorV0</span></code></a> wrapper which stores the environments stepping data in internal memory buffers before saving the dataset into disk. The <a class="reference internal" href="../../api/data_collector/#minari.DataCollectorV0" title="minari.DataCollectorV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollectorV0</span></code></a> wrapper can also perform caching by scheduling the amount of episodes or steps that are stored in-memory before saving the data in a temporary <a class="reference external" href="/content/dataset_standards">Minari dataset file</a> . This wrapper also computes relevant metadata of the dataset while collecting the data.</p>
 <p>The wrapper is very simple to initialize:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">minari</span> <span class="kn">import</span> <span class="n">DataCollectorV0</span>
@@ -395,7 +383,7 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 <p>In this example, the <a class="reference internal" href="../../api/data_collector/#minari.DataCollectorV0" title="minari.DataCollectorV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollectorV0</span></code></a> wraps the <cite>‘LunarLander-v2’</cite> environment from Gymnasium. The arguments passed are <code class="docutils literal notranslate"><span class="pre">record_infos</span></code> (when set to <code class="docutils literal notranslate"><span class="pre">True</span></code> the wrapper will also collect the returned <code class="docutils literal notranslate"><span class="pre">info</span></code> dictionaries to create the dataset), and the <code class="docutils literal notranslate"><span class="pre">max_buffer_steps</span></code> argument, which specifies a caching scheduler by giving the number of data steps to store in-memory before moving them to a temporary file on disk. There are more arguments that can be passed to this wrapper, a detailed description of them can be read in the <a class="reference internal" href="../../api/data_collector/#minari.DataCollectorV0" title="minari.DataCollectorV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollectorV0</span></code></a> documentation.</p>
 </section>
 <section id="save-dataset">
-<h3>Save Dataset<a class="headerlink" href="#save-dataset" title="Permalink to this heading">#</a></h3>
+<h3>Save Dataset<a class="headerlink" href="#save-dataset" title="Link to this heading">#</a></h3>
 <p>To create a Minari dataset first we need to step the environment with a given policy to allow the <a class="reference internal" href="../../api/data_collector/#minari.DataCollectorV0" title="minari.DataCollectorV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollectorV0</span></code></a> to record the data that will comprise the dataset. This is as simple as just looping through the Gymansium MDP API. For our example we will loop through <code class="docutils literal notranslate"><span class="pre">100</span></code> episodes of the <code class="docutils literal notranslate"><span class="pre">'LunarLander-v2'</span></code> environment with a random policy.</p>
 <p>Finally, we need to create the Minari dataset and give it a name id. This is done by calling the <a class="reference internal" href="../../api/minari_functions/#minari.create_dataset_from_collector_env" title="minari.create_dataset_from_collector_env"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.create_dataset_from_collector_env()</span></code></a> Minari function which will move the temporary data recorded in the <a class="reference internal" href="../../api/data_collector/#minari.DataCollectorV0" title="minari.DataCollectorV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollectorV0</span></code></a> environment to a permanent location in the <a class="reference external" href="/content/dataset_standards">local Minari root path</a> with the Minari dataset standard structure.</p>
 <p>Extending the code example for the <code class="docutils literal notranslate"><span class="pre">'LunarLander-v2'</span></code> environment we can create the Minari dataset as follows:</p>
@@ -439,7 +427,7 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 <p>There is another optional way of creating a Minari dataset and that is by using the <a class="reference internal" href="../../api/minari_functions/#minari.create_dataset_from_buffers" title="minari.create_dataset_from_buffers"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.create_dataset_from_buffers()</span></code></a> function. The data collection is left to the user instead of using the <a class="reference internal" href="../../api/data_collector/#minari.DataCollectorV0" title="minari.DataCollectorV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollectorV0</span></code></a> wrapper. The user will be responsible for creating their own buffers to store the stepping data, and these buffers must follow a specific structure specified in the function API documentation.</p>
 </section>
 <section id="checkpoint-minari-dataset">
-<h3>Checkpoint Minari Dataset<a class="headerlink" href="#checkpoint-minari-dataset" title="Permalink to this heading">#</a></h3>
+<h3>Checkpoint Minari Dataset<a class="headerlink" href="#checkpoint-minari-dataset" title="Link to this heading">#</a></h3>
 <p>When collecting data with the <a class="reference internal" href="../../api/data_collector/#minari.DataCollectorV0" title="minari.DataCollectorV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollectorV0</span></code></a> wrapper, the recorded data is saved into temporary files and it won’t be permanently saved in disk until the <a class="reference internal" href="../../api/minari_functions/#minari.create_dataset_from_collector_env" title="minari.create_dataset_from_collector_env"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.create_dataset_from_collector_env()</span></code></a> function is called. For large datasets, to avoid losing all of the collected data, extra data from a <a class="reference internal" href="../../api/data_collector/#minari.DataCollectorV0" title="minari.DataCollectorV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollectorV0</span></code></a> can be appended to checkpoint the data collection process.</p>
 <p>To checkpoint a dataset we can call the <a class="reference internal" href="../../api/minari_dataset/minari_dataset/#minari.MinariDataset.update_dataset_from_collector_env" title="minari.MinariDataset.update_dataset_from_collector_env"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.MinariDataset.update_dataset_from_collector_env()</span></code></a> method. Every time the function <a class="reference internal" href="../../api/minari_functions/#minari.create_dataset_from_collector_env" title="minari.create_dataset_from_collector_env"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.create_dataset_from_collector_env()</span></code></a> or the method <a class="reference internal" href="../../api/minari_dataset/minari_dataset/#minari.MinariDataset.update_dataset_from_collector_env" title="minari.MinariDataset.update_dataset_from_collector_env"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.MinariDataset.update_dataset_from_collector_env()</span></code></a> are called, the buffers from the <a class="reference internal" href="../../api/data_collector/#minari.DataCollectorV0" title="minari.DataCollectorV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollectorV0</span></code></a> environment are cleared.</p>
 <p>Continuing the <code class="docutils literal notranslate"><span class="pre">'LunarLander-v2'</span></code> example we can checkpoint the newly created Minari dataset every 10 episodes as follows:</p>
@@ -482,7 +470,7 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 </section>
 </section>
 <section id="using-minari-datasets">
-<h2>Using Minari Datasets<a class="headerlink" href="#using-minari-datasets" title="Permalink to this heading">#</a></h2>
+<h2>Using Minari Datasets<a class="headerlink" href="#using-minari-datasets" title="Link to this heading">#</a></h2>
 <p>Minari will only be able to load datasets that are stored in your <a class="reference external" href="/content/dataset_standards">local root directory</a> . In order to use any of the dataset sampling features of Minari we first need to load the dataset as a <a class="reference internal" href="../../api/minari_dataset/minari_dataset/#minari.MinariDataset" title="minari.MinariDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.MinariDataset</span></code></a> object using the <a class="reference internal" href="../../api/minari_functions/#minari.load_dataset" title="minari.load_dataset"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.load_dataset()</span></code></a> function as follows:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">minari</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;LunarLander-v2-test-v0&#39;</span><span class="p">)</span>
@@ -491,7 +479,7 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 </pre></div>
 </div>
 <section id="download-remote-datasets">
-<h3>Download Remote Datasets<a class="headerlink" href="#download-remote-datasets" title="Permalink to this heading">#</a></h3>
+<h3>Download Remote Datasets<a class="headerlink" href="#download-remote-datasets" title="Link to this heading">#</a></h3>
 <p>Minari also has a remote storage in a Google Cloud Platform (GCP) bucket which provides access to  standardize Minari datasets. The datasets hosted in the remote Farama server can be listed with <a class="reference internal" href="../../api/minari_functions/#minari.list_remote_datasets" title="minari.list_remote_datasets"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.list_remote_datasets()</span></code></a>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">minari</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">remote_datasets</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">list_remote_datasets</span><span class="p">()</span>
@@ -510,7 +498,7 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 </div>
 </section>
 <section id="sampling-episodes">
-<h3>Sampling Episodes<a class="headerlink" href="#sampling-episodes" title="Permalink to this heading">#</a></h3>
+<h3>Sampling Episodes<a class="headerlink" href="#sampling-episodes" title="Link to this heading">#</a></h3>
 <p>Minari can retrieve a certain amount of episode shards from the dataset files as a list of <a class="reference internal" href="../../api/minari_dataset/episode_data/#minari.EpisodeData" title="minari.EpisodeData"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.EpisodeData</span></code></a> objects. The sampling process of the Minari datasets is performed through the method <a class="reference internal" href="../../api/minari_dataset/minari_dataset/#minari.MinariDataset.sample_episodes" title="minari.MinariDataset.sample_episodes"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.MinariDataset.sample_episodes()</span></code></a>. This method is a generator that randomly samples <code class="docutils literal notranslate"><span class="pre">n</span></code> number of <a class="reference internal" href="../../api/minari_dataset/episode_data/#minari.EpisodeData" title="minari.EpisodeData"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.EpisodeData</span></code></a> from the <a class="reference internal" href="../../api/minari_dataset/minari_dataset/#minari.MinariDataset" title="minari.MinariDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.MinariDataset</span></code></a>. The seed of this generator can be set with <a class="reference internal" href="../../api/minari_dataset/minari_dataset/#minari.MinariDataset.set_seed" title="minari.MinariDataset.set_seed"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.MinariDataset.set_seed()</span></code></a>. For example:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">minari</span>
 
@@ -526,11 +514,11 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 </pre></div>
 </div>
 <p>This code will show the following.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt;&gt;&gt; EPISODE ID&#39;S SAMPLE 0: [1, 13, 0, 22, 15]
-&gt;&gt;&gt; EPISODE ID&#39;S SAMPLE 1: [3, 10, 23, 7, 18]
-&gt;&gt;&gt; EPISODE ID&#39;S SAMPLE 2: [12, 6, 0, 18, 19]
-&gt;&gt;&gt; EPISODE ID&#39;S SAMPLE 3: [9, 4, 15, 3, 17]
-&gt;&gt;&gt; EPISODE ID&#39;S SAMPLE 4: [19, 4, 12, 17, 21]
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt;&gt;&gt;<span class="w"> </span>EPISODE<span class="w"> </span>ID<span class="s1">&#39;S SAMPLE 0: [1, 13, 0, 22, 15]</span>
+<span class="s1">&gt;&gt;&gt; EPISODE ID&#39;</span>S<span class="w"> </span>SAMPLE<span class="w"> </span><span class="m">1</span>:<span class="w"> </span><span class="o">[</span><span class="m">3</span>,<span class="w"> </span><span class="m">10</span>,<span class="w"> </span><span class="m">23</span>,<span class="w"> </span><span class="m">7</span>,<span class="w"> </span><span class="m">18</span><span class="o">]</span>
+&gt;&gt;&gt;<span class="w"> </span>EPISODE<span class="w"> </span>ID<span class="s1">&#39;S SAMPLE 2: [12, 6, 0, 18, 19]</span>
+<span class="s1">&gt;&gt;&gt; EPISODE ID&#39;</span>S<span class="w"> </span>SAMPLE<span class="w"> </span><span class="m">3</span>:<span class="w"> </span><span class="o">[</span><span class="m">9</span>,<span class="w"> </span><span class="m">4</span>,<span class="w"> </span><span class="m">15</span>,<span class="w"> </span><span class="m">3</span>,<span class="w"> </span><span class="m">17</span><span class="o">]</span>
+&gt;&gt;&gt;<span class="w"> </span>EPISODE<span class="w"> </span>ID<span class="err">&#39;</span>S<span class="w"> </span>SAMPLE<span class="w"> </span><span class="m">4</span>:<span class="w"> </span><span class="o">[</span><span class="m">19</span>,<span class="w"> </span><span class="m">4</span>,<span class="w"> </span><span class="m">12</span>,<span class="w"> </span><span class="m">17</span>,<span class="w"> </span><span class="m">21</span><span class="o">]</span>
 </pre></div>
 </div>
 <p>Notice that in each sample non of the episodes are sampled more than once but the same episode can be retrieved in different <a class="reference internal" href="../../api/minari_dataset/minari_dataset/#minari.MinariDataset.sample_episodes" title="minari.MinariDataset.sample_episodes"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.MinariDataset.sample_episodes()</span></code></a> calls.</p>
@@ -561,7 +549,7 @@ To create your own buffers and dataloaders, you may need the ability to iterate 
 </pre></div>
 </div>
 <section id="filter-episodes">
-<h4>Filter Episodes<a class="headerlink" href="#filter-episodes" title="Permalink to this heading">#</a></h4>
+<h4>Filter Episodes<a class="headerlink" href="#filter-episodes" title="Link to this heading">#</a></h4>
 <p>The episodes in the dataset can be filtered before sampling. This is done with a custom conditional callable passed to <a class="reference internal" href="../../api/minari_dataset/minari_dataset/#minari.MinariDataset.filter_episodes" title="minari.MinariDataset.filter_episodes"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.MinariDataset.filter_episodes()</span></code></a>. The input to the conditional callable is an episode group in <a class="reference external" href="https://docs.h5py.org/en/stable/high/group.html">h5py.Group</a> format and the return value must be <code class="docutils literal notranslate"><span class="pre">True</span></code> if you want to keep the episode or <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise. The method will return a new <a class="reference internal" href="../../api/minari_dataset/minari_dataset/#minari.MinariDataset" title="minari.MinariDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.MinariDataset</span></code></a>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">minari</span>
 
@@ -582,7 +570,7 @@ To create your own buffers and dataloaders, you may need the ability to iterate 
 </div>
 </section>
 <section id="split-dataset">
-<h4>Split Dataset<a class="headerlink" href="#split-dataset" title="Permalink to this heading">#</a></h4>
+<h4>Split Dataset<a class="headerlink" href="#split-dataset" title="Link to this heading">#</a></h4>
 <p>Minari provides another utility function to divide a dataset into multiple datasets, <a class="reference internal" href="../../api/minari_functions/#minari.split_dataset" title="minari.split_dataset"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.split_dataset()</span></code></a></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">minari</span>
 
@@ -601,7 +589,7 @@ To create your own buffers and dataloaders, you may need the ability to iterate 
 </section>
 </section>
 <section id="recover-environment">
-<h3>Recover Environment<a class="headerlink" href="#recover-environment" title="Permalink to this heading">#</a></h3>
+<h3>Recover Environment<a class="headerlink" href="#recover-environment" title="Link to this heading">#</a></h3>
 <p>From a <a class="reference internal" href="../../api/minari_dataset/minari_dataset/#minari.MinariDataset" title="minari.MinariDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.MinariDataset</span></code></a> object we can also recover the Gymnasium environment used to create the dataset, this can be useful for reproducibility or to generate more data for a specific dataset:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">minari</span>
 
@@ -617,7 +605,7 @@ To create your own buffers and dataloaders, you may need the ability to iterate 
 </div>
 </section>
 <section id="combine-minari-datasets">
-<h3>Combine Minari Datasets<a class="headerlink" href="#combine-minari-datasets" title="Permalink to this heading">#</a></h3>
+<h3>Combine Minari Datasets<a class="headerlink" href="#combine-minari-datasets" title="Link to this heading">#</a></h3>
 <p>Lastly, in the case of having two or more Minari datasets created with the same environment we can combine these datasets into a single one by using the Minari function <a class="reference internal" href="../../api/minari_functions/#minari.combine_datasets" title="minari.combine_datasets"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.combine_datasets()</span></code></a>, i.e. the <code class="docutils literal notranslate"><span class="pre">'AdroitHandDoor-v1'</span></code> environment has two datasets available in the remote Farama servers, <code class="docutils literal notranslate"><span class="pre">door-human-v0</span></code> and <code class="docutils literal notranslate"><span class="pre">door-expert-v0</span></code>, we can combine the episodes in these two datasets into a new Minari dataset <code class="docutils literal notranslate"><span class="pre">door-all-v0</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">minari</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">human_dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;door-human-v0&#39;</span><span class="p">)</span>
@@ -754,48 +742,99 @@ To create your own buffers and dataloaders, you may need the ability to iterate 
     </script>
 
     
-    <script>
-          (() => {
-              if (!localStorage.getItem("shownCookieAlert")) {
-                  const boxElem = document.createElement("div");
-                  boxElem.classList.add("cookie-alert");
-                  const containerElem = document.createElement("div");
-                  containerElem.classList.add("cookie-alert__container");
-                  const textElem = document.createElement("p");
-                  textElem.innerHTML = `This page uses <a href="https://analytics.google.com/">
-                                      Google Analytics</a> to collect statistics. You can disable it by blocking
-                                      the JavaScript coming from www.google-analytics.com.`;
-                                      containerElem.appendChild(textElem);
-                  const closeBtn = document.createElement("button");
-                  closeBtn.innerHTML = `<?xml version="1.0" ?><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><defs><style>.cls-1{fill:none;stroke:#000;stroke-linecap:round;stroke-linejoin:round;stroke-width:2px;}</style></defs><title/><g id="cross"><line class="cls-1" x1="7" x2="25" y1="7" y2="25"/><line class="cls-1" x1="7" x2="25" y1="25" y2="7"/></g></svg>`
-                  closeBtn.onclick = () => {
-                      localStorage.setItem("shownCookieAlert", "true");
-                      boxElem.style.display = "none";
-                  }
-                  containerElem.appendChild(closeBtn);
-                  boxElem.appendChild(containerElem);
-                  document.body.appendChild(boxElem);
-              }
-          })()
-      </script>
-
-      <script async src="https://www.googletagmanager.com/gtag/js?id=G-R5TRTT6R78"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-R5TRTT6R78"></script>
       <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
+        const enableGtag = () => {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-R5TRTT6R78');
+        }
+        (() => {
+            if (!localStorage.getItem("acceptedCookieAlert")) {
+                const boxElem = document.createElement("div");
+                boxElem.classList.add("cookie-alert");
+                const containerElem = document.createElement("div");
+                containerElem.classList.add("cookie-alert__container");
+                const textElem = document.createElement("p");
+                textElem.innerHTML = `This page uses <a href="https://analytics.google.com/">
+                                    Google Analytics</a> to collect statistics.`;
+                                    containerElem.appendChild(textElem);
 
-        gtag('config', 'G-R5TRTT6R78');
+                const declineBtn = Object.assign(document.createElement("button"),
+                  {
+                    innerText: "Deny",
+                    className: "farama-btn cookie-alert__button",
+                    id: "cookie-alert__decline",
+                  }
+                );
+                declineBtn.addEventListener("click", () => {
+                  localStorage.setItem("acceptedCookieAlert", false);
+                  boxElem.remove();
+                });
+
+                const acceptBtn = Object.assign(document.createElement("button"),
+                  {
+                    innerText: "Allow",
+                    className: "farama-btn cookie-alert__button",
+                    id: "cookie-alert__accept",
+                  }
+                );
+                acceptBtn.addEventListener("click", () => {
+                  localStorage.setItem("acceptedCookieAlert", true);
+                  boxElem.remove();
+                  enableGtag();
+                });
+
+                containerElem.appendChild(declineBtn);
+                containerElem.appendChild(acceptBtn);
+                boxElem.appendChild(containerElem);
+                document.body.appendChild(boxElem);
+            } else if (localStorage.getItem("acceptedCookieAlert") === "true") {
+              enableGtag();
+            }
+        })()
       </script>
 
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/sphinx_highlight.js"></script>
-    <script src="../../_static/scripts/furo.js"></script>
-    <script src="../../_static/js/termynal.js"></script>
-    <script src="../../_static/js/custom.js"></script>
+    <script src="../../_static/documentation_options.js?v=28686c4f"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/furo.js?v=7660844c"></script>
+    <script src="../../_static/js/termynal.js?v=ff4c6923"></script>
+    <script src="../../_static/js/custom.js?v=e881c6cc"></script>
     
     <script>
+
+      const createProjectsList = (projects, displayImages) => {
+        const ulElem = Object.assign(document.createElement('ul'),
+          {
+            className:'farama-header-menu-list',
+          }
+        )
+        for (let project of projects) {
+          const liElem = document.createElement("li");
+          const aElem = Object.assign(document.createElement("a"),
+            {
+              href: project.link
+            }
+          );
+          liElem.appendChild(aElem);
+          if (displayImages) {
+            const imgElem = Object.assign(document.createElement("img"),
+              {
+                src: project.image ? imagesBasepath + project.image : imagesBasepath + "/farama_black.svg",
+                alt: `${project.name} logo`,
+                className: "farama-black-logo-invert"
+              }
+            );
+            aElem.appendChild(imgElem);
+          }
+          aElem.appendChild(document.createTextNode(project.name));
+          ulElem.appendChild(liElem);
+        }
+        return ulElem;
+      }
+
       // Create menu with Farama projects by using the API at farama.org/api/projects.json
       const createCORSRequest = (method, url) => {
         let xhr = new XMLHttpRequest();
@@ -822,9 +861,15 @@ To create your own buffers and dataloaders, you may need the ability to iterate 
       xhr.onload = () => {
         const jsonResponse = xhr.response;
         const sections = {
-          "Documentation": [],
-          "Mature Projects": [],
-          "Incubating Projects": [],
+          "Core Projects": [],
+          "Mature Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          },
+          "Incubating Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          },
           "Foundation": [
             {
               name: "About",
@@ -840,28 +885,38 @@ To create your own buffers and dataloaders, you may need the ability to iterate 
             }
           ]
         }
+
+        // Categorize projects
         Object.keys(jsonResponse).forEach(key => {
           projectJson = jsonResponse[key];
           if (projectJson.website !== null) {
             projectJson.link = projectJson.website;
-            sections["Documentation"].push(projectJson)
-          } else if (projectJson.type == "mature") {
-            projectJson.link = projectJson.github;
-            sections["Mature Projects"].push(projectJson)
           } else {
             projectJson.link = projectJson.github;
-            sections["Incubating Projects"].push(projectJson)
+          }
+          if (projectJson.type === "core") {
+            sections["Core Projects"].push(projectJson)
+          } else if (projectJson.type == "mature") {
+            if (projectJson.website !== null) {
+              sections["Mature Projects"]["Documentation"].push(projectJson)
+            } else {
+              sections["Mature Projects"]["Repositories"].push(projectJson)
+            }
+          } else {
+            if (projectJson.website !== null) {
+              sections["Incubating Projects"]["Documentation"].push(projectJson)
+            } else {
+              sections["Incubating Projects"]["Repositories"].push(projectJson)
+            }
           }
         })
 
         const menuContainer = document.querySelector(".farama-header-menu__body");
 
         Object.keys(sections).forEach((key, i) => {
-          projects = sections[key];
           const sectionElem = Object.assign(
             document.createElement('div'), {
               className:'farama-header-menu__section',
-              style: "padding-left: 24px"
             }
           )
           sectionElem.appendChild(Object.assign(document.createElement('span'),
@@ -870,33 +925,37 @@ To create your own buffers and dataloaders, you may need the ability to iterate 
               innerText: key
             }
           ))
-          const ulElem = Object.assign(document.createElement('ul'),
-            {
-              className:'farama-header-menu-list',
-            }
-          )
-          for (let project of projects) {
-            const liElem = document.createElement("li");
-            const aElem = Object.assign(document.createElement("a"),
-              {
-                href: project.link
-              }
-            );
-            liElem.appendChild(aElem);
-            if (key !== "Foundation") {
-              const imgElem = Object.assign(document.createElement("img"),
-                {
-                  src: project.image ? imagesBasepath + project.image : imagesBasepath + "/farama_black.svg",
-                  alt: `${project.name} logo`,
-                  className: "farama-black-logo-invert"
+          // is not a list
+          if (sections[key].constructor !== Array) {
+            const subSections = sections[key];
+            const subSectionContainerElem = Object.assign(
+                document.createElement('div'), {
+                  className:'farama-header-menu__subsections-container',
+                  style: 'display: flex'
                 }
-              );
-              aElem.appendChild(imgElem);
-            }
-            aElem.appendChild(document.createTextNode(project.name));
-            ulElem.appendChild(liElem);
+            )
+            Object.keys(subSections).forEach((subKey, i) => {
+              const subSectionElem = Object.assign(
+                document.createElement('div'), {
+                  className:'farama-header-menu__subsection',
+                }
+              )
+              subSectionElem.appendChild(Object.assign(document.createElement('span'),
+                {
+                  className:'farama-header-menu__subsection-title' ,
+                  innerText: subKey
+                }
+              ))
+              const ulElem = createProjectsList(subSections[subKey], key !== 'Foundation');
+              subSectionElem.appendChild(ulElem);
+              subSectionContainerElem.appendChild(subSectionElem);
+            })
+            sectionElem.appendChild(subSectionContainerElem);
+          } else {
+            const projects = sections[key];
+            const ulElem = createProjectsList(projects, true);
+            sectionElem.appendChild(ulElem);
           }
-          sectionElem.appendChild(ulElem);
           menuContainer.appendChild(sectionElem)
         });
       }
