@@ -252,12 +252,12 @@ def test_combine_dataset_with_different_metadata():
             env.reset()
 
         # Create Minari dataset and store locally
+        permalink = "https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/test_dataset_combine.py"
         dataset = minari.create_dataset_from_collector_env(
             dataset_id=dataset_id,
             collector_env=env,
             algorithm_name="random_policy" + str(i),
-            code_permalink="https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py"
-            + str(i),
+            code_permalink=permalink + str(i),
             author="WillDudley" + str(i),
             author_email="wdudley@farama.org" + str(i),
         )
@@ -268,12 +268,10 @@ def test_combine_dataset_with_different_metadata():
     combined_dataset = combine_datasets(
         dataset_list, new_dataset_id="cartpole-combined-test-v0"
     )
+    permalink = "https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/test_dataset_combine.py"
     with h5py.File(combined_dataset.spec.data_path) as dt_file:
         assert dt_file.attrs["algorithm_name"] == "random_policy" + str(n_data - 1)
-        _final_code_link = (
-            "https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py"
-            + str(n_data - 1)
-        )
+        _final_code_link = (permalink + str(n_data - 1))
         assert dt_file.attrs["code_permalink"] == _final_code_link
         assert dt_file.attrs["author"] == "WillDudley" + str(n_data - 1)
         assert dt_file.attrs["author_email"] == "wdudley@farama.org" + str(n_data - 1)

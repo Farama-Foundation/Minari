@@ -503,10 +503,6 @@ def create_dataset_from_buffers(
                 "env_spec"
             ] = env.spec.to_json()  # pyright: ignore [reportOptionalMemberAccess]
             file.attrs["dataset_id"] = dataset_id
-            # file.attrs["algorithm_name"] = str(algorithm_name)
-            # file.attrs["author"] = str(author)
-            # file.attrs["author_email"] = str(author_email)
-            # file.attrs["code_permalink"] = str(code_permalink)
 
             if algorithm_name is not None:
                 file.attrs["algorithm_name"] = str(algorithm_name)
