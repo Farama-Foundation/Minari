@@ -271,7 +271,7 @@ def test_combine_dataset_with_different_metadata():
     permalink = "https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/test_dataset_combine.py"
     with h5py.File(combined_dataset.spec.data_path) as dt_file:
         assert dt_file.attrs["algorithm_name"] == "random_policy" + str(n_data - 1)
-        _final_code_link = (permalink + str(n_data - 1))
+        _final_code_link = permalink + str(n_data - 1)
         assert dt_file.attrs["code_permalink"] == _final_code_link
         assert dt_file.attrs["author"] == "WillDudley" + str(n_data - 1)
         assert dt_file.attrs["author_email"] == "wdudley@farama.org" + str(n_data - 1)
