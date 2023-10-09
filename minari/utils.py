@@ -380,7 +380,7 @@ def create_dataset_from_buffers(
         * `terminations`: np.ndarray of step terminations. shape = (total_episode_steps + 1, 1).
         * `truncations`: np.ndarray of step truncations. shape = (total_episode_steps + 1, 1).
 
-    If the last trjaectory is neither terminated or truncated, the last step will be marked as truncated.
+    If the last trajectory is neither terminated or truncated, the last step will be marked as truncated.
     Other additional items can be added as long as the values are np.ndarray's or other nested dictionaries.
 
     Args:
