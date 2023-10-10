@@ -632,10 +632,17 @@
 
             <span class="c1"># TODO: list of authors, and emails</span>
             <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">data_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">dataset_file</span><span class="p">:</span>
-                <span class="n">combined_data_file</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">modify</span><span class="p">(</span><span class="s2">&quot;author&quot;</span><span class="p">,</span> <span class="n">dataset_file</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;author&quot;</span><span class="p">])</span>
-                <span class="n">combined_data_file</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">modify</span><span class="p">(</span>
-                    <span class="s2">&quot;author_email&quot;</span><span class="p">,</span> <span class="n">dataset_file</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;author_email&quot;</span><span class="p">]</span>
-                <span class="p">)</span>
+                <span class="n">attr_list</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="s2">&quot;author&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;author_email&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;code_permalink&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;algorithm_name&quot;</span><span class="p">,</span>
+                <span class="p">]</span>
+                <span class="k">for</span> <span class="n">optional_parameter</span> <span class="ow">in</span> <span class="n">attr_list</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">optional_parameter</span> <span class="ow">in</span> <span class="n">dataset_file</span><span class="o">.</span><span class="n">attrs</span><span class="p">:</span>
+                        <span class="n">combined_data_file</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">modify</span><span class="p">(</span>
+                            <span class="n">optional_parameter</span><span class="p">,</span> <span class="n">dataset_file</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="n">optional_parameter</span><span class="p">]</span>
+                        <span class="p">)</span>
 
         <span class="k">assert</span> <span class="n">combined_dataset_env_spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="n">combined_data_file</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;env_spec&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">combined_dataset_env_spec</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
@@ -729,10 +736,10 @@
 
 <span class="sd">    Each episode dictionary buffer must have the following items:</span>
 <span class="sd">        * `observations`: np.ndarray of step observations. shape = (total_episode_steps + 1, (observation_shape)). Should include initial and final observation</span>
-<span class="sd">        * `actions`: np.ndarray of step action. shape = (total_episode_steps + 1, (action_shape)).</span>
-<span class="sd">        * `rewards`: np.ndarray of step rewards. shape = (total_episode_steps + 1, 1).</span>
-<span class="sd">        * `terminations`: np.ndarray of step terminations. shape = (total_episode_steps + 1, 1).</span>
-<span class="sd">        * `truncations`: np.ndarray of step truncations. shape = (total_episode_steps + 1, 1).</span>
+<span class="sd">        * `actions`: np.ndarray of step action. shape = (total_episode_steps, (action_shape)).</span>
+<span class="sd">        * `rewards`: np.ndarray of step rewards. shape = (total_episode_steps, 1).</span>
+<span class="sd">        * `terminations`: np.ndarray of step terminations. shape = (total_episode_steps, 1).</span>
+<span class="sd">        * `truncations`: np.ndarray of step truncations. shape = (total_episode_steps, 1).</span>
 
 <span class="sd">    Other additional items can be added as long as the values are np.ndarray&#39;s or other nested dictionaries.</span>
 
@@ -750,6 +757,10 @@
 <span class="sd">        expert_policy (Optional[Callable[[ObsType], ActType], optional): policy to compute `ref_max_score` by averaging the returns over a number of episodes equal to  `num_episodes_average_score`.</span>
 <span class="sd">                                                                        `ref_max_score` and `expert_policy` can&#39;t be passed at the same time. Default to None</span>
 <span class="sd">        num_episodes_average_score (int): number of episodes to average over the returns to compute `ref_min_score` and `ref_max_score`. Default to 100.</span>
+<span class="sd">                observation_space:</span>
+<span class="sd">        action_space (Optional[gym.spaces.Space]): action space of the environment. If None (default) use the environment action space.</span>
+<span class="sd">        observation_space (Optional[gym.spaces.Space]): observation space of the environment. If None (default) use the environment observation space.</span>
+<span class="sd">        minari_version (Optional[str], optional): Minari version specifier compatible with the dataset. If None (default) use the installed Minari version.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        MinariDataset</span>
@@ -770,6 +781,12 @@
             <span class="s2">&quot;`author_email` is set to None. For longevity purposes it is highly recommended to provide an author email, or some other obvious contact information.&quot;</span><span class="p">,</span>
             <span class="ne">UserWarning</span><span class="p">,</span>
         <span class="p">)</span>
+    <span class="k">if</span> <span class="n">algorithm_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;`algorithm_name` is set to None. For reproducibility purpose it&#39;s highly recommended to set your algorithm&quot;</span><span class="p">,</span>
+            <span class="ne">UserWarning</span><span class="p">,</span>
+        <span class="p">)</span>
+
     <span class="k">if</span> <span class="n">minari_version</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">version</span> <span class="o">=</span> <span class="n">Version</span><span class="p">(</span><span class="n">__version__</span><span class="p">)</span>
         <span class="n">release</span> <span class="o">=</span> <span class="n">version</span><span class="o">.</span><span class="n">release</span>
@@ -840,6 +857,15 @@
                 <span class="s2">&quot;env_spec&quot;</span>
             <span class="p">]</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>  <span class="c1"># pyright: ignore [reportOptionalMemberAccess]</span>
             <span class="n">file</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;dataset_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset_id</span>
+
+            <span class="k">if</span> <span class="n">algorithm_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">file</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;algorithm_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">algorithm_name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">author</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">file</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;author&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">author</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">author_email</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">file</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;author_email&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">author_email</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">code_permalink</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">file</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;code_permalink&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">code_permalink</span><span class="p">)</span>
 
             <span class="n">action_space_str</span> <span class="o">=</span> <span class="n">serialize_space</span><span class="p">(</span><span class="n">action_space</span><span class="p">)</span>
             <span class="n">observation_space_str</span> <span class="o">=</span> <span class="n">serialize_space</span><span class="p">(</span><span class="n">observation_space</span><span class="p">)</span>
@@ -928,6 +954,13 @@
             <span class="s2">&quot;`author_email` is set to None. For longevity purposes it is highly recommended to provide an author email, or some other obvious contact information.&quot;</span><span class="p">,</span>
             <span class="ne">UserWarning</span><span class="p">,</span>
         <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">algorithm_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;`algorithm_name` is set to None. For reproducibility purpose it&#39;s highly recommended to set your algorithm&quot;</span><span class="p">,</span>
+            <span class="ne">UserWarning</span><span class="p">,</span>
+        <span class="p">)</span>
+
     <span class="k">if</span> <span class="n">expert_policy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">ref_max_score</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s2">&quot;Can&#39;t pass a value for `expert_policy` and `ref_max_score` at the same time.&quot;</span>
@@ -959,11 +992,17 @@
         <span class="n">data_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">,</span> <span class="s2">&quot;main_data.hdf5&quot;</span><span class="p">)</span>
         <span class="n">dataset_metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;dataset_id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">),</span>
-            <span class="s2">&quot;algorithm_name&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">algorithm_name</span><span class="p">),</span>
-            <span class="s2">&quot;author&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">author</span><span class="p">),</span>
-            <span class="s2">&quot;author_email&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">author_email</span><span class="p">),</span>
-            <span class="s2">&quot;code_permalink&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">code_permalink</span><span class="p">),</span>
+            <span class="s2">&quot;minari_version&quot;</span><span class="p">:</span> <span class="n">minari_version</span><span class="p">,</span>
         <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">algorithm_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dataset_metadata</span><span class="p">[</span><span class="s2">&quot;algorithm_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">algorithm_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">author</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dataset_metadata</span><span class="p">[</span><span class="s2">&quot;author&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">author</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">author_email</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dataset_metadata</span><span class="p">[</span><span class="s2">&quot;author_email&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">author_email</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">code_permalink</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dataset_metadata</span><span class="p">[</span><span class="s2">&quot;code_permalink&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">code_permalink</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">expert_policy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">ref_max_score</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">env</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">collector_env</span><span class="o">.</span><span class="n">env</span><span class="p">)</span>
@@ -986,14 +1025,7 @@
 
         <span class="n">collector_env</span><span class="o">.</span><span class="n">save_to_disk</span><span class="p">(</span>
             <span class="n">data_path</span><span class="p">,</span>
-            <span class="n">dataset_metadata</span><span class="o">=</span><span class="p">{</span>
-                <span class="s2">&quot;dataset_id&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">),</span>
-                <span class="s2">&quot;algorithm_name&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">algorithm_name</span><span class="p">),</span>
-                <span class="s2">&quot;author&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">author</span><span class="p">),</span>
-                <span class="s2">&quot;author_email&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">author_email</span><span class="p">),</span>
-                <span class="s2">&quot;code_permalink&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">code_permalink</span><span class="p">),</span>
-                <span class="s2">&quot;minari_version&quot;</span><span class="p">:</span> <span class="n">minari_version</span><span class="p">,</span>
-            <span class="p">},</span>
+            <span class="n">dataset_metadata</span><span class="o">=</span><span class="n">dataset_metadata</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">MinariDataset</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>

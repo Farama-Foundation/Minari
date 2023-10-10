@@ -401,10 +401,10 @@ This <code class="docutils literal notranslate"><span class="pre">dataset_id</sp
 <dl class="simple">
 <dt>Each episode dictionary buffer must have the following items:</dt><dd><ul class="simple">
 <li><p><cite>observations</cite>: np.ndarray of step observations. shape = (total_episode_steps + 1, (observation_shape)). Should include initial and final observation</p></li>
-<li><p><cite>actions</cite>: np.ndarray of step action. shape = (total_episode_steps + 1, (action_shape)).</p></li>
-<li><p><cite>rewards</cite>: np.ndarray of step rewards. shape = (total_episode_steps + 1, 1).</p></li>
-<li><p><cite>terminations</cite>: np.ndarray of step terminations. shape = (total_episode_steps + 1, 1).</p></li>
-<li><p><cite>truncations</cite>: np.ndarray of step truncations. shape = (total_episode_steps + 1, 1).</p></li>
+<li><p><cite>actions</cite>: np.ndarray of step action. shape = (total_episode_steps, (action_shape)).</p></li>
+<li><p><cite>rewards</cite>: np.ndarray of step rewards. shape = (total_episode_steps, 1).</p></li>
+<li><p><cite>terminations</cite>: np.ndarray of step terminations. shape = (total_episode_steps, 1).</p></li>
+<li><p><cite>truncations</cite>: np.ndarray of step truncations. shape = (total_episode_steps, 1).</p></li>
 </ul>
 </dd>
 </dl>
@@ -425,7 +425,11 @@ Also note that this attribute will be added to the Minari dataset only if <cite>
 <li><p><strong>optional</strong> – maximum reference score from the average returns of a hypothetical expert policy. This value is used in <cite>MinariDataset.get_normalized_score()</cite>. Default None.</p></li>
 <li><p><strong>expert_policy</strong> (<em>Optional</em><em>[</em><em>Callable</em><em>[</em><em>[</em><em>ObsType</em><em>]</em><em>, </em><em>ActType</em><em>]</em><em>, </em><em>optional</em>) – policy to compute <cite>ref_max_score</cite> by averaging the returns over a number of episodes equal to  <cite>num_episodes_average_score</cite>.
 <cite>ref_max_score</cite> and <cite>expert_policy</cite> can’t be passed at the same time. Default to None</p></li>
-<li><p><strong>num_episodes_average_score</strong> (<em>int</em>) – number of episodes to average over the returns to compute <cite>ref_min_score</cite> and <cite>ref_max_score</cite>. Default to 100.</p></li>
+<li><p><strong>num_episodes_average_score</strong> (<em>int</em>) – number of episodes to average over the returns to compute <cite>ref_min_score</cite> and <cite>ref_max_score</cite>. Default to 100.
+observation_space:</p></li>
+<li><p><strong>action_space</strong> (<em>Optional</em><em>[</em><em>gym.spaces.Space</em><em>]</em>) – action space of the environment. If None (default) use the environment action space.</p></li>
+<li><p><strong>observation_space</strong> (<em>Optional</em><em>[</em><em>gym.spaces.Space</em><em>]</em>) – observation space of the environment. If None (default) use the environment observation space.</p></li>
+<li><p><strong>minari_version</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – Minari version specifier compatible with the dataset. If None (default) use the installed Minari version.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
