@@ -1,6 +1,7 @@
 from typing import Optional
 
 import gymnasium as gym
+import h5py
 import pytest
 from gymnasium.utils.env_checker import data_equivalence
 from packaging.specifiers import SpecifierSet
@@ -231,3 +232,51 @@ def test_combine_minari_version_specifiers(specifier_intersection, version_speci
     intersection = combine_minari_version_specifiers(version_specifiers)
 
     assert specifier_intersection == intersection
+
+
+# in the future, if the logic of save metadata of combined dataset changes, this should be changed as well
+def test_combine_dataset_with_different_metadata():
+    n_data = 2
+    dataset_list = []
+    for i in range(n_data):
+        dataset_id = f"cartpole-test-{i}-v0"
+        env = gym.make("CartPole-v1", max_episode_steps=500)
+        env = DataCollectorV0(env)
+        env.reset(seed=42)
+        for episode in range(5):
+            terminated = False
+            truncated = False
+            while not terminated and not truncated:
+                action = env.action_space.sample()  # User-defined policy function
+                _, _, terminated, truncated, _ = env.step(action)
+            env.reset()
+
+        # Create Minari dataset and store locally
+        permalink = "https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/test_dataset_combine.py"
+        dataset = minari.create_dataset_from_collector_env(
+            dataset_id=dataset_id,
+            collector_env=env,
+            algorithm_name="random_policy" + str(i),
+            code_permalink=permalink + str(i),
+            author="WillDudley" + str(i),
+            author_email="wdudley@farama.org" + str(i),
+        )
+        assert isinstance(dataset, MinariDataset)
+        env.close()
+        dataset_list.append(dataset)
+
+    combined_dataset = combine_datasets(
+        dataset_list, new_dataset_id="cartpole-combined-test-v0"
+    )
+    permalink = "https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/test_dataset_combine.py"
+    with h5py.File(combined_dataset.spec.data_path) as dt_file:
+        assert dt_file.attrs["algorithm_name"] == "random_policy" + str(n_data - 1)
+        _final_code_link = permalink + str(n_data - 1)
+        assert dt_file.attrs["code_permalink"] == _final_code_link
+        assert dt_file.attrs["author"] == "WillDudley" + str(n_data - 1)
+        assert dt_file.attrs["author_email"] == "wdudley@farama.org" + str(n_data - 1)
+
+    for i in range(n_data):
+        minari.delete_dataset(f"cartpole-test-{i}-v0")
+    minari.delete_dataset("cartpole-combined-test-v0")
+    return

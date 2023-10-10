@@ -284,10 +284,17 @@ def combine_datasets(
 
             # TODO: list of authors, and emails
             with h5py.File(dataset.spec.data_path, "r") as dataset_file:
-                combined_data_file.attrs.modify("author", dataset_file.attrs["author"])
-                combined_data_file.attrs.modify(
-                    "author_email", dataset_file.attrs["author_email"]
-                )
+                attr_list = [
+                    "author",
+                    "author_email",
+                    "code_permalink",
+                    "algorithm_name",
+                ]
+                for optional_parameter in attr_list:
+                    if optional_parameter in dataset_file.attrs:
+                        combined_data_file.attrs.modify(
+                            optional_parameter, dataset_file.attrs[optional_parameter]
+                        )
 
         assert combined_dataset_env_spec is not None
         combined_data_file.attrs["env_spec"] = combined_dataset_env_spec.to_json()
@@ -375,10 +382,10 @@ def create_dataset_from_buffers(
 
     Each episode dictionary buffer must have the following items:
         * `observations`: np.ndarray of step observations. shape = (total_episode_steps + 1, (observation_shape)). Should include initial and final observation
-        * `actions`: np.ndarray of step action. shape = (total_episode_steps + 1, (action_shape)).
-        * `rewards`: np.ndarray of step rewards. shape = (total_episode_steps + 1, 1).
-        * `terminations`: np.ndarray of step terminations. shape = (total_episode_steps + 1, 1).
-        * `truncations`: np.ndarray of step truncations. shape = (total_episode_steps + 1, 1).
+        * `actions`: np.ndarray of step action. shape = (total_episode_steps, (action_shape)).
+        * `rewards`: np.ndarray of step rewards. shape = (total_episode_steps, 1).
+        * `terminations`: np.ndarray of step terminations. shape = (total_episode_steps, 1).
+        * `truncations`: np.ndarray of step truncations. shape = (total_episode_steps, 1).
 
     Other additional items can be added as long as the values are np.ndarray's or other nested dictionaries.
 
@@ -396,6 +403,10 @@ def create_dataset_from_buffers(
         expert_policy (Optional[Callable[[ObsType], ActType], optional): policy to compute `ref_max_score` by averaging the returns over a number of episodes equal to  `num_episodes_average_score`.
                                                                         `ref_max_score` and `expert_policy` can't be passed at the same time. Default to None
         num_episodes_average_score (int): number of episodes to average over the returns to compute `ref_min_score` and `ref_max_score`. Default to 100.
+                observation_space:
+        action_space (Optional[gym.spaces.Space]): action space of the environment. If None (default) use the environment action space.
+        observation_space (Optional[gym.spaces.Space]): observation space of the environment. If None (default) use the environment observation space.
+        minari_version (Optional[str], optional): Minari version specifier compatible with the dataset. If None (default) use the installed Minari version.
 
     Returns:
         MinariDataset
@@ -416,6 +427,12 @@ def create_dataset_from_buffers(
             "`author_email` is set to None. For longevity purposes it is highly recommended to provide an author email, or some other obvious contact information.",
             UserWarning,
         )
+    if algorithm_name is None:
+        warnings.warn(
+            "`algorithm_name` is set to None. For reproducibility purpose it's highly recommended to set your algorithm",
+            UserWarning,
+        )
+
     if minari_version is None:
         version = Version(__version__)
         release = version.release
@@ -486,6 +503,15 @@ def create_dataset_from_buffers(
                 "env_spec"
             ] = env.spec.to_json()  # pyright: ignore [reportOptionalMemberAccess]
             file.attrs["dataset_id"] = dataset_id
+
+            if algorithm_name is not None:
+                file.attrs["algorithm_name"] = str(algorithm_name)
+            if author is not None:
+                file.attrs["author"] = str(author)
+            if author_email is not None:
+                file.attrs["author_email"] = str(author_email)
+            if code_permalink is not None:
+                file.attrs["code_permalink"] = str(code_permalink)
 
             action_space_str = serialize_space(action_space)
             observation_space_str = serialize_space(observation_space)
@@ -571,6 +597,13 @@ def create_dataset_from_collector_env(
             "`author_email` is set to None. For longevity purposes it is highly recommended to provide an author email, or some other obvious contact information.",
             UserWarning,
         )
+
+    if algorithm_name is None:
+        warnings.warn(
+            "`algorithm_name` is set to None. For reproducibility purpose it's highly recommended to set your algorithm",
+            UserWarning,
+        )
+
     if expert_policy is not None and ref_max_score is not None:
         raise ValueError(
             "Can't pass a value for `expert_policy` and `ref_max_score` at the same time."
@@ -602,11 +635,17 @@ def create_dataset_from_collector_env(
         data_path = os.path.join(dataset_path, "main_data.hdf5")
         dataset_metadata: Dict[str, Any] = {
             "dataset_id": str(dataset_id),
-            "algorithm_name": str(algorithm_name),
-            "author": str(author),
-            "author_email": str(author_email),
-            "code_permalink": str(code_permalink),
+            "minari_version": minari_version,
         }
+
+        if algorithm_name is not None:
+            dataset_metadata["algorithm_name"] = str(algorithm_name)
+        if author is not None:
+            dataset_metadata["author"] = str(author)
+        if author_email is not None:
+            dataset_metadata["author_email"] = str(author_email)
+        if code_permalink is not None:
+            dataset_metadata["code_permalink"] = str(code_permalink)
 
         if expert_policy is not None or ref_max_score is not None:
             env = copy.deepcopy(collector_env.env)
@@ -629,14 +668,7 @@ def create_dataset_from_collector_env(
 
         collector_env.save_to_disk(
             data_path,
-            dataset_metadata={
-                "dataset_id": str(dataset_id),
-                "algorithm_name": str(algorithm_name),
-                "author": str(author),
-                "author_email": str(author_email),
-                "code_permalink": str(code_permalink),
-                "minari_version": minari_version,
-            },
+            dataset_metadata=dataset_metadata,
         )
         return MinariDataset(data_path)
     else:
