@@ -8,9 +8,9 @@ Serializing a custom space
 # to create a Minari dataset with :class:`minari.DataCollectorV0`. We'll use the
 # simple `CartPole-v1 <https://gymnasium.farama.org/environments/classic_control/cart_pole/>`_ environment,
 # modify the observation space, show how to serialize it, and create a Minari dataset.
-# 
+#
 # Serializing a custom space can be applied to both observation and action spaces.
-# 
+#
 # Let's get started by importing the required modules:
 
 import json
@@ -41,6 +41,8 @@ print(f"Observation space: {env.action_space}")
 # Now we can create a new observation space that inherits from the `gym.Space <https://gymnasium.farama.org/api/spaces/#the-base-class>`_ class.
 
 # %%
+
+
 class CartPoleObservationSpace(Space):
     def __init__(
         self,
@@ -76,10 +78,15 @@ class CartPoleObservationSpace(Space):
 
 # %% [markdown]
 # Now that we have a custom observation space we need to define functions that properly serialize it.
-# 
-# When creating a Minari dataset, the space data gets `serialized <https://minari.farama.org/content/dataset_standards/#space-serialization>`_ to a JSON format when saving to disk. The `serialize_space <https://github.com/Farama-Foundation/Minari/blob/main/minari/serialization.py#L13C5-L13C20>`_ function takes care of this conversion for various supported Gym spaces. To enable serialization for a custom space we can register 2 new functions that will serialize the space into a JSON object and also deserialize it into our custom space object.
+#
+# When creating a Minari dataset, the space data gets `serialized <https://minari.farama.org/content/dataset_standards/#space-serialization>`_
+# to a JSON format when saving to disk. The `serialize_space <https://github.com/Farama-Foundation/Minari/blob/main/minari/serialization.py#L13C5-L13C20>`_
+# function takes care of this conversion for various supported Gym spaces. To enable serialization for a custom space we can register 2 new functions that
+# will serialize the space into a JSON object and also deserialize it into our custom space object.
 
 # %%
+
+
 @serialize_space.register(CartPoleObservationSpace)
 def serialize_custom_space(space: CartPoleObservationSpace, to_string=True) -> Union[Dict, str]:
     result = {}
@@ -92,6 +99,7 @@ def serialize_custom_space(space: CartPoleObservationSpace, to_string=True) -> U
     if to_string:
         result = json.dumps(result)
     return result
+
 
 @deserialize_space.register("CartPoleObservationSpace")
 def deserialize_custom_space(space_dict: Dict) -> CartPoleObservationSpace:
@@ -109,23 +117,26 @@ def deserialize_custom_space(space_dict: Dict) -> CartPoleObservationSpace:
 
 # %% [markdown]
 # Now we can initialize the custom observation space for our environment and collect some episode data.
-# 
+#
 # The x-position of CartPole's observation space can take values between -4.8 and +4.8.
 # For this tutorial we'll use our new class to create an observation space where the
 # cart's x-position can only take on values between 0 and +4.8.
-# 
+#
 # We also need to define a :class:`minari.StepDataCallback` object to manipulate the x-position to be
 # above 0.
 #
 # First element in array is x-position. The rest of elements are CartPole's default values
 
 # %%
+
+
 custom_observation_space = CartPoleObservationSpace(
     low=np.array([0, -3.4028235e+38, -4.1887903e-01, -3.4028235e+38], dtype=np.float32),
     high=np.array([4.8, 3.4028235e+38, 4.1887903e-01, 3.4028235e+38], dtype=np.float32),
     shape=(4,),
     dtype=np.float32
 )
+
 
 class CustomSpaceStepDataCallback(StepDataCallback):
     def __call__(self, env, **kwargs):
@@ -134,6 +145,8 @@ class CustomSpaceStepDataCallback(StepDataCallback):
         return step_data
 
 # %%
+
+
 dataset_id = "cartpole-custom-space-v1"
 
 # delete the test dataset if it already exists
