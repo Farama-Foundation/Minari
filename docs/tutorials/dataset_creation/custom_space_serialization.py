@@ -13,18 +13,20 @@ Serializing a custom space
 # 
 # Let's get started by importing the required modules:
 
+import json
+from typing import Any, Dict, Sequence, Union
+
 # %%
 import gymnasium as gym
-from typing import Any, Sequence, Union, Dict
-import json
 import numpy as np
 from gymnasium.spaces import Space
 from numpy.typing import NDArray
 
 import minari
 from minari import DataCollectorV0
-from minari.serialization import serialize_space, deserialize_space
 from minari.data_collector.callbacks import StepDataCallback
+from minari.serialization import deserialize_space, serialize_space
+
 
 # %% [markdown]
 # First we'll initialize the CartPole environment and take a look at its observation and action space.
