@@ -326,10 +326,10 @@ def create_dataset_from_buffers(
 
     Each episode dictionary buffer must have the following items:
         * `observations`: np.ndarray of step observations. shape = (total_episode_steps + 1, (observation_shape)). Should include initial and final observation
-        * `actions`: np.ndarray of step action. shape = (total_episode_steps + 1, (action_shape)).
-        * `rewards`: np.ndarray of step rewards. shape = (total_episode_steps + 1, 1).
-        * `terminations`: np.ndarray of step terminations. shape = (total_episode_steps + 1, 1).
-        * `truncations`: np.ndarray of step truncations. shape = (total_episode_steps + 1, 1).
+        * `actions`: np.ndarray of step action. shape = (total_episode_steps, (action_shape)).
+        * `rewards`: np.ndarray of step rewards. shape = (total_episode_steps, 1).
+        * `terminations`: np.ndarray of step terminations. shape = (total_episode_steps, 1).
+        * `truncations`: np.ndarray of step truncations. shape = (total_episode_steps, 1).
 
     Other additional items can be added as long as the values are np.ndarray's or other nested dictionaries.
 
@@ -347,6 +347,10 @@ def create_dataset_from_buffers(
         expert_policy (Optional[Callable[[ObsType], ActType], optional): policy to compute `ref_max_score` by averaging the returns over a number of episodes equal to  `num_episodes_average_score`.
                                                                         `ref_max_score` and `expert_policy` can't be passed at the same time. Default to None
         num_episodes_average_score (int): number of episodes to average over the returns to compute `ref_min_score` and `ref_max_score`. Default to 100.
+                observation_space:
+        action_space (Optional[gym.spaces.Space]): action space of the environment. If None (default) use the environment action space.
+        observation_space (Optional[gym.spaces.Space]): observation space of the environment. If None (default) use the environment observation space.
+        minari_version (Optional[str], optional): Minari version specifier compatible with the dataset. If None (default) use the installed Minari version.
 
     Returns:
         MinariDataset
@@ -367,6 +371,12 @@ def create_dataset_from_buffers(
             "`author_email` is set to None. For longevity purposes it is highly recommended to provide an author email, or some other obvious contact information.",
             UserWarning,
         )
+    if algorithm_name is None:
+        warnings.warn(
+            "`algorithm_name` is set to None. For reproducibility purpose it's highly recommended to set your algorithm",
+            UserWarning,
+        )
+
     if minari_version is None:
         version = Version(__version__)
         release = version.release
@@ -497,6 +507,13 @@ def create_dataset_from_collector_env(
             "`author_email` is set to None. For longevity purposes it is highly recommended to provide an author email, or some other obvious contact information.",
             UserWarning,
         )
+
+    if algorithm_name is None:
+        warnings.warn(
+            "`algorithm_name` is set to None. For reproducibility purpose it's highly recommended to set your algorithm",
+            UserWarning,
+        )
+
     if expert_policy is not None and ref_max_score is not None:
         raise ValueError(
             "Can't pass a value for `expert_policy` and `ref_max_score` at the same time."
