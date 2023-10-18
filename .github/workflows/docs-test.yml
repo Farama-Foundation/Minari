@@ -1,4 +1,4 @@
-name: Build Documentation website
+name: Test Documentation
 on:
   push:
     branches: [main]
@@ -6,7 +6,7 @@ permissions:
   contents: write
 jobs:
   docs:
-    name: Generate Website
+    name: Test documentation
     runs-on: ubuntu-latest
     env:
       SPHINX_GITHUB_CHANGELOG_TOKEN: ${{ secrets.GITHUB_TOKEN }}
