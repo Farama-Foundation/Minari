@@ -68,7 +68,7 @@ def list_local_datasets(
             continue
 
         data_path = os.path.join(datasets_path, dst_id, "data")
-        metadata = MinariStorage(data_path).metadata
+        metadata = MinariStorage.read(data_path).metadata
         if ("minari_version" not in metadata) or (
             compatible_minari_version
             and __version__ not in SpecifierSet(metadata["minari_version"])

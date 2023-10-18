@@ -33,6 +33,7 @@ dependencies = [
     "gymnasium>=0.28.1",
     "portion==2.4.0",
     "packaging==23.1",
+    "pyarrow",
 ]
 dynamic = ["version"]
 

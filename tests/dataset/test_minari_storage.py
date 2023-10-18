@@ -34,10 +34,10 @@ def _generate_episode_dict(
 
 def test_non_existing_data(tmp_dir):
     with pytest.raises(ValueError, match="The data path foo doesn't exist"):
-        MinariStorage("foo")
+        MinariStorage.read("foo")
 
     with pytest.raises(ValueError, match="No data found in data path"):
-        MinariStorage(tmp_dir)
+        MinariStorage.read(tmp_dir)
 
 
 def test_metadata(tmp_dir):
@@ -48,7 +48,7 @@ def test_metadata(tmp_dir):
         observation_space=observation_space,
         action_space=action_space,
     )
-    assert storage.data_path == tmp_dir
+    assert str(storage.data_path) == tmp_dir
 
     extra_metadata = {"float": 3.2, "string": "test-value", "int": 2, "bool": True}
     storage.update_metadata(extra_metadata)
@@ -63,12 +63,13 @@ def test_metadata(tmp_dir):
         "string",
         "total_episodes",
         "total_steps",
+        "data_format"
     }
 
     for key, value in extra_metadata.items():
         assert storage_metadata[key] == value
 
-    storage2 = MinariStorage(tmp_dir)
+    storage2 = MinariStorage.read(tmp_dir)
     assert storage_metadata == storage2.metadata
 
 
@@ -90,7 +91,7 @@ def test_add_episodes(tmp_dir):
     )
     storage.update_episodes(episodes)
     del storage
-    storage = MinariStorage(tmp_dir)
+    storage = MinariStorage.read(tmp_dir)
 
     assert storage.total_episodes == n_episodes
     assert storage.total_steps == n_episodes * steps_per_episode

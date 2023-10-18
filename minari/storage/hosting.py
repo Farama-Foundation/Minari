@@ -56,7 +56,7 @@ def upload_dataset(dataset_id: str, path_to_private_key: str):
 
         dataset = load_dataset(dataset_id)
 
-        metadata = MinariStorage(dataset.spec.data_path).metadata
+        metadata = MinariStorage.read(dataset.spec.data_path).metadata
 
         # See https://github.com/googleapis/python-storage/issues/27 for discussion on progress bars
         _upload_local_directory_to_gcs(str(file_path), bucket, dataset_id)
