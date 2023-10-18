@@ -3,12 +3,29 @@ import pytest
 import minari
 from minari import MinariDataset
 from minari.storage.datasets_root_dir import get_dataset_path
+from minari.storage.hosting import get_remote_dataset_versions
 from tests.common import check_data_integrity
+
+
+env_names = ["pen", "door", "hammer", "relocate"]
+
+
+def get_latest_compatible_dataset_id(env_name, dataset_name):
+    latest_compatible_version = get_remote_dataset_versions(
+        dataset_name=dataset_name,
+        env_name=env_name,
+        latest_version=True,
+        compatible_minari_version=True,
+    )[0]
+    return f"{env_name}-{dataset_name}-v{latest_compatible_version}"
 
 
 @pytest.mark.parametrize(
     "dataset_id",
-    ["pen-human-v0", "door-human-v0", "hammer-human-v0", "relocate-human-v0"],
+    [
+        get_latest_compatible_dataset_id(env_name=env_name, dataset_name="human")
+        for env_name in env_names
+    ],
 )
 def test_download_dataset_from_farama_server(dataset_id: str):
     """Test downloading Minari datasets from remote server.
@@ -44,3 +61,21 @@ def test_download_dataset_from_farama_server(dataset_id: str):
     minari.delete_dataset(dataset_id)
     local_datasets = minari.list_local_datasets()
     assert dataset_id not in local_datasets
+
+
+@pytest.mark.parametrize(
+    "dataset_id",
+    [
+        get_latest_compatible_dataset_id(env_name=env_name, dataset_name="human")
+        for env_name in env_names
+    ],
+)
+def test_load_dataset_with_download(dataset_id: str):
+    """Test load dataset with and without download."""
+    with pytest.raises(FileNotFoundError):
+        dataset = minari.load_dataset(dataset_id)
+
+    dataset = minari.load_dataset(dataset_id, download=True)
+    assert isinstance(dataset, MinariDataset)
+
+    minari.delete_dataset(dataset_id)

@@ -3,6 +3,7 @@ from collections import OrderedDict
 from typing import Dict
 
 import gymnasium as gym
+import h5py
 import numpy as np
 import pytest
 from gymnasium import spaces
@@ -28,8 +29,9 @@ register_dummy_envs()
         ("dummy-dict-test-v0", "DummyDictEnv-v0"),
         ("dummy-box-test-v0", "DummyBoxEnv-v0"),
         ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
+        ("dummy-text-test-v0", "DummyTextEnv-v0"),
         ("dummy-combo-test-v0", "DummyComboEnv-v0"),
-        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDisceteBoxEnv-v0"),
+        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
     ],
 )
 def test_generate_dataset_with_collector_env(dataset_id, env_id):
@@ -62,14 +64,24 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
         env.reset()
 
     # Create Minari dataset and store locally
+    codelink = "https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/test_dataset_combine.py"
     dataset = minari.create_dataset_from_collector_env(
         dataset_id=dataset_id,
         collector_env=env,
         algorithm_name="random_policy",
-        code_permalink="https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
+        code_permalink=codelink,
         author="WillDudley",
         author_email="wdudley@farama.org",
     )
+
+    # test metadata
+
+    with h5py.File(dataset.spec.data_path, "r") as data_file:
+        assert data_file.attrs["algorithm_name"] == "random_policy"
+        codelink = "https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/test_dataset_combine.py"
+        assert data_file.attrs["code_permalink"] == codelink
+        assert data_file.attrs["author"] == "WillDudley"
+        assert data_file.attrs["author_email"] == "wdudley@farama.org"
 
     assert isinstance(dataset, MinariDataset)
     assert dataset.total_episodes == num_episodes
@@ -92,8 +104,9 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
         ("cartpole-test-v0", "CartPole-v1"),
         ("dummy-dict-test-v0", "DummyDictEnv-v0"),
         ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
+        ("dummy-text-test-v0", "DummyTextEnv-v0"),
         ("dummy-combo-test-v0", "DummyComboEnv-v0"),
-        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDisceteBoxEnv-v0"),
+        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
     ],
 )
 def test_generate_dataset_with_external_buffer(dataset_id, env_id):
@@ -265,17 +278,26 @@ def test_generate_dataset_with_space_subset_external_buffer():
         observations.append(_space_subset_helper(observation))
 
     # Create Minari dataset and store locally
+    codelink = "https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/test_dataset_combine.py"
     dataset = minari.create_dataset_from_buffers(
         dataset_id=dataset_id,
         env=env,
         buffer=buffer,
         algorithm_name="random_policy",
-        code_permalink="https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
+        code_permalink=codelink,
         author="WillDudley",
         author_email="wdudley@farama.org",
         action_space=action_space_subset,
         observation_space=observation_space_subset,
     )
+
+    # test metadata
+    with h5py.File(dataset.spec.data_path, "r") as data_file:
+        assert data_file.attrs["algorithm_name"] == "random_policy"
+        code_link = "https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/test_dataset_combine.py"
+        assert data_file.attrs["code_permalink"] == code_link
+        assert data_file.attrs["author"] == "WillDudley"
+        assert data_file.attrs["author_email"] == "wdudley@farama.org"
 
     assert isinstance(dataset, MinariDataset)
     assert dataset.total_episodes == num_episodes

@@ -3,6 +3,7 @@ import os
 import h5py
 import pytest
 
+from minari import __version__
 from minari.dataset.minari_storage import MinariStorage
 
 
@@ -23,6 +24,7 @@ def _create_dummy_dataset(file_path):
         f.attrs["total_episodes"] = 100
         f.attrs["total_steps"] = 1000
         f.attrs["dataset_id"] = "dummy-test-v0"
+        f.attrs["minari_version"] = f"=={__version__}"
 
 
 def test_minari_storage_missing_env_module():

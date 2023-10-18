@@ -8,7 +8,8 @@ from google.cloud import storage  # pyright: ignore [reportGeneralTypeIssues]
 
 from minari import list_remote_datasets
 from minari.dataset.minari_dataset import parse_dataset_id
-from minari.storage.hosting import find_highest_remote_version
+from minari.serialization import deserialize_space
+from minari.storage.hosting import get_remote_dataset_versions
 
 
 filtered_datasets = defaultdict(defaultdict)
@@ -19,7 +20,7 @@ for dataset_id in all_remote_datasets.keys():
     env_name, dataset_name, version = parse_dataset_id(dataset_id)
 
     if dataset_name not in filtered_datasets[env_name]:
-        max_version = find_highest_remote_version(env_name, dataset_name)
+        max_version = get_remote_dataset_versions(env_name, dataset_name, True)[0]
         max_version_dataset_id = "-".join([env_name, dataset_name, f"v{max_version}"])
         filtered_datasets[env_name][dataset_name] = all_remote_datasets[
             max_version_dataset_id
@@ -44,10 +45,19 @@ for env_name, datasets in filtered_datasets.items():
         dataset_id = dataset_spec["dataset_id"]
         total_timesteps = dataset_spec["total_steps"]
         total_episodes = dataset_spec["total_episodes"]
+        dataset_action_space = (
+            deserialize_space(dataset_spec["action_space"]).__repr__().replace("\n", "")
+        )
+        dataset_observation_space = (
+            deserialize_space(dataset_spec["observation_space"])
+            .__repr__()
+            .replace("\n", "")
+        )
         author = dataset_spec["author"]
         email = dataset_spec["author_email"]
         algo_name = dataset_spec["algorithm_name"]
         code = dataset_spec["code_permalink"]
+        minari_version = dataset_spec["minari_version"]
 
         description = None
         if "description" in dataset_spec:
@@ -97,10 +107,13 @@ title: {dataset_name.title()}
 |----|----|
 |Total Timesteps| `{total_timesteps}`|
 |Total Episodes | `{total_episodes}` |
+| Dataset Observation Space | `{dataset_observation_space}` |
+| Dataset Action Space | `{dataset_action_space}` |
 | Algorithm           | `{algo_name}`           |
 | Author              | `{author}`              |
 | Email               | `{email}`               |
 | Code Permalink      | `{code}`                |
+| Minari Version      | `{minari_version}`      |
 | download            | `minari.download_dataset("{dataset_id}")` |
 
 

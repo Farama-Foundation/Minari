@@ -313,10 +313,10 @@ In this case, the resulting Minari dataset `HDF5` file will end up looking as fo
                 <li class="folder">actions
                 <ul>
                     <li class="dataset">_index_0</li>
-                    <li class="folder">_index_1_
+                    <li class="folder">_index_1
                     <ul>
                     <li class="dataset"> _index_0 </li>
-                    <li class="dataset"> _index_1_ </li>
+                    <li class="dataset"> _index_1 </li>
                     </ul>
                     </li>
                 </ul>
@@ -360,10 +360,10 @@ In this case, the resulting Minari dataset `HDF5` file will end up looking as fo
                     <li class="folder-white">actions
                         <ul>
                             <li class="dataset-white">_index_0</li>
-                            <li class="folder-white">_index_1_
+                            <li class="folder-white">_index_1
                             <ul>
                             <li class="dataset-white"> _index_0 </li>
-                            <li class="dataset-white"> _index_1_ </li>
+                            <li class="dataset-white"> _index_1 </li>
                             </ul>
                             </li>
                         </ul>
@@ -502,6 +502,7 @@ When creating a Minari dataset with the `DataCollectorV0` wrapper the default gl
 | `algorithm_name`        | `str`      | Name of the expert policy used to create the dataset. |
 | `action_space`          | `str`      | Serialized Gymnasium action space describing actions in dataset. |
 | `observation_space`     | `str`      | Serialized Gymnasium observation space describing observations in dataset. |
+| `minari_version`        | `str`      | Version specifier of Minari versions compatible with the dataset. |
 
 
 
@@ -528,23 +529,43 @@ Statistical metrics are also computed as metadata for the individual datasets in
 ## Observation and Action Spaces
 The Minari storage format supports the following observation and action spaces:
 
-### Observation Spaces
+### Supported Spaces
 
-| Observation Space                                                                                 | Description                                                                                              |
+| Space                                                                                 | Description                                                                                              |
 | ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
 | [Discrete](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/discrete.py) |Describes a discrete space where `{0, 1, ..., n-1}` are the possible values our observation can take. An optional argument can be used to shift the values to `{a, a+1, ..., a+n-1}`.|
 | [Box](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/box.py)           |An n-dimensional continuous space. The `upper` and `lower` arguments can be used to define bounded spaces.|
 | [Tuple](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/tuple.py)       |Represents a tuple of spaces.                                                                             |
 | [Dict](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/dict.py)         |Represents a dictionary of spaces.                                                                        |
-
-### Action Spaces
-
-| Action Space                                                                                      | Description                                                                                               |
-| ------------------------------------------------------------------------------------------------- |---------------------------------------------------------------------------------------------------------- |
-| [Discrete](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/discrete.py) |Describes a discrete space where `{0, 1, ..., n-1}` are the possible values our action can take. An optional argument can be used to shift the values to `{a, a+1, ..., a+n-1}`. |
-| [Box](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/box.py)           |An n-dimensional continuous space. The `upper` and `lower` arguments can be used to define bounded spaces. |
-| [Tuple](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/tuple.py)       |Represents a tuple of spaces.                                                                              |
-| [Dict](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/dict.py)         |Represents a dictionary of spaces.                                                                         |
+| [Text](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/text.py)         |The elements of this space are bounded strings from a charset. Note: at the moment, we don't guarantee support for all surrogate pairs.                                                                        |                                                                       |
 
 #### Space Serialization
 Spaces are serialized to a JSON format when saving to disk. This serialization supports all space types supported by Minari, and aims to be both human, and machine readable. The serialized action and observation spaces for the episodes in the dataset are saved as strings in the global HDF5 group metadata in `main_data.hdf5` for a particular dataset as `action_space` and `observation_space` respectively. All episodes in `main_data.hdf5` must have observations and actions that comply with these action and observation spaces. 
+
+## Minari Data Structures
+
+A Minari dataset is encapsulated in the `MinariDataset` class which allows for iterating and sampling through episodes which are defined as `EpisodeData` data class.
+
+### EpisodeData Structure
+
+Episodes can be accessed from a Minari dataset through iteration, random sampling, or even filtering episodes from a dataset through an arbitrary condition via the `filter_episodes` method. Take the following example where we load the `door-human-v0` dataset and randomly sample 10 episodes:
+
+```python
+dataset = minari.load_dataset("door-human-v0")
+sampled_episodes = dataset.sample_episodes(10)
+```
+
+The `sampled_episodes` variable will be a list of 10 `EpisodeData` elements, each containing episode data. An `EpisodeData` element is a data class consisting of the following fields:
+
+| Field             | Type                                 | Description                                                   |
+| ----------------- | ------------------------------------ | ------------------------------------------------------------- |
+| `id`              | `np.int64`                           | ID of the episode.                                            |
+| `seed`            | `np.int64`                           | Seed used to reset the episode.                               |
+| `total_timesteps` | `np.int64`                           | Number of timesteps in the episode.                           |
+| `observations`    | `np.ndarray`, `list`, `tuple`, `dict` | Observations for each timestep including initial observation. |
+| `actions`         | `np.ndarray`, `list`, `tuple`, `dict` | Actions for each timestep.                                    |
+| `rewards`         | `np.ndarray`                         | Rewards for each timestep.                                    |
+| `terminations`    | `np.ndarray`                         | Terminations for each timestep.                               |
+| `truncations`     | `np.ndarray`                         | Truncations for each timestep.                                |
+
+As mentioned in the `Supported Spaces` section, many different observation and action spaces are supported so the data type for these fields are dependent on the environment being used.
