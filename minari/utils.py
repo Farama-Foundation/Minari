@@ -174,7 +174,8 @@ def validate_datasets_to_combine(datasets_to_combine: List[MinariDataset]) -> En
         max_episode_steps = None
     else:
         max_episode_steps = max(
-            dataset.spec.env_spec.max_episode_steps for dataset in datasets_to_combine
+            dataset.spec.env_spec.max_episode_steps
+            for dataset in datasets_to_combine  # pyright: ignore[reportGeneralTypeIssues]
         )
 
     combine_env_spec = []
@@ -348,7 +349,9 @@ def get_average_reference_score(
     for _ in range(num_episodes):
         while True:
             action = policy(obs)
-            obs, _, terminated, truncated, info = env.step(action)
+            obs, _, terminated, truncated, info = env.step(
+                action  # pyright: ignore[reportGeneralTypeIssues]
+            )
             if terminated or truncated:
                 episode_returns.append(info["episode"]["r"])
                 obs, _ = env.reset()
@@ -450,16 +453,17 @@ def create_dataset_from_buffers(
     except InvalidSpecifier:
         print(f"{minari_version} is not a version specifier.")
 
-    if env is None:
-        if observation_space is None or action_space is None:
-            raise ValueError(
-                             "Both observation space and action space must be provided, if environment is None"
-            )
-    else:
-        if observation_space is None:
-            observation_space = env.observation_space
-        if action_space is None:
-            action_space = env.action_space
+    if env is None and (observation_space is None or action_space is None):
+        raise ValueError(
+            "Both observation space and action space must be provided, if environment is None"
+        )
+
+    if observation_space is None:
+        observation_space = (
+            env.observation_space  # pyright: ignore[reportOptionalMemberAccess]
+        )
+    if action_space is None:
+        action_space = env.action_space  # pyright: ignore[reportOptionalMemberAccess]
 
     if expert_policy is not None and ref_max_score is not None:
         raise ValueError(
