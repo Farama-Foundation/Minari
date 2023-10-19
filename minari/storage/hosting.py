@@ -5,6 +5,7 @@ import importlib.metadata
 import os
 import warnings
 from typing import Dict, List
+import h5py
 
 from google.cloud import storage  # pyright: ignore [reportGeneralTypeIssues]
 from gymnasium import logger
@@ -43,7 +44,8 @@ def upload_dataset(dataset_id: str, path_to_private_key: str):
                 blob = bucket.blob(remote_path)
                 # add metadata to main data file of dataset
                 if blob.name.endswith("main_data.hdf5"):
-                    blob.metadata = metadata
+                    with h5py.File(local_file, "r") as file:  # TODO: remove h5py when migrating to JSON metadata
+                        blob.metadata = file.attrs
                 blob.upload_from_filename(local_file)
 
     file_path = get_dataset_path(dataset_id)
