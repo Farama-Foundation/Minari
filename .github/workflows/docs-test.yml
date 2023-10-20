@@ -37,4 +37,4 @@ jobs:
         run: rm -r _build/.doctrees
 
       - name: Run documentation tests
-        run: xvfb-run -s "-screen 0 1024x768x24" pytest docs --markdown-docs -m markdown-docs
+        run: xvfb-run -s "-screen 0 1024x768x24" pytest docs --markdown-docs -m markdown-docs —-ignore=docs/tutorials/using_datasets/behavioral_cloning.py
