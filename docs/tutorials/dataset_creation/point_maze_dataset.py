@@ -364,7 +364,7 @@ for n_step in range(int(1e6)):
         print(n_step)
         if dataset is None:
             dataset = minari.create_dataset_from_collector_env(collector_env=collector_env,
-                                                               dataset_name=dataset_name,
+                                                               dataset_id=dataset_name,
                                                                algorithm_name="QIteration",
                                                                code_permalink="https://github.com/Farama-Foundation/Minari/blob/main/docs/tutorials/dataset_creation/point_maze_dataset.py",
                                                                author="Rodrigo Perez-Vicente",
