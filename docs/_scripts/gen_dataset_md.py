@@ -109,7 +109,7 @@ title: {dataset_name.title()}
 | download            | `minari.download_dataset("{dataset_id}")` |
 
 """
-        
+
         # Environment Specs
         env_spec = dataset_spec.get("env_spec")
         if env_spec is not None:
@@ -118,7 +118,7 @@ title: {dataset_name.title()}
             env = gym.make(env_id)
             action_space_table = env.action_space.__repr__().replace("\n", "")
             observation_space_table = env.observation_space.__repr__().replace("\n", "")
-    
+
             dataset_page += f"""
 ## Environment Specs
 
