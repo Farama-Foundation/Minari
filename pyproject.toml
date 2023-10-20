@@ -40,9 +40,10 @@ dynamic = ["version"]
 testing = [
     "pytest==7.1.3",
     "pytest-markdown-docs>=0.4.3",
-    "gymnasium-robotics>=1.2.1",
+    "gymnasium-robotics>=1.2.3",
+    "imageio>=2.14.1",
     "minigrid",
-    "imageio >=2.14.1",
+    "torch",
 ]
 
 [project.urls]
