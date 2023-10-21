@@ -481,6 +481,8 @@ def create_dataset_from_collector_env(
         dataset_id (str): name id to identify Minari dataset
         collector_env (DataCollectorV0): Gymnasium environment used to collect the buffer data
         buffer (list[Dict[str, Union[list, Dict]]]): list of episode dictionaries with data
+        eval_env (Optional[str|gym.Env|EnvSpec]): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) to use for evaluation with the dataset. After loading the dataset, the environment can be recovered as follows: `MinariDataset.recover_environment(eval_env=True).
+                                                If None the `env` used to collect the buffer data should be used for evaluation.
         algorithm_name (Optional[str], optional): name of the algorithm used to collect the data. Defaults to None.
         author (Optional[str], optional): author that generated the dataset. Defaults to None.
         author_email (Optional[str], optional): email of the author that generated the dataset. Defaults to None.
@@ -568,16 +570,36 @@ def create_dataset_from_collector_env(
         dataset_metadata["author_email"] = author_email
     if code_permalink is not None:
         dataset_metadata["code_permalink"] = code_permalink
+
+    if eval_env is not None:
+        if isinstance(eval_env, str):
+            eval_env_spec = gym.spec(eval_env)
+        elif isinstance(eval_env, EnvSpec):
+            eval_env_spec = eval_env
+        elif isinstance(eval_env, gym.Env):
+            eval_env_spec = eval_env.spec
+        else:
+            raise ValueError(
+                "The `eval_env` argument must be of types str|EnvSpec|gym.Env"
+            )
+        dataset_metadata["eval_env_spec"] = eval_env_spec.to_json()
+    else:
+        eval_env_spec = None
+
     if expert_policy is not None or ref_max_score is not None:
-        env = copy.deepcopy(collector_env.env)
+        # Prioritize the use of the evaluation environment to get the reference scores
+        if eval_env_spec is None:
+            env_ref_score = copy.deepcopy(collector_env.env)
+        else:
+            env_ref_score = gym.make(eval_env_spec)
         if ref_min_score is None:
             ref_min_score = get_average_reference_score(
-                env, RandomPolicy(env), num_episodes_average_score
+                env_ref_score, RandomPolicy(env_ref_score), num_episodes_average_score
             )
 
         if expert_policy is not None:
             ref_max_score = get_average_reference_score(
-                env, expert_policy, num_episodes_average_score
+                env_ref_score, expert_policy, num_episodes_average_score
             )
         dataset_metadata["ref_max_score"] = ref_max_score
         dataset_metadata["ref_min_score"] = ref_min_score

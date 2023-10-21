@@ -191,17 +191,12 @@ def test_generate_dataset_with_external_buffer(dataset_id, env_id):
         check_data_integrity(dataset._data, dataset.episode_indices)
         check_env_recovery(env, dataset, eval_env)
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-    check_data_integrity(dataset.storage, dataset.episode_indices)
-    check_env_recovery(env, dataset)
-=======
-    check_data_integrity(dataset._data, dataset.episode_indices)
-    check_env_recovery(env, dataset, eval_env_spec)
->>>>>>> f148956 (add recover eval env tests)
-=======
+        # check_data_integrity(dataset.storage, dataset.episode_indices)
+        # check_env_recovery(env, dataset)
+        # check_data_integrity(dataset._data, dataset.episode_indices)
+        # check_env_recovery(env, dataset, eval_env_spec)
+
         check_load_and_delete_dataset(dataset_id)
->>>>>>> ae12238 (test for different types of env and eval_env)
 
     env.close()
     eval_env.close()
