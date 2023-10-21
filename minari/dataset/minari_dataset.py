@@ -103,6 +103,12 @@ class MinariDataset:
         assert isinstance(env_spec, str)
         self._env_spec = EnvSpec.from_json(env_spec)
 
+        eval_env_spec = metadata.get("eval_env_spec")
+        if eval_env_spec is not None:
+            assert isinstance(eval_env_spec, str)
+            eval_env_spec = EnvSpec.from_json(eval_env_spec)
+        self._eval_env_spec = eval_env_spec
+
         dataset_id = metadata["dataset_id"]
         assert isinstance(dataset_id, str)
         self._dataset_id = dataset_id
@@ -139,7 +145,7 @@ class MinariDataset:
 
         self._generator = np.random.default_rng()
 
-    def recover_environment(self) -> gym.Env:
+    def recover_environment(self, eval_env: bool = False) -> gym.Env:
         """Recover the Gymnasium environment used to create the dataset.
 
         Args:
@@ -149,10 +155,10 @@ class MinariDataset:
         Returns:
             environment: Gymnasium environment
         """
-        # if eval_env and self._data.eval_env_spec is not None:
-        #     return gym.make(self._data.eval_env_spec)
+        if eval_env and self._eval_env_spec is not None:
+            return gym.make(self._eval_env_spec)
 
-        return gym.make(self._data.env_spec)
+        return gym.make(self._env_spec)
 
     def set_seed(self, seed: int):
         """Set seed for random episode sampling generator."""

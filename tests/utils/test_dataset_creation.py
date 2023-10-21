@@ -188,13 +188,8 @@ def test_generate_dataset_with_external_buffer(dataset_id, env_id):
         assert dataset.spec.total_episodes == num_episodes
         assert len(dataset.episode_indices) == num_episodes
 
-        check_data_integrity(dataset._data, dataset.episode_indices)
+        check_data_integrity(dataset.storage, dataset.episode_indices)
         check_env_recovery(env, dataset, eval_env)
-
-        # check_data_integrity(dataset.storage, dataset.episode_indices)
-        # check_env_recovery(env, dataset)
-        # check_data_integrity(dataset._data, dataset.episode_indices)
-        # check_env_recovery(env, dataset, eval_env_spec)
 
         check_load_and_delete_dataset(dataset_id)
 

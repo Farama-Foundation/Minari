@@ -134,10 +134,6 @@ class MinariStorage:
                 ep_group = file[f"episode_{episode_id}"]
                 ep_group.attrs.update(metadata)
 
-            self._eval_env_spec = None
-            if "eval_env_spec" in f.attrs:
-                self._eval_env_spec = EnvSpec.from_json(f.attrs["eval_env_spec"])
-
     def apply(
         self,
         function: Callable[[dict], Any],
