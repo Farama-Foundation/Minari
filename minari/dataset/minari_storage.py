@@ -1,6 +1,7 @@
-import importlib.metadata
-import json
+from __future__ import annotations
+
 import os
+import pathlib
 from collections import OrderedDict
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
 
@@ -8,126 +9,158 @@ import gymnasium as gym
 import h5py
 import numpy as np
 from gymnasium.envs.registration import EnvSpec
-from packaging.specifiers import InvalidSpecifier, SpecifierSet
-from packaging.version import Version
 
-from minari.data_collector import DataCollectorV0
-from minari.serialization import deserialize_space
+from minari.serialization import deserialize_space, serialize_space
 
 
-# Use importlib due to circular import when: "from minari import __version__"
-__version__ = importlib.metadata.version("minari")
-
-PathLike = Union[str, bytes, os.PathLike]
+PathLike = Union[str, os.PathLike]
 
 
 class MinariStorage:
+    """Class that handles disk access to the data."""
+
     def __init__(self, data_path: PathLike):
-        """Initialize properties of the Minari storage.
+        """Initialize a MinariStorage with an existing data path.
+
+        To create a new dataset, use the class method `new`.
 
         Args:
-            data_path (str): full path to the `main_data.hdf5` file of the dataset.
+            data_path (str or Path): directory containing the data.
+
+        Raises:
+            ValueError: if the specified path doesn't exist or doesn't contain any data.
+
         """
-        self._data_path = data_path
-        self._extra_data_id = 0
-        with h5py.File(self._data_path, "r") as f:
-            self._env_spec = EnvSpec.from_json(f.attrs["env_spec"])
+        if not os.path.exists(data_path) or not os.path.isdir(data_path):
+            raise ValueError(f"The data path {data_path} doesn't exist")
+        file_path = os.path.join(str(data_path), "main_data.hdf5")
+        if not os.path.exists(file_path):
+            raise ValueError(f"No data found in data path {data_path}")
+        self._file_path = file_path
 
-            total_episodes = f.attrs["total_episodes"].item()
-            assert isinstance(total_episodes, int)
-            self._total_episodes: int = total_episodes
+        self._observation_space = None
+        self._action_space = None
 
-            total_steps = f.attrs["total_steps"].item()
-            assert isinstance(total_steps, int)
-            self._total_steps: int = total_steps
+    @classmethod
+    def new(
+        cls,
+        data_path: PathLike,
+        observation_space: Optional[gym.Space] = None,
+        action_space: Optional[gym.Space] = None,
+        env_spec: Optional[EnvSpec] = None,
+    ) -> MinariStorage:
+        """Class method to create a new data storage.
 
-            dataset_id = f.attrs["dataset_id"]
-            assert isinstance(dataset_id, str)
-            self._dataset_id = dataset_id
+        Args:
+            data_path (str or Path): directory where the data will be stored.
+            observation_space (gymnasium.Space, optional): Gymnasium observation space of the dataset.
+            action_space (gymnasium.Space, optional): Gymnasium action space of the dataset.
+            env_spec (EnvSpec, optional): Gymnasium EnvSpec of the environment that generates the dataset.
 
-            minari_version = f.attrs["minari_version"]
-            assert isinstance(minari_version, str)
+        Returns:
+            A new MinariStorage object.
 
-            # Check that the dataset is compatible with the current version of Minari
-            try:
-                assert Version(__version__) in SpecifierSet(
-                    minari_version
-                ), f"The installed Minari version {__version__} is not contained in the dataset version specifier {minari_version}."
-                self._minari_version = minari_version
-            except InvalidSpecifier:
-                print(f"{minari_version} is not a version specifier.")
+        Raises:
+            ValueError: if you don't specify the env_spec, you need to specify both observation_space and action_space.
+        """
+        if env_spec is None and (observation_space is None or action_space is None):
+            raise ValueError(
+                "Since env_spec is not specified, you need to specify both action space and observation space!"
+            )
+        data_path = pathlib.Path(data_path)
+        data_path.mkdir(exist_ok=True)
+        data_path.joinpath("main_data.hdf5").touch(exist_ok=False)
 
-            self._combined_datasets = f.attrs.get("combined_datasets", default=[])
+        obj = cls(data_path)
+        metadata: Dict[str, Any] = {"total_episodes": 0, "total_steps": 0}
+        if observation_space is not None:
+            metadata["observation_space"] = serialize_space(observation_space)
+            obj._observation_space = observation_space
+        if action_space is not None:
+            metadata["action_space"] = serialize_space(action_space)
+            obj._action_space = action_space
+        if env_spec is not None:
+            metadata["env_spec"] = env_spec.to_json()
 
-            # We will default to using the reconstructed observation and action spaces from the dataset
-            # and fall back to the env spec env if the action and observation spaces are not both present
-            # in the dataset.
-            if "action_space" in f.attrs and "observation_space" in f.attrs:
-                self._observation_space = deserialize_space(
-                    f.attrs["observation_space"]
-                )
-                self._action_space = deserialize_space(f.attrs["action_space"])
-            else:
-                # Checking if the base library of the environment is present in the environment
-                entry_point = json.loads(f.attrs["env_spec"])["entry_point"]
-                lib_full_path = entry_point.split(":")[0]
-                base_lib = lib_full_path.split(".")[0]
-                env_name = self._env_spec.id
+        with h5py.File(obj._file_path, "a") as file:
+            file.attrs.update(metadata)
+        return obj
 
-                try:
-                    env = gym.make(self._env_spec)
-                    self._observation_space = env.observation_space
-                    self._action_space = env.action_space
-                    env.close()
-                except ModuleNotFoundError as e:
-                    raise ModuleNotFoundError(
-                        f"Install {base_lib} for loading {env_name} data"
-                    ) from e
+    @property
+    def metadata(self) -> Dict[str, Any]:
+        """Metadata of the dataset."""
+        metadata = {}
+        with h5py.File(self._file_path, "r") as file:
+            metadata.update(file.attrs)
+
+        metadata["observation_space"] = self.observation_space
+        metadata["action_space"] = self.action_space
+        return metadata
+
+    def update_metadata(self, metadata: Dict):
+        """Update the metadata adding/modifying some keys.
+
+        Args:
+            metadata (dict): dictionary of keys-values to add to the metadata.
+        """
+        forbidden_keys = {"observation_space", "action_space", "env_spec"}.intersection(
+            metadata.keys()
+        )
+        if forbidden_keys:
+            raise ValueError(
+                f"You are not allowed to update values for {', '.join(forbidden_keys)}"
+            )
+        with h5py.File(self._file_path, "a") as file:
+            file.attrs.update(metadata)
+
+    def update_episode_metadata(
+        self, metadatas: Iterable[Dict], episode_indices: Optional[Iterable] = None
+    ):
+        """Update the metadata of episodes.
+
+        Args:
+            metadatas (Iterable[Dict]): metadatas, one for each episode.
+            episode_indices (Iterable, optional): episode indices to update.
+            If not specified, all the episodes are considered.
+
+        Warning:
+            In case metadatas and episode_indices have different lengths, the longest is truncated silently.
+        """
+        if episode_indices is None:
+            episode_indices = range(self.total_episodes)
+
+        with h5py.File(self._file_path, "a") as file:
+            for metadata, episode_id in zip(metadatas, episode_indices):
+                ep_group = file[f"episode_{episode_id}"]
+                ep_group.attrs.update(metadata)
 
     def apply(
         self,
         function: Callable[[dict], Any],
         episode_indices: Optional[Iterable] = None,
-    ) -> List[Any]:
+    ) -> Iterable[Any]:
         """Apply a function to a slice of the data.
 
         Args:
             function (Callable): function to apply to episodes
-            episode_indices (Optional[Iterable]): epsiodes id to consider
+            episode_indices (Optional[Iterable]): episodes id to consider
 
         Returns:
-            outs (list): list of outputs returned by the function applied to episodes
+            outs (Iterable): outputs returned by the function applied to episodes
         """
         if episode_indices is None:
             episode_indices = range(self.total_episodes)
-        out = []
-        with h5py.File(self._data_path, "r") as file:
-            for ep_idx in episode_indices:
-                ep_group = file[f"episode_{ep_idx}"]
-                assert isinstance(ep_group, h5py.Group)
-                ep_dict = {
-                    "id": ep_group.attrs.get("id"),
-                    "total_timesteps": ep_group.attrs.get("total_steps"),
-                    "seed": ep_group.attrs.get("seed"),
-                    "observations": self._decode_space(
-                        ep_group["observations"], self.observation_space
-                    ),
-                    "actions": self._decode_space(
-                        ep_group["actions"], self.action_space
-                    ),
-                    "rewards": ep_group["rewards"][()],
-                    "terminations": ep_group["terminations"][()],
-                    "truncations": ep_group["truncations"][()],
-                }
-                out.append(function(ep_dict))
 
-        return out
+        ep_dicts = self.get_episodes(episode_indices)
+        return map(function, ep_dicts)
 
     def _decode_space(
         self,
-        hdf_ref: Union[h5py.Group, h5py.Dataset],
+        hdf_ref: Union[h5py.Group, h5py.Dataset, h5py.Datatype],
         space: gym.spaces.Space,
     ) -> Union[Dict, Tuple, List, np.ndarray]:
+        assert not isinstance(hdf_ref, h5py.Datatype)
+
         if isinstance(space, gym.spaces.Tuple):
             assert isinstance(hdf_ref, h5py.Group)
             result = []
@@ -139,7 +172,7 @@ class MinariStorage:
         elif isinstance(space, gym.spaces.Dict):
             assert isinstance(hdf_ref, h5py.Group)
             result = {}
-            for key in hdf_ref:
+            for key in hdf_ref.keys():
                 result[key] = self._decode_space(hdf_ref[key], space.spaces[key])
             return result
         elif isinstance(space, gym.spaces.Text):
@@ -160,197 +193,213 @@ class MinariStorage:
             episodes (List[dict]): list of episodes data
         """
         out = []
-        with h5py.File(self._data_path, "r") as file:
+        with h5py.File(self._file_path, "r") as file:
             for ep_idx in episode_indices:
                 ep_group = file[f"episode_{ep_idx}"]
-                out.append(
-                    {
-                        "id": ep_group.attrs.get("id"),
-                        "total_timesteps": ep_group.attrs.get("total_steps"),
-                        "seed": ep_group.attrs.get("seed"),
-                        "observations": self._decode_space(
-                            ep_group["observations"], self.observation_space
-                        ),
-                        "actions": self._decode_space(
-                            ep_group["actions"], self.action_space
-                        ),
-                        "rewards": ep_group["rewards"][()],
-                        "terminations": ep_group["terminations"][()],
-                        "truncations": ep_group["truncations"][()],
-                    }
-                )
+                assert isinstance(ep_group, h5py.Group)
+
+                ep_dict = {
+                    "id": ep_group.attrs.get("id"),
+                    "total_timesteps": ep_group.attrs.get("total_steps"),
+                    "seed": ep_group.attrs.get("seed"),
+                    "observations": self._decode_space(
+                        ep_group["observations"], self.observation_space
+                    ),
+                    "actions": self._decode_space(
+                        ep_group["actions"], self.action_space
+                    ),
+                }
+                for key in {"rewards", "terminations", "truncations"}:
+                    group_value = ep_group[key]
+                    assert isinstance(group_value, h5py.Dataset)
+                    ep_dict[key] = group_value[:]
+
+                out.append(ep_dict)
 
         return out
 
-    def update_from_collector_env(
-        self,
-        collector_env: DataCollectorV0,
-        new_data_file_path: str,
-        additional_data_id: int,
-    ):
+    def update_episodes(self, episodes: Iterable[dict]):
+        """Update epsiodes in the storage from a list of episode buffer.
 
-        collector_env.save_to_disk(path=new_data_file_path)
+        Args:
+            episodes (Iterable[dict]): list of episodes buffer.
+            They must contain the keys specified in EpsiodeData dataclass, except for `id` which is optional.
+            If `id` is specified and exists, the new data is appended to the one in the storage.
+        """
+        additional_steps = 0
+        with h5py.File(self._file_path, "a", track_order=True) as file:
+            for eps_buff in episodes:
+                total_episodes = len(file.keys())
+                episode_id = eps_buff.pop("id", total_episodes)
+                assert (
+                    episode_id <= total_episodes
+                ), "Invalid episode id; ids must be sequential."
+                episode_group = _get_from_h5py(file, f"episode_{episode_id}")
+                episode_group.attrs["id"] = episode_id
+                if "seed" in eps_buff.keys():
+                    assert "seed" not in episode_group.attrs.keys()
+                    episode_group.attrs["seed"] = eps_buff.pop("seed")
+                total_steps = len(eps_buff["rewards"])
+                episode_group.attrs["total_steps"] = total_steps
+                additional_steps += total_steps
 
-        with h5py.File(new_data_file_path, "r", track_order=True) as new_data_file:
-            new_data_total_episodes = new_data_file.attrs["total_episodes"]
-            new_data_total_steps = new_data_file.attrs["total_steps"]
+                _add_episode_to_group(eps_buff, episode_group)
 
-        with h5py.File(self.data_path, "a", track_order=True) as file:
+            current_steps = file.attrs["total_steps"]
+            assert type(current_steps) == np.int64
+            total_steps = current_steps + additional_steps
+            total_episodes = len(file.keys())
+
+            file.attrs.modify("total_episodes", total_episodes)
+            file.attrs.modify("total_steps", total_steps)
+
+    def update_from_storage(self, storage: MinariStorage):
+        """Update the dataset using another MinariStorage.
+
+        Args:
+            storage (MinariStorage): the other MinariStorage from which the data will be taken
+        """
+        if type(storage) != type(self):
+            # TODO: relax this constraint. In theory one can use MinariStorage API to update
+            raise ValueError(f"{type(self)} cannot update from {type(storage)}")
+
+        with h5py.File(self._file_path, "a", track_order=True) as file:
             last_episode_id = file.attrs["total_episodes"]
-            for id in range(new_data_total_episodes):
-                file[f"episode_{last_episode_id + id}"] = h5py.ExternalLink(
-                    f"additional_data_{additional_data_id}.hdf5", f"/episode_{id}"
-                )
+            assert type(last_episode_id) == np.int64
+            storage_total_episodes = storage.total_episodes
+
+            for id in range(storage.total_episodes):
+                with h5py.File(
+                    storage._file_path, "r", track_order=True
+                ) as storage_file:
+                    storage_file.copy(
+                        storage_file[f"episode_{id}"],
+                        file,
+                        name=f"episode_{last_episode_id + id}",
+                    )
+
                 file[f"episode_{last_episode_id + id}"].attrs.modify(
                     "id", last_episode_id + id
                 )
 
-            self._total_steps = file.attrs["total_steps"] + new_data_total_steps
-
-            # Update metadata of minari dataset
             file.attrs.modify(
-                "total_episodes", last_episode_id + new_data_total_episodes
+                "total_episodes", last_episode_id + storage_total_episodes
             )
-            file.attrs.modify("total_steps", self._total_steps)
-            self._total_episodes = int(file.attrs["total_episodes"].item())
+            total_steps = file.attrs["total_steps"]
+            assert type(total_steps) == np.int64
+            file.attrs.modify("total_steps", total_steps + storage.total_steps)
 
-    def update_from_buffer(self, buffer: List[dict], data_path: str):
-        additional_steps = 0
-        with h5py.File(data_path, "a", track_order=True) as file:
-            last_episode_id = file.attrs["total_episodes"]
-            for i, eps_buff in enumerate(buffer):
-                episode_id = last_episode_id + i
-                # check episode terminated or truncated
-                assert (
-                    eps_buff["terminations"][-1] or eps_buff["truncations"][-1]
-                ), "Each episode must be terminated or truncated before adding it to a Minari dataset"
-                assert len(eps_buff["actions"]) + 1 == len(
-                    eps_buff["observations"]
-                ), f"Number of observations {len(eps_buff['observations'])} must have an additional \
-                                                                                        element compared to the number of action steps {len(eps_buff['actions'])} \
-                                                                                        The initial and final observation must be included"
-                seed = eps_buff.pop("seed", None)
-                episode_group = clear_episode_buffer(
-                    eps_buff, file.create_group(f"episode_{episode_id}")
-                )
-
-                episode_group.attrs["id"] = episode_id
-                total_steps = len(eps_buff["actions"])
-                episode_group.attrs["total_steps"] = total_steps
-                additional_steps += total_steps
-
-                if seed is None:
-                    episode_group.attrs["seed"] = str(None)
-                else:
-                    assert isinstance(seed, int)
-                    episode_group.attrs["seed"] = seed
-
-                # TODO: save EpisodeMetadataCallback callback in MinariDataset and update new episode group metadata
-
-            self._total_steps = file.attrs["total_steps"] + additional_steps
-            self._total_episodes = last_episode_id + len(buffer)
-
-            file.attrs.modify("total_episodes", self._total_episodes)
-            file.attrs.modify("total_steps", self._total_steps)
-
-            self._total_episodes = int(file.attrs["total_episodes"].item())
+            storage_metadata = storage.metadata
+            authors = [file.attrs.get("author"), storage_metadata.get("author")]
+            file.attrs.modify(
+                "author", "; ".join([aut for aut in authors if aut is not None])
+            )
+            emails = [
+                file.attrs.get("author_email"),
+                storage_metadata.get("author_email"),
+            ]
+            file.attrs.modify(
+                "author_email", "; ".join([e for e in emails if e is not None])
+            )
 
     @property
-    def observation_space(self):
-        """Original observation space of the environment before flatteining (if this is the case)."""
+    def data_path(self) -> PathLike:
+        """Full path to the `main_data.hdf5` file of the dataset."""
+        return os.path.dirname(self._file_path)
+
+    @property
+    def total_episodes(self) -> np.int64:
+        """Total episodes in the dataset."""
+        with h5py.File(self._file_path, "r") as file:
+            total_episodes = file.attrs["total_episodes"]
+            assert type(total_episodes) == np.int64
+            return total_episodes
+
+    @property
+    def total_steps(self) -> np.int64:
+        """Total steps in the dataset."""
+        with h5py.File(self._file_path, "r") as file:
+            total_steps = file.attrs["total_steps"]
+            assert type(total_steps) == np.int64
+            return total_steps
+
+    @property
+    def observation_space(self) -> gym.Space:
+        """Observation Space of the dataset."""
+        if self._observation_space is None:
+            with h5py.File(self._file_path, "r") as file:
+                if "observation_space" in file.attrs.keys():
+                    serialized_space = file.attrs["observation_space"]
+                    assert isinstance(serialized_space, str)
+                    self._observation_space = deserialize_space(serialized_space)
+                else:
+                    env_spec_str = file.attrs.get("env_spec")
+                    assert isinstance(env_spec_str, str)
+                    env_spec = EnvSpec.from_json(env_spec_str)
+                    self._observation_space = gym.make(env_spec).observation_space
         return self._observation_space
 
     @property
-    def action_space(self):
-        """Original action space of the environment before flatteining (if this is the case)."""
+    def action_space(self) -> gym.Space:
+        """Action space of the dataset."""
+        if self._action_space is None:
+            with h5py.File(self._file_path, "r") as file:
+                if "action_space" in file.attrs.keys():
+                    serialized_space = file.attrs["action_space"]
+                    assert isinstance(serialized_space, str)
+                    self._action_space = deserialize_space(serialized_space)
+                else:
+                    env_spec_str = file.attrs.get("env_spec")
+                    assert isinstance(env_spec_str, str)
+                    env_spec = EnvSpec.from_json(env_spec_str)
+                    self._action_space = gym.make(env_spec).action_space
+
         return self._action_space
 
-    @property
-    def data_path(self):
-        """Full path to the `main_data.hdf5` file of the dataset."""
-        return self._data_path
 
-    @property
-    def total_steps(self):
-        """Total steps recorded in the Minari dataset along all episodes."""
-        return self._total_steps
+def _get_from_h5py(group: h5py.Group, name: str) -> h5py.Group:
+    if name in group:
+        subgroup = group.get(name)
+        assert isinstance(subgroup, h5py.Group)
+    else:
+        subgroup = group.create_group(name)
 
-    @property
-    def total_episodes(self):
-        """Total episodes recorded in the Minari dataset."""
-        return self._total_episodes
-
-    @property
-    def env_spec(self):
-        """Envspec of the environment that has generated the dataset."""
-        return self._env_spec
-
-    @property
-    def combined_datasets(self) -> List[str]:
-        """If this Minari dataset is a combination of other subdatasets, return a list with the subdataset names."""
-        if self._combined_datasets is None:
-            return []
-        else:
-            return self._combined_datasets
-
-    @property
-    def id(self) -> str:
-        """Name of the Minari dataset."""
-        return self._dataset_id
-
-    @property
-    def minari_version(self) -> str:
-        """Version of Minari the dataset is compatible with."""
-        return self._minari_version
+    return subgroup
 
 
-def clear_episode_buffer(episode_buffer: Dict, episode_group: h5py.Group) -> h5py.Group:
-    """Save an episode dictionary buffer into an HDF5 episode group recursively.
-
-    Args:
-        episode_buffer (dict): episode buffer
-        episode_group (h5py.Group): HDF5 group to store the episode datasets
-
-    Returns:
-        episode group: filled HDF5 episode group
-    """
+def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
     for key, data in episode_buffer.items():
         if isinstance(data, dict):
-            if key in episode_group:
-                episode_group_to_clear = episode_group[key]
-            else:
-                episode_group_to_clear = episode_group.create_group(key)
-            clear_episode_buffer(data, episode_group_to_clear)
-        elif all([isinstance(entry, tuple) for entry in data]):
-            # we have a list of tuples, so we need to act appropriately
+            episode_group_to_clear = _get_from_h5py(episode_group, key)
+            _add_episode_to_group(data, episode_group_to_clear)
+        elif all([isinstance(entry, tuple) for entry in data]):  # list of tuples
             dict_data = {
                 f"_index_{str(i)}": [entry[i] for entry in data]
                 for i, _ in enumerate(data[0])
             }
-            if key in episode_group:
-                episode_group_to_clear = episode_group[key]
-            else:
-                episode_group_to_clear = episode_group.create_group(key)
+            episode_group_to_clear = _get_from_h5py(episode_group, key)
+            _add_episode_to_group(dict_data, episode_group_to_clear)
+        elif all(
+            [isinstance(entry, OrderedDict) for entry in data]
+        ):  # list of OrderedDict
+            dict_data = {key: [entry[key] for entry in data] for key in data[0].keys()}
+            episode_group_to_clear = _get_from_h5py(episode_group, key)
+            _add_episode_to_group(dict_data, episode_group_to_clear)
 
-            clear_episode_buffer(dict_data, episode_group_to_clear)
-        elif all([isinstance(entry, OrderedDict) for entry in data]):
-
-            # we have a list of OrderedDicts, so we need to act appropriately
-            dict_data = {
-                key: [entry[key] for entry in data] for key, value in data[0].items()
-            }
-
-            if key in episode_group:
-                episode_group_to_clear = episode_group[key]
-            else:
-                episode_group_to_clear = episode_group.create_group(key)
-            clear_episode_buffer(dict_data, episode_group_to_clear)
-        elif all(map(lambda elem: isinstance(elem, str), data)):
-            dtype = h5py.string_dtype(encoding="utf-8")
-            episode_group.create_dataset(key, data=data, dtype=dtype, chunks=True)
+        # leaf data
+        elif key in episode_group:
+            dataset = episode_group[key]
+            assert isinstance(dataset, h5py.Dataset)
+            dataset.resize((dataset.shape[0] + len(data), *dataset.shape[1:]))
+            dataset[-len(data) :] = data
         else:
-            assert np.all(np.logical_not(np.isnan(data)))
-            # add seed to attributes
-            episode_group.create_dataset(key, data=data, chunks=True)
+            dtype = None
+            if all(map(lambda elem: isinstance(elem, str), data)):
+                dtype = h5py.string_dtype(encoding="utf-8")
+            dshape = ()
+            if hasattr(data[0], "shape"):
+                dshape = data[0].shape
 
-    return episode_group
+            episode_group.create_dataset(
+                key, data=data, dtype=dtype, chunks=True, maxshape=(None, *dshape)
+            )

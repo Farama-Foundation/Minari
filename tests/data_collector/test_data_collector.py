@@ -139,7 +139,6 @@ def test_truncation_without_reset(dataset_id, env_id):
             else:
                 assert np.array_equal(first_step.observations, last_step.observations)
         last_step = get_single_step_from_episode(episode, -1)
-        print(last_step.truncations)
         assert bool(last_step.truncations) is True
 
     # check load and delete local dataset

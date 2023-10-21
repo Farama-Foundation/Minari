@@ -1,14 +1,18 @@
 import copy
+import os
 import re
+import shutil
 from typing import Any
 
 import gymnasium as gym
 import numpy as np
 import pytest
+from gymnasium.envs.registration import EnvSpec
 
 import minari
 from minari import DataCollectorV0, MinariDataset
 from minari.dataset.minari_dataset import EpisodeData
+from minari.dataset.minari_storage import MinariStorage
 from tests.common import (
     check_data_integrity,
     check_env_recovery,
@@ -90,21 +94,17 @@ def test_update_dataset_from_collector_env(dataset_id, env_id):
         while not terminated and not truncated:
             action = env.action_space.sample()  # User-defined policy function
             _, _, terminated, truncated, _ = env.step(action)
-            if terminated or truncated:
-                assert not env._buffer[-1]
-            else:
-                assert env._buffer[-1]
 
         env.reset()
 
-    dataset.update_dataset_from_collector_env(env)
+    env.add_to_dataset(dataset)
 
     assert isinstance(dataset, MinariDataset)
     assert dataset.total_episodes == num_episodes * 2
     assert dataset.spec.total_episodes == num_episodes * 2
     assert len(dataset.episode_indices) == num_episodes * 2
 
-    check_data_integrity(dataset._data, dataset.episode_indices)
+    check_data_integrity(dataset.storage, dataset.episode_indices)
     check_env_recovery(env.env, dataset)
 
     env.close()
@@ -151,7 +151,7 @@ def test_filter_episodes_and_subsequent_updates(dataset_id, env_id):
     assert len(filtered_dataset.episode_indices) == 7
 
     check_data_integrity(
-        filtered_dataset._data, dataset.episode_indices
+        filtered_dataset.storage, dataset.episode_indices
     )  # checks that the underlying episodes are still present in the `MinariStorage` object
     check_env_recovery(env.env, filtered_dataset)
 
@@ -164,14 +164,10 @@ def test_filter_episodes_and_subsequent_updates(dataset_id, env_id):
         while not terminated and not truncated:
             action = env.action_space.sample()  # User-defined policy function
             _, _, terminated, truncated, _ = env.step(action)
-            if terminated or truncated:
-                assert not env._buffer[-1]
-            else:
-                assert env._buffer[-1]
 
         env.reset()
 
-    filtered_dataset.update_dataset_from_collector_env(env)
+    env.add_to_dataset(filtered_dataset)
 
     assert isinstance(filtered_dataset, MinariDataset)
     assert filtered_dataset.total_episodes == 17
@@ -196,9 +192,8 @@ def test_filter_episodes_and_subsequent_updates(dataset_id, env_id):
         18,
         19,
     )
-    print(dataset._episode_indices)
-    assert filtered_dataset._data.total_episodes == 20
-    assert dataset._data.total_episodes == 20
+    assert filtered_dataset.storage.total_episodes == 20
+    assert dataset.storage.total_episodes == 20
     check_env_recovery(env.env, filtered_dataset)
 
     env.close()
@@ -285,12 +280,12 @@ def test_filter_episodes_and_subsequent_updates(dataset_id, env_id):
         28,
         29,
     )
-    print(dataset._episode_indices)
-    assert filtered_dataset._data.total_episodes == 30
-    assert dataset._data.total_episodes == 30
+    assert filtered_dataset.storage.total_episodes == 30
+    assert dataset.storage.total_episodes == 30
     check_env_recovery(env, filtered_dataset)
 
     check_load_and_delete_dataset(dataset_id)
+    env.close()
 
 
 @pytest.mark.parametrize(
@@ -360,6 +355,7 @@ def test_iterate_episodes(dataset_id, env_id):
     dataset = create_dummy_dataset_with_collecter_env_helper(
         dataset_id, env, num_episodes=num_episodes
     )
+    env.close()
 
     episodes = list(dataset.iterate_episodes([1, 3, 5]))
 
@@ -381,8 +377,6 @@ def test_iterate_episodes(dataset_id, env_id):
         length += 1
     assert length == 10
     assert len(dataset) == 10
-
-    env.close()
 
 
 @pytest.mark.parametrize(
@@ -463,9 +457,28 @@ def test_update_dataset_from_buffer(dataset_id, env_id):
     assert dataset.spec.total_episodes == num_episodes * 2
     assert len(dataset.episode_indices) == num_episodes * 2
 
-    check_data_integrity(dataset._data, dataset.episode_indices)
+    check_data_integrity(dataset.storage, dataset.episode_indices)
     check_env_recovery(env, dataset)
 
     collector_env.close()
-
     check_load_and_delete_dataset(dataset_id)
+
+
+def test_missing_env_module():
+    data_path = os.path.join(
+        os.path.expanduser("~"), ".minari", "datasets", "dummy-test-v0"
+    )
+
+    class FakeEnvSpec(EnvSpec):
+        def to_json(self) -> str:
+            return r"""{"id": "DummyEnv-v0", "entry_point": "dummymodule:dummyenv", "reward_threshold": null, "nondeterministic": false, "max_episode_steps": 300, "order_enforce": true, "disable_env_checker": false, "apply_api_compatibility": false, "additional_wrappers": []}"""
+
+    storage = MinariStorage.new(
+        data_path,
+        env_spec=FakeEnvSpec("DummyEnv-v0"),
+    )
+
+    with pytest.raises(ModuleNotFoundError, match="No module named 'dummymodule'"):
+        MinariDataset(storage.data_path)
+
+    shutil.rmtree(data_path)
