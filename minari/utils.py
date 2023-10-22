@@ -172,8 +172,7 @@ def validate_datasets_to_combine(datasets_to_combine: List[MinariDataset]) -> En
         max_episode_steps = None
     else:
         max_episode_steps = max(
-            dataset.spec.env_spec.max_episode_steps
-            for dataset in datasets_to_combine  # pyright: ignore[reportGeneralTypeIssues]
+            dataset.spec.env_spec.max_episode_steps for dataset in datasets_to_combine
         )
 
     combine_env_spec = []
@@ -215,6 +214,9 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_id: s
     Returns:
         combined_dataset (MinariDataset): the resulting MinariDataset
     """
+    if any((dataset.spec.env_spec is None) for dataset in datasets_to_combine):
+        raise ValueError("One or more datasets have No Env_Spec")
+
     combined_dataset_env_spec = validate_datasets_to_combine(datasets_to_combine)
 
     # Compute intersection of Minari version specifiers
@@ -293,9 +295,7 @@ def get_average_reference_score(
     for _ in range(num_episodes):
         while True:
             action = policy(obs)
-            obs, _, terminated, truncated, info = env.step(
-                action  # pyright: ignore[reportGeneralTypeIssues]
-            )
+            obs, _, terminated, truncated, info = env.step(action)
             if terminated or truncated:
                 episode_returns.append(info["episode"]["r"])
                 obs, _ = env.reset()
@@ -403,11 +403,9 @@ def create_dataset_from_buffers(
         )
 
     if observation_space is None:
-        observation_space = (
-            env.observation_space  # pyright: ignore[reportOptionalMemberAccess]
-        )
+        observation_space = env.observation_space
     if action_space is None:
-        action_space = env.action_space  # pyright: ignore[reportOptionalMemberAccess]
+        action_space = env.action_space
 
     if expert_policy is not None and ref_max_score is not None:
         raise ValueError(
@@ -424,11 +422,14 @@ def create_dataset_from_buffers(
     dataset_path.mkdir()
 
     dataset_path = os.path.join(dataset_path, "data")
+    env_spec = None
+    if env is not None:
+        env_spec = env.spec
     storage = MinariStorage.new(
         dataset_path,
         observation_space=observation_space,
         action_space=action_space,
-        env_spec=env.spec,
+        env_spec=env_spec,
     )
 
     metadata: Dict[str, Any] = {
@@ -443,16 +444,20 @@ def create_dataset_from_buffers(
         metadata["author_email"] = author_email
     if code_permalink is not None:
         metadata["code_permalink"] = code_permalink
-    if expert_policy is not None or ref_max_score is not None:
+    if env is not None and (expert_policy is not None or ref_max_score is not None):
         env = copy.deepcopy(env)
         if ref_min_score is None:
             ref_min_score = get_average_reference_score(
-                env, RandomPolicy(env), num_episodes_average_score
+                env,
+                RandomPolicy(env),
+                num_episodes_average_score,
             )
 
         if expert_policy is not None:
             ref_max_score = get_average_reference_score(
-                env, expert_policy, num_episodes_average_score
+                env,
+                expert_policy,
+                num_episodes_average_score,
             )
 
         metadata["ref_max_score"] = ref_max_score
