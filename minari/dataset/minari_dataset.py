@@ -49,7 +49,7 @@ def parse_dataset_id(dataset_id: str) -> tuple[str | None, str, int]:
 
 @dataclass
 class MinariDatasetSpec:
-    env_spec: EnvSpec
+    env_spec: Optional[EnvSpec]
     total_episodes: int
     total_steps: np.int64
     dataset_id: str
@@ -99,9 +99,12 @@ class MinariDataset:
 
         metadata = self._data.metadata
 
-        env_spec = metadata["env_spec"]
-        assert isinstance(env_spec, str)
-        self._env_spec = EnvSpec.from_json(env_spec)
+        if metadata.get("env_spec"):
+            env_spec = metadata["env_spec"]
+            assert isinstance(env_spec, str)
+            self._env_spec = EnvSpec.from_json(env_spec)
+        else:
+            self._env_spec = None
 
         dataset_id = metadata["dataset_id"]
         assert isinstance(dataset_id, str)
@@ -145,6 +148,8 @@ class MinariDataset:
         Returns:
             environment: Gymnasium environment
         """
+        if self.env_spec is None:
+            raise ValueError("Environment cannot be recovered when env_spec is None")
         return gym.make(self.env_spec)
 
     def set_seed(self, seed: int):
