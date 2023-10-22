@@ -139,7 +139,7 @@ for env_name, datasets in filtered_datasets.items():
 | Action Space | `{re.sub(' +', ' ', eval_env_action_space_table)}` |
 | Observation Space | `{re.sub(' +', ' ', eval_env_observation_space_table)}` |
 | entry_point | `{eval_env_spec.entry_point}` |
-| max_episode_steps | `{int(eval_env_spec.max_episode_steps)}` |
+| max_episode_steps | `{eval_env_spec.max_episode_steps}` |
 | reward_threshold | `{eval_env_spec.reward_threshold}` |
 | nondeterministic | `{eval_env_spec.nondeterministic}` |
 | order_enforce    | `{eval_env_spec.order_enforce}`|
@@ -202,7 +202,7 @@ title: {dataset_name.title()}
 | Observation Space | `{re.sub(' +', ' ', observation_space_table)}` |
 | Action Space | `{re.sub(' +', ' ', action_space_table)}` |
 | entry_point | `{env_spec.entry_point}` |
-| max_episode_steps | `{int(env_spec.max_episode_steps)}` |
+| max_episode_steps | `{env_spec.max_episode_steps}` |
 | reward_threshold | `{env_spec.reward_threshold}` |
 | nondeterministic | `{env_spec.nondeterministic}` |
 | order_enforce    | `{env_spec.order_enforce}`|
