@@ -193,8 +193,9 @@ def _space_subset_helper(entry: Dict):
     )
 
 
-def test_generate_dataset_with_space_subset_external_buffer():
-    """Test create dataset from external buffers without using DataCollectorV0."""
+@pytest.mark.parametrize("is_env_needed", [True, False])
+def test_generate_dataset_with_space_subset_external_buffer(is_env_needed):
+    """Test create dataset from external buffers without using DataCollectorV0 or environment."""
     buffer = []
     dataset_id = "dummy-dict-test-v0"
 
@@ -271,11 +272,12 @@ def test_generate_dataset_with_space_subset_external_buffer():
         observations.append(_space_subset_helper(observation))
 
     # Create Minari dataset and store locally
+    env_to_pass = env if is_env_needed else None
     codelink = "https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/test_dataset_combine.py"
     dataset = minari.create_dataset_from_buffers(
         dataset_id=dataset_id,
         buffer=buffer,
-        env=env,
+        env=env_to_pass,
         algorithm_name="random_policy",
         code_permalink=codelink,
         author="WillDudley",
@@ -297,9 +299,10 @@ def test_generate_dataset_with_space_subset_external_buffer():
     assert len(dataset.episode_indices) == num_episodes
 
     check_data_integrity(dataset.storage, dataset.episode_indices)
-    check_env_recovery_with_subset_spaces(
-        env, dataset, action_space_subset, observation_space_subset
-    )
+    if is_env_needed:
+        check_env_recovery_with_subset_spaces(
+            env, dataset, action_space_subset, observation_space_subset
+        )
 
     env.close()
 

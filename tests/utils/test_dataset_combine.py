@@ -72,8 +72,8 @@ def _generate_dataset_with_collector_env(
         # Force None max_episode_steps
         env_spec = gym.make("CartPole-v1").spec
         assert env_spec is not None
-        env_spec.max_episode_steps = None  # pyright: ignore[reportOptionalMemberAccess]
-        env = env_spec.make()  # pyright: ignore[reportOptionalMemberAccess]
+        env_spec.max_episode_steps = None
+        env = env_spec.make()
     else:
         env = gym.make("CartPole-v1", max_episode_steps=max_episode_steps)
 
@@ -163,7 +163,8 @@ def test_combine_datasets():
     combined_dataset = combine_datasets(
         test_datasets, new_dataset_id="cartpole-combined-test-v0"
     )
-    assert combined_dataset.spec.env_spec.max_episode_steps is None
+    if combined_dataset.spec.env_spec is not None:
+        assert combined_dataset.spec.env_spec.max_episode_steps is None
     _check_load_and_delete_dataset("cartpole-combined-test-v0")
 
     # Check that we get max(max_episode_steps) when there is no max_episode_steps=None
