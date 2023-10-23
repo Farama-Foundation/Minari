@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib.metadata
 import os
 import re
 from dataclasses import dataclass, field
@@ -9,10 +10,15 @@ import gymnasium as gym
 import numpy as np
 from gymnasium import error
 from gymnasium.envs.registration import EnvSpec
+from packaging.specifiers import InvalidSpecifier, SpecifierSet
+from packaging.version import Version
 
-from minari.data_collector import DataCollectorV0
+from minari.dataset.episode_data import EpisodeData
 from minari.dataset.minari_storage import MinariStorage, PathLike
 
+
+# Use importlib due to circular import when: "from minari import __version__"
+__version__ = importlib.metadata.version("minari")
 
 DATASET_ID_RE = re.compile(
     r"(?:(?P<environment>[\w]+?))?(?:-(?P<dataset>[\w:.-]+?))(?:-v(?P<version>\d+))?$"
@@ -41,59 +47,11 @@ def parse_dataset_id(dataset_id: str) -> tuple[str | None, str, int]:
     return env_name, dataset_name, version
 
 
-@dataclass(frozen=True)
-class EpisodeData:
-    """Contains the datasets data for a single episode.
-
-    This is the object returned by :class:`minari.MinariDataset.sample_episodes`.
-    """
-
-    id: int
-    seed: Optional[int]
-    total_timesteps: int
-    observations: np.ndarray
-    actions: np.ndarray
-    rewards: np.ndarray
-    terminations: np.ndarray
-    truncations: np.ndarray
-
-    def __repr__(self) -> str:
-        return (
-            "EpisodeData("
-            f"id={repr(self.id)}, "
-            f"seed={repr(self.seed)}, "
-            f"total_timesteps={self.total_timesteps}, "
-            f"observations={EpisodeData._repr_space_values(self.observations)}, "
-            f"actions={EpisodeData._repr_space_values(self.actions)}, "
-            f"rewards=ndarray of {len(self.rewards)} floats, "
-            f"terminations=ndarray of {len(self.terminations)} bools, "
-            f"truncations=ndarray of {len(self.truncations)} bools"
-            ")"
-        )
-
-    @staticmethod
-    def _repr_space_values(value):
-        if isinstance(value, np.ndarray):
-            return f"ndarray of shape {value.shape} and dtype {value.dtype}"
-        elif isinstance(value, dict):
-            reprs = [
-                f"{k}: {EpisodeData._repr_space_values(v)}" for k, v in value.items()
-            ]
-            dict_repr = ", ".join(reprs)
-            return "{" + dict_repr + "}"
-        elif isinstance(value, tuple):
-            reprs = [EpisodeData._repr_space_values(v) for v in value]
-            values_repr = ", ".join(reprs)
-            return "(" + values_repr + ")"
-        else:
-            return repr(value)
-
-
 @dataclass
 class MinariDatasetSpec:
     env_spec: EnvSpec
     total_episodes: int
-    total_steps: int
+    total_steps: np.int64
     dataset_id: str
     combined_datasets: List[str]
     observation_space: gym.Space
@@ -124,65 +82,62 @@ class MinariDataset:
         """Initialize properties of the Minari Dataset.
 
         Args:
-            data (Union[MinariStorage, _PathLike]): source of data.
+            data (Union[MinariStorage, PathLike]): source of data.
             episode_indices (Optiona[np.ndarray]): slice of episode indices this dataset is pointing to.
         """
         if isinstance(data, MinariStorage):
             self._data = data
-        elif (
-            isinstance(data, str)
-            or isinstance(data, os.PathLike)
-            or isinstance(data, bytes)
-        ):
+        elif isinstance(data, (str, os.PathLike)):
             self._data = MinariStorage(data)
         else:
             raise ValueError(f"Unrecognized type {type(data)} for data")
 
-        self._additional_data_id = 0
         if episode_indices is None:
             episode_indices = np.arange(self._data.total_episodes)
-            total_steps = self._data.total_steps
-        else:
-            total_steps = sum(
-                self._data.apply(
-                    lambda episode: episode["total_timesteps"],
-                    episode_indices=episode_indices,
-                )
-            )
+        self._episode_indices: np.ndarray = episode_indices
+        self._total_steps = None
 
-        self._episode_indices = episode_indices
+        metadata = self._data.metadata
 
-        assert self._episode_indices is not None
+        env_spec = metadata["env_spec"]
+        assert isinstance(env_spec, str)
+        self._env_spec = EnvSpec.from_json(env_spec)
 
-        self.spec = MinariDatasetSpec(
-            env_spec=self._data.env_spec,
-            total_episodes=self._episode_indices.size,
-            total_steps=total_steps,
-            dataset_id=self._data.id,
-            combined_datasets=self._data.combined_datasets,
-            observation_space=self._data.observation_space,
-            action_space=self._data.action_space,
-            data_path=str(self._data.data_path),
-            minari_version=str(self._data.minari_version),
-        )
-        self._total_steps = total_steps
+        dataset_id = metadata["dataset_id"]
+        assert isinstance(dataset_id, str)
+        self._dataset_id = dataset_id
+
+        minari_version = metadata["minari_version"]
+        assert isinstance(minari_version, str)
+
+        # Check that the dataset is compatible with the current version of Minari
+        try:
+            assert Version(__version__) in SpecifierSet(
+                minari_version
+            ), f"The installed Minari version {__version__} is not contained in the dataset version specifier {minari_version}."
+            self._minari_version = minari_version
+        except InvalidSpecifier:
+            print(f"{minari_version} is not a version specifier.")
+
+        self._combined_datasets = metadata.get("combined_datasets", [])
+
+        # By default, we use the observation and action spaces from the dataset and
+        # we fall back to the env if one of them is not in the dataset.
+        observation_space = metadata.get("observation_space")
+        action_space = metadata.get("action_space")
+        if observation_space is None or action_space is None:
+            env = self.recover_environment()
+            if observation_space is None:
+                observation_space = env.observation_space
+            if action_space is None:
+                action_space = env.action_space
+            env.close()
+        assert isinstance(observation_space, gym.spaces.Space)
+        assert isinstance(action_space, gym.spaces.Space)
+        self._observation_space = observation_space
+        self._action_space = action_space
+
         self._generator = np.random.default_rng()
-
-    @property
-    def total_episodes(self):
-        """Total episodes recorded in the Minari dataset."""
-        assert self._episode_indices is not None
-        return self._episode_indices.size
-
-    @property
-    def total_steps(self):
-        """Total episodes steps in the Minari dataset."""
-        return self._total_steps
-
-    @property
-    def episode_indices(self) -> np.ndarray:
-        """Indices of the available episodes to sample within the Minari dataset."""
-        return self._episode_indices
 
     def recover_environment(self) -> gym.Env:
         """Recover the Gymnasium environment used to create the dataset.
@@ -190,7 +145,7 @@ class MinariDataset:
         Returns:
             environment: Gymnasium environment
         """
-        return gym.make(self._data.env_spec)
+        return gym.make(self.env_spec)
 
     def set_seed(self, seed: int):
         """Set seed for random episode sampling generator."""
@@ -210,17 +165,18 @@ class MinariDataset:
         ```
 
         Args:
-            condition (Callable[[EpisodeData], bool]): callable that accepts any type(For our current backend, an h5py episode group) and returns True if certain condition is met.
+            condition (Callable[[EpisodeData], bool]): function that gets in input an EpisodeData object and returns True if certain condition is met.
         """
 
         def dict_to_episode_data_condition(episode: dict) -> bool:
             return condition(EpisodeData(**episode))
 
-        mask = self._data.apply(
-            dict_to_episode_data_condition, episode_indices=self._episode_indices
+        mask = self.storage.apply(
+            dict_to_episode_data_condition, episode_indices=self.episode_indices
         )
-        assert self._episode_indices is not None
-        return MinariDataset(self._data, episode_indices=self._episode_indices[mask])
+        assert self.episode_indices is not None
+        filtered_indices = self.episode_indices[list(mask)]
+        return MinariDataset(self.storage, episode_indices=filtered_indices)
 
     def sample_episodes(self, n_episodes: int) -> Iterable[EpisodeData]:
         """Sample n number of episodes from the dataset.
@@ -231,7 +187,7 @@ class MinariDataset:
         indices = self._generator.choice(
             self.episode_indices, size=n_episodes, replace=False
         )
-        episodes = self._data.get_episodes(indices)
+        episodes = self.storage.get_episodes(indices)
         return list(map(lambda data: EpisodeData(**data), episodes))
 
     def iterate_episodes(
@@ -250,47 +206,8 @@ class MinariDataset:
         assert episode_indices is not None
 
         for episode_index in episode_indices:
-            data = self._data.get_episodes([episode_index])[0]
+            data = self.storage.get_episodes([episode_index])[0]
             yield EpisodeData(**data)
-
-    def update_dataset_from_collector_env(self, collector_env: DataCollectorV0):
-        """Add extra data to Minari dataset from collector environment buffers (DataCollectorV0).
-
-        This method can be used as a checkpoint when creating a dataset.
-        A new HDF5 file will be created with the new dataset file in the same directory as `main_data.hdf5` called
-        `additional_data_i.hdf5`. Both datasets are joined together by creating external links to each additional
-        episode group: https://docs.h5py.org/en/stable/high/group.html#external-links
-
-        Args:
-            collector_env (DataCollectorV0): Collector environment
-        """
-        # check that collector env has the same characteristics as self._env_spec
-        new_data_file_path = os.path.join(
-            os.path.split(self.spec.data_path)[0],
-            f"additional_data_{self._additional_data_id}.hdf5",
-        )
-
-        old_total_episodes = self._data.total_episodes
-
-        self._data.update_from_collector_env(
-            collector_env, new_data_file_path, self._additional_data_id
-        )
-
-        new_total_episodes = self._data._total_episodes
-
-        self._additional_data_id += 1
-
-        self._episode_indices = np.append(
-            self._episode_indices, np.arange(old_total_episodes, new_total_episodes)
-        )  # ~= np.append(self._episode_indices,np.arange(self._data.total_episodes))
-
-        self.spec.total_episodes = self._episode_indices.size
-        self.spec.total_steps = sum(
-            self._data.apply(
-                lambda episode: episode["total_timesteps"],
-                episode_indices=self._episode_indices,
-            )
-        )
 
     def update_dataset_from_buffer(self, buffer: List[dict]):
         """Additional data can be added to the Minari Dataset from a list of episode dictionary buffers.
@@ -307,32 +224,100 @@ class MinariDataset:
         Args:
             buffer (list[dict]): list of episode dictionary buffers to add to dataset
         """
-        old_total_episodes = self._data.total_episodes
-
-        self._data.update_from_buffer(buffer, self.spec.data_path)
-
-        new_total_episodes = self._data._total_episodes
-
-        self._episode_indices = np.append(
-            self._episode_indices, np.arange(old_total_episodes, new_total_episodes)
-        )  # ~= np.append(self._episode_indices,np.arange(self._data.total_episodes))
-
-        self.spec.total_episodes = self._episode_indices.size
-
-        self.spec.total_steps = sum(
-            self._data.apply(
-                lambda episode: episode["total_timesteps"],
-                episode_indices=self._episode_indices,
-            )
+        first_id = self.storage.total_episodes
+        self.storage.update_episodes(buffer)
+        self.episode_indices = np.append(
+            self.episode_indices, first_id + np.arange(len(buffer))
         )
 
     def __iter__(self):
         return self.iterate_episodes()
 
     def __getitem__(self, idx: int) -> EpisodeData:
-        episodes_data = self._data.get_episodes([self.episode_indices[idx]])
+        episodes_data = self.storage.get_episodes([self.episode_indices[idx]])
         assert len(episodes_data) == 1
         return EpisodeData(**episodes_data[0])
 
     def __len__(self) -> int:
         return self.total_episodes
+
+    @property
+    def total_episodes(self) -> int:
+        return len(self.episode_indices)
+
+    @property
+    def total_steps(self) -> np.int64:
+        """Total episodes steps in the Minari dataset."""
+        if self._total_steps is None:
+            if self.episode_indices is None:
+                self._total_steps = self.storage.total_steps
+            else:
+                self._total_steps = sum(
+                    self.storage.apply(
+                        lambda episode: episode["total_timesteps"],
+                        episode_indices=self.episode_indices,
+                    )
+                )
+        return np.int64(self._total_steps)
+
+    @property
+    def episode_indices(self) -> np.ndarray:
+        """Indices of the available episodes to sample within the Minari dataset."""
+        return self._episode_indices
+
+    @episode_indices.setter
+    def episode_indices(self, new_value: np.ndarray):
+        self._total_steps = None  # invalidate cache
+        self._episode_indices = new_value
+
+    @property
+    def observation_space(self):
+        """Original observation space of the environment before flatteining (if this is the case)."""
+        return self._observation_space
+
+    @property
+    def action_space(self):
+        """Original action space of the environment before flatteining (if this is the case)."""
+        return self._action_space
+
+    @property
+    def env_spec(self):
+        """Envspec of the environment that has generated the dataset."""
+        return self._env_spec
+
+    @property
+    def combined_datasets(self) -> List[str]:
+        """If this Minari dataset is a combination of other subdatasets, return a list with the subdataset names."""
+        if self._combined_datasets is None:
+            return []
+        else:
+            return self._combined_datasets
+
+    @property
+    def id(self) -> str:
+        """Name of the Minari dataset."""
+        return self._dataset_id
+
+    @property
+    def minari_version(self) -> str:
+        """Version of Minari the dataset is compatible with."""
+        return self._minari_version
+
+    @property
+    def storage(self) -> MinariStorage:
+        """Minari storage managing access to disk."""
+        return self._data
+
+    @property
+    def spec(self) -> MinariDatasetSpec:
+        return MinariDatasetSpec(
+            env_spec=self.env_spec,
+            total_episodes=self._episode_indices.size,
+            total_steps=self.total_steps,
+            dataset_id=self.id,
+            combined_datasets=self.combined_datasets,
+            observation_space=self.observation_space,
+            action_space=self.action_space,
+            data_path=str(self.storage.data_path),
+            minari_version=str(self.minari_version),
+        )

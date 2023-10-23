@@ -3,7 +3,6 @@ from collections import OrderedDict
 from typing import Dict
 
 import gymnasium as gym
-import h5py
 import numpy as np
 import pytest
 from gymnasium import spaces
@@ -51,15 +50,11 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
     env.reset(seed=42)
 
     for episode in range(num_episodes):
-        terminated = False
-        truncated = False
-        while not terminated and not truncated:
+        done = False
+        while not done:
             action = env.action_space.sample()  # User-defined policy function
             _, _, terminated, truncated, _ = env.step(action)
-            if terminated or truncated:
-                assert not env._buffer[-1]
-            else:
-                assert env._buffer[-1]
+            done = terminated or truncated
 
         env.reset()
 
@@ -74,21 +69,19 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
         author_email="wdudley@farama.org",
     )
 
-    # test metadata
-
-    with h5py.File(dataset.spec.data_path, "r") as data_file:
-        assert data_file.attrs["algorithm_name"] == "random_policy"
-        codelink = "https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/test_dataset_combine.py"
-        assert data_file.attrs["code_permalink"] == codelink
-        assert data_file.attrs["author"] == "WillDudley"
-        assert data_file.attrs["author_email"] == "wdudley@farama.org"
+    metadata = dataset.storage.metadata
+    assert metadata["algorithm_name"] == "random_policy"
+    codelink = "https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/test_dataset_combine.py"
+    assert metadata["code_permalink"] == codelink
+    assert metadata["author"] == "WillDudley"
+    assert metadata["author_email"] == "wdudley@farama.org"
 
     assert isinstance(dataset, MinariDataset)
     assert dataset.total_episodes == num_episodes
     assert dataset.spec.total_episodes == num_episodes
     assert len(dataset.episode_indices) == num_episodes
 
-    check_data_integrity(dataset._data, dataset.episode_indices)
+    check_data_integrity(dataset.storage, dataset.episode_indices)
 
     # check that the environment can be recovered from the dataset
     check_env_recovery(env.env, dataset)
@@ -181,7 +174,7 @@ def test_generate_dataset_with_external_buffer(dataset_id, env_id):
     assert dataset.spec.total_episodes == num_episodes
     assert len(dataset.episode_indices) == num_episodes
 
-    check_data_integrity(dataset._data, dataset.episode_indices)
+    check_data_integrity(dataset.storage, dataset.episode_indices)
     check_env_recovery(env, dataset)
 
     env.close()
@@ -291,20 +284,19 @@ def test_generate_dataset_with_space_subset_external_buffer():
         observation_space=observation_space_subset,
     )
 
-    # test metadata
-    with h5py.File(dataset.spec.data_path, "r") as data_file:
-        assert data_file.attrs["algorithm_name"] == "random_policy"
-        code_link = "https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/test_dataset_combine.py"
-        assert data_file.attrs["code_permalink"] == code_link
-        assert data_file.attrs["author"] == "WillDudley"
-        assert data_file.attrs["author_email"] == "wdudley@farama.org"
+    metadata = dataset.storage.metadata
+    assert metadata["algorithm_name"] == "random_policy"
+    code_link = "https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/test_dataset_combine.py"
+    assert metadata["code_permalink"] == code_link
+    assert metadata["author"] == "WillDudley"
+    assert metadata["author_email"] == "wdudley@farama.org"
 
     assert isinstance(dataset, MinariDataset)
     assert dataset.total_episodes == num_episodes
     assert dataset.spec.total_episodes == num_episodes
     assert len(dataset.episode_indices) == num_episodes
 
-    check_data_integrity(dataset._data, dataset.episode_indices)
+    check_data_integrity(dataset.storage, dataset.episode_indices)
     check_env_recovery_with_subset_spaces(
         env, dataset, action_space_subset, observation_space_subset
     )
