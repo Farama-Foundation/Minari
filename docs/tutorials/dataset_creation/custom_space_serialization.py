@@ -82,6 +82,8 @@ env.observation_space['mission'].sample()
 # and also deserialize it back into the custom space.
 
 # %%
+
+
 @serialize_space.register(MissionSpace)
 def serialize_custom_space(space: MissionSpace, to_string=True) -> Union[Dict, str]:
     result = {}
@@ -96,7 +98,7 @@ def serialize_custom_space(space: MissionSpace, to_string=True) -> Union[Dict, s
 @deserialize_space.register("MissionSpace")
 def deserialize_custom_space(space_dict: Dict) -> MissionSpace:
     assert space_dict["type"] == "MissionSpace"
-    mission_func = lambda : space_dict["mission_func"]
+    mission_func = lambda: space_dict["mission_func"]  # noqa: E731
 
     return MissionSpace(
         mission_func=mission_func
@@ -106,6 +108,8 @@ def deserialize_custom_space(space_dict: Dict) -> MissionSpace:
 # Now that we have serialization functions for ``MissionSpace`` we can collect some episode data.
 
 # %%
+
+
 dataset_id = "minigrid-custom-space-v0"
 
 env = DataCollectorV0(env)
