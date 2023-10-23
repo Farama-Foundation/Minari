@@ -150,7 +150,9 @@ def combine_minari_version_specifiers(specifier_set: SpecifierSet) -> SpecifierS
     return final_version_specifier
 
 
-def validate_datasets_to_combine(datasets_to_combine: List[MinariDataset]) -> EnvSpec:
+def validate_datasets_to_combine(
+    datasets_to_combine: List[MinariDataset],
+) -> EnvSpec | None:
     """Check if the given datasets can be combined.
 
     Tests if the datasets were created with the same environment (`env_spec`) and re-calculates the
@@ -161,31 +163,25 @@ def validate_datasets_to_combine(datasets_to_combine: List[MinariDataset]) -> En
 
     Returns:
         combined_dataset_env_spec (EnvSpec): the resulting EnvSpec of combining the MinariDatasets
+
     """
-    assert all(isinstance(dataset, MinariDataset) for dataset in datasets_to_combine)
-
-    # Check if there are any `None` max_episode_steps
-    if any(
-        (dataset.spec.env_spec.max_episode_steps is None)
-        for dataset in datasets_to_combine
-    ):
-        max_episode_steps = None
-    else:
-        max_episode_steps = max(
-            dataset.spec.env_spec.max_episode_steps for dataset in datasets_to_combine
-        )
-
-    combine_env_spec = []
+    common_env_spec = copy.deepcopy(datasets_to_combine[0].spec.env_spec)
     for dataset in datasets_to_combine:
-        dataset_env_spec = copy.deepcopy(dataset.spec.env_spec)
-        dataset_env_spec.max_episode_steps = max_episode_steps
-        combine_env_spec.append(dataset_env_spec)
+        assert isinstance(dataset, MinariDataset)
+        env_spec = dataset.spec.env_spec
+        if env_spec is not None:
+            assert common_env_spec is not None, ""
+            if (
+                common_env_spec.max_episode_steps is None
+                or env_spec.max_episode_steps is None
+            ):
+                common_env_spec.max_episode_steps = None
+            else:
+                common_env_spec.max_episode_steps = max(
+                    common_env_spec.max_episode_steps, env_spec.max_episode_steps
+                )
 
-    assert all(
-        env_spec == combine_env_spec[0] for env_spec in combine_env_spec
-    ), "The datasets to be combined have different values for `env_spec` attribute."
-
-    return combine_env_spec[0]
+    return common_env_spec
 
 
 class RandomPolicy:
@@ -214,9 +210,6 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_id: s
     Returns:
         combined_dataset (MinariDataset): the resulting MinariDataset
     """
-    if any((dataset.spec.env_spec is None) for dataset in datasets_to_combine):
-        raise ValueError("One or more datasets have No Env_Spec")
-
     combined_dataset_env_spec = validate_datasets_to_combine(datasets_to_combine)
 
     # Compute intersection of Minari version specifiers
@@ -403,8 +396,10 @@ def create_dataset_from_buffers(
         )
 
     if observation_space is None:
+        assert env is not None
         observation_space = env.observation_space
     if action_space is None:
+        assert env is not None
         action_space = env.action_space
 
     if expert_policy is not None and ref_max_score is not None:

@@ -128,7 +128,7 @@ def test_combine_datasets():
     assert list(combined_dataset.spec.combined_datasets) == test_datasets_ids
     assert combined_dataset.spec.total_episodes == num_datasets * num_episodes
     assert combined_dataset.spec.total_steps == sum(
-        d.spec.total_steps for d in test_datasets
+        int(d.spec.total_steps) for d in test_datasets
     )
     _check_env_recovery(gym.make("CartPole-v1"), combined_dataset)
 
@@ -173,6 +173,7 @@ def test_combine_datasets():
     combined_dataset = combine_datasets(
         test_datasets, new_dataset_id="cartpole-combined-test-v0"
     )
+    assert combined_dataset.spec.env_spec is not None
     assert combined_dataset.spec.env_spec.max_episode_steps == 10
     _check_load_and_delete_dataset("cartpole-combined-test-v0")
 
