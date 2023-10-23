@@ -14,13 +14,13 @@ Note: Minari was previously developed under the name Kabuki.
 
 ## Installation
 To install Minari from [PyPI](https://pypi.org/project/minari/):
-```
+```bash
 pip install minari
 ```
 
 Note that currently Minari is under a beta release. If you'd like to start testing or contribute to Minari please install this project from source with: 
 
-```bash
+```
 git clone https://github.com/Farama-Foundation/Minari.git
 cd Minari
 pip install -e .
@@ -34,26 +34,20 @@ For an introduction to Minari, see [Basic Usage](https://minari.farama.org/main/
 
 To check available remote datasets:
 
-```python
-import minari
-
-minari.list_remote_datasets()
+```bash
+minari list remote
 ```
 
 To check available local datasets:
 
-```python
-import minari
-
-minari.list_local_datasets()
+```bash
+minari list local
 ```
 
 To download a dataset:
 
-```python
-import minari
-
-minari.download_dataset("door-cloned-v1")
+```bash
+minari download door-human-v1
 ```
 
 To load a dataset:
@@ -61,7 +55,7 @@ To load a dataset:
 ```python
 import minari
 
-dataset = minari.load_dataset("door-cloned-v1")
+dataset = minari.load_dataset("door-human-v1")
 ```
 
 ## Project Maintainers
