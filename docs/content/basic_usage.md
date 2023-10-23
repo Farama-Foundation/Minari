@@ -152,8 +152,7 @@ for episode_id in range(total_episodes):
                                                     author="Farama",
                                                     author_email="contact@farama.org")
         else:
-            assert dataset is not None    
-            dataset.update_dataset_from_collector_env(env)
+            env.add_to_dataset(dataset)
 ```
 
 ## Using Minari Datasets
