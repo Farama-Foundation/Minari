@@ -170,7 +170,9 @@ def validate_datasets_to_combine(
         assert isinstance(dataset, MinariDataset)
         env_spec = dataset.spec.env_spec
         if env_spec is not None:
-            assert common_env_spec is not None, ""
+            assert (
+                common_env_spec is not None
+            ), "Found incompatible env_spec in datasets"
             if (
                 common_env_spec.max_episode_steps is None
                 or env_spec.max_episode_steps is None
