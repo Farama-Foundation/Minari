@@ -4,161 +4,111 @@ Serializing a custom space
 =========================================
 """
 # %%%
-# In this tutorial you'll learn how to serialize a custom Gym observation space and use that
+# In this tutorial you'll learn how to serialize a custom Gymnasium observation space and use that
 # to create a Minari dataset with :class:`minari.DataCollectorV0`. We'll use the
-# simple `CartPole-v1 <https://gymnasium.farama.org/environments/classic_control/cart_pole/>`_ environment,
-# modify the observation space, show how to serialize it, and create a Minari dataset.
+# `MiniGrid Empty <https://minigrid.farama.org/environments/minigrid/EmptyEnv/>`_ environment and
+# show how to serialize its unique observation space.
 #
 # Serializing a custom space can be applied to both observation and action spaces.
 #
-# Let's get started by importing the required modules:
+# Let's start by installing the minigrid library:
+#
+# ``pip install minigrid``
 
-import json
-from typing import Any, Dict, Sequence, Union
+# %% [markdown]
+# Then we can import the required modules:
 
 # %%
+import json
+from typing import Dict, Union
+
 import gymnasium as gym
-import numpy as np
-from gymnasium.spaces import Space
-from numpy.typing import NDArray
+from minigrid.core.mission import MissionSpace
 
 import minari
 from minari import DataCollectorV0
-from minari.data_collector.callbacks import StepDataCallback
 from minari.serialization import deserialize_space, serialize_space
 
 
 # %% [markdown]
-# First we'll initialize the CartPole environment and take a look at its observation and action space.
+# First we'll initialize the MiniGrid Empty environment and take a look at its observation and action space.
 
 # %%
-env = gym.make("CartPole-v1")
+env = gym.make("MiniGrid-Empty-16x16-v0")
 
 print(f"Observation space: {env.observation_space}")
-print(f"Observation space: {env.action_space}")
+print(f"Action space: {env.action_space}")
 
 # %% [markdown]
-# Now we can create a new observation space that inherits from the `gym.Space <https://gymnasium.farama.org/api/spaces/#the-base-class>`_ class.
+# We can see the output from above looks like:
+#
+#   Observation space: Dict('direction': Discrete(4), 'image': Box(0, 255, (7, 7, 3), uint8), 'mission': MissionSpace(<function EmptyEnv._gen_mission at 0x12253a940>, None))
+#
+#   Action space: Discrete(7)
+#
+# If we take a look at Minari's `serialization functions <https://github.com/Farama-Foundation/Minari/blob/main/minari/serialization.py#L13>`_
+# we can see that ``Dict``, ``Discrete``, and ``Box`` are all supported. However ``MissionSpace`` is not
+# supported and if try to serialize it with:
 
 # %%
-
-
-class CartPoleObservationSpace(Space):
-    def __init__(
-        self,
-        low: NDArray[Any],
-        high: NDArray[Any],
-        shape: Sequence[int],
-        dtype: type[np.floating[Any]] = np.float32,
-    ):
-        self.low = np.full(shape, low, dtype=dtype)
-        self.high = np.full(shape, high, dtype=dtype)
-        super().__init__(shape, dtype)
-
-    def sample(self) -> NDArray[Any]:
-        """Sample a random observation according to low/high boundaries"""
-        sample = np.empty(self.shape)
-        sample = self.np_random.uniform(low=self.low, high=self.high, size=self.shape)
-        return sample.astype(self.dtype)
-
-    def contains(self, x: Any) -> bool:
-        """Return boolean specifying if x is a valid member of this space"""
-        if not isinstance(x, np.ndarray):
-            try:
-                x = np.asarray(x, dtype=self.dtype)
-            except (ValueError, TypeError):
-                return False
-
-        return bool(
-            np.can_cast(x.dtype, self.dtype)
-            and x.shape == self.shape
-            and np.all(x >= self.low)
-            and np.all(x <= self.high)
-        )
+serialize_space(env.observation_space['mission'])
 
 # %% [markdown]
-# Now that we have a custom observation space we need to define functions that properly serialize it.
+# Then we will encounter a ``NotImplementedError`` error:
+#
+#   NotImplementedError: No serialization method available for MissionSpace(<function EmptyEnv._gen_mission at 0x12253a940>, None)
+#
+# But what is ``MissonSpace``? If we look at the `source code <https://github.com/Farama-Foundation/Minigrid/blob/master/minigrid/core/mission.py#L14>`_
+# we can see that it is simply a wrapper around a ``Callable`` that returns a randomly generated
+# string representing the environment's mission. Let's sample from the mission space to see an example:
+
+# %%
+env.observation_space['mission'].sample()
+
+# %% [markdown]
+# This will print out:
+#
+#   'get to the green goal square'
+#
+# For this particular environment we don't have to worry about the mission string varying from sample to sample.
+#
+# Now that we have a custom observation space we need to define functions that
+# properly serialize and deserialize it.
 #
 # When creating a Minari dataset, the space data gets `serialized <https://minari.farama.org/content/dataset_standards/#space-serialization>`_
-# to a JSON format when saving to disk. The `serialize_space <https://github.com/Farama-Foundation/Minari/blob/main/minari/serialization.py#L13C5-L13C20>`_
-# function takes care of this conversion for various supported Gym spaces. To enable serialization for a custom space we can register 2 new functions that
-# will serialize the space into a JSON object and also deserialize it into our custom space object.
+# to a JSON format before saving to disk. The `serialize_space <https://github.com/Farama-Foundation/Minari/blob/main/minari/serialization.py#L13C5-L13C20>`_
+# function takes care of this conversion for various supported Gymnasium spaces. To enable serialization
+# for a custom space we can register 2 new functions that will serialize the space into a JSON object
+# and also deserialize it back into the custom space.
 
 # %%
-
-
-@serialize_space.register(CartPoleObservationSpace)
-def serialize_custom_space(space: CartPoleObservationSpace, to_string=True) -> Union[Dict, str]:
+@serialize_space.register(MissionSpace)
+def serialize_custom_space(space: MissionSpace, to_string=True) -> Union[Dict, str]:
     result = {}
-    result["type"] = "CartPoleObservationSpace"
-    result["dtype"] = str(space.dtype)
-    result["shape"] = space.shape
-    result["low"] = space.low.tolist()
-    result["high"] = space.high.tolist()
+    result["type"] = "MissionSpace"
+    result["mission_func"] = space.mission_func()
 
     if to_string:
         result = json.dumps(result)
     return result
 
 
-@deserialize_space.register("CartPoleObservationSpace")
-def deserialize_custom_space(space_dict: Dict) -> CartPoleObservationSpace:
-    assert space_dict["type"] == "CartPoleObservationSpace"
-    dtype = space_dict["dtype"]
-    shape = space_dict["shape"]
-    low = np.array(space_dict["low"])
-    high = np.array(space_dict["high"])
-    return CartPoleObservationSpace(
-        low=low,
-        high=high,
-        shape=shape,
-        dtype=dtype
+@deserialize_space.register("MissionSpace")
+def deserialize_custom_space(space_dict: Dict) -> MissionSpace:
+    assert space_dict["type"] == "MissionSpace"
+    mission_func = lambda : space_dict["mission_func"]
+
+    return MissionSpace(
+        mission_func=mission_func
     )
 
 # %% [markdown]
-# Now we can initialize the custom observation space for our environment and collect some episode data.
-#
-# The x-position of CartPole's observation space can take values between -4.8 and +4.8.
-# For this tutorial we'll use our new class to create an observation space where the
-# cart's x-position can only take on values between 0 and +4.8.
-#
-# We also need to define a :class:`minari.StepDataCallback` object to manipulate the x-position to be
-# above 0.
-#
-# First element in array is x-position. The rest of elements are CartPole's default values
+# Now that we have serialization functions for ``MissionSpace`` we can collect some episode data.
 
 # %%
+dataset_id = "minigrid-custom-space-v0"
 
-
-custom_observation_space = CartPoleObservationSpace(
-    low=np.array([0, -3.4028235e+38, -4.1887903e-01, -3.4028235e+38], dtype=np.float32),
-    high=np.array([4.8, 3.4028235e+38, 4.1887903e-01, 3.4028235e+38], dtype=np.float32),
-    shape=(4,),
-    dtype=np.float32
-)
-
-
-class CustomSpaceStepDataCallback(StepDataCallback):
-    def __call__(self, env, **kwargs):
-        step_data = super().__call__(env, **kwargs)
-        step_data["observations"][0] = max(step_data["observations"][0], 0)
-        return step_data
-
-# %%
-
-
-dataset_id = "cartpole-custom-space-v1"
-
-# delete the test dataset if it already exists
-local_datasets = minari.list_local_datasets()
-if dataset_id in local_datasets:
-    minari.delete_dataset(dataset_id)
-
-env = DataCollectorV0(
-    env,
-    observation_space=custom_observation_space,
-    step_data_callback=CustomSpaceStepDataCallback
-)
+env = DataCollectorV0(env)
 num_episodes = 10
 
 env.reset(seed=42)
@@ -172,7 +122,7 @@ for episode in range(num_episodes):
     env.reset()
 
 # %% [markdown]
-# Now that we have collected some episode data we can create a Minari dataset and take a look at a sample episode.
+# Finally we can create a Minari dataset.
 
 # %%
 dataset = minari.create_dataset_from_collector_env(
@@ -184,20 +134,19 @@ dataset = minari.create_dataset_from_collector_env(
     code_permalink="https://github.com/Farama-Foundation/Minari/blob/main/docs/tutorials/dataset_creation/custom_space_serialization.py"
 )
 
-ep = dataset.sample_episodes(1)
-print(f"Min x-position: {ep[0].observations[:, 0].min():.2f}")
-
-# %%
-# The output from the above section will take a sampled episode and show the minimum x-position for a sampled episode being greater than or equal to 0.
-#
-#   Min x-position: 0.00
-#
+# %% [markdown]
 # To get an idea of what the serialization is doing under the hood we can directly call
-# the `serialize_custom_space` function we defined earlier and see the JSON string it returns.
+# the ``serialize_custom_space`` function we defined earlier and see the JSON string it returns.
 
 # %%
-serialize_custom_space(custom_observation_space)
-# %%
+serialize_custom_space(env.observation_space['mission'])
+
+# %% [markdown]
 # The output should show our custom observation space object as a string:
 #
-#  '{"type": "CartPoleObservationSpace", "dtype": "float32", "shape": [4], "low": [0.0, -3.4028234663852886e+38, -0.41887903213500977, -3.4028234663852886e+38], "high": [4.800000190734863, 3.4028234663852886e+38, 0.41887903213500977, 3.4028234663852886e+38]}'
+#  '{"type": "MissionSpace", "mission_func": "get to the green goal square"}'
+#
+# Finally to clean things up, we'll delete the dataset we created earlier:
+
+# %%
+minari.delete_dataset(dataset_id)
