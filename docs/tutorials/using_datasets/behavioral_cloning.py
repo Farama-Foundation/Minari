@@ -12,10 +12,10 @@ Behavioral cloning with PyTorch
 # Policy training
 # ~~~~~~~~~~~~~~~~~~~
 # To train the expert policy, we use `SB3 <https://github.com/DLR-RM/stable-baselines3>`_'s `rl-zoo3 <https://github.com/DLR-RM/rl-baselines3-zoo>`_ library.
-# After installing the library with ``pip install rl_zoo3``,
-# we train a PPO agent on the environment with the following command:
-#
-# ``python -m rl_zoo3.train --algo ppo --env CartPole-v1``
+# After installing the library, we train a PPO agent on the environment:
+
+!pip install rl_zoo3
+!python -m rl_zoo3.train --algo ppo --env CartPole-v1``
 
 # %%
 # This will generate a new folder named `log` with the expert policy.
