@@ -49,11 +49,9 @@ print(f"Action space: {env.action_space}")
 # If we take a look at Minari's `serialization functions <https://github.com/Farama-Foundation/Minari/blob/main/minari/serialization.py#L13>`_
 # we can see that ``Dict``, ``Discrete``, and ``Box`` are all supported. However ``MissionSpace`` is not
 # supported and if try to serialize it with:
-
-# %%
-serialize_space(env.observation_space['mission'])
-
-# %% [markdown]
+#
+#  serialize_space(env.observation_space['mission'])
+#
 # Then we will encounter a ``NotImplementedError`` error:
 #
 #   NotImplementedError: No serialization method available for MissionSpace(<function EmptyEnv._gen_mission at 0x12253a940>, None)
@@ -139,16 +137,22 @@ dataset = minari.create_dataset_from_collector_env(
 )
 
 # %% [markdown]
-# To get an idea of what the serialization is doing under the hood we can directly call
-# the ``serialize_custom_space`` function we defined earlier and see the JSON string it returns.
+# To show that the custom space was properly serialized we
+# can load the dataset we just created and take a look at
+# the observation space.
 
 # %%
-serialize_custom_space(env.observation_space['mission'])
+del dataset
+dataset = minari.load_dataset(dataset_id)
+
+print(dataset.spec.observation_space)
 
 # %% [markdown]
-# The output should show our custom observation space object as a string:
+# The output should show the original observation space from earlier
+# except with a different ``MissionSpace`` function name since
+# we created it inside ``deserialize_custom_space``:
 #
-#  '{"type": "MissionSpace", "mission_func": "get to the green goal square"}'
+#  Dict('direction': Discrete(4), 'image': Box(0, 255, (7, 7, 3), uint8), 'mission': MissionSpace(<function deserialize_custom_space.<locals>.<lambda> at 0x11f2608b0>, None))
 #
 # Finally to clean things up, we'll delete the dataset we created earlier:
 
