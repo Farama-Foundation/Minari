@@ -324,18 +324,9 @@ class PointMazeStepDataCallback(StepDataCallback):
 # as our policy. Don't forget to initialize the environment with a ``max_episode_steps`` of ``1,000,000`` since that's the total amount of steps we want to
 # collect for our dataset and we don't want the environment to get ``truncated`` during the data collection due to a time limit.
 #
-# To create the Minari dataset we will first create the dataset by calling the function :func:`minari.create_dataset_from_collector_env`, and then checkpoint the dataset
-# every ``200,000`` steps taken by the environment.
-#
 
 
 dataset_name = "pointmaze-umaze-v0"
-
-# Check if dataset already exist and load to add more data
-if dataset_name in minari.list_local_datasets():
-    dataset = minari.load_dataset(dataset_name)
-else:
-    dataset = None
 
 # continuing task => the episode doesn't terminate or truncate when reaching a goal
 # it will generate a new target. For this reason we set the maximum episode steps to
@@ -359,20 +350,14 @@ for n_step in range(int(1e6)):
     action = np.clip(action, env.action_space.low, env.action_space.high, dtype=np.float32)
 
     obs, rew, terminated, truncated, info = collector_env.step(action)
-    if (n_step + 1) % 200000 == 0:
-        print('STEPS RECORDED:')
-        print(n_step)
-        if dataset is None:
-            dataset = minari.create_dataset_from_collector_env(collector_env=collector_env,
-                                                               dataset_id=dataset_name,
-                                                               algorithm_name="QIteration",
-                                                               code_permalink="https://github.com/Farama-Foundation/Minari/blob/main/docs/tutorials/dataset_creation/point_maze_dataset.py",
-                                                               author="Rodrigo Perez-Vicente",
-                                                               author_email="rperezvicente@farama.org")
-        else:
-            # Update local Minari dataset every 200000 steps.
-            # This works as a checkpoint to not lose the already collected data
-            dataset.update_dataset_from_collector_env(collector_env)
+
+dataset = minari.create_dataset_from_collector_env(collector_env=collector_env,
+                                                    dataset_id=dataset_name,
+                                                    algorithm_name="QIteration",
+                                                    code_permalink="https://github.com/Farama-Foundation/Minari/blob/main/docs/tutorials/dataset_creation/point_maze_dataset.py",
+                                                    author="Rodrigo Perez-Vicente",
+                                                    author_email="rperezvicente@farama.org"
+                                                    )
 
 
 # %%
