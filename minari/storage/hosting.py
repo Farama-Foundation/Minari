@@ -43,7 +43,10 @@ def upload_dataset(dataset_id: str, path_to_private_key: str):
                 blob = bucket.blob(remote_path)
                 # add metadata to main data file of dataset
                 if blob.name.endswith("main_data.hdf5"):
-                    blob.metadata = metadata
+                    with h5py.File(
+                        local_file, "r"
+                    ) as file:  # TODO: remove h5py when migrating to JSON metadata
+                        blob.metadata = file.attrs
                 blob.upload_from_filename(local_file)
 
     file_path = get_dataset_path(dataset_id)
@@ -55,9 +58,6 @@ def upload_dataset(dataset_id: str, path_to_private_key: str):
         bucket = storage.Bucket(storage_client, "minari-datasets")
 
         dataset = load_dataset(dataset_id)
-
-        with h5py.File(dataset.spec.data_path, "r") as f:
-            metadata = dict(f.attrs.items())
 
         # See https://github.com/googleapis/python-storage/issues/27 for discussion on progress bars
         _upload_local_directory_to_gcs(str(file_path), bucket, dataset_id)

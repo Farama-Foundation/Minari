@@ -3,10 +3,10 @@ import os
 import shutil
 from typing import Dict, Union
 
-import h5py
 from packaging.specifiers import SpecifierSet
 
 from minari.dataset.minari_dataset import MinariDataset, parse_dataset_id
+from minari.dataset.minari_storage import MinariStorage
 from minari.storage import hosting
 from minari.storage.datasets_root_dir import get_dataset_path
 
@@ -26,7 +26,7 @@ def load_dataset(dataset_id: str, download: bool = False):
         MinariDataset
     """
     file_path = get_dataset_path(dataset_id)
-    data_path = os.path.join(file_path, "data", "main_data.hdf5")
+    data_path = os.path.join(file_path, "data")
 
     if not os.path.exists(data_path):
         if not download:
@@ -67,24 +67,21 @@ def list_local_datasets(
             # Minari datasets must contain the data directory.
             continue
 
-        main_file_path = os.path.join(datasets_path, dst_id, "data/main_data.hdf5")
-        with h5py.File(main_file_path, "r") as f:
-            metadata = dict(f.attrs.items())
-            if ("minari_version" not in metadata) or (
-                compatible_minari_version
-                and __version__ not in SpecifierSet(metadata["minari_version"])
-            ):
-                continue
-            env_name, dataset_name, version = parse_dataset_id(dst_id)
-            dataset = f"{env_name}-{dataset_name}"
-            if latest_version:
-                if (
-                    dataset not in local_datasets
-                    or version > local_datasets[dataset][0]
-                ):
-                    local_datasets[dataset] = (version, metadata)
-            else:
-                local_datasets[dst_id] = metadata
+        data_path = os.path.join(datasets_path, dst_id, "data")
+        metadata = MinariStorage(data_path).metadata
+        if ("minari_version" not in metadata) or (
+            compatible_minari_version
+            and __version__ not in SpecifierSet(metadata["minari_version"])
+        ):
+            continue
+        env_name, dataset_name, version = parse_dataset_id(dst_id)
+        dataset = f"{env_name}-{dataset_name}"
+        if latest_version:
+            if dataset not in local_datasets or version > local_datasets[dataset][0]:
+                local_datasets[dataset] = (version, metadata)
+        else:
+            local_datasets[dst_id] = metadata
+
     if latest_version:
         # Return dict = {'dataset_id': metadata}
         return dict(
