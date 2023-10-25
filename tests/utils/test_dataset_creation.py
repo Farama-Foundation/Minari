@@ -18,6 +18,7 @@ from tests.common import (
 )
 
 
+CODELINK = "https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/test_dataset_creation.py"
 register_dummy_envs()
 
 
@@ -62,21 +63,19 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
     if dataset_id in local_datasets:
         minari.delete_dataset(dataset_id)
     # Create Minari dataset and store locally
-    codelink = "https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/test_dataset_combine.py"
     dataset = minari.create_dataset_from_collector_env(
         dataset_id=dataset_id,
         eval_env=eval_env,
         collector_env=env,
         algorithm_name="random_policy",
-        code_permalink=codelink,
+        code_permalink=CODELINK,
         author="WillDudley",
         author_email="wdudley@farama.org",
     )
 
     metadata = dataset.storage.metadata
     assert metadata["algorithm_name"] == "random_policy"
-    codelink = "https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/test_dataset_combine.py"
-    assert metadata["code_permalink"] == codelink
+    assert metadata["code_permalink"] == CODELINK
     assert metadata["author"] == "WillDudley"
     assert metadata["author_email"] == "wdudley@farama.org"
 
@@ -178,7 +177,7 @@ def test_generate_dataset_with_external_buffer(dataset_id, env_id):
             eval_env=eval_env_dataset_id,
             buffer=buffer,
             algorithm_name="random_policy",
-            code_permalink="https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
+            code_permalink=CODELINK,
             author="WillDudley",
             author_email="wdudley@farama.org",
         )
@@ -286,13 +285,12 @@ def test_generate_dataset_with_space_subset_external_buffer():
         observations.append(_space_subset_helper(observation))
 
     # Create Minari dataset and store locally
-    codelink = "https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/test_dataset_combine.py"
     dataset = minari.create_dataset_from_buffers(
         dataset_id=dataset_id,
         env=env,
         buffer=buffer,
         algorithm_name="random_policy",
-        code_permalink=codelink,
+        code_permalink=CODELINK,
         author="WillDudley",
         author_email="wdudley@farama.org",
         action_space=action_space_subset,
@@ -301,8 +299,7 @@ def test_generate_dataset_with_space_subset_external_buffer():
 
     metadata = dataset.storage.metadata
     assert metadata["algorithm_name"] == "random_policy"
-    code_link = "https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/test_dataset_combine.py"
-    assert metadata["code_permalink"] == code_link
+    assert metadata["code_permalink"] == CODELINK
     assert metadata["author"] == "WillDudley"
     assert metadata["author_email"] == "wdudley@farama.org"
 
