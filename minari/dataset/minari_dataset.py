@@ -9,6 +9,7 @@ from typing import Callable, Iterable, Iterator, List, Optional, Union
 import gymnasium as gym
 import numpy as np
 from gymnasium import error
+from gymnasium import logger
 from gymnasium.envs.registration import EnvSpec
 from packaging.specifiers import InvalidSpecifier, SpecifierSet
 from packaging.version import Version
@@ -149,15 +150,15 @@ class MinariDataset:
         """Recover the Gymnasium environment used to create the dataset.
 
         Args:
-            eval_env (bool): if True the returned Gymnasium environment will be that intended to be used for evaluation. If no eval_env was specified when creating the dataset, the returned environment will be the
-                                same as the one used for creating the dataset. Default False.
+            eval_env (bool): if True the returned Gymnasium environment will be that intended to be used for evaluation. If no eval_env was specified when creating the dataset, the returned environment will be the same as the one used for creating the dataset. Default False.
 
         Returns:
             environment: Gymnasium environment
         """
-        if eval_env and self._eval_env_spec is not None:
-            return gym.make(self._eval_env_spec)
-
+        if eval_env:
+            if self._eval_env_spec is not None:
+                return gym.make(self._eval_env_spec)
+            logger.info(f"`eval_env` has been set to True but the dataset {self._dataset_id} doesn't provide an evaluation environment. Instead, the environment used for collecting the data will be returned: {self._env_spec}")
         return gym.make(self._env_spec)
 
     def set_seed(self, seed: int):
