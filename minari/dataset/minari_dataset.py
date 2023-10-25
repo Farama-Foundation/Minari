@@ -8,8 +8,7 @@ from typing import Callable, Iterable, Iterator, List, Optional, Union
 
 import gymnasium as gym
 import numpy as np
-from gymnasium import error
-from gymnasium import logger
+from gymnasium import error, logger
 from gymnasium.envs.registration import EnvSpec
 from packaging.specifiers import InvalidSpecifier, SpecifierSet
 from packaging.version import Version
@@ -158,7 +157,9 @@ class MinariDataset:
         if eval_env:
             if self._eval_env_spec is not None:
                 return gym.make(self._eval_env_spec)
-            logger.info(f"`eval_env` has been set to True but the dataset {self._dataset_id} doesn't provide an evaluation environment. Instead, the environment used for collecting the data will be returned: {self._env_spec}")
+            logger.info(
+                f"`eval_env` has been set to True but the dataset {self._dataset_id} doesn't provide an evaluation environment. Instead, the environment used for collecting the data will be returned: {self._env_spec}"
+            )
         return gym.make(self._env_spec)
 
     def set_seed(self, seed: int):
