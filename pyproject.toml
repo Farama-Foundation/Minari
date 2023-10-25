@@ -66,6 +66,7 @@ include = ["minari", "minari.*"]
 
 [tool.black]
 safe = true
+force-exclude = ["docs/tutorials/using_datasets/behavioral_cloning.py"]
 
 [tool.isort]
 atomic = true

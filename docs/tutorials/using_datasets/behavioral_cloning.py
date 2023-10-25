@@ -1,4 +1,3 @@
-# fmt: off
 """
 Behavioral cloning with PyTorch
 =========================================
@@ -41,7 +40,6 @@ from tqdm.auto import tqdm
 import minari
 from minari import DataCollectorV0
 
-
 torch.manual_seed(42)
 
 # %%
@@ -64,13 +62,14 @@ for i in tqdm(range(total_episodes)):
         if terminated or truncated:
             break
 
-dataset = minari.create_dataset_from_collector_env(dataset_id="CartPole-v1-expert",
-                                                   collector_env=env,
-                                                   algorithm_name="ExpertPolicy",
-                                                   code_permalink="https://minari.farama.org/tutorials/behavioral_cloning",
-                                                   author="Farama",
-                                                   author_email="contact@farama.org"
-                                                   )
+dataset = minari.create_dataset_from_collector_env(
+    dataset_id="CartPole-v1-expert",
+    collector_env=env,
+    algorithm_name="ExpertPolicy",
+    code_permalink="https://minari.farama.org/tutorials/behavioral_cloning",
+    author="Farama",
+    author_email="contact@farama.org"
+)
 
 # %%
 # Once executing the script, the dataset will be saved on your disk. You can display the list of datasets with ``minari list local`` command.
