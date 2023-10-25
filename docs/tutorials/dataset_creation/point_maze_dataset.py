@@ -13,7 +13,7 @@ PointMaze D4RL dataset
 #   2. Then we also need to generate the actions so that the agent can follow the waypoints of the trajectory. For this purpose D4RL implements a PD controller.
 #   3. Finally, to create the Minari dataset, we will wrap the environment with a :class:`minari.DataCollectorV0` and step through it by generating actions with the path planner and waypoint controller.
 #
-# For this tutorial we will be using the ``pointmaze-medium-v3`` environment to collect 1,000,000 transitions. However, any map implementation in the PointMaze environment group can be used.
+# For this tutorial we will be using the ``pointmaze-medium-v3`` environment to collect transition data. However, any map implementation in the PointMaze environment group can be used.
 # Another important factor to take into account is that the environment is continuing, which means that it won't be ``terminated`` when reaching a goal. Instead a new goal target will be randomly selected and the agent
 # will start from the location it's currently at (no ``env.reset()`` required).
 #
@@ -361,17 +361,18 @@ class PointMazeStepDataCallback(StepDataCallback):
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Now we will finally perform our data collection and create the Minari dataset. This is as simple as wrapping the environment with
 # the :class:`minari.DataCollectorV0` wrapper and add the custom callback methods. Once we've done this we can step the environment with the ``WayPointController``
-# as our policy. Don't forget to initialize the environment with a ``max_episode_steps`` of ``1,000,000`` since that's the total amount of steps we want to
+# as our policy. For the tutorial, we collect 10,000 transitions. Thus, we initialize the environment with ``max_episode_steps=10,000`` since that's the total amount of steps we want to
 # collect for our dataset and we don't want the environment to get ``truncated`` during the data collection due to a time limit.
 #
 
 
 dataset_name = "pointmaze-umaze-v0"
+total_steps = 10_000
 
 # continuing task => the episode doesn't terminate or truncate when reaching a goal
 # it will generate a new target. For this reason we set the maximum episode steps to
 # the desired size of our Minari dataset (evade truncation due to time limit)
-env = gym.make("PointMaze_Medium-v3", continuing_task=True, max_episode_steps=1e6)
+env = gym.make("PointMaze_Medium-v3", continuing_task=True, max_episode_steps=total_steps)
 
 # Data collector wrapper to save temporary data while stepping. Characteristics:
 #   * Custom StepDataCallback to add extra state information to 'infos' and divide dataset in different episodes by overridng
@@ -385,7 +386,7 @@ obs, _ = collector_env.reset(seed=123)
 
 waypoint_controller = WaypointController(maze=env.maze)
 
-for n_step in range(int(1e5)):
+for n_step in range(int(total_steps)):
     action = waypoint_controller.compute_action(obs)
     # Add some noise to each step action
     action += np.random.randn(*action.shape) * 0.5
