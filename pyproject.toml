@@ -43,7 +43,7 @@ testing = [
     "nbmake",
     "gymnasium-robotics>=1.2.3",
     "imageio>=2.14.1",
-    "minigrid",
+    "minigrid>=2.2.0",
 ]
 
 [project.urls]
