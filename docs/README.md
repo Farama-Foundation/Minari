@@ -8,7 +8,7 @@ For more information about how to contribute to the documentation go to our [CON
 
 Install the required packages and Minari:
 
-```bash
+```
 git clone https://github.com/Farama-Foundation/Minari.git
 cd Minari
 pip install -e .
@@ -17,14 +17,14 @@ pip install -r docs/requirements.txt
 
 To build the documentation once:
 
-```bash
+```
 cd docs
 make dirhtml
 ```
 
 To rebuild the documentation automatically every time a change is made:
 
-```bash
+```
 cd docs
 sphinx-autobuild -b dirhtml . _build
 ```
