@@ -1,4 +1,5 @@
 import copy
+import json
 import os
 import re
 import shutil
@@ -465,20 +466,28 @@ def test_update_dataset_from_buffer(dataset_id, env_id):
 
 
 def test_missing_env_module():
-    data_path = os.path.join(
-        os.path.expanduser("~"), ".minari", "datasets", "dummy-test-v0"
+    dataset_id = "dummy-test-v0"
+
+    local_datasets = minari.list_local_datasets()
+    if dataset_id in local_datasets:
+        minari.delete_dataset(dataset_id)
+
+    env = gym.make("CartPole-v1")
+    env = DataCollectorV0(env)
+    num_episodes = 10
+
+    dataset = create_dummy_dataset_with_collecter_env_helper(
+        dataset_id, env, num_episodes=num_episodes
     )
 
-    class FakeEnvSpec(EnvSpec):
-        def to_json(self) -> str:
-            return r"""{"id": "DummyEnv-v0", "entry_point": "dummymodule:dummyenv", "reward_threshold": null, "nondeterministic": false, "max_episode_steps": 300, "order_enforce": true, "disable_env_checker": false, "apply_api_compatibility": false, "additional_wrappers": []}"""
-
-    storage = MinariStorage.new(
-        data_path,
-        env_spec=FakeEnvSpec("DummyEnv-v0"),
-    )
+    path = os.path.join(dataset.storage.data_path, "metadata.json")
+    with open(path, "r") as file:
+        metadata = json.load(file)
+    metadata["env_spec"] = r"""{"id": "DummyEnv-v0", "entry_point": "dummymodule:dummyenv", "reward_threshold": null, "nondeterministic": false, "max_episode_steps": 300, "order_enforce": true, "disable_env_checker": false, "apply_api_compatibility": false, "additional_wrappers": []}"""
+    with open(path, "w") as file:
+        file.write(json.dumps(metadata))
 
     with pytest.raises(ModuleNotFoundError, match="No module named 'dummymodule'"):
-        MinariDataset(storage.data_path)
+        dataset = minari.load_dataset(dataset_id)
 
-    shutil.rmtree(data_path)
+    minari.delete_dataset(dataset_id)

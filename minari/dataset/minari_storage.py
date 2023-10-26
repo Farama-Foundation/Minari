@@ -146,7 +146,7 @@ class MinariStorage(ABC):
         metadata["action_space"] = self.action_space
         return metadata
 
-    def update_metadata(self, metadata: Dict):  # TODO to json
+    def update_metadata(self, metadata: Dict):
         """Update the metadata adding/modifying some keys.
 
         Args:
