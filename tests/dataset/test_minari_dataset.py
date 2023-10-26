@@ -2,13 +2,11 @@ import copy
 import json
 import os
 import re
-import shutil
 from typing import Any
 
 import gymnasium as gym
 import numpy as np
 import pytest
-from gymnasium.envs.registration import EnvSpec
 
 import minari
 from minari import DataCollectorV0, MinariDataset
