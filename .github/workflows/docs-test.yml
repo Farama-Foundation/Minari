@@ -1,5 +1,9 @@
 name: Test Documentation
-on: [pull_request, push]
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
 permissions:
   contents: read
 jobs:
