@@ -110,7 +110,7 @@ class MinariStorage(ABC):
         data_path.mkdir(exist_ok=True)
         if data_path.joinpath("metadata.json").exists():
             raise ValueError(
-                f"A dataset is already available at {data_path}; delete it or specify another path"
+                f"A dataset is already available at {data_path}. Delete it or specify another path"
             )
         metadata: Dict[str, Any] = {
             "total_episodes": 0,
