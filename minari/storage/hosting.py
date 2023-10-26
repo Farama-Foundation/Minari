@@ -12,7 +12,6 @@ from packaging.specifiers import SpecifierSet
 from tqdm.auto import tqdm  # pyright: ignore [reportMissingModuleSource]
 
 from minari.dataset.minari_dataset import parse_dataset_id
-from minari.dataset.minari_storage import MinariStorage
 from minari.storage.datasets_root_dir import get_dataset_path
 from minari.storage.local import load_dataset
 
@@ -41,12 +40,12 @@ def upload_dataset(dataset_id: str, path_to_private_key: str):
             else:
                 remote_path = os.path.join(gcs_path, local_file[1 + len(local_path) :])
                 blob = bucket.blob(remote_path)
-                # add metadata to main data file of dataset
-                if blob.name.endswith("main_data.hdf5"):
-                    with h5py.File(
-                        local_file, "r"
-                    ) as file:  # TODO: remove h5py when migrating to JSON metadata
-                        blob.metadata = file.attrs
+                # # add metadata to main data file of dataset
+                # if blob.name.endswith("main_data.hdf5"):
+                #     with h5py.File(
+                #         local_file, "r"
+                #     ) as file:  # TODO: remove h5py when migrating to JSON metadata
+                #         blob.metadata = file.attrs
                 blob.upload_from_filename(local_file)
 
     file_path = get_dataset_path(dataset_id)
@@ -58,8 +57,6 @@ def upload_dataset(dataset_id: str, path_to_private_key: str):
         bucket = storage.Bucket(storage_client, "minari-datasets")
 
         dataset = load_dataset(dataset_id)
-
-        metadata = MinariStorage.read(dataset.spec.data_path).metadata
 
         # See https://github.com/googleapis/python-storage/issues/27 for discussion on progress bars
         _upload_local_directory_to_gcs(str(file_path), bucket, dataset_id)

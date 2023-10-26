@@ -8,6 +8,7 @@ from typing import Dict, Iterable, List, Optional, Tuple, Union
 import gymnasium as gym
 import h5py
 import numpy as np
+
 from minari.dataset.minari_storage import MinariStorage
 
 
@@ -16,7 +17,7 @@ class _HDF5Storage(MinariStorage):
         self,
         data_path: pathlib.Path,
         observation_space: gym.Space,
-        action_space: gym.Space
+        action_space: gym.Space,
     ):
         super().__init__(data_path, observation_space, action_space)
         file_path = os.path.join(self.data_path, "main_data.hdf5")
@@ -29,11 +30,11 @@ class _HDF5Storage(MinariStorage):
         cls,
         data_path: pathlib.Path,
         observation_space: gym.Space,
-        action_space: gym.Space
+        action_space: gym.Space,
     ) -> MinariStorage:
         data_path.joinpath("main_data.hdf5").touch(exist_ok=False)
         obj = cls(data_path, observation_space, action_space)
-        return obj        
+        return obj
 
     def update_episode_metadata(
         self, metadatas: Iterable[Dict], episode_indices: Optional[Iterable] = None
@@ -125,7 +126,9 @@ class _HDF5Storage(MinariStorage):
             total_episodes = len(file.keys())
 
         total_steps = self.total_steps + additional_steps
-        self.update_metadata({"total_steps": total_steps, "total_episodes": total_episodes})
+        self.update_metadata(
+            {"total_steps": total_steps, "total_episodes": total_episodes}
+        )
 
     def update_from_storage(self, storage: MinariStorage):
         if type(storage) != type(self):
@@ -156,12 +159,14 @@ class _HDF5Storage(MinariStorage):
                 storage_metadata.get("author_email"),
             ]
 
-            self.update_metadata({
-                "total_episodes": self_total_episodes + storage_total_episodes,
-                "total_steps": self.total_steps + storage.total_steps,
-                "author": "; ".join([aut for aut in authors if aut is not None]),
-                "author_email": "; ".join([e for e in emails if e is not None])
-            })
+            self.update_metadata(
+                {
+                    "total_episodes": self_total_episodes + storage_total_episodes,
+                    "total_steps": self.total_steps + storage.total_steps,
+                    "author": "; ".join([aut for aut in authors if aut is not None]),
+                    "author_email": "; ".join([e for e in emails if e is not None]),
+                }
+            )
 
 
 def _get_from_h5py(group: h5py.Group, name: str) -> h5py.Group:

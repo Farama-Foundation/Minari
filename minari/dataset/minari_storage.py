@@ -1,9 +1,9 @@
 from __future__ import annotations
-from abc import ABC, abstractmethod
-import json
 
+import json
 import os
 import pathlib
+from abc import ABC, abstractmethod
 from typing import Any, Callable, Dict, Iterable, List, Optional, Union
 
 import gymnasium as gym
@@ -24,7 +24,7 @@ class MinariStorage(ABC):
         self,
         data_path: pathlib.Path,
         observation_space: gym.Space,
-        action_space: gym.Space
+        action_space: gym.Space,
     ):
         """Initialize a MinariStorage with an existing data path.
 
@@ -49,9 +49,9 @@ class MinariStorage(ABC):
         metadata_file_path = data_path.joinpath(_METADATA_FILE_NAME)
         if not metadata_file_path.exists():
             raise ValueError(f"No data found in data path {data_path}")
-        with open(metadata_file_path, "r") as file:
+        with open(metadata_file_path) as file:
             metadata = json.load(file)
-    
+
         observation_space = None
         action_space = None
         if "observation_space" in metadata.keys():
@@ -62,7 +62,7 @@ class MinariStorage(ABC):
             serialized_space = metadata["action_space"]
             assert isinstance(serialized_space, str)
             action_space = deserialize_space(serialized_space)
-        
+
         if action_space is None or observation_space is None:
             env_spec_str = metadata.get("env_spec")
             assert isinstance(env_spec_str, str)
@@ -72,9 +72,12 @@ class MinariStorage(ABC):
                 observation_space = env.observation_space
             if action_space is None:
                 action_space = env.action_space
-        
+
         from minari.dataset.storages import registry  # avoid circular import
-        return registry[metadata["data_format"]](data_path, observation_space, action_space)
+
+        return registry[metadata["data_format"]](
+            data_path, observation_space, action_space
+        )
 
     @classmethod
     def new(
@@ -83,7 +86,7 @@ class MinariStorage(ABC):
         observation_space: Optional[gym.Space] = None,
         action_space: Optional[gym.Space] = None,
         env_spec: Optional[EnvSpec] = None,
-        data_format: str = "hdf5"  # TODO: add to docs & check if value is correct with informative error
+        data_format: str = "hdf5",  # TODO: add to docs & check if value is correct with informative error
     ) -> MinariStorage:
         """Class method to create a new data storage.
 
@@ -109,14 +112,18 @@ class MinariStorage(ABC):
             raise ValueError(
                 f"A dataset is already available at {data_path}; delete it or specify another path"
             )
-        metadata: Dict[str, Any] = {"total_episodes": 0, "total_steps": 0, "data_format": data_format}
+        metadata: Dict[str, Any] = {
+            "total_episodes": 0,
+            "total_steps": 0,
+            "data_format": data_format,
+        }
         if observation_space is not None:
             metadata["observation_space"] = serialize_space(observation_space)
         if action_space is not None:
             metadata["action_space"] = serialize_space(action_space)
         if env_spec is not None:
             metadata["env_spec"] = env_spec.to_json()
-        with open(data_path.joinpath(_METADATA_FILE_NAME), 'w') as f:
+        with open(data_path.joinpath(_METADATA_FILE_NAME), "w") as f:
             json.dump(metadata, f)
 
         if observation_space is None or action_space is None:
@@ -128,18 +135,24 @@ class MinariStorage(ABC):
                 action_space = env.action_space
 
         from minari.dataset.storages import registry  # avoid circular import
+
         obj = registry[data_format]._create(data_path, observation_space, action_space)
         return obj
 
     @classmethod
     @abstractmethod
-    def _create(cls, data_path: pathlib.Path, observation_space: gym.Space, action_space: gym.Space) -> MinariStorage:
+    def _create(
+        cls,
+        data_path: pathlib.Path,
+        observation_space: gym.Space,
+        action_space: gym.Space,
+    ) -> MinariStorage:
         ...
 
     @property
     def metadata(self) -> Dict[str, Any]:
         """Metadata of the dataset."""
-        with open(self.data_path.joinpath(_METADATA_FILE_NAME), "r") as file:
+        with open(self.data_path.joinpath(_METADATA_FILE_NAME)) as file:
             metadata = json.load(file)
 
         metadata["observation_space"] = self.observation_space
@@ -160,9 +173,9 @@ class MinariStorage(ABC):
                 f"You are not allowed to update values for {', '.join(forbidden_keys)}"
             )
 
-        with open(os.path.join(self.data_path, _METADATA_FILE_NAME), "r") as file:
+        with open(os.path.join(self.data_path, _METADATA_FILE_NAME)) as file:
             saved_metadata = json.load(file)
-        
+
         saved_metadata.update(metadata)
         with open(os.path.join(self.data_path, _METADATA_FILE_NAME), "w") as file:
             file.write(json.dumps(saved_metadata))
@@ -202,7 +215,6 @@ class MinariStorage(ABC):
 
         ep_dicts = self.get_episodes(episode_indices)
         return map(function, ep_dicts)
-
 
     @abstractmethod
     def get_episodes(self, episode_indices: Iterable[int]) -> List[dict]:

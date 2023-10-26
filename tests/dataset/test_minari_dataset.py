@@ -11,7 +11,6 @@ import pytest
 import minari
 from minari import DataCollectorV0, MinariDataset
 from minari.dataset.minari_dataset import EpisodeData
-from minari.dataset.minari_storage import MinariStorage
 from tests.common import (
     check_data_integrity,
     check_env_recovery,
@@ -479,9 +478,11 @@ def test_missing_env_module():
     )
 
     path = os.path.join(dataset.storage.data_path, "metadata.json")
-    with open(path, "r") as file:
+    with open(path) as file:
         metadata = json.load(file)
-    metadata["env_spec"] = r"""{"id": "DummyEnv-v0", "entry_point": "dummymodule:dummyenv", "reward_threshold": null, "nondeterministic": false, "max_episode_steps": 300, "order_enforce": true, "disable_env_checker": false, "apply_api_compatibility": false, "additional_wrappers": []}"""
+    metadata[
+        "env_spec"
+    ] = r"""{"id": "DummyEnv-v0", "entry_point": "dummymodule:dummyenv", "reward_threshold": null, "nondeterministic": false, "max_episode_steps": 300, "order_enforce": true, "disable_env_checker": false, "apply_api_compatibility": false, "additional_wrappers": []}"""
     with open(path, "w") as file:
         file.write(json.dumps(metadata))
 

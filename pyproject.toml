@@ -107,6 +107,6 @@ reportUnboundVariable = "warning"
 filterwarnings = ['ignore:.*The environment .* is out of date.*']
 # filterwarnings = ['ignore:.*step API.*:DeprecationWarning']
 addopts = [
-    "--ignore=tests/test_cli.py",
-    "--ignore=tests/dataset/test_dataset_download.py"
+    "--ignore=test_cli.py",
+    "--ignore=dataset/test_dataset_download.py"
 ]

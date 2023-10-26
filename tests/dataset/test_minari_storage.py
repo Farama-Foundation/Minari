@@ -63,7 +63,7 @@ def test_metadata(tmp_dir):
         "string",
         "total_episodes",
         "total_steps",
-        "data_format"
+        "data_format",
     }
 
     for key, value in extra_metadata.items():
