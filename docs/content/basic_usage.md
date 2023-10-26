@@ -26,7 +26,7 @@ We support Python 3.8, 3.9, 3.10 and 3.11 on Linux and macOS.
 ### Collecting Data
 
 ```{eval-rst}
-Minari can abstract the data collection process. This is achieved by using the :class:`minari.DataCollectorV0` wrapper which stores the environments stepping data in internal memory buffers before saving the dataset into disk. The :class:`minari.DataCollectorV0` wrapper can also perform caching by scheduling the amount of episodes or steps that are stored in-memory before saving the data in a temporary `Minari dataset file </content/dataset_standards>`_ . This wrapper also computes relevant metadata of the dataset while collecting the data. 
+Minari can abstract the data collection process. This is achieved by using the :class:`minari.DataCollectorV0` wrapper which stores the environments stepping data in internal memory buffers before saving the dataset into disk. The :class:`minari.DataCollectorV0` wrapper can also perform caching by scheduling the amount of episodes or steps that are stored in-memory before saving the data in a temporary `Minari dataset file </content/dataset_standards>`_ . This wrapper also computes relevant metadata of the dataset while collecting the data.
 
 The wrapper is very simple to initialize:
 ```
@@ -69,11 +69,11 @@ for _ in range(total_episodes):
         # random action policy
         action = env.action_space.sample()
         obs, rew, terminated, truncated, info = env.step(action)
-        
+
         if terminated or truncated:
             break
 
-dataset = minari.create_dataset_from_collector_env(dataset_id="LunarLander-v2-test-v0", 
+dataset = minari.create_dataset_from_collector_env(dataset_id="LunarLander-v2-test-v0",
                                                    collector_env=env,
                                                    algorithm_name="Random-Policy",
                                                    code_permalink="https://github.com/Farama-Foundation/Minari",
@@ -131,7 +131,7 @@ for episode_id in range(total_episodes):
         # random action policy
         action = env.action_space.sample()
         obs, rew, terminated, truncated, info = env.step(action)
-        
+
         if terminated or truncated:
             break
 
@@ -139,14 +139,14 @@ for episode_id in range(total_episodes):
         # Update local Minari dataset every 10 episodes.
         # This works as a checkpoint to not lose the already collected data
         if dataset is None:
-            dataset = minari.create_dataset_from_collector_env(dataset_id=dataset_name, 
+            dataset = minari.create_dataset_from_collector_env(dataset_id=dataset_name,
                                                     collector_env=env,
                                                     algorithm_name="Random-Policy",
                                                     code_permalink="https://github.com/Farama-Foundation/Minari",
                                                     author="Farama",
                                                     author_email="contact@farama.org")
         else:
-            assert dataset is not None    
+            assert dataset is not None
             dataset.update_dataset_from_collector_env(env)
 ```
 
@@ -211,7 +211,7 @@ for i in range(5):
 ```
 
 ```{eval-rst}
-This code will show the following. 
+This code will show the following.
 ```
 
 ```bash
@@ -240,7 +240,7 @@ for episode in episodes_generator:
 ```
 
 ```{eval-rst}
-This code will show the following. 
+This code will show the following.
 ```
 
 ```bash
@@ -340,7 +340,7 @@ Lastly, in the case of having two or more Minari datasets created with the same 
 >>> import minari
 >>> human_dataset = minari.load_dataset('door-human-v0')
 >>> expert_dataset = minari.load_dataset('door-expert-v0')
->>> combine_dataset = minari.combine_datasets(datasets_to_combine=[human_dataset,               expert_dataset], 
+>>> combine_dataset = minari.combine_datasets(datasets_to_combine=[human_dataset,               expert_dataset],
                                         new_dataset_id="door-all-v0")
 >>> combine_dataset.name
 'door-all-v0'
