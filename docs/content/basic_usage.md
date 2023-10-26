@@ -9,11 +9,15 @@ Minari is a standard dataset hosting interface for Offline Reinforcement Learnin
 
 ## Installation
 
-To install the most recent version of the Minari library run this command: `pip install minari`
+To install the most recent version of the Minari library run this command: 
+
+```bash
+pip install minari
+```
 
 The beta release is currently under development. If you'd like to start testing or contribute to Minari then please install this project from source with:
 
-```bash
+```
 git clone https://github.com/Farama-Foundation/Minari.git
 cd Minari
 pip install -e .
@@ -35,22 +39,22 @@ The wrapper is very simple to initialize:
 from minari import DataCollectorV0
 import gymnasium as gym
 
-env = gym.make('LunarLander-v2')
+env = gym.make('CartPole-v1')
 env = DataCollectorV0(env, record_infos=True, max_buffer_steps=100000)
 ```
 
 ```{eval-rst}
-In this example, the :class:`minari.DataCollectorV0` wraps the `'LunarLander-v2'` environment from Gymnasium. The arguments passed are ``record_infos`` (when set to ``True`` the wrapper will also collect the returned ``info`` dictionaries to create the dataset), and the ``max_buffer_steps`` argument, which specifies a caching scheduler by giving the number of data steps to store in-memory before moving them to a temporary file on disk. There are more arguments that can be passed to this wrapper, a detailed description of them can be read in the :class:`minari.DataCollectorV0` documentation.
+In this example, the :class:`minari.DataCollectorV0` wraps the `'CartPole-v1'` environment from Gymnasium. The arguments passed are ``record_infos`` (when set to ``True`` the wrapper will also collect the returned ``info`` dictionaries to create the dataset), and the ``max_buffer_steps`` argument, which specifies a caching scheduler by giving the number of data steps to store in-memory before moving them to a temporary file on disk. There are more arguments that can be passed to this wrapper, a detailed description of them can be read in the :class:`minari.DataCollectorV0` documentation.
 ```
 
 ### Save Dataset
 
 ```{eval-rst}
-To create a Minari dataset first we need to step the environment with a given policy to allow the :class:`minari.DataCollectorV0` to record the data that will comprise the dataset. This is as simple as just looping through the Gymansium MDP API. For our example we will loop through ``100`` episodes of the ``'LunarLander-v2'`` environment with a random policy.
+To create a Minari dataset first we need to step the environment with a given policy to allow the :class:`minari.DataCollectorV0` to record the data that will comprise the dataset. This is as simple as just looping through the Gymansium MDP API. For our example we will loop through ``100`` episodes of the ``'CartPole-v1'`` environment with a random policy.
 
 Finally, we need to create the Minari dataset and give it a name id. This is done by calling the :func:`minari.create_dataset_from_collector_env` Minari function which will move the temporary data recorded in the :class:`minari.DataCollectorV0` environment to a permanent location in the `local Minari root path </content/dataset_standards>`_ with the Minari dataset standard structure.
 
-Extending the code example for the ``'LunarLander-v2'`` environment we can create the Minari dataset as follows:
+Extending the code example for the ``'CartPole-v1'`` environment we can create the Minari dataset as follows:
 ```
 
 ```python
@@ -58,7 +62,7 @@ import minari
 import gymnasium as gym
 from minari import DataCollectorV0
 
-env = gym.make('LunarLander-v2')
+env = gym.make('CartPole-v1')
 env = DataCollectorV0(env, record_infos=True, max_buffer_steps=100000)
 
 total_episodes = 100
@@ -73,7 +77,7 @@ for _ in range(total_episodes):
         if terminated or truncated:
             break
 
-dataset = minari.create_dataset_from_collector_env(dataset_id="LunarLander-v2-test-v0", 
+dataset = minari.create_dataset_from_collector_env(dataset_id="CartPole-v1-test-v0", 
                                                    collector_env=env,
                                                    algorithm_name="Random-Policy",
                                                    code_permalink="https://github.com/Farama-Foundation/Minari",
@@ -93,7 +97,7 @@ Once the dataset has been created we can check if the Minari dataset id appears 
 >>> import minari
 >>> local_datasets = minari.list_local_datasets()
 >>> local_datasets.keys()
-dict_keys(['LunarLander-v2-test-v0'])
+dict_keys(['CartPole-v1-test-v0'])
 ```
 
 ```{eval-rst}
@@ -110,7 +114,7 @@ When collecting data with the :class:`minari.DataCollectorV0` wrapper, the recor
 
 To checkpoint a dataset we can call the :func:`minari.MinariDataset.update_dataset_from_collector_env` method. Every time the function :func:`minari.create_dataset_from_collector_env` or the method :func:`minari.MinariDataset.update_dataset_from_collector_env` are called, the buffers from the :class:`minari.DataCollectorV0` environment are cleared.
 
-Continuing the ``'LunarLander-v2'`` example we can checkpoint the newly created Minari dataset every 10 episodes as follows:
+Continuing the ``'CartPole-v1'`` example we can checkpoint the newly created Minari dataset every 10 episodes as follows:
 ```
 
 ```python
@@ -118,12 +122,14 @@ import minari
 import gymnasium as gym
 from minari import DataCollectorV0
 
-env = gym.make('LunarLander-v2')
+env = gym.make('CartPole-v1')
 env = DataCollectorV0(env, record_infos=True, max_buffer_steps=100000)
 
 total_episodes = 100
-dataset_name = "LunarLander-v2-test-v0"
+dataset_name = "CartPole-v1-test-v0"
 dataset = None
+if dataset_name in minari.list_local_datasets():
+    dataset = minari.load_dataset(dataset_name)
 
 for episode_id in range(total_episodes):
     env.reset(seed=123)
@@ -146,8 +152,7 @@ for episode_id in range(total_episodes):
                                                     author="Farama",
                                                     author_email="contact@farama.org")
         else:
-            assert dataset is not None    
-            dataset.update_dataset_from_collector_env(env)
+            env.add_to_dataset(dataset)
 ```
 
 ## Using Minari Datasets
@@ -158,9 +163,9 @@ Minari will only be able to load datasets that are stored in your `local root di
 
 ```python
 >>> import minari
->>> dataset = minari.load_dataset('LunarLander-v2-test-v0')
+>>> dataset = minari.load_dataset('CartPole-v1-test-v0')
 >>> dataset.name
-'LunarLander-v2-test-v0'
+'CartPole-v1-test-v0'
 ```
 
 ### Download Remote Datasets
@@ -173,7 +178,7 @@ Minari also has a remote storage in a Google Cloud Platform (GCP) bucket which p
 >>> import minari
 >>> remote_datasets = minari.list_remote_datasets()
 >>> remote_datasets.keys()
-dict_keys(['door-expert-v0', 'door-human-v0', 'door-cloned-v0'])
+dict_keys(['door-expert-v1', 'door-human-v1', 'door-cloned-v1'])
 ```
 
 ```{eval-rst}
@@ -184,7 +189,7 @@ To download any of the remote datasets into the local `Minari root path </conten
 
 ```python
 >>> import minari
->>> minari.download_dataset(dataset_id="door-cloned-v0")
+>>> minari.download_dataset(dataset_id="door-cloned-v1")
 >>> local_datasets = minari.list_local_datasets()
 >>> local_datasets.keys()
 dict_keys(['door-cloned-v0'])
@@ -199,7 +204,7 @@ Minari can retrieve a certain amount of episode shards from the dataset files as
 ```python
 import minari
 
-dataset = minari.load_dataset("door-cloned-v0")
+dataset = minari.load_dataset("door-human-v1", download=True)
 dataset.set_seed(seed=123)
 
 for i in range(5):
@@ -232,7 +237,7 @@ To create your own buffers and dataloaders, you may need the ability to iterate 
 ```python
 import minari
 
-dataset = minari.load_dataset("door-cloned-v0")
+dataset = minari.load_dataset("door-human-v1", download=True)
 episodes_generator = dataset.iterate_episodes(episode_indices=[1, 2, 0])
 
 for episode in episodes_generator:
@@ -256,7 +261,7 @@ In addition, the :class:`minari.MinariDataset` dataset itself is iterable. Howev
 ```python
 import minari
 
-dataset = minari.load_dataset("door-cloned-v0")
+dataset = minari.load_dataset("door-human-v1", download=True)
 
 for episode in dataset:
     print(f"EPISODE ID {episode.id}")
@@ -272,12 +277,12 @@ The episodes in the dataset can be filtered before sampling. This is done with a
 ```python
 import minari
 
-dataset = minari.load_dataset("door-human-v0")
+dataset = minari.load_dataset("door-human-v1", download=True)
 
 print(f'TOTAL EPISODES ORIGINAL DATASET: {dataset.total_episodes}')
 
 # get episodes with mean reward greater than 2
-filter_dataset = dataset.filter_episodes(lambda episode: episode["rewards"].attrs.get("mean") > 2)
+filter_dataset = dataset.filter_episodes(lambda episode: episode.rewards.mean() > 2)
 
 print(f'TOTAL EPISODES FILTER DATASET: {filter_dataset.total_episodes}')
 ```
@@ -298,7 +303,7 @@ Minari provides another utility function to divide a dataset into multiple datas
 ```python
 import minari
 
-dataset = minari.load_dataset("door-human-v0")
+dataset = minari.load_dataset("door-human-v1", download=True)
 
 split_datasets = minari.split_dataset(dataset, sizes=[20, 5], seed=123)
 
@@ -320,7 +325,7 @@ From a :class:`minari.MinariDataset` object we can also recover the Gymnasium en
 ```python
 import minari
 
-dataset = minari.load_dataset('LunarLander-v2-test-v0')
+dataset = minari.load_dataset('CartPole-v1-test-v0')
 env = dataset.recover_environment()
 
 env.reset()
