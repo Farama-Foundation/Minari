@@ -24,9 +24,6 @@ jobs:
       - name: Install Minari
         run: pip install .[testing]
 
-      - name: Install pytest-xdist
-        run: pip install pytest-xdist
-
       - name: Build Datasets Docs
         run: python docs/_scripts/gen_dataset_md.py
 
@@ -37,4 +34,4 @@ jobs:
         run: pytest -n auto docs --markdown-docs -m markdown-docs
 
       - name: Run tutorial documentation tests
-        run:  pytest -n auto --nbmake docs/tutorials/**/*.ipynb --nbmake-timeout=600
+        run:  pytest --nbmake docs/tutorials/**/*.ipynb --nbmake-timeout=600
