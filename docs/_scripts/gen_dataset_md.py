@@ -125,7 +125,6 @@ for env_name, datasets in filtered_datasets.items():
         else:
             env_docs += """
 ## Environment Specs
-
 """
             if env_spec is None:
                 env_docs += """
