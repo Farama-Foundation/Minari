@@ -1,6 +1,4 @@
 import copy
-from collections import OrderedDict
-from typing import Dict
 
 import gymnasium as gym
 import numpy as np
@@ -14,6 +12,7 @@ from tests.common import (
     check_env_recovery,
     check_env_recovery_with_subset_spaces,
     check_load_and_delete_dataset,
+    get_sample_buffer_for_dataset_from_env,
     register_dummy_envs,
 )
 
@@ -182,21 +181,9 @@ def test_generate_dataset_with_external_buffer(dataset_id, env_id):
     check_load_and_delete_dataset(dataset_id)
 
 
-def _space_subset_helper(entry: Dict):
-
-    return OrderedDict(
-        {
-            "component_2": OrderedDict(
-                {"subcomponent_2": entry["component_2"]["subcomponent_2"]}
-            )
-        }
-    )
-
-
 @pytest.mark.parametrize("is_env_needed", [True, False])
 def test_generate_dataset_with_space_subset_external_buffer(is_env_needed):
     """Test create dataset from external buffers without using DataCollectorV0 or environment."""
-    buffer = []
     dataset_id = "dummy-dict-test-v0"
 
     # delete the test dataset if it already exists
@@ -225,51 +212,8 @@ def test_generate_dataset_with_space_subset_external_buffer(is_env_needed):
         minari.delete_dataset(dataset_id)
 
     env = gym.make("DummyDictEnv-v0")
-
-    observations = []
-    actions = []
-    rewards = []
-    terminations = []
-    truncations = []
-
     num_episodes = 10
-
-    observation, info = env.reset(seed=42)
-
-    # Step the environment, DataCollectorV0 wrapper will do the data collection job
-    observation, _ = env.reset()
-    observations.append(_space_subset_helper(observation))
-    for episode in range(num_episodes):
-        terminated = False
-        truncated = False
-
-        while not terminated and not truncated:
-            action = env.action_space.sample()  # User-defined policy function
-            observation, reward, terminated, truncated, _ = env.step(action)
-            observations.append(_space_subset_helper(observation))
-            actions.append(_space_subset_helper(action))
-            rewards.append(reward)
-            terminations.append(terminated)
-            truncations.append(truncated)
-
-        episode_buffer = {
-            "observations": copy.deepcopy(observations),
-            "actions": copy.deepcopy(actions),
-            "rewards": np.asarray(rewards),
-            "terminations": np.asarray(terminations),
-            "truncations": np.asarray(truncations),
-        }
-
-        buffer.append(episode_buffer)
-
-        observations.clear()
-        actions.clear()
-        rewards.clear()
-        terminations.clear()
-        truncations.clear()
-
-        observation, _ = env.reset()
-        observations.append(_space_subset_helper(observation))
+    buffer = get_sample_buffer_for_dataset_from_env(env, num_episodes)
 
     # Create Minari dataset and store locally
     env_to_pass = env if is_env_needed else None
