@@ -183,6 +183,16 @@ def validate_datasets_to_combine(
                     common_env_spec.max_episode_steps, env_spec.max_episode_steps
                 )
 
+            env_spec_copy_all = []
+            # updating max_episode_steps to a common value for sake of checking equality
+            dataset_env_copy = copy.deepcopy(env_spec)
+            dataset_env_copy.max_episode_steps = common_env_spec.max_episode_steps
+            env_spec_copy_all.append(dataset_env_copy)
+
+    assert all(
+        env_spec_copy == env_spec_copy_all[0] for env_spec_copy in env_spec_copy_all
+    ), "The datasets to be combined have different values for `env_spec` attribute."
+
     return common_env_spec
 
 
