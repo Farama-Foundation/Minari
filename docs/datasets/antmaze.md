@@ -28,3 +28,33 @@ antmaze/medium-play.md
 antmaze/large-diverse.md
 antmaze/large-play.md
 ```
+
+## Available Datasets
+| Dataset ID | Description |
+| ---------- | ----------- |
+| <a href="../antmaze/large-diverse" title="antmaze-large-diverse-v0">antmaze-large-diverse-v0</a> | The data is collected from the [`AntMaze_Large_Diverse_GR-v4`](https://robotics.farama.org/envs/maze/ant_maze/) environment |
+| <a href="../antmaze/large-play" title="antmaze-large-play-v0">antmaze-large-play-v0</a> | The data is collected from the [`AntMaze_Large-v4`](https://robotics.farama.org/envs/maze/ant_maze/) environment |
+| <a href="../antmaze/medium-diverse" title="antmaze-medium-diverse-v0">antmaze-medium-diverse-v0</a> | The data is collected from the [`AntMaze_Medium_Diverse_GR-v4`](https://robotics.farama.org/envs/maze/ant_maze/) environment |
+| <a href="../antmaze/medium-play" title="antmaze-medium-play-v0">antmaze-medium-play-v0</a> | The data is collected from the [`AntMaze_Medium-v4`](https://robotics.farama.org/envs/maze/ant_maze/) environment |
+| <a href="../antmaze/umaze-diverse" title="antmaze-umaze-diverse-v0">antmaze-umaze-diverse-v0</a> | The data is collected from the [`AntMaze_UMaze-v4`](https://robotics.farama.org/envs/maze/ant_maze/) environment, which contains a U shape maze |
+| <a href="../antmaze/umaze" title="antmaze-umaze-v0">antmaze-umaze-v0</a> | The data is collected from the [`AntMaze_UMaze-v4`](https://robotics.farama.org/envs/maze/ant_maze/) environment, which contains a U shape maze |
+
+## Available Datasets
+| Dataset ID | Description |
+| ---------- | ----------- |
+| <a href="../antmaze/large-diverse" title="antmaze-large-diverse-v0">antmaze-large-diverse-v0</a> | The data is collected from the [`AntMaze_Large_Diverse_GR-v4`](https://robotics.farama.org/envs/maze/ant_maze/) environment |
+| <a href="../antmaze/large-play" title="antmaze-large-play-v0">antmaze-large-play-v0</a> | The data is collected from the [`AntMaze_Large-v4`](https://robotics.farama.org/envs/maze/ant_maze/) environment |
+| <a href="../antmaze/medium-diverse" title="antmaze-medium-diverse-v0">antmaze-medium-diverse-v0</a> | The data is collected from the [`AntMaze_Medium_Diverse_GR-v4`](https://robotics.farama.org/envs/maze/ant_maze/) environment |
+| <a href="../antmaze/medium-play" title="antmaze-medium-play-v0">antmaze-medium-play-v0</a> | The data is collected from the [`AntMaze_Medium-v4`](https://robotics.farama.org/envs/maze/ant_maze/) environment |
+| <a href="../antmaze/umaze-diverse" title="antmaze-umaze-diverse-v0">antmaze-umaze-diverse-v0</a> | The data is collected from the [`AntMaze_UMaze-v4`](https://robotics.farama.org/envs/maze/ant_maze/) environment, which contains a U shape maze |
+| <a href="../antmaze/umaze" title="antmaze-umaze-v0">antmaze-umaze-v0</a> | The data is collected from the [`AntMaze_UMaze-v4`](https://robotics.farama.org/envs/maze/ant_maze/) environment, which contains a U shape maze |
+
+## Available Datasets
+| Dataset ID | Description |
+| ---------- | ----------- |
+| <a href="../antmaze/large-diverse" title="antmaze-large-diverse-v0">antmaze-large-diverse-v0</a> | The data is collected from the [`AntMaze_Large_Diverse_GR-v4`](https://robotics.farama.org/envs/maze/ant_maze/) environment |
+| <a href="../antmaze/large-play" title="antmaze-large-play-v0">antmaze-large-play-v0</a> | The data is collected from the [`AntMaze_Large-v4`](https://robotics.farama.org/envs/maze/ant_maze/) environment |
+| <a href="../antmaze/medium-diverse" title="antmaze-medium-diverse-v0">antmaze-medium-diverse-v0</a> | The data is collected from the [`AntMaze_Medium_Diverse_GR-v4`](https://robotics.farama.org/envs/maze/ant_maze/) environment |
+| <a href="../antmaze/medium-play" title="antmaze-medium-play-v0">antmaze-medium-play-v0</a> | The data is collected from the [`AntMaze_Medium-v4`](https://robotics.farama.org/envs/maze/ant_maze/) environment |
+| <a href="../antmaze/umaze-diverse" title="antmaze-umaze-diverse-v0">antmaze-umaze-diverse-v0</a> | The data is collected from the [`AntMaze_UMaze-v4`](https://robotics.farama.org/envs/maze/ant_maze/) environment, which contains a U shape maze |
+| <a href="../antmaze/umaze" title="antmaze-umaze-v0">antmaze-umaze-v0</a> | The data is collected from the [`AntMaze_UMaze-v4`](https://robotics.farama.org/envs/maze/ant_maze/) environment, which contains a U shape maze |

@@ -12,6 +12,33 @@ from minari.serialization import deserialize_space
 from minari.storage.hosting import get_remote_dataset_versions
 
 
+def _generate_env_spec_table(env_spec: EnvSpec) -> str:
+    """Create a markdown table with the environment specifications, including observation and action space."""
+    env = gym.make(env_spec.id)
+
+    action_space_table = env.action_space.__repr__().replace("\n", "")
+    observation_space_table = env.observation_space.__repr__().replace("\n", "")
+
+    return f"""
+|    |    |
+|----|----|
+|ID| `{env_spec.id}`|
+| Observation Space | `{re.sub(' +', ' ', observation_space_table)}` |
+| Action Space | `{re.sub(' +', ' ', action_space_table)}` |
+| entry_point | `{env_spec.entry_point}` |
+| max_episode_steps | `{env_spec.max_episode_steps}` |
+| reward_threshold | `{env_spec.reward_threshold}` |
+| nondeterministic | `{env_spec.nondeterministic}` |
+| order_enforce    | `{env_spec.order_enforce}`|
+| autoreset        | `{env_spec.autoreset}` |
+| disable_env_checker | `{env_spec.disable_env_checker}` |
+| kwargs | `{env_spec.kwargs}` |
+| additional_wrappers | `{env_spec.additional_wrappers}` |
+| vector_entry_point | `{env_spec.vector_entry_point}` |
+
+"""
+
+
 filtered_datasets = defaultdict(defaultdict)
 all_remote_datasets = list_remote_datasets()
 
@@ -81,15 +108,61 @@ for env_name, datasets in filtered_datasets.items():
                 'style="display: block; margin:0 auto"/>'
             )
 
-        # Environment Specs
-        env_spec = EnvSpec.from_json(dataset_spec["env_spec"])
-        env = gym.make(env_spec.id)
+        # Environment Docs
+        env_docs = """"""
+        env_spec = dataset_spec.get("env_spec")
+        eval_env_spec = dataset_spec.get("eval_env_spec")
 
-        action_space_table = env.action_space.__repr__().replace("\n", "")
-        observation_space_table = env.observation_space.__repr__().replace("\n", "")
+        if env_spec is None and eval_env_spec is None:
+            env_docs += """
+```{eval-rst}
 
-        # Evaluation Environment Specs
-        default_eval_env_note = f"""
+.. warning::
+   This dataset doesn't contain an `env_spec`, neither an `eval_env_spec` attribute. Any call to :func:`minari.MinariDataset.recover_environment` will through an error.
+
+```
+"""
+        else:
+            env_docs += """
+## Environment Specs
+
+"""
+            if env_spec is None:
+                env_docs += """
+```{eval-rst}
+
+.. warning::
+   This dataset doesn't contain an `env_spec` attribute. Calling :func:`minari.MinariDataset.recover_environment` with `eval_env=False` will through an error.
+
+```
+"""
+            else:
+                env_docs += f"""
+```{{eval-rst}}
+
+.. note::
+   The following table rows correspond to (in addition to the action and observation space) the Gymnasium environment specifications used to generate the dataset.
+   To read more about what each parameter means you can have a look at the Gymnasium documentation https://gymnasium.farama.org/api/registry/#gymnasium.envs.registration.EnvSpec
+
+   This environment can be recovered from the Minari dataset as follows:
+
+   .. code-block::
+
+        import minari
+
+        dataset = minari.load_dataset('{dataset_id}')
+        env  = dataset.recover_environment()
+```
+
+{_generate_env_spec_table(EnvSpec.from_json(env_spec))}
+"""
+
+            env_docs += """
+## Evaluation Environment Specs
+
+"""
+            if eval_env_spec is None:
+                env_docs += f"""
 ```{{eval-rst}}
 
 .. note::
@@ -106,19 +179,8 @@ for env_name, datasets in filtered_datasets.items():
         assert env.spec == eval_env.spec
 ```
 """
-        eval_env_spec_table = None
-        if "eval_env_spec" in dataset_spec:
-            eval_env_spec = EnvSpec.from_json(dataset_spec["eval_env_spec"])
-            eval_env = gym.make(eval_env_spec.id)
-
-            eval_env_action_space_table = eval_env.action_space.__repr__().replace(
-                "\n", ""
-            )
-            eval_env_observation_space_table = (
-                eval_env.observation_space.__repr__().replace("\n", "")
-            )
-
-            eval_env_spec_table = f"""
+            else:
+                env_docs += f"""
 
 ```{{eval-rst}}
 
@@ -133,23 +195,9 @@ for env_name, datasets in filtered_datasets.items():
         eval_env  = dataset.recover_environment(eval_env=True)
 ```
 
-|    |    |
-|----|----|
-|ID| `{eval_env_spec.id}`|
-| Action Space | `{re.sub(' +', ' ', eval_env_action_space_table)}` |
-| Observation Space | `{re.sub(' +', ' ', eval_env_observation_space_table)}` |
-| entry_point | `{eval_env_spec.entry_point}` |
-| max_episode_steps | `{eval_env_spec.max_episode_steps}` |
-| reward_threshold | `{eval_env_spec.reward_threshold}` |
-| nondeterministic | `{eval_env_spec.nondeterministic}` |
-| order_enforce    | `{eval_env_spec.order_enforce}`|
-| autoreset        | `{eval_env_spec.autoreset}` |
-| disable_env_checker | `{eval_env_spec.disable_env_checker}` |
-| kwargs | `{eval_env_spec.kwargs}` |
-| additional_wrappers | `{eval_env_spec.additional_wrappers}` |
-| vector_entry_point | `{eval_env_spec.vector_entry_point}` |
+{_generate_env_spec_table(EnvSpec.from_json(eval_env_spec))}
+"""
 
-            """
         env_page = f"""---
 autogenerated:
 title: {dataset_name.title()}
@@ -177,44 +225,7 @@ title: {dataset_name.title()}
 | Minari Version      | `{minari_version}`      |
 | download            | `minari.download_dataset("{dataset_id}")` |
 
-
-## Environment Specs
-
-```{{eval-rst}}
-
-.. note::
-   The following table rows correspond to (in addition to the action and observation space) the Gymnasium environment specifications used to generate the dataset.
-   To read more about what each parameter means you can have a look at the Gymnasium documentation https://gymnasium.farama.org/api/registry/#gymnasium.envs.registration.EnvSpec
-
-   This environment can be recovered from the Minari dataset as follows:
-
-   .. code-block::
-
-        import minari
-
-        dataset = minari.load_dataset('{dataset_id}')
-        env  = dataset.recover_environment()
-```
-
-|    |    |
-|----|----|
-|ID| `{env_spec.id}`|
-| Observation Space | `{re.sub(' +', ' ', observation_space_table)}` |
-| Action Space | `{re.sub(' +', ' ', action_space_table)}` |
-| entry_point | `{env_spec.entry_point}` |
-| max_episode_steps | `{env_spec.max_episode_steps}` |
-| reward_threshold | `{env_spec.reward_threshold}` |
-| nondeterministic | `{env_spec.nondeterministic}` |
-| order_enforce    | `{env_spec.order_enforce}`|
-| autoreset        | `{env_spec.autoreset}` |
-| disable_env_checker | `{env_spec.disable_env_checker}` |
-| kwargs | `{env_spec.kwargs}` |
-| additional_wrappers | `{env_spec.additional_wrappers}` |
-| vector_entry_point | `{env_spec.vector_entry_point}` |
-
-## Evaluation Environment Specs
-
-{eval_env_spec_table if eval_env_spec_table is not None else default_eval_env_note}
+{env_docs}
 """
 
         dataset_doc_path = os.path.join(
