@@ -115,87 +115,86 @@ for env_name, datasets in filtered_datasets.items():
 
         if env_spec is None and eval_env_spec is None:
             env_docs += """
-```{eval-rst}
+                        ```{eval-rst}
 
-.. warning::
-   This dataset doesn't contain an `env_spec`, neither an `eval_env_spec` attribute. Any call to :func:`minari.MinariDataset.recover_environment` will through an error.
+                        .. warning::
+                        This dataset doesn't contain an `env_spec`, neither an `eval_env_spec` attribute. Any call to :func:`minari.MinariDataset.recover_environment` will through an error.
 
-```
-"""
+                        ```
+                        """
         else:
             env_docs += """
-## Environment Specs
-"""
+                        ## Environment Specs
+                        """
             if env_spec is None:
                 env_docs += """
-```{eval-rst}
+                            ```{eval-rst}
 
-.. warning::
-   This dataset doesn't contain an `env_spec` attribute. Calling :func:`minari.MinariDataset.recover_environment` with `eval_env=False` will through an error.
+                            .. warning::
+                            This dataset doesn't contain an `env_spec` attribute. Calling :func:`minari.MinariDataset.recover_environment` with `eval_env=False` will through an error.
 
-```
-"""
+                            ```
+                            """
             else:
                 env_docs += f"""
-```{{eval-rst}}
+                            ```{{eval-rst}}
 
-.. note::
-   The following table rows correspond to (in addition to the action and observation space) the Gymnasium environment specifications used to generate the dataset.
-   To read more about what each parameter means you can have a look at the Gymnasium documentation https://gymnasium.farama.org/api/registry/#gymnasium.envs.registration.EnvSpec
+                            .. note::
+                            The following table rows correspond to (in addition to the action and observation space) the Gymnasium environment specifications used to generate the dataset.
+                            To read more about what each parameter means you can have a look at the Gymnasium documentation https://gymnasium.farama.org/api/registry/#gymnasium.envs.registration.EnvSpec
 
-   This environment can be recovered from the Minari dataset as follows:
+                            This environment can be recovered from the Minari dataset as follows:
 
-   .. code-block::
+                            .. code-block::
 
-        import minari
+                                    import minari
 
-        dataset = minari.load_dataset('{dataset_id}')
-        env  = dataset.recover_environment()
-```
+                                    dataset = minari.load_dataset('{dataset_id}')
+                                    env  = dataset.recover_environment()
+                            ```
 
-{_generate_env_spec_table(EnvSpec.from_json(env_spec))}
-"""
+                            {_generate_env_spec_table(EnvSpec.from_json(env_spec))}
+                            """
 
             env_docs += """
-## Evaluation Environment Specs
+                        ## Evaluation Environment Specs
 
-"""
+                        """
             if eval_env_spec is None:
                 env_docs += f"""
-```{{eval-rst}}
+                            ```{{eval-rst}}
 
-.. note::
-   This dataset doesn't contain an `eval_env_spec` attribute which means that the specs of the environment used for evaluation are the same as the specs of the environment used for creating the dataset. The following calls will return the same environment:
+                            .. note::
+                            This dataset doesn't contain an `eval_env_spec` attribute which means that the specs of the environment used for evaluation are the same as the specs of the environment used for creating the dataset. The following calls will return the same environment:
 
-   .. code-block::
+                            .. code-block::
 
-        import minari
+                                    import minari
 
-        dataset = minari.load_dataset('{dataset_id}')
-        env  = dataset.recover_environment()
-        eval_env = dataset.recover_environment(eval_env=True)
+                                    dataset = minari.load_dataset('{dataset_id}')
+                                    env  = dataset.recover_environment()
+                                    eval_env = dataset.recover_environment(eval_env=True)
 
-        assert env.spec == eval_env.spec
-```
-"""
+                                    assert env.spec == eval_env.spec
+                            ```
+                            """
             else:
                 env_docs += f"""
+                            ```{{eval-rst}}
 
-```{{eval-rst}}
+                            .. note::
+                            This environment can be recovered from the Minari dataset as follows:
 
-.. note::
-   This environment can be recovered from the Minari dataset as follows:
+                            .. code-block::
 
-   .. code-block::
+                                    import minari
 
-        import minari
+                                    dataset = minari.load_dataset('{dataset_id}')
+                                    eval_env  = dataset.recover_environment(eval_env=True)
+                            ```
 
-        dataset = minari.load_dataset('{dataset_id}')
-        eval_env  = dataset.recover_environment(eval_env=True)
-```
-
-{_generate_env_spec_table(EnvSpec.from_json(eval_env_spec))}
-"""
+                            {_generate_env_spec_table(EnvSpec.from_json(eval_env_spec))}
+                            """
 
         env_page = f"""---
 autogenerated:
