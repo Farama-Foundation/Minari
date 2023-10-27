@@ -21,24 +21,3 @@ door/human.md
 door/expert.md
 door/cloned.md
 ```
-
-## Available Datasets
-| Dataset ID | Description |
-| ---------- | ----------- |
-| <a href="../door/cloned" title="door-cloned-v1">door-cloned-v1</a> | Data obtained by training an imitation policy on the demonstrations from `expert` and `human`, then running the policy, and mixing data at a 50-50 ratio with the demonstrations |
-| <a href="../door/expert" title="door-expert-v1">door-expert-v1</a> | Trajectories have expert data from a fine-tuned RL policy provided in the [DAPG](https://github.com/aravindr93/hand_dapg) repository |
-| <a href="../door/human" title="door-human-v1">door-human-v1</a> | 25 human demonstrations provided in the [DAPG](https://github.com/aravindr93/hand_dapg) repository |
-
-## Available Datasets
-| Dataset ID | Description |
-| ---------- | ----------- |
-| <a href="../door/cloned" title="door-cloned-v1">door-cloned-v1</a> | Data obtained by training an imitation policy on the demonstrations from `expert` and `human`, then running the policy, and mixing data at a 50-50 ratio with the demonstrations |
-| <a href="../door/expert" title="door-expert-v1">door-expert-v1</a> | Trajectories have expert data from a fine-tuned RL policy provided in the [DAPG](https://github.com/aravindr93/hand_dapg) repository |
-| <a href="../door/human" title="door-human-v1">door-human-v1</a> | 25 human demonstrations provided in the [DAPG](https://github.com/aravindr93/hand_dapg) repository |
-
-## Available Datasets
-| Dataset ID | Description |
-| ---------- | ----------- |
-| <a href="../door/cloned" title="door-cloned-v1">door-cloned-v1</a> | Data obtained by training an imitation policy on the demonstrations from `expert` and `human`, then running the policy, and mixing data at a 50-50 ratio with the demonstrations |
-| <a href="../door/expert" title="door-expert-v1">door-expert-v1</a> | Trajectories have expert data from a fine-tuned RL policy provided in the [DAPG](https://github.com/aravindr93/hand_dapg) repository |
-| <a href="../door/human" title="door-human-v1">door-human-v1</a> | 25 human demonstrations provided in the [DAPG](https://github.com/aravindr93/hand_dapg) repository |
