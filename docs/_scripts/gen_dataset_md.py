@@ -118,7 +118,7 @@ for env_name, datasets in filtered_datasets.items():
 ```{eval-rst}
 
 .. warning::
-   This dataset doesn't contain an `env_spec`, neither an `eval_env_spec` attribute. Any call to :func:`minari.MinariDataset.recover_environment` will through an error.
+   This dataset doesn't contain an `env_spec`, neither an `eval_env_spec` attribute. Any call to :func:`minari.MinariDataset.recover_environment` will throw an error.
 
 ```
 """
@@ -131,7 +131,7 @@ for env_name, datasets in filtered_datasets.items():
 ```{eval-rst}
 
 .. warning::
-   This dataset doesn't contain an `env_spec` attribute. Calling :func:`minari.MinariDataset.recover_environment` with `eval_env=False` will through an error.
+   This dataset doesn't contain an `env_spec` attribute. Calling :func:`minari.MinariDataset.recover_environment` with `eval_env=False` will throw an error.
 
 ```
 """
