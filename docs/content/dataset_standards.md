@@ -403,22 +403,7 @@ Note how the `Tuple` space elements are assigned corresponding keys of the forma
 The required `datasets` found in the episode groups correspond to the data involved in every Gymnasium step call: `obs, rew, terminated, truncated, info = env.step(action)`: `observations`, `actions`, `rewards`, `terminations`, and `truncations`. These datasets are `np.ndarray` or nested groups of `np.ndarray` and other groups, depending on the observation and action spaces, and the space of all datasets under each required top-level episode key is equal to:
 
 - `actions`: `shape=(num_steps, action_space_component_shape)`. If the action or observation space is `Dict` or a `Tuple`, then the corresponding entry will be a group instead of a dataset. Within this group, there will be nested groups and datasets, as specified by the action and observation spaces. `Dict` and `Tuple` spaces are represented as groups, and `Box` and `Discrete` spaces are represented as datasets. All datasets at any level under the top-level key `actions` will have the same `num_steps`, but will vary in `action_space_component_shape` on for each particular action space component. For example, a `Dict` space may contain two `Box` spaces with different shapes.
-- `observations`: `shape=(num_steps + 1, observation_space_component_shape)`. Observations nest in the same way as actions if the top level space is a `Tuple` or `Dict` space. The value of `num_steps + 1` is the same for datasets at any level under `observations`. These datasets have an additional element because the initial observation of the environment when calling `obs, info = env.reset()` is also saved. `observation_space_component_shape` will vary between datasets, depending on the shapes of the simple spaces specified in the observation space. You can get a transition of the form `(o_t, a_t, o_t+1)` from the datasets in the episode group, where `o_t` is the current observation, `o_t+1` is the next observation after taking action `a`, and `t` is the discrete transition index
-; as follows:
-
-    ```python
-    next_observations = observations[1:]
-    observations = observations[:-1]
-
-    # get transition at timestep t
-    observation = observations[t]             # o_t
-    action = actions[t]                       # a_t
-    next_observation = next_observations[t]   # o_t+1
-    reward = rewards[t]                       # r_t
-    terminated = terminations[t]
-    truncated = truncations[t]
-    ```
-
+- `observations`: `shape=(num_steps + 1, observation_space_component_shape)`. Observations nest in the same way as actions if the top level space is a `Tuple` or `Dict` space. The value of `num_steps + 1` is the same for datasets at any level under `observations`. These datasets have an additional element because the initial observation of the environment when calling `obs, info = env.reset()` is also saved. `observation_space_component_shape` will vary between datasets, depending on the shapes of the simple spaces specified in the observation space.
 - `rewards`: `shape=(num_steps, 1)`, stores the returned reward in each step.
 - `terminations`: `shape=(num_steps, 1)`, the `dtype` is `np.bool` and the last element value will be `True` if the episode finished due to  a `terminated` step return.
 - `truncations`: `shape=(num_steps, 1)`, the `dtype` is `np.bool` and the last element value will be `True` if the episode finished due to a `truncated` step return.  
@@ -434,6 +419,7 @@ For example, the `Adroit Hand` environments in the `Gymnasium-Robotics` project 
 The following code snippet creates a custom `StepDataCallbak` and adds a new key, `state`, to the returned `StepData` dictionary. `state` is a nested dictionary with `np.ndarray` values and the keys are relevant MuJoCo data that represent the state of the simulation: `qpos`, `qvel`, and some other body positions.
 
 ```python
+from minari import StepDataCallback
 class AdroitStepDataCallback(StepDataCallback):
     def __call__(self, env, **kwargs):
         step_data = super().__call__(env, **kwargs)
@@ -551,7 +537,8 @@ A Minari dataset is encapsulated in the `MinariDataset` class which allows for i
 Episodes can be accessed from a Minari dataset through iteration, random sampling, or even filtering episodes from a dataset through an arbitrary condition via the `filter_episodes` method. Take the following example where we load the `door-human-v0` dataset and randomly sample 10 episodes:
 
 ```python
-dataset = minari.load_dataset("door-human-v0")
+import minari
+dataset = minari.load_dataset("door-human-v1", download=True)
 sampled_episodes = dataset.sample_episodes(10)
 ```
 

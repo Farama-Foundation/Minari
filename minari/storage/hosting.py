@@ -68,7 +68,7 @@ def upload_dataset(dataset_id: str, path_to_private_key: str):
 
         if len(combined_datasets) > 0:
             print(
-                f"Dataset {dataset_id} is formed by a combination of the following datasets:"
+                f"Dataset {dataset_id} is formed by a combination of the following datasets: "
             )
             for name in combined_datasets:
                 print(f"\t{name}")
@@ -202,10 +202,10 @@ def download_dataset(dataset_id: str, force_download: bool = False):
         # If the dataset is a combination of other datasets download the subdatasets recursively
         if len(combined_datasets) > 0:
             print(
-                f"\nDataset {dataset_id} is formed by a combination of the following datasets:"
+                f"\nDataset {dataset_id} is formed by a combination of the following datasets: "
             )
             for name in combined_datasets:
-                print(f"  * {name}")
+                print(f" * {name}")
             print("\nDownloading extra datasets ...")
             for dataset in combined_datasets:
                 download_dataset(dataset_id=dataset)
