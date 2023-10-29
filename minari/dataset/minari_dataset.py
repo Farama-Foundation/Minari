@@ -14,7 +14,7 @@ from packaging.specifiers import InvalidSpecifier, SpecifierSet
 from packaging.version import Version
 
 from minari.dataset.episode_data import EpisodeData
-from minari.dataset.minari_storage import MinariStorage, PathLike
+from minari.dataset.minari_storage import MinariStorage, PathLike, get_dataset_size
 
 
 # Use importlib due to circular import when: "from minari import __version__"
@@ -138,6 +138,7 @@ class MinariDataset:
         self._action_space = action_space
 
         self._generator = np.random.default_rng()
+        self._size = get_dataset_size(self._dataset_id)
 
     def recover_environment(self) -> gym.Env:
         """Recover the Gymnasium environment used to create the dataset.

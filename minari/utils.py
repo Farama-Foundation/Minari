@@ -17,7 +17,7 @@ from packaging.version import Version
 
 from minari import DataCollectorV0
 from minari.dataset.minari_dataset import MinariDataset
-from minari.dataset.minari_storage import MinariStorage
+from minari.dataset.minari_storage import MinariStorage, get_dataset_size
 from minari.storage.datasets_root_dir import get_dataset_path
 
 
@@ -448,6 +448,7 @@ def create_dataset_from_buffers(
         metadata["ref_max_score"] = ref_max_score
         metadata["ref_min_score"] = ref_min_score
         metadata["num_episodes_average_score"] = num_episodes_average_score
+    metadata['dataset_size'] = get_dataset_size(dataset_id)
 
     storage.update_metadata(metadata)
     storage.update_episodes(buffer)
@@ -572,6 +573,7 @@ def create_dataset_from_collector_env(
         dataset_metadata["ref_max_score"] = ref_max_score
         dataset_metadata["ref_min_score"] = ref_min_score
         dataset_metadata["num_episodes_average_score"] = num_episodes_average_score
+        dataset_metadata['dataset_size'] = get_dataset_size(dataset_id)
 
     collector_env.save_to_disk(dataset_path, dataset_metadata)
     return MinariDataset(dataset_path)
