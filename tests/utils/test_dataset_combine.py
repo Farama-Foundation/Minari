@@ -95,7 +95,7 @@ def _generate_dataset_with_collector_env(
         dataset_id=dataset_id,
         collector_env=env,
         algorithm_name="random_policy",
-        code_permalink="https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
+        code_permalink="https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/test_dataset_combine.py",
         author="WillDudley",
         author_email="wdudley@farama.org",
     )

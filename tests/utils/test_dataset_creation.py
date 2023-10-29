@@ -18,6 +18,7 @@ from tests.common import (
 )
 
 
+CODELINK = "https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/test_dataset_creation.py"
 register_dummy_envs()
 
 
@@ -35,12 +36,6 @@ register_dummy_envs()
 )
 def test_generate_dataset_with_collector_env(dataset_id, env_id):
     """Test DataCollectorV0 wrapper and Minari dataset creation."""
-    # dataset_id = "cartpole-test-v0"
-    # delete the test dataset if it already exists
-    local_datasets = minari.list_local_datasets()
-    if dataset_id in local_datasets:
-        minari.delete_dataset(dataset_id)
-
     env = gym.make(env_id)
 
     env = DataCollectorV0(env)
@@ -58,21 +53,29 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
 
         env.reset()
 
+    # Save a different environment spec for evaluation (different max_episode_steps)
+    eval_env_spec = gym.spec(env_id)
+    eval_env_spec.max_episode_steps = 123
+    eval_env = gym.make(eval_env_spec)
+    # dataset_id = "cartpole-test-v0"
+    # delete the test dataset if it already exists
+    local_datasets = minari.list_local_datasets()
+    if dataset_id in local_datasets:
+        minari.delete_dataset(dataset_id)
     # Create Minari dataset and store locally
-    codelink = "https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/test_dataset_combine.py"
     dataset = minari.create_dataset_from_collector_env(
         dataset_id=dataset_id,
+        eval_env=eval_env,
         collector_env=env,
         algorithm_name="random_policy",
-        code_permalink=codelink,
+        code_permalink=CODELINK,
         author="WillDudley",
         author_email="wdudley@farama.org",
     )
 
     metadata = dataset.storage.metadata
     assert metadata["algorithm_name"] == "random_policy"
-    codelink = "https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/test_dataset_combine.py"
-    assert metadata["code_permalink"] == codelink
+    assert metadata["code_permalink"] == CODELINK
     assert metadata["author"] == "WillDudley"
     assert metadata["author_email"] == "wdudley@farama.org"
 
@@ -84,9 +87,10 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
     check_data_integrity(dataset.storage, dataset.episode_indices)
 
     # check that the environment can be recovered from the dataset
-    check_env_recovery(env.env, dataset)
+    check_env_recovery(env.env, dataset, eval_env)
 
     env.close()
+    eval_env.close()
     # check load and delete local dataset
     check_load_and_delete_dataset(dataset_id)
 
@@ -105,8 +109,8 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
 def test_generate_dataset_with_external_buffer(dataset_id, env_id):
     """Test create dataset from external buffers without using DataCollectorV0."""
     buffer = []
-    # dataset_id = "cartpole-test-v0"
 
+    # dataset_id = "cartpole-test-v0"
     # delete the test dataset if it already exists
     local_datasets = minari.list_local_datasets()
     if dataset_id in local_datasets:
@@ -158,28 +162,38 @@ def test_generate_dataset_with_external_buffer(dataset_id, env_id):
         observation, _ = env.reset()
         observations.append(observation)
 
-    # Create Minari dataset and store locally
-    dataset = minari.create_dataset_from_buffers(
-        dataset_id=dataset_id,
-        env=env,
-        buffer=buffer,
-        algorithm_name="random_policy",
-        code_permalink="https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
-        author="WillDudley",
-        author_email="wdudley@farama.org",
-    )
+    # Save a different environment spec for evaluation (different max_episode_steps)
+    eval_env_spec = gym.spec(env_id)
+    eval_env_spec.max_episode_steps = 123
+    eval_env = gym.make(eval_env_spec)
+    # Test for different types of env and eval_env (gym.Env, EnvSpec, and str id)
+    for env_dataset_id, eval_env_dataset_id in zip(
+        [env, env.spec, env_id], [eval_env, eval_env.spec, env_id]
+    ):
+        # Create Minari dataset and store locally
+        dataset = minari.create_dataset_from_buffers(
+            dataset_id=dataset_id,
+            env=env_dataset_id,
+            eval_env=eval_env_dataset_id,
+            buffer=buffer,
+            algorithm_name="random_policy",
+            code_permalink=CODELINK,
+            author="WillDudley",
+            author_email="wdudley@farama.org",
+        )
 
-    assert isinstance(dataset, MinariDataset)
-    assert dataset.total_episodes == num_episodes
-    assert dataset.spec.total_episodes == num_episodes
-    assert len(dataset.episode_indices) == num_episodes
+        assert isinstance(dataset, MinariDataset)
+        assert dataset.total_episodes == num_episodes
+        assert dataset.spec.total_episodes == num_episodes
+        assert len(dataset.episode_indices) == num_episodes
 
-    check_data_integrity(dataset.storage, dataset.episode_indices)
-    check_env_recovery(env, dataset)
+        check_data_integrity(dataset.storage, dataset.episode_indices)
+        check_env_recovery(env, dataset, eval_env)
+
+        check_load_and_delete_dataset(dataset_id)
 
     env.close()
-
-    check_load_and_delete_dataset(dataset_id)
+    eval_env.close()
 
 
 def _space_subset_helper(entry: Dict):
@@ -271,13 +285,12 @@ def test_generate_dataset_with_space_subset_external_buffer():
         observations.append(_space_subset_helper(observation))
 
     # Create Minari dataset and store locally
-    codelink = "https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/test_dataset_combine.py"
     dataset = minari.create_dataset_from_buffers(
         dataset_id=dataset_id,
         env=env,
         buffer=buffer,
         algorithm_name="random_policy",
-        code_permalink=codelink,
+        code_permalink=CODELINK,
         author="WillDudley",
         author_email="wdudley@farama.org",
         action_space=action_space_subset,
@@ -286,8 +299,7 @@ def test_generate_dataset_with_space_subset_external_buffer():
 
     metadata = dataset.storage.metadata
     assert metadata["algorithm_name"] == "random_policy"
-    code_link = "https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/test_dataset_combine.py"
-    assert metadata["code_permalink"] == code_link
+    assert metadata["code_permalink"] == CODELINK
     assert metadata["author"] == "WillDudley"
     assert metadata["author_email"] == "wdudley@farama.org"
 
