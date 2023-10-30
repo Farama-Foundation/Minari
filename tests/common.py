@@ -405,9 +405,6 @@ def check_env_recovery_with_subset_spaces(
         observation_space_subset (gym.spaces.Space): desired subset observation space
 
     """
-    if dataset.env_spec is None:
-        raise ValueError("Recovering environment is not possible when env_spec is None")
-
     recovered_env = dataset.recover_environment()
 
     # Check that environment spec is the same
