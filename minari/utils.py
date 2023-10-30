@@ -516,18 +516,18 @@ def create_dataset_from_buffers(
     elif isinstance(env, gym.Env):
         env_spec = env.spec
     elif env is None:
+        if observation_space is None or action_space is None:
+            raise ValueError("Both observation space and action space must be provided, if env is None")
         env_spec = None
     else:
         raise ValueError("The `env` argument must be of types str|EnvSpec|gym.Env|None")
 
-    if isinstance(env, (str, EnvSpec, type(None))) and (observation_space is None or action_space is None):
-        raise ValueError("Both observation space and action space must be provided, if env is str|EnvSpec|None")
-
+    if isinstance(env, (str, EnvSpec)):
+        env = gym.make(env)
+    assert env is not None
     if observation_space is None:
-        assert isinstance(env, gym.Env)
         observation_space = env.observation_space
     if action_space is None:
-        assert isinstance(env, gym.Env)
         action_space = env.action_space
 
     metadata = _generate_dataset_metadata(
