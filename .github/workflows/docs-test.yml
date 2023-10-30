@@ -1,0 +1,37 @@
+name: Test Documentation
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  docs:
+    name: Test documentation
+    runs-on: ubuntu-latest
+    env:
+      SPHINX_GITHUB_CHANGELOG_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+            python-version: '3.9'
+
+      - name: Install dependencies
+        run: pip install -r docs/requirements.txt
+
+      - name: Install Minari
+        run: pip install .[testing]
+
+      - name: Build Datasets Docs
+        run: python docs/_scripts/gen_dataset_md.py
+
+      - name: Build
+        run: sphinx-build -b dirhtml -v docs _build
+
+      - name: Run markdown documentation tests
+        run: pytest docs --markdown-docs -m markdown-docs
+
+      - name: Run tutorial documentation tests
+        run:  pytest --nbmake docs/tutorials/**/*.ipynb --nbmake-timeout=600

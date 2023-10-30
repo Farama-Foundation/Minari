@@ -2,7 +2,7 @@ import copy
 import sys
 import unicodedata
 from collections import OrderedDict
-from typing import Any, Dict, Iterable, List, Union
+from typing import Any, Dict, Iterable, List, Optional, Union
 
 import gymnasium as gym
 import numpy as np
@@ -426,12 +426,17 @@ def check_env_recovery_with_subset_spaces(
     assert data_equivalence(dataset.spec.action_space, action_space_subset)
 
 
-def check_env_recovery(gymnasium_environment: gym.Env, dataset: MinariDataset):
+def check_env_recovery(
+    gymnasium_environment: gym.Env,
+    dataset: MinariDataset,
+    evaluation_environment: Optional[gym.Env] = None,
+):
     """Test that the recovered environment from MinariDataset is the same as the one used to generate the dataset.
 
     Args:
-        gymnasium_environment (gym.Env): original Gymnasium environment
+        gymnasium_environment (gym.Env): original Gymnasium environment used to create the dataset.
         dataset (MinariDataset): Minari dataset created with gymnasium_environment
+        evaluation_environment (gym.Env): Gymnasium environment saved in the `eval_env` attribute of the MinariDataset that should be used for evaluation. This attribute is optional.
     """
     recovered_env = dataset.recover_environment()
 
@@ -453,6 +458,14 @@ def check_env_recovery(gymnasium_environment: gym.Env, dataset: MinariDataset):
     assert data_equivalence(
         dataset.spec.action_space, gymnasium_environment.action_space
     )
+
+    if evaluation_environment is not None:
+        recovered_eval_env = dataset.recover_environment(eval_env=True)
+
+        # Check that evaluation environment spec is the same
+        assert (
+            recovered_eval_env.spec == evaluation_environment.spec
+        ), f"recovered_eval_env spec: {recovered_eval_env.spec}\noriginal spec: {evaluation_environment}"
 
 
 def check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):

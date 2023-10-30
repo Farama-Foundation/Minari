@@ -98,7 +98,7 @@ def _generate_dataset_with_collector_env(
         dataset_id=dataset_id,
         collector_env=env,
         algorithm_name="random_policy",
-        code_permalink="https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
+        code_permalink="https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/test_dataset_combine.py",
         author="WillDudley",
         author_email="wdudley@farama.org",
     )
@@ -142,7 +142,7 @@ def _generate_dataset_without_env(dataset_id: str, num_episodes: int = 10):
         buffer=buffer,
         env=None,
         algorithm_name="random_policy",
-        code_permalink="https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
+        code_permalink="https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/test_dataset_combine.py",
         author="WillDudley",
         author_email="wdudley@farama.org",
         action_space=action_space_subset,
@@ -212,8 +212,8 @@ def test_combine_datasets():
     combined_dataset = combine_datasets(
         test_datasets, new_dataset_id="cartpole-combined-test-v0"
     )
-    if combined_dataset.spec.env_spec is not None:
-        assert combined_dataset.spec.env_spec.max_episode_steps is None
+    assert combined_dataset.spec.env_spec is not None
+    assert combined_dataset.spec.env_spec.max_episode_steps is None
     _check_load_and_delete_dataset("cartpole-combined-test-v0")
 
     # Check that we get max(max_episode_steps) when there is no max_episode_steps=None
