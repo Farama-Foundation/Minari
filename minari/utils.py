@@ -165,14 +165,20 @@ def validate_datasets_to_combine(
         combined_dataset_env_spec (EnvSpec): the resulting EnvSpec of combining the MinariDatasets
 
     """
-    common_env_spec = copy.deepcopy(datasets_to_combine[0].spec.env_spec)
+    # get first among the dataset's env_spec which is not None
+    first_not_none_env_spec = next((dataset.spec.env_spec for dataset in datasets_to_combine if dataset.spec.env_spec is not None), None)
+
+    # early return where all datasets have no env_spec
+    if first_not_none_env_spec is None:
+        return None
+
+    common_env_spec = copy.deepcopy(first_not_none_env_spec)
+
+    # updating the common_env_spec's max_episode_steps
     for dataset in datasets_to_combine:
         assert isinstance(dataset, MinariDataset)
         env_spec = dataset.spec.env_spec
         if env_spec is not None:
-            assert (
-                common_env_spec is not None
-            ), "Found incompatible env_spec in datasets"
             if (
                 common_env_spec.max_episode_steps is None
                 or env_spec.max_episode_steps is None
@@ -183,15 +189,16 @@ def validate_datasets_to_combine(
                     common_env_spec.max_episode_steps, env_spec.max_episode_steps
                 )
 
-            env_spec_copy_all = []
+    # checking equivalence of all datasets with an env
+    for dataset in datasets_to_combine:
+        if dataset.spec.env_spec is not None:
             # updating max_episode_steps to a common value for sake of checking equality
-            dataset_env_copy = copy.deepcopy(env_spec)
-            dataset_env_copy.max_episode_steps = common_env_spec.max_episode_steps
-            env_spec_copy_all.append(dataset_env_copy)
-
-    assert all(
-        env_spec_copy == env_spec_copy_all[0] for env_spec_copy in env_spec_copy_all
-    ), "The datasets to be combined have different values for `env_spec` attribute."
+            env_spec_copy = copy.deepcopy(dataset.spec.env_spec)
+            env_spec_copy.max_episode_steps = common_env_spec.max_episode_steps
+            if env_spec_copy != common_env_spec:
+                raise ValueError(
+                    "The datasets to be combined have different values for `env_spec` attribute."
+                )
 
     return common_env_spec
 
