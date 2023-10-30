@@ -524,10 +524,11 @@ def create_dataset_from_buffers(
 
     if isinstance(env, (str, EnvSpec)):
         env = gym.make(env)
-    assert env is not None
     if observation_space is None:
+        assert env is not None
         observation_space = env.observation_space
     if action_space is None:
+        assert env is not None
         action_space = env.action_space
 
     metadata = _generate_dataset_metadata(
