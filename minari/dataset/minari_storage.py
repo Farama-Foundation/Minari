@@ -8,7 +8,6 @@ from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
 import gymnasium as gym
 import h5py
 import numpy as np
-from google.cloud import storage  # pyright: ignore [reportGeneralTypeIssues]
 from gymnasium.envs.registration import EnvSpec
 
 from minari.serialization import deserialize_space, serialize_space
@@ -421,18 +420,9 @@ def get_dataset_size(dataset_id: str):
     if os.path.exists(data_path):
 
         for filename in os.listdir(data_path):
-            if ".hdf5" in filename:
-                datasize = os.path.getsize(os.path.join(data_path, filename))
-                datasize_list.append(datasize)
+            datasize = os.path.getsize(os.path.join(data_path, filename))
+            datasize_list.append(datasize)
 
-    else:
-        storage_client = storage.Client.create_anonymous_client()
-        bucket = storage_client.bucket(bucket_name="minari-datasets")
-
-        blobs = bucket.list_blobs(prefix=dataset_id)
-        for blob in blobs:
-            if ".hdf5" in blob.name:
-                datasize_list.append(bucket.get_blob(blob.name).size)
     datasize = np.round(np.sum(datasize_list) / 1000000, 1)
 
     return datasize
