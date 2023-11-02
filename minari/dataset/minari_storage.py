@@ -74,7 +74,6 @@ class MinariStorage(ABC):
                 action_space = env.action_space
 
         from minari.dataset.storages import registry  # avoid circular import
-
         return registry[metadata["data_format"]](
             data_path, observation_space, action_space
         )
@@ -86,7 +85,7 @@ class MinariStorage(ABC):
         observation_space: Optional[gym.Space] = None,
         action_space: Optional[gym.Space] = None,
         env_spec: Optional[EnvSpec] = None,
-        data_format: str = "hdf5",  # TODO: add to docs & check if value is correct with informative error
+        data_format: str = "hdf5",
     ) -> MinariStorage:
         """Class method to create a new data storage.
 
@@ -95,6 +94,7 @@ class MinariStorage(ABC):
             observation_space (gymnasium.Space, optional): Gymnasium observation space of the dataset.
             action_space (gymnasium.Space, optional): Gymnasium action space of the dataset.
             env_spec (EnvSpec, optional): Gymnasium EnvSpec of the environment that generates the dataset.
+            data_format (str): Format of the data. Default value is "hdf5".
 
         Returns:
             A new MinariStorage object.
@@ -135,7 +135,8 @@ class MinariStorage(ABC):
                 action_space = env.action_space
 
         from minari.dataset.storages import registry  # avoid circular import
-
+        if data_format not in registry.keys():
+            raise ValueError(f"No storage implemented for {data_format}. Available formats: {registry.keys()}")
         obj = registry[data_format]._create(data_path, observation_space, action_space)
         return obj
 

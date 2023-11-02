@@ -1,4 +1,4 @@
-from .registry import registry
+from minari.dataset.storages.registry import registry
 
 
 __all__ = ["registry"]
