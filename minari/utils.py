@@ -585,16 +585,14 @@ def create_dataset_from_collector_env(
         minari_version,
     )
 
-
-    collector_env.save_to_disk(dataset_path, dataset_metadata)
+    collector_env.save_to_disk(dataset_path, metadata)
 
     # will be able to calculate dataset size only after saving the disk, so updating the dataset metadata post `save_to_disk` method
-    dataset_metadata['dataset_size'] = get_dataset_size(dataset_id)
+    metadata['dataset_size'] = get_dataset_size(dataset_id)
 
     dataset = MinariDataset(dataset_path)
-    dataset.storage.update_metadata(dataset_metadata)
+    dataset.storage.update_metadata(metadata)
     return dataset
-
 
 
 def get_normalized_score(dataset: MinariDataset, returns: np.ndarray) -> np.ndarray:
