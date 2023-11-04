@@ -8,7 +8,7 @@ from typing import Callable, Iterable, Iterator, List, Optional, Union
 
 import gymnasium as gym
 import numpy as np
-from gymnasium import error
+from gymnasium import error, logger
 from gymnasium.envs.registration import EnvSpec
 from packaging.specifiers import InvalidSpecifier, SpecifierSet
 from packaging.version import Version
@@ -103,6 +103,12 @@ class MinariDataset:
         assert isinstance(env_spec, str)
         self._env_spec = EnvSpec.from_json(env_spec)
 
+        eval_env_spec = metadata.get("eval_env_spec")
+        if eval_env_spec is not None:
+            assert isinstance(eval_env_spec, str)
+            eval_env_spec = EnvSpec.from_json(eval_env_spec)
+        self._eval_env_spec = eval_env_spec
+
         dataset_id = metadata["dataset_id"]
         assert isinstance(dataset_id, str)
         self._dataset_id = dataset_id
@@ -139,13 +145,22 @@ class MinariDataset:
 
         self._generator = np.random.default_rng()
 
-    def recover_environment(self) -> gym.Env:
+    def recover_environment(self, eval_env: bool = False) -> gym.Env:
         """Recover the Gymnasium environment used to create the dataset.
+
+        Args:
+            eval_env (bool): if True the returned Gymnasium environment will be that intended to be used for evaluation. If no eval_env was specified when creating the dataset, the returned environment will be the same as the one used for creating the dataset. Default False.
 
         Returns:
             environment: Gymnasium environment
         """
-        return gym.make(self.env_spec)
+        if eval_env:
+            if self._eval_env_spec is not None:
+                return gym.make(self._eval_env_spec)
+            logger.info(
+                f"`eval_env` has been set to True but the dataset {self._dataset_id} doesn't provide an evaluation environment. Instead, the environment used for collecting the data will be returned: {self._env_spec}"
+            )
+        return gym.make(self._env_spec)
 
     def set_seed(self, seed: int):
         """Set seed for random episode sampling generator."""

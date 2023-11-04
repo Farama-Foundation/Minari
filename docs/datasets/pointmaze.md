@@ -32,4 +32,3 @@ pointmaze/umaze-dense.md
 pointmaze/medium-dense.md
 pointmaze/large-dense.md
 ```
-

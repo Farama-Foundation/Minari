@@ -20,4 +20,3 @@ relocate/cloned.md
 [1] Rajeswaran, Aravind, et al. ‘Learning Complex Dexterous Manipulation with Deep Reinforcement Learning and Demonstrations’. CoRR, vol. abs/1709.10087, 2017, http://arxiv.org/abs/1709.10087.
 
 [2] Fu, Justin, et al. ‘D4RL: Datasets for Deep Data-Driven Reinforcement Learning’. CoRR, vol. abs/2004.07219, 2020, https://arxiv.org/abs/2004.07219.
-

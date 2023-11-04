@@ -266,7 +266,9 @@ class DataCollectorV0(gym.Wrapper):
             env_spec=self.env.spec,
         )
 
-    def save_to_disk(self, path: str, dataset_metadata: Dict[str, Any] = {}):
+    def save_to_disk(
+        self, path: str | os.PathLike, dataset_metadata: Dict[str, Any] = {}
+    ):
         """Save all in-memory buffer data and move temporary files to a permanent location in disk.
 
         Args:

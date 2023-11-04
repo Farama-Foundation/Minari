@@ -335,6 +335,22 @@ for _ in range(100):
         env.reset()
 ```
 
+
+```{eval-rst}
+
+.. note::
+   There are some datasets that provide a different environment for evaluation purposes than the one used for collecting the data. This environment can be recovered by setting to `True` the `eval_env` argument:
+   
+   .. code-block::
+
+        import minari
+
+        dataset = minari.load_dataset('LunarLander-v2-test-v0')
+        eval_env = dataset.recover_environment(eval_env=True)
+
+   If the dataset doesn't have an `eval_env_spec` attribute, the environment used for collecting the data will be retrieved by default.
+```
+
 ### Combine Minari Datasets
 
 ```{eval-rst}
