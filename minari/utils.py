@@ -448,10 +448,14 @@ def create_dataset_from_buffers(
         metadata["ref_max_score"] = ref_max_score
         metadata["ref_min_score"] = ref_min_score
         metadata["num_episodes_average_score"] = num_episodes_average_score
-    metadata['dataset_size'] = get_dataset_size(dataset_id)
 
+    # adding `update_metadata` before hand too, as for small envs, the absence of metadata is causing a difference of some 10ths of MBs leading to errors in unit tests.
     storage.update_metadata(metadata)
     storage.update_episodes(buffer)
+
+    metadata['dataset_size'] = get_dataset_size(dataset_id)
+    storage.update_metadata(metadata)
+
     return MinariDataset(storage)
 
 
@@ -573,10 +577,15 @@ def create_dataset_from_collector_env(
         dataset_metadata["ref_max_score"] = ref_max_score
         dataset_metadata["ref_min_score"] = ref_min_score
         dataset_metadata["num_episodes_average_score"] = num_episodes_average_score
-        dataset_metadata['dataset_size'] = get_dataset_size(dataset_id)
 
     collector_env.save_to_disk(dataset_path, dataset_metadata)
-    return MinariDataset(dataset_path)
+
+    # will be able to calculate dataset size only after saving the disk, so updating the dataset metadata post `save_to_disk` method
+    dataset_metadata['dataset_size'] = get_dataset_size(dataset_id)
+
+    dataset = MinariDataset(dataset_path)
+    dataset.storage.update_metadata(dataset_metadata)
+    return dataset
 
 
 def get_normalized_score(dataset: MinariDataset, returns: np.ndarray) -> np.ndarray:

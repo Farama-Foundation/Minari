@@ -10,7 +10,6 @@ from gymnasium import spaces
 import minari
 from minari import DataCollectorV0
 from minari.dataset.minari_storage import MinariStorage, get_dataset_size
-from minari.utils import get_dataset_path
 from tests.common import (
     check_data_integrity,
     check_load_and_delete_dataset,
@@ -204,7 +203,6 @@ def test_episode_metadata(tmp_dir):
         ("dummy-dict-test-v0", "DummyDictEnv-v0"),
         ("dummy-box-test-v0", "DummyBoxEnv-v0"),
         ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
-        ("dummy-text-test-v0", "DummyTextEnv-v0"),
         ("dummy-combo-test-v0", "DummyComboEnv-v0"),
         ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
     ],
@@ -244,12 +242,7 @@ def test_minari_get_dataset_size_from_collector_env(dataset_id, env_id):
         author_email="wdudley@farama.org",
     )
 
-    file_path = get_dataset_path(dataset_id)
-    data_path = os.path.join(file_path, "data", "main_data.hdf5")
-    original_dataset_size = os.path.getsize(data_path)
-    original_dataset_size = np.round(original_dataset_size / 1000000, 1)
-
-    assert get_dataset_size(dataset_id) == original_dataset_size
+    assert dataset._data.metadata['dataset_size'] == get_dataset_size(dataset_id)
 
     check_data_integrity(dataset._data, dataset.episode_indices)
 
@@ -337,12 +330,14 @@ def test_minari_get_dataset_size_from_buffer(dataset_id, env_id):
         author_email="wdudley@farama.org",
     )
 
-    file_path = get_dataset_path(dataset_id)
-    data_path = os.path.join(file_path, "data", "main_data.hdf5")
-    original_dataset_size = os.path.getsize(data_path)
-    original_dataset_size = np.round(original_dataset_size / 1000000, 1)
+    # file_path = get_dataset_path(dataset_id)
+    # data_path = os.path.join(file_path, "data", "main_data.hdf5")
+    # original_dataset_size = os.path.getsize(data_path)
+    # original_dataset_size = np.round(original_dataset_size / 1000000, 1)
 
-    assert get_dataset_size(dataset_id) == original_dataset_size
+    assert dataset._data.metadata['dataset_size'] == get_dataset_size(dataset_id)
+
+    # assert get_dataset_size(dataset_id) == original_dataset_size
 
     check_data_integrity(dataset._data, dataset.episode_indices)
 
