@@ -174,7 +174,7 @@ def validate_datasets_to_combine(
 
     common_env_spec = copy.deepcopy(first_not_none_env_spec)
 
-    # updating the common_env_spec's max_episode_steps
+    # updating the common_env_spec's max_episode_steps & checking equivalence of all env specs
     for dataset in datasets_to_combine:
         assert isinstance(dataset, MinariDataset)
         env_spec = dataset.spec.env_spec
@@ -188,17 +188,15 @@ def validate_datasets_to_combine(
                 common_env_spec.max_episode_steps = max(
                     common_env_spec.max_episode_steps, env_spec.max_episode_steps
                 )
-
-    # checking equivalence of all datasets with an env
-    for dataset in datasets_to_combine:
-        if dataset.spec.env_spec is not None:
-            # updating max_episode_steps to a common value for sake of checking equality
-            env_spec_copy = copy.deepcopy(dataset.spec.env_spec)
+            # setting max_episode_steps in object's copy to same value for sake of checking equality
+            env_spec_copy = copy.deepcopy(env_spec)
             env_spec_copy.max_episode_steps = common_env_spec.max_episode_steps
             if env_spec_copy != common_env_spec:
                 raise ValueError(
                     "The datasets to be combined have different values for `env_spec` attribute."
                 )
+        else:
+            raise ValueError("Cannot combine datasets having env_spec with those having no env_spec.")
 
     return common_env_spec
 
