@@ -407,17 +407,11 @@ def _generate_dataset_metadata(
         )
 
     if eval_env is None:
-        if env_spec is not None:
-            warnings.warn(
-                f"`eval_env` is set to None. If another environment is intended to be used for evaluation please specify corresponding Gymnasium environment (gym.Env | gym.envs.registration.EnvSpec).\
-                  If None the environment used to collect the data (`env={env_spec}`) will be used for this purpose.",
-                UserWarning,
-            )
-        else:
-            warnings.warn(
-                "Since both `eval_env` and `env` used to collect the data are None, no environment can be used for evaluation",
-                UserWarning,
-            )
+        warnings.warn(
+            f"`eval_env` is set to None. If another environment is intended to be used for evaluation please specify corresponding Gymnasium environment (gym.Env | gym.envs.registration.EnvSpec).\
+              If None the environment used to collect the data (`env={env_spec}`) will be used for this purpose.",
+            UserWarning,
+        )
         eval_env_spec = env_spec
     else:
         if isinstance(eval_env, str):
@@ -432,6 +426,12 @@ def _generate_dataset_metadata(
             )
         assert eval_env_spec is not None
         dataset_metadata["eval_env_spec"] = eval_env_spec.to_json()
+
+    if env_spec is None:
+        warnings.warn(
+            "env_spec is None, no environment spec is provided during collection for this dataset",
+            UserWarning,
+        )
 
     if eval_env_spec is not None and (expert_policy is not None or ref_max_score is not None):
         env_ref_score = gym.make(eval_env_spec)
