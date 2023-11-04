@@ -488,7 +488,7 @@ def create_dataset_from_buffers(
         buffer (list[Dict[str, Union[list, Dict]]]): list of episode dictionaries with data.
         env (Optional[str|gym.Env|EnvSpec]): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) used to collect the buffer data. Defaults to None.
         eval_env (Optional[str|gym.Env|EnvSpec]): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) to use for evaluation with the dataset. After loading the dataset, the environment can be recovered as follows: `MinariDataset.recover_environment(eval_env=True).
-                                                If None, and if the `env` used to collect the buffer data is available, latter should be used for evaluation.
+                                                If None, and if the `env` used to collect the buffer data is available, latter will be used for evaluation.
         algorithm_name (Optional[str], optional): name of the algorithm used to collect the data. Defaults to None.
         author (Optional[str], optional): author that generated the dataset. Defaults to None.
         author_email (Optional[str], optional): email of the author that generated the dataset. Defaults to None.
