@@ -288,17 +288,18 @@ class DataCollectorV0(gym.Wrapper):
         assert (
             "env_spec" not in dataset_metadata.keys()
         ), "'env_spec' is not allowed as an optional key."
-        self._storage.update_metadata(dataset_metadata)
 
-        episode_metadata = self._storage.apply(self._episode_metadata_callback)
-        self._storage.update_episode_metadata(episode_metadata)
+        dataset_storage = MinariStorage.new(
+            path,
+            observation_space=self._storage.observation_space,
+            action_space=self._storage.action_space,
+            env_spec=self.env.spec,
+        )
+        dataset_storage.update_metadata(dataset_metadata)
+        dataset_storage.update_from_storage(self._storage)
 
-        files = os.listdir(self._storage.data_path)
-        for file in files:
-            shutil.move(
-                os.path.join(self._storage.data_path, file),
-                os.path.join(path, file),
-            )
+        episode_metadata = dataset_storage.apply(self._episode_metadata_callback)
+        dataset_storage.update_episode_metadata(episode_metadata)
 
         self._episode_id = -1
         self._tmp_dir = tempfile.TemporaryDirectory(dir=self.datasets_path)
