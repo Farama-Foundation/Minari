@@ -145,22 +145,23 @@ class MinariDataset:
 
         self._generator = np.random.default_rng()
 
-    def recover_environment(self, eval_env: bool = False) -> gym.Env:
+    def recover_environment(self, eval_env: bool = False, **kwargs) -> gym.Env:
         """Recover the Gymnasium environment used to create the dataset.
 
         Args:
             eval_env (bool): if True the returned Gymnasium environment will be that intended to be used for evaluation. If no eval_env was specified when creating the dataset, the returned environment will be the same as the one used for creating the dataset. Default False.
+            **kwargs: any other parameter that you want to pass to the `gym.make` function.
 
         Returns:
             environment: Gymnasium environment
         """
         if eval_env:
             if self._eval_env_spec is not None:
-                return gym.make(self._eval_env_spec)
+                return gym.make(self._eval_env_spec, **kwargs)
             logger.info(
                 f"`eval_env` has been set to True but the dataset {self._dataset_id} doesn't provide an evaluation environment. Instead, the environment used for collecting the data will be returned: {self._env_spec}"
             )
-        return gym.make(self._env_spec)
+        return gym.make(self._env_spec, **kwargs)
 
     def set_seed(self, seed: int):
         """Set seed for random episode sampling generator."""
