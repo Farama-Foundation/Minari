@@ -464,9 +464,9 @@ def test_update_dataset_from_buffer(dataset_id, env_id):
     check_load_and_delete_dataset(dataset_id)
 
 
-def test_missing_env_module():
+def test_missing_env_module(tmp_dataset_dir):
     data_path = os.path.join(
-        os.path.expanduser("~"), ".minari", "datasets", "dummy-test-v0"
+        tmp_dataset_dir, "dummy-test-v0"
     )
 
     class FakeEnvSpec(EnvSpec):
