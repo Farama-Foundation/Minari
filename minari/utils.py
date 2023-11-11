@@ -188,9 +188,10 @@ def validate_datasets_to_combine(datasets_to_combine: List[MinariDataset]) -> En
     ), "The datasets to be combined have different values for `env_spec` attribute."
 
     # Check that all datasets have the same action/observation space
-    assert all(dataset.action_space == datasets_to_combine[0].action_space for dataset in datasets_to_combine), "The datasets to combine must have the same action space"
-    assert all(dataset.observation_space == datasets_to_combine[0].observation_space for dataset in datasets_to_combine), "The datasets to combine must have the same observation space"
-
+    if any(dataset.action_space != datasets_to_combine[0].action_space for dataset in datasets_to_combine):
+        raise ValueError("The datasets to combine must have the same action space.")
+    if any(dataset.observation_space != datasets_to_combine[0].observation_space for dataset in datasets_to_combine):
+        raise ValueError("The datasets to combine must have the same observation space.")
     return combine_env_spec[0]
 
 
