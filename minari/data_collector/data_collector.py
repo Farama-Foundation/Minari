@@ -108,13 +108,8 @@ class DataCollectorV0(gym.Wrapper):
             env_spec=self.env.spec,
         )
 
-        if observation_space is None:
-            observation_space = self.env.observation_space
-        self.dataset_observation_space = observation_space
-
-        if action_space is None:
-            action_space = self.env.action_space
-        self.dataset_action_space = action_space
+        self.dataset_observation_space = self._storage.observation_space
+        self.dataset_action_space = self._storage.action_space
 
         self._record_infos = record_infos
         self.max_buffer_steps = max_buffer_steps

@@ -83,13 +83,13 @@ class MinariStorage:
 
         if action_space is None:
             env = gym.make(env_spec)
-            observation_space = env.action_space
+            action_space = env.action_space
             env.close()
         metadata["action_space"] = serialize_space(action_space)
         obj._action_space = action_space
 
         if env_spec is not None:
-            metadata["env_spec"] = env_spec.to_json()  
+            metadata["env_spec"] = env_spec.to_json()
         with h5py.File(obj._file_path, "a") as file:
             file.attrs.update(metadata)
         return obj

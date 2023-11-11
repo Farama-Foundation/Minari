@@ -127,21 +127,10 @@ class MinariDataset:
 
         self._combined_datasets = metadata.get("combined_datasets", [])
 
-        # By default, we use the observation and action spaces from the dataset and
-        # we fall back to the env if one of them is not in the dataset.
-        observation_space = metadata.get("observation_space")
-        action_space = metadata.get("action_space")
-        if observation_space is None or action_space is None:
-            env = self.recover_environment()
-            if observation_space is None:
-                observation_space = env.observation_space
-            if action_space is None:
-                action_space = env.action_space
-            env.close()
-        assert isinstance(observation_space, gym.spaces.Space)
-        assert isinstance(action_space, gym.spaces.Space)
-        self._observation_space = observation_space
-        self._action_space = action_space
+        self._observation_space = metadata["observation_space"]
+        self._action_space = metadata["action_space"]
+        assert isinstance(self._observation_space, gym.spaces.Space)
+        assert isinstance(self._action_space, gym.spaces.Space)
 
         self._generator = np.random.default_rng()
 
