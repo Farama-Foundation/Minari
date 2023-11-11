@@ -336,15 +336,11 @@ class MinariStorage:
         """Observation Space of the dataset."""
         if self._observation_space is None:
             with h5py.File(self._file_path, "r") as file:
-                if "observation_space" in file.attrs.keys():
-                    serialized_space = file.attrs["observation_space"]
-                    assert isinstance(serialized_space, str)
-                    self._observation_space = deserialize_space(serialized_space)
-                else:
-                    env_spec_str = file.attrs.get("env_spec")
-                    assert isinstance(env_spec_str, str)
-                    env_spec = EnvSpec.from_json(env_spec_str)
-                    self._observation_space = gym.make(env_spec).observation_space
+                assert "observation_space" in file.attrs.keys(), "Minari hdf5 datasets must contain an observation_space attribute."
+                serialized_space = file.attrs["observation_space"]
+                assert isinstance(serialized_space, str)
+                self._observation_space = deserialize_space(serialized_space)
+
         return self._observation_space
 
     @property
@@ -352,15 +348,10 @@ class MinariStorage:
         """Action space of the dataset."""
         if self._action_space is None:
             with h5py.File(self._file_path, "r") as file:
-                if "action_space" in file.attrs.keys():
-                    serialized_space = file.attrs["action_space"]
-                    assert isinstance(serialized_space, str)
-                    self._action_space = deserialize_space(serialized_space)
-                else:
-                    env_spec_str = file.attrs.get("env_spec")
-                    assert isinstance(env_spec_str, str)
-                    env_spec = EnvSpec.from_json(env_spec_str)
-                    self._action_space = gym.make(env_spec).action_space
+                assert "action_space" in file.attrs.keys(), "Minari hdf5 datasets must contain an action_space attribute."
+                serialized_space = file.attrs["action_space"]
+                assert isinstance(serialized_space, str)
+                self._action_space = deserialize_space(serialized_space)
 
         return self._action_space
 
