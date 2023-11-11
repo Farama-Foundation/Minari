@@ -156,13 +156,15 @@ def validate_datasets_to_combine(datasets_to_combine: List[MinariDataset]) -> En
     Tests if the datasets were created with the same environment (`env_spec`) and re-calculates the
     `max_episode_steps` argument.
 
+    Also checks that the datasets obs/act spaces are the same.
+
     Args:
         datasets_to_combine (List[MinariDataset]): list of MinariDataset to combine
 
     Returns:
         combined_dataset_env_spec (EnvSpec): the resulting EnvSpec of combining the MinariDatasets
     """
-    assert all(isinstance(dataset, MinariDataset) for dataset in datasets_to_combine)
+    assert all(isinstance(dataset, MinariDataset) for dataset in datasets_to_combine), f"Some of the datasets to combine are not of type {MinariDataset}"
 
     # Check if there are any `None` max_episode_steps
     if any(
@@ -185,6 +187,11 @@ def validate_datasets_to_combine(datasets_to_combine: List[MinariDataset]) -> En
         env_spec == combine_env_spec[0] for env_spec in combine_env_spec
     ), "The datasets to be combined have different values for `env_spec` attribute."
 
+    # Check that all datasets have the same action/observation space
+    if any(dataset.action_space != datasets_to_combine[0].action_space for dataset in datasets_to_combine):
+        raise ValueError("The datasets to combine must have the same action space.")
+    if any(dataset.observation_space != datasets_to_combine[0].observation_space for dataset in datasets_to_combine):
+        raise ValueError("The datasets to combine must have the same observation space.")
     return combine_env_spec[0]
 
 
@@ -228,7 +235,9 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_id: s
     new_dataset_path = get_dataset_path(new_dataset_id)
     new_dataset_path.mkdir()
     new_storage = MinariStorage.new(
-        new_dataset_path.joinpath("data"), env_spec=combined_dataset_env_spec
+        new_dataset_path.joinpath("data"), env_spec=combined_dataset_env_spec,
+        observation_space=datasets_to_combine[0].observation_space,
+        action_space=datasets_to_combine[0].action_space
     )
 
     new_storage.update_metadata(
