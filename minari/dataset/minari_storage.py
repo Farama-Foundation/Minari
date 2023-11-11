@@ -290,14 +290,14 @@ class MinariStorage:
             file.attrs.modify("total_steps", total_steps + storage.total_steps)
 
             storage_metadata = storage.metadata
-            authors = [file.attrs.get("author"), storage_metadata.get("author")]
+            authors = {file.attrs.get("author"), storage_metadata.get("author")}
             file.attrs.modify(
                 "author", "; ".join([aut for aut in authors if aut is not None])
             )
-            emails = [
+            emails = {
                 file.attrs.get("author_email"),
                 storage_metadata.get("author_email"),
-            ]
+            }
             file.attrs.modify(
                 "author_email", "; ".join([e for e in emails if e is not None])
             )
