@@ -74,14 +74,14 @@ class MinariStorage:
         obj = cls(data_path)
         metadata: Dict[str, Any] = {"total_episodes": 0, "total_steps": 0}
 
-        if observation_space is None:
+        if observation_space is None and env_spec is not None:
             env = gym.make(env_spec)
             observation_space = env.observation_space
             env.close()
         metadata["observation_space"] = serialize_space(observation_space)
         obj._observation_space = observation_space
 
-        if action_space is None:
+        if action_space is None and env_spec is not None:
             env = gym.make(env_spec)
             action_space = env.action_space
             env.close()

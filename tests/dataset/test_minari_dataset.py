@@ -473,12 +473,19 @@ def test_missing_env_module(tmp_dataset_dir):
         def to_json(self) -> str:
             return r"""{"id": "DummyEnv-v0", "entry_point": "dummymodule:dummyenv", "reward_threshold": null, "nondeterministic": false, "max_episode_steps": 300, "order_enforce": true, "disable_env_checker": false, "apply_api_compatibility": false, "additional_wrappers": []}"""
 
+    # dummy spaces so that MinariStorage won't throw an error when inferring spaces from env
+    action_space = gym.spaces.Box(low=0, high=1, shape=(1,))
+    observation_space = gym.spaces.Box(low=0, high=1, shape=(1,))
     storage = MinariStorage.new(
         data_path,
         env_spec=FakeEnvSpec("DummyEnv-v0"),
+        action_space=action_space,
+        observation_space=observation_space
     )
+    storage.update_metadata({"dataset_id": "dummy-dataset-v0", "minari_version": f"=={minari.__version__}"})
 
+    dataset = MinariDataset(storage.data_path)
     with pytest.raises(ModuleNotFoundError, match="No module named 'dummymodule'"):
-        MinariDataset(storage.data_path)
+        dataset.recover_environment()
 
     shutil.rmtree(data_path)
