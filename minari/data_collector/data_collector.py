@@ -108,9 +108,6 @@ class DataCollectorV0(gym.Wrapper):
             env_spec=self.env.spec,
         )
 
-        self.dataset_observation_space = self._storage.observation_space
-        self.dataset_action_space = self._storage.action_space
-
         self._record_infos = record_infos
         self.max_buffer_steps = max_buffer_steps
 
@@ -178,10 +175,11 @@ class DataCollectorV0(gym.Wrapper):
         assert STEP_DATA_KEYS.issubset(
             step_data.keys()
         ), "One or more required keys is missing from 'step-data'."
-        assert self.dataset_observation_space.contains(
+        # Check that the stored obs/act spaces comply with the dataset spaces
+        assert self._storage.observation_space.contains(
             step_data["observations"]
         ), "Observations are not in observation space."
-        assert self.dataset_action_space.contains(
+        assert self._storage.action_space.contains(
             step_data["actions"]
         ), "Actions are not in action space."
 
