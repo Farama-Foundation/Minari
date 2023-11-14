@@ -239,11 +239,12 @@
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../tutorials/dataset_creation/">Dataset Creation</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Dataset Creation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../../tutorials/dataset_creation/observation_space_subseting/">Collecting a subset of a dictionary space with StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../tutorials/dataset_creation/custom_space_serialization/">Serializing a custom space</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../../tutorials/dataset_creation/point_maze_dataset/">PointMaze D4RL dataset</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../tutorials/using_datasets/">Using Datasets</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Using Datasets</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../tutorials/using_datasets/behavioral_cloning/">Behavioral cloning with PyTorch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../tutorials/using_datasets/behavioral_cloning/">SyntaxError</a></li>
 </ul>
 </li>
 </ul>
@@ -284,7 +285,16 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/pointmaze/large-dense/">Large-Dense</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../datasets/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../datasets/antmaze/">Ant Maze</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Ant Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/antmaze/umaze/">Umaze</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/antmaze/umaze-diverse/">Umaze-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/antmaze/medium-diverse/">Medium-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/antmaze/medium-play/">Medium-Play</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/antmaze/large-diverse/">Large-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/antmaze/large-play/">Large-Play</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../datasets/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/kitchen/partial/">Partial</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/kitchen/complete/">Complete</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/kitchen/mixed/">Mixed</a></li>
@@ -364,6 +374,7 @@
     <span class="s2">&quot;rewards&quot;</span><span class="p">,</span>
     <span class="s2">&quot;truncations&quot;</span><span class="p">,</span>
     <span class="s2">&quot;terminations&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;infos&quot;</span><span class="p">,</span>
 <span class="p">}</span>
 
 
@@ -405,8 +416,8 @@
 
 <span class="sd">                    return step_data</span>
 
-<span class="sd">        The episode groups in the HDF5 file of this Minari dataset will contain a subgroup called `environment_states` with dataset `velocity` and another subgroup called `pose`</span>
-<span class="sd">        with datasets `position` and `orientation`</span>
+<span class="sd">        The Minari dataset will contain a dictionary called `environment_states` with `velocity` value and another dictionary `pose`</span>
+<span class="sd">        with `position` and `orientation`</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            env (gym.Env): current Gymnasium environment.</span>

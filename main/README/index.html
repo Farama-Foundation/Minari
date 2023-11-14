@@ -240,11 +240,12 @@
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../tutorials/dataset_creation/">Dataset Creation</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Dataset Creation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/dataset_creation/observation_space_subseting/">Collecting a subset of a dictionary space with StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/dataset_creation/custom_space_serialization/">Serializing a custom space</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/dataset_creation/point_maze_dataset/">PointMaze D4RL dataset</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../tutorials/using_datasets/">Using Datasets</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Using Datasets</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../tutorials/using_datasets/behavioral_cloning/">Behavioral cloning with PyTorch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/using_datasets/behavioral_cloning/">SyntaxError</a></li>
 </ul>
 </li>
 </ul>
@@ -285,7 +286,16 @@
 <li class="toctree-l2"><a class="reference internal" href="../datasets/pointmaze/large-dense/">Large-Dense</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../datasets/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../datasets/antmaze/">Ant Maze</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Ant Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../datasets/antmaze/umaze/">Umaze</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../datasets/antmaze/umaze-diverse/">Umaze-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../datasets/antmaze/medium-diverse/">Medium-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../datasets/antmaze/medium-play/">Medium-Play</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../datasets/antmaze/large-diverse/">Large-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../datasets/antmaze/large-play/">Large-Play</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../datasets/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../datasets/kitchen/partial/">Partial</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../datasets/kitchen/complete/">Complete</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../datasets/kitchen/mixed/">Mixed</a></li>
@@ -360,20 +370,20 @@
 <section id="build-the-documentation">
 <h2>Build the Documentation<a class="headerlink" href="#build-the-documentation" title="Link to this heading">#</a></h2>
 <p>Install the required packages and Minari:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/Farama-Foundation/Minari.git
-<span class="nb">cd</span><span class="w"> </span>Minari
-pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
-pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>docs/requirements.txt
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">Farama</span><span class="o">-</span><span class="n">Foundation</span><span class="o">/</span><span class="n">Minari</span><span class="o">.</span><span class="n">git</span>
+<span class="n">cd</span> <span class="n">Minari</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="n">docs</span><span class="o">/</span><span class="n">requirements</span><span class="o">.</span><span class="n">txt</span>
 </pre></div>
 </div>
 <p>To build the documentation once:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>docs
-make<span class="w"> </span>dirhtml
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">docs</span>
+<span class="n">make</span> <span class="n">dirhtml</span>
 </pre></div>
 </div>
 <p>To rebuild the documentation automatically every time a change is made:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>docs
-sphinx-autobuild<span class="w"> </span>-b<span class="w"> </span>dirhtml<span class="w"> </span>.<span class="w"> </span>_build
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">docs</span>
+<span class="n">sphinx</span><span class="o">-</span><span class="n">autobuild</span> <span class="o">-</span><span class="n">b</span> <span class="n">dirhtml</span> <span class="o">.</span> <span class="n">_build</span>
 </pre></div>
 </div>
 </section>

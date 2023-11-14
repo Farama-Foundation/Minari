@@ -240,11 +240,12 @@
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../tutorials/dataset_creation/">Dataset Creation</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Dataset Creation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/dataset_creation/observation_space_subseting/">Collecting a subset of a dictionary space with StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/dataset_creation/custom_space_serialization/">Serializing a custom space</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/dataset_creation/point_maze_dataset/">PointMaze D4RL dataset</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../tutorials/using_datasets/">Using Datasets</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Using Datasets</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/using_datasets/behavioral_cloning/">Behavioral cloning with PyTorch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/using_datasets/behavioral_cloning/">SyntaxError</a></li>
 </ul>
 </li>
 </ul>
@@ -285,7 +286,16 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/large-dense/">Large-Dense</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/antmaze/">Ant Maze</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Ant Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/umaze/">Umaze</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/umaze-diverse/">Umaze-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/medium-diverse/">Medium-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/medium-play/">Medium-Play</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/large-diverse/">Large-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/large-play/">Large-Play</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../datasets/kitchen/partial/">Partial</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../datasets/kitchen/complete/">Complete</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../datasets/kitchen/mixed/">Mixed</a></li>
@@ -362,7 +372,7 @@
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">minari.</span></span><span class="sig-name descname"><span class="pre">EpisodeMetadataCallback</span></span><a class="reference internal" href="../../../_modules/minari/data_collector/callbacks/episode_metadata/#EpisodeMetadataCallback"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#minari.EpisodeMetadataCallback" title="Link to this definition">#</a></dt>
 <dd><p>Callback to full episode after saving to hdf5 file as a group.</p>
 <p>This callback can be overridden to add extra metadata attributes or statistics to
-each HDF5 episode group in the Minari dataset. The custom callback can then be
+each episode in the Minari dataset. The custom callback can then be
 passed to the DataCollectorV0 wrapper to the <cite>episode_metadata_callback</cite> argument.</p>
 <p>TODO: add more default statistics to episode datasets</p>
 </dd></dl>
@@ -371,12 +381,12 @@ passed to the DataCollectorV0 wrapper to the <cite>episode_metadata_callback</ci
 <h3>Methods<a class="headerlink" href="#methods" title="Link to this heading">#</a></h3>
 <dl class="py function">
 <dt class="sig sig-object py" id="minari.EpisodeMetadataCallback.__call__">
-<span class="sig-prename descclassname"><span class="pre">minari.EpisodeMetadataCallback.</span></span><span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps_group</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Group</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#minari.EpisodeMetadataCallback.__call__" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">minari.EpisodeMetadataCallback.</span></span><span class="sig-name descname"><span class="pre">__call__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">episode</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#minari.EpisodeMetadataCallback.__call__" title="Link to this definition">#</a></dt>
 <dd><p>Callback method.</p>
 <p>Override this method to add custom attribute metadata to the episode group.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>eps_group</strong> (<em>h5py.Group</em>) – the HDF5 group that contains an episode’s datasets</p>
+<dd class="field-odd"><p><strong>episode</strong> (<em>dict</em>) – the dict that contains an episode’s data</p>
 </dd>
 </dl>
 </dd></dl>

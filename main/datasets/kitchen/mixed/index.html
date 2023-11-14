@@ -240,11 +240,12 @@
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../tutorials/dataset_creation/">Dataset Creation</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Dataset Creation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/dataset_creation/observation_space_subseting/">Collecting a subset of a dictionary space with StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/dataset_creation/custom_space_serialization/">Serializing a custom space</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/dataset_creation/point_maze_dataset/">PointMaze D4RL dataset</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../tutorials/using_datasets/">Using Datasets</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Using Datasets</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/using_datasets/behavioral_cloning/">Behavioral cloning with PyTorch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/using_datasets/behavioral_cloning/">SyntaxError</a></li>
 </ul>
 </li>
 </ul>
@@ -285,7 +286,16 @@
 <li class="toctree-l2"><a class="reference internal" href="../../pointmaze/large-dense/">Large-Dense</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current has-children"><a class="reference internal" href="../">Kitchen</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../antmaze/">Ant Maze</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Ant Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../antmaze/umaze/">Umaze</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../antmaze/umaze-diverse/">Umaze-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../antmaze/medium-diverse/">Medium-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../antmaze/medium-play/">Medium-Play</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../antmaze/large-diverse/">Large-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../antmaze/large-play/">Large-Play</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../">Kitchen</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../partial/">Partial</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../complete/">Complete</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Mixed</a></li>
@@ -383,7 +393,7 @@
 <td><p><code class="docutils literal notranslate"><span class="pre">rperezvicente&#64;farama.org</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Code Permalink</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">https://github.com/rodrigodelazcano/d4rl-minari-dataset-generation</span></code></p></td>
+<td><p><a href=https://github.com/rodrigodelazcano/d4rl-minari-dataset-generation><code class="docutils literal notranslate"><span class="pre">https://github.com/rodrigodelazcano/d4rl-minari-dataset-generation</span></code></a></p></td>
 </tr>
 <tr class="row-even"><td><p>Minari Version</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">&gt;0.3.1</span></code></p></td>
@@ -397,6 +407,18 @@
 </section>
 <section id="environment-specs">
 <h2>Environment Specs<a class="headerlink" href="#environment-specs" title="Link to this heading">#</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The following table rows correspond to (in addition to the action and observation space) the Gymnasium environment specifications used to generate the dataset.
+To read more about what each parameter means you can have a look at the Gymnasium documentation <a class="reference external" href="https://gymnasium.farama.org/api/registry/#gymnasium.envs.registration.EnvSpec">https://gymnasium.farama.org/api/registry/#gymnasium.envs.registration.EnvSpec</a></p>
+<p>This environment can be recovered from the Minari dataset as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">minari</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;kitchen-mixed-v1&#39;</span><span class="p">)</span>
+<span class="n">env</span>  <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">recover_environment</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -408,14 +430,60 @@
 <tr class="row-even"><td><p>ID</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">FrankaKitchen-v1</span></code></p></td>
 </tr>
-<tr class="row-odd"><td><p>Action Space</p></td>
+<tr class="row-odd"><td><p>Observation Space</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Dict('achieved_goal':</span> <span class="pre">Dict('bottom</span> <span class="pre">burner':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(2,),</span> <span class="pre">float64),</span> <span class="pre">'hinge</span> <span class="pre">cabinet':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(2,),</span> <span class="pre">float64),</span> <span class="pre">'kettle':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(7,),</span> <span class="pre">float64),</span> <span class="pre">'light</span> <span class="pre">switch':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(2,),</span> <span class="pre">float64),</span> <span class="pre">'microwave':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(1,),</span> <span class="pre">float64),</span> <span class="pre">'slide</span> <span class="pre">cabinet':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(1,),</span> <span class="pre">float64),</span> <span class="pre">'top</span> <span class="pre">burner':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(2,),</span> <span class="pre">float64)),</span> <span class="pre">'desired_goal':</span> <span class="pre">Dict('bottom</span> <span class="pre">burner':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(2,),</span> <span class="pre">float64),</span> <span class="pre">'hinge</span> <span class="pre">cabinet':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(2,),</span> <span class="pre">float64),</span> <span class="pre">'kettle':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(7,),</span> <span class="pre">float64),</span> <span class="pre">'light</span> <span class="pre">switch':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(2,),</span> <span class="pre">float64),</span> <span class="pre">'microwave':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(1,),</span> <span class="pre">float64),</span> <span class="pre">'slide</span> <span class="pre">cabinet':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(1,),</span> <span class="pre">float64),</span> <span class="pre">'top</span> <span class="pre">burner':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(2,),</span> <span class="pre">float64)),</span> <span class="pre">'observation':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(59,),</span> <span class="pre">float64))</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Action Space</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Box(-1.0,</span> <span class="pre">1.0,</span> <span class="pre">(9,),</span> <span class="pre">float64)</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>Observation Space</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">Dict('achieved_goal':</span> <span class="pre">Dict('bottom</span> <span class="pre">burner':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(2,),</span> <span class="pre">float64),</span> <span class="pre">'hinge</span> <span class="pre">cabinet':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(2,),</span> <span class="pre">float64),</span> <span class="pre">'kettle':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(7,),</span> <span class="pre">float64),</span> <span class="pre">'light</span> <span class="pre">switch':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(2,),</span> <span class="pre">float64),</span> <span class="pre">'microwave':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(1,),</span> <span class="pre">float64),</span> <span class="pre">'slide</span> <span class="pre">cabinet':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(1,),</span> <span class="pre">float64),</span> <span class="pre">'top</span> <span class="pre">burner':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(2,),</span> <span class="pre">float64)),</span> <span class="pre">'desired_goal':</span> <span class="pre">Dict('bottom</span> <span class="pre">burner':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(2,),</span> <span class="pre">float64),</span> <span class="pre">'hinge</span> <span class="pre">cabinet':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(2,),</span> <span class="pre">float64),</span> <span class="pre">'kettle':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(7,),</span> <span class="pre">float64),</span> <span class="pre">'light</span> <span class="pre">switch':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(2,),</span> <span class="pre">float64),</span> <span class="pre">'microwave':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(1,),</span> <span class="pre">float64),</span> <span class="pre">'slide</span> <span class="pre">cabinet':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(1,),</span> <span class="pre">float64),</span> <span class="pre">'top</span> <span class="pre">burner':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(2,),</span> <span class="pre">float64)),</span> <span class="pre">'observation':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(59,),</span> <span class="pre">float64))</span></code></p></td>
+<tr class="row-odd"><td><p>entry_point</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gymnasium_robotics.envs.franka_kitchen:KitchenEnv</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>max_episode_steps</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">450</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>reward_threshold</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>nondeterministic</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>order_enforce</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>autoreset</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>disable_env_checker</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>kwargs</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{'remove_task_when_completed':</span> <span class="pre">False,</span> <span class="pre">'terminate_on_tasks_completed':</span> <span class="pre">False,</span> <span class="pre">'tasks_to_complete':</span> <span class="pre">['microwave',</span> <span class="pre">'kettle',</span> <span class="pre">'bottom</span> <span class="pre">burner',</span> <span class="pre">'light</span> <span class="pre">switch']}</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>additional_wrappers</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">()</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>vector_entry_point</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
 </tr>
 </tbody>
 </table>
+</div>
+</section>
+<section id="evaluation-environment-specs">
+<h2>Evaluation Environment Specs<a class="headerlink" href="#evaluation-environment-specs" title="Link to this heading">#</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This dataset doesn’t contain an <cite>eval_env_spec</cite> attribute which means that the specs of the environment used for evaluation are the same as the specs of the environment used for creating the dataset. The following calls will return the same environment:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">minari</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;kitchen-mixed-v1&#39;</span><span class="p">)</span>
+<span class="n">env</span>  <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">recover_environment</span><span class="p">()</span>
+<span class="n">eval_env</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">recover_environment</span><span class="p">(</span><span class="n">eval_env</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="k">assert</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span> <span class="o">==</span> <span class="n">eval_env</span><span class="o">.</span><span class="n">spec</span>
+</pre></div>
+</div>
 </div>
 </section>
 </section>
@@ -493,6 +561,7 @@
 <li><a class="reference internal" href="#description">Description</a></li>
 <li><a class="reference internal" href="#dataset-specs">Dataset Specs</a></li>
 <li><a class="reference internal" href="#environment-specs">Environment Specs</a></li>
+<li><a class="reference internal" href="#evaluation-environment-specs">Evaluation Environment Specs</a></li>
 </ul>
 </li>
 </ul>

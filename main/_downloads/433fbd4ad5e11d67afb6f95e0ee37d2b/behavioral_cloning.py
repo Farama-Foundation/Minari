@@ -1,4 +1,3 @@
-# fmt: off
 """
 Behavioral cloning with PyTorch
 =========================================
@@ -12,10 +11,10 @@ Behavioral cloning with PyTorch
 # Policy training
 # ~~~~~~~~~~~~~~~~~~~
 # To train the expert policy, we use `SB3 <https://github.com/DLR-RM/stable-baselines3>`_'s `rl-zoo3 <https://github.com/DLR-RM/rl-baselines3-zoo>`_ library.
-# After installing the library with ``pip install rl_zoo3``,
-# we train a PPO agent on the environment with the following command:
-#
-# ``python -m rl_zoo3.train --algo ppo --env CartPole-v1``
+# After installing the library, we train a PPO agent on the environment:
+
+!pip install rl_zoo3
+!python -m rl_zoo3.train --algo ppo --env CartPole-v1``
 
 # %%
 # This will generate a new folder named `log` with the expert policy.
@@ -41,7 +40,6 @@ from tqdm.auto import tqdm
 import minari
 from minari import DataCollectorV0
 
-
 torch.manual_seed(42)
 
 # %%
@@ -64,13 +62,14 @@ for i in tqdm(range(total_episodes)):
         if terminated or truncated:
             break
 
-dataset = minari.create_dataset_from_collector_env(dataset_id="CartPole-v1-expert",
-                                                   collector_env=env,
-                                                   algorithm_name="ExpertPolicy",
-                                                   code_permalink="https://minari.farama.org/tutorials/behavioral_cloning",
-                                                   author="Farama",
-                                                   author_email="contact@farama.org"
-                                                   )
+dataset = minari.create_dataset_from_collector_env(
+    dataset_id="CartPole-v1-expert",
+    collector_env=env,
+    algorithm_name="ExpertPolicy",
+    code_permalink="https://minari.farama.org/tutorials/behavioral_cloning",
+    author="Farama",
+    author_email="contact@farama.org"
+)
 
 # %%
 # Once executing the script, the dataset will be saved on your disk. You can display the list of datasets with ``minari list local`` command.

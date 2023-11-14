@@ -239,11 +239,12 @@
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../tutorials/dataset_creation/">Dataset Creation</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Dataset Creation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/dataset_creation/observation_space_subseting/">Collecting a subset of a dictionary space with StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/dataset_creation/custom_space_serialization/">Serializing a custom space</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/dataset_creation/point_maze_dataset/">PointMaze D4RL dataset</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../tutorials/using_datasets/">Using Datasets</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Using Datasets</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/using_datasets/behavioral_cloning/">Behavioral cloning with PyTorch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/using_datasets/behavioral_cloning/">SyntaxError</a></li>
 </ul>
 </li>
 </ul>
@@ -284,7 +285,16 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../../datasets/pointmaze/large-dense/">Large-Dense</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../datasets/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../datasets/antmaze/">Ant Maze</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Ant Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../datasets/antmaze/umaze/">Umaze</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../datasets/antmaze/umaze-diverse/">Umaze-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../datasets/antmaze/medium-diverse/">Medium-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../datasets/antmaze/medium-play/">Medium-Play</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../datasets/antmaze/large-diverse/">Large-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../datasets/antmaze/large-play/">Large-Play</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../datasets/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../datasets/kitchen/partial/">Partial</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../datasets/kitchen/complete/">Complete</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../datasets/kitchen/mixed/">Mixed</a></li>
@@ -349,10 +359,10 @@
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">h5py</span>
 <span class="kn">from</span> <span class="nn">packaging.specifiers</span> <span class="kn">import</span> <span class="n">SpecifierSet</span>
 
 <span class="kn">from</span> <span class="nn">minari.dataset.minari_dataset</span> <span class="kn">import</span> <span class="n">MinariDataset</span><span class="p">,</span> <span class="n">parse_dataset_id</span>
+<span class="kn">from</span> <span class="nn">minari.dataset.minari_storage</span> <span class="kn">import</span> <span class="n">MinariStorage</span>
 <span class="kn">from</span> <span class="nn">minari.storage</span> <span class="kn">import</span> <span class="n">hosting</span>
 <span class="kn">from</span> <span class="nn">minari.storage.datasets_root_dir</span> <span class="kn">import</span> <span class="n">get_dataset_path</span>
 
@@ -374,7 +384,7 @@
 <span class="sd">        MinariDataset</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">file_path</span> <span class="o">=</span> <span class="n">get_dataset_path</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
-    <span class="n">data_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span> <span class="s2">&quot;main_data.hdf5&quot;</span><span class="p">)</span>
+    <span class="n">data_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">data_path</span><span class="p">):</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">download</span><span class="p">:</span>
@@ -418,24 +428,21 @@
             <span class="c1"># Minari datasets must contain the data directory.</span>
             <span class="k">continue</span>
 
-        <span class="n">main_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datasets_path</span><span class="p">,</span> <span class="n">dst_id</span><span class="p">,</span> <span class="s2">&quot;data/main_data.hdf5&quot;</span><span class="p">)</span>
-        <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">main_file_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="n">metadata</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
-            <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;minari_version&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">metadata</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
-                <span class="n">compatible_minari_version</span>
-                <span class="ow">and</span> <span class="n">__version__</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SpecifierSet</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;minari_version&quot;</span><span class="p">])</span>
-            <span class="p">):</span>
-                <span class="k">continue</span>
-            <span class="n">env_name</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">parse_dataset_id</span><span class="p">(</span><span class="n">dst_id</span><span class="p">)</span>
-            <span class="n">dataset</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">env_name</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="k">if</span> <span class="n">latest_version</span><span class="p">:</span>
-                <span class="k">if</span> <span class="p">(</span>
-                    <span class="n">dataset</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">local_datasets</span>
-                    <span class="ow">or</span> <span class="n">version</span> <span class="o">&gt;</span> <span class="n">local_datasets</span><span class="p">[</span><span class="n">dataset</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-                <span class="p">):</span>
-                    <span class="n">local_datasets</span><span class="p">[</span><span class="n">dataset</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">version</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">local_datasets</span><span class="p">[</span><span class="n">dst_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">metadata</span>
+        <span class="n">data_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datasets_path</span><span class="p">,</span> <span class="n">dst_id</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">MinariStorage</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span><span class="o">.</span><span class="n">metadata</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;minari_version&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">metadata</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="n">compatible_minari_version</span>
+            <span class="ow">and</span> <span class="n">__version__</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SpecifierSet</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;minari_version&quot;</span><span class="p">])</span>
+        <span class="p">):</span>
+            <span class="k">continue</span>
+        <span class="n">env_name</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">parse_dataset_id</span><span class="p">(</span><span class="n">dst_id</span><span class="p">)</span>
+        <span class="n">dataset</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">env_name</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">latest_version</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">dataset</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">local_datasets</span> <span class="ow">or</span> <span class="n">version</span> <span class="o">&gt;</span> <span class="n">local_datasets</span><span class="p">[</span><span class="n">dataset</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="n">local_datasets</span><span class="p">[</span><span class="n">dataset</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">version</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">local_datasets</span><span class="p">[</span><span class="n">dst_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">metadata</span>
+
     <span class="k">if</span> <span class="n">latest_version</span><span class="p">:</span>
         <span class="c1"># Return dict = {&#39;dataset_id&#39;: metadata}</span>
         <span class="k">return</span> <span class="nb">dict</span><span class="p">(</span>

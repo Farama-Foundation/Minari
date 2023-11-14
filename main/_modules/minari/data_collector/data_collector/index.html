@@ -239,11 +239,12 @@
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../tutorials/dataset_creation/">Dataset Creation</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Dataset Creation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/dataset_creation/observation_space_subseting/">Collecting a subset of a dictionary space with StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/dataset_creation/custom_space_serialization/">Serializing a custom space</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/dataset_creation/point_maze_dataset/">PointMaze D4RL dataset</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../tutorials/using_datasets/">Using Datasets</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Using Datasets</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/using_datasets/behavioral_cloning/">Behavioral cloning with PyTorch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../tutorials/using_datasets/behavioral_cloning/">SyntaxError</a></li>
 </ul>
 </li>
 </ul>
@@ -284,7 +285,16 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../../datasets/pointmaze/large-dense/">Large-Dense</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../datasets/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../datasets/antmaze/">Ant Maze</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Ant Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../datasets/antmaze/umaze/">Umaze</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../datasets/antmaze/umaze-diverse/">Umaze-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../datasets/antmaze/medium-diverse/">Medium-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../datasets/antmaze/medium-play/">Medium-Play</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../datasets/antmaze/large-diverse/">Large-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../datasets/antmaze/large-play/">Large-Play</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../datasets/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../datasets/kitchen/partial/">Partial</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../datasets/kitchen/complete/">Complete</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../datasets/kitchen/mixed/">Mixed</a></li>
@@ -349,11 +359,9 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
-<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="kn">import</span> <span class="nn">h5py</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">gymnasium.core</span> <span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span>
 
@@ -363,7 +371,8 @@
     <span class="n">StepData</span><span class="p">,</span>
     <span class="n">StepDataCallback</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">minari.serialization</span> <span class="kn">import</span> <span class="n">serialize_space</span>
+<span class="kn">from</span> <span class="nn">minari.dataset.minari_dataset</span> <span class="kn">import</span> <span class="n">MinariDataset</span>
+<span class="kn">from</span> <span class="nn">minari.dataset.minari_storage</span> <span class="kn">import</span> <span class="n">MinariStorage</span>
 
 
 <span class="n">EpisodeBuffer</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>  <span class="c1"># TODO: narrow this down</span>
@@ -420,7 +429,6 @@
         <span class="p">]</span> <span class="o">=</span> <span class="n">EpisodeMetadataCallback</span><span class="p">,</span>
         <span class="n">record_infos</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">max_buffer_steps</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">max_buffer_episodes</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">observation_space</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">action_space</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
@@ -432,38 +440,13 @@
 <span class="sd">            episode_metadata_callback (type[EpisodeMetadataCallback], optional): Callback class to add custom metadata to episode group in HDF5 file. Defaults to EpisodeMetadataCallback.</span>
 <span class="sd">            record_infos (bool, optional): If True record the info return key of each step. Defaults to False.</span>
 <span class="sd">            max_buffer_steps (Optional[int], optional): number of steps saved in-memory buffers before dumping to HDF5 file in disk. Defaults to None.</span>
-<span class="sd">            max_buffer_episodes (Optional[int], optional): number of episodes saved in-memory buffers before dumping to HDF5 file in disk. Defaults to None.</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            ValueError: `max_buffer_steps` and `max_buffer_episodes` can&#39;t be passed at the same time</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_step_data_callback</span> <span class="o">=</span> <span class="n">step_data_callback</span><span class="p">()</span>
-
-        <span class="k">if</span> <span class="n">observation_space</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">observation_space</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dataset_observation_space</span> <span class="o">=</span> <span class="n">observation_space</span>
-
-        <span class="k">if</span> <span class="n">action_space</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">action_space</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">dataset_action_space</span> <span class="o">=</span> <span class="n">action_space</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_episode_metadata_callback</span> <span class="o">=</span> <span class="n">episode_metadata_callback</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_record_infos</span> <span class="o">=</span> <span class="n">record_infos</span>
-
-        <span class="k">if</span> <span class="n">max_buffer_steps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">max_buffer_episodes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Choose step or episode scheduler not both&quot;</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">max_buffer_episodes</span> <span class="o">=</span> <span class="n">max_buffer_episodes</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">max_buffer_steps</span> <span class="o">=</span> <span class="n">max_buffer_steps</span>
-
-        <span class="c1"># Initialzie empty buffer</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">EpisodeBuffer</span><span class="p">]</span> <span class="o">=</span> <span class="p">[{}]</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_current_seed</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_new_episode</span> <span class="o">=</span> <span class="kc">False</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_step_id</span> <span class="o">=</span> <span class="mi">0</span>
 
         <span class="c1"># get path to minari datasets directory</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">datasets_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;MINARI_DATASETS_PATH&quot;</span><span class="p">)</span>
@@ -476,23 +459,21 @@
             <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">datasets_path</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_tmp_dir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">(</span><span class="nb">dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">datasets_path</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tmp_f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tmp_dir</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;tmp_dataset.hdf5&quot;</span><span class="p">),</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="n">track_order</span><span class="o">=</span><span class="kc">True</span>
-        <span class="p">)</span>  <span class="c1"># track insertion order of groups (&#39;episodes_i&#39;)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_storage</span> <span class="o">=</span> <span class="n">MinariStorage</span><span class="o">.</span><span class="n">new</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_tmp_dir</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">observation_space</span><span class="o">=</span><span class="n">observation_space</span><span class="p">,</span>
+            <span class="n">action_space</span><span class="o">=</span><span class="n">action_space</span><span class="p">,</span>
+            <span class="n">env_spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span>
+        <span class="p">)</span>
 
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;Env Spec is None&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tmp_f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;env_spec&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_record_infos</span> <span class="o">=</span> <span class="n">record_infos</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_buffer_steps</span> <span class="o">=</span> <span class="n">max_buffer_steps</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_new_episode</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_called</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="c1"># Initialzie empty buffer</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">EpisodeBuffer</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
-        <span class="c1"># Initialize first episode group in temporary hdf5 file</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_episode_id</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_eps_group</span><span class="p">:</span> <span class="n">h5py</span><span class="o">.</span><span class="n">Group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tmp_f</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;episode_0&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_eps_group</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_last_episode_group_term_or_trunc</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_last_episode_n_steps</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_step_id</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_episode_id</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 
     <span class="k">def</span> <span class="nf">_add_to_episode_buffer</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -510,8 +491,6 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">step_data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_record_infos</span> <span class="ow">and</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;infos&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
-                <span class="c1"># if the step data comes from a reset call: skip actions, rewards,</span>
-                <span class="c1"># terminations, and truncations their values are set to None in the StepDataCallback</span>
                 <span class="k">continue</span>
 
             <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">episode_buffer</span><span class="p">:</span>
@@ -542,9 +521,8 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Gymnasium step method.&quot;&quot;&quot;</span>
         <span class="n">obs</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
 
-        <span class="c1"># add/edit data from step and convert to dictionary step data</span>
         <span class="n">step_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step_data_callback</span><span class="p">(</span>
-            <span class="n">env</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+            <span class="n">env</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span>
             <span class="n">obs</span><span class="o">=</span><span class="n">obs</span><span class="p">,</span>
             <span class="n">info</span><span class="o">=</span><span class="n">info</span><span class="p">,</span>
             <span class="n">action</span><span class="o">=</span><span class="n">action</span><span class="p">,</span>
@@ -552,68 +530,36 @@
             <span class="n">terminated</span><span class="o">=</span><span class="n">terminated</span><span class="p">,</span>
             <span class="n">truncated</span><span class="o">=</span><span class="n">truncated</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="c1"># Force step data dictionary to include keys corresponding to Gymnasium step returns:</span>
-        <span class="c1"># actions, observations, rewards, terminations, truncations, and infos</span>
         <span class="k">assert</span> <span class="n">STEP_DATA_KEYS</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span>
             <span class="n">step_data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
         <span class="p">),</span> <span class="s2">&quot;One or more required keys is missing from &#39;step-data&#39;.&quot;</span>
-        <span class="c1"># Check that the saved observation and action belong to the dataset&#39;s observation/action spaces</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset_observation_space</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span>
+        <span class="c1"># Check that the stored obs/act spaces comply with the dataset spaces</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_storage</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span>
             <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;observations&quot;</span><span class="p">]</span>
         <span class="p">),</span> <span class="s2">&quot;Observations are not in observation space.&quot;</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset_action_space</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_storage</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span>
             <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;actions&quot;</span><span class="p">]</span>
         <span class="p">),</span> <span class="s2">&quot;Actions are not in action space.&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_step_id</span> <span class="o">+=</span> <span class="mi">1</span>
-
-        <span class="n">clear_buffers</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="c1"># check if buffer needs to be cleared to temp file due to maximum step scheduler</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_buffer_steps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">clear_buffers</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_step_id</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_buffer_steps</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step_id</span> <span class="o">!=</span> <span class="mi">0</span>
-            <span class="p">)</span>
-
-        <span class="c1"># Get initial observation/info from previous episode if reset has not been called after termination</span>
-        <span class="c1"># or truncation. This may happen if the step_data_callback truncates or terminates the episode under</span>
-        <span class="c1"># certain conditions.</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_new_episode</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reset_called</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_previous_eps_final_obs</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;observations&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_to_episode_buffer</span><span class="p">(</span>
-                    <span class="p">{},</span> <span class="bp">self</span><span class="o">.</span><span class="n">_previous_eps_final_obs</span>
-                <span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;observations&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_previous_eps_final_obs</span><span class="p">]</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_record_infos</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;infos&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_to_episode_buffer</span><span class="p">(</span>
-                    <span class="p">{},</span> <span class="bp">self</span><span class="o">.</span><span class="n">_previous_eps_final_info</span>
-                <span class="p">)</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">_new_episode</span> <span class="o">=</span> <span class="kc">False</span>
-
-        <span class="c1"># add step data to last episode buffer</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_to_episode_buffer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">step_data</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;terminations&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;truncations&quot;</span><span class="p">]:</span>
-            <span class="c1"># Save last observation/info to use as initial observation/info in the next episode</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_previous_eps_final_obs</span> <span class="o">=</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;observations&quot;</span><span class="p">]</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_record_infos</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_previous_eps_final_info</span> <span class="o">=</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;infos&quot;</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_reset_called</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_new_episode</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;seed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_seed</span>  <span class="c1"># type: ignore</span>
-            <span class="c1"># Only check episode scheduler to save in-memory data to temp HDF5 file when episode is done</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_buffer_episodes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">clear_buffers</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_episode_id</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_buffer_episodes</span> <span class="o">==</span> <span class="mi">0</span>
-
-        <span class="k">if</span> <span class="n">clear_buffers</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">clear_buffer_to_tmp_file</span><span class="p">()</span>
-
-        <span class="k">if</span> <span class="n">clear_buffers</span> <span class="ow">or</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;terminations&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;truncations&quot;</span><span class="p">]:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">append</span><span class="p">({})</span>
-
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">max_buffer_steps</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step_id</span> <span class="o">!=</span> <span class="mi">0</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step_id</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_buffer_steps</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_storage</span><span class="o">.</span><span class="n">update_episodes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span> <span class="o">=</span> <span class="p">[{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_episode_id</span><span class="p">}]</span>
         <span class="k">if</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;terminations&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;truncations&quot;</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_episode_id</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">eps_buff</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_episode_id</span><span class="p">}</span>
+            <span class="n">previous_data</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;observations&quot;</span><span class="p">:</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;observations&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;infos&quot;</span><span class="p">:</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;infos&quot;</span><span class="p">],</span>
+            <span class="p">}</span>
+            <span class="n">eps_buff</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_to_episode_buffer</span><span class="p">(</span><span class="n">eps_buff</span><span class="p">,</span> <span class="n">previous_data</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">eps_buff</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span>
 
@@ -625,212 +571,64 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Gymnasium environment reset.&quot;&quot;&quot;</span>
         <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
-        <span class="n">step_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step_data_callback</span><span class="p">(</span><span class="n">env</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="o">=</span><span class="n">obs</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="n">info</span><span class="p">)</span>
+        <span class="n">step_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step_data_callback</span><span class="p">(</span><span class="n">env</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">obs</span><span class="o">=</span><span class="n">obs</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="n">info</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_episode_id</span> <span class="o">+=</span> <span class="mi">1</span>
 
         <span class="k">assert</span> <span class="n">STEP_DATA_KEYS</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span>
             <span class="n">step_data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
         <span class="p">),</span> <span class="s2">&quot;One or more required keys is missing from &#39;step-data&#39;&quot;</span>
 
-        <span class="c1"># If last episode in global buffer has saved steps, we need to check if it was truncated or terminated</span>
-        <span class="c1"># If the last element in the buffer is not an empty dictionary, then we need to auto-truncate the episode.</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
-            <span class="k">if</span> <span class="p">(</span>
-                <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;terminations&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-                <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;truncations&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-            <span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;truncations&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;seed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_seed</span>  <span class="c1"># type: ignore</span>
-
-                <span class="c1"># New episode</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_episode_id</span> <span class="o">+=</span> <span class="mi">1</span>
-
-                <span class="k">if</span> <span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">max_buffer_episodes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-                    <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_episode_id</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_buffer_episodes</span> <span class="o">==</span> <span class="mi">0</span>
-                <span class="p">):</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">clear_buffer_to_tmp_file</span><span class="p">()</span>
-
-                <span class="c1"># add new episode buffer</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">append</span><span class="p">({})</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># In the case that the past episode is already stored in the tmp hdf5 file because of caching,</span>
-            <span class="c1"># we need to check if it was truncated or terminated, if not then auto-truncate</span>
-            <span class="k">if</span> <span class="p">(</span>
-                <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
-                <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_episode_group_term_or_trunc</span>
-                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_episode_id</span> <span class="o">!=</span> <span class="mi">0</span>
-            <span class="p">):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_eps_group</span><span class="p">[</span><span class="s2">&quot;truncations&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_last_episode_group_term_or_trunc</span> <span class="o">=</span> <span class="kc">True</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_eps_group</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;seed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_seed</span>
-
-                <span class="c1"># New episode</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_episode_id</span> <span class="o">+=</span> <span class="mi">1</span>
-
-                <span class="c1"># Compute metadata, use episode dataset in hdf5 file</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_episode_metadata_callback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_eps_group</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_to_episode_buffer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">step_data</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_current_seed</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_current_seed</span> <span class="o">=</span> <span class="n">seed</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_reset_called</span> <span class="o">=</span> <span class="kc">True</span>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_buffer</span><span class="p">()</span>
+        <span class="n">episode_buffer</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;seed&quot;</span><span class="p">:</span> <span class="n">seed</span> <span class="k">if</span> <span class="n">seed</span> <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="kc">None</span><span class="p">),</span> <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_episode_id</span><span class="p">}</span>
+        <span class="n">episode_buffer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_add_to_episode_buffer</span><span class="p">(</span><span class="n">episode_buffer</span><span class="p">,</span> <span class="n">step_data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">episode_buffer</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">info</span>
 
-    <span class="k">def</span> <span class="nf">clear_buffer_to_tmp_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">truncate_last_episode</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save the global buffer in-memory to a temporary HDF5 file in disk.</span>
+    <span class="k">def</span> <span class="nf">_validate_buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;actions&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_episode_id</span> <span class="o">-=</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;terminations&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;truncations&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">add_to_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">MinariDataset</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add extra data to Minari dataset from collector environment buffers (DataCollectorV0).</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            truncate_last_episode (bool, optional): If True the last episode from the buffer will be truncated before saving to disk. Defaults to False.</span>
+<span class="sd">            dataset (MinariDataset): Dataset to add the data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">def</span> <span class="nf">get_h5py_subgroup</span><span class="p">(</span><span class="n">group</span><span class="p">:</span> <span class="n">h5py</span><span class="o">.</span><span class="n">Group</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">h5py</span><span class="o">.</span><span class="n">Group</span><span class="p">:</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Get a subgroup from an h5py group.</span>
-
-<span class="sd">            If the subgroup does not exist, create and return and empty group with the given name.</span>
-
-<span class="sd">            Args:</span>
-<span class="sd">                group (h5py.Group): the h5py group object to look for/create the subgroup.</span>
-<span class="sd">                name (str): name of the subgroup.</span>
-
-<span class="sd">            Returns:</span>
-<span class="sd">                subgroup (h5py.Group)</span>
-<span class="sd">            &quot;&quot;&quot;</span>
-            <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">group</span><span class="p">:</span>
-                <span class="n">subgroup</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">subgroup</span><span class="p">,</span> <span class="n">h5py</span><span class="o">.</span><span class="n">Group</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">subgroup</span> <span class="o">=</span> <span class="n">group</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-
-            <span class="k">return</span> <span class="n">subgroup</span>
-
-        <span class="k">def</span> <span class="nf">clear_buffer</span><span class="p">(</span><span class="n">dictionary_buffer</span><span class="p">:</span> <span class="n">EpisodeBuffer</span><span class="p">,</span> <span class="n">episode_group</span><span class="p">:</span> <span class="n">h5py</span><span class="o">.</span><span class="n">Group</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Inner function to recursively save the nested data dictionaries in an episode buffer.</span>
-
-<span class="sd">            Args:</span>
-<span class="sd">                dictionary_buffer (EpisodeBuffer): ditionary with keys to store as independent HDF5 datasets if the value is a list buffer</span>
-<span class="sd">                or create another group if value is a dictionary.</span>
-<span class="sd">                episode_group (h5py.Group): HDF5 group to store the datasets from the dictionary_buffer.</span>
-<span class="sd">            &quot;&quot;&quot;</span>
-            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">dictionary_buffer</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-                    <span class="n">eps_group_to_clear</span> <span class="o">=</span> <span class="n">get_h5py_subgroup</span><span class="p">(</span><span class="n">episode_group</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
-                    <span class="n">clear_buffer</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">eps_group_to_clear</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="nb">all</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">elem</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">),</span> <span class="n">data</span><span class="p">)):</span>
-                    <span class="c1"># we have a list of tuples, so we need to act appropriately</span>
-                    <span class="n">dict_data</span> <span class="o">=</span> <span class="p">{</span>
-                        <span class="sa">f</span><span class="s2">&quot;_index_</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">entry</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
-                        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-                    <span class="p">}</span>
-                    <span class="n">eps_group_to_clear</span> <span class="o">=</span> <span class="n">get_h5py_subgroup</span><span class="p">(</span><span class="n">episode_group</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
-                    <span class="n">clear_buffer</span><span class="p">(</span><span class="n">dict_data</span><span class="p">,</span> <span class="n">eps_group_to_clear</span><span class="p">)</span>
-                <span class="k">elif</span> <span class="nb">all</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">elem</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="n">OrderedDict</span><span class="p">),</span> <span class="n">data</span><span class="p">)):</span>
-                    <span class="c1"># we have a list of OrderedDicts, so we need to act appropriately</span>
-                    <span class="n">dict_data</span> <span class="o">=</span> <span class="p">{</span>
-                        <span class="n">key</span><span class="p">:</span> <span class="p">[</span><span class="n">entry</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">data</span><span class="p">]</span>
-                        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
-                    <span class="p">}</span>
-                    <span class="n">eps_group_to_clear</span> <span class="o">=</span> <span class="n">get_h5py_subgroup</span><span class="p">(</span><span class="n">episode_group</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
-                    <span class="n">clear_buffer</span><span class="p">(</span><span class="n">dict_data</span><span class="p">,</span> <span class="n">eps_group_to_clear</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">elem</span><span class="p">:</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span> <span class="n">data</span><span class="p">)):</span>
-                        <span class="n">data_shape</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),)</span>
-                        <span class="n">dtype</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">string_dtype</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-                        <span class="n">data_shape</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span>
-                        <span class="n">dtype</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">dtype</span>
-                        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span>
-                            <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
-                        <span class="p">),</span> <span class="s2">&quot;Nan found after cast to nump array, check the type of &#39;data&#39;.&quot;</span>
-
-                    <span class="k">if</span> <span class="p">(</span>
-                        <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_episode_group_term_or_trunc</span>
-                        <span class="ow">and</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">episode_group</span>
-                    <span class="p">):</span>
-                        <span class="n">current_dataset_shape</span> <span class="o">=</span> <span class="n">episode_group</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-                        <span class="n">episode_group</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span>
-                            <span class="n">current_dataset_shape</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
-                        <span class="p">)</span>
-                        <span class="n">episode_group</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">data</span>
-                    <span class="k">else</span><span class="p">:</span>
-                        <span class="k">if</span> <span class="ow">not</span> <span class="n">current_episode_group_term_or_trunc</span><span class="p">:</span>
-                            <span class="n">data_shape</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,)</span> <span class="o">+</span> <span class="n">data_shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>  <span class="c1"># resizable dataset</span>
-
-                        <span class="n">episode_group</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span>
-                            <span class="n">key</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">maxshape</span><span class="o">=</span><span class="n">data_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">dtype</span>
-                        <span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">eps_buff</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">):</span>
-            <span class="c1"># Make sure that the episode has stepped, by checking if the &#39;actions&#39; key has been added to the episode buffer.</span>
-            <span class="k">if</span> <span class="s2">&quot;actions&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">eps_buff</span><span class="p">:</span>
-                <span class="k">continue</span>
-
-            <span class="n">current_episode_group_term_or_trunc</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">eps_buff</span><span class="p">[</span><span class="s2">&quot;terminations&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="ow">or</span> <span class="n">eps_buff</span><span class="p">[</span><span class="s2">&quot;truncations&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-            <span class="p">)</span>
-
-            <span class="c1"># Check if last episode group is terminated or truncated</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_episode_group_term_or_trunc</span><span class="p">:</span>
-                <span class="c1"># Add new episode group</span>
-                <span class="n">current_episode_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_episode_id</span> <span class="o">+</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_eps_group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tmp_f</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;episode_</span><span class="si">{</span><span class="n">current_episode_id</span><span class="si">}</span><span class="s2">&quot;</span>
-                <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_eps_group</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">current_episode_id</span>
-
-            <span class="k">if</span> <span class="n">current_episode_group_term_or_trunc</span><span class="p">:</span>
-                <span class="c1"># Add seed to episode metadata if the current episode has finished</span>
-                <span class="c1"># Remove seed key from episode buffer before storing datasets to file</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_eps_group</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;seed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">eps_buff</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;seed&quot;</span><span class="p">)</span>
-            <span class="n">clear_buffer</span><span class="p">(</span><span class="n">eps_buff</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eps_group</span><span class="p">)</span>
-
-            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_episode_group_term_or_trunc</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_last_episode_n_steps</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">eps_buff</span><span class="p">[</span><span class="s2">&quot;actions&quot;</span><span class="p">])</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_last_episode_n_steps</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">eps_buff</span><span class="p">[</span><span class="s2">&quot;actions&quot;</span><span class="p">])</span>
-
-            <span class="k">if</span> <span class="n">current_episode_group_term_or_trunc</span><span class="p">:</span>
-                <span class="c1"># Compute metadata, use episode dataset in hdf5 file</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_episode_metadata_callback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_eps_group</span><span class="p">)</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">_last_episode_group_term_or_trunc</span> <span class="o">=</span> <span class="n">current_episode_group_term_or_trunc</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_episode_group_term_or_trunc</span> <span class="ow">and</span> <span class="n">truncate_last_episode</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_eps_group</span><span class="p">[</span><span class="s2">&quot;truncations&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_last_episode_group_term_or_trunc</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_eps_group</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;seed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_seed</span>
-
-            <span class="c1"># New episode</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_episode_id</span> <span class="o">+=</span> <span class="mi">1</span>
-
-            <span class="c1"># Compute metadata, use episode dataset in hdf5 file</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_episode_metadata_callback</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_eps_group</span><span class="p">)</span>
-
-        <span class="c1"># Clear in-memory buffers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_buffer</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_storage</span><span class="o">.</span><span class="n">update_episodes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
 
+        <span class="n">first_id</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">total_episodes</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">update_from_storage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_storage</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">episode_indices</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">new_ids</span> <span class="o">=</span> <span class="n">first_id</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_storage</span><span class="o">.</span><span class="n">total_episodes</span><span class="p">)</span>
+            <span class="n">dataset</span><span class="o">.</span><span class="n">episode_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">episode_indices</span><span class="p">,</span> <span class="n">new_ids</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_episode_id</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tmp_dir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">(</span><span class="nb">dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">datasets_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_storage</span> <span class="o">=</span> <span class="n">MinariStorage</span><span class="o">.</span><span class="n">new</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_tmp_dir</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">observation_space</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_storage</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span>
+            <span class="n">action_space</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_storage</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span>
+            <span class="n">env_spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span>
+        <span class="p">)</span>
+
     <span class="k">def</span> <span class="nf">save_to_disk</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">dataset_metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span> <span class="n">dataset_metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save all in-memory buffer data and move temporary HDF5 file to a permanent location in disk.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save all in-memory buffer data and move temporary files to a permanent location in disk.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            path (str): path to store permanent HDF5, i.e: &#39;/home/foo/datasets/data.hdf5&#39;</span>
-<span class="sd">            dataset_metadata (Dict, optional): additional metadata to add to HDF5 dataset file as attributes. Defaults to {}.</span>
+<span class="sd">            path (str): path to store the dataset, e.g.: &#39;/home/foo/datasets/data&#39;</span>
+<span class="sd">            dataset_metadata (Dict, optional): additional metadata to add to the dataset file. Defaults to {}.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">dataset_metadata</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">dataset_metadata</span> <span class="o">=</span> <span class="p">{}</span>
-
-        <span class="c1"># Dump everything in memory buffers to tmp_dataset.hdf5 and truncate last episode</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">clear_buffer_to_tmp_file</span><span class="p">(</span><span class="n">truncate_last_episode</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">dataset_metadata</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_tmp_f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_buffer</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_storage</span><span class="o">.</span><span class="n">update_episodes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
 
         <span class="k">assert</span> <span class="p">(</span>
             <span class="s2">&quot;observation_space&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dataset_metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
@@ -838,48 +636,38 @@
         <span class="k">assert</span> <span class="p">(</span>
             <span class="s2">&quot;action_space&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dataset_metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
         <span class="p">),</span> <span class="s2">&quot;&#39;action_space&#39; is not allowed as an optional key.&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="s2">&quot;env_spec&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dataset_metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="p">),</span> <span class="s2">&quot;&#39;env_spec&#39; is not allowed as an optional key.&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_storage</span><span class="o">.</span><span class="n">update_metadata</span><span class="p">(</span><span class="n">dataset_metadata</span><span class="p">)</span>
 
-        <span class="n">action_space_str</span> <span class="o">=</span> <span class="n">serialize_space</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset_action_space</span><span class="p">)</span>
-        <span class="n">observation_space_str</span> <span class="o">=</span> <span class="n">serialize_space</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset_observation_space</span><span class="p">)</span>
+        <span class="n">episode_metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_storage</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_episode_metadata_callback</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_storage</span><span class="o">.</span><span class="n">update_episode_metadata</span><span class="p">(</span><span class="n">episode_metadata</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tmp_f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;action_space&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">action_space_str</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tmp_f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;observation_space&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">observation_space_str</span>
+        <span class="n">files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_storage</span><span class="o">.</span><span class="n">data_path</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">move</span><span class="p">(</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_storage</span><span class="o">.</span><span class="n">data_path</span><span class="p">,</span> <span class="n">file</span><span class="p">),</span>
+                <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">file</span><span class="p">),</span>
+            <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">append</span><span class="p">({})</span>
-
-        <span class="c1"># Reset episode count</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_episode_id</span> <span class="o">=</span> <span class="mi">0</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tmp_f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;total_episodes&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tmp_f</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tmp_f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;total_steps&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">episode_group</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;total_steps&quot;</span><span class="p">]</span>
-                <span class="k">for</span> <span class="n">episode_group</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_tmp_f</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
-            <span class="p">]</span>
-        <span class="p">)</span>
-
-        <span class="c1"># Close tmp_dataset.hdf5</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tmp_f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
-        <span class="c1"># Move tmp_dataset.hdf5 to specified directory</span>
-        <span class="n">shutil</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tmp_dir</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;tmp_dataset.hdf5&quot;</span><span class="p">),</span> <span class="n">path</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tmp_f</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tmp_dir</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;tmp_dataset.hdf5&quot;</span><span class="p">),</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="n">track_order</span><span class="o">=</span><span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_episode_id</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_tmp_dir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">(</span><span class="nb">dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">datasets_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_storage</span> <span class="o">=</span> <span class="n">MinariStorage</span><span class="o">.</span><span class="n">new</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_tmp_dir</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="n">observation_space</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_storage</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span>
+            <span class="n">action_space</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_storage</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span>
+            <span class="n">env_spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span>
         <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Close the Gymnasium environment.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Close the DataCollector.</span>
 
 <span class="sd">        Clear buffer and close temporary directory.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 
-        <span class="c1"># Clear buffer</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
-
-        <span class="c1"># Close tmp_dataset.hdf5</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_tmp_f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
         <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_tmp_dir</span><span class="o">.</span><span class="n">name</span><span class="p">)</span></div>
 
 </pre></div>

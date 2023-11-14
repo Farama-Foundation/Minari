@@ -12,7 +12,7 @@
         <link rel="canonical" href="https://minari.farama.org/tutorials/using_datasets/behavioral_cloning.html" />
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
-        <title>Behavioral cloning with PyTorch - Minari Documentation</title>
+        <title>SyntaxError - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
@@ -240,11 +240,12 @@
 <ul class="current">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../dataset_creation/">Dataset Creation</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Dataset Creation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../dataset_creation/observation_space_subseting/">Collecting a subset of a dictionary space with StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dataset_creation/custom_space_serialization/">Serializing a custom space</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../dataset_creation/point_maze_dataset/">PointMaze D4RL dataset</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../">Using Datasets</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Using Datasets</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Behavioral cloning with PyTorch</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">SyntaxError</a></li>
 </ul>
 </li>
 </ul>
@@ -285,7 +286,16 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/large-dense/">Large-Dense</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/antmaze/">Ant Maze</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Ant Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/umaze/">Umaze</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/umaze-diverse/">Umaze-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/medium-diverse/">Medium-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/medium-play/">Medium-Play</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/large-diverse/">Large-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/large-play/">Large-Play</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../datasets/kitchen/partial/">Partial</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../datasets/kitchen/complete/">Complete</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../datasets/kitchen/mixed/">Mixed</a></li>
@@ -354,17 +364,26 @@
           </div>
           <article role="main">
             
-            <section class="sphx-glr-example-title" id="behavioral-cloning-with-pytorch">
-<span id="sphx-glr-tutorials-using-datasets-behavioral-cloning-py"></span><h1>Behavioral cloning with PyTorch<a class="headerlink" href="#behavioral-cloning-with-pytorch" title="Link to this heading">#</a></h1>
+            <section class="sphx-glr-example-title" id="syntaxerror">
+<span id="sphx-glr-tutorials-using-datasets-behavioral-cloning-py"></span><h1>SyntaxError<a class="headerlink" href="#syntaxerror" title="Link to this heading">#</a></h1>
+<p>Example script with invalid Python syntax</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Behavioral cloning with PyTorch</span>
+<span class="sd">=========================================</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
 <p>We present here how to perform behavioral cloning on a Minari dataset using <a class="reference external" href="https://pytorch.org/">PyTorch</a>.
 We will start generating the dataset of the expert policy for the <a class="reference external" href="https://gymnasium.farama.org/environments/classic_control/cart_pole/">CartPole-v1</a> environment, which is a classic control problem.
 The objective is to balance the pole on the cart, and we receive a reward of +1 for each successful timestep.</p>
 <section id="policy-training">
 <h2>Policy training<a class="headerlink" href="#policy-training" title="Link to this heading">#</a></h2>
 <p>To train the expert policy, we use <a class="reference external" href="https://github.com/DLR-RM/stable-baselines3">SB3</a>’s <a class="reference external" href="https://github.com/DLR-RM/rl-baselines3-zoo">rl-zoo3</a> library.
-After installing the library with <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">rl_zoo3</span></code>,
-we train a PPO agent on the environment with the following command:</p>
-<p><code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">rl_zoo3.train</span> <span class="pre">--algo</span> <span class="pre">ppo</span> <span class="pre">--env</span> <span class="pre">CartPole-v1</span></code></p>
+After installing the library, we train a PPO agent on the environment:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>!pip install rl_zoo3
+!python -m rl_zoo3.train --algo ppo --env CartPole-v1``
+</pre></div>
+</div>
 <p>This will generate a new folder named <cite>log</cite> with the expert policy.</p>
 </section>
 <section id="imports">
@@ -384,7 +403,6 @@ we train a PPO agent on the environment with the following command:</p>
 
 <span class="kn">import</span> <span class="nn">minari</span>
 <span class="kn">from</span> <span class="nn">minari</span> <span class="kn">import</span> <span class="n">DataCollectorV0</span>
-
 
 <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
 </pre></div>
@@ -407,19 +425,20 @@ we train a PPO agent on the environment with the following command:</p>
         <span class="k">if</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span><span class="p">:</span>
             <span class="k">break</span>
 
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">create_dataset_from_collector_env</span><span class="p">(</span><span class="n">dataset_id</span><span class="o">=</span><span class="s2">&quot;CartPole-v1-expert&quot;</span><span class="p">,</span>
-                                                   <span class="n">collector_env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
-                                                   <span class="n">algorithm_name</span><span class="o">=</span><span class="s2">&quot;ExpertPolicy&quot;</span><span class="p">,</span>
-                                                   <span class="n">code_permalink</span><span class="o">=</span><span class="s2">&quot;https://minari.farama.org/tutorials/behavioral_cloning&quot;</span><span class="p">,</span>
-                                                   <span class="n">author</span><span class="o">=</span><span class="s2">&quot;Farama&quot;</span><span class="p">,</span>
-                                                   <span class="n">author_email</span><span class="o">=</span><span class="s2">&quot;contact@farama.org&quot;</span>
-                                                   <span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">create_dataset_from_collector_env</span><span class="p">(</span>
+    <span class="n">dataset_id</span><span class="o">=</span><span class="s2">&quot;CartPole-v1-expert&quot;</span><span class="p">,</span>
+    <span class="n">collector_env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+    <span class="n">algorithm_name</span><span class="o">=</span><span class="s2">&quot;ExpertPolicy&quot;</span><span class="p">,</span>
+    <span class="n">code_permalink</span><span class="o">=</span><span class="s2">&quot;https://minari.farama.org/tutorials/behavioral_cloning&quot;</span><span class="p">,</span>
+    <span class="n">author</span><span class="o">=</span><span class="s2">&quot;Farama&quot;</span><span class="p">,</span>
+    <span class="n">author_email</span><span class="o">=</span><span class="s2">&quot;contact@farama.org&quot;</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 <p>Once executing the script, the dataset will be saved on your disk. You can display the list of datasets with <code class="docutils literal notranslate"><span class="pre">minari</span> <span class="pre">list</span> <span class="pre">local</span></code> command.</p>
 </section>
-<section id="id1">
-<h2>Behavioral cloning with PyTorch<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<section id="behavioral-cloning-with-pytorch">
+<h2>Behavioral cloning with PyTorch<a class="headerlink" href="#behavioral-cloning-with-pytorch" title="Link to this heading">#</a></h2>
 <p>Now we can use PyTorch to learn the policy from the offline dataset.
 Let’s define the policy network:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">PolicyNetwork</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -597,11 +616,11 @@ We then train the policy to predict the actions:</p>
           <div class="toc-tree-container">
             <div class="toc-tree">
               <ul>
-<li><a class="reference internal" href="#">Behavioral cloning with PyTorch</a><ul>
+<li><a class="reference internal" href="#">SyntaxError</a><ul>
 <li><a class="reference internal" href="#policy-training">Policy training</a></li>
 <li><a class="reference internal" href="#imports">Imports</a></li>
 <li><a class="reference internal" href="#dataset-generation">Dataset generation</a></li>
-<li><a class="reference internal" href="#id1">Behavioral cloning with PyTorch</a></li>
+<li><a class="reference internal" href="#behavioral-cloning-with-pytorch">Behavioral cloning with PyTorch</a></li>
 </ul>
 </li>
 </ul>
