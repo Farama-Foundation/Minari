@@ -30,6 +30,7 @@ tutorials/**/index
 ```{toctree}
 :hidden:
 :caption: Datasets
+datasets/minigrid
 datasets/door
 datasets/hammer
 datasets/relocate
