@@ -9,7 +9,7 @@ Minari is a standard dataset hosting interface for Offline Reinforcement Learnin
 
 ## Installation
 
-To install the most recent version of the Minari library run this command: 
+To install the most recent version of the Minari library run this command:
 
 ```bash
 pip install minari
@@ -77,7 +77,7 @@ for _ in range(total_episodes):
         if terminated or truncated:
             break
 
-dataset = minari.create_dataset_from_collector_env(dataset_id="CartPole-v1-test-v0", 
+dataset = minari.create_dataset_from_collector_env(dataset_id="CartPole-v1-test-v0",
                                                    collector_env=env,
                                                    algorithm_name="Random-Policy",
                                                    code_permalink="https://github.com/Farama-Foundation/Minari",
@@ -145,12 +145,14 @@ for episode_id in range(total_episodes):
         # Update local Minari dataset every 10 episodes.
         # This works as a checkpoint to not lose the already collected data
         if dataset is None:
-            dataset = minari.create_dataset_from_collector_env(dataset_id=dataset_name,
-                                                    collector_env=env,
-                                                    algorithm_name="Random-Policy",
-                                                    code_permalink="https://github.com/Farama-Foundation/Minari",
-                                                    author="Farama",
-                                                    author_email="contact@farama.org")
+            dataset = minari.create_dataset_from_collector_env(
+                dataset_id=dataset_name,
+                collector_env=env,
+                algorithm_name="Random-Policy",
+                code_permalink="https://github.com/Farama-Foundation/Minari",
+                author="Farama",
+                author_email="contact@farama.org"
+            )
         else:
             env.add_to_dataset(dataset)
 ```
