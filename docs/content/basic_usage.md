@@ -146,11 +146,11 @@ for episode_id in range(total_episodes):
         # This works as a checkpoint to not lose the already collected data
         if dataset is None:
             dataset = minari.create_dataset_from_collector_env(dataset_id=dataset_name,
-                                                     collector_env=env,
-                                                     algorithm_name="Random-Policy",
-                                                     code_permalink="https://github.com/Farama-Foundation/Minari",
-                                                     author="Farama",
-                                                     author_email="contact@farama.org")
+                                                    collector_env=env,
+                                                    algorithm_name="Random-Policy",
+                                                    code_permalink="https://github.com/Farama-Foundation/Minari",
+                                                    author="Farama",
+                                                    author_email="contact@farama.org")
         else:
             env.add_to_dataset(dataset)
 ```
