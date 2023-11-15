@@ -145,14 +145,12 @@ for episode_id in range(total_episodes):
         # Update local Minari dataset every 10 episodes.
         # This works as a checkpoint to not lose the already collected data
         if dataset is None:
-            dataset = minari.create_dataset_from_collector_env(
-                dataset_id=dataset_name,
-                collector_env=env,
-                algorithm_name="Random-Policy",
-                code_permalink="https://github.com/Farama-Foundation/Minari",
-                author="Farama",
-                author_email="contact@farama.org"
-            )
+            dataset = minari.create_dataset_from_collector_env(dataset_id=dataset_name,
+                                                     collector_env=env,
+                                                     algorithm_name="Random-Policy",
+                                                     code_permalink="https://github.com/Farama-Foundation/Minari",
+                                                     author="Farama",
+                                                     author_email="contact@farama.org")
         else:
             env.add_to_dataset(dataset)
 ```
@@ -342,7 +340,7 @@ for _ in range(100):
 
 .. note::
    There are some datasets that provide a different environment for evaluation purposes than the one used for collecting the data. This environment can be recovered by setting to `True` the `eval_env` argument:
-   
+
    .. code-block::
 
         import minari
