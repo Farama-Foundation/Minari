@@ -30,11 +30,13 @@ tutorials/**/index
 ```{toctree}
 :hidden:
 :caption: Datasets
+datasets/minigrid
 datasets/door
 datasets/hammer
 datasets/relocate
 datasets/pen
 datasets/pointmaze
+datasets/antmaze
 datasets/kitchen
 ```
 
