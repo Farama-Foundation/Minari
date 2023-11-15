@@ -74,7 +74,7 @@ class DataCollectorV0(gym.Wrapper):
         observation_space=None,
         action_space=None,
     ):
-        """Initialize the data colletor attributes and create the temporary directory for caching.
+        """Initialize the data collector attributes and create the temporary directory for caching.
 
         Args:
             env (gym.Env): Gymnasium environment

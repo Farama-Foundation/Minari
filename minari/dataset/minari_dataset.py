@@ -83,7 +83,7 @@ class MinariDataset:
 
         Args:
             data (Union[MinariStorage, PathLike]): source of data.
-            episode_indices (Optiona[np.ndarray]): slice of episode indices this dataset is pointing to.
+            episode_indices (Optional[np.ndarray]): slice of episode indices this dataset is pointing to.
         """
         if isinstance(data, MinariStorage):
             self._data = data
