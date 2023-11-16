@@ -12,7 +12,7 @@
         <link rel="canonical" href="https://minari.farama.org/tutorials/using_datasets/behavioral_cloning.html" />
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
-        <title>SyntaxError - Minari Documentation</title>
+        <title>Behavioral cloning with PyTorch - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
@@ -21,8 +21,8 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=49cbaffd" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/termynal.css?v=d6ad0c61" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=befa2ef3" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/css/directory_tree.css?v=2ab1fc38" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=16dd5f1b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/directory_tree.css?v=083c6588" />
     
     
 
@@ -245,7 +245,7 @@
 </ul>
 </li>
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../">Using Datasets</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Using Datasets</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">SyntaxError</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Behavioral cloning with PyTorch</a></li>
 </ul>
 </li>
 </ul>
@@ -367,32 +367,17 @@
           </div>
           <article role="main">
             
-            <section class="sphx-glr-example-title" id="syntaxerror">
-<span id="sphx-glr-tutorials-using-datasets-behavioral-cloning-py"></span><h1>SyntaxError<a class="headerlink" href="#syntaxerror" title="Link to this heading">#</a></h1>
-<p>Example script with invalid Python syntax</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">Behavioral cloning with PyTorch</span>
-<span class="sd">=========================================</span>
-<span class="sd">&quot;&quot;&quot;</span>
-</pre></div>
-</div>
+            <section class="sphx-glr-example-title" id="behavioral-cloning-with-pytorch">
+<span id="sphx-glr-tutorials-using-datasets-behavioral-cloning-py"></span><h1>Behavioral cloning with PyTorch<a class="headerlink" href="#behavioral-cloning-with-pytorch" title="Link to this heading">#</a></h1>
 <p>We present here how to perform behavioral cloning on a Minari dataset using <a class="reference external" href="https://pytorch.org/">PyTorch</a>.
 We will start generating the dataset of the expert policy for the <a class="reference external" href="https://gymnasium.farama.org/environments/classic_control/cart_pole/">CartPole-v1</a> environment, which is a classic control problem.
 The objective is to balance the pole on the cart, and we receive a reward of +1 for each successful timestep.</p>
-<section id="policy-training">
-<h2>Policy training<a class="headerlink" href="#policy-training" title="Link to this heading">#</a></h2>
-<p>To train the expert policy, we use <a class="reference external" href="https://github.com/DLR-RM/stable-baselines3">SB3</a>’s <a class="reference external" href="https://github.com/DLR-RM/rl-baselines3-zoo">rl-zoo3</a> library.
-After installing the library, we train a PPO agent on the environment:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>!pip install rl_zoo3
-!python -m rl_zoo3.train --algo ppo --env CartPole-v1``
-</pre></div>
-</div>
-<p>This will generate a new folder named <cite>log</cite> with the expert policy.</p>
-</section>
 <section id="imports">
 <h2>Imports<a class="headerlink" href="#imports" title="Link to this heading">#</a></h2>
-<p>Let’s import all the required packages and set the random seed for reproducibility:</p>
+<p>For this tutorial you will need the <a class="reference external" href="https://github.com/DLR-RM/rl-baselines3-zoo">RL Baselines3 Zoo</a> library, which you can install with <cite>pip install rl_zoo3</cite>.
+Let’s then import all the required packages and set the random seed for reproducibility:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">sys</span>
 
 <span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -400,6 +385,7 @@ After installing the library, we train a PPO agent on the environment:</p>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
 <span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
 <span class="kn">from</span> <span class="nn">gymnasium</span> <span class="kn">import</span> <span class="n">spaces</span>
+<span class="kn">from</span> <span class="nn">rl_zoo3.train</span> <span class="kn">import</span> <span class="n">train</span>
 <span class="kn">from</span> <span class="nn">stable_baselines3</span> <span class="kn">import</span> <span class="n">PPO</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
 <span class="kn">from</span> <span class="nn">tqdm.auto</span> <span class="kn">import</span> <span class="n">tqdm</span>
@@ -407,9 +393,20 @@ After installing the library, we train a PPO agent on the environment:</p>
 <span class="kn">import</span> <span class="nn">minari</span>
 <span class="kn">from</span> <span class="nn">minari</span> <span class="kn">import</span> <span class="n">DataCollectorV0</span>
 
+
 <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
 </pre></div>
 </div>
+</section>
+<section id="policy-training">
+<h2>Policy training<a class="headerlink" href="#policy-training" title="Link to this heading">#</a></h2>
+<p>Now we can train the expert policy using RL Baselines3 Zoo.
+We train a PPO agent on the environment:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="s2">&quot;--algo&quot;</span><span class="p">,</span> <span class="s2">&quot;ppo&quot;</span><span class="p">,</span> <span class="s2">&quot;--env&quot;</span><span class="p">,</span> <span class="s2">&quot;CartPole-v1&quot;</span><span class="p">]</span>
+<span class="n">train</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>This will generate a new folder named <cite>log</cite> with the expert policy.</p>
 </section>
 <section id="dataset-generation">
 <h2>Dataset generation<a class="headerlink" href="#dataset-generation" title="Link to this heading">#</a></h2>
@@ -440,8 +437,8 @@ After installing the library, we train a PPO agent on the environment:</p>
 </div>
 <p>Once executing the script, the dataset will be saved on your disk. You can display the list of datasets with <code class="docutils literal notranslate"><span class="pre">minari</span> <span class="pre">list</span> <span class="pre">local</span></code> command.</p>
 </section>
-<section id="behavioral-cloning-with-pytorch">
-<h2>Behavioral cloning with PyTorch<a class="headerlink" href="#behavioral-cloning-with-pytorch" title="Link to this heading">#</a></h2>
+<section id="id1">
+<h2>Behavioral cloning with PyTorch<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
 <p>Now we can use PyTorch to learn the policy from the offline dataset.
 Let’s define the policy network:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">PolicyNetwork</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -619,11 +616,11 @@ We then train the policy to predict the actions:</p>
           <div class="toc-tree-container">
             <div class="toc-tree">
               <ul>
-<li><a class="reference internal" href="#">SyntaxError</a><ul>
-<li><a class="reference internal" href="#policy-training">Policy training</a></li>
+<li><a class="reference internal" href="#">Behavioral cloning with PyTorch</a><ul>
 <li><a class="reference internal" href="#imports">Imports</a></li>
+<li><a class="reference internal" href="#policy-training">Policy training</a></li>
 <li><a class="reference internal" href="#dataset-generation">Dataset generation</a></li>
-<li><a class="reference internal" href="#behavioral-cloning-with-pytorch">Behavioral cloning with PyTorch</a></li>
+<li><a class="reference internal" href="#id1">Behavioral cloning with PyTorch</a></li>
 </ul>
 </li>
 </ul>
@@ -715,7 +712,7 @@ We then train the policy to predict the actions:</p>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
     <script src="../../../_static/js/termynal.js?v=ff4c6923"></script>
-    <script src="../../../_static/js/custom.js?v=e881c6cc"></script>
+    <script src="../../../_static/js/custom.js?v=a0ed09ce"></script>
     
     <script>
 

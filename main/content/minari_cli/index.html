@@ -21,8 +21,8 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=49cbaffd" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/termynal.css?v=d6ad0c61" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=befa2ef3" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/directory_tree.css?v=2ab1fc38" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=16dd5f1b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/directory_tree.css?v=083c6588" />
     
     
 
@@ -245,7 +245,7 @@
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/using_datasets/">Using Datasets</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Using Datasets</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../tutorials/using_datasets/behavioral_cloning/">SyntaxError</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/using_datasets/behavioral_cloning/">Behavioral cloning with PyTorch</a></li>
 </ul>
 </li>
 </ul>
@@ -384,7 +384,7 @@ The Minari CLI gives access to most of the package functions through the command
 
 <span class="go">&lt;b&gt; &lt;/b&gt;&lt;font color=&quot;#F4BF75&quot;&gt;&lt;b&gt;Usage: &lt;/b&gt;&lt;/font&gt;&lt;b&gt;minari [OPTIONS] COMMANDS [ARGS]...                       &lt;/b&gt;</span>
 <span class="go">&lt;b&gt;                                                     &lt;/b&gt;</span>
-<span class="go">Minari is a tool for collecting and hosting Offline datasets for Reinforcement Learning environments based on the Gymnaisum API. </span>
+<span class="go">Minari is a tool for collecting and hosting Offline datasets for Reinforcement Learning environments based on the Gymnaisum API.</span>
 
 <span class="go">&lt;font color=&quot;#A5A5A1&quot;&gt;╭─ Options ─────────────────────────────────────────╮&lt;/font&gt;</span>
 <span class="go">&lt;font color=&quot;#A5A5A1&quot;&gt;│ &lt;/font&gt;&lt;font color=&quot;#A1EFE4&quot;&gt;&lt;b&gt;--version&lt;/b&gt;&lt;/font&gt;       &lt;/font&gt;&lt;font color=&quot;#03AC13&quot;&gt;&lt;b&gt;-v&lt;/b&gt;&lt;/font&gt;            Show installed      │</span>
@@ -422,21 +422,21 @@ This command comes with other two required sub-commands:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">// Show local datasets.</span>
 <span class="gp">$ </span>minari<span class="w"> </span>list<span class="w"> </span><span class="nb">local</span>
 
-<span class="go">               &lt;i&gt;Local Minari datasets(&#39;.minari/&#39;)&lt;/i&gt;                   </span>
-<span class="go">┌───────────────┬───────────┬───────────┬─────────┬───────────┐ </span>
+<span class="go">               &lt;i&gt;Local Minari datasets(&#39;.minari/&#39;)&lt;/i&gt;</span>
+<span class="go">┌───────────────┬───────────┬───────────┬─────────┬───────────┐</span>
 <span class="go">│               │     &lt;b&gt;Total&lt;/b&gt; │     &lt;b&gt;Total&lt;/b&gt; │         │           │</span>
 <span class="go">│ &lt;b&gt;Name&lt;/b&gt;          │  &lt;b&gt;Episodes&lt;/b&gt; │     &lt;b&gt;Steps&lt;/b&gt; │  &lt;b&gt;Author&lt;/b&gt; │ &lt;b&gt;Email&lt;/b&gt;     │</span>
 <span class="go">┡───────────────╇───────────╇───────────╇─────────╇───────────┩</span>
 <span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;pen-cloned-v0&lt;/font&gt; │      &lt;font color=&quot;#03AC13&quot;&gt;3736&lt;/font&gt; │    &lt;font color=&quot;#03AC13&quot;&gt;500000&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;rperezvic…&lt;/font&gt;│</span>
 <span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;pen-expert-v0&lt;/font&gt; │      &lt;font color=&quot;#03AC13&quot;&gt;4958&lt;/font&gt; │    &lt;font color=&quot;#03AC13&quot;&gt;499206&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;rperezvic…&lt;/font&gt;│</span>
 <span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;pen-human-v0&lt;/font&gt;  │        &lt;font color=&quot;#03AC13&quot;&gt;25&lt;/font&gt; │      &lt;font color=&quot;#03AC13&quot;&gt;5000&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;rperezvic…&lt;/font&gt;│</span>
-<span class="go">└───────────────┴───────────┴───────────┴─────────┴───────────┘  </span>
+<span class="go">└───────────────┴───────────┴───────────┴─────────┴───────────┘</span>
 
 <span class="go">// Show remote datasets.</span>
 <span class="gp">$ </span>minari<span class="w"> </span>list<span class="w"> </span>remote
 
-<span class="go">                 &lt;i&gt;Minari datasets in Farama server&lt;/i&gt;                    </span>
-<span class="go">┌────────────────┬───────────┬────────────┬─────────┬───────────┐ </span>
+<span class="go">                 &lt;i&gt;Minari datasets in Farama server&lt;/i&gt;</span>
+<span class="go">┌────────────────┬───────────┬────────────┬─────────┬───────────┐</span>
 <span class="go">│                │     &lt;b&gt;Total&lt;/b&gt; │      &lt;b&gt;Total&lt;/b&gt; │         │           │</span>
 <span class="go">│ &lt;b&gt;Name&lt;/b&gt;           │  &lt;b&gt;Episodes&lt;/b&gt; │      &lt;b&gt;Steps&lt;/b&gt; │  &lt;b&gt;Author&lt;/b&gt; │ &lt;b&gt;Email&lt;/b&gt;     │</span>
 <span class="go">┡────────────────╇───────────╇────────────╇─────────╇───────────┩</span>
@@ -446,7 +446,7 @@ This command comes with other two required sub-commands:</p>
 <span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;pen-cloned-v0&lt;/font&gt;  │      &lt;font color=&quot;#03AC13&quot;&gt;3736&lt;/font&gt; │     &lt;font color=&quot;#03AC13&quot;&gt;500000&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;rperezvic…&lt;/font&gt;│</span>
 <span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;pen-expert-v0&lt;/font&gt;  │      &lt;font color=&quot;#03AC13&quot;&gt;4958&lt;/font&gt; │     &lt;font color=&quot;#03AC13&quot;&gt;499206&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;rperezvic…&lt;/font&gt;│</span>
 <span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;pen-human-v0&lt;/font&gt;   │        &lt;font color=&quot;#03AC13&quot;&gt;25&lt;/font&gt; │       &lt;font color=&quot;#03AC13&quot;&gt;5000&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;rperezvic…&lt;/font&gt;│</span>
-<span class="go">└────────────────┴───────────┴────────────┴─────────┴───────────┘ </span>
+<span class="go">└────────────────┴───────────┴────────────┴─────────┴───────────┘</span>
 </pre></div>
 </div>
 </div>
@@ -474,7 +474,7 @@ current content of the local dataset.</p>
 <span class="go">Downloading door-human-v0 from Farama servers...</span>
 
 <span class="go">   * Downloading data file &#39;door-human-v0/data/main_data.hdf5&#39; ...</span>
-<span class="go">   </span>
+
 <span class="go">---&gt; 100%</span>
 
 <span class="go">Dataset door-human-v0 downloaded to &lt;path-to-local-datasets&gt;/.minari/datasets/pen-expert-v0</span>
@@ -489,14 +489,14 @@ current content of the local dataset.</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">// Delete datasets pen-cloned-v0 and door-human-v0</span>
 <span class="gp">$ </span>minari<span class="w"> </span>delete<span class="w"> </span>pen-cloned-v0<span class="w"> </span>door-human-v0
 
-<span class="go">                   &lt;i&gt;Delete local Minari datasets&lt;/i&gt;                    </span>
-<span class="go">┌────────────────┬───────────┬────────────┬─────────┬───────────┐ </span>
+<span class="go">                   &lt;i&gt;Delete local Minari datasets&lt;/i&gt;</span>
+<span class="go">┌────────────────┬───────────┬────────────┬─────────┬───────────┐</span>
 <span class="go">│                │     &lt;b&gt;Total&lt;/b&gt; │      &lt;b&gt;Total&lt;/b&gt; │         │           │</span>
 <span class="go">│ &lt;b&gt;Name&lt;/b&gt;           │  &lt;b&gt;Episodes&lt;/b&gt; │      &lt;b&gt;Steps&lt;/b&gt; │  &lt;b&gt;Author&lt;/b&gt; │ &lt;b&gt;Email&lt;/b&gt;     │</span>
 <span class="go">┡────────────────╇───────────╇────────────╇─────────╇───────────┩</span>
 <span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;door-human-v0&lt;/font&gt;  │        &lt;font color=&quot;#03AC13&quot;&gt;25&lt;/font&gt; │       &lt;font color=&quot;#03AC13&quot;&gt;6729&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;rperezvic…&lt;/font&gt;│</span>
 <span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;pen-cloned-v0&lt;/font&gt;  │      &lt;font color=&quot;#03AC13&quot;&gt;3736&lt;/font&gt; │     &lt;font color=&quot;#03AC13&quot;&gt;500000&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;rperezvic…&lt;/font&gt;│</span>
-<span class="go">└────────────────┴───────────┴────────────┴─────────┴───────────┘ </span>
+<span class="go">└────────────────┴───────────┴────────────┴─────────┴───────────┘</span>
 
 <span class="gp"># </span>Are<span class="w"> </span>you<span class="w"> </span>sure<span class="w"> </span>you<span class="w"> </span>want<span class="w"> </span>to<span class="w"> </span>delete<span class="w"> </span>these<span class="w"> </span><span class="nb">local</span><span class="w"> </span>datasets?<span class="w"> </span><span class="o">[</span>y/N<span class="o">]</span>:$<span class="w"> </span>y
 
@@ -706,7 +706,7 @@ current content of the local dataset.</p>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=7660844c"></script>
     <script src="../../_static/js/termynal.js?v=ff4c6923"></script>
-    <script src="../../_static/js/custom.js?v=e881c6cc"></script>
+    <script src="../../_static/js/custom.js?v=a0ed09ce"></script>
     
     <script>
 
