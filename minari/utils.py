@@ -264,7 +264,7 @@ def split_dataset(
     Args:
         dataset (MinariDataset): the MinariDataset to split
         sizes (List[int]): sizes of the resulting datasets
-        seed (Optiona[int]): random seed
+        seed (Optional[int]): random seed
 
     Returns:
         datasets (List[MinariDataset]): resulting list of datasets

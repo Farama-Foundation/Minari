@@ -1,4 +1,4 @@
-[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://pre-commit.com/) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black) 
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://pre-commit.com/) [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 
 <p align="center">
@@ -18,7 +18,7 @@ To install Minari from [PyPI](https://pypi.org/project/minari/):
 pip install minari
 ```
 
-Note that currently Minari is under a beta release. If you'd like to start testing or contribute to Minari please install this project from source with: 
+Note that currently Minari is under a beta release. If you'd like to start testing or contribute to Minari please install this project from source with:
 
 ```
 git clone https://github.com/Farama-Foundation/Minari.git
@@ -30,7 +30,7 @@ pip install -e .
 
 For an introduction to Minari, see [Basic Usage](https://minari.farama.org/main/content/basic_usage/). To create new datasets using Minari, see our [Pointmaze D4RL Dataset](https://minari.farama.org/main/tutorials/dataset_creation/point_maze_dataset/) tutorial, which re-creates the Maze2D datasets from [D4RL](https://github.com/Farama-Foundation/D4RL).
 
-## API 
+## API
 
 To check available remote datasets:
 

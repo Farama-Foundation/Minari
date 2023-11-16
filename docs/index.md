@@ -76,15 +76,15 @@ $ pip install minari
 // Show remote datasets.
 $ minari list remote
 
-                 <i>Minari datasets in Farama server</i>                    
-┌────────────────┬───────────┬────────────┬─────────┬───────────┐ 
+                 <i>Minari datasets in Farama server</i>
+┌────────────────┬───────────┬────────────┬─────────┬───────────┐
 │                │     <b>Total</b> │      <b>Total</b> │         │           │
 │ <b>Name</b>           │  <b>Episodes</b> │      <b>Steps</b> │  <b>Author</b> │ <b>Email</b>     │
 ┡────────────────╇───────────╇────────────╇─────────╇───────────┩
 │ <font color="#A1EFE4">door-cloned-v0</font> │      <font color="#03AC13">4356</font> │    <font color="#03AC13">1000000</font> │ <font color="#FF00FF">Farama</font>  │<font color="#FF00FF">@farama.org</font>│
 │ <font color="#A1EFE4">door-expert-v0</font> │      <font color="#03AC13">5000</font> │    <font color="#03AC13">1000000</font> │ <font color="#FF00FF">Farama</font>  │<font color="#FF00FF">@farama.org</font>│
 │ <font color="#A1EFE4">door-human-v0</font>  │        <font color="#03AC13">25</font> │       <font color="#03AC13">6729</font> │ <font color="#FF00FF">Farama</font>  │<font color="#FF00FF">@farama.org</font>│
-└────────────────┴───────────┴────────────┴─────────┴───────────┘ 
+└────────────────┴───────────┴────────────┴─────────┴───────────┘
 
 // Download dataset door-cloned-v0
 $ minari download door-cloned-v0

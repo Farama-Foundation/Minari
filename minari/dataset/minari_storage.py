@@ -227,7 +227,7 @@ class MinariStorage:
         return out
 
     def update_episodes(self, episodes: Iterable[dict]):
-        """Update epsiodes in the storage from a list of episode buffer.
+        """Update episodes in the storage from a list of episode buffer.
 
         Args:
             episodes (Iterable[dict]): list of episodes buffer.
@@ -254,7 +254,7 @@ class MinariStorage:
                 _add_episode_to_group(eps_buff, episode_group)
 
             current_steps = file.attrs["total_steps"]
-            assert type(current_steps) == np.int64
+            assert isinstance(current_steps, np.int64)
             total_steps = current_steps + additional_steps
             total_episodes = len(file.keys())
 
@@ -267,13 +267,13 @@ class MinariStorage:
         Args:
             storage (MinariStorage): the other MinariStorage from which the data will be taken
         """
-        if type(storage) != type(self):
+        if not isinstance(storage, MinariStorage):
             # TODO: relax this constraint. In theory one can use MinariStorage API to update
             raise ValueError(f"{type(self)} cannot update from {type(storage)}")
 
         with h5py.File(self._file_path, "a", track_order=True) as file:
             last_episode_id = file.attrs["total_episodes"]
-            assert type(last_episode_id) == np.int64
+            assert isinstance(last_episode_id, np.int64)
             storage_total_episodes = storage.total_episodes
 
             for id in range(storage.total_episodes):
@@ -294,7 +294,7 @@ class MinariStorage:
                 "total_episodes", last_episode_id + storage_total_episodes
             )
             total_steps = file.attrs["total_steps"]
-            assert type(total_steps) == np.int64
+            assert isinstance(total_steps, np.int64)
             file.attrs.modify("total_steps", total_steps + storage.total_steps)
 
             storage_metadata = storage.metadata
@@ -320,7 +320,7 @@ class MinariStorage:
         """Total episodes in the dataset."""
         with h5py.File(self._file_path, "r") as file:
             total_episodes = file.attrs["total_episodes"]
-            assert type(total_episodes) == np.int64
+            assert isinstance(total_episodes, np.int64)
             return total_episodes
 
     @property
@@ -328,7 +328,7 @@ class MinariStorage:
         """Total steps in the dataset."""
         with h5py.File(self._file_path, "r") as file:
             total_steps = file.attrs["total_steps"]
-            assert type(total_steps) == np.int64
+            assert isinstance(total_steps, np.int64)
             return total_steps
 
     @property

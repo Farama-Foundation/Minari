@@ -177,7 +177,7 @@ The stepping data inside the episode group is divided into some required `datase
 </ul>
 </div>
 
-In the case where, the observation space is a relatively complex `Dict` space with the following definition: 
+In the case where, the observation space is a relatively complex `Dict` space with the following definition:
 ```
 spaces.Dict(
     {
@@ -191,7 +191,7 @@ spaces.Dict(
     }
 )
 ```
-and the action space is a `Box` space, the resulting Minari dataset `HDF5` file will end up looking as follows: 
+and the action space is a `Box` space, the resulting Minari dataset `HDF5` file will end up looking as follows:
 
 <div class="only-light">
 <ul class="directory-list">
@@ -256,7 +256,7 @@ and the action space is a `Box` space, the resulting Minari dataset `HDF5` file 
                         </ul>
                     </li>
                 </ul>
-                </li>                    
+                </li>
                 <li class="dataset-white">actions</li>
                 <li class="dataset-white">terminations</li>
                 <li class="dataset-white">truncations</li>
@@ -287,7 +287,7 @@ and the action space is a `Box` space, the resulting Minari dataset `HDF5` file 
 </ul>
 </div>
 
-Similarly, consider the case where we have a `Box` space as an observation space and a relatively complex `Tuple` space as an action space with the following definition: 
+Similarly, consider the case where we have a `Box` space as an observation space and a relatively complex `Tuple` space as an action space with the following definition:
 ```
 spaces.Tuple(
     (
@@ -301,7 +301,7 @@ spaces.Tuple(
     )
 )
 ```
-In this case, the resulting Minari dataset `HDF5` file will end up looking as follows: 
+In this case, the resulting Minari dataset `HDF5` file will end up looking as follows:
 
 <div class="only-light">
 <ul class="directory-list">
@@ -406,7 +406,7 @@ The required `datasets` found in the episode groups correspond to the data invol
 - `observations`: `shape=(num_steps + 1, observation_space_component_shape)`. Observations nest in the same way as actions if the top level space is a `Tuple` or `Dict` space. The value of `num_steps + 1` is the same for datasets at any level under `observations`. These datasets have an additional element because the initial observation of the environment when calling `obs, info = env.reset()` is also saved. `observation_space_component_shape` will vary between datasets, depending on the shapes of the simple spaces specified in the observation space.
 - `rewards`: `shape=(num_steps, 1)`, stores the returned reward in each step.
 - `terminations`: `shape=(num_steps, 1)`, the `dtype` is `np.bool` and the last element value will be `True` if the episode finished due to  a `terminated` step return.
-- `truncations`: `shape=(num_steps, 1)`, the `dtype` is `np.bool` and the last element value will be `True` if the episode finished due to a `truncated` step return.  
+- `truncations`: `shape=(num_steps, 1)`, the `dtype` is `np.bool` and the last element value will be `True` if the episode finished due to a `truncated` step return.
 
 The `dtype` of the numpy array datasets can be of any type compatible with [`h5py`](https://docs.h5py.org/en/latest/faq.html#what-datatypes-are-supported).
 
@@ -526,7 +526,7 @@ The Minari storage format supports the following observation and action spaces:
 | [Text](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/text.py)         |The elements of this space are bounded strings from a charset. Note: at the moment, we don't guarantee support for all surrogate pairs.                                                                        |                                                                       |
 
 #### Space Serialization
-Spaces are serialized to a JSON format when saving to disk. This serialization supports all space types supported by Minari, and aims to be both human, and machine readable. The serialized action and observation spaces for the episodes in the dataset are saved as strings in the global HDF5 group metadata in `main_data.hdf5` for a particular dataset as `action_space` and `observation_space` respectively. All episodes in `main_data.hdf5` must have observations and actions that comply with these action and observation spaces. 
+Spaces are serialized to a JSON format when saving to disk. This serialization supports all space types supported by Minari, and aims to be both human, and machine readable. The serialized action and observation spaces for the episodes in the dataset are saved as strings in the global HDF5 group metadata in `main_data.hdf5` for a particular dataset as `action_space` and `observation_space` respectively. All episodes in `main_data.hdf5` must have observations and actions that comply with these action and observation spaces.
 
 ## Minari Data Structures
 

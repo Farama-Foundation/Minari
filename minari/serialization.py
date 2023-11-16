@@ -20,7 +20,7 @@ def _serialize_box(space: spaces.Box, to_string=True) -> Union[Dict, str]:
     result["type"] = "Box"
     result["dtype"] = str(space.dtype)
     result["shape"] = list(space.shape)
-    # we have to use python float type to serialze the np.float32 types
+    # we have to use python float type to serialize the np.float32 types
     result["low"] = space.low.tolist()
     result["high"] = space.high.tolist()
 

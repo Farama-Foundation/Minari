@@ -195,7 +195,7 @@ def download_dataset(dataset_id: str, force_download: bool = False):
 
     print(f"\nDataset {dataset_id} downloaded to {file_path}")
 
-    # Skip a force download of an incompatible dataset versino
+    # Skip a force download of an incompatible dataset version
     if download_dataset in compatible_dataset_versions:
         combined_datasets = load_dataset(dataset_id).spec.combined_datasets
 
