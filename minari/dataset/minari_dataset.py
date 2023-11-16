@@ -153,7 +153,7 @@ class MinariDataset:
                 f"`eval_env` has been set to True but the dataset {self._dataset_id} doesn't provide an evaluation environment. Instead, the environment used for collecting the data will be returned: {self._env_spec}"
             )
 
-        if self.env_spec is None:
+        if self._env_spec is None:
             raise ValueError("Environment cannot be recovered when env_spec is None")
 
         return gym.make(self._env_spec, **kwargs)

@@ -254,7 +254,7 @@ class MinariStorage:
                 _add_episode_to_group(eps_buff, episode_group)
 
             current_steps = file.attrs["total_steps"]
-            assert isinstance(current_steps, np.int64)
+            assert isinstance(current_steps, np.integer)
             total_steps = current_steps + additional_steps
             total_episodes = len(file.keys())
 
@@ -273,7 +273,7 @@ class MinariStorage:
 
         with h5py.File(self._file_path, "a", track_order=True) as file:
             last_episode_id = file.attrs["total_episodes"]
-            assert isinstance(last_episode_id, np.int64)
+            assert isinstance(last_episode_id, np.integer)
             storage_total_episodes = storage.total_episodes
 
             for id in range(storage.total_episodes):
@@ -294,7 +294,7 @@ class MinariStorage:
                 "total_episodes", last_episode_id + storage_total_episodes
             )
             total_steps = file.attrs["total_steps"]
-            assert isinstance(total_steps, np.int64)
+            assert isinstance(total_steps, np.integer)
             file.attrs.modify("total_steps", total_steps + storage.total_steps)
 
             storage_metadata = storage.metadata
@@ -316,19 +316,19 @@ class MinariStorage:
         return os.path.dirname(self._file_path)
 
     @property
-    def total_episodes(self) -> np.int64:
+    def total_episodes(self) -> np.integer:
         """Total episodes in the dataset."""
         with h5py.File(self._file_path, "r") as file:
             total_episodes = file.attrs["total_episodes"]
-            assert isinstance(total_episodes, np.int64)
+            assert isinstance(total_episodes, np.integer)
             return total_episodes
 
     @property
-    def total_steps(self) -> np.int64:
+    def total_steps(self) -> np.integer:
         """Total steps in the dataset."""
         with h5py.File(self._file_path, "r") as file:
             total_steps = file.attrs["total_steps"]
-            assert isinstance(total_steps, np.int64)
+            assert isinstance(total_steps, np.integer)
             return total_steps
 
     @property
