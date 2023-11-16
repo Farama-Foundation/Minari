@@ -9,7 +9,7 @@ Minari is a standard dataset hosting interface for Offline Reinforcement Learnin
 
 ## Installation
 
-To install the most recent version of the Minari library run this command: 
+To install the most recent version of the Minari library run this command:
 
 ```bash
 pip install minari
@@ -30,7 +30,7 @@ We support Python 3.8, 3.9, 3.10 and 3.11 on Linux and macOS.
 ### Collecting Data
 
 ```{eval-rst}
-Minari can abstract the data collection process. This is achieved by using the :class:`minari.DataCollectorV0` wrapper which stores the environments stepping data in internal memory buffers before saving the dataset into disk. The :class:`minari.DataCollectorV0` wrapper can also perform caching by scheduling the amount of episodes or steps that are stored in-memory before saving the data in a temporary `Minari dataset file </content/dataset_standards>`_ . This wrapper also computes relevant metadata of the dataset while collecting the data. 
+Minari can abstract the data collection process. This is achieved by using the :class:`minari.DataCollectorV0` wrapper which stores the environments stepping data in internal memory buffers before saving the dataset into disk. The :class:`minari.DataCollectorV0` wrapper can also perform caching by scheduling the amount of episodes or steps that are stored in-memory before saving the data in a temporary `Minari dataset file </content/dataset_standards>`_ . This wrapper also computes relevant metadata of the dataset while collecting the data.
 
 The wrapper is very simple to initialize:
 ```
@@ -73,11 +73,11 @@ for _ in range(total_episodes):
         # random action policy
         action = env.action_space.sample()
         obs, rew, terminated, truncated, info = env.step(action)
-        
+
         if terminated or truncated:
             break
 
-dataset = minari.create_dataset_from_collector_env(dataset_id="CartPole-v1-test-v0", 
+dataset = minari.create_dataset_from_collector_env(dataset_id="CartPole-v1-test-v0",
                                                    collector_env=env,
                                                    algorithm_name="Random-Policy",
                                                    code_permalink="https://github.com/Farama-Foundation/Minari",
@@ -137,7 +137,7 @@ for episode_id in range(total_episodes):
         # random action policy
         action = env.action_space.sample()
         obs, rew, terminated, truncated, info = env.step(action)
-        
+
         if terminated or truncated:
             break
 
@@ -145,7 +145,7 @@ for episode_id in range(total_episodes):
         # Update local Minari dataset every 10 episodes.
         # This works as a checkpoint to not lose the already collected data
         if dataset is None:
-            dataset = minari.create_dataset_from_collector_env(dataset_id=dataset_name, 
+            dataset = minari.create_dataset_from_collector_env(dataset_id=dataset_name,
                                                     collector_env=env,
                                                     algorithm_name="Random-Policy",
                                                     code_permalink="https://github.com/Farama-Foundation/Minari",
@@ -216,7 +216,7 @@ for i in range(5):
 ```
 
 ```{eval-rst}
-This code will show the following. 
+This code will show the following.
 ```
 
 ```bash
@@ -245,7 +245,7 @@ for episode in episodes_generator:
 ```
 
 ```{eval-rst}
-This code will show the following. 
+This code will show the following.
 ```
 
 ```bash
@@ -340,7 +340,7 @@ for _ in range(100):
 
 .. note::
    There are some datasets that provide a different environment for evaluation purposes than the one used for collecting the data. This environment can be recovered by setting to `True` the `eval_env` argument:
-   
+
    .. code-block::
 
         import minari
@@ -361,7 +361,7 @@ Lastly, in the case of having two or more Minari datasets created with the same 
 >>> import minari
 >>> human_dataset = minari.load_dataset('door-human-v0')
 >>> expert_dataset = minari.load_dataset('door-expert-v0')
->>> combine_dataset = minari.combine_datasets(datasets_to_combine=[human_dataset,               expert_dataset], 
+>>> combine_dataset = minari.combine_datasets(datasets_to_combine=[human_dataset,               expert_dataset],
                                         new_dataset_id="door-all-v0")
 >>> combine_dataset.name
 'door-all-v0'

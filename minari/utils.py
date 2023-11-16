@@ -158,6 +158,8 @@ def validate_datasets_to_combine(
     Tests if the datasets were created with the same environment (`env_spec`) and re-calculates the
     `max_episode_steps` argument.
 
+    Also checks that the datasets obs/act spaces are the same.
+
     Args:
         datasets_to_combine (List[MinariDataset]): list of MinariDataset to combine
 
@@ -241,7 +243,9 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_id: s
     new_dataset_path = get_dataset_path(new_dataset_id)
     new_dataset_path.mkdir()
     new_storage = MinariStorage.new(
-        new_dataset_path.joinpath("data"), env_spec=combined_dataset_env_spec
+        new_dataset_path.joinpath("data"), env_spec=combined_dataset_env_spec,
+        observation_space=datasets_to_combine[0].observation_space,
+        action_space=datasets_to_combine[0].action_space
     )
 
     new_storage.update_metadata(
@@ -268,7 +272,7 @@ def split_dataset(
     Args:
         dataset (MinariDataset): the MinariDataset to split
         sizes (List[int]): sizes of the resulting datasets
-        seed (Optiona[int]): random seed
+        seed (Optional[int]): random seed
 
     Returns:
         datasets (List[MinariDataset]): resulting list of datasets
