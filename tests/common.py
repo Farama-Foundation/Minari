@@ -1,6 +1,8 @@
+import copy
 import sys
 import unicodedata
-from typing import Any, Iterable, List, Optional, Union
+from collections import OrderedDict
+from typing import Any, Dict, Iterable, List, Optional, Union
 
 import gymnasium as gym
 import numpy as np
@@ -627,3 +629,63 @@ def check_episode_data_integrity(
         assert episode.total_timesteps == len(episode.rewards)
         assert episode.total_timesteps == len(episode.terminations)
         assert episode.total_timesteps == len(episode.truncations)
+
+
+def _space_subset_helper(entry: Dict):
+
+    return OrderedDict(
+        {
+            "component_2": OrderedDict(
+                {"subcomponent_2": entry["component_2"]["subcomponent_2"]}
+            )
+        }
+    )
+
+
+def get_sample_buffer_for_dataset_from_env(env, num_episodes=10):
+
+    buffer = []
+    observations = []
+    actions = []
+    rewards = []
+    terminations = []
+    truncations = []
+
+    observation, info = env.reset(seed=42)
+
+    # Step the environment, DataCollectorV0 wrapper will do the data collection job
+    observation, _ = env.reset()
+    observations.append(_space_subset_helper(observation))
+    for episode in range(num_episodes):
+        terminated = False
+        truncated = False
+
+        while not terminated and not truncated:
+            action = env.action_space.sample()  # User-defined policy function
+            observation, reward, terminated, truncated, _ = env.step(action)
+            observations.append(_space_subset_helper(observation))
+            actions.append(_space_subset_helper(action))
+            rewards.append(reward)
+            terminations.append(terminated)
+            truncations.append(truncated)
+
+        episode_buffer = {
+            "observations": copy.deepcopy(observations),
+            "actions": copy.deepcopy(actions),
+            "rewards": np.asarray(rewards),
+            "terminations": np.asarray(terminations),
+            "truncations": np.asarray(truncations),
+        }
+
+        buffer.append(episode_buffer)
+
+        observations.clear()
+        actions.clear()
+        rewards.clear()
+        terminations.clear()
+        truncations.clear()
+
+        observation, _ = env.reset()
+        observations.append(_space_subset_helper(observation))
+
+    return buffer

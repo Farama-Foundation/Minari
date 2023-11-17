@@ -150,7 +150,9 @@ def combine_minari_version_specifiers(specifier_set: SpecifierSet) -> SpecifierS
     return final_version_specifier
 
 
-def validate_datasets_to_combine(datasets_to_combine: List[MinariDataset]) -> EnvSpec:
+def validate_datasets_to_combine(
+    datasets_to_combine: List[MinariDataset],
+) -> EnvSpec | None:
     """Check if the given datasets can be combined.
 
     Tests if the datasets were created with the same environment (`env_spec`) and re-calculates the
@@ -163,36 +165,42 @@ def validate_datasets_to_combine(datasets_to_combine: List[MinariDataset]) -> En
 
     Returns:
         combined_dataset_env_spec (EnvSpec): the resulting EnvSpec of combining the MinariDatasets
+
     """
-    assert all(isinstance(dataset, MinariDataset) for dataset in datasets_to_combine), f"Some of the datasets to combine are not of type {MinariDataset}"
+    # get first among the dataset's env_spec which is not None
+    first_not_none_env_spec = next((dataset.spec.env_spec for dataset in datasets_to_combine if dataset.spec.env_spec is not None), None)
 
-    # Check if there are any `None` max_episode_steps
-    if any(
-        (dataset.spec.env_spec.max_episode_steps is None)
-        for dataset in datasets_to_combine
-    ):
-        max_episode_steps = None
-    else:
-        max_episode_steps = max(
-            dataset.spec.env_spec.max_episode_steps for dataset in datasets_to_combine
-        )
+    # early return where all datasets have no env_spec
+    if first_not_none_env_spec is None:
+        return None
 
-    combine_env_spec = []
+    common_env_spec = copy.deepcopy(first_not_none_env_spec)
+
+    # updating the common_env_spec's max_episode_steps & checking equivalence of all env specs
     for dataset in datasets_to_combine:
-        dataset_env_spec = copy.deepcopy(dataset.spec.env_spec)
-        dataset_env_spec.max_episode_steps = max_episode_steps
-        combine_env_spec.append(dataset_env_spec)
+        assert isinstance(dataset, MinariDataset)
+        env_spec = dataset.spec.env_spec
+        if env_spec is not None:
+            if (
+                common_env_spec.max_episode_steps is None
+                or env_spec.max_episode_steps is None
+            ):
+                common_env_spec.max_episode_steps = None
+            else:
+                common_env_spec.max_episode_steps = max(
+                    common_env_spec.max_episode_steps, env_spec.max_episode_steps
+                )
+            # setting max_episode_steps in object's copy to same value for sake of checking equality
+            env_spec_copy = copy.deepcopy(env_spec)
+            env_spec_copy.max_episode_steps = common_env_spec.max_episode_steps
+            if env_spec_copy != common_env_spec:
+                raise ValueError(
+                    "The datasets to be combined have different values for `env_spec` attribute."
+                )
+        else:
+            raise ValueError("Cannot combine datasets having env_spec with those having no env_spec.")
 
-    assert all(
-        env_spec == combine_env_spec[0] for env_spec in combine_env_spec
-    ), "The datasets to be combined have different values for `env_spec` attribute."
-
-    # Check that all datasets have the same action/observation space
-    if any(dataset.action_space != datasets_to_combine[0].action_space for dataset in datasets_to_combine):
-        raise ValueError("The datasets to combine must have the same action space.")
-    if any(dataset.observation_space != datasets_to_combine[0].observation_space for dataset in datasets_to_combine):
-        raise ValueError("The datasets to combine must have the same observation space.")
-    return combine_env_spec[0]
+    return common_env_spec
 
 
 class RandomPolicy:
@@ -301,7 +309,7 @@ def get_average_reference_score(
     for _ in range(num_episodes):
         while True:
             action = policy(obs)
-            obs, _, terminated, truncated, info = env.step(action)
+            obs, _, terminated, truncated, info = env.step(action)  # pyright: ignore[reportGeneralTypeIssues]
             if terminated or truncated:
                 episode_returns.append(info["episode"]["r"])
                 obs, _ = env.reset()
@@ -326,8 +334,8 @@ def _generate_dataset_path(dataset_id: str) -> str | os.PathLike:
 
 
 def _generate_dataset_metadata(
-    env_spec: EnvSpec,
     dataset_id: str,
+    env_spec: Optional[EnvSpec],
     eval_env: Optional[str | gym.Env | EnvSpec],
     algorithm_name: Optional[str],
     author: Optional[str],
@@ -403,7 +411,7 @@ def _generate_dataset_metadata(
     if eval_env is None:
         warnings.warn(
             f"`eval_env` is set to None. If another environment is intended to be used for evaluation please specify corresponding Gymnasium environment (gym.Env | gym.envs.registration.EnvSpec).\
-                  If None the environment used to collect the data (`env={env_spec}`) will be used for this purpose.",
+              If None the environment used to collect the data (`env={env_spec}`) will be used for this purpose.",
             UserWarning,
         )
         eval_env_spec = env_spec
@@ -421,7 +429,13 @@ def _generate_dataset_metadata(
         assert eval_env_spec is not None
         dataset_metadata["eval_env_spec"] = eval_env_spec.to_json()
 
-    if expert_policy is not None or ref_max_score is not None:
+    if env_spec is None:
+        warnings.warn(
+            "env_spec is None, no environment spec is provided during collection for this dataset",
+            UserWarning,
+        )
+
+    if eval_env_spec is not None and (expert_policy is not None or ref_max_score is not None):
         env_ref_score = gym.make(eval_env_spec)
         if ref_min_score is None:
             ref_min_score = get_average_reference_score(
@@ -441,8 +455,8 @@ def _generate_dataset_metadata(
 
 def create_dataset_from_buffers(
     dataset_id: str,
-    env: str | gym.Env | EnvSpec,
     buffer: List[Dict[str, Union[list, Dict]]],
+    env: Optional[str | gym.Env | EnvSpec] = None,
     eval_env: Optional[str | gym.Env | EnvSpec] = None,
     algorithm_name: Optional[str] = None,
     author: Optional[str] = None,
@@ -473,10 +487,10 @@ def create_dataset_from_buffers(
 
     Args:
         dataset_id (str): name id to identify Minari dataset.
-        env (str|gym.Env|EnvSpec): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) used to collect the buffer data.
         buffer (list[Dict[str, Union[list, Dict]]]): list of episode dictionaries with data.
+        env (Optional[str|gym.Env|EnvSpec]): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) used to collect the buffer data. Defaults to None.
         eval_env (Optional[str|gym.Env|EnvSpec]): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) to use for evaluation with the dataset. After loading the dataset, the environment can be recovered as follows: `MinariDataset.recover_environment(eval_env=True).
-                                                If None the `env` used to collect the buffer data should be used for evaluation.
+                                                If None, and if the `env` used to collect the buffer data is available, latter will be used for evaluation.
         algorithm_name (Optional[str], optional): name of the algorithm used to collect the data. Defaults to None.
         author (Optional[str], optional): author that generated the dataset. Defaults to None.
         author_email (Optional[str], optional): email of the author that generated the dataset. Defaults to None.
@@ -503,11 +517,25 @@ def create_dataset_from_buffers(
         env_spec = env
     elif isinstance(env, gym.Env):
         env_spec = env.spec
+    elif env is None:
+        if observation_space is None or action_space is None:
+            raise ValueError("Both observation space and action space must be provided, if env is None")
+        env_spec = None
     else:
-        raise ValueError("The `env` argument must be of types str|EnvSpec|gym.Env")
+        raise ValueError("The `env` argument must be of types str|EnvSpec|gym.Env|None")
+
+    if isinstance(env, (str, EnvSpec)):
+        env = gym.make(env)
+    if observation_space is None:
+        assert isinstance(env, gym.Env)
+        observation_space = env.observation_space
+    if action_space is None:
+        assert isinstance(env, gym.Env)
+        action_space = env.action_space
+
     metadata = _generate_dataset_metadata(
-        env_spec,
         dataset_id,
+        env_spec,
         eval_env,
         algorithm_name,
         author,
@@ -575,8 +603,8 @@ def create_dataset_from_collector_env(
     assert collector_env.datasets_path is not None
     dataset_path = _generate_dataset_path(dataset_id)
     metadata: Dict[str, Any] = _generate_dataset_metadata(
-        copy.deepcopy(collector_env.env.spec),
         dataset_id,
+        copy.deepcopy(collector_env.env.spec),
         eval_env,
         algorithm_name,
         author,

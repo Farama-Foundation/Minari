@@ -49,7 +49,7 @@ def parse_dataset_id(dataset_id: str) -> tuple[str | None, str, int]:
 
 @dataclass
 class MinariDatasetSpec:
-    env_spec: EnvSpec
+    env_spec: Optional[EnvSpec]
     total_episodes: int
     total_steps: np.int64
     dataset_id: str
@@ -99,9 +99,11 @@ class MinariDataset:
 
         metadata = self._data.metadata
 
-        env_spec = metadata["env_spec"]
-        assert isinstance(env_spec, str)
-        self._env_spec = EnvSpec.from_json(env_spec)
+        env_spec = metadata.get("env_spec")
+        if env_spec is not None:
+            assert isinstance(env_spec, str)
+            env_spec = EnvSpec.from_json(env_spec)
+        self._env_spec = env_spec
 
         eval_env_spec = metadata.get("eval_env_spec")
         if eval_env_spec is not None:
@@ -150,7 +152,11 @@ class MinariDataset:
             logger.info(
                 f"`eval_env` has been set to True but the dataset {self._dataset_id} doesn't provide an evaluation environment. Instead, the environment used for collecting the data will be returned: {self._env_spec}"
             )
-        return gym.make(self._env_spec, **kwargs)
+
+        if self.env_spec is None:
+            raise ValueError("Environment cannot be recovered when env_spec is None")
+
+        return gym.make(self.env_spec, **kwargs)
 
     def set_seed(self, seed: int):
         """Set seed for random episode sampling generator."""
