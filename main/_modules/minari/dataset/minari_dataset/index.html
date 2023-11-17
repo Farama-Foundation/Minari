@@ -408,7 +408,7 @@
 
 <span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">MinariDatasetSpec</span><span class="p">:</span>
-    <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span>
+    <span class="n">env_spec</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">EnvSpec</span><span class="p">]</span>
     <span class="n">total_episodes</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">total_steps</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span>
     <span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span>
@@ -460,9 +460,11 @@
 
         <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">metadata</span>
 
-        <span class="n">env_spec</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;env_spec&quot;</span><span class="p">]</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span> <span class="o">=</span> <span class="n">EnvSpec</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">env_spec</span><span class="p">)</span>
+        <span class="n">env_spec</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;env_spec&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">env_spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env_spec</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+            <span class="n">env_spec</span> <span class="o">=</span> <span class="n">EnvSpec</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">env_spec</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span> <span class="o">=</span> <span class="n">env_spec</span>
 
         <span class="n">eval_env_spec</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;eval_env_spec&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">eval_env_spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -511,7 +513,11 @@
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;`eval_env` has been set to True but the dataset </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_dataset_id</span><span class="si">}</span><span class="s2"> doesn&#39;t provide an evaluation environment. Instead, the environment used for collecting the data will be returned: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
-        <span class="k">return</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_env_spec</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">env_spec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Environment cannot be recovered when env_spec is None&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env_spec</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">set_seed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set seed for random episode sampling generator.&quot;&quot;&quot;</span>

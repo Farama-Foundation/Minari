@@ -509,7 +509,9 @@
     <span class="k">return</span> <span class="n">final_version_specifier</span>
 
 
-<span class="k">def</span> <span class="nf">validate_datasets_to_combine</span><span class="p">(</span><span class="n">datasets_to_combine</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">MinariDataset</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">EnvSpec</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">validate_datasets_to_combine</span><span class="p">(</span>
+    <span class="n">datasets_to_combine</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">MinariDataset</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EnvSpec</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the given datasets can be combined.</span>
 
 <span class="sd">    Tests if the datasets were created with the same environment (`env_spec`) and re-calculates the</span>
@@ -522,36 +524,42 @@
 
 <span class="sd">    Returns:</span>
 <span class="sd">        combined_dataset_env_spec (EnvSpec): the resulting EnvSpec of combining the MinariDatasets</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">MinariDataset</span><span class="p">)</span> <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">datasets_to_combine</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Some of the datasets to combine are not of type </span><span class="si">{</span><span class="n">MinariDataset</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="c1"># get first among the dataset&#39;s env_spec which is not None</span>
+    <span class="n">first_not_none_env_spec</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">dataset</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">env_spec</span> <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">datasets_to_combine</span> <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">env_spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
 
-    <span class="c1"># Check if there are any `None` max_episode_steps</span>
-    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span>
-        <span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">max_episode_steps</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">datasets_to_combine</span>
-    <span class="p">):</span>
-        <span class="n">max_episode_steps</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">max_episode_steps</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
-            <span class="n">dataset</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">env_spec</span><span class="o">.</span><span class="n">max_episode_steps</span> <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">datasets_to_combine</span>
-        <span class="p">)</span>
+    <span class="c1"># early return where all datasets have no env_spec</span>
+    <span class="k">if</span> <span class="n">first_not_none_env_spec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="n">combine_env_spec</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">common_env_spec</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">first_not_none_env_spec</span><span class="p">)</span>
+
+    <span class="c1"># updating the common_env_spec&#39;s max_episode_steps &amp; checking equivalence of all env specs</span>
     <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">datasets_to_combine</span><span class="p">:</span>
-        <span class="n">dataset_env_spec</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">env_spec</span><span class="p">)</span>
-        <span class="n">dataset_env_spec</span><span class="o">.</span><span class="n">max_episode_steps</span> <span class="o">=</span> <span class="n">max_episode_steps</span>
-        <span class="n">combine_env_spec</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dataset_env_spec</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span> <span class="n">MinariDataset</span><span class="p">)</span>
+        <span class="n">env_spec</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">env_spec</span>
+        <span class="k">if</span> <span class="n">env_spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">common_env_spec</span><span class="o">.</span><span class="n">max_episode_steps</span> <span class="ow">is</span> <span class="kc">None</span>
+                <span class="ow">or</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">max_episode_steps</span> <span class="ow">is</span> <span class="kc">None</span>
+            <span class="p">):</span>
+                <span class="n">common_env_spec</span><span class="o">.</span><span class="n">max_episode_steps</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">common_env_spec</span><span class="o">.</span><span class="n">max_episode_steps</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
+                    <span class="n">common_env_spec</span><span class="o">.</span><span class="n">max_episode_steps</span><span class="p">,</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">max_episode_steps</span>
+                <span class="p">)</span>
+            <span class="c1"># setting max_episode_steps in object&#39;s copy to same value for sake of checking equality</span>
+            <span class="n">env_spec_copy</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">env_spec</span><span class="p">)</span>
+            <span class="n">env_spec_copy</span><span class="o">.</span><span class="n">max_episode_steps</span> <span class="o">=</span> <span class="n">common_env_spec</span><span class="o">.</span><span class="n">max_episode_steps</span>
+            <span class="k">if</span> <span class="n">env_spec_copy</span> <span class="o">!=</span> <span class="n">common_env_spec</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;The datasets to be combined have different values for `env_spec` attribute.&quot;</span>
+                <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot combine datasets having env_spec with those having no env_spec.&quot;</span><span class="p">)</span>
 
-    <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span>
-        <span class="n">env_spec</span> <span class="o">==</span> <span class="n">combine_env_spec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">env_spec</span> <span class="ow">in</span> <span class="n">combine_env_spec</span>
-    <span class="p">),</span> <span class="s2">&quot;The datasets to be combined have different values for `env_spec` attribute.&quot;</span>
-
-    <span class="c1"># Check that all datasets have the same action/observation space</span>
-    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">action_space</span> <span class="o">!=</span> <span class="n">datasets_to_combine</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">action_space</span> <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">datasets_to_combine</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The datasets to combine must have the same action space.&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">!=</span> <span class="n">datasets_to_combine</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">observation_space</span> <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">datasets_to_combine</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The datasets to combine must have the same observation space.&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">combine_env_spec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">common_env_spec</span>
 
 
 <span class="k">class</span> <span class="nc">RandomPolicy</span><span class="p">:</span>
@@ -666,7 +674,7 @@
     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_episodes</span><span class="p">):</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">action</span> <span class="o">=</span> <span class="n">policy</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
-            <span class="n">obs</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+            <span class="n">obs</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportGeneralTypeIssues]</span>
             <span class="k">if</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span><span class="p">:</span>
                 <span class="n">episode_returns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;episode&quot;</span><span class="p">][</span><span class="s2">&quot;r&quot;</span><span class="p">])</span>
                 <span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
@@ -691,8 +699,8 @@
 
 
 <span class="k">def</span> <span class="nf">_generate_dataset_metadata</span><span class="p">(</span>
-    <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">,</span>
     <span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">env_spec</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">EnvSpec</span><span class="p">],</span>
     <span class="n">eval_env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span> <span class="o">|</span> <span class="n">EnvSpec</span><span class="p">],</span>
     <span class="n">algorithm_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">author</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
@@ -768,7 +776,7 @@
     <span class="k">if</span> <span class="n">eval_env</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;`eval_env` is set to None. If another environment is intended to be used for evaluation please specify corresponding Gymnasium environment (gym.Env | gym.envs.registration.EnvSpec).</span><span class="se">\</span>
-<span class="s2">                  If None the environment used to collect the data (`env=</span><span class="si">{</span><span class="n">env_spec</span><span class="si">}</span><span class="s2">`) will be used for this purpose.&quot;</span><span class="p">,</span>
+<span class="s2">              If None the environment used to collect the data (`env=</span><span class="si">{</span><span class="n">env_spec</span><span class="si">}</span><span class="s2">`) will be used for this purpose.&quot;</span><span class="p">,</span>
             <span class="ne">UserWarning</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">eval_env_spec</span> <span class="o">=</span> <span class="n">env_spec</span>
@@ -786,7 +794,13 @@
         <span class="k">assert</span> <span class="n">eval_env_spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="n">dataset_metadata</span><span class="p">[</span><span class="s2">&quot;eval_env_spec&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">eval_env_spec</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
 
-    <span class="k">if</span> <span class="n">expert_policy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">ref_max_score</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">env_spec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="s2">&quot;env_spec is None, no environment spec is provided during collection for this dataset&quot;</span><span class="p">,</span>
+            <span class="ne">UserWarning</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">eval_env_spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">expert_policy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">ref_max_score</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
         <span class="n">env_ref_score</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="n">eval_env_spec</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">ref_min_score</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">ref_min_score</span> <span class="o">=</span> <span class="n">get_average_reference_score</span><span class="p">(</span>
@@ -808,8 +822,8 @@
 <a class="viewcode-back" href="../../../api/minari_functions/#minari.create_dataset_from_buffers">[docs]</a>
 <span class="k">def</span> <span class="nf">create_dataset_from_buffers</span><span class="p">(</span>
     <span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">env</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span> <span class="o">|</span> <span class="n">EnvSpec</span><span class="p">,</span>
     <span class="n">buffer</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]]],</span>
+    <span class="n">env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span> <span class="o">|</span> <span class="n">EnvSpec</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">eval_env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span> <span class="o">|</span> <span class="n">EnvSpec</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">algorithm_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">author</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -840,10 +854,10 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        dataset_id (str): name id to identify Minari dataset.</span>
-<span class="sd">        env (str|gym.Env|EnvSpec): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) used to collect the buffer data.</span>
 <span class="sd">        buffer (list[Dict[str, Union[list, Dict]]]): list of episode dictionaries with data.</span>
+<span class="sd">        env (Optional[str|gym.Env|EnvSpec]): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) used to collect the buffer data. Defaults to None.</span>
 <span class="sd">        eval_env (Optional[str|gym.Env|EnvSpec]): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) to use for evaluation with the dataset. After loading the dataset, the environment can be recovered as follows: `MinariDataset.recover_environment(eval_env=True).</span>
-<span class="sd">                                                If None the `env` used to collect the buffer data should be used for evaluation.</span>
+<span class="sd">                                                If None, and if the `env` used to collect the buffer data is available, latter will be used for evaluation.</span>
 <span class="sd">        algorithm_name (Optional[str], optional): name of the algorithm used to collect the data. Defaults to None.</span>
 <span class="sd">        author (Optional[str], optional): author that generated the dataset. Defaults to None.</span>
 <span class="sd">        author_email (Optional[str], optional): email of the author that generated the dataset. Defaults to None.</span>
@@ -870,11 +884,25 @@
         <span class="n">env_spec</span> <span class="o">=</span> <span class="n">env</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
         <span class="n">env_spec</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span>
+    <span class="k">elif</span> <span class="n">env</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">observation_space</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">action_space</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Both observation space and action space must be provided, if env is None&quot;</span><span class="p">)</span>
+        <span class="n">env_spec</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The `env` argument must be of types str|EnvSpec|gym.Env&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The `env` argument must be of types str|EnvSpec|gym.Env|None&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">EnvSpec</span><span class="p">)):</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">observation_space</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">)</span>
+        <span class="n">observation_space</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
+    <span class="k">if</span> <span class="n">action_space</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">)</span>
+        <span class="n">action_space</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span>
+
     <span class="n">metadata</span> <span class="o">=</span> <span class="n">_generate_dataset_metadata</span><span class="p">(</span>
-        <span class="n">env_spec</span><span class="p">,</span>
         <span class="n">dataset_id</span><span class="p">,</span>
+        <span class="n">env_spec</span><span class="p">,</span>
         <span class="n">eval_env</span><span class="p">,</span>
         <span class="n">algorithm_name</span><span class="p">,</span>
         <span class="n">author</span><span class="p">,</span>
@@ -945,8 +973,8 @@
     <span class="k">assert</span> <span class="n">collector_env</span><span class="o">.</span><span class="n">datasets_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
     <span class="n">dataset_path</span> <span class="o">=</span> <span class="n">_generate_dataset_path</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
     <span class="n">metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">_generate_dataset_metadata</span><span class="p">(</span>
-        <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">collector_env</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">),</span>
         <span class="n">dataset_id</span><span class="p">,</span>
+        <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">collector_env</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">),</span>
         <span class="n">eval_env</span><span class="p">,</span>
         <span class="n">algorithm_name</span><span class="p">,</span>
         <span class="n">author</span><span class="p">,</span>
