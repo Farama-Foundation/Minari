@@ -26,10 +26,6 @@ cd Minari
 pip install -e .
 ```
 
-## Getting Started
-
-For an introduction to Minari, see [Basic Usage](https://minari.farama.org/main/content/basic_usage/). To create new datasets using Minari, see our [Pointmaze D4RL Dataset](https://minari.farama.org/main/tutorials/dataset_creation/point_maze_dataset/) tutorial, which re-creates the Maze2D datasets from [D4RL](https://github.com/Farama-Foundation/D4RL).
-
 ## Command Line API
 
 To check available remote datasets:
@@ -90,7 +86,7 @@ for _ in range(100):
 dataset = minari.create_dataset_from_collector_env("LunarLander-v2-test-v0", env)
 ```
 
-You can find more examples in the [documentation](https://minari.farama.org/content/basic_usage/).
+For other examples, see [Basic Usage](https://minari.farama.org/main/content/basic_usage/). For a complete tutorial on how to create new datasets using Minari, see our [Pointmaze D4RL Dataset](https://minari.farama.org/main/tutorials/dataset_creation/point_maze_dataset/) tutorial, which re-creates the Maze2D datasets from [D4RL](https://github.com/Farama-Foundation/D4RL).
 
 ## Project Maintainers
 Main Contributors: [Rodrigo Perez-Vicente](https://github.com/rodrigodelazcano), [Omar Younis](https://github.com/younik), [John Balis](https://github.com/balisujohn)
