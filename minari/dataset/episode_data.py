@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Optional
+from typing import Any, Optional
 
 import numpy as np
 
@@ -14,8 +14,8 @@ class EpisodeData:
     id: int
     seed: Optional[int]
     total_timesteps: int
-    observations: np.ndarray
-    actions: np.ndarray
+    observations: Any
+    actions: Any
     rewards: np.ndarray
     terminations: np.ndarray
     truncations: np.ndarray
