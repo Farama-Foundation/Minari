@@ -37,7 +37,6 @@ class MinariStorage:
         if not os.path.exists(file_path):
             raise ValueError(f"No data found in data path {data_path}")
         self._file_path = file_path
-        self._data_path = data_path
         self._observation_space = None
         self._action_space = None
 
@@ -268,10 +267,10 @@ class MinariStorage:
             datasize (float): size of the dataset in MB
         """
         datasize_list = []
-        if os.path.exists(self._data_path):
+        if os.path.exists(self.data_path):
 
-            for filename in os.listdir(self._data_path):
-                datasize = os.path.getsize(os.path.join(self._data_path, filename))
+            for filename in os.listdir(self.data_path):
+                datasize = os.path.getsize(os.path.join(self.data_path, filename))
                 datasize_list.append(datasize)
 
         datasize = np.round(np.sum(datasize_list) / 1000000, 1)
