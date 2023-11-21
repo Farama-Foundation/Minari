@@ -74,15 +74,23 @@ class MinariStorage:
 
         obj = cls(data_path)
         metadata: Dict[str, Any] = {"total_episodes": 0, "total_steps": 0}
-        if observation_space is not None:
-            metadata["observation_space"] = serialize_space(observation_space)
-            obj._observation_space = observation_space
-        if action_space is not None:
-            metadata["action_space"] = serialize_space(action_space)
-            obj._action_space = action_space
+
+        if observation_space is None and env_spec is not None:
+            env = gym.make(env_spec)
+            observation_space = env.observation_space
+            env.close()
+        metadata["observation_space"] = serialize_space(observation_space)
+        obj._observation_space = observation_space
+
+        if action_space is None and env_spec is not None:
+            env = gym.make(env_spec)
+            action_space = env.action_space
+            env.close()
+        metadata["action_space"] = serialize_space(action_space)
+        obj._action_space = action_space
+
         if env_spec is not None:
             metadata["env_spec"] = env_spec.to_json()
-
         with h5py.File(obj._file_path, "a") as file:
             file.attrs.update(metadata)
         return obj
@@ -220,7 +228,7 @@ class MinariStorage:
         return out
 
     def update_episodes(self, episodes: Iterable[dict]):
-        """Update epsiodes in the storage from a list of episode buffer.
+        """Update episodes in the storage from a list of episode buffer.
 
         Args:
             episodes (Iterable[dict]): list of episodes buffer.
@@ -247,7 +255,7 @@ class MinariStorage:
                 _add_episode_to_group(eps_buff, episode_group)
 
             current_steps = file.attrs["total_steps"]
-            assert type(current_steps) == np.int64
+            assert isinstance(current_steps, np.integer)
             total_steps = current_steps + additional_steps
             total_episodes = len(file.keys())
 
@@ -260,13 +268,13 @@ class MinariStorage:
         Args:
             storage (MinariStorage): the other MinariStorage from which the data will be taken
         """
-        if type(storage) != type(self):
+        if not isinstance(storage, MinariStorage):
             # TODO: relax this constraint. In theory one can use MinariStorage API to update
             raise ValueError(f"{type(self)} cannot update from {type(storage)}")
 
         with h5py.File(self._file_path, "a", track_order=True) as file:
             last_episode_id = file.attrs["total_episodes"]
-            assert type(last_episode_id) == np.int64
+            assert isinstance(last_episode_id, np.integer)
             storage_total_episodes = storage.total_episodes
 
             for id in range(storage.total_episodes):
@@ -287,18 +295,18 @@ class MinariStorage:
                 "total_episodes", last_episode_id + storage_total_episodes
             )
             total_steps = file.attrs["total_steps"]
-            assert type(total_steps) == np.int64
+            assert isinstance(total_steps, np.integer)
             file.attrs.modify("total_steps", total_steps + storage.total_steps)
 
             storage_metadata = storage.metadata
-            authors = [file.attrs.get("author"), storage_metadata.get("author")]
+            authors = {file.attrs.get("author"), storage_metadata.get("author")}
             file.attrs.modify(
                 "author", "; ".join([aut for aut in authors if aut is not None])
             )
-            emails = [
+            emails = {
                 file.attrs.get("author_email"),
                 storage_metadata.get("author_email"),
-            ]
+            }
             file.attrs.modify(
                 "author_email", "; ".join([e for e in emails if e is not None])
             )
@@ -309,19 +317,19 @@ class MinariStorage:
         return os.path.dirname(self._file_path)
 
     @property
-    def total_episodes(self) -> np.int64:
+    def total_episodes(self) -> np.integer:
         """Total episodes in the dataset."""
         with h5py.File(self._file_path, "r") as file:
             total_episodes = file.attrs["total_episodes"]
-            assert type(total_episodes) == np.int64
+            assert isinstance(total_episodes, np.integer)
             return total_episodes
 
     @property
-    def total_steps(self) -> np.int64:
+    def total_steps(self) -> np.integer:
         """Total steps in the dataset."""
         with h5py.File(self._file_path, "r") as file:
             total_steps = file.attrs["total_steps"]
-            assert type(total_steps) == np.int64
+            assert isinstance(total_steps, np.integer)
             return total_steps
 
     @property
@@ -329,15 +337,11 @@ class MinariStorage:
         """Observation Space of the dataset."""
         if self._observation_space is None:
             with h5py.File(self._file_path, "r") as file:
-                if "observation_space" in file.attrs.keys():
-                    serialized_space = file.attrs["observation_space"]
-                    assert isinstance(serialized_space, str)
-                    self._observation_space = deserialize_space(serialized_space)
-                else:
-                    env_spec_str = file.attrs.get("env_spec")
-                    assert isinstance(env_spec_str, str)
-                    env_spec = EnvSpec.from_json(env_spec_str)
-                    self._observation_space = gym.make(env_spec).observation_space
+                assert "observation_space" in file.attrs.keys(), "Minari hdf5 datasets must contain an observation_space attribute."
+                serialized_space = file.attrs["observation_space"]
+                assert isinstance(serialized_space, str)
+                self._observation_space = deserialize_space(serialized_space)
+
         return self._observation_space
 
     @property
@@ -345,15 +349,10 @@ class MinariStorage:
         """Action space of the dataset."""
         if self._action_space is None:
             with h5py.File(self._file_path, "r") as file:
-                if "action_space" in file.attrs.keys():
-                    serialized_space = file.attrs["action_space"]
-                    assert isinstance(serialized_space, str)
-                    self._action_space = deserialize_space(serialized_space)
-                else:
-                    env_spec_str = file.attrs.get("env_spec")
-                    assert isinstance(env_spec_str, str)
-                    env_spec = EnvSpec.from_json(env_spec_str)
-                    self._action_space = gym.make(env_spec).action_space
+                assert "action_space" in file.attrs.keys(), "Minari hdf5 datasets must contain an action_space attribute."
+                serialized_space = file.attrs["action_space"]
+                assert isinstance(serialized_space, str)
+                self._action_space = deserialize_space(serialized_space)
 
         return self._action_space
 

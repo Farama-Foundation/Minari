@@ -1,13 +1,16 @@
 from typing import Optional
 
 import gymnasium as gym
+import numpy as np
 import pytest
+from gymnasium import spaces
 from gymnasium.utils.env_checker import data_equivalence
 from packaging.specifiers import SpecifierSet
 
 import minari
 from minari import DataCollectorV0, MinariDataset
 from minari.utils import combine_datasets, combine_minari_version_specifiers
+from tests.common import get_sample_buffer_for_dataset_from_env
 
 
 def _check_env_recovery(gymnasium_environment: gym.Env, dataset: MinariDataset):
@@ -103,6 +106,52 @@ def _generate_dataset_with_collector_env(
     env.close()
 
 
+def _generate_dataset_without_env(dataset_id: str, num_episodes: int = 10):
+    """Helper function to create tmp dataset without an env to use for testing combining.
+
+    Args:
+        dataset_id (str): name of the generated Minari dataset
+        num_episodes (int): number of episodes in the generated dataset
+    """
+    buffer = []
+    action_space_subset = spaces.Dict(
+        {
+            "component_2": spaces.Dict(
+                {
+                    "subcomponent_2": spaces.Box(low=4, high=5, dtype=np.float32),
+                }
+            ),
+        }
+    )
+    observation_space_subset = spaces.Dict(
+        {
+            "component_2": spaces.Dict(
+                {
+                    "subcomponent_2": spaces.Box(low=4, high=5, dtype=np.float32),
+                }
+            ),
+        }
+    )
+
+    env = gym.make("DummyDictEnv-v0")
+    buffer = get_sample_buffer_for_dataset_from_env(env, num_episodes)
+
+    # Create Minari dataset and store locally
+    dataset = minari.create_dataset_from_buffers(
+        dataset_id=dataset_id,
+        buffer=buffer,
+        env=None,
+        algorithm_name="random_policy",
+        code_permalink="https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/test_dataset_combine.py",
+        author="WillDudley",
+        author_email="wdudley@farama.org",
+        action_space=action_space_subset,
+        observation_space=observation_space_subset,
+    )
+    assert isinstance(dataset, MinariDataset)
+    env.close()
+
+
 def test_combine_datasets():
     num_datasets, num_episodes = 5, 10
     test_datasets_ids = [f"cartpole-test-{i}-v0" for i in range(num_datasets)]
@@ -128,7 +177,7 @@ def test_combine_datasets():
     assert list(combined_dataset.spec.combined_datasets) == test_datasets_ids
     assert combined_dataset.spec.total_episodes == num_datasets * num_episodes
     assert combined_dataset.spec.total_steps == sum(
-        d.spec.total_steps for d in test_datasets
+        int(d.spec.total_steps) for d in test_datasets
     )
     _check_env_recovery(gym.make("CartPole-v1"), combined_dataset)
 
@@ -163,6 +212,7 @@ def test_combine_datasets():
     combined_dataset = combine_datasets(
         test_datasets, new_dataset_id="cartpole-combined-test-v0"
     )
+    assert combined_dataset.spec.env_spec is not None
     assert combined_dataset.spec.env_spec.max_episode_steps is None
     _check_load_and_delete_dataset("cartpole-combined-test-v0")
 
@@ -172,6 +222,7 @@ def test_combine_datasets():
     combined_dataset = combine_datasets(
         test_datasets, new_dataset_id="cartpole-combined-test-v0"
     )
+    assert combined_dataset.spec.env_spec is not None
     assert combined_dataset.spec.env_spec.max_episode_steps == 10
     _check_load_and_delete_dataset("cartpole-combined-test-v0")
 
