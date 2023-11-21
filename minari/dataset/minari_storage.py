@@ -11,7 +11,6 @@ import numpy as np
 from gymnasium.envs.registration import EnvSpec
 
 from minari.serialization import deserialize_space, serialize_space
-from minari.storage.datasets_root_dir import get_dataset_path
 
 
 PathLike = Union[str, os.PathLike]
@@ -38,7 +37,7 @@ class MinariStorage:
         if not os.path.exists(file_path):
             raise ValueError(f"No data found in data path {data_path}")
         self._file_path = file_path
-
+        self._data_path = data_path
         self._observation_space = None
         self._action_space = None
 
@@ -262,6 +261,23 @@ class MinariStorage:
             file.attrs.modify("total_episodes", total_episodes)
             file.attrs.modify("total_steps", total_steps)
 
+    def get_size(self):
+        """Returns the dataset size in MB.
+
+        Returns:
+            datasize (float): size of the dataset in MB
+        """
+        datasize_list = []
+        if os.path.exists(self._data_path):
+
+            for filename in os.listdir(self._data_path):
+                datasize = os.path.getsize(os.path.join(self._data_path, filename))
+                datasize_list.append(datasize)
+
+        datasize = np.round(np.sum(datasize_list) / 1000000, 1)
+
+        return datasize
+
     def update_from_storage(self, storage: MinariStorage):
         """Update the dataset using another MinariStorage.
 
@@ -403,25 +419,3 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
             episode_group.create_dataset(
                 key, data=data, dtype=dtype, chunks=True, maxshape=(None, *dshape)
             )
-
-
-def get_dataset_size(dataset_id: str):
-    """Returns the dataset size in MB.
-
-    Args:
-        dataset_id (str) : name id of Minari Dataset
-    Returns:
-        datasize (float): size of the dataset in MB
-    """
-    file_path = get_dataset_path(dataset_id)
-    data_path = os.path.join(file_path, "data")
-    datasize_list = []
-    if os.path.exists(data_path):
-
-        for filename in os.listdir(data_path):
-            datasize = os.path.getsize(os.path.join(data_path, filename))
-            datasize_list.append(datasize)
-
-    datasize = np.round(np.sum(datasize_list) / 1000000, 1)
-
-    return datasize

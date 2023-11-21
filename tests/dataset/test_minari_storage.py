@@ -1,16 +1,14 @@
 import copy
 import os
-import tempfile
 
 import gymnasium as gym
-
 import numpy as np
 import pytest
 from gymnasium import spaces
 
 import minari
 from minari import DataCollectorV0
-from minari.dataset.minari_storage import MinariStorage, get_dataset_size
+from minari.dataset.minari_storage import MinariStorage
 from tests.common import (
     check_data_integrity,
     check_load_and_delete_dataset,
@@ -236,7 +234,7 @@ def test_minari_get_dataset_size_from_collector_env(dataset_id, env_id):
         author_email="wdudley@farama.org",
     )
 
-    assert dataset._data.metadata['dataset_size'] == get_dataset_size(dataset_id)
+    assert dataset._data.metadata['dataset_size'] == dataset.storage.get_size()
 
     check_data_integrity(dataset._data, dataset.episode_indices)
 
@@ -329,7 +327,7 @@ def test_minari_get_dataset_size_from_buffer(dataset_id, env_id):
     # original_dataset_size = os.path.getsize(data_path)
     # original_dataset_size = np.round(original_dataset_size / 1000000, 1)
 
-    assert dataset._data.metadata['dataset_size'] == get_dataset_size(dataset_id)
+    assert dataset._data.metadata['dataset_size'] == dataset.storage.get_size()
 
     # assert get_dataset_size(dataset_id) == original_dataset_size
 

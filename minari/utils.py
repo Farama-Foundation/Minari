@@ -17,7 +17,7 @@ from packaging.version import Version
 
 from minari import DataCollectorV0
 from minari.dataset.minari_dataset import MinariDataset
-from minari.dataset.minari_storage import MinariStorage, get_dataset_size
+from minari.dataset.minari_storage import MinariStorage
 from minari.storage.datasets_root_dir import get_dataset_path
 
 
@@ -559,7 +559,7 @@ def create_dataset_from_buffers(
     storage.update_metadata(metadata)
     storage.update_episodes(buffer)
 
-    metadata['dataset_size'] = get_dataset_size(dataset_id)
+    metadata['dataset_size'] = storage.get_size()
     storage.update_metadata(metadata)
 
     return MinariDataset(storage)
@@ -625,9 +625,9 @@ def create_dataset_from_collector_env(
     collector_env.save_to_disk(dataset_path, metadata)
 
     # will be able to calculate dataset size only after saving the disk, so updating the dataset metadata post `save_to_disk` method
-    metadata['dataset_size'] = get_dataset_size(dataset_id)
 
     dataset = MinariDataset(dataset_path)
+    metadata['dataset_size'] = dataset.storage.get_size()
     dataset.storage.update_metadata(metadata)
     return dataset
 
