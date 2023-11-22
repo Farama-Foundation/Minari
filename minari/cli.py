@@ -31,12 +31,16 @@ def _show_dataset_table(datasets, table_title):
     table.add_column("Name", justify="left", style="cyan", no_wrap=True)
     table.add_column("Total Episodes", justify="right", style="green")
     table.add_column("Total Steps", justify="right", style="green")
+    table.add_column("Dataset Size", justify="left", style="green")
     table.add_column("Description", justify="left", style="yellow")
     table.add_column("Author", justify="left", style="magenta")
     table.add_column("Email", justify="left", style="magenta")
 
     for dst_metadata in datasets.values():
         author = dst_metadata.get("author", "Unknown")
+        dataset_size = dst_metadata.get("dataset_size", "Unknown")
+        if dataset_size != "Unknown":
+            dataset_size = f"{str(dataset_size)} MB"
         author_email = dst_metadata.get("author_email", "Unknown")
 
         assert isinstance(dst_metadata["dataset_id"], str)
@@ -46,6 +50,7 @@ def _show_dataset_table(datasets, table_title):
             dst_metadata["dataset_id"],
             str(dst_metadata["total_episodes"]),
             str(dst_metadata["total_steps"]),
+            dataset_size,
             "Coming soon ...",
             author,
             author_email,
