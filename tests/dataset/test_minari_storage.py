@@ -201,7 +201,6 @@ def test_episode_metadata(tmp_dataset_dir):
 )
 def test_minari_get_dataset_size_from_collector_env(dataset_id, env_id):
     """Test get_dataset_size method for dataset made using create_dataset_from_collector_env method."""
-    # dataset_id = "cartpole-test-v0"
     # delete the test dataset if it already exists
     local_datasets = minari.list_local_datasets()
     if dataset_id in local_datasets:
@@ -258,7 +257,6 @@ def test_minari_get_dataset_size_from_collector_env(dataset_id, env_id):
 def test_minari_get_dataset_size_from_buffer(dataset_id, env_id):
     """Test get_dataset_size method for dataset made using create_dataset_from_buffers method."""
     buffer = []
-    # dataset_id = "cartpole-test-v0"
 
     # delete the test dataset if it already exists
     local_datasets = minari.list_local_datasets()
@@ -323,8 +321,6 @@ def test_minari_get_dataset_size_from_buffer(dataset_id, env_id):
     )
 
     assert dataset.storage.metadata['dataset_size'] == dataset.storage.get_size()
-
-    # assert get_dataset_size(dataset_id) == original_dataset_size
 
     check_data_integrity(dataset.storage, dataset.episode_indices)
 
