@@ -234,9 +234,9 @@ def test_minari_get_dataset_size_from_collector_env(dataset_id, env_id):
         author_email="wdudley@farama.org",
     )
 
-    assert dataset._data.metadata['dataset_size'] == dataset.storage.get_size()
+    assert dataset.storage.metadata['dataset_size'] == dataset.storage.get_size()
 
-    check_data_integrity(dataset._data, dataset.episode_indices)
+    check_data_integrity(dataset.storage, dataset.episode_indices)
 
     env.close()
 
@@ -322,16 +322,11 @@ def test_minari_get_dataset_size_from_buffer(dataset_id, env_id):
         author_email="wdudley@farama.org",
     )
 
-    # file_path = get_dataset_path(dataset_id)
-    # data_path = os.path.join(file_path, "data", "main_data.hdf5")
-    # original_dataset_size = os.path.getsize(data_path)
-    # original_dataset_size = np.round(original_dataset_size / 1000000, 1)
-
-    assert dataset._data.metadata['dataset_size'] == dataset.storage.get_size()
+    assert dataset.storage.metadata['dataset_size'] == dataset.storage.get_size()
 
     # assert get_dataset_size(dataset_id) == original_dataset_size
 
-    check_data_integrity(dataset._data, dataset.episode_indices)
+    check_data_integrity(dataset.storage, dataset.episode_indices)
 
     env.close()
 
