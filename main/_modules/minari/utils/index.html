@@ -922,8 +922,13 @@
         <span class="n">env_spec</span><span class="o">=</span><span class="n">env_spec</span><span class="p">,</span>
     <span class="p">)</span>
 
+    <span class="c1"># adding `update_metadata` before hand too, as for small envs, the absence of metadata is causing a difference of some 10ths of MBs leading to errors in unit tests.</span>
     <span class="n">storage</span><span class="o">.</span><span class="n">update_metadata</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
     <span class="n">storage</span><span class="o">.</span><span class="n">update_episodes</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
+
+    <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;dataset_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">storage</span><span class="o">.</span><span class="n">get_size</span><span class="p">()</span>
+    <span class="n">storage</span><span class="o">.</span><span class="n">update_metadata</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
+
     <span class="k">return</span> <span class="n">MinariDataset</span><span class="p">(</span><span class="n">storage</span><span class="p">)</span></div>
 
 
@@ -988,7 +993,13 @@
     <span class="p">)</span>
 
     <span class="n">collector_env</span><span class="o">.</span><span class="n">save_to_disk</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">MinariDataset</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">)</span></div>
+
+    <span class="c1"># will be able to calculate dataset size only after saving the disk, so updating the dataset metadata post `save_to_disk` method</span>
+
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">MinariDataset</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">)</span>
+    <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;dataset_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">get_size</span><span class="p">()</span>
+    <span class="n">dataset</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">update_metadata</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dataset</span></div>
 
 
 
