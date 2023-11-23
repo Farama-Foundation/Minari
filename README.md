@@ -26,22 +26,12 @@ cd Minari
 pip install -e .
 ```
 
-## Getting Started
-
-For an introduction to Minari, see [Basic Usage](https://minari.farama.org/main/content/basic_usage/). To create new datasets using Minari, see our [Pointmaze D4RL Dataset](https://minari.farama.org/main/tutorials/dataset_creation/point_maze_dataset/) tutorial, which re-creates the Maze2D datasets from [D4RL](https://github.com/Farama-Foundation/D4RL).
-
-## API
+## Command Line API
 
 To check available remote datasets:
 
 ```bash
 minari list remote
-```
-
-To check available local datasets:
-
-```bash
-minari list local
 ```
 
 To download a dataset:
@@ -50,13 +40,53 @@ To download a dataset:
 minari download door-human-v1
 ```
 
-To load a dataset:
+To check available local datasets:
+
+```bash
+minari list local
+```
+
+For the list of commands:
+```bash
+minari --help
+```
+
+## Basic Usage
+
+### Reading a dataset
 
 ```python
 import minari
 
 dataset = minari.load_dataset("door-human-v1")
+
+for episode_data in dataset.iterate_episodes():
+    ...
 ```
+
+### Writing a dataset
+
+```python
+import minari
+import gymnasium as gym
+from minari import DataCollectorV0
+
+
+env = gym.make('LunarLander-v2')
+env = DataCollectorV0(env)
+
+for _ in range(100):
+    env.reset()
+    done = False
+    while not done:
+        action = ...
+        obs, rew, terminated, truncated, info = env.step(action)
+        done = terminated or truncated
+
+dataset = minari.create_dataset_from_collector_env("LunarLander-v2-test-v0", env)
+```
+
+For other examples, see [Basic Usage](https://minari.farama.org/main/content/basic_usage/). For a complete tutorial on how to create new datasets using Minari, see our [Pointmaze D4RL Dataset](https://minari.farama.org/main/tutorials/dataset_creation/point_maze_dataset/) tutorial, which re-creates the Maze2D datasets from [D4RL](https://github.com/Farama-Foundation/D4RL).
 
 ## Project Maintainers
 Main Contributors: [Rodrigo Perez-Vicente](https://github.com/rodrigodelazcano), [Omar Younis](https://github.com/younik), [John Balis](https://github.com/balisujohn)
