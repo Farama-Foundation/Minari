@@ -2,7 +2,6 @@ import gymnasium as gym
 import numpy as np
 import pytest
 
-import minari
 from minari import DataCollectorV0, EpisodeData, MinariDataset, StepDataCallback
 from tests.common import check_load_and_delete_dataset, register_dummy_envs
 
@@ -109,9 +108,8 @@ def test_truncation_without_reset(dataset_id, env_id):
     for _ in range(num_steps):
         env.step(env.action_space.sample())
 
-    dataset = minari.create_dataset_from_collector_env(
+    dataset = env.create_dataset(
         dataset_id=dataset_id,
-        collector_env=env,
         algorithm_name="random_policy",
         author="Farama",
         author_email="farama@farama.org",

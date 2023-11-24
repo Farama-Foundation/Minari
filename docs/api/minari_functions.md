@@ -10,7 +10,7 @@ minari_dataset/episode_data
 ## Create Minari Dataset
 
 ```{eval-rst}
-.. autofunction:: minari.create_dataset_from_collector_env
+.. autofunction:: env.create_dataset
 .. autofunction:: minari.create_dataset_from_buffers
 ```
 

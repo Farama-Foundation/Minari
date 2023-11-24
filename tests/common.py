@@ -583,9 +583,8 @@ def create_dummy_dataset_with_collecter_env_helper(
         env.reset()
 
     # Create Minari dataset and store locally
-    dataset = minari.create_dataset_from_collector_env(
+    dataset = env.create_dataset(
         dataset_id=dataset_id,
-        collector_env=env,
         algorithm_name="random_policy",
         code_permalink="https://github.com/Farama-Foundation/Minari/blob/main/tests/common.py",
         author="WillDudley",

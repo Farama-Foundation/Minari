@@ -224,9 +224,8 @@ def test_minari_get_dataset_size_from_collector_env(dataset_id, env_id):
         env.reset()
 
     # Create Minari dataset and store locally
-    dataset = minari.create_dataset_from_collector_env(
+    dataset = env.create_dataset(
         dataset_id=dataset_id,
-        collector_env=env,
         algorithm_name="random_policy",
         code_permalink="https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
         author="WillDudley",
