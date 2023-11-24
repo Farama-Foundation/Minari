@@ -21,8 +21,8 @@
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=49cbaffd" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/termynal.css?v=d6ad0c61" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=befa2ef3" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/directory_tree.css?v=2ab1fc38" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=16dd5f1b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/directory_tree.css?v=083c6588" />
     
     
 
@@ -240,6 +240,7 @@
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/dataset_creation/">Dataset Creation</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Dataset Creation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/dataset_creation/observation_space_subseting/">Collecting a subset of a dictionary space with StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/dataset_creation/custom_space_serialization/">Serializing a custom space</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/dataset_creation/point_maze_dataset/">PointMaze D4RL dataset</a></li>
 </ul>
 </li>
@@ -250,31 +251,34 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
 <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/door/">Door</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Door</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/minigrid/">MiniGrid</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of MiniGrid</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/door/">Door</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Door</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/door/human/">Human</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/door/expert/">Expert</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/door/cloned/">Cloned</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/hammer/">Hammer</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Hammer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/hammer/">Hammer</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Hammer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/hammer/human/">Human</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/hammer/expert/">Expert</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/hammer/cloned/">Cloned</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/relocate/">Relocate</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Relocate</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/relocate/">Relocate</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Relocate</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/relocate/human/">Human</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/relocate/expert/">Expert</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/relocate/cloned/">Cloned</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/pen/">Pen</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Pen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/pen/">Pen</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Pen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/pen/human/">Human</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/pen/expert/">Expert</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/pen/cloned/">Cloned</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/pointmaze/">Point Maze</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Point Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/pointmaze/">Point Maze</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Point Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/open/">Open</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/umaze/">Umaze</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/medium/">Medium</a></li>
@@ -285,7 +289,16 @@
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/large-dense/">Large-Dense</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/antmaze/">Ant Maze</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Ant Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/antmaze/umaze/">Umaze</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/antmaze/umaze-diverse/">Umaze-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/antmaze/medium-diverse/">Medium-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/antmaze/medium-play/">Medium-Play</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/antmaze/large-diverse/">Large-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/antmaze/large-play/">Large-Play</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/kitchen/partial/">Partial</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/kitchen/complete/">Complete</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../datasets/kitchen/mixed/">Mixed</a></li>
@@ -594,7 +607,7 @@
                         </ul>
                     </li>
                 </ul>
-                </li>                    
+                </li>
                 <li class="dataset-white">actions</li>
                 <li class="dataset-white">terminations</li>
                 <li class="dataset-white">truncations</li>
@@ -733,23 +746,9 @@
 </div>
 <p>Note how the <code class="docutils literal notranslate"><span class="pre">Tuple</span></code> space elements are assigned corresponding keys of the format <code class="docutils literal notranslate"><span class="pre">f&quot;_index_{i}&quot;</span></code> were <code class="docutils literal notranslate"><span class="pre">i</span></code> is their index in the <code class="docutils literal notranslate"><span class="pre">Tuple</span></code> space.</p>
 <p>The required <code class="docutils literal notranslate"><span class="pre">datasets</span></code> found in the episode groups correspond to the data involved in every Gymnasium step call: <code class="docutils literal notranslate"><span class="pre">obs,</span> <span class="pre">rew,</span> <span class="pre">terminated,</span> <span class="pre">truncated,</span> <span class="pre">info</span> <span class="pre">=</span> <span class="pre">env.step(action)</span></code>: <code class="docutils literal notranslate"><span class="pre">observations</span></code>, <code class="docutils literal notranslate"><span class="pre">actions</span></code>, <code class="docutils literal notranslate"><span class="pre">rewards</span></code>, <code class="docutils literal notranslate"><span class="pre">terminations</span></code>, and <code class="docutils literal notranslate"><span class="pre">truncations</span></code>. These datasets are <code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code> or nested groups of <code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code> and other groups, depending on the observation and action spaces, and the space of all datasets under each required top-level episode key is equal to:</p>
-<ul>
+<ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">actions</span></code>: <code class="docutils literal notranslate"><span class="pre">shape=(num_steps,</span> <span class="pre">action_space_component_shape)</span></code>. If the action or observation space is <code class="docutils literal notranslate"><span class="pre">Dict</span></code> or a <code class="docutils literal notranslate"><span class="pre">Tuple</span></code>, then the corresponding entry will be a group instead of a dataset. Within this group, there will be nested groups and datasets, as specified by the action and observation spaces. <code class="docutils literal notranslate"><span class="pre">Dict</span></code> and <code class="docutils literal notranslate"><span class="pre">Tuple</span></code> spaces are represented as groups, and <code class="docutils literal notranslate"><span class="pre">Box</span></code> and <code class="docutils literal notranslate"><span class="pre">Discrete</span></code> spaces are represented as datasets. All datasets at any level under the top-level key <code class="docutils literal notranslate"><span class="pre">actions</span></code> will have the same <code class="docutils literal notranslate"><span class="pre">num_steps</span></code>, but will vary in <code class="docutils literal notranslate"><span class="pre">action_space_component_shape</span></code> on for each particular action space component. For example, a <code class="docutils literal notranslate"><span class="pre">Dict</span></code> space may contain two <code class="docutils literal notranslate"><span class="pre">Box</span></code> spaces with different shapes.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">observations</span></code>: <code class="docutils literal notranslate"><span class="pre">shape=(num_steps</span> <span class="pre">+</span> <span class="pre">1,</span> <span class="pre">observation_space_component_shape)</span></code>. Observations nest in the same way as actions if the top level space is a <code class="docutils literal notranslate"><span class="pre">Tuple</span></code> or <code class="docutils literal notranslate"><span class="pre">Dict</span></code> space. The value of <code class="docutils literal notranslate"><span class="pre">num_steps</span> <span class="pre">+</span> <span class="pre">1</span></code> is the same for datasets at any level under <code class="docutils literal notranslate"><span class="pre">observations</span></code>. These datasets have an additional element because the initial observation of the environment when calling <code class="docutils literal notranslate"><span class="pre">obs,</span> <span class="pre">info</span> <span class="pre">=</span> <span class="pre">env.reset()</span></code> is also saved. <code class="docutils literal notranslate"><span class="pre">observation_space_component_shape</span></code> will vary between datasets, depending on the shapes of the simple spaces specified in the observation space. You can get a transition of the form <code class="docutils literal notranslate"><span class="pre">(o_t,</span> <span class="pre">a_t,</span> <span class="pre">o_t+1)</span></code> from the datasets in the episode group, where <code class="docutils literal notranslate"><span class="pre">o_t</span></code> is the current observation, <code class="docutils literal notranslate"><span class="pre">o_t+1</span></code> is the next observation after taking action <code class="docutils literal notranslate"><span class="pre">a</span></code>, and <code class="docutils literal notranslate"><span class="pre">t</span></code> is the discrete transition index
-; as follows:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">next_observations</span> <span class="o">=</span> <span class="n">observations</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
-<span class="n">observations</span> <span class="o">=</span> <span class="n">observations</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-
-<span class="c1"># get transition at timestep t</span>
-<span class="n">observation</span> <span class="o">=</span> <span class="n">observations</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>             <span class="c1"># o_t</span>
-<span class="n">action</span> <span class="o">=</span> <span class="n">actions</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>                       <span class="c1"># a_t</span>
-<span class="n">next_observation</span> <span class="o">=</span> <span class="n">next_observations</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>   <span class="c1"># o_t+1</span>
-<span class="n">reward</span> <span class="o">=</span> <span class="n">rewards</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>                       <span class="c1"># r_t</span>
-<span class="n">terminated</span> <span class="o">=</span> <span class="n">terminations</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>
-<span class="n">truncated</span> <span class="o">=</span> <span class="n">truncations</span><span class="p">[</span><span class="n">t</span><span class="p">]</span>
-</pre></div>
-</div>
-</li>
+<li><p><code class="docutils literal notranslate"><span class="pre">observations</span></code>: <code class="docutils literal notranslate"><span class="pre">shape=(num_steps</span> <span class="pre">+</span> <span class="pre">1,</span> <span class="pre">observation_space_component_shape)</span></code>. Observations nest in the same way as actions if the top level space is a <code class="docutils literal notranslate"><span class="pre">Tuple</span></code> or <code class="docutils literal notranslate"><span class="pre">Dict</span></code> space. The value of <code class="docutils literal notranslate"><span class="pre">num_steps</span> <span class="pre">+</span> <span class="pre">1</span></code> is the same for datasets at any level under <code class="docutils literal notranslate"><span class="pre">observations</span></code>. These datasets have an additional element because the initial observation of the environment when calling <code class="docutils literal notranslate"><span class="pre">obs,</span> <span class="pre">info</span> <span class="pre">=</span> <span class="pre">env.reset()</span></code> is also saved. <code class="docutils literal notranslate"><span class="pre">observation_space_component_shape</span></code> will vary between datasets, depending on the shapes of the simple spaces specified in the observation space.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">rewards</span></code>: <code class="docutils literal notranslate"><span class="pre">shape=(num_steps,</span> <span class="pre">1)</span></code>, stores the returned reward in each step.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">terminations</span></code>: <code class="docutils literal notranslate"><span class="pre">shape=(num_steps,</span> <span class="pre">1)</span></code>, the <code class="docutils literal notranslate"><span class="pre">dtype</span></code> is <code class="docutils literal notranslate"><span class="pre">np.bool</span></code> and the last element value will be <code class="docutils literal notranslate"><span class="pre">True</span></code> if the episode finished due to  a <code class="docutils literal notranslate"><span class="pre">terminated</span></code> step return.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">truncations</span></code>: <code class="docutils literal notranslate"><span class="pre">shape=(num_steps,</span> <span class="pre">1)</span></code>, the <code class="docutils literal notranslate"><span class="pre">dtype</span></code> is <code class="docutils literal notranslate"><span class="pre">np.bool</span></code> and the last element value will be <code class="docutils literal notranslate"><span class="pre">True</span></code> if the episode finished due to a <code class="docutils literal notranslate"><span class="pre">truncated</span></code> step return.</p></li>
@@ -759,7 +758,8 @@
 <p>Also, additional <code class="docutils literal notranslate"><span class="pre">datasets</span></code> and nested <code class="docutils literal notranslate"><span class="pre">sub-groups</span></code> can be saved in each episode. This can be the case of environment data that doesn’t participate in each <code class="docutils literal notranslate"><span class="pre">env.step()</span></code> or <code class="docutils literal notranslate"><span class="pre">env.reset()</span></code> call in the Gymnasium API, such as the full environment state in each step. This can be achieved by creating a custom <code class="docutils literal notranslate"><span class="pre">StepDataCallback</span></code> that returns extra keys and nested dictionaries in the <code class="docutils literal notranslate"><span class="pre">StepData</span></code> dictionary return.</p>
 <p>For example, the <code class="docutils literal notranslate"><span class="pre">Adroit</span> <span class="pre">Hand</span></code> environments in the <code class="docutils literal notranslate"><span class="pre">Gymnasium-Robotics</span></code> project need to store the full state of the MuJoCo simulation since this information is not present in the <code class="docutils literal notranslate"><span class="pre">observations</span></code> dataset and the environments are reset by setting an initial state in the simulation.</p>
 <p>The following code snippet creates a custom <code class="docutils literal notranslate"><span class="pre">StepDataCallbak</span></code> and adds a new key, <code class="docutils literal notranslate"><span class="pre">state</span></code>, to the returned <code class="docutils literal notranslate"><span class="pre">StepData</span></code> dictionary. <code class="docutils literal notranslate"><span class="pre">state</span></code> is a nested dictionary with <code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code> values and the keys are relevant MuJoCo data that represent the state of the simulation: <code class="docutils literal notranslate"><span class="pre">qpos</span></code>, <code class="docutils literal notranslate"><span class="pre">qvel</span></code>, and some other body positions.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">AdroitStepDataCallback</span><span class="p">(</span><span class="n">StepDataCallback</span><span class="p">):</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">minari</span> <span class="kn">import</span> <span class="n">StepDataCallback</span>
+<span class="k">class</span> <span class="nc">AdroitStepDataCallback</span><span class="p">(</span><span class="n">StepDataCallback</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">step_data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">step_data</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get_env_state</span><span class="p">()</span>
@@ -975,7 +975,8 @@
 <section id="episodedata-structure">
 <h3>EpisodeData Structure<a class="headerlink" href="#episodedata-structure" title="Link to this heading">#</a></h3>
 <p>Episodes can be accessed from a Minari dataset through iteration, random sampling, or even filtering episodes from a dataset through an arbitrary condition via the <code class="docutils literal notranslate"><span class="pre">filter_episodes</span></code> method. Take the following example where we load the <code class="docutils literal notranslate"><span class="pre">door-human-v0</span></code> dataset and randomly sample 10 episodes:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;door-human-v0&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">minari</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;door-human-v1&quot;</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">sampled_episodes</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">sample_episodes</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -1211,7 +1212,7 @@
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=7660844c"></script>
     <script src="../../_static/js/termynal.js?v=ff4c6923"></script>
-    <script src="../../_static/js/custom.js?v=e881c6cc"></script>
+    <script src="../../_static/js/custom.js?v=a0ed09ce"></script>
     
     <script>
 

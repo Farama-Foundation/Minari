@@ -8,7 +8,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:description" content="Minari is a Python library for conducting research in offline reinforcement learning." />
     <meta property="og:url" content="https://minari.farama.org/tutorials/dataset_creation/point_maze_dataset.html" /><meta property="og:image" content="https://minari.farama.org/_static/img/robotics-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Using Datasets" href="../../using_datasets/" /><link rel="prev" title="Collecting a subset of a dictionary space with StepDataCallback" href="../observation_space_subseting/" />
+<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Using Datasets" href="../../using_datasets/" /><link rel="prev" title="Serializing a custom space" href="../custom_space_serialization/" />
         <link rel="canonical" href="https://minari.farama.org/tutorials/dataset_creation/point_maze_dataset.html" />
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
@@ -21,8 +21,8 @@
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=49cbaffd" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/termynal.css?v=d6ad0c61" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=befa2ef3" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/css/directory_tree.css?v=2ab1fc38" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=16dd5f1b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/directory_tree.css?v=083c6588" />
     
     
 
@@ -240,6 +240,7 @@
 <ul class="current">
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../">Dataset Creation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Dataset Creation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="../observation_space_subseting/">Collecting a subset of a dictionary space with StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../custom_space_serialization/">Serializing a custom space</a></li>
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">PointMaze D4RL dataset</a></li>
 </ul>
 </li>
@@ -250,31 +251,34 @@
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
 <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/door/">Door</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of Door</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/minigrid/">MiniGrid</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of MiniGrid</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/door/">Door</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Door</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../datasets/door/human/">Human</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../datasets/door/expert/">Expert</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../datasets/door/cloned/">Cloned</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/hammer/">Hammer</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Hammer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/hammer/">Hammer</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Hammer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../datasets/hammer/human/">Human</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../datasets/hammer/expert/">Expert</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../datasets/hammer/cloned/">Cloned</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/relocate/">Relocate</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Relocate</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/relocate/">Relocate</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Relocate</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../datasets/relocate/human/">Human</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../datasets/relocate/expert/">Expert</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../datasets/relocate/cloned/">Cloned</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/pen/">Pen</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Pen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/pen/">Pen</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Pen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../datasets/pen/human/">Human</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../datasets/pen/expert/">Expert</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../datasets/pen/cloned/">Cloned</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/pointmaze/">Point Maze</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Point Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/pointmaze/">Point Maze</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Point Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/open/">Open</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/umaze/">Umaze</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/medium/">Medium</a></li>
@@ -285,7 +289,16 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/large-dense/">Large-Dense</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/antmaze/">Ant Maze</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Ant Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/umaze/">Umaze</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/umaze-diverse/">Umaze-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/medium-diverse/">Medium-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/medium-play/">Medium-Play</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/large-diverse/">Large-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/large-play/">Large-Play</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../datasets/kitchen/partial/">Partial</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../datasets/kitchen/complete/">Complete</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../datasets/kitchen/mixed/">Mixed</a></li>
@@ -368,7 +381,7 @@ MuJoCo python bindings.</p>
 </ol>
 </dd>
 </dl>
-<p>For this tutorial we will be using the <code class="docutils literal notranslate"><span class="pre">pointmaze-medium-v3</span></code> environment to collect 1,000,000 transitions. However, any map implementation in the PointMaze environment group can be used.
+<p>For this tutorial we will be using the <code class="docutils literal notranslate"><span class="pre">pointmaze-medium-v3</span></code> environment to collect transition data. However, any map implementation in the PointMaze environment group can be used.
 Another important factor to take into account is that the environment is continuing, which means that it won’t be <code class="docutils literal notranslate"><span class="pre">terminated</span></code> when reaching a goal. Instead a new goal target will be randomly selected and the agent
 will start from the location it’s currently at (no <code class="docutils literal notranslate"><span class="pre">env.reset()</span></code> required).</p>
 <p>Lets start by importing the required modules for this tutorial:</p>
@@ -420,6 +433,7 @@ such as:</p>
 
 <span class="sd">    Inspired by https://github.com/Farama-Foundation/D4RL/blob/master/d4rl/pointmaze/q_iteration.py</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maze</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">maze</span> <span class="o">=</span> <span class="n">maze</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">num_states</span> <span class="o">=</span> <span class="n">maze</span><span class="o">.</span><span class="n">map_length</span> <span class="o">*</span> <span class="n">maze</span><span class="o">.</span><span class="n">map_width</span>
@@ -434,7 +448,9 @@ such as:</p>
         <span class="n">waypoints</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">action_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">q_values</span><span class="p">[</span><span class="n">current_state</span><span class="p">])</span>
-            <span class="n">next_state</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_next_state</span><span class="p">(</span><span class="n">current_state</span><span class="p">,</span> <span class="n">EXPLORATION_ACTIONS</span><span class="p">[</span><span class="n">action_id</span><span class="p">])</span>
+            <span class="n">next_state</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_next_state</span><span class="p">(</span>
+                <span class="n">current_state</span><span class="p">,</span> <span class="n">EXPLORATION_ACTIONS</span><span class="p">[</span><span class="n">action_id</span><span class="p">]</span>
+            <span class="p">)</span>
             <span class="n">current_cell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_to_cell</span><span class="p">(</span><span class="n">current_state</span><span class="p">)</span>
             <span class="n">waypoints</span><span class="p">[</span><span class="n">current_cell</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_to_cell</span><span class="p">(</span><span class="n">next_state</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">waypoints</span><span class="p">[</span><span class="n">current_cell</span><span class="p">]</span> <span class="o">==</span> <span class="n">goal_cell</span><span class="p">:</span>
@@ -451,7 +467,7 @@ such as:</p>
             <span class="k">return</span> <span class="mf">0.0</span>
 
     <span class="k">def</span> <span class="nf">state_to_cell</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
-        <span class="n">i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">state</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">maze</span><span class="o">.</span><span class="n">map_width</span><span class="p">)</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">state</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">maze</span><span class="o">.</span><span class="n">map_width</span><span class="p">)</span>
         <span class="n">j</span> <span class="o">=</span> <span class="n">state</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">maze</span><span class="o">.</span><span class="n">map_width</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
 
@@ -462,7 +478,7 @@ such as:</p>
         <span class="n">q_fn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_actions</span><span class="p">))</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_itrs</span><span class="p">):</span>
             <span class="n">v_fn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">q_fn</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">q_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rew_matrix</span> <span class="o">+</span> <span class="n">discount</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">transition_matrix</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">v_fn</span><span class="p">)</span>
+            <span class="n">q_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rew_matrix</span> <span class="o">+</span> <span class="n">discount</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">transition_matrix</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">v_fn</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">q_fn</span>
 
     <span class="k">def</span> <span class="nf">compute_reward_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">goal_cell</span><span class="p">):</span>
@@ -470,7 +486,9 @@ such as:</p>
             <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_actions</span><span class="p">):</span>
                 <span class="n">next_state</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_next_state</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">EXPLORATION_ACTIONS</span><span class="p">[</span><span class="n">action</span><span class="p">])</span>
                 <span class="n">next_cell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_to_cell</span><span class="p">(</span><span class="n">next_state</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">rew_matrix</span><span class="p">[</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_function</span><span class="p">(</span><span class="n">goal_cell</span><span class="p">,</span> <span class="n">next_cell</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rew_matrix</span><span class="p">[</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_function</span><span class="p">(</span>
+                    <span class="n">goal_cell</span><span class="p">,</span> <span class="n">next_cell</span>
+                <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">compute_transition_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructs this environment&#39;s transition matrix.</span>
@@ -479,7 +497,9 @@ such as:</p>
 <span class="sd">          corresponds to the probability of transitioning into state ns after taking</span>
 <span class="sd">          action a from state s.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">transition_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_actions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transition_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_actions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="p">)</span>
+        <span class="p">)</span>
         <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">action_idx</span><span class="p">,</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">EXPLORATION_ACTIONS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                 <span class="n">next_state</span><span class="p">,</span> <span class="n">valid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_next_state</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
@@ -579,6 +599,7 @@ the <span class="math notranslate nohighlight">\(x\)</span> and <span class="mat
 
 <span class="sd">    Inspired by https://github.com/Farama-Foundation/D4RL/blob/master/d4rl/pointmaze/waypoint_controller.py</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maze</span><span class="p">,</span> <span class="n">gains</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;p&quot;</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span> <span class="s2">&quot;d&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">},</span> <span class="n">waypoint_threshold</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">global_target_xy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">maze</span> <span class="o">=</span> <span class="n">maze</span>
@@ -591,35 +612,63 @@ the <span class="math notranslate nohighlight">\(x\)</span> and <span class="mat
 
     <span class="k">def</span> <span class="nf">compute_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">):</span>
         <span class="c1"># Check if we need to generate new waypoint path due to change in global target</span>
-        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">global_target_xy</span> <span class="o">-</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;desired_goal&#39;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mf">1e-3</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">waypoint_targets</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">global_target_xy</span> <span class="o">-</span> <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;desired_goal&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mf">1e-3</span>
+            <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">waypoint_targets</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="p">):</span>
             <span class="c1"># Convert xy to cell id</span>
-            <span class="n">achieved_goal_cell</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maze</span><span class="o">.</span><span class="n">cell_xy_to_rowcol</span><span class="p">(</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;achieved_goal&#39;</span><span class="p">]))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">global_target_id</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maze</span><span class="o">.</span><span class="n">cell_xy_to_rowcol</span><span class="p">(</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;desired_goal&#39;</span><span class="p">]))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">global_target_xy</span> <span class="o">=</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;desired_goal&#39;</span><span class="p">]</span>
+            <span class="n">achieved_goal_cell</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">maze</span><span class="o">.</span><span class="n">cell_xy_to_rowcol</span><span class="p">(</span><span class="n">obs</span><span class="p">[</span><span class="s2">&quot;achieved_goal&quot;</span><span class="p">])</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_target_id</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">maze</span><span class="o">.</span><span class="n">cell_xy_to_rowcol</span><span class="p">(</span><span class="n">obs</span><span class="p">[</span><span class="s2">&quot;desired_goal&quot;</span><span class="p">])</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_target_xy</span> <span class="o">=</span> <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;desired_goal&quot;</span><span class="p">]</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">waypoint_targets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maze_solver</span><span class="o">.</span><span class="n">generate_path</span><span class="p">(</span><span class="n">achieved_goal_cell</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_target_id</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">waypoint_targets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maze_solver</span><span class="o">.</span><span class="n">generate_path</span><span class="p">(</span>
+                <span class="n">achieved_goal_cell</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_target_id</span>
+            <span class="p">)</span>
 
             <span class="c1"># Check if the waypoint dictionary is empty</span>
             <span class="c1"># If empty then the ball is already in the target cell location</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">waypoint_targets</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">waypoint_targets</span><span class="p">[</span><span class="n">achieved_goal_cell</span><span class="p">]</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_xy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maze</span><span class="o">.</span><span class="n">cell_rowcol_to_xy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_id</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">waypoint_targets</span><span class="p">[</span>
+                    <span class="n">achieved_goal_cell</span>
+                <span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_xy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maze</span><span class="o">.</span><span class="n">cell_rowcol_to_xy</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_id</span><span class="p">)</span>
+                <span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">waypoint_targets</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_id</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_id</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">waypoint_targets</span><span class="p">[</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_id</span>
+                <span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_id</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_target_id</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_xy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_target_xy</span>
 
         <span class="c1"># Check if we need to go to the next waypoint</span>
-        <span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_xy</span> <span class="o">-</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;achieved_goal&#39;</span><span class="p">])</span>
-        <span class="k">if</span> <span class="n">dist</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">waypoint_threshold</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_id</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_target_id</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">waypoint_targets</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_id</span><span class="p">]</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_xy</span> <span class="o">-</span> <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;achieved_goal&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">dist</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">waypoint_threshold</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_id</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_target_id</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">waypoint_targets</span><span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_id</span>
+            <span class="p">]</span>
             <span class="c1"># If target is global goal go directly to goal position</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_target_id</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_xy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_target_xy</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_xy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maze</span><span class="o">.</span><span class="n">cell_rowcol_to_xy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_id</span><span class="p">))</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,))</span><span class="o">*</span><span class="mf">0.2</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_xy</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">maze</span><span class="o">.</span><span class="n">cell_rowcol_to_xy</span><span class="p">(</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_id</span><span class="p">)</span>
+                    <span class="p">)</span>
+                    <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,))</span> <span class="o">*</span> <span class="mf">0.2</span>
+                <span class="p">)</span>
 
-        <span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gains</span><span class="p">[</span><span class="s1">&#39;p&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_xy</span> <span class="o">-</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;achieved_goal&#39;</span><span class="p">])</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gains</span><span class="p">[</span><span class="s1">&#39;d&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;observation&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">:]</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gains</span><span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_xy</span> <span class="o">-</span> <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;achieved_goal&quot;</span><span class="p">])</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gains</span><span class="p">[</span><span class="s2">&quot;d&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">][</span><span class="mi">2</span><span class="p">:]</span>
+        <span class="p">)</span>
         <span class="n">action</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">action</span>
@@ -643,18 +692,21 @@ case we will be generating new hdf5 datasets <code class="docutils literal notra
 <span class="sd">    never terminated or truncated. This callback overrides the truncation value to True when the step</span>
 <span class="sd">    returns a True &#39;succes&#39; key in &#39;infos&#39;. This way we can divide the Minari dataset into different trajectories.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rew</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">terminated</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">truncated</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="n">qpos</span> <span class="o">=</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;observation&#39;</span><span class="p">][:</span><span class="mi">2</span><span class="p">]</span>
-        <span class="n">qvel</span> <span class="o">=</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;observation&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">:]</span>
-        <span class="n">goal</span> <span class="o">=</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;desired_goal&#39;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rew</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">terminated</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">truncated</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="n">qpos</span> <span class="o">=</span> <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">][:</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">qvel</span> <span class="o">=</span> <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">][</span><span class="mi">2</span><span class="p">:]</span>
+        <span class="n">goal</span> <span class="o">=</span> <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;desired_goal&quot;</span><span class="p">]</span>
 
         <span class="n">step_data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">step_data</span><span class="p">[</span><span class="s1">&#39;infos&#39;</span><span class="p">][</span><span class="s1">&#39;success&#39;</span><span class="p">]:</span>
-            <span class="n">step_data</span><span class="p">[</span><span class="s1">&#39;truncations&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="n">step_data</span><span class="p">[</span><span class="s1">&#39;infos&#39;</span><span class="p">][</span><span class="s1">&#39;qpos&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">qpos</span>
-        <span class="n">step_data</span><span class="p">[</span><span class="s1">&#39;infos&#39;</span><span class="p">][</span><span class="s1">&#39;qvel&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">qvel</span>
-        <span class="n">step_data</span><span class="p">[</span><span class="s1">&#39;infos&#39;</span><span class="p">][</span><span class="s1">&#39;goal&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">goal</span>
+        <span class="k">if</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;infos&quot;</span><span class="p">][</span><span class="s2">&quot;success&quot;</span><span class="p">]:</span>
+            <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;truncations&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;infos&quot;</span><span class="p">][</span><span class="s2">&quot;qpos&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">qpos</span>
+        <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;infos&quot;</span><span class="p">][</span><span class="s2">&quot;qvel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">qvel</span>
+        <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;infos&quot;</span><span class="p">][</span><span class="s2">&quot;goal&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">goal</span>
 
         <span class="k">return</span> <span class="n">step_data</span>
 </pre></div>
@@ -664,54 +716,46 @@ case we will be generating new hdf5 datasets <code class="docutils literal notra
 <h2>Collect Data and Create Minari Dataset<a class="headerlink" href="#collect-data-and-create-minari-dataset" title="Link to this heading">#</a></h2>
 <p>Now we will finally perform our data collection and create the Minari dataset. This is as simple as wrapping the environment with
 the <a class="reference internal" href="../../../api/data_collector/#minari.DataCollectorV0" title="minari.DataCollectorV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollectorV0</span></code></a> wrapper and add the custom callback methods. Once we’ve done this we can step the environment with the <code class="docutils literal notranslate"><span class="pre">WayPointController</span></code>
-as our policy. Don’t forget to initialize the environment with a <code class="docutils literal notranslate"><span class="pre">max_episode_steps</span></code> of <code class="docutils literal notranslate"><span class="pre">1,000,000</span></code> since that’s the total amount of steps we want to
+as our policy. For the tutorial, we collect 10,000 transitions. Thus, we initialize the environment with <code class="docutils literal notranslate"><span class="pre">max_episode_steps=10,000</span></code> since that’s the total amount of steps we want to
 collect for our dataset and we don’t want the environment to get <code class="docutils literal notranslate"><span class="pre">truncated</span></code> during the data collection due to a time limit.</p>
-<p>To create the Minari dataset we will first create the dataset by calling the function <a class="reference internal" href="../../../api/minari_functions/#minari.create_dataset_from_collector_env" title="minari.create_dataset_from_collector_env"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.create_dataset_from_collector_env()</span></code></a>, and then checkpoint the dataset
-every <code class="docutils literal notranslate"><span class="pre">200,000</span></code> steps taken by the environment.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dataset_name</span> <span class="o">=</span> <span class="s2">&quot;pointmaze-umaze-v0&quot;</span>
-
-<span class="c1"># Check if dataset already exist and load to add more data</span>
-<span class="k">if</span> <span class="n">dataset_name</span> <span class="ow">in</span> <span class="n">minari</span><span class="o">.</span><span class="n">list_local_datasets</span><span class="p">():</span>
-    <span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
-<span class="k">else</span><span class="p">:</span>
-    <span class="n">dataset</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="n">total_steps</span> <span class="o">=</span> <span class="mi">10_000</span>
 
 <span class="c1"># continuing task =&gt; the episode doesn&#39;t terminate or truncate when reaching a goal</span>
 <span class="c1"># it will generate a new target. For this reason we set the maximum episode steps to</span>
 <span class="c1"># the desired size of our Minari dataset (evade truncation due to time limit)</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;PointMaze_Medium-v3&#39;</span><span class="p">,</span> <span class="n">continuing_task</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_episode_steps</span><span class="o">=</span><span class="mf">1e6</span><span class="p">)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;PointMaze_Medium-v3&quot;</span><span class="p">,</span> <span class="n">continuing_task</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_episode_steps</span><span class="o">=</span><span class="n">total_steps</span><span class="p">)</span>
 
 <span class="c1"># Data collector wrapper to save temporary data while stepping. Characteristics:</span>
 <span class="c1">#   * Custom StepDataCallback to add extra state information to &#39;infos&#39; and divide dataset in different episodes by overridng</span>
 <span class="c1">#     truncation value to True when target is reached</span>
 <span class="c1">#   * Record the &#39;info&#39; value of every step</span>
-<span class="n">collector_env</span> <span class="o">=</span> <span class="n">DataCollectorV0</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">step_data_callback</span><span class="o">=</span><span class="n">PointMazeStepDataCallback</span><span class="p">,</span> <span class="n">record_infos</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">collector_env</span> <span class="o">=</span> <span class="n">DataCollectorV0</span><span class="p">(</span>
+    <span class="n">env</span><span class="p">,</span> <span class="n">step_data_callback</span><span class="o">=</span><span class="n">PointMazeStepDataCallback</span><span class="p">,</span> <span class="n">record_infos</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
 
 <span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">collector_env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
 
 <span class="n">waypoint_controller</span> <span class="o">=</span> <span class="n">WaypointController</span><span class="p">(</span><span class="n">maze</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">maze</span><span class="p">)</span>
 
-<span class="k">for</span> <span class="n">n_step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="mf">1e6</span><span class="p">)):</span>
+<span class="k">for</span> <span class="n">n_step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">total_steps</span><span class="p">)):</span>
     <span class="n">action</span> <span class="o">=</span> <span class="n">waypoint_controller</span><span class="o">.</span><span class="n">compute_action</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
     <span class="c1"># Add some noise to each step action</span>
-    <span class="n">action</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">action</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">*</span><span class="mf">0.5</span>
-    <span class="n">action</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">low</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">high</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="n">action</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">action</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span>
+        <span class="n">action</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">low</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">high</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+    <span class="p">)</span>
 
     <span class="n">obs</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">collector_env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">n_step</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span class="mi">200000</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;STEPS RECORDED:&#39;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">n_step</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">dataset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">create_dataset_from_collector_env</span><span class="p">(</span><span class="n">collector_env</span><span class="o">=</span><span class="n">collector_env</span><span class="p">,</span>
-                                                               <span class="n">dataset_name</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">,</span>
-                                                               <span class="n">algorithm_name</span><span class="o">=</span><span class="s2">&quot;QIteration&quot;</span><span class="p">,</span>
-                                                               <span class="n">code_permalink</span><span class="o">=</span><span class="s2">&quot;https://github.com/Farama-Foundation/Minari/blob/main/docs/tutorials/dataset_creation/point_maze_dataset.py&quot;</span><span class="p">,</span>
-                                                               <span class="n">author</span><span class="o">=</span><span class="s2">&quot;Rodrigo Perez-Vicente&quot;</span><span class="p">,</span>
-                                                               <span class="n">author_email</span><span class="o">=</span><span class="s2">&quot;rperezvicente@farama.org&quot;</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># Update local Minari dataset every 200000 steps.</span>
-            <span class="c1"># This works as a checkpoint to not lose the already collected data</span>
-            <span class="n">dataset</span><span class="o">.</span><span class="n">update_dataset_from_collector_env</span><span class="p">(</span><span class="n">collector_env</span><span class="p">)</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">create_dataset_from_collector_env</span><span class="p">(</span>
+    <span class="n">collector_env</span><span class="o">=</span><span class="n">collector_env</span><span class="p">,</span>
+    <span class="n">dataset_id</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">,</span>
+    <span class="n">algorithm_name</span><span class="o">=</span><span class="s2">&quot;QIteration&quot;</span><span class="p">,</span>
+    <span class="n">code_permalink</span><span class="o">=</span><span class="s2">&quot;https://github.com/Farama-Foundation/Minari/blob/main/docs/tutorials/dataset_creation/point_maze_dataset.py&quot;</span><span class="p">,</span>
+    <span class="n">author</span><span class="o">=</span><span class="s2">&quot;Rodrigo Perez-Vicente&quot;</span><span class="p">,</span>
+    <span class="n">author_email</span><span class="o">=</span><span class="s2">&quot;rperezvicente@farama.org&quot;</span><span class="p">,</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -748,7 +792,7 @@ Apr 8, 2020, <a class="reference external" href="https://towardsdatascience.com/
                 <use href="#svg-arrow-right"></use>
               </svg>
             </a>
-            <a class="prev-page" href="../observation_space_subseting/">
+            <a class="prev-page" href="../custom_space_serialization/">
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
               </svg>
@@ -757,7 +801,7 @@ Apr 8, 2020, <a class="reference external" href="https://towardsdatascience.com/
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Collecting a subset of a dictionary space with StepDataCallback</div>
+                <div class="title">Serializing a custom space</div>
                 
               </div>
             </a>
@@ -904,7 +948,7 @@ Apr 8, 2020, <a class="reference external" href="https://towardsdatascience.com/
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../../../_static/js/termynal.js?v=ff4c6923"></script>
-    <script src="../../../_static/js/custom.js?v=e881c6cc"></script>
+    <script src="../../../_static/js/custom.js?v=a0ed09ce"></script>
     
     <script>
 

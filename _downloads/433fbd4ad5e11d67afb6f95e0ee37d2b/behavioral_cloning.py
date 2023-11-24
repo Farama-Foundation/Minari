@@ -1,4 +1,3 @@
-# fmt: off
 """
 Behavioral cloning with PyTorch
 =========================================
@@ -9,24 +8,13 @@ Behavioral cloning with PyTorch
 # The objective is to balance the pole on the cart, and we receive a reward of +1 for each successful timestep.
 
 # %%
-# Policy training
-# ~~~~~~~~~~~~~~~~~~~
-# To train the expert policy, we use `SB3 <https://github.com/DLR-RM/stable-baselines3>`_'s `rl-zoo3 <https://github.com/DLR-RM/rl-baselines3-zoo>`_ library.
-# After installing the library with ``pip install rl_zoo3``,
-# we train a PPO agent on the environment with the following command:
-#
-# ``python -m rl_zoo3.train --algo ppo --env CartPole-v1``
-
-# %%
-# This will generate a new folder named `log` with the expert policy.
-
-# %%
 # Imports
 # ~~~~~~~~~~~~~~~~~~~
-# Let's import all the required packages and set the random seed for reproducibility:
-
+# For this tutorial you will need the `RL Baselines3 Zoo <https://github.com/DLR-RM/rl-baselines3-zoo>`_ library, which you can install with `pip install rl_zoo3`.
+# Let's then import all the required packages and set the random seed for reproducibility:
 
 import os
+import sys
 
 import gymnasium as gym
 import numpy as np
@@ -34,6 +22,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from gymnasium import spaces
+from rl_zoo3.train import train
 from stable_baselines3 import PPO
 from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
@@ -43,6 +32,19 @@ from minari import DataCollectorV0
 
 
 torch.manual_seed(42)
+
+# %%
+# Policy training
+# ~~~~~~~~~~~~~~~~~~~
+# Now we can train the expert policy using RL Baselines3 Zoo.
+# We train a PPO agent on the environment:
+
+sys.argv = ["python", "--algo", "ppo", "--env", "CartPole-v1"]
+train()
+
+# %%
+# This will generate a new folder named `log` with the expert policy.
+
 
 # %%
 # Dataset generation
@@ -64,13 +66,14 @@ for i in tqdm(range(total_episodes)):
         if terminated or truncated:
             break
 
-dataset = minari.create_dataset_from_collector_env(dataset_id="CartPole-v1-expert",
-                                                   collector_env=env,
-                                                   algorithm_name="ExpertPolicy",
-                                                   code_permalink="https://minari.farama.org/tutorials/behavioral_cloning",
-                                                   author="Farama",
-                                                   author_email="contact@farama.org"
-                                                   )
+dataset = minari.create_dataset_from_collector_env(
+    dataset_id="CartPole-v1-expert",
+    collector_env=env,
+    algorithm_name="ExpertPolicy",
+    code_permalink="https://minari.farama.org/tutorials/behavioral_cloning",
+    author="Farama",
+    author_email="contact@farama.org"
+)
 
 # %%
 # Once executing the script, the dataset will be saved on your disk. You can display the list of datasets with ``minari list local`` command.
