@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 import shutil
 import tempfile
+import warnings
 from typing import Any, Dict, List, Optional, SupportsFloat, Type, Union
 
 import gymnasium as gym
@@ -268,6 +269,7 @@ class DataCollectorV0(gym.Wrapper):
             path (str): path to store the dataset, e.g.: '/home/foo/datasets/data'
             dataset_metadata (Dict, optional): additional metadata to add to the dataset file. Defaults to {}.
         """
+        warnings.warn("This method is deprecated and will become private in v0.5.0.", DeprecationWarning, stacklevel=2)
         self._validate_buffer()
         self._storage.update_episodes(self._buffer)
         self._buffer.clear()

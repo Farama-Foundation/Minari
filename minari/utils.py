@@ -605,6 +605,7 @@ def create_dataset_from_collector_env(
     Returns:
         MinariDataset
     """
+    warnings.warn("This function is deprecated and will be removed in v0.5.0. Please use env.create_dataset() instead.", DeprecationWarning, stacklevel=2)
     assert collector_env.datasets_path is not None
     dataset_path = _generate_dataset_path(dataset_id)
     metadata: Dict[str, Any] = _generate_dataset_metadata(
