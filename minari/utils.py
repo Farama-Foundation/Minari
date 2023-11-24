@@ -15,7 +15,6 @@ from gymnasium.wrappers.record_episode_statistics import RecordEpisodeStatistics
 from packaging.specifiers import InvalidSpecifier, SpecifierSet
 from packaging.version import Version
 
-from minari import DataCollectorV0
 from minari.dataset.minari_dataset import MinariDataset
 from minari.dataset.minari_storage import MinariStorage
 from minari.storage.datasets_root_dir import get_dataset_path
@@ -567,7 +566,7 @@ def create_dataset_from_buffers(
 
 def create_dataset_from_collector_env(
     dataset_id: str,
-    collector_env: DataCollectorV0,
+    collector_env: Any,
     eval_env: Optional[str | gym.Env | EnvSpec] = None,
     algorithm_name: Optional[str] = None,
     author: Optional[str] = None,
