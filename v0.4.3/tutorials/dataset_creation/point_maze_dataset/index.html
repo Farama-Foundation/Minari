@@ -1,0 +1,1144 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark">
+    <meta name="description" content="Minari is a Python library for conducting research in offline reinforcement learning.">
+    <meta property="og:title" content="Minari Documentation" />
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="Minari is a Python library for conducting research in offline reinforcement learning." />
+    <meta property="og:url" content="https://minari.farama.org/tutorials/dataset_creation/point_maze_dataset.html" /><meta property="og:image" content="https://minari.farama.org/_static/img/robotics-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Using Datasets" href="../../using_datasets/" /><link rel="prev" title="Serializing a custom space" href="../custom_space_serialization/" />
+        <link rel="canonical" href="https://minari.farama.org/tutorials/dataset_creation/point_maze_dataset.html" />
+
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+        <title>PointMaze D4RL dataset - Minari Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=ca3c1c84" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=e5fbc548" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=49cbaffd" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/termynal.css?v=d6ad0c61" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=16dd5f1b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/directory_tree.css?v=083c6588" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    <header class="farama-header" aria-label="Farama header">
+      <div class="farama-header__container">
+        <div class="farama-header__left--mobile">
+          <label class="nav-overlay-icon" for="__navigation">
+            <div class="visually-hidden">Toggle site navigation sidebar</div>
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <defs></defs>
+              <line x1="0.5" y1="4" x2="23.5" y2="4"></line>
+              <line x1="0.232" y1="12" x2="23.5" y2="12"></line>
+              <line x1="0.232" y1="20" x2="23.5" y2="20"></line>
+            </svg>
+          </label>
+        </div>
+        <div class="farama-header__left farama-header__center--mobile">
+          <a href="../../../">
+              <img class="farama-header__logo only-light" src="../../../_static/img/Minari.svg" alt="Light Logo"/>
+              <img class="farama-header__logo only-dark" src="../../../_static/img/Minari_White.svg" alt="Dark Logo"/>
+            <span class="farama-header__title">Minari Documentation</span>
+          </a>
+        </div>
+        <div class="farama-header__right">
+          <div class="farama-header-menu">
+            <button class="farama-header-menu__btn" aria-label="Open Farama Menu" aria-expanded="false" aria-haspopup="true" aria-controls="farama-menu">
+              <img class="farama-black-logo-invert" src="../../../_static/img/farama-logo-header.svg">
+              <svg viewBox="0 0 24 24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <polyline style="stroke-linecap: round; stroke-linejoin: round; fill: none; stroke-width: 2px;" points="1 7 12 18 23 7"></polyline>
+              </svg>
+            </button>
+            <div class="farama-header-menu-container farama-hidden" aria-hidden="true" id="farama-menu">
+              <div class="farama-header-menu__header">
+                <a href="https://farama.org">
+                  <img class="farama-header-menu__logo farama-white-logo-invert" src="../../../_static/img/farama_solid_white.svg" alt="Farama Foundation logo">
+                  <span>Farama Foundation</span>
+                </a>
+                <div class="farama-header-menu-header__right">
+                  <button id="farama-close-menu">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
+                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-close">
+                      <line x1="3" y1="21" x2="21" y2="3"></line>
+                      <line x1="3" y1="3" x2="21" y2="21"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="farama-header-menu__body">
+                <!-- Response from farama.org/api/projects.json -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<div class="page">
+  <!--<header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../"><div class="brand">Minari Documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>-->
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="farama-sidebar__title" href="../../../">
+      <img class="farama-header__logo only-light" src="../../../_static/img/Minari.svg" alt="Light Logo"/>
+      <img class="farama-header__logo only-dark" src="../../../_static/img/Minari_White.svg" alt="Dark Logo"/>
+    <span class="farama-header__title">Minari Documentation</span>
+  </a><form class="sidebar-search-container" method="get" action="../../../search/" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../content/basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../content/dataset_standards/">Dataset Standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../content/minari_cli/">Minari CLI</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/minari_functions/">Minari</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Minari</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/minari_dataset/minari_dataset/">MinariDataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/minari_dataset/episode_data/">EpisodeData</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/data_collector/">DataCollectorV0</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of DataCollectorV0</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector_callbacks/step_data_callback/">StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector_callbacks/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="current">
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../">Dataset Creation</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Dataset Creation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../observation_space_subseting/">Collecting a subset of a dictionary space with StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../custom_space_serialization/">Serializing a custom space</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">PointMaze D4RL dataset</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../using_datasets/">Using Datasets</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Using Datasets</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../using_datasets/behavioral_cloning/">Behavioral cloning with PyTorch</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/minigrid/">MiniGrid</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of MiniGrid</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/door/">Door</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Door</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/door/human/">Human</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/door/expert/">Expert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/door/cloned/">Cloned</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/hammer/">Hammer</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Hammer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/hammer/human/">Human</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/hammer/expert/">Expert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/hammer/cloned/">Cloned</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/relocate/">Relocate</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Relocate</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/relocate/human/">Human</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/relocate/expert/">Expert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/relocate/cloned/">Cloned</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/pen/">Pen</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Pen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pen/human/">Human</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pen/expert/">Expert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pen/cloned/">Cloned</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/pointmaze/">Point Maze</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Point Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/open/">Open</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/umaze/">Umaze</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/medium/">Medium</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/large/">Large</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/open-dense/">Open-Dense</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/umaze-dense/">Umaze-Dense</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/medium-dense/">Medium-Dense</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/large-dense/">Large-Dense</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/antmaze/">Ant Maze</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Ant Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/umaze/">Umaze</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/umaze-diverse/">Umaze-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/medium-diverse/">Medium-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/medium-play/">Medium-Play</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/large-diverse/">Large-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/large-play/">Large-Play</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/kitchen/partial/">Partial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/kitchen/complete/">Complete</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../datasets/kitchen/mixed/">Mixed</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/Minari">Github</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes/">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/Minari/tree/main/docs">Contribute to the Docs</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main-container">
+
+    
+
+    
+
+    <div class="main">
+      <div class="content">
+        <div class="article-container">
+          <a href="#" class="back-to-top muted-link">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+            </svg>
+            <span>Back to top</span>
+          </a>
+          <div class="content-icon-container">
+      <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/Farama-Foundation/Minari/edit/main/docs/tutorials/dataset_creation/point_maze_dataset.py" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+              <button class="theme-toggle" title="Toggle color theme">
+                <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+                <svg class="theme-icon-when-auto">
+                  <use href="#svg-sun-half"></use>
+                </svg>
+                <svg class="theme-icon-when-dark">
+                  <use href="#svg-moon"></use>
+                </svg>
+                <svg class="theme-icon-when-light">
+                  <use href="#svg-sun"></use>
+                </svg>
+              </button>
+            </div>
+            <label class="toc-overlay-icon toc-content-icon" for="__toc">
+              <div class="visually-hidden">Toggle table of contents sidebar</div>
+              <i class="icon"><svg>
+                  <use href="#svg-toc"></use>
+                </svg></i>
+            </label>
+          </div>
+          <article role="main">
+            
+            <section class="sphx-glr-example-title" id="pointmaze-d4rl-dataset">
+<span id="sphx-glr-tutorials-dataset-creation-point-maze-dataset-py"></span><h1>PointMaze D4RL dataset<a class="headerlink" href="#pointmaze-d4rl-dataset" title="Link to this heading">#</a></h1>
+<p>In this tutorial you will learn how to re-create the Maze2D datasets from <a class="reference external" href="https://sites.google.com/view/d4rl/home">D4RL</a> [1] with Minari.
+We will be using the refactored version of the PointMaze environments in <a class="reference external" href="https://robotics.farama.org/envs/maze/point_maze/">Gymnasium-Robotics</a> which support the Gymnasium API as well as the latest
+MuJoCo python bindings.</p>
+<dl class="simple">
+<dt>Lets start by breaking down the steps to generate these datasets:</dt><dd><ol class="arabic simple">
+<li><p>First we need to create a planner that outputs a trajectory of waypoints that the agent can follow to reach the goal from its initial location in the maze. We will be using
+<a class="reference external" href="https://towardsdatascience.com/fundamental-iterative-methods-of-reinforcement-learning-df8ff078652a">Q-Value Iteration</a> [2] to solve the discrete grid maze, same as in D4RL.</p></li>
+<li><p>Then we also need to generate the actions so that the agent can follow the waypoints of the trajectory. For this purpose D4RL implements a PD controller.</p></li>
+<li><p>Finally, to create the Minari dataset, we will wrap the environment with a <a class="reference internal" href="../../../api/data_collector/#minari.DataCollectorV0" title="minari.DataCollectorV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollectorV0</span></code></a> and step through it by generating actions with the path planner and waypoint controller.</p></li>
+</ol>
+</dd>
+</dl>
+<p>For this tutorial we will be using the <code class="docutils literal notranslate"><span class="pre">pointmaze-medium-v3</span></code> environment to collect transition data. However, any map implementation in the PointMaze environment group can be used.
+Another important factor to take into account is that the environment is continuing, which means that it won’t be <code class="docutils literal notranslate"><span class="pre">terminated</span></code> when reaching a goal. Instead a new goal target will be randomly selected and the agent
+will start from the location it’s currently at (no <code class="docutils literal notranslate"><span class="pre">env.reset()</span></code> required).</p>
+<p>Lets start by importing the required modules for this tutorial:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">import</span> <span class="nn">minari</span>
+<span class="kn">from</span> <span class="nn">minari</span> <span class="kn">import</span> <span class="n">DataCollectorV0</span><span class="p">,</span> <span class="n">StepDataCallback</span>
+</pre></div>
+</div>
+<section id="waypoint-planner">
+<h2>WayPoint Planner<a class="headerlink" href="#waypoint-planner" title="Link to this heading">#</a></h2>
+<p>Our first task is to create a method that generates a trajectory to the goal in the maze.
+We have the advantage that the MuJoCo maze can be discretized into a grid of cells, which reduces
+the size of the state space. The action space for this solver will also be reduced to <code class="docutils literal notranslate"><span class="pre">UP</span></code>, <code class="docutils literal notranslate"><span class="pre">DOWN</span></code>, <code class="docutils literal notranslate"><span class="pre">LEFT</span></code>,
+and <code class="docutils literal notranslate"><span class="pre">RIGHT</span></code>. The solution trajectories will then be a set of waypoints that the agent has to follow to reach the
+goal.
+We can simply use a variation of Dynamic Programming to generate the trajectories. The method chosen in the D4RL[1] publication
+is that of Value Iteration, specifically Q-Value Iteration[2]. We will obtain the optimal Q-values by doing a series of Bellman
+updates (<code class="docutils literal notranslate"><span class="pre">50</span></code> in total) of the form:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[Q'(s, a) \leftarrow \sum_{s'}T(s,a,s')[R(s,a,s') + \gamma\max_{a'}Q(s',a')]\]</div>
+</div>
+<p><strong>T(s,a,s’)</strong> is the transition matrix which gives the probability of reaching state <strong>s’</strong> when taking action <strong>a</strong> from state <strong>s</strong>.
+We consider the grid maze a deterministic space which means that if <strong>s’</strong> is an empty cell <strong>T(s,a,s’)</strong> will have a value of <code class="docutils literal notranslate"><span class="pre">1</span></code> since
+we know that the agent will always reach that state. On the other hand, if the state <strong>s’</strong> is a wall the value of <strong>T(s,a,s’)</strong> will be <code class="docutils literal notranslate"><span class="pre">0</span></code>.</p>
+<p>Once we have the optimal Q-values (<strong>Q*</strong>) we can generate a waypoint trajectory with the following policy:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\pi(s) = arg\max_{a}Q^{*}(s,a)\]</div>
+</div>
+<p>The class below, <code class="docutils literal notranslate"><span class="pre">QIteration</span></code>, gives access to the method <code class="docutils literal notranslate"><span class="pre">generate_path(current_cell,</span> <span class="pre">goal_cell)</span></code>.  This method returns a dictionary of waypoints
+such as:</p>
+<div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="p">{(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">):</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">):</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)}</span>
+</pre></div>
+</div>
+<p>The keys of this dictionary are the current state of the agent and the values the next state of the wapoint path.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">UP</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">DOWN</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">LEFT</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">RIGHT</span> <span class="o">=</span> <span class="mi">3</span>
+
+<span class="n">EXPLORATION_ACTIONS</span> <span class="o">=</span> <span class="p">{</span><span class="n">UP</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">DOWN</span><span class="p">:</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">LEFT</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="n">RIGHT</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)}</span>
+
+
+<span class="k">class</span> <span class="nc">QIteration</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Solves for optimal policy with Q-Value Iteration.</span>
+
+<span class="sd">    Inspired by https://github.com/Farama-Foundation/D4RL/blob/master/d4rl/pointmaze/q_iteration.py</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maze</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maze</span> <span class="o">=</span> <span class="n">maze</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_states</span> <span class="o">=</span> <span class="n">maze</span><span class="o">.</span><span class="n">map_length</span> <span class="o">*</span> <span class="n">maze</span><span class="o">.</span><span class="n">map_width</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_actions</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">EXPLORATION_ACTIONS</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rew_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_actions</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">compute_transition_matrix</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">generate_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current_cell</span><span class="p">,</span> <span class="n">goal_cell</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">compute_reward_matrix</span><span class="p">(</span><span class="n">goal_cell</span><span class="p">)</span>
+        <span class="n">q_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_q_values</span><span class="p">()</span>
+        <span class="n">current_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_to_state</span><span class="p">(</span><span class="n">current_cell</span><span class="p">)</span>
+        <span class="n">waypoints</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">action_id</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">q_values</span><span class="p">[</span><span class="n">current_state</span><span class="p">])</span>
+            <span class="n">next_state</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_next_state</span><span class="p">(</span>
+                <span class="n">current_state</span><span class="p">,</span> <span class="n">EXPLORATION_ACTIONS</span><span class="p">[</span><span class="n">action_id</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="n">current_cell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_to_cell</span><span class="p">(</span><span class="n">current_state</span><span class="p">)</span>
+            <span class="n">waypoints</span><span class="p">[</span><span class="n">current_cell</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_to_cell</span><span class="p">(</span><span class="n">next_state</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">waypoints</span><span class="p">[</span><span class="n">current_cell</span><span class="p">]</span> <span class="o">==</span> <span class="n">goal_cell</span><span class="p">:</span>
+                <span class="k">break</span>
+
+            <span class="n">current_state</span> <span class="o">=</span> <span class="n">next_state</span>
+
+        <span class="k">return</span> <span class="n">waypoints</span>
+
+    <span class="k">def</span> <span class="nf">reward_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">desired_cell</span><span class="p">,</span> <span class="n">current_cell</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">desired_cell</span> <span class="o">==</span> <span class="n">current_cell</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">1.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">0.0</span>
+
+    <span class="k">def</span> <span class="nf">state_to_cell</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">state</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">maze</span><span class="o">.</span><span class="n">map_width</span><span class="p">)</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="n">state</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">maze</span><span class="o">.</span><span class="n">map_width</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">cell_to_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cell</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cell</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">maze</span><span class="o">.</span><span class="n">map_width</span> <span class="o">+</span> <span class="n">cell</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">get_q_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">num_itrs</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">discount</span><span class="o">=</span><span class="mf">0.99</span><span class="p">):</span>
+        <span class="n">q_fn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_actions</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_itrs</span><span class="p">):</span>
+            <span class="n">v_fn</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">q_fn</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">q_fn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rew_matrix</span> <span class="o">+</span> <span class="n">discount</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">transition_matrix</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">v_fn</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">q_fn</span>
+
+    <span class="k">def</span> <span class="nf">compute_reward_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">goal_cell</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_actions</span><span class="p">):</span>
+                <span class="n">next_state</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_next_state</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">EXPLORATION_ACTIONS</span><span class="p">[</span><span class="n">action</span><span class="p">])</span>
+                <span class="n">next_cell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_to_cell</span><span class="p">(</span><span class="n">next_state</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rew_matrix</span><span class="p">[</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reward_function</span><span class="p">(</span>
+                    <span class="n">goal_cell</span><span class="p">,</span> <span class="n">next_cell</span>
+                <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">compute_transition_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructs this environment&#39;s transition matrix.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">          A dS x dA x dS array where the entry transition_matrix[s, a, ns]</span>
+<span class="sd">          corresponds to the probability of transitioning into state ns after taking</span>
+<span class="sd">          action a from state s.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transition_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_actions</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">for</span> <span class="n">state</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">num_states</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">action_idx</span><span class="p">,</span> <span class="n">action</span> <span class="ow">in</span> <span class="n">EXPLORATION_ACTIONS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">next_state</span><span class="p">,</span> <span class="n">valid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_next_state</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">valid</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">transition_matrix</span><span class="p">[</span><span class="n">state</span><span class="p">,</span> <span class="n">action_idx</span><span class="p">,</span> <span class="n">next_state</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="k">def</span> <span class="nf">get_next_state</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="n">cell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">state_to_cell</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
+
+        <span class="n">next_cell</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="n">j</span><span class="p">),</span> <span class="n">cell</span><span class="p">,</span> <span class="n">action</span><span class="p">))</span>
+        <span class="n">next_state</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cell_to_state</span><span class="p">(</span><span class="n">next_cell</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">next_state</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_valid_cell</span><span class="p">(</span><span class="n">next_cell</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_check_valid_cell</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cell</span><span class="p">):</span>
+        <span class="c1"># Out of map bounds</span>
+        <span class="k">if</span> <span class="n">cell</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maze</span><span class="o">.</span><span class="n">map_length</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">elif</span> <span class="n">cell</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maze</span><span class="o">.</span><span class="n">map_width</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="c1"># Wall collision</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">maze</span><span class="o">.</span><span class="n">maze_map</span><span class="p">[</span><span class="n">cell</span><span class="p">[</span><span class="mi">0</span><span class="p">]][</span><span class="n">cell</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+</pre></div>
+</div>
+</section>
+<section id="waypoint-controller">
+<h2>Waypoint Controller<a class="headerlink" href="#waypoint-controller" title="Link to this heading">#</a></h2>
+<p>The step will be to create a controller to allow the agent to follow the waypoint trajectory.
+D4RL uses a PD controller to output continuous force actions from position and velocity.
+A PD controller is a variation of the PID controller often used in classical Control Theory.
+PID combines three components: a Proportial Term(P), Integral Term(I) and Derivative Term (D)</p>
+<section id="proportional-term-p">
+<h3>1. Proportional Term (P)<a class="headerlink" href="#proportional-term-p" title="Link to this heading">#</a></h3>
+<p>The proportional term in a PID controller adjusts the control action based on the current error, which
+is the difference between the desired value (setpoint) and the current value of the process variable.
+The control action is directly proportional to the error. A higher error results in a stronger control action.
+However, the proportional term alone can lead to overshooting or instability. Note <span class="math notranslate nohighlight">\(\tau\)</span> is our control value.</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\tau = k_{p}(\text{Error})\]</div>
+</div>
+</section>
+<section id="derivative-term-d">
+<h3>2. Derivative Term (D)<a class="headerlink" href="#derivative-term-d" title="Link to this heading">#</a></h3>
+<p>The derivative term in a PD controller considers the rate of change of the error over time.
+It helps to predict the future behavior of the error. By dampening the control action based
+on the rate of change of the error, the derivative term contributes to system stability and reduces overshooting.
+It also helps the system respond quickly to changes in the error.</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\tau = k_{d}(d(\text{Error}) / dt)\]</div>
+</div>
+<p>So for a PD controller we have the equation below. We explain what the values <span class="math notranslate nohighlight">\(k_{d}\)</span> and <span class="math notranslate nohighlight">\(k_{p}\)</span> mean in a bit</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\tau = k_{p}(\text{Error})  + k_{d}(d(\text{Error}) / dt)\]</div>
+</div>
+</section>
+<section id="integral-term-i">
+<h3>3. Integral Term (I)<a class="headerlink" href="#integral-term-i" title="Link to this heading">#</a></h3>
+<p>The integral term in a PID controller integrates the cumulative error over time.
+It helps to address steady-state errors or biases that may exist in the system.
+The integral term continuously adjusts the control action based on the accumulated error,
+aiming to eliminate any long-term deviations between the desired setpoint and the actual process variable.</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\tau = k_{I}{\int}_0^t(\text{Error}) dt\]</div>
+</div>
+<p>Finally for a PID controller we have the equation below</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\tau = k_{p}(\text{Error})  + k_{d}(d(\text{Error}) / dt) +  k_{I}\int_{0}^{t}(\text{Error}) dt\]</div>
+</div>
+<p>In the PID controller formula, <span class="math notranslate nohighlight">\(K_p\)</span>, <span class="math notranslate nohighlight">\(K_i\)</span>, and <span class="math notranslate nohighlight">\(K_d\)</span> are the respective gains for the proportional, integral, and derivative terms.
+These gains determine the influence of each term on the control action.
+The optimal values for these gains are typically determined through tuning, which involves adjusting
+the gains to achieve the desired control performance.</p>
+<p>Now back to our controller as stated previously, for the D4RL task we use a PD controller and we
+follow the same theme as what we have stated before as can be seen below. The <span class="math notranslate nohighlight">\(Error\)</span> is equlivalent
+to the difference between the <span class="math notranslate nohighlight">\(\text{goal}_\text{pose}\)</span> and <span class="math notranslate nohighlight">\(\text{agent}_\text{pose}\)</span> and we replace the derivative term <span class="math notranslate nohighlight">\((d(\text{Error}) / dt)\)</span> with
+the velocity of the the agent <span class="math notranslate nohighlight">\(v_{\text{agent}}\)</span>, we can think of this as a measure of the speed at which the agent
+is approaching the target position. When the agent is moving quickly towards the target, the
+derivative term will be larger, contributing to a stronger corrective action from the controller.
+On the other hand, if the agent is already close to the target and moving slowly, the derivative term will be smaller,
+resulting in a less aggressive control action.</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[\tau = k_{p}(p_{\text{goal}} - p_{\text{agent}}) + k_{d}v_{\text{agent}}\]</div>
+</div>
+<p>Each target position in the waypoint trajectory is converted from discrete to a continuous value and we also add some noise to
+the <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(y\)</span> coordinates to add more variance in the trajectories generated for the offline dataset.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">WaypointController</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Agent controller to follow waypoints in the maze.</span>
+
+<span class="sd">    Inspired by https://github.com/Farama-Foundation/D4RL/blob/master/d4rl/pointmaze/waypoint_controller.py</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maze</span><span class="p">,</span> <span class="n">gains</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;p&quot;</span><span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span> <span class="s2">&quot;d&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">},</span> <span class="n">waypoint_threshold</span><span class="o">=</span><span class="mf">0.1</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">global_target_xy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maze</span> <span class="o">=</span> <span class="n">maze</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">maze_solver</span> <span class="o">=</span> <span class="n">QIteration</span><span class="p">(</span><span class="n">maze</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">maze</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">gains</span> <span class="o">=</span> <span class="n">gains</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">waypoint_threshold</span> <span class="o">=</span> <span class="n">waypoint_threshold</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">waypoint_targets</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">compute_action</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obs</span><span class="p">):</span>
+        <span class="c1"># Check if we need to generate new waypoint path due to change in global target</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">global_target_xy</span> <span class="o">-</span> <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;desired_goal&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mf">1e-3</span>
+            <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">waypoint_targets</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="p">):</span>
+            <span class="c1"># Convert xy to cell id</span>
+            <span class="n">achieved_goal_cell</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">maze</span><span class="o">.</span><span class="n">cell_xy_to_rowcol</span><span class="p">(</span><span class="n">obs</span><span class="p">[</span><span class="s2">&quot;achieved_goal&quot;</span><span class="p">])</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_target_id</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">maze</span><span class="o">.</span><span class="n">cell_xy_to_rowcol</span><span class="p">(</span><span class="n">obs</span><span class="p">[</span><span class="s2">&quot;desired_goal&quot;</span><span class="p">])</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_target_xy</span> <span class="o">=</span> <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;desired_goal&quot;</span><span class="p">]</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">waypoint_targets</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maze_solver</span><span class="o">.</span><span class="n">generate_path</span><span class="p">(</span>
+                <span class="n">achieved_goal_cell</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_target_id</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Check if the waypoint dictionary is empty</span>
+            <span class="c1"># If empty then the ball is already in the target cell location</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">waypoint_targets</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">waypoint_targets</span><span class="p">[</span>
+                    <span class="n">achieved_goal_cell</span>
+                <span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_xy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maze</span><span class="o">.</span><span class="n">cell_rowcol_to_xy</span><span class="p">(</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_id</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">waypoint_targets</span><span class="p">[</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_id</span>
+                <span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_id</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_target_id</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_xy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_target_xy</span>
+
+        <span class="c1"># Check if we need to go to the next waypoint</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_xy</span> <span class="o">-</span> <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;achieved_goal&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">dist</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">waypoint_threshold</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_id</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_target_id</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">waypoint_targets</span><span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_id</span>
+            <span class="p">]</span>
+            <span class="c1"># If target is global goal go directly to goal position</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_target_id</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_xy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_target_xy</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_xy</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">maze</span><span class="o">.</span><span class="n">cell_rowcol_to_xy</span><span class="p">(</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_id</span><span class="p">)</span>
+                    <span class="p">)</span>
+                    <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,))</span> <span class="o">*</span> <span class="mf">0.2</span>
+                <span class="p">)</span>
+
+        <span class="n">action</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gains</span><span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_control_target_xy</span> <span class="o">-</span> <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;achieved_goal&quot;</span><span class="p">])</span>
+            <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gains</span><span class="p">[</span><span class="s2">&quot;d&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">][</span><span class="mi">2</span><span class="p">:]</span>
+        <span class="p">)</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">action</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="modified-stepdatacallback">
+<h2>Modified StepDataCallback<a class="headerlink" href="#modified-stepdatacallback" title="Link to this heading">#</a></h2>
+<p>We will also need to create our own custom callback function to record the data after each step.
+As previously mentioned, the task is continuing and the environment won’t be <code class="docutils literal notranslate"><span class="pre">terminated</span></code> or <code class="docutils literal notranslate"><span class="pre">truncated</span></code> when reaching a goal.
+Instead a new target will be randomly selected in the map and the agent will continue stepping to this new goal. For this reason, to divide the dataset into episodes,
+we will have to truncate the dataset ourselves when a new goal is reached. This can be done by overriding the <code class="docutils literal notranslate"><span class="pre">'truncations'</span></code> key in the step data return when the
+agent returns <code class="docutils literal notranslate"><span class="pre">success=True</span></code> in the <code class="docutils literal notranslate"><span class="pre">'infos'</span></code> item.</p>
+<p>In the <a class="reference internal" href="../../../api/data_collector_callbacks/step_data_callback/#minari.StepDataCallback" title="minari.StepDataCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.StepDataCallback</span></code></a> we can add new keys to infos that we would also want to save in our Minari dataset. For example in this
+case we will be generating new hdf5 datasets <code class="docutils literal notranslate"><span class="pre">qpos</span></code>, <code class="docutils literal notranslate"><span class="pre">qvel</span></code>, and <code class="docutils literal notranslate"><span class="pre">goal</span></code> in the <code class="docutils literal notranslate"><span class="pre">infos</span></code> subgroup of each episode group.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">PointMazeStepDataCallback</span><span class="p">(</span><span class="n">StepDataCallback</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add environment state information to &#39;infos&#39;.</span>
+
+<span class="sd">    Also, since the environment generates a new target every time it reaches a goal, the environment is</span>
+<span class="sd">    never terminated or truncated. This callback overrides the truncation value to True when the step</span>
+<span class="sd">    returns a True &#39;succes&#39; key in &#39;infos&#39;. This way we can divide the Minari dataset into different trajectories.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">rew</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">terminated</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">truncated</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+        <span class="n">qpos</span> <span class="o">=</span> <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">][:</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">qvel</span> <span class="o">=</span> <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">][</span><span class="mi">2</span><span class="p">:]</span>
+        <span class="n">goal</span> <span class="o">=</span> <span class="n">obs</span><span class="p">[</span><span class="s2">&quot;desired_goal&quot;</span><span class="p">]</span>
+
+        <span class="n">step_data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;infos&quot;</span><span class="p">][</span><span class="s2">&quot;success&quot;</span><span class="p">]:</span>
+            <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;truncations&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;infos&quot;</span><span class="p">][</span><span class="s2">&quot;qpos&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">qpos</span>
+        <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;infos&quot;</span><span class="p">][</span><span class="s2">&quot;qvel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">qvel</span>
+        <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;infos&quot;</span><span class="p">][</span><span class="s2">&quot;goal&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">goal</span>
+
+        <span class="k">return</span> <span class="n">step_data</span>
+</pre></div>
+</div>
+</section>
+<section id="collect-data-and-create-minari-dataset">
+<h2>Collect Data and Create Minari Dataset<a class="headerlink" href="#collect-data-and-create-minari-dataset" title="Link to this heading">#</a></h2>
+<p>Now we will finally perform our data collection and create the Minari dataset. This is as simple as wrapping the environment with
+the <a class="reference internal" href="../../../api/data_collector/#minari.DataCollectorV0" title="minari.DataCollectorV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollectorV0</span></code></a> wrapper and add the custom callback methods. Once we’ve done this we can step the environment with the <code class="docutils literal notranslate"><span class="pre">WayPointController</span></code>
+as our policy. For the tutorial, we collect 10,000 transitions. Thus, we initialize the environment with <code class="docutils literal notranslate"><span class="pre">max_episode_steps=10,000</span></code> since that’s the total amount of steps we want to
+collect for our dataset and we don’t want the environment to get <code class="docutils literal notranslate"><span class="pre">truncated</span></code> during the data collection due to a time limit.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dataset_name</span> <span class="o">=</span> <span class="s2">&quot;pointmaze-umaze-v0&quot;</span>
+<span class="n">total_steps</span> <span class="o">=</span> <span class="mi">10_000</span>
+
+<span class="c1"># continuing task =&gt; the episode doesn&#39;t terminate or truncate when reaching a goal</span>
+<span class="c1"># it will generate a new target. For this reason we set the maximum episode steps to</span>
+<span class="c1"># the desired size of our Minari dataset (evade truncation due to time limit)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;PointMaze_Medium-v3&quot;</span><span class="p">,</span> <span class="n">continuing_task</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_episode_steps</span><span class="o">=</span><span class="n">total_steps</span><span class="p">)</span>
+
+<span class="c1"># Data collector wrapper to save temporary data while stepping. Characteristics:</span>
+<span class="c1">#   * Custom StepDataCallback to add extra state information to &#39;infos&#39; and divide dataset in different episodes by overridng</span>
+<span class="c1">#     truncation value to True when target is reached</span>
+<span class="c1">#   * Record the &#39;info&#39; value of every step</span>
+<span class="n">collector_env</span> <span class="o">=</span> <span class="n">DataCollectorV0</span><span class="p">(</span>
+    <span class="n">env</span><span class="p">,</span> <span class="n">step_data_callback</span><span class="o">=</span><span class="n">PointMazeStepDataCallback</span><span class="p">,</span> <span class="n">record_infos</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+
+<span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">collector_env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
+
+<span class="n">waypoint_controller</span> <span class="o">=</span> <span class="n">WaypointController</span><span class="p">(</span><span class="n">maze</span><span class="o">=</span><span class="n">env</span><span class="o">.</span><span class="n">maze</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">n_step</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">total_steps</span><span class="p">)):</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="n">waypoint_controller</span><span class="o">.</span><span class="n">compute_action</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
+    <span class="c1"># Add some noise to each step action</span>
+    <span class="n">action</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="o">*</span><span class="n">action</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span>
+        <span class="n">action</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">low</span><span class="p">,</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">high</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span>
+    <span class="p">)</span>
+
+    <span class="n">obs</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">collector_env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">create_dataset_from_collector_env</span><span class="p">(</span>
+    <span class="n">collector_env</span><span class="o">=</span><span class="n">collector_env</span><span class="p">,</span>
+    <span class="n">dataset_id</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">,</span>
+    <span class="n">algorithm_name</span><span class="o">=</span><span class="s2">&quot;QIteration&quot;</span><span class="p">,</span>
+    <span class="n">code_permalink</span><span class="o">=</span><span class="s2">&quot;https://github.com/Farama-Foundation/Minari/blob/main/docs/tutorials/dataset_creation/point_maze_dataset.py&quot;</span><span class="p">,</span>
+    <span class="n">author</span><span class="o">=</span><span class="s2">&quot;Rodrigo Perez-Vicente&quot;</span><span class="p">,</span>
+    <span class="n">author_email</span><span class="o">=</span><span class="s2">&quot;rperezvicente@farama.org&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<p>[1] Fu, Justin, et al. ‘D4RL: Datasets for Deep Data-Driven Reinforcement Learning’.
+CoRR, vol. abs/2004.07219, 2020, <a class="reference external" href="https://arxiv.org/abs/2004.07219">https://arxiv.org/abs/2004.07219</a>..</p>
+<p>[2] Lambert, Nathan. ‘Fundamental Iterative Methods of Reinforcement Learnin’.
+Apr 8, 2020, <a class="reference external" href="https://towardsdatascience.com/fundamental-iterative-methods-of-reinforcement-learning-df8ff078652a">https://towardsdatascience.com/fundamental-iterative-methods-of-reinforcement-learning-df8ff078652a</a></p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-tutorials-dataset-creation-point-maze-dataset-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/d242f1ed6ffcff2255fb7296630d75ca/point_maze_dataset.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">point_maze_dataset.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/e07dbac5507bc55a4140a567f8213c9a/point_maze_dataset.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">point_maze_dataset.ipynb</span></code></a></p>
+</div>
+</div>
+</section>
+</section>
+
+          </article>
+        </div>
+        <footer>
+          
+          <div class="related-pages">
+            <a class="next-page" href="../../using_datasets/">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Using Datasets</div>
+              </div>
+              <svg class="furo-related-icon">
+                <use href="#svg-arrow-right"></use>
+              </svg>
+            </a>
+            <a class="prev-page" href="../custom_space_serialization/">
+              <svg class="furo-related-icon">
+                <use href="#svg-arrow-right"></use>
+              </svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Serializing a custom space</div>
+                
+              </div>
+            </a>
+          </div>
+          <div class="bottom-of-page">
+            <div class="left-details">
+              <div class="copyright">
+                Copyright &#169; 2022
+              </div>
+              <!--
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            -->
+            </div>
+            <div class="right-details">
+              <div class="icons">
+                <a class="muted-link" href="https://github.com/Farama-Foundation/Minari/"
+                  aria-label="On GitHub">
+                  <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                      d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z">
+                    </path>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+          
+        </footer>
+      </div>
+      <aside class="toc-drawer">
+        
+        
+        <div class="toc-sticky toc-scroll">
+          <div class="toc-title-container">
+            <span class="toc-title">
+              On this page
+            </span>
+          </div>
+          <div class="toc-tree-container">
+            <div class="toc-tree">
+              <ul>
+<li><a class="reference internal" href="#">PointMaze D4RL dataset</a><ul>
+<li><a class="reference internal" href="#waypoint-planner">WayPoint Planner</a></li>
+<li><a class="reference internal" href="#waypoint-controller">Waypoint Controller</a><ul>
+<li><a class="reference internal" href="#proportional-term-p">1. Proportional Term (P)</a></li>
+<li><a class="reference internal" href="#derivative-term-d">2. Derivative Term (D)</a></li>
+<li><a class="reference internal" href="#integral-term-i">3. Integral Term (I)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#modified-stepdatacallback">Modified StepDataCallback</a></li>
+<li><a class="reference internal" href="#collect-data-and-create-minari-dataset">Collect Data and Create Minari Dataset</a></li>
+<li><a class="reference internal" href="#references">References</a></li>
+</ul>
+</li>
+</ul>
+
+            </div>
+          </div>
+        </div>
+        
+        
+      </aside>
+    </div>
+  </div>
+</div>
+    <script>
+      const toggleMenu = () => {
+        const menuBtn = document.querySelector(".farama-header-menu__btn");
+        const menuContainer = document.querySelector(".farama-header-menu-container");
+        if (document.querySelector(".farama-header-menu").classList.contains("active")) {
+          menuBtn.setAttribute("aria-expanded", "false");
+          menuContainer.setAttribute("aria-hidden", "true");
+        } else {
+          menuBtn.setAttribute("aria-expanded", "true");
+          menuContainer.setAttribute("aria-hidden", "false");
+        }
+        document.querySelector(".farama-header-menu").classList.toggle("active");
+      }
+
+      document.querySelector(".farama-header-menu__btn").addEventListener("click", toggleMenu);
+      document.getElementById("farama-close-menu").addEventListener("click", toggleMenu);
+    </script>
+
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-R5TRTT6R78"></script>
+      <script>
+        const enableGtag = () => {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-R5TRTT6R78');
+        }
+        (() => {
+            if (!localStorage.getItem("acceptedCookieAlert")) {
+                const boxElem = document.createElement("div");
+                boxElem.classList.add("cookie-alert");
+                const containerElem = document.createElement("div");
+                containerElem.classList.add("cookie-alert__container");
+                const textElem = document.createElement("p");
+                textElem.innerHTML = `This page uses <a href="https://analytics.google.com/">
+                                    Google Analytics</a> to collect statistics.`;
+                                    containerElem.appendChild(textElem);
+
+                const declineBtn = Object.assign(document.createElement("button"),
+                  {
+                    innerText: "Deny",
+                    className: "farama-btn cookie-alert__button",
+                    id: "cookie-alert__decline",
+                  }
+                );
+                declineBtn.addEventListener("click", () => {
+                  localStorage.setItem("acceptedCookieAlert", false);
+                  boxElem.remove();
+                });
+
+                const acceptBtn = Object.assign(document.createElement("button"),
+                  {
+                    innerText: "Allow",
+                    className: "farama-btn cookie-alert__button",
+                    id: "cookie-alert__accept",
+                  }
+                );
+                acceptBtn.addEventListener("click", () => {
+                  localStorage.setItem("acceptedCookieAlert", true);
+                  boxElem.remove();
+                  enableGtag();
+                });
+
+                containerElem.appendChild(declineBtn);
+                containerElem.appendChild(acceptBtn);
+                boxElem.appendChild(containerElem);
+                document.body.appendChild(boxElem);
+            } else if (localStorage.getItem("acceptedCookieAlert") === "true") {
+              enableGtag();
+            }
+        })()
+      </script>
+
+    <script src="../../../_static/documentation_options.js?v=28686c4f"></script>
+    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../_static/js/termynal.js?v=ff4c6923"></script>
+    <script src="../../../_static/js/custom.js?v=a0ed09ce"></script>
+    
+    <script>
+
+      const createProjectsList = (projects, displayImages) => {
+        const ulElem = Object.assign(document.createElement('ul'),
+          {
+            className:'farama-header-menu-list',
+          }
+        )
+        for (let project of projects) {
+          const liElem = document.createElement("li");
+          const aElem = Object.assign(document.createElement("a"),
+            {
+              href: project.link
+            }
+          );
+          liElem.appendChild(aElem);
+          if (displayImages) {
+            const imgElem = Object.assign(document.createElement("img"),
+              {
+                src: project.image ? imagesBasepath + project.image : imagesBasepath + "/farama_black.svg",
+                alt: `${project.name} logo`,
+                className: "farama-black-logo-invert"
+              }
+            );
+            aElem.appendChild(imgElem);
+          }
+          aElem.appendChild(document.createTextNode(project.name));
+          ulElem.appendChild(liElem);
+        }
+        return ulElem;
+      }
+
+      // Create menu with Farama projects by using the API at farama.org/api/projects.json
+      const createCORSRequest = (method, url) => {
+        let xhr = new XMLHttpRequest();
+        xhr.responseType = 'json';
+
+        if ("withCredentials" in xhr) {
+          xhr.open(method, url, true);
+        } else if (typeof XDomainRequest != "undefined") {
+          // IE8 & IE9
+          xhr = new XDomainRequest();
+          xhr.open(method, url);
+        } else {
+          // CORS not supported.
+          xhr = null;
+        }
+        return xhr;
+      };
+
+      const url = 'https://farama.org/api/projects.json';
+      const imagesBasepath = "https://farama.org/assets/images"
+      const method = 'GET';
+      let xhr = createCORSRequest(method, url);
+
+      xhr.onload = () => {
+        const jsonResponse = xhr.response;
+        const sections = {
+          "Core Projects": [],
+          "Mature Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          },
+          "Incubating Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          },
+          "Foundation": [
+            {
+              name: "About",
+              link: "https://farama.org/about"
+            },
+            {
+              name: "Standards",
+              link: "https://farama.org/project_standards",
+            },
+            {
+              name: "Donate",
+              link: "https://farama.org/donations"
+            }
+          ]
+        }
+
+        // Categorize projects
+        Object.keys(jsonResponse).forEach(key => {
+          projectJson = jsonResponse[key];
+          if (projectJson.website !== null) {
+            projectJson.link = projectJson.website;
+          } else {
+            projectJson.link = projectJson.github;
+          }
+          if (projectJson.type === "core") {
+            sections["Core Projects"].push(projectJson)
+          } else if (projectJson.type == "mature") {
+            if (projectJson.website !== null) {
+              sections["Mature Projects"]["Documentation"].push(projectJson)
+            } else {
+              sections["Mature Projects"]["Repositories"].push(projectJson)
+            }
+          } else {
+            if (projectJson.website !== null) {
+              sections["Incubating Projects"]["Documentation"].push(projectJson)
+            } else {
+              sections["Incubating Projects"]["Repositories"].push(projectJson)
+            }
+          }
+        })
+
+        const menuContainer = document.querySelector(".farama-header-menu__body");
+
+        Object.keys(sections).forEach((key, i) => {
+          const sectionElem = Object.assign(
+            document.createElement('div'), {
+              className:'farama-header-menu__section',
+            }
+          )
+          sectionElem.appendChild(Object.assign(document.createElement('span'),
+            {
+              className:'farama-header-menu__section-title' ,
+              innerText: key
+            }
+          ))
+          // is not a list
+          if (sections[key].constructor !== Array) {
+            const subSections = sections[key];
+            const subSectionContainerElem = Object.assign(
+                document.createElement('div'), {
+                  className:'farama-header-menu__subsections-container',
+                  style: 'display: flex'
+                }
+            )
+            Object.keys(subSections).forEach((subKey, i) => {
+              const subSectionElem = Object.assign(
+                document.createElement('div'), {
+                  className:'farama-header-menu__subsection',
+                }
+              )
+              subSectionElem.appendChild(Object.assign(document.createElement('span'),
+                {
+                  className:'farama-header-menu__subsection-title' ,
+                  innerText: subKey
+                }
+              ))
+              const ulElem = createProjectsList(subSections[subKey], key !== 'Foundation');
+              subSectionElem.appendChild(ulElem);
+              subSectionContainerElem.appendChild(subSectionElem);
+            })
+            sectionElem.appendChild(subSectionContainerElem);
+          } else {
+            const projects = sections[key];
+            const ulElem = createProjectsList(projects, true);
+            sectionElem.appendChild(ulElem);
+          }
+          menuContainer.appendChild(sectionElem)
+        });
+      }
+
+      xhr.onerror = function() {
+        console.error("Unable to load projects");
+      };
+
+      xhr.send();
+    </script>
+
+    
+    <script>
+      const versioningConfig = {
+        githubUser: 'Farama-Foundation',
+        githubRepo: 'Minari',
+      };
+      fetch('/main/_static/versioning/versioning_menu.html').then(response => {
+        if (response.status === 200) {
+            response.text().then(text => {
+                const container = document.createElement("div");
+                container.innerHTML = text;
+                document.querySelector("body").appendChild(container);
+                // innerHtml doenst evaluate scripts, we need to add them dynamically
+                Array.from(container.querySelectorAll("script")).forEach(oldScript => {
+                    const newScript = document.createElement("script");
+                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                });
+            });
+        } else {
+            console.warn("Unable to load versioning menu", response);
+        }
+      });
+    </script>
+
+    </body>
+</html>

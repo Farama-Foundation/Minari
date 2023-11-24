@@ -1,0 +1,1408 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark">
+    <meta name="description" content="Minari is a Python library for conducting research in offline reinforcement learning.">
+    <meta property="og:title" content="Minari Documentation" />
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="Minari is a Python library for conducting research in offline reinforcement learning." />
+    <meta property="og:url" content="https://minari.farama.org/content/dataset_standards.html" /><meta property="og:image" content="https://minari.farama.org/_static/img/robotics-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Minari CLI" href="../minari_cli/" /><link rel="prev" title="Basic Usage" href="../basic_usage/" />
+        <link rel="canonical" href="https://minari.farama.org/content/dataset_standards.html" />
+
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+        <title>Dataset Standards - Minari Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=3e7f4c72" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=61a4c737" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=ca3c1c84" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=e5fbc548" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=49cbaffd" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/termynal.css?v=d6ad0c61" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/custom.css?v=16dd5f1b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/directory_tree.css?v=083c6588" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    <header class="farama-header" aria-label="Farama header">
+      <div class="farama-header__container">
+        <div class="farama-header__left--mobile">
+          <label class="nav-overlay-icon" for="__navigation">
+            <div class="visually-hidden">Toggle site navigation sidebar</div>
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <defs></defs>
+              <line x1="0.5" y1="4" x2="23.5" y2="4"></line>
+              <line x1="0.232" y1="12" x2="23.5" y2="12"></line>
+              <line x1="0.232" y1="20" x2="23.5" y2="20"></line>
+            </svg>
+          </label>
+        </div>
+        <div class="farama-header__left farama-header__center--mobile">
+          <a href="../../">
+              <img class="farama-header__logo only-light" src="../../_static/img/Minari.svg" alt="Light Logo"/>
+              <img class="farama-header__logo only-dark" src="../../_static/img/Minari_White.svg" alt="Dark Logo"/>
+            <span class="farama-header__title">Minari Documentation</span>
+          </a>
+        </div>
+        <div class="farama-header__right">
+          <div class="farama-header-menu">
+            <button class="farama-header-menu__btn" aria-label="Open Farama Menu" aria-expanded="false" aria-haspopup="true" aria-controls="farama-menu">
+              <img class="farama-black-logo-invert" src="../../_static/img/farama-logo-header.svg">
+              <svg viewBox="0 0 24 24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <polyline style="stroke-linecap: round; stroke-linejoin: round; fill: none; stroke-width: 2px;" points="1 7 12 18 23 7"></polyline>
+              </svg>
+            </button>
+            <div class="farama-header-menu-container farama-hidden" aria-hidden="true" id="farama-menu">
+              <div class="farama-header-menu__header">
+                <a href="https://farama.org">
+                  <img class="farama-header-menu__logo farama-white-logo-invert" src="../../_static/img/farama_solid_white.svg" alt="Farama Foundation logo">
+                  <span>Farama Foundation</span>
+                </a>
+                <div class="farama-header-menu-header__right">
+                  <button id="farama-close-menu">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
+                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-close">
+                      <line x1="3" y1="21" x2="21" y2="3"></line>
+                      <line x1="3" y1="3" x2="21" y2="21"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="farama-header-menu__body">
+                <!-- Response from farama.org/api/projects.json -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<div class="page">
+  <!--<header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../"><div class="brand">Minari Documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>-->
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="farama-sidebar__title" href="../../">
+      <img class="farama-header__logo only-light" src="../../_static/img/Minari.svg" alt="Light Logo"/>
+      <img class="farama-header__logo only-dark" src="../../_static/img/Minari_White.svg" alt="Dark Logo"/>
+    <span class="farama-header__title">Minari Documentation</span>
+  </a><form class="sidebar-search-container" method="get" action="../../search/" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Dataset Standards</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../minari_cli/">Minari CLI</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/minari_functions/">Minari</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Minari</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/minari_dataset/minari_dataset/">MinariDataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/minari_dataset/episode_data/">EpisodeData</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../api/data_collector/">DataCollectorV0</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of DataCollectorV0</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../api/data_collector_callbacks/step_data_callback/">StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/data_collector_callbacks/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/dataset_creation/">Dataset Creation</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Dataset Creation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/dataset_creation/observation_space_subseting/">Collecting a subset of a dictionary space with StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/dataset_creation/custom_space_serialization/">Serializing a custom space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/dataset_creation/point_maze_dataset/">PointMaze D4RL dataset</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/using_datasets/">Using Datasets</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Using Datasets</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/using_datasets/behavioral_cloning/">Behavioral cloning with PyTorch</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/minigrid/">MiniGrid</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of MiniGrid</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/door/">Door</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Door</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/door/human/">Human</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/door/expert/">Expert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/door/cloned/">Cloned</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/hammer/">Hammer</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Hammer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/hammer/human/">Human</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/hammer/expert/">Expert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/hammer/cloned/">Cloned</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/relocate/">Relocate</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Relocate</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/relocate/human/">Human</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/relocate/expert/">Expert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/relocate/cloned/">Cloned</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/pen/">Pen</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Pen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/pen/human/">Human</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/pen/expert/">Expert</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/pen/cloned/">Cloned</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/pointmaze/">Point Maze</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Point Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/open/">Open</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/umaze/">Umaze</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/medium/">Medium</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/large/">Large</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/open-dense/">Open-Dense</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/umaze-dense/">Umaze-Dense</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/medium-dense/">Medium-Dense</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/large-dense/">Large-Dense</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/antmaze/">Ant Maze</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Ant Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/antmaze/umaze/">Umaze</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/antmaze/umaze-diverse/">Umaze-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/antmaze/medium-diverse/">Medium-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/antmaze/medium-play/">Medium-Play</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/antmaze/large-diverse/">Large-Diverse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/antmaze/large-play/">Large-Play</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/kitchen/partial/">Partial</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/kitchen/complete/">Complete</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../datasets/kitchen/mixed/">Mixed</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/Minari">Github</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../release_notes/">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/Minari/tree/main/docs">Contribute to the Docs</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main-container">
+
+    
+
+    
+
+    <div class="main">
+      <div class="content">
+        <div class="article-container">
+          <a href="#" class="back-to-top muted-link">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+            </svg>
+            <span>Back to top</span>
+          </a>
+          <div class="content-icon-container"><div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/Farama-Foundation/Minari/edit/main/docs/content/dataset_standards.md" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+              <button class="theme-toggle" title="Toggle color theme">
+                <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+                <svg class="theme-icon-when-auto">
+                  <use href="#svg-sun-half"></use>
+                </svg>
+                <svg class="theme-icon-when-dark">
+                  <use href="#svg-moon"></use>
+                </svg>
+                <svg class="theme-icon-when-light">
+                  <use href="#svg-sun"></use>
+                </svg>
+              </button>
+            </div>
+            <label class="toc-overlay-icon toc-content-icon" for="__toc">
+              <div class="visually-hidden">Toggle table of contents sidebar</div>
+              <i class="icon"><svg>
+                  <use href="#svg-toc"></use>
+                </svg></i>
+            </label>
+          </div>
+          <article role="main">
+            
+            <section id="dataset-standards">
+<h1>Dataset Standards<a class="headerlink" href="#dataset-standards" title="Link to this heading">#</a></h1>
+<section id="minari-storage">
+<h2>Minari Storage<a class="headerlink" href="#minari-storage" title="Link to this heading">#</a></h2>
+<section id="minari-root">
+<h3>Minari root<a class="headerlink" href="#minari-root" title="Link to this heading">#</a></h3>
+<p>Minari stores the offline datasets under a common root directory. The root directory path for the local datasets is set by default to <code class="docutils literal notranslate"><span class="pre">~/.minari/datasets/</span></code>. However, this path can be modified by setting the environment variable <code class="docutils literal notranslate"><span class="pre">MINARI_DATASETS_PATH</span></code>.</p>
+<p>The remote datasets are kept in the public Google Cloud Platform (GCP) bucket <a class="reference external" href="https://console.cloud.google.com/storage/browser/minari-datasets;tab=objects?forceOnBucketsSortingFiltering=false&amp;amp;project=mcmes-345620&amp;amp;prefix=&amp;amp;forceOnObjectsSortingFiltering=false"><code class="docutils literal notranslate"><span class="pre">minari-datasets</span></code></a>.</p>
+<p>The first level of the root directory tree contains the Minari dataset directories, which are named after the datasets <code class="docutils literal notranslate"><span class="pre">id</span></code>. The datasets <code class="docutils literal notranslate"><span class="pre">id</span></code> must follow the syntax <code class="docutils literal notranslate"><span class="pre">(env_name-)(dataset_name)(-v(version))</span></code>, where:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">env_name</span></code>: a string that describes the environment from which the dataset was created. If a dataset comes from the <a class="reference external" href="https://robotics.farama.org/envs/adroit_hand/adroit_door/"><code class="docutils literal notranslate"><span class="pre">AdroitHandDoor</span></code></a> environment <code class="docutils literal notranslate"><span class="pre">ennv_name</span></code> can be equal to <code class="docutils literal notranslate"><span class="pre">door</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">dataset_name</span></code>: a string describing the content of the dataset. For example, if the dataset for the <code class="docutils literal notranslate"><span class="pre">AdroitHandDoor</span></code> environment was generated from human input we can give the value <code class="docutils literal notranslate"><span class="pre">human</span></code> to <code class="docutils literal notranslate"><span class="pre">dataset_name</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">version</span></code>: integer value that represent the number of versions for <code class="docutils literal notranslate"><span class="pre">door-human-v(version)</span></code> dataset, starting from <code class="docutils literal notranslate"><span class="pre">0</span></code>.</p></li>
+</ul>
+<p>In the end, the <code class="docutils literal notranslate"><span class="pre">id</span></code> of the dataset for the initial version of the <code class="docutils literal notranslate"><span class="pre">AdroitHandDoor</span></code> environment example will be <code class="docutils literal notranslate"><span class="pre">door-human-v0</span></code>.</p>
+</section>
+<section id="data-files">
+<h3>Data files<a class="headerlink" href="#data-files" title="Link to this heading">#</a></h3>
+<p>Each Minari dataset directory contains another directory named <code class="docutils literal notranslate"><span class="pre">data</span></code> where the files of the collected offline data are stored (more directories are yet to be included for additional information, <code class="docutils literal notranslate"><span class="pre">_docs</span></code> and <code class="docutils literal notranslate"><span class="pre">policies</span></code> are WIP). The <code class="docutils literal notranslate"><span class="pre">data</span></code> directory can contain multiple <code class="docutils literal notranslate"><span class="pre">.hdf5</span></code> files storing the offline data. When using a Minari dataset the offline data is loaded homogeneously from all <code class="docutils literal notranslate"><span class="pre">.hdf5</span></code> as if it were a single file. The names for these files are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">main_data.hdf5</span></code>: root file that aside from raw data it also contains all the metadata of the global dataset and external links to the data in the other files. Minari will read this file when a dataset is loaded.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">additional_data_x.hdf5</span></code>: these files contain raw data. Each of them is generated after making a checkpoint when collecting the offline data with <code class="docutils literal notranslate"><span class="pre">MinariDataset.update_datasets(env)</span></code>.</p></li>
+</ul>
+<p>The following directory tree of a Minari root path contains three different datasets named <code class="docutils literal notranslate"><span class="pre">dataset_id-v0</span></code>, <code class="docutils literal notranslate"><span class="pre">dataset_id-v1</span></code>, and <code class="docutils literal notranslate"><span class="pre">other_dataset_id-v0</span></code>. The offline data of the <code class="docutils literal notranslate"><span class="pre">dataset_id-v1</span></code> is saved in a single <code class="docutils literal notranslate"><span class="pre">main_data.hdf5</span></code> file, while for <code class="docutils literal notranslate"><span class="pre">dataset_id-v0</span></code> the offline data has been divided into multiple <code class="docutils literal notranslate"><span class="pre">.hdf5</span></code> files.</p>
+<div class="only-light">
+<ul class="directory-list">
+<li class="folder">minari_root
+    <ul>
+    <li class="folder">dataset_id-v0
+        <ul>
+        <li class="folder">data
+            <ul>
+            <li class="file">main_data.hdf5</li>
+            <li class="file">additional_data_0.hdf5</li>
+            <li class="file">additional_data_1.hdf5</li>
+            </ul>
+        </li>
+        </ul>
+    </li>
+    <li class="folder">dataset_id-v1
+        <ul>
+        <li class="folder">data
+            <ul>
+            <li class="file">main_data.hdf5</li>
+            </ul>
+        </li>
+        </ul>
+    </li>
+    <li class="folder-closed">other_dataset_id-v0</li>
+    </ul>
+</li>
+</ul>
+</div>
+<div class="only-dark">
+<ul class="directory-list">
+<li class="folder-white">minari_root
+    <ul class="white">
+    <li class="folder-white">dataset_id-v0
+        <ul class="white">
+        <li class="folder-white">data
+            <ul class="white">
+            <li class="file-white">main_data.hdf5</li>
+            <li class="file-white">additional_data_0.hdf5</li>
+            <li class="file-white">additional_data_1.hdf5</li>
+            </ul>
+        </li>
+        </ul>
+    </li>
+    <li class="folder-white">dataset_id-v1
+        <ul class="white">
+        <li class="folder-white">data
+            <ul class="white">
+            <li class="file-white">main_data.hdf5</li>
+            </ul>
+        </li>
+        </ul>
+    </li>
+    <li class="folder-white-closed">other_dataset_id-v0</li>
+    </ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+<section id="dataset-file-format">
+<h2>Dataset File Format<a class="headerlink" href="#dataset-file-format" title="Link to this heading">#</a></h2>
+<p>Minari datasets are stored in <a class="reference external" href="https://www.hdfgroup.org/solutions/hdf5/"><code class="docutils literal notranslate"><span class="pre">HDF5</span></code></a> file format by using the <a class="reference external" href="https://www.h5py.org/"><code class="docutils literal notranslate"><span class="pre">h5py</span></code></a> Python interface. We leverage the hierarchical structure of <code class="docutils literal notranslate"><span class="pre">HDF5</span></code> files of <a class="reference external" href="https://docs.h5py.org/en/stable/high/group.html"><code class="docutils literal notranslate"><span class="pre">group</span></code></a> and <a class="reference external" href="https://docs.h5py.org/en/stable/high/dataset.html"><code class="docutils literal notranslate"><span class="pre">dataset</span></code></a> elements to clearly divide the recorded step data into episode <code class="docutils literal notranslate"><span class="pre">groups</span></code> and add custom metadata to the whole dataset, to each episode <code class="docutils literal notranslate"><span class="pre">group</span></code>, or to the individual <code class="docutils literal notranslate"><span class="pre">HDF5</span></code> <code class="docutils literal notranslate"><span class="pre">datasets</span></code> that comprise each episode <code class="docutils literal notranslate"><span class="pre">group</span></code>.</p>
+<p>More information about the features that the <code class="docutils literal notranslate"><span class="pre">HDF5</span></code> file format support can be read in this <a class="reference external" href="https://www.neonscience.org/resources/learning-hub/tutorials/about-hdf5">link</a></p>
+<section id="hdf5-file-structure">
+<h3>HDF5 file structure<a class="headerlink" href="#hdf5-file-structure" title="Link to this heading">#</a></h3>
+<p>The offline data is organized inside the <code class="docutils literal notranslate"><span class="pre">main_data.hdf5</span></code> file in episode <a class="reference external" href="https://docs.h5py.org/en/stable/high/dataset.html"><code class="docutils literal notranslate"><span class="pre">groups</span></code></a> named as <code class="docutils literal notranslate"><span class="pre">episode_id</span></code>. Each episode group contains all the stepping data from a Gymnasium environment until the environment is <code class="docutils literal notranslate"><span class="pre">terminated</span></code> or <code class="docutils literal notranslate"><span class="pre">truncated</span></code>.</p>
+<p>The stepping data inside the episode group is divided into some required <code class="docutils literal notranslate"><span class="pre">datasets</span></code> (<code class="docutils literal notranslate"><span class="pre">StepData</span></code>) plus other optional <code class="docutils literal notranslate"><span class="pre">groups</span></code> and nested <code class="docutils literal notranslate"><span class="pre">sub-groups</span></code> such as <code class="docutils literal notranslate"><span class="pre">infos</span></code>. If the action and observation spaces both are simple spaces (not <code class="docutils literal notranslate"><span class="pre">Tuple</span></code> and not <code class="docutils literal notranslate"><span class="pre">Dict</span></code>), then the hierarchical tree of the Minari dataset <code class="docutils literal notranslate"><span class="pre">HDF5</span></code> file will end up looking as follows:</p>
+<div class="only-light">
+<ul class="directory-list">
+<li class="file">main_data.hdf5
+    <ul>
+        <li class="folder">episode_0
+            <ul>
+                <li class="dataset">observations</li>
+                <li class="dataset">actions</li>
+                <li class="dataset">terminations</li>
+                <li class="dataset">truncations</li>
+                <li class="dataset">rewards</li>
+                <li class="folder">infos
+                <ul>
+                    <li class="dataset">infos_datasets</li>
+                    <li class="folder">infos_subgroup
+                    <ul>
+                        <li class="dataset">more_datasets</li>
+                    </ul>
+                    </li>
+                </ul>
+                </li>
+                <li class="folder">additional_groups
+                    <ul>
+                        <li class="dataset">additional_datasets</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li class="folder-closed">episode_1</li>
+        <li class="folder-closed">episode_2</li>
+        <ul><br></ul>
+        <li class="folder-closed">episode_id</li>
+    </ul>
+</li>
+</ul>
+</div>
+<div class="only-dark">
+<ul class="directory-list">
+    <li class="file-white" style="color:white">main_data.hdf5
+        <ul class="white">
+            <li class="folder-white">episode_0
+                <ul class="white">
+                    <li class="dataset-white">observations</li>
+                    <li class="dataset-white">actions</li>
+                    <li class="dataset-white">terminations</li>
+                    <li class="dataset-white">truncations</li>
+                    <li class="dataset-white">rewards</li>
+                    <li class="folder-white">infos
+                    <ul class="white">
+                        <li class="dataset-white">infos_datasets</li>
+                        <li class="folder-white">infos_subgroup
+                        <ul class="white">
+                            <li class="dataset-white">more_datasets</li>
+                        </ul>
+                        </li>
+                    </ul>
+                    </li>
+                    <li class="folder-white">additional_groups
+                        <ul class="white">
+                            <li class="dataset-white">additional_datasets</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li class="folder-white-closed">episode_1</li>
+            <li class="folder-white-closed">episode_2</li>
+            <ul class="white"><br></ul>
+            <li class="folder-white-closed">episode_id</li>
+        </ul>
+    </li>
+</ul>
+</div>
+<p>In the case where, the observation space is a relatively complex <code class="docutils literal notranslate"><span class="pre">Dict</span></code> space with the following definition:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">spaces</span><span class="o">.</span><span class="n">Dict</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;component_1&quot;</span><span class="p">:</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+        <span class="s2">&quot;component_2&quot;</span><span class="p">:</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Dict</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;subcomponent_1&quot;</span><span class="p">:</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+                <span class="s2">&quot;subcomponent_2&quot;</span><span class="p">:</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+            <span class="p">}</span>
+        <span class="p">),</span>
+    <span class="p">}</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>and the action space is a <code class="docutils literal notranslate"><span class="pre">Box</span></code> space, the resulting Minari dataset <code class="docutils literal notranslate"><span class="pre">HDF5</span></code> file will end up looking as follows:</p>
+<div class="only-light">
+<ul class="directory-list">
+<li class="file">main_data.hdf5
+    <ul>
+        <li class="folder">episode_0
+            <ul>
+                <li class="folder">observations
+                <ul>
+                    <li class="dataset">component_1</li>
+                    <li class="folder">component_2
+                    <ul>
+                    <li class="dataset"> subcomponent_1 </li>
+                    <li class="dataset"> subcomponent_2 </li>
+                    </ul>
+                    </li>
+                </ul>
+                </li>
+                <li class="dataset">actions</li>
+                <li class="dataset">terminations</li>
+                <li class="dataset">truncations</li>
+                <li class="dataset">rewards</li>
+                <li class="folder">infos
+                <ul>
+                    <li class="dataset">infos_datasets</li>
+                    <li class="folder">infos_subgroup
+                    <ul>
+                        <li class="dataset">more_datasets</li>
+                    </ul>
+                    </li>
+                </ul>
+                </li>
+                <li class="folder">additional_groups
+                    <ul>
+                        <li class="dataset">additional_datasets</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li class="folder-closed">episode_1</li>
+        <li class="folder-closed">episode_2</li>
+        <ul><br></ul>
+        <li class="folder-closed">episode_id</li>
+    </ul>
+</li>
+</ul>
+</div>
+<div class="only-dark">
+<ul class="directory-list">
+    <li class="file-white" style="color:white">main_data.hdf5
+        <ul class="white">
+            <li class="folder-white">episode_0
+                <ul class="white">
+                <li class="folder-white">observations
+                <ul>
+                    <li class="dataset-white">component_1</li>
+                    <li class="folder-white">component_2
+                        <ul class="white">
+                            <li class="dataset-white"> subcomponent_1 </li>
+                            <li class="dataset-white"> subcomponent_2 </li>
+                        </ul>
+                    </li>
+                </ul>
+                </li>
+                <li class="dataset-white">actions</li>
+                <li class="dataset-white">terminations</li>
+                <li class="dataset-white">truncations</li>
+                <li class="dataset-white">rewards</li>
+                <li class="folder-white">infos
+                <ul class="white">
+                    <li class="dataset-white">infos_datasets</li>
+                    <li class="folder-white">infos_subgroup
+                    <ul class="white">
+                        <li class="dataset-white">more_datasets</li>
+                    </ul>
+                    </li>
+                </ul>
+                </li>
+                <li class="folder-white">additional_groups
+                    <ul class="white">
+                        <li class="dataset-white">additional_datasets</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li class="folder-white-closed">episode_1</li>
+        <li class="folder-white-closed">episode_2</li>
+        <ul class="white"><br></ul>
+        <li class="folder-white-closed">episode_id</li>
+        </ul>
+    </li>
+</ul>
+</div>
+<p>Similarly, consider the case where we have a <code class="docutils literal notranslate"><span class="pre">Box</span></code> space as an observation space and a relatively complex <code class="docutils literal notranslate"><span class="pre">Tuple</span></code> space as an action space with the following definition:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">spaces</span><span class="o">.</span><span class="n">Tuple</span><span class="p">(</span>
+    <span class="p">(</span>
+        <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+        <span class="n">spaces</span><span class="o">.</span><span class="n">Tuple</span><span class="p">(</span>
+            <span class="p">(</span>
+                <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+                <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>In this case, the resulting Minari dataset <code class="docutils literal notranslate"><span class="pre">HDF5</span></code> file will end up looking as follows:</p>
+<div class="only-light">
+<ul class="directory-list">
+<li class="file">main_data.hdf5
+    <ul>
+        <li class="folder">episode_0
+            <ul>
+                <li class="dataset">observations</li>
+                <li class="folder">actions
+                <ul>
+                    <li class="dataset">_index_0</li>
+                    <li class="folder">_index_1
+                    <ul>
+                    <li class="dataset"> _index_0 </li>
+                    <li class="dataset"> _index_1 </li>
+                    </ul>
+                    </li>
+                </ul>
+                </li>
+                <li class="dataset">terminations</li>
+                <li class="dataset">truncations</li>
+                <li class="dataset">rewards</li>
+                <li class="folder">infos
+                <ul>
+                    <li class="dataset">infos_datasets</li>
+                    <li class="folder">infos_subgroup
+                    <ul>
+                        <li class="dataset">more_datasets</li>
+                    </ul>
+                    </li>
+                </ul>
+                </li>
+                <li class="folder">additional_groups
+                    <ul>
+                        <li class="dataset">additional_datasets</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li class="folder-closed">episode_1</li>
+        <li class="folder-closed">episode_2</li>
+        <ul><br></ul>
+        <li class="folder-closed">episode_id</li>
+    </ul>
+</li>
+</ul>
+</div>
+<div class="only-dark">
+<ul class="directory-list">
+    <li class="file-white" style="color:white">main_data.hdf5
+        <ul class="white">
+            <li class="folder-white">episode_0
+                <ul class="white">
+                    <li class="dataset-white">observations</li>
+                    <li class="folder-white">actions
+                        <ul>
+                            <li class="dataset-white">_index_0</li>
+                            <li class="folder-white">_index_1
+                            <ul>
+                            <li class="dataset-white"> _index_0 </li>
+                            <li class="dataset-white"> _index_1 </li>
+                            </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="dataset-white">terminations</li>
+                    <li class="dataset-white">truncations</li>
+                    <li class="dataset-white">rewards</li>
+                    <li class="folder-white">infos
+                    <ul class="white">
+                        <li class="dataset-white">infos_datasets</li>
+                        <li class="folder-white">infos_subgroup
+                        <ul class="white">
+                            <li class="dataset-white">more_datasets</li>
+                        </ul>
+                        </li>
+                    </ul>
+                    </li>
+                    <li class="folder-white">additional_groups
+                        <ul class="white">
+                            <li class="dataset-white">additional_datasets</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li class="folder-white-closed">episode_1</li>
+            <li class="folder-white-closed">episode_2</li>
+            <ul class="white"><br></ul>
+            <li class="folder-white-closed">episode_id</li>
+        </ul>
+    </li>
+</ul>
+</div>
+<p>Note how the <code class="docutils literal notranslate"><span class="pre">Tuple</span></code> space elements are assigned corresponding keys of the format <code class="docutils literal notranslate"><span class="pre">f&quot;_index_{i}&quot;</span></code> were <code class="docutils literal notranslate"><span class="pre">i</span></code> is their index in the <code class="docutils literal notranslate"><span class="pre">Tuple</span></code> space.</p>
+<p>The required <code class="docutils literal notranslate"><span class="pre">datasets</span></code> found in the episode groups correspond to the data involved in every Gymnasium step call: <code class="docutils literal notranslate"><span class="pre">obs,</span> <span class="pre">rew,</span> <span class="pre">terminated,</span> <span class="pre">truncated,</span> <span class="pre">info</span> <span class="pre">=</span> <span class="pre">env.step(action)</span></code>: <code class="docutils literal notranslate"><span class="pre">observations</span></code>, <code class="docutils literal notranslate"><span class="pre">actions</span></code>, <code class="docutils literal notranslate"><span class="pre">rewards</span></code>, <code class="docutils literal notranslate"><span class="pre">terminations</span></code>, and <code class="docutils literal notranslate"><span class="pre">truncations</span></code>. These datasets are <code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code> or nested groups of <code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code> and other groups, depending on the observation and action spaces, and the space of all datasets under each required top-level episode key is equal to:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">actions</span></code>: <code class="docutils literal notranslate"><span class="pre">shape=(num_steps,</span> <span class="pre">action_space_component_shape)</span></code>. If the action or observation space is <code class="docutils literal notranslate"><span class="pre">Dict</span></code> or a <code class="docutils literal notranslate"><span class="pre">Tuple</span></code>, then the corresponding entry will be a group instead of a dataset. Within this group, there will be nested groups and datasets, as specified by the action and observation spaces. <code class="docutils literal notranslate"><span class="pre">Dict</span></code> and <code class="docutils literal notranslate"><span class="pre">Tuple</span></code> spaces are represented as groups, and <code class="docutils literal notranslate"><span class="pre">Box</span></code> and <code class="docutils literal notranslate"><span class="pre">Discrete</span></code> spaces are represented as datasets. All datasets at any level under the top-level key <code class="docutils literal notranslate"><span class="pre">actions</span></code> will have the same <code class="docutils literal notranslate"><span class="pre">num_steps</span></code>, but will vary in <code class="docutils literal notranslate"><span class="pre">action_space_component_shape</span></code> on for each particular action space component. For example, a <code class="docutils literal notranslate"><span class="pre">Dict</span></code> space may contain two <code class="docutils literal notranslate"><span class="pre">Box</span></code> spaces with different shapes.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">observations</span></code>: <code class="docutils literal notranslate"><span class="pre">shape=(num_steps</span> <span class="pre">+</span> <span class="pre">1,</span> <span class="pre">observation_space_component_shape)</span></code>. Observations nest in the same way as actions if the top level space is a <code class="docutils literal notranslate"><span class="pre">Tuple</span></code> or <code class="docutils literal notranslate"><span class="pre">Dict</span></code> space. The value of <code class="docutils literal notranslate"><span class="pre">num_steps</span> <span class="pre">+</span> <span class="pre">1</span></code> is the same for datasets at any level under <code class="docutils literal notranslate"><span class="pre">observations</span></code>. These datasets have an additional element because the initial observation of the environment when calling <code class="docutils literal notranslate"><span class="pre">obs,</span> <span class="pre">info</span> <span class="pre">=</span> <span class="pre">env.reset()</span></code> is also saved. <code class="docutils literal notranslate"><span class="pre">observation_space_component_shape</span></code> will vary between datasets, depending on the shapes of the simple spaces specified in the observation space.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rewards</span></code>: <code class="docutils literal notranslate"><span class="pre">shape=(num_steps,</span> <span class="pre">1)</span></code>, stores the returned reward in each step.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">terminations</span></code>: <code class="docutils literal notranslate"><span class="pre">shape=(num_steps,</span> <span class="pre">1)</span></code>, the <code class="docutils literal notranslate"><span class="pre">dtype</span></code> is <code class="docutils literal notranslate"><span class="pre">np.bool</span></code> and the last element value will be <code class="docutils literal notranslate"><span class="pre">True</span></code> if the episode finished due to  a <code class="docutils literal notranslate"><span class="pre">terminated</span></code> step return.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">truncations</span></code>: <code class="docutils literal notranslate"><span class="pre">shape=(num_steps,</span> <span class="pre">1)</span></code>, the <code class="docutils literal notranslate"><span class="pre">dtype</span></code> is <code class="docutils literal notranslate"><span class="pre">np.bool</span></code> and the last element value will be <code class="docutils literal notranslate"><span class="pre">True</span></code> if the episode finished due to a <code class="docutils literal notranslate"><span class="pre">truncated</span></code> step return.</p></li>
+</ul>
+<p>The <code class="docutils literal notranslate"><span class="pre">dtype</span></code> of the numpy array datasets can be of any type compatible with <a class="reference external" href="https://docs.h5py.org/en/latest/faq.html#what-datatypes-are-supported"><code class="docutils literal notranslate"><span class="pre">h5py</span></code></a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">info</span></code> dictionary returned in <code class="docutils literal notranslate"><span class="pre">env.step()</span></code> and <code class="docutils literal notranslate"><span class="pre">env.reset()</span></code> can be optionally saved in the dataset as a <code class="docutils literal notranslate"><span class="pre">sub-group</span></code>. The option to save the <code class="docutils literal notranslate"><span class="pre">info</span></code> data can be set in the <code class="docutils literal notranslate"><span class="pre">DataCollectorv0</span></code> wrapper with the  <code class="docutils literal notranslate"><span class="pre">record_infos</span></code> argument.</p>
+<p>Also, additional <code class="docutils literal notranslate"><span class="pre">datasets</span></code> and nested <code class="docutils literal notranslate"><span class="pre">sub-groups</span></code> can be saved in each episode. This can be the case of environment data that doesn’t participate in each <code class="docutils literal notranslate"><span class="pre">env.step()</span></code> or <code class="docutils literal notranslate"><span class="pre">env.reset()</span></code> call in the Gymnasium API, such as the full environment state in each step. This can be achieved by creating a custom <code class="docutils literal notranslate"><span class="pre">StepDataCallback</span></code> that returns extra keys and nested dictionaries in the <code class="docutils literal notranslate"><span class="pre">StepData</span></code> dictionary return.</p>
+<p>For example, the <code class="docutils literal notranslate"><span class="pre">Adroit</span> <span class="pre">Hand</span></code> environments in the <code class="docutils literal notranslate"><span class="pre">Gymnasium-Robotics</span></code> project need to store the full state of the MuJoCo simulation since this information is not present in the <code class="docutils literal notranslate"><span class="pre">observations</span></code> dataset and the environments are reset by setting an initial state in the simulation.</p>
+<p>The following code snippet creates a custom <code class="docutils literal notranslate"><span class="pre">StepDataCallbak</span></code> and adds a new key, <code class="docutils literal notranslate"><span class="pre">state</span></code>, to the returned <code class="docutils literal notranslate"><span class="pre">StepData</span></code> dictionary. <code class="docutils literal notranslate"><span class="pre">state</span></code> is a nested dictionary with <code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code> values and the keys are relevant MuJoCo data that represent the state of the simulation: <code class="docutils literal notranslate"><span class="pre">qpos</span></code>, <code class="docutils literal notranslate"><span class="pre">qvel</span></code>, and some other body positions.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">minari</span> <span class="kn">import</span> <span class="n">StepDataCallback</span>
+<span class="k">class</span> <span class="nc">AdroitStepDataCallback</span><span class="p">(</span><span class="n">StepDataCallback</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">step_data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">step_data</span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">get_env_state</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">step_data</span>
+</pre></div>
+</div>
+<p>The episode groups in the <code class="docutils literal notranslate"><span class="pre">HDF5</span></code> file will then have the following structure:</p>
+<div class="only-light">
+<ul class="directory-list">
+<li class="folder">episode_id
+    <ul>
+        <li class="dataset">observations</li>
+        <li class="dataset">actions</li>
+        <li class="dataset">terminations</li>
+        <li class="dataset">truncations</li>
+        <li class="dataset">rewards</li>
+        <li class="folder-closed">infos
+        <li class="folder">state
+        <ul>
+            <li class="dataset">qpos</li>
+            <li class="dataset">qvel</li>
+            <li class="dataset">object_body_pos</li>
+        </ul>
+    </ul>
+</li>
+</ul>
+</div>
+<div class="only-dark">
+<ul class="directory-list">
+<li class="folder-white">episode_id
+    <ul class="white">
+        <li class="dataset-white">observations</li>
+        <li class="dataset-white">actions</li>
+        <li class="dataset-white">terminations</li>
+        <li class="dataset-white">truncations</li>
+        <li class="dataset-white">rewards</li>
+        <li class="folder-white-closed">infos
+        <li class="folder-white">state
+        <ul class="white">
+            <li class="dataset-white">qpos</li>
+            <li class="dataset-white">qvel</li>
+            <li class="dataset-white">object_body_pos</li>
+        </ul>
+    </ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="default-dataset-metadata">
+<h3>Default dataset metadata<a class="headerlink" href="#default-dataset-metadata" title="Link to this heading">#</a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">HDF5</span></code> files can have metadata attached to <code class="docutils literal notranslate"><span class="pre">objects</span></code> as <a class="reference external" href="https://docs.h5py.org/en/stable/high/attr.html"><code class="docutils literal notranslate"><span class="pre">attributes</span></code></a>. Minari uses these <code class="docutils literal notranslate"><span class="pre">attributes</span></code> to add metadata to the global dataset file, to each episode group, as well as to the individual datasets inside each episode. This                                                                                 metadata can be added by the user by overriding the <code class="docutils literal notranslate"><span class="pre">EpisodeMetadataCallback</span></code> in the <code class="docutils literal notranslate"><span class="pre">DataCollectorV0</span></code> wrapper. However, there is also some metadata added by default to every dataset.</p>
+<p>When creating a Minari dataset with the <code class="docutils literal notranslate"><span class="pre">DataCollectorV0</span></code> wrapper the default global metadata will be the following:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">total_episodes</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">np.int64</span></code></p></td>
+<td><p>Number of episodes in the Minari dataset.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">total_steps</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">np.int64</span></code></p></td>
+<td><p>Number of steps in the Minari dataset.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">env_spec</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>json string of the Gymnasium environment spec.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">dataset_id</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>Identifier of the Minari dataset.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">code_permalink</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>Link to a repository with the code used to generate the dataset.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">author</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>Author’s name that created the dataset.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">author_email</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>Email of the author that created the dataset.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">algorithm_name</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>Name of the expert policy used to create the dataset.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">action_space</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>Serialized Gymnasium action space describing actions in dataset.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">observation_space</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>Serialized Gymnasium observation space describing observations in dataset.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">minari_version</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code></p></td>
+<td><p>Version specifier of Minari versions compatible with the dataset.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>For each episode group the default metadata <code class="docutils literal notranslate"><span class="pre">attributes</span></code> are:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">id</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">np.int64</span></code></p></td>
+<td><p>ID of the episode, <code class="docutils literal notranslate"><span class="pre">episode_id</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">total_steps</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">np.int64</span></code></p></td>
+<td><p>Number of steps in the episode.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">seed</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">np.int64</span></code></p></td>
+<td><p>Seed used to reset the episode.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Statistical metrics are also computed as metadata for the individual datasets in each episode (for now only computed for <code class="docutils literal notranslate"><span class="pre">rewards</span></code> dataset)</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">rewards</span></code> dataset:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Metric</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">max</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">np.float64</span></code></p></td>
+<td><p>Maximum reward value in the episode.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">min</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">np.float64</span></code></p></td>
+<td><p>Minimum reward value in the episode.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mean</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">np.float64</span></code></p></td>
+<td><p>Mean value of the episode rewards.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">std</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">np.float64</span></code></p></td>
+<td><p>Standard deviation of the episode rewards.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sum</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">np.float64</span></code></p></td>
+<td><p>Total undiscounted return of the episode.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</li>
+</ul>
+</section>
+</section>
+<section id="observation-and-action-spaces">
+<h2>Observation and Action Spaces<a class="headerlink" href="#observation-and-action-spaces" title="Link to this heading">#</a></h2>
+<p>The Minari storage format supports the following observation and action spaces:</p>
+<section id="supported-spaces">
+<h3>Supported Spaces<a class="headerlink" href="#supported-spaces" title="Link to this heading">#</a></h3>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Space</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/discrete.py">Discrete</a></p></td>
+<td><p>Describes a discrete space where <code class="docutils literal notranslate"><span class="pre">{0,</span> <span class="pre">1,</span> <span class="pre">...,</span> <span class="pre">n-1}</span></code> are the possible values our observation can take. An optional argument can be used to shift the values to <code class="docutils literal notranslate"><span class="pre">{a,</span> <span class="pre">a+1,</span> <span class="pre">...,</span> <span class="pre">a+n-1}</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/box.py">Box</a></p></td>
+<td><p>An n-dimensional continuous space. The <code class="docutils literal notranslate"><span class="pre">upper</span></code> and <code class="docutils literal notranslate"><span class="pre">lower</span></code> arguments can be used to define bounded spaces.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/tuple.py">Tuple</a></p></td>
+<td><p>Represents a tuple of spaces.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/dict.py">Dict</a></p></td>
+<td><p>Represents a dictionary of spaces.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/text.py">Text</a></p></td>
+<td><p>The elements of this space are bounded strings from a charset. Note: at the moment, we don’t guarantee support for all surrogate pairs.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<section id="space-serialization">
+<h4>Space Serialization<a class="headerlink" href="#space-serialization" title="Link to this heading">#</a></h4>
+<p>Spaces are serialized to a JSON format when saving to disk. This serialization supports all space types supported by Minari, and aims to be both human, and machine readable. The serialized action and observation spaces for the episodes in the dataset are saved as strings in the global HDF5 group metadata in <code class="docutils literal notranslate"><span class="pre">main_data.hdf5</span></code> for a particular dataset as <code class="docutils literal notranslate"><span class="pre">action_space</span></code> and <code class="docutils literal notranslate"><span class="pre">observation_space</span></code> respectively. All episodes in <code class="docutils literal notranslate"><span class="pre">main_data.hdf5</span></code> must have observations and actions that comply with these action and observation spaces.</p>
+</section>
+</section>
+</section>
+<section id="minari-data-structures">
+<h2>Minari Data Structures<a class="headerlink" href="#minari-data-structures" title="Link to this heading">#</a></h2>
+<p>A Minari dataset is encapsulated in the <code class="docutils literal notranslate"><span class="pre">MinariDataset</span></code> class which allows for iterating and sampling through episodes which are defined as <code class="docutils literal notranslate"><span class="pre">EpisodeData</span></code> data class.</p>
+<section id="episodedata-structure">
+<h3>EpisodeData Structure<a class="headerlink" href="#episodedata-structure" title="Link to this heading">#</a></h3>
+<p>Episodes can be accessed from a Minari dataset through iteration, random sampling, or even filtering episodes from a dataset through an arbitrary condition via the <code class="docutils literal notranslate"><span class="pre">filter_episodes</span></code> method. Take the following example where we load the <code class="docutils literal notranslate"><span class="pre">door-human-v0</span></code> dataset and randomly sample 10 episodes:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">minari</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;door-human-v1&quot;</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">sampled_episodes</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">sample_episodes</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">sampled_episodes</span></code> variable will be a list of 10 <code class="docutils literal notranslate"><span class="pre">EpisodeData</span></code> elements, each containing episode data. An <code class="docutils literal notranslate"><span class="pre">EpisodeData</span></code> element is a data class consisting of the following fields:</p>
+<div class="table-wrapper colwidths-auto docutils container">
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">id</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">np.int64</span></code></p></td>
+<td><p>ID of the episode.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">seed</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">np.int64</span></code></p></td>
+<td><p>Seed used to reset the episode.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">total_timesteps</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">np.int64</span></code></p></td>
+<td><p>Number of timesteps in the episode.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">observations</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code>, <code class="docutils literal notranslate"><span class="pre">list</span></code>, <code class="docutils literal notranslate"><span class="pre">tuple</span></code>, <code class="docutils literal notranslate"><span class="pre">dict</span></code></p></td>
+<td><p>Observations for each timestep including initial observation.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">actions</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code>, <code class="docutils literal notranslate"><span class="pre">list</span></code>, <code class="docutils literal notranslate"><span class="pre">tuple</span></code>, <code class="docutils literal notranslate"><span class="pre">dict</span></code></p></td>
+<td><p>Actions for each timestep.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rewards</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code></p></td>
+<td><p>Rewards for each timestep.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">terminations</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code></p></td>
+<td><p>Terminations for each timestep.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">truncations</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code></p></td>
+<td><p>Truncations for each timestep.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>As mentioned in the <code class="docutils literal notranslate"><span class="pre">Supported</span> <span class="pre">Spaces</span></code> section, many different observation and action spaces are supported so the data type for these fields are dependent on the environment being used.</p>
+</section>
+</section>
+</section>
+
+          </article>
+        </div>
+        <footer>
+          
+          <div class="related-pages">
+            <a class="next-page" href="../minari_cli/">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">Minari CLI</div>
+              </div>
+              <svg class="furo-related-icon">
+                <use href="#svg-arrow-right"></use>
+              </svg>
+            </a>
+            <a class="prev-page" href="../basic_usage/">
+              <svg class="furo-related-icon">
+                <use href="#svg-arrow-right"></use>
+              </svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Basic Usage</div>
+                
+              </div>
+            </a>
+          </div>
+          <div class="bottom-of-page">
+            <div class="left-details">
+              <div class="copyright">
+                Copyright &#169; 2022
+              </div>
+              <!--
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            -->
+            </div>
+            <div class="right-details">
+              <div class="icons">
+                <a class="muted-link" href="https://github.com/Farama-Foundation/Minari/"
+                  aria-label="On GitHub">
+                  <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                      d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z">
+                    </path>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+          
+        </footer>
+      </div>
+      <aside class="toc-drawer">
+        
+        
+        <div class="toc-sticky toc-scroll">
+          <div class="toc-title-container">
+            <span class="toc-title">
+              On this page
+            </span>
+          </div>
+          <div class="toc-tree-container">
+            <div class="toc-tree">
+              <ul>
+<li><a class="reference internal" href="#">Dataset Standards</a><ul>
+<li><a class="reference internal" href="#minari-storage">Minari Storage</a><ul>
+<li><a class="reference internal" href="#minari-root">Minari root</a></li>
+<li><a class="reference internal" href="#data-files">Data files</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#dataset-file-format">Dataset File Format</a><ul>
+<li><a class="reference internal" href="#hdf5-file-structure">HDF5 file structure</a></li>
+<li><a class="reference internal" href="#default-dataset-metadata">Default dataset metadata</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#observation-and-action-spaces">Observation and Action Spaces</a><ul>
+<li><a class="reference internal" href="#supported-spaces">Supported Spaces</a><ul>
+<li><a class="reference internal" href="#space-serialization">Space Serialization</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#minari-data-structures">Minari Data Structures</a><ul>
+<li><a class="reference internal" href="#episodedata-structure">EpisodeData Structure</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            </div>
+          </div>
+        </div>
+        
+        
+      </aside>
+    </div>
+  </div>
+</div>
+    <script>
+      const toggleMenu = () => {
+        const menuBtn = document.querySelector(".farama-header-menu__btn");
+        const menuContainer = document.querySelector(".farama-header-menu-container");
+        if (document.querySelector(".farama-header-menu").classList.contains("active")) {
+          menuBtn.setAttribute("aria-expanded", "false");
+          menuContainer.setAttribute("aria-hidden", "true");
+        } else {
+          menuBtn.setAttribute("aria-expanded", "true");
+          menuContainer.setAttribute("aria-hidden", "false");
+        }
+        document.querySelector(".farama-header-menu").classList.toggle("active");
+      }
+
+      document.querySelector(".farama-header-menu__btn").addEventListener("click", toggleMenu);
+      document.getElementById("farama-close-menu").addEventListener("click", toggleMenu);
+    </script>
+
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-R5TRTT6R78"></script>
+      <script>
+        const enableGtag = () => {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-R5TRTT6R78');
+        }
+        (() => {
+            if (!localStorage.getItem("acceptedCookieAlert")) {
+                const boxElem = document.createElement("div");
+                boxElem.classList.add("cookie-alert");
+                const containerElem = document.createElement("div");
+                containerElem.classList.add("cookie-alert__container");
+                const textElem = document.createElement("p");
+                textElem.innerHTML = `This page uses <a href="https://analytics.google.com/">
+                                    Google Analytics</a> to collect statistics.`;
+                                    containerElem.appendChild(textElem);
+
+                const declineBtn = Object.assign(document.createElement("button"),
+                  {
+                    innerText: "Deny",
+                    className: "farama-btn cookie-alert__button",
+                    id: "cookie-alert__decline",
+                  }
+                );
+                declineBtn.addEventListener("click", () => {
+                  localStorage.setItem("acceptedCookieAlert", false);
+                  boxElem.remove();
+                });
+
+                const acceptBtn = Object.assign(document.createElement("button"),
+                  {
+                    innerText: "Allow",
+                    className: "farama-btn cookie-alert__button",
+                    id: "cookie-alert__accept",
+                  }
+                );
+                acceptBtn.addEventListener("click", () => {
+                  localStorage.setItem("acceptedCookieAlert", true);
+                  boxElem.remove();
+                  enableGtag();
+                });
+
+                containerElem.appendChild(declineBtn);
+                containerElem.appendChild(acceptBtn);
+                boxElem.appendChild(containerElem);
+                document.body.appendChild(boxElem);
+            } else if (localStorage.getItem("acceptedCookieAlert") === "true") {
+              enableGtag();
+            }
+        })()
+      </script>
+
+    <script src="../../_static/documentation_options.js?v=28686c4f"></script>
+    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/furo.js?v=7660844c"></script>
+    <script src="../../_static/js/termynal.js?v=ff4c6923"></script>
+    <script src="../../_static/js/custom.js?v=a0ed09ce"></script>
+    
+    <script>
+
+      const createProjectsList = (projects, displayImages) => {
+        const ulElem = Object.assign(document.createElement('ul'),
+          {
+            className:'farama-header-menu-list',
+          }
+        )
+        for (let project of projects) {
+          const liElem = document.createElement("li");
+          const aElem = Object.assign(document.createElement("a"),
+            {
+              href: project.link
+            }
+          );
+          liElem.appendChild(aElem);
+          if (displayImages) {
+            const imgElem = Object.assign(document.createElement("img"),
+              {
+                src: project.image ? imagesBasepath + project.image : imagesBasepath + "/farama_black.svg",
+                alt: `${project.name} logo`,
+                className: "farama-black-logo-invert"
+              }
+            );
+            aElem.appendChild(imgElem);
+          }
+          aElem.appendChild(document.createTextNode(project.name));
+          ulElem.appendChild(liElem);
+        }
+        return ulElem;
+      }
+
+      // Create menu with Farama projects by using the API at farama.org/api/projects.json
+      const createCORSRequest = (method, url) => {
+        let xhr = new XMLHttpRequest();
+        xhr.responseType = 'json';
+
+        if ("withCredentials" in xhr) {
+          xhr.open(method, url, true);
+        } else if (typeof XDomainRequest != "undefined") {
+          // IE8 & IE9
+          xhr = new XDomainRequest();
+          xhr.open(method, url);
+        } else {
+          // CORS not supported.
+          xhr = null;
+        }
+        return xhr;
+      };
+
+      const url = 'https://farama.org/api/projects.json';
+      const imagesBasepath = "https://farama.org/assets/images"
+      const method = 'GET';
+      let xhr = createCORSRequest(method, url);
+
+      xhr.onload = () => {
+        const jsonResponse = xhr.response;
+        const sections = {
+          "Core Projects": [],
+          "Mature Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          },
+          "Incubating Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          },
+          "Foundation": [
+            {
+              name: "About",
+              link: "https://farama.org/about"
+            },
+            {
+              name: "Standards",
+              link: "https://farama.org/project_standards",
+            },
+            {
+              name: "Donate",
+              link: "https://farama.org/donations"
+            }
+          ]
+        }
+
+        // Categorize projects
+        Object.keys(jsonResponse).forEach(key => {
+          projectJson = jsonResponse[key];
+          if (projectJson.website !== null) {
+            projectJson.link = projectJson.website;
+          } else {
+            projectJson.link = projectJson.github;
+          }
+          if (projectJson.type === "core") {
+            sections["Core Projects"].push(projectJson)
+          } else if (projectJson.type == "mature") {
+            if (projectJson.website !== null) {
+              sections["Mature Projects"]["Documentation"].push(projectJson)
+            } else {
+              sections["Mature Projects"]["Repositories"].push(projectJson)
+            }
+          } else {
+            if (projectJson.website !== null) {
+              sections["Incubating Projects"]["Documentation"].push(projectJson)
+            } else {
+              sections["Incubating Projects"]["Repositories"].push(projectJson)
+            }
+          }
+        })
+
+        const menuContainer = document.querySelector(".farama-header-menu__body");
+
+        Object.keys(sections).forEach((key, i) => {
+          const sectionElem = Object.assign(
+            document.createElement('div'), {
+              className:'farama-header-menu__section',
+            }
+          )
+          sectionElem.appendChild(Object.assign(document.createElement('span'),
+            {
+              className:'farama-header-menu__section-title' ,
+              innerText: key
+            }
+          ))
+          // is not a list
+          if (sections[key].constructor !== Array) {
+            const subSections = sections[key];
+            const subSectionContainerElem = Object.assign(
+                document.createElement('div'), {
+                  className:'farama-header-menu__subsections-container',
+                  style: 'display: flex'
+                }
+            )
+            Object.keys(subSections).forEach((subKey, i) => {
+              const subSectionElem = Object.assign(
+                document.createElement('div'), {
+                  className:'farama-header-menu__subsection',
+                }
+              )
+              subSectionElem.appendChild(Object.assign(document.createElement('span'),
+                {
+                  className:'farama-header-menu__subsection-title' ,
+                  innerText: subKey
+                }
+              ))
+              const ulElem = createProjectsList(subSections[subKey], key !== 'Foundation');
+              subSectionElem.appendChild(ulElem);
+              subSectionContainerElem.appendChild(subSectionElem);
+            })
+            sectionElem.appendChild(subSectionContainerElem);
+          } else {
+            const projects = sections[key];
+            const ulElem = createProjectsList(projects, true);
+            sectionElem.appendChild(ulElem);
+          }
+          menuContainer.appendChild(sectionElem)
+        });
+      }
+
+      xhr.onerror = function() {
+        console.error("Unable to load projects");
+      };
+
+      xhr.send();
+    </script>
+
+    
+    <script>
+      const versioningConfig = {
+        githubUser: 'Farama-Foundation',
+        githubRepo: 'Minari',
+      };
+      fetch('/main/_static/versioning/versioning_menu.html').then(response => {
+        if (response.status === 200) {
+            response.text().then(text => {
+                const container = document.createElement("div");
+                container.innerHTML = text;
+                document.querySelector("body").appendChild(container);
+                // innerHtml doenst evaluate scripts, we need to add them dynamically
+                Array.from(container.querySelectorAll("script")).forEach(oldScript => {
+                    const newScript = document.createElement("script");
+                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                });
+            });
+        } else {
+            console.warn("Unable to load versioning menu", response);
+        }
+      });
+    </script>
+
+    </body>
+</html>
