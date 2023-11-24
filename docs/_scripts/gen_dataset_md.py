@@ -1,42 +1,21 @@
 import os
-import re
 from collections import defaultdict
+from typing import Dict
 
-import gymnasium as gym
 from google.cloud import storage  # pyright: ignore [reportGeneralTypeIssues]
 from gymnasium.envs.registration import EnvSpec
 
 from minari import list_remote_datasets
 from minari.dataset.minari_dataset import parse_dataset_id
-from minari.serialization import deserialize_space
 from minari.storage.hosting import get_remote_dataset_versions
+from minari.utils import get_dataset_spec_dict, get_env_spec_dict
 
 
-def _generate_env_spec_table(env_spec: EnvSpec) -> str:
-    """Create a markdown table with the environment specifications, including observation and action space."""
-    env = gym.make(env_spec.id)
-
-    action_space_table = env.action_space.__repr__().replace("\n", "")
-    observation_space_table = env.observation_space.__repr__().replace("\n", "")
-
-    return f"""
-|    |    |
-|----|----|
-|ID| `{env_spec.id}`|
-| Observation Space | `{re.sub(' +', ' ', observation_space_table)}` |
-| Action Space | `{re.sub(' +', ' ', action_space_table)}` |
-| entry_point | `{env_spec.entry_point}` |
-| max_episode_steps | `{env_spec.max_episode_steps}` |
-| reward_threshold | `{env_spec.reward_threshold}` |
-| nondeterministic | `{env_spec.nondeterministic}` |
-| order_enforce    | `{env_spec.order_enforce}`|
-| autoreset        | `{env_spec.autoreset}` |
-| disable_env_checker | `{env_spec.disable_env_checker}` |
-| kwargs | `{env_spec.kwargs}` |
-| additional_wrappers | `{env_spec.additional_wrappers}` |
-| vector_entry_point | `{env_spec.vector_entry_point}` |
-
-"""
+def _md_table(table_dict: Dict[str, str]) -> str:
+    markdown = "|    |    |\n |----|----|"
+    for key, value in table_dict.items():
+        markdown += f"\n| {key} | {value} |"
+    return markdown
 
 
 filtered_datasets = defaultdict(defaultdict)
@@ -68,23 +47,7 @@ for env_name, datasets in filtered_datasets.items():
         else:
             related_pages_meta = ""
 
-        # Dataset Specs
         dataset_id = dataset_spec["dataset_id"]
-        total_timesteps = dataset_spec["total_steps"]
-        total_episodes = dataset_spec["total_episodes"]
-        dataset_action_space = (
-            deserialize_space(dataset_spec["action_space"]).__repr__().replace("\n", "")
-        )
-        dataset_observation_space = (
-            deserialize_space(dataset_spec["observation_space"])
-            .__repr__()
-            .replace("\n", "")
-        )
-        author = dataset_spec["author"]
-        email = dataset_spec["author_email"]
-        algo_name = dataset_spec["algorithm_name"]
-        code = dataset_spec["code_permalink"]
-        minari_version = dataset_spec["minari_version"]
 
         description = None
         if "description" in dataset_spec:
@@ -153,7 +116,7 @@ for env_name, datasets in filtered_datasets.items():
         env  = dataset.recover_environment()
 ```
 
-{_generate_env_spec_table(EnvSpec.from_json(env_spec))}
+{_md_table(get_env_spec_dict(EnvSpec.from_json(env_spec)))}
 """
 
             env_docs += """
@@ -194,7 +157,7 @@ for env_name, datasets in filtered_datasets.items():
         eval_env  = dataset.recover_environment(eval_env=True)
 ```
 
-{_generate_env_spec_table(EnvSpec.from_json(eval_env_spec))}
+{_md_table(get_env_spec_dict(EnvSpec.from_json(eval_env_spec)))}
 """
 
         env_page = f"""---
@@ -211,18 +174,7 @@ title: {dataset_name.title()}
 
 ## Dataset Specs
 
-|    |    |
-|----|----|
-|Total Timesteps| `{total_timesteps}`|
-|Total Episodes | `{total_episodes}` |
-| Dataset Observation Space | `{dataset_observation_space}` |
-| Dataset Action Space | `{dataset_action_space}` |
-| Algorithm           | `{algo_name}`           |
-| Author              | `{author}`              |
-| Email               | `{email}`               |
-| Code Permalink      | <a href={code}>`{code}`</a> |
-| Minari Version      | `{minari_version}`      |
-| download            | `minari.download_dataset("{dataset_id}")` |
+{_md_table(get_dataset_spec_dict(dataset_spec))}
 
 {env_docs}
 """

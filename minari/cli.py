@@ -4,13 +4,16 @@ from typing import List, Optional
 from typing_extensions import Annotated
 
 import typer
+from gymnasium.envs.registration import EnvSpec
 from rich import print
+from rich.markdown import Markdown
 from rich.table import Table
+from rich.text import Text
 from rich.tree import Tree
 
 from minari import __version__
 from minari.storage import get_dataset_path, hosting, local
-from minari.utils import combine_datasets
+from minari.utils import combine_datasets, get_dataset_spec_dict, get_env_spec_dict
 
 
 app = typer.Typer()
@@ -29,12 +32,11 @@ def _show_dataset_table(datasets, table_title):
     table = Table(title=table_title)
 
     table.add_column("Name", justify="left", style="cyan", no_wrap=True)
-    table.add_column("Total Episodes", justify="right", style="green")
-    table.add_column("Total Steps", justify="right", style="green")
-    table.add_column("Dataset Size", justify="left", style="green")
-    table.add_column("Description", justify="left", style="yellow")
-    table.add_column("Author", justify="left", style="magenta")
-    table.add_column("Email", justify="left", style="magenta")
+    table.add_column("Total Episodes", justify="right", style="green", no_wrap=True)
+    table.add_column("Total Steps", justify="right", style="green", no_wrap=True)
+    table.add_column("Dataset Size", justify="left", style="green", no_wrap=True)
+    table.add_column("Author", justify="left", style="magenta", no_wrap=True)
+    table.add_column("Email", justify="left", style="magenta", no_wrap=True)
 
     for dst_metadata in datasets.values():
         author = dst_metadata.get("author", "Unknown")
@@ -46,12 +48,20 @@ def _show_dataset_table(datasets, table_title):
         assert isinstance(dst_metadata["dataset_id"], str)
         assert isinstance(author, str)
         assert isinstance(author_email, str)
+
+        dataset_id = dst_metadata["dataset_id"]
+        docs_url = dst_metadata.get("docs_url", None)
+
+        if docs_url is not None:
+            dataset_id_text = f"[link={docs_url}]{dataset_id}[/link]"
+        else:
+            dataset_id_text = dataset_id
+
         table.add_row(
-            dst_metadata["dataset_id"],
+            dataset_id_text,
             str(dst_metadata["total_episodes"]),
             str(dst_metadata["total_steps"]),
             dataset_size,
-            "Coming soon ...",
             author,
             author_email,
         )
@@ -111,6 +121,75 @@ def list_local(
     )
     table_title = f"Local Minari datasets('{dataset_dir}')"
     _show_dataset_table(datasets, table_title)
+
+
+@app.command()
+def show(dataset: Annotated[str, typer.Argument()]):
+    """Describe a local or remote dataset, and its environment."""
+    local_datasets = local.list_local_datasets()
+
+    # Try to find a local dataset first, then fall back to remote datasets
+    if dataset in local_datasets:
+        dst_metadata = local_datasets[dataset]
+    else:
+        remote_datasets = hosting.list_remote_datasets()
+
+        if dataset in remote_datasets:
+            dst_metadata = remote_datasets[dataset]
+        else:
+            local_dataset_path = get_dataset_path("")
+            print(Text(
+                f"""The dataset `{dataset}` can't be found locally"""
+                f"""(at `{local_dataset_path}`) or remotely.""",
+                style="red",
+            ))
+            raise typer.Abort()
+
+    dataset_id = dst_metadata["dataset_id"]
+    description = dst_metadata.get("description")
+    docs_url = dst_metadata.get("docs_url")
+
+    if docs_url is not None:
+        dataset_id_text = f"[{dataset_id}]({docs_url})"
+    else:
+        dataset_id_text = dataset_id
+
+    dataset_spec_table = Table(show_header=False, highlight=True)
+    dataset_spec_table.add_column(style="bold")
+    dataset_spec_table.add_column(style="not bold")
+
+    for key, value in get_dataset_spec_dict(dst_metadata, print_version=True).items():
+        md = Markdown(value, inline_code_lexer="python", inline_code_theme="monokai")
+        dataset_spec_table.add_row(key, md)
+
+    print(Markdown(f"""# {dataset_id_text}"""))
+
+    if description is not None:
+        print(Markdown(f"""\n## Description\n {description} """))
+
+    print(Markdown("## Dataset Specs"))
+    print(dataset_spec_table)
+
+    for env_type in ["env_spec", "eval_env_spec"]:
+        env_spec_json = dst_metadata.get(env_type)
+
+        if env_spec_json is not None:
+            assert isinstance(env_spec_json, str)
+            env_spec = EnvSpec.from_json(env_spec_json)
+            env_spec_table = Table(show_header=False, highlight=True)
+            env_spec_table.add_column(style="bold")
+            env_spec_table.add_column(style="not bold")
+
+            for key, value in get_env_spec_dict(env_spec).items():
+                md = Markdown(value, inline_code_lexer="python", inline_code_theme="monokai")
+                env_spec_table.add_row(key, md)
+
+            if env_type == "env_spec":
+                print(Markdown("## Environment Specs"))
+            else:
+                print(Markdown("## Evaluation Environment Specs"))
+
+            print(env_spec_table)
 
 
 @app.command()
