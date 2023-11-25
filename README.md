@@ -83,7 +83,7 @@ for _ in range(100):
         obs, rew, terminated, truncated, info = env.step(action)
         done = terminated or truncated
 
-dataset = minari.create_dataset_from_collector_env("LunarLander-v2-test-v0", env)
+dataset = env.create_dataset("LunarLander-v2-test-v0")
 ```
 
 For other examples, see [Basic Usage](https://minari.farama.org/main/content/basic_usage/). For a complete tutorial on how to create new datasets using Minari, see our [Pointmaze D4RL Dataset](https://minari.farama.org/main/tutorials/dataset_creation/point_maze_dataset/) tutorial, which re-creates the Maze2D datasets from [D4RL](https://github.com/Farama-Foundation/D4RL).

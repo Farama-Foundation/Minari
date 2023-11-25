@@ -22,7 +22,7 @@ data_collector_callbacks/episode_metadata_callback
 .. autofunction:: minari.DataCollectorV0.step
 .. autofunction:: minari.DataCollectorV0.reset
 .. autofunction:: minari.DataCollectorV0.close
-.. autofunction:: minari.DataCollectorV0.save_to_disk
+.. autofunction:: minari.DataCollectorV0.create_dataset
 .. autofunction:: minari.DataCollectorV0.clear_buffer_to_tmp_file
 .. autofunction::minari.DataCollectorV0._add_to_episode_buffer
 ```

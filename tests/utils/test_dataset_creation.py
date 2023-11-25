@@ -62,10 +62,9 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
     if dataset_id in local_datasets:
         minari.delete_dataset(dataset_id)
     # Create Minari dataset and store locally
-    dataset = minari.create_dataset_from_collector_env(
+    dataset = env.create_dataset(
         dataset_id=dataset_id,
         eval_env=eval_env,
-        collector_env=env,
         algorithm_name="random_policy",
         code_permalink=CODELINK,
         author="WillDudley",

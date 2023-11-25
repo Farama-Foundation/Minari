@@ -52,7 +52,7 @@ In this example, the :class:`minari.DataCollectorV0` wraps the `'CartPole-v1'` e
 ```{eval-rst}
 To create a Minari dataset first we need to step the environment with a given policy to allow the :class:`minari.DataCollectorV0` to record the data that will comprise the dataset. This is as simple as just looping through the Gymansium MDP API. For our example we will loop through ``100`` episodes of the ``'CartPole-v1'`` environment with a random policy.
 
-Finally, we need to create the Minari dataset and give it a name id. This is done by calling the :func:`minari.create_dataset_from_collector_env` Minari function which will move the temporary data recorded in the :class:`minari.DataCollectorV0` environment to a permanent location in the `local Minari root path </content/dataset_standards>`_ with the Minari dataset standard structure.
+Finally, we need to create the Minari dataset and give it a name id. This is done by calling the :func:`DataCollectorV0.create_dataset` Minari function which will move the temporary data recorded in the :class:`minari.DataCollectorV0` environment to a permanent location in the `local Minari root path </content/dataset_standards>`_ with the Minari dataset standard structure.
 
 Extending the code example for the ``'CartPole-v1'`` environment we can create the Minari dataset as follows:
 ```
@@ -77,8 +77,7 @@ for _ in range(total_episodes):
         if terminated or truncated:
             break
 
-dataset = minari.create_dataset_from_collector_env(dataset_id="CartPole-v1-test-v0",
-                                                   collector_env=env,
+dataset = env.create_dataset(dataset_id="CartPole-v1-test-v0",
                                                    algorithm_name="Random-Policy",
                                                    code_permalink="https://github.com/Farama-Foundation/Minari",
                                                    author="Farama",
@@ -88,7 +87,7 @@ dataset = minari.create_dataset_from_collector_env(dataset_id="CartPole-v1-test-
 ```{eval-rst}
 When creating the Minari dataset additional metadata can be added such as the ``algorithm_name`` used to compute the actions, a ``code_permalink`` with a link to the code used to generate the dataset, as well as the ``author`` and ``author_email``.
 
-The :func:`minari.create_dataset_from_collector_env` function returns a :class:`minari.MinariDataset` object, ``dataset`` in the previous code snippet.
+The :func:`DataCollectorV0.create_dataset` function returns a :class:`minari.MinariDataset` object, ``dataset`` in the previous code snippet.
 
 Once the dataset has been created we can check if the Minari dataset id appears in the list of local datasets:
 ```
@@ -109,10 +108,10 @@ There is another optional way of creating a Minari dataset and that is by using 
 ### Checkpoint Minari Dataset
 
 ```{eval-rst}
-When collecting data with the :class:`minari.DataCollectorV0` wrapper, the recorded data is saved into temporary files and it won't be permanently saved in disk until the :func:`minari.create_dataset_from_collector_env` function is called. For large datasets, to avoid losing all of the collected data, extra data from a :class:`minari.DataCollectorV0` can be appended to checkpoint the data collection process.
+When collecting data with the :class:`minari.DataCollectorV0` wrapper, the recorded data is saved into temporary files and it won't be permanently saved in disk until the :func:`DataCollectorV0.create_dataset` function is called. For large datasets, to avoid losing all of the collected data, extra data from a :class:`minari.DataCollectorV0` can be appended to checkpoint the data collection process.
 
 
-To checkpoint a dataset we can call the :func:`minari.MinariDataset.update_dataset_from_collector_env` method. Every time the function :func:`minari.create_dataset_from_collector_env` or the method :func:`minari.MinariDataset.update_dataset_from_collector_env` are called, the buffers from the :class:`minari.DataCollectorV0` environment are cleared.
+To checkpoint a dataset we can call the :func:`minari.MinariDataset.update_dataset_from_collector_env` method. Every time the function :func:`DataCollectorV0.create_dataset` or the method :func:`minari.MinariDataset.update_dataset_from_collector_env` are called, the buffers from the :class:`minari.DataCollectorV0` environment are cleared.
 
 Continuing the ``'CartPole-v1'`` example we can checkpoint the newly created Minari dataset every 10 episodes as follows:
 ```
@@ -145,8 +144,7 @@ for episode_id in range(total_episodes):
         # Update local Minari dataset every 10 episodes.
         # This works as a checkpoint to not lose the already collected data
         if dataset is None:
-            dataset = minari.create_dataset_from_collector_env(dataset_id=dataset_name,
-                                                    collector_env=env,
+            dataset = env.create_dataset(dataset_id=dataset_name,
                                                     algorithm_name="Random-Policy",
                                                     code_permalink="https://github.com/Farama-Foundation/Minari",
                                                     author="Farama",

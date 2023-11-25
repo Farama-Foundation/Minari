@@ -605,30 +605,20 @@ def create_dataset_from_collector_env(
     Returns:
         MinariDataset
     """
-    assert collector_env.datasets_path is not None
-    dataset_path = _generate_dataset_path(dataset_id)
-    metadata: Dict[str, Any] = _generate_dataset_metadata(
-        dataset_id,
-        copy.deepcopy(collector_env.env.spec),
-        eval_env,
-        algorithm_name,
-        author,
-        author_email,
-        code_permalink,
-        ref_min_score,
-        ref_max_score,
-        expert_policy,
-        num_episodes_average_score,
-        minari_version,
+    warnings.warn("This function is deprecated and will be removed in v0.5.0. Please use DataCollectorV0.create_dataset() instead.", DeprecationWarning, stacklevel=2)
+    dataset = collector_env.create_dataset(
+        dataset_id=dataset_id,
+        eval_env=eval_env,
+        algorithm_name=algorithm_name,
+        author=author,
+        author_email=author_email,
+        code_permalink=code_permalink,
+        ref_min_score=ref_min_score,
+        ref_max_score=ref_max_score,
+        expert_policy=expert_policy,
+        num_episodes_average_score=num_episodes_average_score,
+        minari_version=minari_version,
     )
-
-    collector_env.save_to_disk(dataset_path, metadata)
-
-    # will be able to calculate dataset size only after saving the disk, so updating the dataset metadata post `save_to_disk` method
-
-    dataset = MinariDataset(dataset_path)
-    metadata['dataset_size'] = dataset.storage.get_size()
-    dataset.storage.update_metadata(metadata)
     return dataset
 
 
