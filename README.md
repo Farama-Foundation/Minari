@@ -45,6 +45,11 @@ To check available local datasets:
 ```bash
 minari list local
 ```
+To show the details of a dataset:
+
+```bash
+minari show door-human-v1
+```
 
 For the list of commands:
 ```bash

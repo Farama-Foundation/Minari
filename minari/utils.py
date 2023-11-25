@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import importlib.metadata
 import os
+import re
 import warnings
 from typing import Any, Callable, Dict, List, Optional, Union
 
@@ -18,6 +19,7 @@ from packaging.version import Version
 from minari import DataCollectorV0
 from minari.dataset.minari_dataset import MinariDataset
 from minari.dataset.minari_storage import MinariStorage
+from minari.serialization import deserialize_space
 from minari.storage.datasets_root_dir import get_dataset_path
 
 
@@ -652,3 +654,71 @@ def get_normalized_score(dataset: MinariDataset, returns: np.ndarray) -> np.ndar
         )
 
     return (returns - ref_min_score) / (ref_max_score - ref_min_score)
+
+
+def get_env_spec_dict(env_spec: EnvSpec) -> Dict[str, str]:
+    """Create dict of the environment specs, including observation and action space."""
+    env = gym.make(env_spec.id)
+
+    action_space_table = env.action_space.__repr__().replace("\n", "")
+    observation_space_table = env.observation_space.__repr__().replace("\n", "")
+
+    md_dict = {
+        "ID": env_spec.id,
+        "Observation Space": f"`{re.sub(' +', ' ', observation_space_table)}`",
+        "Action Space": f"`{re.sub(' +', ' ', action_space_table)}`",
+        "entry_point": f"`{env_spec.entry_point}`",
+        "max_episode_steps": env_spec.max_episode_steps,
+        "reward_threshold": env_spec.reward_threshold,
+        "nondeterministic": f"`{env_spec.nondeterministic}`",
+        "order_enforce": f"`{env_spec.order_enforce}`",
+        "autoreset": f"`{env_spec.autoreset}`",
+        "disable_env_checker": f"`{env_spec.disable_env_checker}`",
+        "kwargs": f"`{env_spec.kwargs}`",
+        "additional_wrappers": f"`{env_spec.additional_wrappers}`",
+        "vector_entry_point": f"`{env_spec.vector_entry_point}`",
+    }
+
+    return {k: str(v) for k, v in md_dict.items()}
+
+
+def get_dataset_spec_dict(
+        dataset_spec: Union[Dict[str, Union[str, int, bool]], Dict[str, str]],
+        print_version: bool = False
+) -> Dict[str, str]:
+    """Create dict of the dataset specs, including observation and action space."""
+    code_link = dataset_spec["code_permalink"]
+    action_space = dataset_spec["action_space"]
+    obs_space = dataset_spec["observation_space"]
+
+    assert isinstance(action_space, str)
+    assert isinstance(obs_space, str)
+
+    dataset_action_space = (
+        deserialize_space(action_space).__repr__().replace("\n", "")
+    )
+    dataset_observation_space = (
+        deserialize_space(obs_space)
+        .__repr__()
+        .replace("\n", "")
+    )
+
+    version = str(dataset_spec['minari_version'])
+
+    if print_version:
+        version += f" ({__version__} installed)"
+
+    md_dict = {
+        "Total Timesteps": dataset_spec["total_steps"],
+        "Total Episodes": dataset_spec["total_episodes"],
+        "Dataset Observation Space": f"`{dataset_observation_space}`",
+        "Dataset Action Space": f"`{dataset_action_space}`",
+        "Algorithm": dataset_spec["algorithm_name"],
+        "Author": dataset_spec["author"],
+        "Email": dataset_spec["author_email"],
+        "Code Permalink": f"[{code_link}]({code_link})",
+        "Minari Version": version,
+        "Download": f"`minari.download_dataset(\"{dataset_spec['dataset_id']}\")`"
+    }
+
+    return md_dict
