@@ -395,7 +395,7 @@ for n_step in range(int(total_steps)):
 
     obs, rew, terminated, truncated, info = collector_env.step(action)
 
-dataset = env.create_dataset(
+dataset = collector_env.create_dataset(
     dataset_id=dataset_name,
     algorithm_name="QIteration",
     code_permalink="https://github.com/Farama-Foundation/Minari/blob/main/docs/tutorials/dataset_creation/point_maze_dataset.py",
