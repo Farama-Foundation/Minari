@@ -362,6 +362,7 @@
 <span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">importlib.metadata</span>
 <span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
@@ -377,6 +378,7 @@
 <span class="kn">from</span> <span class="nn">minari</span> <span class="kn">import</span> <span class="n">DataCollectorV0</span>
 <span class="kn">from</span> <span class="nn">minari.dataset.minari_dataset</span> <span class="kn">import</span> <span class="n">MinariDataset</span>
 <span class="kn">from</span> <span class="nn">minari.dataset.minari_storage</span> <span class="kn">import</span> <span class="n">MinariStorage</span>
+<span class="kn">from</span> <span class="nn">minari.serialization</span> <span class="kn">import</span> <span class="n">deserialize_space</span>
 <span class="kn">from</span> <span class="nn">minari.storage.datasets_root_dir</span> <span class="kn">import</span> <span class="n">get_dataset_path</span>
 
 
@@ -1023,6 +1025,74 @@
 
     <span class="k">return</span> <span class="p">(</span><span class="n">returns</span> <span class="o">-</span> <span class="n">ref_min_score</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">ref_max_score</span> <span class="o">-</span> <span class="n">ref_min_score</span><span class="p">)</span></div>
 
+
+
+<span class="k">def</span> <span class="nf">get_env_spec_dict</span><span class="p">(</span><span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create dict of the environment specs, including observation and action space.&quot;&quot;&quot;</span>
+    <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="n">env_spec</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+    <span class="n">action_space_table</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">observation_space_table</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="n">md_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;ID&quot;</span><span class="p">:</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+        <span class="s2">&quot;Observation Space&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39; +&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">observation_space_table</span><span class="p">)</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Action Space&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39; +&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">action_space_table</span><span class="p">)</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;entry_point&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">env_spec</span><span class="o">.</span><span class="n">entry_point</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;max_episode_steps&quot;</span><span class="p">:</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">max_episode_steps</span><span class="p">,</span>
+        <span class="s2">&quot;reward_threshold&quot;</span><span class="p">:</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">reward_threshold</span><span class="p">,</span>
+        <span class="s2">&quot;nondeterministic&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">env_spec</span><span class="o">.</span><span class="n">nondeterministic</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;order_enforce&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">env_spec</span><span class="o">.</span><span class="n">order_enforce</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;autoreset&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">env_spec</span><span class="o">.</span><span class="n">autoreset</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;disable_env_checker&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">env_spec</span><span class="o">.</span><span class="n">disable_env_checker</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;kwargs&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">env_spec</span><span class="o">.</span><span class="n">kwargs</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;additional_wrappers&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">env_spec</span><span class="o">.</span><span class="n">additional_wrappers</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;vector_entry_point&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">env_spec</span><span class="o">.</span><span class="n">vector_entry_point</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">md_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+
+<span class="k">def</span> <span class="nf">get_dataset_spec_dict</span><span class="p">(</span>
+        <span class="n">dataset_spec</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
+        <span class="n">print_version</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create dict of the dataset specs, including observation and action space.&quot;&quot;&quot;</span>
+    <span class="n">code_link</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="p">[</span><span class="s2">&quot;code_permalink&quot;</span><span class="p">]</span>
+    <span class="n">action_space</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="p">[</span><span class="s2">&quot;action_space&quot;</span><span class="p">]</span>
+    <span class="n">obs_space</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="p">[</span><span class="s2">&quot;observation_space&quot;</span><span class="p">]</span>
+
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action_space</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs_space</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+
+    <span class="n">dataset_action_space</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">deserialize_space</span><span class="p">(</span><span class="n">action_space</span><span class="p">)</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">dataset_observation_space</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">deserialize_space</span><span class="p">(</span><span class="n">obs_space</span><span class="p">)</span>
+        <span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+        <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">version</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">dataset_spec</span><span class="p">[</span><span class="s1">&#39;minari_version&#39;</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="n">print_version</span><span class="p">:</span>
+        <span class="n">version</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; (</span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2"> installed)&quot;</span>
+
+    <span class="n">md_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Total Timesteps&quot;</span><span class="p">:</span> <span class="n">dataset_spec</span><span class="p">[</span><span class="s2">&quot;total_steps&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;Total Episodes&quot;</span><span class="p">:</span> <span class="n">dataset_spec</span><span class="p">[</span><span class="s2">&quot;total_episodes&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;Dataset Observation Space&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">dataset_observation_space</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Dataset Action Space&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">dataset_action_space</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Algorithm&quot;</span><span class="p">:</span> <span class="n">dataset_spec</span><span class="p">[</span><span class="s2">&quot;algorithm_name&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;Author&quot;</span><span class="p">:</span> <span class="n">dataset_spec</span><span class="p">[</span><span class="s2">&quot;author&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;Email&quot;</span><span class="p">:</span> <span class="n">dataset_spec</span><span class="p">[</span><span class="s2">&quot;author_email&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;Code Permalink&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">code_link</span><span class="si">}</span><span class="s2">](</span><span class="si">{</span><span class="n">code_link</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;Minari Version&quot;</span><span class="p">:</span> <span class="n">version</span><span class="p">,</span>
+        <span class="s2">&quot;Download&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`minari.download_dataset(</span><span class="se">\&quot;</span><span class="si">{</span><span class="n">dataset_spec</span><span class="p">[</span><span class="s1">&#39;dataset_id&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">)`&quot;</span>
+    <span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">md_dict</span>
 </pre></div>
           </article>
         </div>
