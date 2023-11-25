@@ -20,7 +20,6 @@ from minari.data_collector.callbacks import (
 )
 from minari.dataset.minari_dataset import MinariDataset
 from minari.dataset.minari_storage import MinariStorage
-from minari.utils import _generate_dataset_metadata, _generate_dataset_path
 
 
 EpisodeBuffer = Dict[str, Any]  # TODO: narrow this down
@@ -302,6 +301,8 @@ class DataCollectorV0(gym.Wrapper):
         Returns:
             MinariDataset
         """
+        # TODO: move the import to top of the file after removing minari.create_dataset_from_collector_env() in 0.5.0
+        from minari.utils import _generate_dataset_metadata, _generate_dataset_path
         dataset_path = _generate_dataset_path(dataset_id)
         metadata: Dict[str, Any] = _generate_dataset_metadata(
             dataset_id,
