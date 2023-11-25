@@ -388,7 +388,6 @@ will start from the location it’s currently at (no <code class="docutils liter
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">import</span> <span class="nn">minari</span>
 <span class="kn">from</span> <span class="nn">minari</span> <span class="kn">import</span> <span class="n">DataCollectorV0</span><span class="p">,</span> <span class="n">StepDataCallback</span>
 </pre></div>
 </div>
@@ -748,8 +747,7 @@ collect for our dataset and we don’t want the environment to get <code class="
 
     <span class="n">obs</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">collector_env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
 
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">create_dataset_from_collector_env</span><span class="p">(</span>
-    <span class="n">collector_env</span><span class="o">=</span><span class="n">collector_env</span><span class="p">,</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">collector_env</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span>
     <span class="n">dataset_id</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">,</span>
     <span class="n">algorithm_name</span><span class="o">=</span><span class="s2">&quot;QIteration&quot;</span><span class="p">,</span>
     <span class="n">code_permalink</span><span class="o">=</span><span class="s2">&quot;https://github.com/Farama-Foundation/Minari/blob/main/docs/tutorials/dataset_creation/point_maze_dataset.py&quot;</span><span class="p">,</span>

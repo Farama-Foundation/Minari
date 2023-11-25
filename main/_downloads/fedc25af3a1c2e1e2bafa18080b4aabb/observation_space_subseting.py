@@ -100,9 +100,8 @@ for episode in range(num_episodes):
     env.reset()
 
 # Create Minari dataset and store locally
-dataset = minari.create_dataset_from_collector_env(
+dataset = env.create_dataset(
     dataset_id=dataset_id,
-    collector_env=env,
     algorithm_name="random_policy",
 )
 

@@ -467,9 +467,8 @@ and also deserialize it back into the custom space.</p>
 </pre></div>
 </div>
 <p>Finally we can create a Minari dataset.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">create_dataset_from_collector_env</span><span class="p">(</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span>
     <span class="n">dataset_id</span><span class="o">=</span><span class="n">dataset_id</span><span class="p">,</span>
-    <span class="n">collector_env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
     <span class="n">algorithm_name</span><span class="o">=</span><span class="s2">&quot;random_policy&quot;</span><span class="p">,</span>
     <span class="n">author</span><span class="o">=</span><span class="s2">&quot;Farama&quot;</span><span class="p">,</span>
     <span class="n">author_email</span><span class="o">=</span><span class="s2">&quot;contact@farama.org&quot;</span><span class="p">,</span>

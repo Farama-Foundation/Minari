@@ -425,9 +425,8 @@ We train a PPO agent on the environment:</p>
         <span class="k">if</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span><span class="p">:</span>
             <span class="k">break</span>
 
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">create_dataset_from_collector_env</span><span class="p">(</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span>
     <span class="n">dataset_id</span><span class="o">=</span><span class="s2">&quot;CartPole-v1-expert&quot;</span><span class="p">,</span>
-    <span class="n">collector_env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
     <span class="n">algorithm_name</span><span class="o">=</span><span class="s2">&quot;ExpertPolicy&quot;</span><span class="p">,</span>
     <span class="n">code_permalink</span><span class="o">=</span><span class="s2">&quot;https://minari.farama.org/tutorials/behavioral_cloning&quot;</span><span class="p">,</span>
     <span class="n">author</span><span class="o">=</span><span class="s2">&quot;Farama&quot;</span><span class="p">,</span>

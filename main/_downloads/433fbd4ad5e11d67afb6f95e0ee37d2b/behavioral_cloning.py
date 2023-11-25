@@ -66,9 +66,8 @@ for i in tqdm(range(total_episodes)):
         if terminated or truncated:
             break
 
-dataset = minari.create_dataset_from_collector_env(
+dataset = env.create_dataset(
     dataset_id="CartPole-v1-expert",
-    collector_env=env,
     algorithm_name="ExpertPolicy",
     code_permalink="https://minari.farama.org/tutorials/behavioral_cloning",
     author="Farama",

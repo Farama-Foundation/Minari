@@ -127,9 +127,8 @@ for episode in range(num_episodes):
 # Finally we can create a Minari dataset.
 
 # %%
-dataset = minari.create_dataset_from_collector_env(
+dataset = env.create_dataset(
     dataset_id=dataset_id,
-    collector_env=env,
     algorithm_name="random_policy",
     author="Farama",
     author_email="contact@farama.org",

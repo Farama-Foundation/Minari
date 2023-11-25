@@ -454,9 +454,8 @@ callback passed to <a class="reference internal" href="../../../api/data_collect
     <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
 <span class="c1"># Create Minari dataset and store locally</span>
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">create_dataset_from_collector_env</span><span class="p">(</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span>
     <span class="n">dataset_id</span><span class="o">=</span><span class="n">dataset_id</span><span class="p">,</span>
-    <span class="n">collector_env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
     <span class="n">algorithm_name</span><span class="o">=</span><span class="s2">&quot;random_policy&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 

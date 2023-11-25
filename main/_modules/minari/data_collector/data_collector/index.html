@@ -359,14 +359,17 @@
             <h1>Source code for minari.data_collector.data_collector</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
+<span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">gymnasium.core</span> <span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span>
+<span class="kn">from</span> <span class="nn">gymnasium.envs.registration</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
 
 <span class="kn">from</span> <span class="nn">minari.data_collector.callbacks</span> <span class="kn">import</span> <span class="p">(</span>
     <span class="n">STEP_DATA_KEYS</span><span class="p">,</span>
@@ -405,7 +408,7 @@
 <span class="sd">            if terminated or truncated:</span>
 <span class="sd">                env.reset()</span>
 
-<span class="sd">        dataset = minari.create_dataset_from_collector_env(dataset_id=&quot;env_name-dataset_name-v(version)&quot;, collector_env=env, **kwargs)</span>
+<span class="sd">        dataset = env.create_dataset(dataset_id=&quot;env_name-dataset_name-v(version)&quot;, **kwargs)</span>
 
 <span class="sd">    Some of the characteristics of this wrapper:</span>
 
@@ -620,6 +623,72 @@
             <span class="n">env_spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">,</span>
         <span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">create_dataset</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">eval_env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span> <span class="o">|</span> <span class="n">EnvSpec</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">algorithm_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">author</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">author_email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">code_permalink</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ref_min_score</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">ref_max_score</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">expert_policy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">ObsType</span><span class="p">],</span> <span class="n">ActType</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">num_episodes_average_score</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">minari_version</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a Minari dataset using the data collected from stepping with a Gymnasium environment wrapped with a `DataCollectorV0` Minari wrapper.</span>
+
+<span class="sd">        The ``dataset_id`` parameter corresponds to the name of the dataset, with the syntax as follows:</span>
+<span class="sd">        ``(env_name-)(dataset_name)(-v(version))`` where ``env_name`` identifies the name of the environment used to generate the dataset ``dataset_name``.</span>
+<span class="sd">        This ``dataset_id`` is used to load the Minari datasets with :meth:`minari.load_dataset`.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            dataset_id (str): name id to identify Minari dataset</span>
+<span class="sd">            buffer (list[Dict[str, Union[list, Dict]]]): list of episode dictionaries with data</span>
+<span class="sd">            eval_env (Optional[str|gym.Env|EnvSpec]): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) to use for evaluation with the dataset. After loading the dataset, the environment can be recovered as follows: `MinariDataset.recover_environment(eval_env=True).</span>
+<span class="sd">                                                    If None the `env` used to collect the buffer data should be used for evaluation.</span>
+<span class="sd">            algorithm_name (Optional[str], optional): name of the algorithm used to collect the data. Defaults to None.</span>
+<span class="sd">            author (Optional[str], optional): author that generated the dataset. Defaults to None.</span>
+<span class="sd">            author_email (Optional[str], optional): email of the author that generated the dataset. Defaults to None.</span>
+<span class="sd">            code_permalink (Optional[str], optional): link to relevant code used to generate the dataset. Defaults to None.</span>
+<span class="sd">            ref_min_score( Optional[float], optional): minimum reference score from the average returns of a random policy. This value is later used to normalize a score with :meth:`minari.get_normalized_score`. If default None the value will be estimated with a default random policy.</span>
+<span class="sd">            ref_max_score (Optional[float], optional: maximum reference score from the average returns of a hypothetical expert policy. This value is used in :meth:`minari.get_normalized_score`. Default None.</span>
+<span class="sd">            expert_policy (Optional[Callable[[ObsType], ActType], optional): policy to compute `ref_max_score` by averaging the returns over a number of episodes equal to  `num_episodes_average_score`.</span>
+<span class="sd">                                                                            `ref_max_score` and `expert_policy` can&#39;t be passed at the same time. Default to None</span>
+<span class="sd">            num_episodes_average_score (int): number of episodes to average over the returns to compute `ref_min_score` and `ref_max_score`. Default to 100.</span>
+<span class="sd">            minari_version (Optional[str], optional): Minari version specifier compatible with the dataset. If None (default) use the installed Minari version.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            MinariDataset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: move the import to top of the file after removing minari.create_dataset_from_collector_env() in 0.5.0</span>
+        <span class="kn">from</span> <span class="nn">minari.utils</span> <span class="kn">import</span> <span class="n">_generate_dataset_metadata</span><span class="p">,</span> <span class="n">_generate_dataset_path</span>
+        <span class="n">dataset_path</span> <span class="o">=</span> <span class="n">_generate_dataset_path</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
+        <span class="n">metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">_generate_dataset_metadata</span><span class="p">(</span>
+            <span class="n">dataset_id</span><span class="p">,</span>
+            <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">spec</span><span class="p">),</span>
+            <span class="n">eval_env</span><span class="p">,</span>
+            <span class="n">algorithm_name</span><span class="p">,</span>
+            <span class="n">author</span><span class="p">,</span>
+            <span class="n">author_email</span><span class="p">,</span>
+            <span class="n">code_permalink</span><span class="p">,</span>
+            <span class="n">ref_min_score</span><span class="p">,</span>
+            <span class="n">ref_max_score</span><span class="p">,</span>
+            <span class="n">expert_policy</span><span class="p">,</span>
+            <span class="n">num_episodes_average_score</span><span class="p">,</span>
+            <span class="n">minari_version</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">save_to_disk</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
+
+        <span class="c1"># will be able to calculate dataset size only after saving the disk, so updating the dataset metadata post `save_to_disk` method</span>
+
+        <span class="n">dataset</span> <span class="o">=</span> <span class="n">MinariDataset</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">)</span>
+        <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;dataset_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">get_size</span><span class="p">()</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">update_metadata</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">dataset</span>
+
     <span class="k">def</span> <span class="nf">save_to_disk</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span> <span class="n">dataset_metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="p">):</span>
@@ -629,6 +698,7 @@
 <span class="sd">            path (str): path to store the dataset, e.g.: &#39;/home/foo/datasets/data&#39;</span>
 <span class="sd">            dataset_metadata (Dict, optional): additional metadata to add to the dataset file. Defaults to {}.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;This method is deprecated and will become private in v0.5.0.&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_validate_buffer</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_storage</span><span class="o">.</span><span class="n">update_episodes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
