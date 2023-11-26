@@ -45,4 +45,3 @@ def __getattr__(name):
     if name == "DataCollectorV0":
         from minari.data_collector import DataCollectorV0
         return DataCollectorV0
-
