@@ -229,7 +229,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/minari_dataset/episode_data/">EpisodeData</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/data_collector/">DataCollectorV0</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of DataCollectorV0</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/data_collector/">DataCollector</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of DataCollector</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/data_collector_callbacks/step_data_callback/">StepDataCallback</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/data_collector_callbacks/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
 </ul>
@@ -384,9 +384,16 @@
 <span class="n">EpisodeBuffer</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>  <span class="c1"># TODO: narrow this down</span>
 
 
-<div class="viewcode-block" id="DataCollectorV0">
-<a class="viewcode-back" href="../../../../api/data_collector/#minari.DataCollectorV0">[docs]</a>
-<span class="k">class</span> <span class="nc">DataCollectorV0</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">DataCollectorV0</span><span class="p">:</span>
+    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;DataCollectorV0 is deprecated and will be removed. Use DataCollector instead.&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">DataCollector</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="DataCollector">
+<a class="viewcode-back" href="../../../../api/data_collector/#minari.DataCollector">[docs]</a>
+<span class="k">class</span> <span class="nc">DataCollector</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Gymnasium environment wrapper that collects step data.</span>
 
 <span class="sd">    This wrapper is meant to work as a temporary buffer of the environment data before creating a Minari dataset. The creation of the buffers</span>
@@ -397,7 +404,7 @@
 <span class="sd">        import minari</span>
 <span class="sd">        import gymnasium as gym</span>
 
-<span class="sd">        env = minari.DataCollectorV0(gym.make(&#39;EnvID&#39;))</span>
+<span class="sd">        env = minari.DataCollector(gym.make(&#39;EnvID&#39;))</span>
 
 <span class="sd">        env.reset()</span>
 
@@ -423,7 +430,7 @@
 
 <span class="sd">        * To perform caching the user can set the `max_buffer_steps` or `max_buffer_episodes` before saving the in-memory buffers to a temporary HDF5</span>
 <span class="sd">          file in disk. If non of `max_buffer_steps` or `max_buffer_episodes` are set, the data will move from in-memory to a permanent location only</span>
-<span class="sd">          when the Minari dataset is created. To move all the stored data to a permanent location use DataCollectorV0.save_to_disK(path_to_permanent_location).</span>
+<span class="sd">          when the Minari dataset is created. To move all the stored data to a permanent location use DataCollector.save_to_disK(path_to_permanent_location).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -599,7 +606,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;truncations&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">def</span> <span class="nf">add_to_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">MinariDataset</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add extra data to Minari dataset from collector environment buffers (DataCollectorV0).</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add extra data to Minari dataset from collector environment buffers (DataCollector).</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            dataset (MinariDataset): Dataset to add the data</span>
@@ -637,7 +644,7 @@
         <span class="n">num_episodes_average_score</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
         <span class="n">minari_version</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a Minari dataset using the data collected from stepping with a Gymnasium environment wrapped with a `DataCollectorV0` Minari wrapper.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a Minari dataset using the data collected from stepping with a Gymnasium environment wrapped with a `DataCollector` Minari wrapper.</span>
 
 <span class="sd">        The ``dataset_id`` parameter corresponds to the name of the dataset, with the syntax as follows:</span>
 <span class="sd">        ``(env_name-)(dataset_name)(-v(version))`` where ``env_name`` identifies the name of the environment used to generate the dataset ``dataset_name``.</span>

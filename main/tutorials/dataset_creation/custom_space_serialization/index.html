@@ -230,7 +230,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../api/minari_dataset/episode_data/">EpisodeData</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/data_collector/">DataCollectorV0</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of DataCollectorV0</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/data_collector/">DataCollector</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of DataCollector</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector_callbacks/step_data_callback/">StepDataCallback</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector_callbacks/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
 </ul>
@@ -370,7 +370,7 @@
             <section class="sphx-glr-example-title" id="serializing-a-custom-space">
 <span id="sphx-glr-tutorials-dataset-creation-custom-space-serialization-py"></span><h1>Serializing a custom space<a class="headerlink" href="#serializing-a-custom-space" title="Link to this heading">#</a></h1>
 <p>In this tutorial you’ll learn how to serialize a custom Gymnasium observation space and use that
-to create a Minari dataset with <a class="reference internal" href="../../../api/data_collector/#minari.DataCollectorV0" title="minari.DataCollectorV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollectorV0</span></code></a>. We’ll use the
+to create a Minari dataset with <a class="reference internal" href="../../../api/data_collector/#minari.DataCollector" title="minari.DataCollector"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollector</span></code></a>. We’ll use the
 <a class="reference external" href="https://minigrid.farama.org/environments/minigrid/EmptyEnv/">MiniGrid Empty</a> environment and
 show how to serialize its unique observation space.</p>
 <p>Serializing a custom space can be applied to both observation and action spaces.</p>
@@ -384,7 +384,7 @@ show how to serialize its unique observation space.</p>
 <span class="kn">from</span> <span class="nn">minigrid.core.mission</span> <span class="kn">import</span> <span class="n">MissionSpace</span>
 
 <span class="kn">import</span> <span class="nn">minari</span>
-<span class="kn">from</span> <span class="nn">minari</span> <span class="kn">import</span> <span class="n">DataCollectorV0</span>
+<span class="kn">from</span> <span class="nn">minari</span> <span class="kn">import</span> <span class="n">DataCollector</span>
 <span class="kn">from</span> <span class="nn">minari.serialization</span> <span class="kn">import</span> <span class="n">deserialize_space</span><span class="p">,</span> <span class="n">serialize_space</span>
 </pre></div>
 </div>
@@ -452,7 +452,7 @@ and also deserialize it back into the custom space.</p>
 <p>Now that we have serialization functions for <code class="docutils literal notranslate"><span class="pre">MissionSpace</span></code> we can collect some episode data.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dataset_id</span> <span class="o">=</span> <span class="s2">&quot;minigrid-custom-space-v0&quot;</span>
 
-<span class="n">env</span> <span class="o">=</span> <span class="n">DataCollectorV0</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">DataCollector</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
 <span class="n">num_episodes</span> <span class="o">=</span> <span class="mi">10</span>
 
 <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
