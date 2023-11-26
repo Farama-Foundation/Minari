@@ -31,6 +31,7 @@ class DataCollectorV0:
     def __new__(cls, *args, **kwargs):
         return DataCollector(*args, **kwargs)
 
+
 class DataCollector(gym.Wrapper):
     r"""Gymnasium environment wrapper that collects step data.
 
