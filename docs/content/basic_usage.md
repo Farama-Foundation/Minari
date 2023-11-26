@@ -30,29 +30,29 @@ We support Python 3.8, 3.9, 3.10 and 3.11 on Linux and macOS.
 ### Collecting Data
 
 ```{eval-rst}
-Minari can abstract the data collection process. This is achieved by using the :class:`minari.DataCollectorV0` wrapper which stores the environments stepping data in internal memory buffers before saving the dataset into disk. The :class:`minari.DataCollectorV0` wrapper can also perform caching by scheduling the amount of episodes or steps that are stored in-memory before saving the data in a temporary `Minari dataset file </content/dataset_standards>`_ . This wrapper also computes relevant metadata of the dataset while collecting the data.
+Minari can abstract the data collection process. This is achieved by using the :class:`minari.DataCollector` wrapper which stores the environments stepping data in internal memory buffers before saving the dataset into disk. The :class:`minari.DataCollector` wrapper can also perform caching by scheduling the amount of episodes or steps that are stored in-memory before saving the data in a temporary `Minari dataset file </content/dataset_standards>`_ . This wrapper also computes relevant metadata of the dataset while collecting the data.
 
 The wrapper is very simple to initialize:
 ```
 
 ```python
-from minari import DataCollectorV0
+from minari import DataCollector
 import gymnasium as gym
 
 env = gym.make('CartPole-v1')
-env = DataCollectorV0(env, record_infos=True, max_buffer_steps=100000)
+env = DataCollector(env, record_infos=True, max_buffer_steps=100000)
 ```
 
 ```{eval-rst}
-In this example, the :class:`minari.DataCollectorV0` wraps the `'CartPole-v1'` environment from Gymnasium. The arguments passed are ``record_infos`` (when set to ``True`` the wrapper will also collect the returned ``info`` dictionaries to create the dataset), and the ``max_buffer_steps`` argument, which specifies a caching scheduler by giving the number of data steps to store in-memory before moving them to a temporary file on disk. There are more arguments that can be passed to this wrapper, a detailed description of them can be read in the :class:`minari.DataCollectorV0` documentation.
+In this example, the :class:`minari.DataCollector` wraps the `'CartPole-v1'` environment from Gymnasium. The arguments passed are ``record_infos`` (when set to ``True`` the wrapper will also collect the returned ``info`` dictionaries to create the dataset), and the ``max_buffer_steps`` argument, which specifies a caching scheduler by giving the number of data steps to store in-memory before moving them to a temporary file on disk. There are more arguments that can be passed to this wrapper, a detailed description of them can be read in the :class:`minari.DataCollector` documentation.
 ```
 
 ### Save Dataset
 
 ```{eval-rst}
-To create a Minari dataset first we need to step the environment with a given policy to allow the :class:`minari.DataCollectorV0` to record the data that will comprise the dataset. This is as simple as just looping through the Gymansium MDP API. For our example we will loop through ``100`` episodes of the ``'CartPole-v1'`` environment with a random policy.
+To create a Minari dataset first we need to step the environment with a given policy to allow the :class:`minari.DataCollector` to record the data that will comprise the dataset. This is as simple as just looping through the Gymansium MDP API. For our example we will loop through ``100`` episodes of the ``'CartPole-v1'`` environment with a random policy.
 
-Finally, we need to create the Minari dataset and give it a name id. This is done by calling the :func:`DataCollectorV0.create_dataset` Minari function which will move the temporary data recorded in the :class:`minari.DataCollectorV0` environment to a permanent location in the `local Minari root path </content/dataset_standards>`_ with the Minari dataset standard structure.
+Finally, we need to create the Minari dataset and give it a name id. This is done by calling the :func:`DataCollector.create_dataset` Minari function which will move the temporary data recorded in the :class:`minari.DataCollector` environment to a permanent location in the `local Minari root path </content/dataset_standards>`_ with the Minari dataset standard structure.
 
 Extending the code example for the ``'CartPole-v1'`` environment we can create the Minari dataset as follows:
 ```
@@ -60,10 +60,10 @@ Extending the code example for the ``'CartPole-v1'`` environment we can create t
 ```python
 import minari
 import gymnasium as gym
-from minari import DataCollectorV0
+from minari import DataCollector
 
 env = gym.make('CartPole-v1')
-env = DataCollectorV0(env, record_infos=True, max_buffer_steps=100000)
+env = DataCollector(env, record_infos=True, max_buffer_steps=100000)
 
 total_episodes = 100
 
@@ -87,7 +87,7 @@ dataset = env.create_dataset(dataset_id="CartPole-v1-test-v0",
 ```{eval-rst}
 When creating the Minari dataset additional metadata can be added such as the ``algorithm_name`` used to compute the actions, a ``code_permalink`` with a link to the code used to generate the dataset, as well as the ``author`` and ``author_email``.
 
-The :func:`DataCollectorV0.create_dataset` function returns a :class:`minari.MinariDataset` object, ``dataset`` in the previous code snippet.
+The :func:`DataCollector.create_dataset` function returns a :class:`minari.MinariDataset` object, ``dataset`` in the previous code snippet.
 
 Once the dataset has been created we can check if the Minari dataset id appears in the list of local datasets:
 ```
@@ -102,16 +102,16 @@ dict_keys(['CartPole-v1-test-v0'])
 ```{eval-rst}
 The :func:`minari.list_local_datasets` function returns a dictionary with keys the local Minari dataset ids and values their metadata.
 
-There is another optional way of creating a Minari dataset and that is by using the :func:`minari.create_dataset_from_buffers` function. The data collection is left to the user instead of using the :class:`minari.DataCollectorV0` wrapper. The user will be responsible for creating their own buffers to store the stepping data, and these buffers must follow a specific structure specified in the function API documentation.
+There is another optional way of creating a Minari dataset and that is by using the :func:`minari.create_dataset_from_buffers` function. The data collection is left to the user instead of using the :class:`minari.DataCollector` wrapper. The user will be responsible for creating their own buffers to store the stepping data, and these buffers must follow a specific structure specified in the function API documentation.
 ```
 
 ### Checkpoint Minari Dataset
 
 ```{eval-rst}
-When collecting data with the :class:`minari.DataCollectorV0` wrapper, the recorded data is saved into temporary files and it won't be permanently saved in disk until the :func:`DataCollectorV0.create_dataset` function is called. For large datasets, to avoid losing all of the collected data, extra data from a :class:`minari.DataCollectorV0` can be appended to checkpoint the data collection process.
+When collecting data with the :class:`minari.DataCollector` wrapper, the recorded data is saved into temporary files and it won't be permanently saved in disk until the :func:`DataCollector.create_dataset` function is called. For large datasets, to avoid losing all of the collected data, extra data from a :class:`minari.DataCollector` can be appended to checkpoint the data collection process.
 
 
-To checkpoint a dataset we can call the :func:`minari.MinariDataset.update_dataset_from_collector_env` method. Every time the function :func:`DataCollectorV0.create_dataset` or the method :func:`minari.MinariDataset.update_dataset_from_collector_env` are called, the buffers from the :class:`minari.DataCollectorV0` environment are cleared.
+To checkpoint a dataset we can call the :func:`minari.MinariDataset.update_dataset_from_collector_env` method. Every time the function :func:`DataCollector.create_dataset` or the method :func:`minari.MinariDataset.update_dataset_from_collector_env` are called, the buffers from the :class:`minari.DataCollector` environment are cleared.
 
 Continuing the ``'CartPole-v1'`` example we can checkpoint the newly created Minari dataset every 10 episodes as follows:
 ```
@@ -119,10 +119,10 @@ Continuing the ``'CartPole-v1'`` example we can checkpoint the newly created Min
 ```python
 import minari
 import gymnasium as gym
-from minari import DataCollectorV0
+from minari import DataCollector
 
 env = gym.make('CartPole-v1')
-env = DataCollectorV0(env, record_infos=True, max_buffer_steps=100000)
+env = DataCollector(env, record_infos=True, max_buffer_steps=100000)
 
 total_episodes = 100
 dataset_name = "CartPole-v1-test-v0"

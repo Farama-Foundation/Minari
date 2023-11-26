@@ -2,7 +2,7 @@ import gymnasium as gym
 import numpy as np
 import pytest
 
-from minari import DataCollectorV0, EpisodeData, MinariDataset, StepDataCallback
+from minari import DataCollector, EpisodeData, MinariDataset, StepDataCallback
 from tests.common import check_load_and_delete_dataset, register_dummy_envs
 
 
@@ -98,7 +98,7 @@ def test_truncation_without_reset(dataset_id, env_id):
     num_steps = 50
     num_episodes = int(num_steps / ForceTruncateStepDataCallback.episode_steps)
     env = gym.make(env_id, max_episode_steps=50)
-    env = DataCollectorV0(
+    env = DataCollector(
         env,
         step_data_callback=ForceTruncateStepDataCallback,
     )

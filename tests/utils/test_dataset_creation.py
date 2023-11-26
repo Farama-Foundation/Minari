@@ -6,7 +6,7 @@ import pytest
 from gymnasium import spaces
 
 import minari
-from minari import DataCollectorV0, MinariDataset
+from minari import DataCollector, MinariDataset
 from tests.common import (
     check_data_integrity,
     check_env_recovery,
@@ -34,13 +34,13 @@ register_dummy_envs()
     ],
 )
 def test_generate_dataset_with_collector_env(dataset_id, env_id):
-    """Test DataCollectorV0 wrapper and Minari dataset creation."""
+    """Test DataCollector wrapper and Minari dataset creation."""
     env = gym.make(env_id)
 
-    env = DataCollectorV0(env)
+    env = DataCollector(env)
     num_episodes = 10
 
-    # Step the environment, DataCollectorV0 wrapper will do the data collection job
+    # Step the environment, DataCollector wrapper will do the data collection job
     env.reset(seed=42)
 
     for episode in range(num_episodes):
@@ -105,7 +105,7 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
     ],
 )
 def test_generate_dataset_with_external_buffer(dataset_id, env_id):
-    """Test create dataset from external buffers without using DataCollectorV0."""
+    """Test create dataset from external buffers without using DataCollector."""
     buffer = []
 
     # dataset_id = "cartpole-test-v0"
@@ -126,7 +126,7 @@ def test_generate_dataset_with_external_buffer(dataset_id, env_id):
 
     observation, info = env.reset(seed=42)
 
-    # Step the environment, DataCollectorV0 wrapper will do the data collection job
+    # Step the environment, DataCollector wrapper will do the data collection job
     observation, _ = env.reset()
     observations.append(observation)
     for episode in range(num_episodes):
@@ -196,7 +196,7 @@ def test_generate_dataset_with_external_buffer(dataset_id, env_id):
 
 @pytest.mark.parametrize("is_env_needed", [True, False])
 def test_generate_dataset_with_space_subset_external_buffer(is_env_needed):
-    """Test create dataset from external buffers without using DataCollectorV0 or environment."""
+    """Test create dataset from external buffers without using DataCollector or environment."""
     dataset_id = "dummy-dict-test-v0"
 
     # delete the test dataset if it already exists

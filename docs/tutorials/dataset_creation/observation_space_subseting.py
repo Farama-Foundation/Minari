@@ -4,7 +4,7 @@ Collecting a subset of a dictionary space with StepDataCallback
 =========================================
 """
 # %%%
-# In this tutorial you'll learn how to have :class:`minari.DataCollectorV0` only collect a subset
+# In this tutorial you'll learn how to have :class:`minari.DataCollector` only collect a subset
 # of the observation space in PointMaze. Specifically, we'll be collecting observations using
 # random actions on PointMaze_UMaze-v3 from `Gymnasium-Robotics <https://robotics.farama.org/envs/maze/point_maze/>`_
 # and omitting ``achieved_goal`` from the observation space of PointMaze.
@@ -24,7 +24,7 @@ import numpy as np
 from gymnasium import spaces
 
 import minari
-from minari import DataCollectorV0
+from minari import DataCollector
 from minari.data_collector.callbacks import StepDataCallback
 
 
@@ -72,7 +72,7 @@ class CustomSubsetStepDataCallback(StepDataCallback):
 
 # %%
 # Finally we'll record 10 episodes with our observation space subset and
-# callback passed to :class:`minari.DataCollectorV0`.
+# callback passed to :class:`minari.DataCollector`.
 
 dataset_id = "point-maze-subseted-v3"
 
@@ -81,7 +81,7 @@ local_datasets = minari.list_local_datasets()
 if dataset_id in local_datasets:
     minari.delete_dataset(dataset_id)
 
-env = DataCollectorV0(
+env = DataCollector(
     env,
     observation_space=observation_space_subset,
     # action_space=action_space_subset,

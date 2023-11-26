@@ -8,7 +8,7 @@ from gymnasium.utils.env_checker import data_equivalence
 from packaging.specifiers import SpecifierSet
 
 import minari
-from minari import DataCollectorV0, MinariDataset
+from minari import DataCollector, MinariDataset
 from minari.utils import combine_datasets, combine_minari_version_specifiers
 from tests.common import get_sample_buffer_for_dataset_from_env
 
@@ -80,8 +80,8 @@ def _generate_dataset_with_collector_env(
     else:
         env = gym.make("CartPole-v1", max_episode_steps=max_episode_steps)
 
-    env = DataCollectorV0(env)
-    # Step the environment, DataCollectorV0 wrapper will do the data collection job
+    env = DataCollector(env)
+    # Step the environment, DataCollector wrapper will do the data collection job
     env.reset(seed=42)
 
     for episode in range(num_episodes):

@@ -7,7 +7,7 @@ import pytest
 from gymnasium import spaces
 
 import minari
-from minari import DataCollectorV0
+from minari import DataCollector
 from minari.dataset.minari_storage import MinariStorage
 from tests.common import (
     check_data_integrity,
@@ -208,10 +208,10 @@ def test_minari_get_dataset_size_from_collector_env(dataset_id, env_id):
 
     env = gym.make(env_id)
 
-    env = DataCollectorV0(env)
+    env = DataCollector(env)
     num_episodes = 100
 
-    # Step the environment, DataCollectorV0 wrapper will do the data collection job
+    # Step the environment, DataCollector wrapper will do the data collection job
     env.reset(seed=42)
 
     for episode in range(num_episodes):
@@ -274,7 +274,7 @@ def test_minari_get_dataset_size_from_buffer(dataset_id, env_id):
 
     observation, info = env.reset(seed=42)
 
-    # Step the environment, DataCollectorV0 wrapper will do the data collection job
+    # Step the environment, DataCollector wrapper will do the data collection job
     observation, _ = env.reset()
     observations.append(observation)
     for episode in range(num_episodes):

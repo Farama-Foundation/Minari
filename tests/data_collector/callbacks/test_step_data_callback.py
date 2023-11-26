@@ -3,7 +3,7 @@ import numpy as np
 from gymnasium import spaces
 
 import minari
-from minari import DataCollectorV0, MinariDataset
+from minari import DataCollector, MinariDataset
 from minari.data_collector.callbacks import StepDataCallback
 from tests.common import (
     check_data_integrity,
@@ -38,7 +38,7 @@ class CustomSubsetStepDataCallback(StepDataCallback):
 
 
 def test_data_collector_step_data_callback():
-    """Test DataCollectorV0 wrapper and Minari dataset creation."""
+    """Test DataCollector wrapper and Minari dataset creation."""
     dataset_id = "dummy-dict-test-v0"
     # delete the test dataset if it already exists
     local_datasets = minari.list_local_datasets()
@@ -66,7 +66,7 @@ def test_data_collector_step_data_callback():
         }
     )
 
-    env = DataCollectorV0(
+    env = DataCollector(
         env,
         observation_space=observation_space_subset,
         action_space=action_space_subset,
@@ -74,7 +74,7 @@ def test_data_collector_step_data_callback():
     )
     num_episodes = 10
 
-    # Step the environment, DataCollectorV0 wrapper will do the data collection job
+    # Step the environment, DataCollector wrapper will do the data collection job
     env.reset(seed=42)
 
     for episode in range(num_episodes):

@@ -74,11 +74,11 @@ for episode_data in dataset.iterate_episodes():
 ```python
 import minari
 import gymnasium as gym
-from minari import DataCollectorV0
+from minari import DataCollector
 
 
 env = gym.make('LunarLander-v2')
-env = DataCollectorV0(env)
+env = DataCollector(env)
 
 for _ in range(100):
     env.reset()

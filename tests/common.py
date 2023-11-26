@@ -11,7 +11,7 @@ from gymnasium.envs.registration import register
 from gymnasium.utils.env_checker import data_equivalence
 
 import minari
-from minari import DataCollectorV0, MinariDataset
+from minari import DataCollector, MinariDataset
 from minari.dataset.minari_dataset import EpisodeData
 from minari.dataset.minari_storage import MinariStorage
 
@@ -564,13 +564,13 @@ def check_load_and_delete_dataset(dataset_id: str):
 
 
 def create_dummy_dataset_with_collecter_env_helper(
-    dataset_id: str, env: DataCollectorV0, num_episodes: int = 10, **kwargs
+    dataset_id: str, env: DataCollector, num_episodes: int = 10, **kwargs
 ):
     local_datasets = minari.list_local_datasets()
     if dataset_id in local_datasets:
         minari.delete_dataset(dataset_id)
 
-    # Step the environment, DataCollectorV0 wrapper will do the data collection job
+    # Step the environment, DataCollector wrapper will do the data collection job
     env.reset(seed=42)
 
     for episode in range(num_episodes):
@@ -652,7 +652,7 @@ def get_sample_buffer_for_dataset_from_env(env, num_episodes=10):
 
     observation, info = env.reset(seed=42)
 
-    # Step the environment, DataCollectorV0 wrapper will do the data collection job
+    # Step the environment, DataCollector wrapper will do the data collection job
     observation, _ = env.reset()
     observations.append(_space_subset_helper(observation))
     for episode in range(num_episodes):

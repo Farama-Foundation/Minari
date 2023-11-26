@@ -10,7 +10,7 @@ import pytest
 from gymnasium.envs.registration import EnvSpec
 
 import minari
-from minari import DataCollectorV0, MinariDataset
+from minari import DataCollector, MinariDataset
 from minari.dataset.minari_dataset import EpisodeData
 from minari.dataset.minari_storage import MinariStorage
 from tests.common import (
@@ -78,14 +78,14 @@ def test_update_dataset_from_collector_env(dataset_id, env_id):
 
     env = gym.make(env_id)
 
-    env = DataCollectorV0(env)
+    env = DataCollector(env)
     num_episodes = 10
 
     dataset = create_dummy_dataset_with_collecter_env_helper(
         dataset_id, env, num_episodes=num_episodes
     )
 
-    # Step the environment, DataCollectorV0 wrapper will do the data collection job
+    # Step the environment, DataCollector wrapper will do the data collection job
     env.reset(seed=42)
 
     for episode in range(num_episodes):
@@ -133,7 +133,7 @@ def test_filter_episodes_and_subsequent_updates(dataset_id, env_id):
 
     env = gym.make(env_id)
 
-    env = DataCollectorV0(env)
+    env = DataCollector(env)
     num_episodes = 10
 
     dataset = create_dummy_dataset_with_collecter_env_helper(
@@ -155,7 +155,7 @@ def test_filter_episodes_and_subsequent_updates(dataset_id, env_id):
     )  # checks that the underlying episodes are still present in the `MinariStorage` object
     check_env_recovery(env.env, filtered_dataset)
 
-    # Step the environment, DataCollectorV0 wrapper will do the data collection job
+    # Step the environment, DataCollector wrapper will do the data collection job
     env.reset(seed=42)
 
     for episode in range(num_episodes):
@@ -306,7 +306,7 @@ def test_sample_episodes(dataset_id, env_id):
 
     env = gym.make(env_id)
 
-    env = DataCollectorV0(env)
+    env = DataCollector(env)
     num_episodes = 10
 
     dataset = create_dummy_dataset_with_collecter_env_helper(
@@ -349,7 +349,7 @@ def test_iterate_episodes(dataset_id, env_id):
 
     env = gym.make(env_id)
 
-    env = DataCollectorV0(env)
+    env = DataCollector(env)
     num_episodes = 10
 
     dataset = create_dummy_dataset_with_collecter_env_helper(
@@ -398,7 +398,7 @@ def test_update_dataset_from_buffer(dataset_id, env_id):
 
     env = gym.make(env_id)
 
-    collector_env = DataCollectorV0(env)
+    collector_env = DataCollector(env)
     num_episodes = 10
 
     dataset = create_dummy_dataset_with_collecter_env_helper(
