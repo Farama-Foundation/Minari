@@ -11,7 +11,7 @@ PointMaze D4RL dataset
 #   1. First we need to create a planner that outputs a trajectory of waypoints that the agent can follow to reach the goal from its initial location in the maze. We will be using
 #      `Q-Value Iteration <https://towardsdatascience.com/fundamental-iterative-methods-of-reinforcement-learning-df8ff078652a>`_ [2] to solve the discrete grid maze, same as in D4RL.
 #   2. Then we also need to generate the actions so that the agent can follow the waypoints of the trajectory. For this purpose D4RL implements a PD controller.
-#   3. Finally, to create the Minari dataset, we will wrap the environment with a :class:`minari.DataCollectorV0` and step through it by generating actions with the path planner and waypoint controller.
+#   3. Finally, to create the Minari dataset, we will wrap the environment with a :class:`minari.DataCollector` and step through it by generating actions with the path planner and waypoint controller.
 #
 # For this tutorial we will be using the ``pointmaze-medium-v3`` environment to collect transition data. However, any map implementation in the PointMaze environment group can be used.
 # Another important factor to take into account is that the environment is continuing, which means that it won't be ``terminated`` when reaching a goal. Instead a new goal target will be randomly selected and the agent
@@ -22,7 +22,7 @@ PointMaze D4RL dataset
 import gymnasium as gym
 import numpy as np
 
-from minari import DataCollectorV0, StepDataCallback
+from minari import DataCollector, StepDataCallback
 
 
 # %%
@@ -359,7 +359,7 @@ class PointMazeStepDataCallback(StepDataCallback):
 # Collect Data and Create Minari Dataset
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Now we will finally perform our data collection and create the Minari dataset. This is as simple as wrapping the environment with
-# the :class:`minari.DataCollectorV0` wrapper and add the custom callback methods. Once we've done this we can step the environment with the ``WayPointController``
+# the :class:`minari.DataCollector` wrapper and add the custom callback methods. Once we've done this we can step the environment with the ``WayPointController``
 # as our policy. For the tutorial, we collect 10,000 transitions. Thus, we initialize the environment with ``max_episode_steps=10,000`` since that's the total amount of steps we want to
 # collect for our dataset and we don't want the environment to get ``truncated`` during the data collection due to a time limit.
 #
@@ -377,7 +377,7 @@ env = gym.make("PointMaze_Medium-v3", continuing_task=True, max_episode_steps=to
 #   * Custom StepDataCallback to add extra state information to 'infos' and divide dataset in different episodes by overridng
 #     truncation value to True when target is reached
 #   * Record the 'info' value of every step
-collector_env = DataCollectorV0(
+collector_env = DataCollector(
     env, step_data_callback=PointMazeStepDataCallback, record_infos=True
 )
 

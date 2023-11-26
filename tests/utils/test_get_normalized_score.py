@@ -3,7 +3,7 @@ import numpy as np
 
 import minari
 from minari import get_normalized_score
-from minari.data_collector.data_collector import DataCollectorV0
+from minari.data_collector.data_collector import DataCollector
 from tests.common import create_dummy_dataset_with_collecter_env_helper
 
 
@@ -14,7 +14,7 @@ def test_ref_score():
 
     env = gym.make("CartPole-v1")
 
-    env = DataCollectorV0(env)
+    env = DataCollector(env)
     num_episodes = 10
 
     ref_min_score, ref_max_score = -1, 100

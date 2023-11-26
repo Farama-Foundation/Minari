@@ -1,4 +1,4 @@
-from minari.data_collector import DataCollectorV0
+from minari.data_collector import DataCollector
 from minari.data_collector.callbacks import EpisodeMetadataCallback, StepDataCallback
 from minari.dataset.minari_dataset import EpisodeData, MinariDataset
 from minari.storage.hosting import (
@@ -21,7 +21,7 @@ __all__ = [
     "MinariDataset",
     "EpisodeData",
     # Data collection
-    "DataCollectorV0",
+    "DataCollector",
     "EpisodeMetadataCallback",
     "StepDataCallback",
     # Dataset Functions
@@ -39,3 +39,9 @@ __all__ = [
 ]
 
 __version__ = "0.4.2"
+
+
+def __getattr__(name):
+    if name == "DataCollectorV0":
+        from minari.data_collector import DataCollectorV0
+        return DataCollectorV0

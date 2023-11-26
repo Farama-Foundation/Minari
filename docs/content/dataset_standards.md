@@ -410,7 +410,7 @@ The required `datasets` found in the episode groups correspond to the data invol
 
 The `dtype` of the numpy array datasets can be of any type compatible with [`h5py`](https://docs.h5py.org/en/latest/faq.html#what-datatypes-are-supported).
 
-The `info` dictionary returned in `env.step()` and `env.reset()` can be optionally saved in the dataset as a `sub-group`. The option to save the `info` data can be set in the `DataCollectorv0` wrapper with the  `record_infos` argument.
+The `info` dictionary returned in `env.step()` and `env.reset()` can be optionally saved in the dataset as a `sub-group`. The option to save the `info` data can be set in the `DataCollector` wrapper with the  `record_infos` argument.
 
 Also, additional `datasets` and nested `sub-groups` can be saved in each episode. This can be the case of environment data that doesn't participate in each `env.step()` or `env.reset()` call in the Gymnasium API, such as the full environment state in each step. This can be achieved by creating a custom `StepDataCallback` that returns extra keys and nested dictionaries in the `StepData` dictionary return.
 
@@ -472,9 +472,9 @@ The episode groups in the `HDF5` file will then have the following structure:
 </div>
 
 ### Default dataset metadata
-`HDF5` files can have metadata attached to `objects` as [`attributes`](https://docs.h5py.org/en/stable/high/attr.html). Minari uses these `attributes` to add metadata to the global dataset file, to each episode group, as well as to the individual datasets inside each episode. This                                                                                 metadata can be added by the user by overriding the `EpisodeMetadataCallback` in the `DataCollectorV0` wrapper. However, there is also some metadata added by default to every dataset.
+`HDF5` files can have metadata attached to `objects` as [`attributes`](https://docs.h5py.org/en/stable/high/attr.html). Minari uses these `attributes` to add metadata to the global dataset file, to each episode group, as well as to the individual datasets inside each episode. This                                                                                 metadata can be added by the user by overriding the `EpisodeMetadataCallback` in the `DataCollector` wrapper. However, there is also some metadata added by default to every dataset.
 
-When creating a Minari dataset with the `DataCollectorV0` wrapper the default global metadata will be the following:
+When creating a Minari dataset with the `DataCollector` wrapper the default global metadata will be the following:
 
 | Attribute               | Type       | Description |
 | ----------------------- | ---------- | ----------- |

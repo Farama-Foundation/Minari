@@ -28,7 +28,7 @@ from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
 
 import minari
-from minari import DataCollectorV0
+from minari import DataCollector
 
 
 torch.manual_seed(42)
@@ -49,10 +49,10 @@ train()
 # %%
 # Dataset generation
 # ~~~~~~~~~~~~~~~~~~~
-# Now let's generate the dataset using the `DataCollectorV0 <https://minari.farama.org/api/data_collector/>`_ wrapper:
+# Now let's generate the dataset using the `DataCollector <https://minari.farama.org/api/data_collector/>`_ wrapper:
 #
 
-env = DataCollectorV0(gym.make('CartPole-v1'))
+env = DataCollector(gym.make('CartPole-v1'))
 path = os.path.abspath('') + '/logs/ppo/CartPole-v1_1/best_model'
 agent = PPO.load(path)
 

@@ -25,7 +25,14 @@ from minari.dataset.minari_storage import MinariStorage
 EpisodeBuffer = Dict[str, Any]  # TODO: narrow this down
 
 
-class DataCollectorV0(gym.Wrapper):
+class DataCollectorV0:
+    warnings.warn("DataCollectorV0 is deprecated and will be removed. Use DataCollector instead.", DeprecationWarning, stacklevel=5)
+
+    def __new__(cls, *args, **kwargs):
+        return DataCollector(*args, **kwargs)
+
+
+class DataCollector(gym.Wrapper):
     r"""Gymnasium environment wrapper that collects step data.
 
     This wrapper is meant to work as a temporary buffer of the environment data before creating a Minari dataset. The creation of the buffers
@@ -36,7 +43,7 @@ class DataCollectorV0(gym.Wrapper):
         import minari
         import gymnasium as gym
 
-        env = minari.DataCollectorV0(gym.make('EnvID'))
+        env = minari.DataCollector(gym.make('EnvID'))
 
         env.reset()
 
@@ -62,7 +69,7 @@ class DataCollectorV0(gym.Wrapper):
 
         * To perform caching the user can set the `max_buffer_steps` or `max_buffer_episodes` before saving the in-memory buffers to a temporary HDF5
           file in disk. If non of `max_buffer_steps` or `max_buffer_episodes` are set, the data will move from in-memory to a permanent location only
-          when the Minari dataset is created. To move all the stored data to a permanent location use DataCollectorV0.save_to_disK(path_to_permanent_location).
+          when the Minari dataset is created. To move all the stored data to a permanent location use DataCollector.save_to_disK(path_to_permanent_location).
     """
 
     def __init__(
@@ -238,7 +245,7 @@ class DataCollectorV0(gym.Wrapper):
                 self._buffer[-1]["truncations"][-1] = True
 
     def add_to_dataset(self, dataset: MinariDataset):
-        """Add extra data to Minari dataset from collector environment buffers (DataCollectorV0).
+        """Add extra data to Minari dataset from collector environment buffers (DataCollector).
 
         Args:
             dataset (MinariDataset): Dataset to add the data
@@ -276,7 +283,7 @@ class DataCollectorV0(gym.Wrapper):
         num_episodes_average_score: int = 100,
         minari_version: Optional[str] = None,
     ):
-        """Create a Minari dataset using the data collected from stepping with a Gymnasium environment wrapped with a `DataCollectorV0` Minari wrapper.
+        """Create a Minari dataset using the data collected from stepping with a Gymnasium environment wrapped with a `DataCollector` Minari wrapper.
 
         The ``dataset_id`` parameter corresponds to the name of the dataset, with the syntax as follows:
         ``(env_name-)(dataset_name)(-v(version))`` where ``env_name`` identifies the name of the environment used to generate the dataset ``dataset_name``.

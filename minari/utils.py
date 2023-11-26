@@ -16,7 +16,7 @@ from gymnasium.wrappers.record_episode_statistics import RecordEpisodeStatistics
 from packaging.specifiers import InvalidSpecifier, SpecifierSet
 from packaging.version import Version
 
-from minari import DataCollectorV0
+from minari import DataCollector
 from minari.dataset.minari_dataset import MinariDataset
 from minari.dataset.minari_storage import MinariStorage
 from minari.serialization import deserialize_space
@@ -569,7 +569,7 @@ def create_dataset_from_buffers(
 
 def create_dataset_from_collector_env(
     dataset_id: str,
-    collector_env: DataCollectorV0,
+    collector_env: DataCollector,
     eval_env: Optional[str | gym.Env | EnvSpec] = None,
     algorithm_name: Optional[str] = None,
     author: Optional[str] = None,
@@ -581,7 +581,7 @@ def create_dataset_from_collector_env(
     num_episodes_average_score: int = 100,
     minari_version: Optional[str] = None,
 ):
-    """Create a Minari dataset using the data collected from stepping with a Gymnasium environment wrapped with a `DataCollectorV0` Minari wrapper.
+    """Create a Minari dataset using the data collected from stepping with a Gymnasium environment wrapped with a `DataCollector` Minari wrapper.
 
     The ``dataset_id`` parameter corresponds to the name of the dataset, with the syntax as follows:
     ``(env_name-)(dataset_name)(-v(version))`` where ``env_name`` identifies the name of the environment used to generate the dataset ``dataset_name``.
@@ -589,7 +589,7 @@ def create_dataset_from_collector_env(
 
     Args:
         dataset_id (str): name id to identify Minari dataset
-        collector_env (DataCollectorV0): Gymnasium environment used to collect the buffer data
+        collector_env (DataCollector): Gymnasium environment used to collect the buffer data
         buffer (list[Dict[str, Union[list, Dict]]]): list of episode dictionaries with data
         eval_env (Optional[str|gym.Env|EnvSpec]): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) to use for evaluation with the dataset. After loading the dataset, the environment can be recovered as follows: `MinariDataset.recover_environment(eval_env=True).
                                                 If None the `env` used to collect the buffer data should be used for evaluation.
@@ -607,7 +607,7 @@ def create_dataset_from_collector_env(
     Returns:
         MinariDataset
     """
-    warnings.warn("This function is deprecated and will be removed in v0.5.0. Please use DataCollectorV0.create_dataset() instead.", DeprecationWarning, stacklevel=2)
+    warnings.warn("This function is deprecated and will be removed in v0.5.0. Please use DataCollector.create_dataset() instead.", DeprecationWarning, stacklevel=2)
     dataset = collector_env.create_dataset(
         dataset_id=dataset_id,
         eval_env=eval_env,

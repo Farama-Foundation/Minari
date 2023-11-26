@@ -8,7 +8,7 @@ class EpisodeMetadataCallback:
 
     This callback can be overridden to add extra metadata attributes or statistics to
     each episode in the Minari dataset. The custom callback can then be
-    passed to the DataCollectorV0 wrapper to the `episode_metadata_callback` argument.
+    passed to the DataCollector wrapper to the `episode_metadata_callback` argument.
 
     TODO: add more default statistics to episode datasets
     """
