@@ -123,7 +123,7 @@ def test_data_collector_step_data_callback():
 
 
 def test_data_collector_step_data_callback_info_correction():
-    """Test DataCollectorV0 wrapper and Minari dataset creation."""
+    """Test DataCollector wrapper and Minari dataset creation."""
     dataset_id = "dummy-tuple-discrete-box-v0"
     # delete the test dataset if it already exists
     local_datasets = minari.list_local_datasets()
@@ -132,14 +132,14 @@ def test_data_collector_step_data_callback_info_correction():
 
     env = gym.make("DummyTupleDiscreteBoxEnv-v0")
 
-    env = DataCollectorV0(
+    env = DataCollector(
         env,
         record_infos=True,
         step_data_callback=CustomSubsetInfoPadStepDataCallback,
     )
     num_episodes = 10
 
-    # Step the environment, DataCollectorV0 wrapper will do the data collection job
+    # Step the environment, DataCollector wrapper will do the data collection job
     env.reset(seed=42)
 
     for episode in range(num_episodes):
@@ -177,7 +177,7 @@ def test_data_collector_step_data_callback_info_correction():
 
     env = gym.make("DummyTupleDiscreteBoxEnv-v0")
 
-    env = DataCollectorV0(
+    env = DataCollector(
         env,
         record_infos=True,
     )
@@ -187,7 +187,7 @@ def test_data_collector_step_data_callback_info_correction():
 
         num_episodes = 10
 
-        # Step the environment, DataCollectorV0 wrapper will do the data collection job
+        # Step the environment, DataCollector wrapper will do the data collection job
         env.reset(seed=42)
 
         for episode in range(num_episodes):

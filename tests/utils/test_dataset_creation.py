@@ -171,7 +171,7 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
     ],
 )
 def test_generate_dataset_with_collector_env_infos(dataset_id, env_id, info_override):
-    """Test DataCollectorV0 wrapper and Minari dataset creation."""
+    """Test DataCollector wrapper and Minari dataset creation."""
     # dataset_id = "cartpole-test-v0"
     # delete the test dataset if it already exists
     local_datasets = minari.list_local_datasets()
@@ -183,10 +183,10 @@ def test_generate_dataset_with_collector_env_infos(dataset_id, env_id, info_over
     if env_id == "DummyMutableInfoBoxEnv-v0":
         env.unwrapped.info = info_override
 
-    env = DataCollectorV0(env, record_infos=True)
+    env = DataCollector(env, record_infos=True)
     num_episodes = 10
 
-    # Step the environment, DataCollectorV0 wrapper will do the data collection job
+    # Step the environment, DataCollector wrapper will do the data collection job
     _, info_sample = env.reset(seed=42)
 
     for episode in range(num_episodes):
