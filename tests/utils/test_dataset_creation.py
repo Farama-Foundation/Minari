@@ -188,7 +188,6 @@ def test_generate_dataset_with_collector_env_infos(dataset_id, env_id, info_over
 
     # Step the environment, DataCollectorV0 wrapper will do the data collection job
     _, info_sample = env.reset(seed=42)
-    print(info_sample)
 
     for episode in range(num_episodes):
         terminated = False
