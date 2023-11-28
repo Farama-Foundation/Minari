@@ -119,6 +119,10 @@ class DataCollector(gym.Wrapper):
         )
 
         self._record_infos = record_infos
+        if self._record_infos:
+            self._reference_info = None  # initialized to None, determined
+            # from the info returned by the first call to `self.env.reset()`
+         
         self.max_buffer_steps = max_buffer_steps
 
         # Initialzie empty buffer
@@ -182,6 +186,14 @@ class DataCollector(gym.Wrapper):
             terminated=terminated,
             truncated=truncated,
         )
+        
+        if self._record_infos and not self.check_infos_same_shape(
+            self._reference_info, step_data["infos"]
+        ):
+            raise ValueError(
+                "Info structure inconsistent with info structure returned by original reset."
+            )
+        
         assert STEP_DATA_KEYS.issubset(
             step_data.keys()
         ), "One or more required keys is missing from 'step-data'."

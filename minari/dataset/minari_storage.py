@@ -162,12 +162,13 @@ class MinariStorage:
         return map(function, ep_dicts)
 
     def _decode_infos(self, infos: h5py.Group):
+        assert isinstance(infos, h5py.Group)
         result = {}
-        for key in infos.keys():
-            if isinstance(infos[key], h5py.Group):
-                result[key] = self._decode_infos(infos[key])
-            elif isinstance(infos[key], h5py.Dataset):
-                result[key] = infos[key][()]
+        for key, value in infos.items():
+            if isinstance(value, h5py.Group):
+                result[key] = self._decode_infos(value)
+            elif isinstance(value, h5py.Dataset):
+                result[key] = value[()]
             else:
                 raise ValueError(
                     "Infos are in an unsupported format; see Minari documentation for supported formats."
