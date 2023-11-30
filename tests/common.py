@@ -28,6 +28,9 @@ class DummyBoxEnv(gym.Env):
             low=-1, high=4, shape=(3,), dtype=np.float32
         )
 
+    def _get_info(self):
+        return {"timestep": np.array([self.timestep])}
+
     def step(self, action):
         terminated = self.timestep > 5
         self.timestep += 1
@@ -37,13 +40,13 @@ class DummyBoxEnv(gym.Env):
             0,
             terminated,
             False,
-            {"timestep": np.array([self.timestep])},
+            self._get_info(),
         )
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
         self.observation_space.seed(seed)
-        return self.observation_space.sample(), {"timestep": np.array([self.timestep])}
+        return self.observation_space.sample(), self._get_info()
 
 
 # this returns whatever is set to `self.info` as the info, making it easy to create parameterized tests with a lot of different info datatypes.
@@ -55,15 +58,18 @@ class DummyMutableInfoBoxEnv(gym.Env):
         )
         self.info = {}
 
+    def _get_info(self):
+        return self.info
+
     def step(self, action):
         terminated = self.timestep > 5
         self.timestep += 1
 
-        return (self.observation_space.sample(), 0, terminated, False, self.info)
+        return (self.observation_space.sample(), 0, terminated, False, self._get_info())
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
-        return self.observation_space.sample(), self.info
+        return self.observation_space.sample(), self._get_info()
 
 
 class DummyMultiDimensionalBoxEnv(gym.Env):
@@ -102,6 +108,9 @@ class DummyTupleDiscreteBoxEnv(gym.Env):
             )
         )
 
+    def _get_info(self):
+        return {"timestep": np.array([self.timestep])} if self.timestep % 2 == 0 else {}
+
     def step(self, action):
         terminated = self.timestep > 5
         self.timestep += 1
@@ -111,7 +120,7 @@ class DummyTupleDiscreteBoxEnv(gym.Env):
             0,
             terminated,
             False,
-            {"timestep": np.array([self.timestep])} if self.timestep % 2 == 0 else {},
+            self._get_info(),
         )
 
     def reset(self, seed=None, options=None):
@@ -119,7 +128,7 @@ class DummyTupleDiscreteBoxEnv(gym.Env):
         self.observation_space.seed(seed)
         return (
             self.observation_space.sample(),
-            {"timestep": np.array([self.timestep])} if self.timestep % 2 == 0 else {},
+            self._get_info(),
         )
 
 
@@ -148,6 +157,12 @@ class DummyDictEnv(gym.Env):
             }
         )
 
+    def _get_info(self):
+        return {
+                "timestep": np.array([self.timestep]),
+                "component_1": {"next_timestep": np.array([self.timestep + 1])},
+            }
+
     def step(self, action):
         terminated = self.timestep > 5
         self.timestep += 1
@@ -157,20 +172,14 @@ class DummyDictEnv(gym.Env):
             0,
             terminated,
             False,
-            {
-                "timestep": np.array([self.timestep]),
-                "component_1": {"next_timestep": np.array([self.timestep + 1])},
-            },
+            self._get_info(),
         )
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
         self.observation_space.seed(seed)
 
-        return self.observation_space.sample(), {
-            "timestep": np.array([self.timestep]),
-            "component_1": {"next_timestep": np.array([self.timestep + 1])},
-        }
+        return self.observation_space.sample(), self._get_info()
 
 
 class DummyTupleEnv(gym.Env):
@@ -194,26 +203,23 @@ class DummyTupleEnv(gym.Env):
             )
         )
 
-    def step(self, action):
-        terminated = self.timestep > 5
-        self.timestep += 1
-
-        info = {
+    def _get_info(self):
+        return {
             "info_1": np.ones((2, 2)),
             "component_1": {"component_1_info_1": np.ones((2,))},
         }
 
-        return self.observation_space.sample(), 0, terminated, False, info
+    def step(self, action):
+        terminated = self.timestep > 5
+        self.timestep += 1
+
+        return self.observation_space.sample(), 0, terminated, False, self._get_info()
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
         self.observation_space.seed(seed)
 
-        info = {
-            "info_1": np.ones((2, 2)),
-            "component_1": {"component_1_info_1": np.ones((2,))},
-        }
-        return self.observation_space.sample(), info
+        return self.observation_space.sample(), self._get_info()
 
 
 class DummyTextEnv(gym.Env):
