@@ -601,11 +601,11 @@ def assert_infos_same_shape(info_1, info_2):
     return True
 
 
-def _get_step_from_infos_dict(infos, step_index):
+def _get_info_at_step_index(infos, step_index):
     result = {}
     for key in infos.keys():
         if isinstance(infos[key], dict):
-            result[key] = _get_step_from_infos_dict(infos[key], step_index)
+            result[key] = _get_info_at_step_index(infos[key], step_index)
         elif isinstance(infos[key], np.ndarray):
             result[key] = infos[key][step_index]
         else:
@@ -733,7 +733,7 @@ def check_episode_data_integrity(
             obs = _reconstuct_obs_or_action_at_index_recursive(episode.observations, i)
             if info_sample is not None:
                 assert assert_infos_same_shape(
-                    _get_step_from_infos_dict(episode.infos, i), info_sample
+                    _get_info_at_step_index(episode.infos, i), info_sample
                 )
             assert observation_space.contains(obs)
 
