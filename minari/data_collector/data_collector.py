@@ -153,6 +153,14 @@ class DataCollector(gym.Wrapper):
         Returns:
             Dict: new dictionary episode buffer with added values from step_data
         """
+
+        if self._record_infos and not self.check_infos_same_shape(
+            self._reference_info, step_data["infos"]
+        ):
+            raise ValueError(
+                "Info structure inconsistent with info structure returned by original reset."
+            )
+
         for key, value in step_data.items():
             if (not self._record_infos and key == "infos") or (value is None):
                 continue
@@ -194,13 +202,6 @@ class DataCollector(gym.Wrapper):
             terminated=terminated,
             truncated=truncated,
         )
-
-        if self._record_infos and not self.check_infos_same_shape(
-            self._reference_info, step_data["infos"]
-        ):
-            raise ValueError(
-                "Info structure inconsistent with info structure returned by original reset."
-            )
 
         # Force step data dictionary to include keys corresponding to Gymnasium step returns:
         # actions, observations, rewards, terminations, truncations, and infos
@@ -266,16 +267,8 @@ class DataCollector(gym.Wrapper):
         step_data = self._step_data_callback(env=self.env, obs=obs, info=info)
         self._episode_id += 1
 
-        if self._record_infos:
-            if self._reference_info is None:
-                self._reference_info = step_data["infos"]
-            else:
-                if not self.check_infos_same_shape(
-                    self._reference_info, step_data["infos"]
-                ):
-                    raise ValueError(
-                        "Info structure inconsistent with info structure returned by original reset."
-                    )
+        if self._record_infos and self._reference_info is None:
+            self._reference_info = step_data["infos"]
 
         assert STEP_DATA_KEYS.issubset(
             step_data.keys()
