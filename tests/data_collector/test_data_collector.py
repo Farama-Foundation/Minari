@@ -165,7 +165,12 @@ def test_reproducibility(seed):
         while not (trunc or term):
             _, _, trunc, term, _ = env.step(env.action_space.sample())
 
-    dataset = env.create_dataset(dataset_id)
+    dataset = env.create_dataset(
+        dataset_id=dataset_id,
+        algorithm_name="random_policy",
+        author="Farama",
+        author_email="farama@farama.org",
+    )
     env.close()
 
     # Step through the env again using the stored seed and check it matches
@@ -184,7 +189,7 @@ def test_reproducibility(seed):
         assert np.allclose(obs, episode.observations[0])
 
         for k in range(episode.total_timesteps):
-            obs, rew, trunc, _, _ = env.step(env.action_space.sample())
+            obs, rew, _, _, _ = env.step(env.action_space.sample())
             assert np.allclose(obs, episode.observations[k + 1])
             assert rew == episode.rewards[k]
 
