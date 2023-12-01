@@ -174,6 +174,7 @@ def test_reproducibility(seed):
     for episode in dataset.sample_episodes(dataset.total_episodes):
         if seed is None:
             assert isinstance(episode.seed, int)
+            assert episode.seed >= 0
         else:
             assert seed == episode.seed
 
