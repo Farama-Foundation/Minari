@@ -150,14 +150,12 @@ def test_reproducibility(seed):
     """Test episodes are reproducible, even if an explicit reset seed is not set."""
     dataset_id = "dummy-box-test-v0"
     env_id = "DummyBoxEnv-v0"
-    policy_seed = 42
     num_episodes = 5
 
     env = DataCollector(gym.make(env_id))
 
     for _ in range(num_episodes):
         env.reset(seed=seed)
-        env.action_space.seed(policy_seed)
 
         trunc = False
         term = False
@@ -176,7 +174,7 @@ def test_reproducibility(seed):
     # Step through the env again using the stored seed and check it matches
     env = dataset.recover_environment()
 
-    for episode in dataset.sample_episodes(dataset.total_episodes):
+    for episode in dataset.iterate_episodes():
         if seed is None:
             assert isinstance(episode.seed, int)
             assert episode.seed >= 0
@@ -184,13 +182,14 @@ def test_reproducibility(seed):
             assert seed == episode.seed
 
         obs, _ = env.reset(seed=episode.seed)
-        env.action_space.seed(policy_seed)
 
         assert np.allclose(obs, episode.observations[0])
 
         for k in range(episode.total_timesteps):
-            obs, rew, _, _, _ = env.step(env.action_space.sample())
+            obs, rew, term, trunc, _ = env.step(episode.actions[k])
             assert np.allclose(obs, episode.observations[k + 1])
             assert rew == episode.rewards[k]
+            assert not term
+            assert trunc == (k == episode.total_timesteps - 1)
 
     check_load_and_delete_dataset(dataset_id)
