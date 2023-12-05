@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import os
+import secrets
 import shutil
 import tempfile
 import warnings
@@ -21,6 +22,9 @@ from minari.data_collector.callbacks import (
 from minari.dataset.minari_dataset import MinariDataset
 from minari.dataset.minari_storage import MinariStorage
 
+
+# H5Py supports ints up to uint64
+AUTOSEED_BIT_SIZE = 64
 
 EpisodeBuffer = Dict[str, Any]  # TODO: narrow this down
 
@@ -221,7 +225,25 @@ class DataCollector(gym.Wrapper):
         seed: int | None = None,
         options: dict[str, Any] | None = None,
     ) -> tuple[ObsType, dict[str, Any]]:
-        """Gymnasium environment reset."""
+        """Gymnasium environment reset.
+
+        If no seed is set, one will be automatically generated, for reproducibility,
+        unless ``minari_autoseed=False`` in the ``options`` dictionary.
+
+        Args:
+            seed (optional int): The seed that is used to initialize the environment's PRNG.
+                If no seed is specified, one will be automatically generated (by default).
+            options (optional dict): Additional information to specify how the environment is reset.
+                Set ``minari_autoseed=False`` to disable automatic seeding.
+
+        Returns:
+            observation (ObsType): Observation of the initial state.
+            info (dictionary): Auxiliary information complementing ``observation``.
+        """
+        autoseed_enabled = (not options) or options.get("minari_autoseed", False)
+        if seed is None and autoseed_enabled:
+            seed = secrets.randbits(AUTOSEED_BIT_SIZE)
+
         obs, info = self.env.reset(seed=seed, options=options)
         step_data = self._step_data_callback(env=self.env, obs=obs, info=info)
         self._episode_id += 1
@@ -231,7 +253,10 @@ class DataCollector(gym.Wrapper):
         ), "One or more required keys is missing from 'step-data'"
 
         self._validate_buffer()
-        episode_buffer = {"seed": seed if seed else str(None), "id": self._episode_id}
+        episode_buffer = {
+            "seed": str(None) if seed is None else seed,
+            "id": self._episode_id
+        }
         episode_buffer = self._add_to_episode_buffer(episode_buffer, step_data)
         self._buffer.append(episode_buffer)
         return obs, info

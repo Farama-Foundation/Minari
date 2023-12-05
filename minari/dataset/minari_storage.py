@@ -205,10 +205,14 @@ class MinariStorage:
                 ep_group = file[f"episode_{ep_idx}"]
                 assert isinstance(ep_group, h5py.Group)
 
+                seed = ep_group.attrs.get("seed")
+                if isinstance(seed, np.integer):
+                    seed = int(seed)
+
                 ep_dict = {
                     "id": ep_group.attrs.get("id"),
                     "total_timesteps": ep_group.attrs.get("total_steps"),
-                    "seed": ep_group.attrs.get("seed"),
+                    "seed": seed,
                     "observations": self._decode_space(
                         ep_group["observations"], self.observation_space
                     ),

@@ -36,6 +36,7 @@ class DummyBoxEnv(gym.Env):
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
+        self.observation_space.seed(seed)
         return self.observation_space.sample(), {}
 
 
@@ -56,6 +57,7 @@ class DummyMultiDimensionalBoxEnv(gym.Env):
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
+        self.observation_space.seed(seed)
         return self.observation_space.sample(), {}
 
 
@@ -82,6 +84,7 @@ class DummyTupleDiscreteBoxEnv(gym.Env):
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
+        self.observation_space.seed(seed)
         return self.observation_space.sample(), {}
 
 
@@ -118,6 +121,7 @@ class DummyDictEnv(gym.Env):
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
+        self.observation_space.seed(seed)
         return self.observation_space.sample(), {}
 
 
@@ -150,6 +154,7 @@ class DummyTupleEnv(gym.Env):
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
+        self.observation_space.seed(seed)
         return self.observation_space.sample(), {}
 
 
@@ -166,6 +171,7 @@ class DummyTextEnv(gym.Env):
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
+        self.observation_space.seed(seed)
         return "者示序袋費欠走立🐝🗓🈸🐿🍯🚆▶️🎧🎇💫", {}
 
 
@@ -219,6 +225,7 @@ class DummyComboEnv(gym.Env):
 
     def reset(self, seed=0, options=None):
         self.timestep = 0
+        self.observation_space.seed(seed)
         return self.observation_space.sample(), {}
 
 

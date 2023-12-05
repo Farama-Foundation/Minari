@@ -6,6 +6,8 @@ from minari import DataCollector, EpisodeData, MinariDataset, StepDataCallback
 from tests.common import check_load_and_delete_dataset, register_dummy_envs
 
 
+MAX_UINT64 = np.iinfo(np.uint64).max
+
 register_dummy_envs()
 
 
@@ -140,4 +142,54 @@ def test_truncation_without_reset(dataset_id, env_id):
         assert bool(last_step.truncations) is True
 
     # check load and delete local dataset
+    check_load_and_delete_dataset(dataset_id)
+
+
+@pytest.mark.parametrize("seed", [None, 0, 42, MAX_UINT64])
+def test_reproducibility(seed):
+    """Test episodes are reproducible, even if an explicit reset seed is not set."""
+    dataset_id = "dummy-box-test-v0"
+    env_id = "DummyBoxEnv-v0"
+    num_episodes = 5
+
+    env = DataCollector(gym.make(env_id))
+
+    for _ in range(num_episodes):
+        env.reset(seed=seed)
+
+        trunc = False
+        term = False
+
+        while not (trunc or term):
+            _, _, trunc, term, _ = env.step(env.action_space.sample())
+
+    dataset = env.create_dataset(
+        dataset_id=dataset_id,
+        algorithm_name="random_policy",
+        author="Farama",
+        author_email="farama@farama.org",
+    )
+    env.close()
+
+    # Step through the env again using the stored seed and check it matches
+    env = dataset.recover_environment()
+
+    for episode in dataset.iterate_episodes():
+        if seed is None:
+            assert isinstance(episode.seed, int)
+            assert episode.seed >= 0
+        else:
+            assert seed == episode.seed
+
+        obs, _ = env.reset(seed=episode.seed)
+
+        assert np.allclose(obs, episode.observations[0])
+
+        for k in range(episode.total_timesteps):
+            obs, rew, term, trunc, _ = env.step(episode.actions[k])
+            assert np.allclose(obs, episode.observations[k + 1])
+            assert rew == episode.rewards[k]
+            assert term == episode.terminations[k]
+            assert trunc == episode.truncations[k]
+
     check_load_and_delete_dataset(dataset_id)
