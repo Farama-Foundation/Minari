@@ -189,7 +189,7 @@ def test_reproducibility(seed):
             obs, rew, term, trunc, _ = env.step(episode.actions[k])
             assert np.allclose(obs, episode.observations[k + 1])
             assert rew == episode.rewards[k]
-            assert not term
-            assert trunc == (k == episode.total_timesteps - 1)
+            assert term == episode.terminations[k]
+            assert trunc == episode.truncations[k]
 
     check_load_and_delete_dataset(dataset_id)
