@@ -32,7 +32,6 @@ EpisodeBuffer = Dict[str, Any]  # TODO: narrow this down
 
 def __getattr__(name):
     if name == "DataCollectorV0":
-        # warnings.simplefilter('once', DeprecationWarning)
         stacklevel = len(inspect.stack(0))
         warnings.warn("DataCollectorV0 is deprecated and will be removed. Use DataCollector instead.", DeprecationWarning, stacklevel=stacklevel)
         return DataCollector
