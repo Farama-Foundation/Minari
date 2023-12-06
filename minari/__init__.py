@@ -1,4 +1,5 @@
 import warnings
+
 from minari.data_collector import DataCollector
 from minari.data_collector.callbacks import EpisodeMetadataCallback, StepDataCallback
 from minari.dataset.minari_dataset import EpisodeData, MinariDataset
@@ -48,4 +49,3 @@ def __getattr__(name):
         return DataCollectorV0
     else:
         raise ImportError(f"cannot import name '{name}' from '{__name__}' ({__file__})")
-    
