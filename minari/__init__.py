@@ -1,5 +1,3 @@
-import warnings
-
 from minari.data_collector import DataCollector
 from minari.data_collector.callbacks import EpisodeMetadataCallback, StepDataCallback
 from minari.dataset.minari_dataset import EpisodeData, MinariDataset
