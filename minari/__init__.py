@@ -44,7 +44,6 @@ __version__ = "0.4.2"
 
 def __getattr__(name):
     if name == "DataCollectorV0":
-        warnings.simplefilter('once', DeprecationWarning)
         from minari.data_collector import DataCollectorV0
         return DataCollectorV0
     else:
