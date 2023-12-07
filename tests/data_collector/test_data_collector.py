@@ -1,10 +1,13 @@
 import gymnasium as gym
-import h5py
 import numpy as np
 import pytest
 
 from minari import DataCollector, EpisodeData, MinariDataset, StepDataCallback
-from tests.common import check_load_and_delete_dataset, register_dummy_envs
+from tests.common import (
+    check_load_and_delete_dataset,
+    get_info_at_step_index,
+    register_dummy_envs,
+)
 
 
 MAX_UINT64 = np.iinfo(np.uint64).max
@@ -28,20 +31,6 @@ class ForceTruncateStepDataCallback(StepDataCallback):
 
         self.time_steps += 1
         return step_data
-
-
-def _get_step_from_infos(infos, step_index: int):
-    result = {}
-    for key in infos.keys():
-        if isinstance(infos[key], h5py.Group):
-            result[key] = _get_step_from_infos(infos[key], step_index)
-        elif isinstance(infos[key], h5py.Dataset):
-            result[key] = infos[key][step_index]
-        else:
-            raise ValueError(
-                "Infos are in an unsupported format; see Minari documentation for supported formats."
-            )
-    return result
 
 
 def _get_step_from_dictionary_space(episode_data, step_index):
@@ -86,7 +75,7 @@ def get_single_step_from_episode(episode: EpisodeData, index: int) -> EpisodeDat
     else:
         action = episode.actions[index]
 
-    infos = _get_step_from_infos(episode.infos, index)
+    infos = get_info_at_step_index(episode.infos, index)
 
     step_data = {
         "id": episode.id,

@@ -153,7 +153,6 @@ class DataCollector(gym.Wrapper):
         Returns:
             Dict: new dictionary episode buffer with added values from step_data
         """
-
         if self._record_infos and not self.check_infos_same_shape(
             self._reference_info, step_data["infos"]
         ):
