@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import inspect
 import os
 import secrets
 import shutil
@@ -29,11 +30,15 @@ AUTOSEED_BIT_SIZE = 64
 EpisodeBuffer = Dict[str, Any]  # TODO: narrow this down
 
 
-class DataCollectorV0:
-    warnings.warn("DataCollectorV0 is deprecated and will be removed. Use DataCollector instead.", DeprecationWarning, stacklevel=5)
-
-    def __new__(cls, *args, **kwargs):
-        return DataCollector(*args, **kwargs)
+def __getattr__(name):
+    if name == "DataCollectorV0":
+        stacklevel = len(inspect.stack(0))
+        warnings.warn("DataCollectorV0 is deprecated and will be removed. Use DataCollector instead.", DeprecationWarning, stacklevel=stacklevel)
+        return DataCollector
+    elif name == "__path__":
+        return False  # see https://stackoverflow.com/a/60803436
+    else:
+        raise ImportError(f"cannot import name '{name}' from '{__name__}' ({__file__})")
 
 
 class DataCollector(gym.Wrapper):
