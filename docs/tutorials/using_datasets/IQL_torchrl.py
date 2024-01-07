@@ -425,7 +425,7 @@ for i in pbar:
     # 3) Backpropagate the gradients
     optimizer.zero_grad()
     loss.backward()
-    optimizer.step() # Update V(s), Q(a, s), pi(a|s)
+    optimizer.step()  # Update V(s), Q(a, s), pi(a|s)
     target_net_updater.step()  # Update the target Q-network
 
     # Evaluate the policy
@@ -496,7 +496,7 @@ frames = list(tensordict["pixels"].numpy())
 save_video(frames, video_folder="results_video", fps=30)
 
 # Display the video. Embedding is necessary for Google Colab etc
-mp4 = open("results_video/rl-video-episode-0.mp4",'rb').read()
+mp4 = open("results_video/rl-video-episode-0.mp4", "rb").read()
 data_url = "data:video/mp4;base64," + b64encode(mp4).decode()
 HTML("""
 <video controls style='margin: auto; display: block'>
