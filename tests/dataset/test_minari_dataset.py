@@ -100,6 +100,7 @@ def test_update_dataset_from_collector_env(dataset_id, env_id):
     env.add_to_dataset(dataset)
 
     assert isinstance(dataset, MinariDataset)
+    assert isinstance(dataset.total_steps, int)
     assert dataset.total_episodes == num_episodes * 2
     assert dataset.spec.total_episodes == num_episodes * 2
     assert len(dataset.episode_indices) == num_episodes * 2
@@ -170,6 +171,7 @@ def test_filter_episodes_and_subsequent_updates(dataset_id, env_id):
     env.add_to_dataset(filtered_dataset)
 
     assert isinstance(filtered_dataset, MinariDataset)
+    assert isinstance(filtered_dataset.spec.total_steps, int)
     assert filtered_dataset.total_episodes == 17
     assert filtered_dataset.spec.total_episodes == 17
     assert filtered_dataset.spec.total_steps == 17 * 5
@@ -247,6 +249,7 @@ def test_filter_episodes_and_subsequent_updates(dataset_id, env_id):
     filtered_dataset.update_dataset_from_buffer(buffer)
 
     assert isinstance(filtered_dataset, MinariDataset)
+    assert isinstance(filtered_dataset.spec.total_steps, int)
     assert filtered_dataset.total_episodes == 27
     assert filtered_dataset.spec.total_episodes == 27
     assert filtered_dataset.spec.total_steps == 27 * 5
