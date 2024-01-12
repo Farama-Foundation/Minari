@@ -51,7 +51,7 @@ def parse_dataset_id(dataset_id: str) -> tuple[str | None, str, int]:
 class MinariDatasetSpec:
     env_spec: Optional[EnvSpec]
     total_episodes: int
-    total_steps: np.int64
+    total_steps: int
     dataset_id: str
     combined_datasets: List[str]
     observation_space: gym.Space
@@ -257,7 +257,7 @@ class MinariDataset:
         return len(self.episode_indices)
 
     @property
-    def total_steps(self) -> np.int64:
+    def total_steps(self) -> int:
         """Total episodes steps in the Minari dataset."""
         if self._total_steps is None:
             if self.episode_indices is None:
@@ -269,7 +269,7 @@ class MinariDataset:
                         episode_indices=self.episode_indices,
                     )
                 )
-        return np.int64(self._total_steps)
+        return int(self._total_steps)
 
     @property
     def episode_indices(self) -> np.ndarray:
