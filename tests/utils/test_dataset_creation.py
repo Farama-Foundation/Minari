@@ -8,6 +8,7 @@ from gymnasium import spaces
 import minari
 from minari import DataCollector, MinariDataset
 from tests.common import (
+    DummyMutableInfoBoxEnv,
     check_data_integrity,
     check_env_recovery,
     check_env_recovery_with_subset_spaces,
@@ -83,7 +84,7 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
     assert dataset.spec.total_episodes == num_episodes
     assert len(dataset.episode_indices) == num_episodes
 
-    check_data_integrity(dataset._data, dataset.episode_indices)
+    check_data_integrity(dataset.storage, dataset.episode_indices)
     check_episode_data_integrity(
         dataset, dataset.spec.observation_space, dataset.spec.action_space
     )
@@ -181,6 +182,7 @@ def test_record_infos_collector_env(dataset_id, env_id, info_override):
     env = gym.make(env_id)
 
     if env_id == "DummyMutableInfoBoxEnv-v0":
+        assert isinstance(env.unwrapped, DummyMutableInfoBoxEnv)
         env.unwrapped.info = info_override
 
     env = DataCollector(env, record_infos=True)
@@ -213,7 +215,7 @@ def test_record_infos_collector_env(dataset_id, env_id, info_override):
     assert dataset.spec.total_episodes == num_episodes
     assert len(dataset.episode_indices) == num_episodes
 
-    check_data_integrity(dataset._data, dataset.episode_indices)
+    check_data_integrity(dataset.storage, dataset.episode_indices)
     check_episode_data_integrity(
         dataset,
         dataset.spec.observation_space,

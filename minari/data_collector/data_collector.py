@@ -229,9 +229,13 @@ class DataCollector(gym.Wrapper):
         if step_data["terminations"] or step_data["truncations"]:
             self._episode_id += 1
             eps_buff = {"id": self._episode_id}
-            previous_data = {
+            previous_data: StepData = {
                 "observations": step_data["observations"],
                 "infos": step_data["infos"],
+                "rewards": None,
+                "actions": None,
+                "terminations": None,
+                "truncations": None
             }
             self._add_step_data(eps_buff, previous_data)
             self._buffer.append(eps_buff)
