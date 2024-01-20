@@ -154,12 +154,14 @@ class DataCollector(gym.Wrapper):
         dict_data = dict(step_data)
         if not self._record_infos:
             dict_data = {k: v for k, v in step_data.items() if k != "infos"}
-        elif not self.check_infos_same_shape(
-            self._reference_info, dict_data["infos"]
-        ):
-            raise ValueError(
-                "Info structure inconsistent with info structure returned by original reset."
-            )
+        else:
+            assert self._reference_info is not None
+            if not check_infos_same_shape(
+                self._reference_info, step_data["infos"]
+            ):
+                raise ValueError(
+                    "Info structure inconsistent with info structure returned by original reset."
+                )
 
         self._add_to_episode_buffer(episode_buffer, dict_data)
 
@@ -430,25 +432,6 @@ class DataCollector(gym.Wrapper):
             env_spec=self.env.spec,
         )
 
-    # This function is designed the same way as `assert_infos_same_shape` in tests/common.py, but is a class function so has a `self` argument.
-    def check_infos_same_shape(self, info_1, info_2):
-        if len(info_1.keys()) != len(info_2.keys()):
-            return False
-        for key in info_1.keys():
-            if isinstance(info_1[key], dict):
-                if not self.check_infos_same_shape(info_1[key], info_2[key]):
-                    return False
-            elif isinstance(info_1[key], np.ndarray):
-                if not (info_1[key].shape == info_2[key].shape) and (
-                    info_1[key].dtype == info_2[key].dtype
-                ):
-                    return False
-            else:
-                raise ValueError(
-                    "Infos are in an unsupported format; see [Minari documentation](http://minari.farama.org/content/dataset_standards/) for supported formats."
-                )
-        return True
-
     def close(self):
         """Close the DataCollector.
 
@@ -458,3 +441,16 @@ class DataCollector(gym.Wrapper):
 
         self._buffer.clear()
         shutil.rmtree(self._tmp_dir.name)
+
+
+def check_infos_same_shape(info_1: dict, info_2: dict):
+    if info_1.keys() != info_2.keys():
+        return False
+    for key in info_1.keys():
+        if type(info_1[key]) is not type(info_2[key]):
+            return False
+        if isinstance(info_1[key], dict):
+            return check_infos_same_shape(info_1[key], info_2[key])
+        elif isinstance(info_1[key], np.ndarray):
+            return (info_1[key].shape == info_2[key].shape) and (info_1[key].dtype == info_2[key].dtype)
+    return True

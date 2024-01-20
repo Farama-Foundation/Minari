@@ -12,6 +12,7 @@ from gymnasium.utils.env_checker import data_equivalence
 
 import minari
 from minari import DataCollector, MinariDataset
+from minari.data_collector.data_collector import check_infos_same_shape
 from minari.dataset.minari_dataset import EpisodeData
 from minari.dataset.minari_storage import MinariStorage
 
@@ -582,25 +583,6 @@ def check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
     assert total_steps == data.total_steps
 
 
-def assert_infos_same_structure(info_1, info_2):
-    if len(info_1.keys()) != len(info_2.keys()):
-        return False
-    for key in info_1.keys():
-        if isinstance(info_1[key], dict):
-            if not assert_infos_same_structure(info_1[key], info_2[key]):
-                return False
-        elif isinstance(info_1[key], np.ndarray):
-            if not (info_1[key].shape == info_2[key].shape) and (
-                info_1[key].dtype == info_2[key].dtype
-            ):
-                return False
-        else:
-            raise ValueError(
-                "Infos are in an unsupported format; see [Minari documentation](http://minari.farama.org/content/dataset_standards/) for supported formats."
-            )
-    return True
-
-
 def get_info_at_step_index(infos, step_index):
     result = {}
     for key in infos.keys():
@@ -732,7 +714,7 @@ def check_episode_data_integrity(
         for i in range(episode.total_timesteps + 1):
             obs = _reconstuct_obs_or_action_at_index_recursive(episode.observations, i)
             if info_sample is not None:
-                assert assert_infos_same_structure(
+                assert check_infos_same_shape(
                     get_info_at_step_index(episode.infos, i), info_sample
                 )
             assert observation_space.contains(obs)
