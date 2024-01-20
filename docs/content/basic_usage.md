@@ -125,7 +125,7 @@ env = gym.make('CartPole-v1')
 env = DataCollector(env, record_infos=True, max_buffer_steps=100000)
 
 total_episodes = 100
-dataset_name = "CartPole-v1-test-v0"
+dataset_name = "cartpole-test-v0"
 dataset = None
 if dataset_name in minari.list_local_datasets():
     dataset = minari.load_dataset(dataset_name)

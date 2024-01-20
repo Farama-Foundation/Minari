@@ -562,13 +562,13 @@ As mentioned in the `Supported Spaces` section, many different observation and a
 
 
 
-When creating a dataset with `DataCollectorV0`, if the `DataCollectorV0` is initialized with `record_infos=True`, the additional information stored as step infos must be provided to Minari as a dict, which can only contain strings as keys and other dictionaries or `np.ndarray` as values. An info dict must be provided from every call to the wrapped evironment's `step` and `reset` function, and the shape of each `np.ndarray` must stay the same across timesteps, and the keys must remain the same in all `dicts` across timesteps.
+When creating a dataset with `DataCollector`, if the `DataCollector` is initialized with `record_infos=True`, the additional information stored as step infos must be provided to Minari as a dict, which can only contain strings as keys and other dictionaries or `np.ndarray` as values. An info dict must be provided from every call to the wrapped evironment's `step` and `reset` function, and the shape of each `np.ndarray` must stay the same across timesteps, and the keys must remain the same in all `dicts` across timesteps.
 
 Here is an example of what a valid `info` might look like:
 
-
 ```python
-info = {'value_1':np.array([1]), 'value_2': {"sub_value_1":np.asarray([[2.3],[4.5]])}}
+import numpy as np
+info = {'value_1': np.array([1]), 'value_2': {"sub_value_1": np.array([[2.3], [4.5]])}}
 ```
 
 Note that this shows how `infos` can be structured hierarchically, and that the nesting of dicts can go to arbitrary depth.
