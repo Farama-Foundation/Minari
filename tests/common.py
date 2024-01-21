@@ -51,7 +51,7 @@ class DummyBoxEnv(gym.Env):
 
 # this returns whatever is set to `self.info` as the info, making it easy to create parameterized tests with a lot of different info datatypes.
 class DummyInfoBoxEnv(gym.Env):
-    def __init__(self, info = None):
+    def __init__(self, info=None):
         self.action_space = spaces.Box(low=-1, high=4, shape=(2,), dtype=np.float32)
         self.observation_space = spaces.Box(
             low=-1, high=4, shape=(3,), dtype=np.float32
