@@ -156,7 +156,7 @@ class DataCollector(gym.Wrapper):
             dict_data = {k: v for k, v in step_data.items() if k != "infos"}
         else:
             assert self._reference_info is not None
-            if not check_infos_same_shape(
+            if not _check_infos_same_shape(
                 self._reference_info, step_data["infos"]
             ):
                 raise ValueError(
@@ -443,14 +443,14 @@ class DataCollector(gym.Wrapper):
         shutil.rmtree(self._tmp_dir.name)
 
 
-def check_infos_same_shape(info_1: dict, info_2: dict):
+def _check_infos_same_shape(info_1: dict, info_2: dict):
     if info_1.keys() != info_2.keys():
         return False
     for key in info_1.keys():
         if type(info_1[key]) is not type(info_2[key]):
             return False
         if isinstance(info_1[key], dict):
-            return check_infos_same_shape(info_1[key], info_2[key])
+            return _check_infos_same_shape(info_1[key], info_2[key])
         elif isinstance(info_1[key], np.ndarray):
             return (info_1[key].shape == info_2[key].shape) and (info_1[key].dtype == info_2[key].dtype)
     return True

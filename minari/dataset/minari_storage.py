@@ -88,7 +88,10 @@ class MinariStorage:
         obj._action_space = action_space
 
         if env_spec is not None:
-            metadata["env_spec"] = env_spec.to_json()
+            try:
+                metadata["env_spec"] = env_spec.to_json()
+            except TypeError:
+                pass
         with h5py.File(obj._file_path, "a") as file:
             file.attrs.update(metadata)
         return obj

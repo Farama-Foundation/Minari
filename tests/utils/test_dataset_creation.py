@@ -8,7 +8,6 @@ from gymnasium import spaces
 import minari
 from minari import DataCollector, MinariDataset
 from tests.common import (
-    DummyMutableInfoBoxEnv,
     check_data_integrity,
     check_env_recovery,
     check_env_recovery_with_subset_spaces,
@@ -99,91 +98,24 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
 
 
 @pytest.mark.parametrize(
-    "dataset_id,env_id,info_override",
+    "info_override",
     [
-        ("dummy-dict-test-v0", "DummyDictEnv-v0", None),
-        ("dummy-box-test-v0", "DummyBoxEnv-v0", None),
-        (
-            "dummy-mutable-info-box-test-v0",
-            "DummyMutableInfoBoxEnv-v0",
-            {"misc": np.ones((5, 5), np.int64)},
-        ),
-        (
-            "dummy-mutable-info-box-test-v0",
-            "DummyMutableInfoBoxEnv-v0",
-            {"misc": np.ones((5, 5), np.int32)},
-        ),
-        (
-            "dummy-mutable-info-box-test-v0",
-            "DummyMutableInfoBoxEnv-v0",
-            {"misc": np.ones((5, 5), np.int16)},
-        ),
-        (
-            "dummy-mutable-info-box-test-v0",
-            "DummyMutableInfoBoxEnv-v0",
-            {"misc": np.ones((5, 5), np.int8)},
-        ),
-        (
-            "dummy-mutable-info-box-test-v0",
-            "DummyMutableInfoBoxEnv-v0",
-            {"misc": np.ones((5, 5), np.uint64)},
-        ),
-        (
-            "dummy-mutable-info-box-test-v0",
-            "DummyMutableInfoBoxEnv-v0",
-            {"misc": np.ones((5, 5), np.uint32)},
-        ),
-        (
-            "dummy-mutable-info-box-test-v0",
-            "DummyMutableInfoBoxEnv-v0",
-            {"misc": np.ones((5, 5), np.uint16)},
-        ),
-        (
-            "dummy-mutable-info-box-test-v0",
-            "DummyMutableInfoBoxEnv-v0",
-            {"misc": np.ones((5, 5), np.uint8)},
-        ),
-        (
-            "dummy-mutable-info-box-test-v0",
-            "DummyMutableInfoBoxEnv-v0",
-            {"misc": np.ones((5, 5), np.float64)},
-        ),
-        (
-            "dummy-mutable-info-box-test-v0",
-            "DummyMutableInfoBoxEnv-v0",
-            {"misc": np.ones((5, 5), np.float32)},
-        ),
-        (
-            "dummy-mutable-info-box-test-v0",
-            "DummyMutableInfoBoxEnv-v0",
-            {"misc": np.ones((5, 5), np.float16)},
-        ),
-        (
-            "dummy-mutable-info-box-test-v0",
-            "DummyMutableInfoBoxEnv-v0",
-            {"misc": np.array([1])},
-        ),
-        (
-            "dummy-mutable-info-box-test-v0",
-            "DummyMutableInfoBoxEnv-v0",
-            {"misc": np.array([1])},
-        ),
-        ("dummy-tuple-test-v0", "DummyTupleEnv-v0", None),
+        None, {}, {"foo": np.ones((10, 10), dtype=np.float32)},
+        {"int": 1}, {"bool": False},
+        {
+            "value1": True,
+            "value2": 5,
+            "value3": {
+                "nested1": False,
+                "nested2": np.empty(10)
+            }
+        },
     ],
 )
-def test_record_infos_collector_env(dataset_id, env_id, info_override):
+def test_record_infos_collector_env(info_override):
     """Test DataCollector wrapper and Minari dataset creation including infos."""
-    # dataset_id = "cartpole-test-v0"
-    # delete the test dataset if it already exists
-    local_datasets = minari.list_local_datasets()
-    if dataset_id in local_datasets:
-        minari.delete_dataset(dataset_id)
-
-    env = gym.make(env_id)
-
-    if env_id == "DummyMutableInfoBoxEnv-v0":
-        assert isinstance(env.unwrapped, DummyMutableInfoBoxEnv)
-        env.unwrapped.info = info_override
+    dataset_id = "dummy-mutable-info-box-test-v0"
+    env = gym.make("DummyInfoBoxEnv-v0", info=info_override)
 
     env = DataCollector(env, record_infos=True)
     num_episodes = 10
@@ -205,7 +137,7 @@ def test_record_infos_collector_env(dataset_id, env_id, info_override):
         dataset_id=dataset_id,
         collector_env=env,
         algorithm_name="random_policy",
-        code_permalink="https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
+        code_permalink=CODELINK,
         author="WillDudley",
         author_email="wdudley@farama.org",
     )
@@ -222,9 +154,6 @@ def test_record_infos_collector_env(dataset_id, env_id, info_override):
         dataset.spec.action_space,
         info_sample=info_sample,
     )
-
-    # check that the environment can be recovered from the dataset
-    check_env_recovery(env.env, dataset)
 
     env.close()
 

@@ -560,19 +560,6 @@ As mentioned in the `Supported Spaces` section, many different observation and a
 
 ## Additional Information Formatting
 
-
-
-When creating a dataset with `DataCollector`, if the `DataCollector` is initialized with `record_infos=True`, the additional information stored as step infos must be provided to Minari as a dict, which can only contain strings as keys and other dictionaries or `np.ndarray` as values. An info dict must be provided from every call to the wrapped evironment's `step` and `reset` function, and the shape of each `np.ndarray` must stay the same across timesteps, and the keys must remain the same in all `dicts` across timesteps.
-
-Here is an example of what a valid `info` might look like:
-
-```python
-import numpy as np
-info = {'value_1': np.array([1]), 'value_2': {"sub_value_1": np.array([[2.3], [4.5]])}}
-```
-
-Note that this shows how `infos` can be structured hierarchically, and that the nesting of dicts can go to arbitrary depth.
+When creating a dataset with `DataCollector`, if the `DataCollector` is initialized with `record_infos=True`, an info dict must be provided from every call to the environment's `step` and `reset` function. The structure of the info dictionary must be the same across timesteps.
 
 Given that it is not guaranteed that all Gymnasium environments provide infos at every timestep, we provide the `StepDataCallback` which can modify the infos from a non-compliant environment so they have the same structure at every timestep. An example of this pattern is available in our test `test_data_collector_step_data_callback_info_correction` in test_step_data_callback.py.
-
-We provide tests to guarantee support for the following `numpy.ndarray` data types: `np.int8`,`np.int16`,`np.int32`,`np.int64`, `np.uint8`,`np.uint16`,`np.uint32`,`np.iunt64`,`np.float16`,`np.float32`,`np.float64`.

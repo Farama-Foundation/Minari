@@ -12,7 +12,6 @@ from gymnasium.utils.env_checker import data_equivalence
 
 import minari
 from minari import DataCollector, MinariDataset
-from minari.data_collector.data_collector import check_infos_same_shape
 from minari.dataset.minari_dataset import EpisodeData
 from minari.dataset.minari_storage import MinariStorage
 
@@ -51,13 +50,13 @@ class DummyBoxEnv(gym.Env):
 
 
 # this returns whatever is set to `self.info` as the info, making it easy to create parameterized tests with a lot of different info datatypes.
-class DummyMutableInfoBoxEnv(gym.Env):
-    def __init__(self):
+class DummyInfoBoxEnv(gym.Env):
+    def __init__(self, info = None):
         self.action_space = spaces.Box(low=-1, high=4, shape=(2,), dtype=np.float32)
         self.observation_space = spaces.Box(
             low=-1, high=4, shape=(3,), dtype=np.float32
         )
-        self.info = {}
+        self.info = info if info is not None else {}
 
     def _get_info(self):
         return self.info
@@ -66,7 +65,7 @@ class DummyMutableInfoBoxEnv(gym.Env):
         terminated = self.timestep > 5
         self.timestep += 1
 
-        return (self.observation_space.sample(), 0, terminated, False, self._get_info())
+        return self.observation_space.sample(), 0, terminated, False, self._get_info()
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
@@ -303,8 +302,8 @@ def register_dummy_envs():
     )
 
     register(
-        id="DummyMutableInfoBoxEnv-v0",
-        entry_point="tests.common:DummyMutableInfoBoxEnv",
+        id="DummyInfoBoxEnv-v0",
+        entry_point="tests.common:DummyInfoBoxEnv",
         max_episode_steps=5,
     )
 
@@ -714,9 +713,11 @@ def check_episode_data_integrity(
         for i in range(episode.total_timesteps + 1):
             obs = _reconstuct_obs_or_action_at_index_recursive(episode.observations, i)
             if info_sample is not None:
-                assert check_infos_same_shape(
-                    get_info_at_step_index(episode.infos, i), info_sample
+                assert check_infos_equal(
+                    get_info_at_step_index(episode.infos, i),
+                    info_sample
                 )
+
             assert observation_space.contains(obs)
 
         for i in range(episode.total_timesteps):
@@ -726,6 +727,19 @@ def check_episode_data_integrity(
         assert episode.total_timesteps == len(episode.rewards)
         assert episode.total_timesteps == len(episode.terminations)
         assert episode.total_timesteps == len(episode.truncations)
+
+
+def check_infos_equal(info_1: dict, info_2: dict):
+    if info_1.keys() != info_2.keys():
+        return False
+    for key in info_1.keys():
+        if isinstance(info_1[key], dict):
+            return check_infos_equal(info_1[key], info_2[key])
+        elif isinstance(info_1[key], np.ndarray):
+            return np.all(info_1[key] == info_2[key])
+        else:
+            return info_1[key] == info_2[key]
+    return True
 
 
 def _space_subset_helper(entry: Dict):
