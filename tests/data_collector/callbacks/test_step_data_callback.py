@@ -85,7 +85,7 @@ def test_data_collector_step_data_callback():
         terminated = False
         truncated = False
         while not terminated and not truncated:
-            action = env.action_space.sample() 
+            action = env.action_space.sample()
             _, _, terminated, truncated, _ = env.step(action)
 
         env.reset()
