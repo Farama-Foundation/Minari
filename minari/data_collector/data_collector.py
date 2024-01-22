@@ -7,7 +7,7 @@ import secrets
 import shutil
 import tempfile
 import warnings
-from typing import Any, Callable, Dict, List, Optional, SupportsFloat, Type
+from typing import Any, Callable, Dict, List, Optional, SupportsFloat, Type, Union
 
 import gymnasium as gym
 import numpy as np
@@ -140,7 +140,7 @@ class DataCollector(gym.Wrapper):
     def _add_step_data(
         self,
         episode_buffer: EpisodeBuffer,
-        step_data: StepData,
+        step_data: Union[StepData, Dict],
     ):
         """Add step data dictionary to episode buffer.
 
@@ -231,13 +231,9 @@ class DataCollector(gym.Wrapper):
         if step_data["terminations"] or step_data["truncations"]:
             self._episode_id += 1
             eps_buff = {"id": self._episode_id}
-            previous_data: StepData = {
+            previous_data = {
                 "observations": step_data["observations"],
                 "infos": step_data["infos"],
-                "rewards": None,
-                "actions": None,
-                "terminations": None,
-                "truncations": None
             }
             self._add_step_data(eps_buff, previous_data)
             self._buffer.append(eps_buff)
@@ -265,7 +261,7 @@ class DataCollector(gym.Wrapper):
             observation (ObsType): Observation of the initial state.
             info (dictionary): Auxiliary information complementing ``observation``.
         """
-        autoseed_enabled = (not options) or options.get("minari_autoseed", False)
+        autoseed_enabled = (not options) or options.get("minari_autoseed", True)
         if seed is None and autoseed_enabled:
             seed = secrets.randbits(AUTOSEED_BIT_SIZE)
 
