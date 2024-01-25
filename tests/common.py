@@ -581,7 +581,7 @@ def check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
     assert total_steps == data.total_steps
 
 
-def get_info_at_step_index(infos, step_index):
+def get_info_at_step_index(infos: Dict, step_index: int) -> Dict:
     result = {}
     for key in infos.keys():
         if isinstance(infos[key], dict):
@@ -696,9 +696,10 @@ def check_episode_data_integrity(
 
     Args:
         episode_data_list (List[EpisodeData]): A list of EpisodeData instances representing episodes.
-        observation_space(gym.spaces.Space): The environment's observation space.
-        action_space(gym.spaces.Space): The environment's action space.
-        info_sample(dict): An info returned by the environment used to build the dataset.
+        observation_space (gym.spaces.Space): The environment's observation space.
+        action_space (gym.spaces.Space): The environment's action space.
+        info_sample (dict): An info returned by the environment used to build the dataset.
+
     """
     # verify the actions and observations are in the appropriate action space and observation space, and that the episode lengths are correct
     for episode in episode_data_list:
@@ -728,14 +729,14 @@ def check_episode_data_integrity(
         assert episode.total_timesteps == len(episode.truncations)
 
 
-def check_infos_equal(info_1: dict, info_2: dict):
+def check_infos_equal(info_1: Dict, info_2: Dict) -> bool:
     if info_1.keys() != info_2.keys():
         return False
     for key in info_1.keys():
         if isinstance(info_1[key], dict):
             return check_infos_equal(info_1[key], info_2[key])
         elif isinstance(info_1[key], np.ndarray):
-            return np.all(info_1[key] == info_2[key])
+            return bool(np.all(info_1[key] == info_2[key]))
         else:
             return info_1[key] == info_2[key]
     return True
@@ -752,7 +753,7 @@ def _space_subset_helper(entry: Dict):
     )
 
 
-def get_sample_buffer_for_dataset_from_env(env, num_episodes=10):
+def get_sample_buffer_for_dataset_from_env(env: gym.Env, num_episodes: int = 10):
 
     buffer = []
     observations = []
@@ -771,7 +772,7 @@ def get_sample_buffer_for_dataset_from_env(env, num_episodes=10):
         truncated = False
 
         while not terminated and not truncated:
-            action = env.action_space.sample()  # User-defined policy function
+            action = env.action_space.sample()
             observation, reward, terminated, truncated, _ = env.step(action)
             observations.append(_space_subset_helper(observation))
             actions.append(_space_subset_helper(action))
