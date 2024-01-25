@@ -115,8 +115,8 @@ def test_data_collector_step_data_callback():
 
 def test_data_collector_step_data_callback_info_correction():
     """Test DataCollector wrapper and Minari dataset creation."""
-    dataset_id = "dummy-tuple-discrete-box-v0"
-    env = gym.make("DummyTupleDiscreteBoxEnv-v0")
+    dataset_id = "dummy-inconsistent-info-v0"
+    env = gym.make("DummyInconsistentInfoEnv-v0")
 
     env = DataCollector(
         env,
@@ -156,7 +156,7 @@ def test_data_collector_step_data_callback_info_correction():
     env.close()
     check_load_and_delete_dataset(dataset_id)
 
-    env = gym.make("DummyTupleDiscreteBoxEnv-v0")
+    env = gym.make("DummyInconsistentInfoEnv-v0")
 
     env = DataCollector(
         env,

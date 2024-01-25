@@ -38,7 +38,7 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
     """Test DataCollector wrapper and Minari dataset creation."""
     env = gym.make(env_id)
 
-    env = DataCollector(env)
+    env = DataCollector(env, record_infos=True)
     num_episodes = 10
 
     # Step the environment, DataCollector wrapper will do the data collection job
@@ -115,24 +115,22 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
 def test_record_infos_collector_env(info_override):
     """Test DataCollector wrapper and Minari dataset creation including infos."""
     dataset_id = "dummy-mutable-info-box-test-v0"
-    env = gym.make("DummyInfoBoxEnv-v0", info=info_override)
+    env = gym.make("DummyInfoEnv-v0", info=info_override)
 
     env = DataCollector(env, record_infos=True)
     num_episodes = 10
 
-    # Step the environment, DataCollector wrapper will do the data collection job
     _, info_sample = env.reset(seed=42)
 
     for episode in range(num_episodes):
         terminated = False
         truncated = False
         while not terminated and not truncated:
-            action = env.action_space.sample()  # User-defined policy function
+            action = env.action_space.sample()
             _, _, terminated, truncated, _ = env.step(action)
 
         env.reset()
 
-    # Create Minari dataset and store locally
     dataset = minari.create_dataset_from_collector_env(
         dataset_id=dataset_id,
         collector_env=env,

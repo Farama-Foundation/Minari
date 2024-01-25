@@ -49,26 +49,21 @@ class DummyBoxEnv(gym.Env):
         return self.observation_space.sample(), self._get_info()
 
 
-class DummyInfoBoxEnv(gym.Env):
+class DummyInfoEnv(DummyBoxEnv):
     def __init__(self, info=None):
-        self.action_space = spaces.Box(low=-1, high=4, shape=(2,), dtype=np.float32)
-        self.observation_space = spaces.Box(
-            low=-1, high=4, shape=(3,), dtype=np.float32
-        )
+        super().__init__()
         self.info = info if info is not None else {}
 
     def _get_info(self):
         return self.info
 
-    def step(self, action):
-        terminated = self.timestep > 5
-        self.timestep += 1
 
-        return self.observation_space.sample(), 0, terminated, False, self._get_info()
+class DummyInconsistentInfoEnv(DummyBoxEnv):
+    def __init__(self):
+        super().__init__()
 
-    def reset(self, seed=None, options=None):
-        self.timestep = 0
-        return self.observation_space.sample(), self._get_info()
+    def _get_info(self):
+        return super()._get_info() if self.timestep % 2 == 0 else {}
 
 
 class DummyMultiDimensionalBoxEnv(gym.Env):
@@ -108,7 +103,7 @@ class DummyTupleDiscreteBoxEnv(gym.Env):
         )
 
     def _get_info(self):
-        return {"timestep": np.array([self.timestep])} if self.timestep % 2 == 0 else {}
+        return {"timestep": np.array([self.timestep])}
 
     def step(self, action):
         terminated = self.timestep > 5
@@ -301,8 +296,14 @@ def register_dummy_envs():
     )
 
     register(
-        id="DummyInfoBoxEnv-v0",
-        entry_point="tests.common:DummyInfoBoxEnv",
+        id="DummyInfoEnv-v0",
+        entry_point="tests.common:DummyInfoEnv",
+        max_episode_steps=5,
+    )
+
+    register(
+        id="DummyInconsistentInfoEnv-v0",
+        entry_point="tests.common:DummyInconsistentInfoEnv",
         max_episode_steps=5,
     )
 
