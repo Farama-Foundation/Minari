@@ -1022,11 +1022,20 @@
 <td><p><code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code></p></td>
 <td><p>Truncations for each timestep.</p></td>
 </tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">infos</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dict</span></code></p></td>
+<td><p>A dictionary containing additional information.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
 <p>As mentioned in the <code class="docutils literal notranslate"><span class="pre">Supported</span> <span class="pre">Spaces</span></code> section, many different observation and action spaces are supported so the data type for these fields are dependent on the environment being used.</p>
 </section>
+</section>
+<section id="additional-information-formatting">
+<h2>Additional Information Formatting<a class="headerlink" href="#additional-information-formatting" title="Link to this heading">#</a></h2>
+<p>When creating a dataset with <code class="docutils literal notranslate"><span class="pre">DataCollector</span></code>, if the <code class="docutils literal notranslate"><span class="pre">DataCollector</span></code> is initialized with <code class="docutils literal notranslate"><span class="pre">record_infos=True</span></code>, an info dict must be provided from every call to the environment’s <code class="docutils literal notranslate"><span class="pre">step</span></code> and <code class="docutils literal notranslate"><span class="pre">reset</span></code> function. The structure of the info dictionary must be the same across timesteps.</p>
+<p>Given that it is not guaranteed that all Gymnasium environments provide infos at every timestep, we provide the <code class="docutils literal notranslate"><span class="pre">StepDataCallback</span></code> which can modify the infos from a non-compliant environment so they have the same structure at every timestep. An example of this pattern is available in our test <code class="docutils literal notranslate"><span class="pre">test_data_collector_step_data_callback_info_correction</span></code> in test_step_data_callback.py.</p>
 </section>
 </section>
 
@@ -1121,6 +1130,7 @@
 <li><a class="reference internal" href="#episodedata-structure">EpisodeData Structure</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#additional-information-formatting">Additional Information Formatting</a></li>
 </ul>
 </li>
 </ul>

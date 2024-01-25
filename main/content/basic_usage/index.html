@@ -422,7 +422,7 @@
         <span class="k">if</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span><span class="p">:</span>
             <span class="k">break</span>
 
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="n">dataset_id</span><span class="o">=</span><span class="s2">&quot;CartPole-v1-test-v0&quot;</span><span class="p">,</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="n">dataset_id</span><span class="o">=</span><span class="s2">&quot;cartpole-test-v0&quot;</span><span class="p">,</span>
                                                    <span class="n">algorithm_name</span><span class="o">=</span><span class="s2">&quot;Random-Policy&quot;</span><span class="p">,</span>
                                                    <span class="n">code_permalink</span><span class="o">=</span><span class="s2">&quot;https://github.com/Farama-Foundation/Minari&quot;</span><span class="p">,</span>
                                                    <span class="n">author</span><span class="o">=</span><span class="s2">&quot;Farama&quot;</span><span class="p">,</span>
@@ -435,7 +435,7 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">minari</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">local_datasets</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">list_local_datasets</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">local_datasets</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-<span class="go">dict_keys([&#39;CartPole-v1-test-v0&#39;])</span>
+<span class="go">dict_keys([&#39;cartpole-test-v0&#39;])</span>
 </pre></div>
 </div>
 <p>The <a class="reference internal" href="../../api/minari_functions/#minari.list_local_datasets" title="minari.list_local_datasets"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.list_local_datasets()</span></code></a> function returns a dictionary with keys the local Minari dataset ids and values their metadata.</p>
@@ -454,7 +454,7 @@
 <span class="n">env</span> <span class="o">=</span> <span class="n">DataCollector</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">record_infos</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_buffer_steps</span><span class="o">=</span><span class="mi">100000</span><span class="p">)</span>
 
 <span class="n">total_episodes</span> <span class="o">=</span> <span class="mi">100</span>
-<span class="n">dataset_name</span> <span class="o">=</span> <span class="s2">&quot;CartPole-v1-test-v0&quot;</span>
+<span class="n">dataset_name</span> <span class="o">=</span> <span class="s2">&quot;cartpole-test-v0&quot;</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="k">if</span> <span class="n">dataset_name</span> <span class="ow">in</span> <span class="n">minari</span><span class="o">.</span><span class="n">list_local_datasets</span><span class="p">():</span>
     <span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
@@ -488,9 +488,9 @@
 <h2>Using Minari Datasets<a class="headerlink" href="#using-minari-datasets" title="Link to this heading">#</a></h2>
 <p>Minari will only be able to load datasets that are stored in your <a class="reference external" href="/content/dataset_standards">local root directory</a> . In order to use any of the dataset sampling features of Minari we first need to load the dataset as a <a class="reference internal" href="../../api/minari_dataset/minari_dataset/#minari.MinariDataset" title="minari.MinariDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.MinariDataset</span></code></a> object using the <a class="reference internal" href="../../api/minari_functions/#minari.load_dataset" title="minari.load_dataset"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.load_dataset()</span></code></a> function as follows:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">minari</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;CartPole-v1-test-v0&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;cartpole-test-v0&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span>
-<span class="go">&#39;CartPole-v1-test-v0&#39;</span>
+<span class="go">&#39;cartpole-test-v0&#39;</span>
 </pre></div>
 </div>
 <section id="download-remote-datasets">
@@ -608,7 +608,7 @@ To create your own buffers and dataloaders, you may need the ability to iterate 
 <p>From a <a class="reference internal" href="../../api/minari_dataset/minari_dataset/#minari.MinariDataset" title="minari.MinariDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.MinariDataset</span></code></a> object we can also recover the Gymnasium environment used to create the dataset, this can be useful for reproducibility or to generate more data for a specific dataset:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">minari</span>
 
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;CartPole-v1-test-v0&#39;</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;cartpole-test-v0&#39;</span><span class="p">)</span>
 <span class="n">env</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">recover_environment</span><span class="p">()</span>
 
 <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
