@@ -32,7 +32,7 @@ class EpisodeData:
             f"rewards=ndarray of {len(self.rewards)} floats, "
             f"terminations=ndarray of {len(self.terminations)} bools, "
             f"truncations=ndarray of {len(self.truncations)} bools, "
-            f"infos=dict with keys of :{list(self.infos.keys())}"
+            f"infos=dict with the following keys: {list(self.infos.keys())}"
             ")"
         )
 
