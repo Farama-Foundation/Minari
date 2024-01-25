@@ -3,7 +3,12 @@ import numpy as np
 import pytest
 
 from minari import DataCollector, EpisodeData, MinariDataset, StepDataCallback
-from tests.common import check_load_and_delete_dataset, register_dummy_envs
+from tests.common import (
+    check_infos_equal,
+    check_load_and_delete_dataset,
+    get_info_at_step_index,
+    register_dummy_envs,
+)
 
 
 MAX_UINT64 = np.iinfo(np.uint64).max
@@ -71,6 +76,8 @@ def get_single_step_from_episode(episode: EpisodeData, index: int) -> EpisodeDat
     else:
         action = episode.actions[index]
 
+    infos = get_info_at_step_index(episode.infos, index)
+
     step_data = {
         "id": episode.id,
         "total_timesteps": 1,
@@ -80,6 +87,7 @@ def get_single_step_from_episode(episode: EpisodeData, index: int) -> EpisodeDat
         "rewards": episode.rewards[index],
         "terminations": episode.terminations[index],
         "truncations": episode.truncations[index],
+        "infos": infos,
     }
 
     return EpisodeData(**step_data)
@@ -103,10 +111,10 @@ def test_truncation_without_reset(dataset_id, env_id):
     env = DataCollector(
         env,
         step_data_callback=ForceTruncateStepDataCallback,
+        record_infos=True,
     )
 
     env.reset()
-
     for _ in range(num_steps):
         env.step(env.action_space.sample())
 
@@ -125,19 +133,20 @@ def test_truncation_without_reset(dataset_id, env_id):
     assert len(dataset.episode_indices) == num_episodes
 
     episodes_generator = dataset.iterate_episodes()
-    last_step = None
+    last_step = get_single_step_from_episode(next(episodes_generator), -1)
     for episode in episodes_generator:
         assert episode.total_timesteps == ForceTruncateStepDataCallback.episode_steps
-        if last_step is not None:
-            first_step = get_single_step_from_episode(episode, 0)
-            # Check that the last observation of the previous episode is carried over to the next episode
-            # as the reset observation.
-            if isinstance(first_step.observations, dict) or isinstance(
-                first_step.observations, tuple
-            ):
-                assert first_step.observations == last_step.observations
-            else:
-                assert np.array_equal(first_step.observations, last_step.observations)
+        first_step = get_single_step_from_episode(episode, 0)
+        # Check that the last observation of the previous episode is carried over to the next episode
+        # as the reset observation.
+        if isinstance(first_step.observations, dict) or isinstance(
+            first_step.observations, tuple
+        ):
+            assert first_step.observations == last_step.observations
+        else:
+            assert np.array_equal(first_step.observations, last_step.observations)
+
+        check_infos_equal(last_step.infos, first_step.infos)
         last_step = get_single_step_from_episode(episode, -1)
         assert bool(last_step.truncations) is True
 

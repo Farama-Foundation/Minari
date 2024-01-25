@@ -11,6 +11,7 @@ from tests.common import (
     check_data_integrity,
     check_env_recovery,
     check_env_recovery_with_subset_spaces,
+    check_episode_data_integrity,
     check_load_and_delete_dataset,
     get_sample_buffer_for_dataset_from_env,
     register_dummy_envs,
@@ -37,7 +38,7 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
     """Test DataCollector wrapper and Minari dataset creation."""
     env = gym.make(env_id)
 
-    env = DataCollector(env)
+    env = DataCollector(env, record_infos=True)
     num_episodes = 10
 
     # Step the environment, DataCollector wrapper will do the data collection job
@@ -83,6 +84,9 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
     assert len(dataset.episode_indices) == num_episodes
 
     check_data_integrity(dataset.storage, dataset.episode_indices)
+    check_episode_data_integrity(
+        dataset, dataset.spec.observation_space, dataset.spec.action_space
+    )
 
     # check that the environment can be recovered from the dataset
     check_env_recovery(env.env, dataset, eval_env)
@@ -90,6 +94,67 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
     env.close()
     eval_env.close()
     # check load and delete local dataset
+    check_load_and_delete_dataset(dataset_id)
+
+
+@pytest.mark.parametrize(
+    "info_override",
+    [
+        None, {}, {"foo": np.ones((10, 10), dtype=np.float32)},
+        {"int": 1}, {"bool": False},
+        {
+            "value1": True,
+            "value2": 5,
+            "value3": {
+                "nested1": False,
+                "nested2": np.empty(10)
+            }
+        },
+    ],
+)
+def test_record_infos_collector_env(info_override):
+    """Test DataCollector wrapper and Minari dataset creation including infos."""
+    dataset_id = "dummy-mutable-info-box-test-v0"
+    env = gym.make("DummyInfoEnv-v0", info=info_override)
+
+    env = DataCollector(env, record_infos=True)
+    num_episodes = 10
+
+    _, info_sample = env.reset(seed=42)
+
+    for episode in range(num_episodes):
+        terminated = False
+        truncated = False
+        while not terminated and not truncated:
+            action = env.action_space.sample()
+            _, _, terminated, truncated, _ = env.step(action)
+
+        env.reset()
+
+    dataset = minari.create_dataset_from_collector_env(
+        dataset_id=dataset_id,
+        collector_env=env,
+        algorithm_name="random_policy",
+        code_permalink=CODELINK,
+        author="WillDudley",
+        author_email="wdudley@farama.org",
+    )
+
+    assert isinstance(dataset, MinariDataset)
+    assert dataset.total_episodes == num_episodes
+    assert dataset.spec.total_episodes == num_episodes
+    assert len(dataset.episode_indices) == num_episodes
+
+    check_data_integrity(dataset.storage, dataset.episode_indices)
+    check_episode_data_integrity(
+        dataset,
+        dataset.spec.observation_space,
+        dataset.spec.action_space,
+        info_sample=info_sample,
+    )
+
+    env.close()
+
     check_load_and_delete_dataset(dataset_id)
 
 
@@ -186,6 +251,7 @@ def test_generate_dataset_with_external_buffer(dataset_id, env_id):
         assert len(dataset.episode_indices) == num_episodes
 
         check_data_integrity(dataset.storage, dataset.episode_indices)
+        check_episode_data_integrity(dataset, dataset.spec.observation_space, dataset.spec.action_space)
         check_env_recovery(env, dataset, eval_env)
 
         check_load_and_delete_dataset(dataset_id)
@@ -254,6 +320,7 @@ def test_generate_dataset_with_space_subset_external_buffer(is_env_needed):
     assert len(dataset.episode_indices) == num_episodes
 
     check_data_integrity(dataset.storage, dataset.episode_indices)
+    check_episode_data_integrity(dataset, dataset.spec.observation_space, dataset.spec.action_space)
     if is_env_needed:
         check_env_recovery_with_subset_spaces(
             env, dataset, action_space_subset, observation_space_subset

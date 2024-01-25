@@ -77,7 +77,7 @@ for _ in range(total_episodes):
         if terminated or truncated:
             break
 
-dataset = env.create_dataset(dataset_id="CartPole-v1-test-v0",
+dataset = env.create_dataset(dataset_id="cartpole-test-v0",
                                                    algorithm_name="Random-Policy",
                                                    code_permalink="https://github.com/Farama-Foundation/Minari",
                                                    author="Farama",
@@ -96,7 +96,7 @@ Once the dataset has been created we can check if the Minari dataset id appears 
 >>> import minari
 >>> local_datasets = minari.list_local_datasets()
 >>> local_datasets.keys()
-dict_keys(['CartPole-v1-test-v0'])
+dict_keys(['cartpole-test-v0'])
 ```
 
 ```{eval-rst}
@@ -125,7 +125,7 @@ env = gym.make('CartPole-v1')
 env = DataCollector(env, record_infos=True, max_buffer_steps=100000)
 
 total_episodes = 100
-dataset_name = "CartPole-v1-test-v0"
+dataset_name = "cartpole-test-v0"
 dataset = None
 if dataset_name in minari.list_local_datasets():
     dataset = minari.load_dataset(dataset_name)
@@ -161,9 +161,9 @@ Minari will only be able to load datasets that are stored in your `local root di
 
 ```python
 >>> import minari
->>> dataset = minari.load_dataset('CartPole-v1-test-v0')
+>>> dataset = minari.load_dataset('cartpole-test-v0')
 >>> dataset.name
-'CartPole-v1-test-v0'
+'cartpole-test-v0'
 ```
 
 ### Download Remote Datasets
@@ -323,7 +323,7 @@ From a :class:`minari.MinariDataset` object we can also recover the Gymnasium en
 ```python
 import minari
 
-dataset = minari.load_dataset('CartPole-v1-test-v0')
+dataset = minari.load_dataset('cartpole-test-v0')
 env = dataset.recover_environment()
 
 env.reset()
