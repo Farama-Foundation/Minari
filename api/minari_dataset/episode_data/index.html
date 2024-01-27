@@ -8,7 +8,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:description" content="Minari is a Python library for conducting research in offline reinforcement learning." />
     <meta property="og:url" content="https://minari.farama.org/api/minari_dataset/episode_data.html" /><meta property="og:image" content="https://minari.farama.org/_static/img/robotics-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="DataCollectorV0" href="../../data_collector/" /><link rel="prev" title="MinariDataset" href="../minari_dataset/" />
+<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="DataCollector" href="../../data_collector/" /><link rel="prev" title="MinariDataset" href="../minari_dataset/" />
         <link rel="canonical" href="https://minari.farama.org/api/minari_dataset/episode_data.html" />
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
@@ -230,7 +230,7 @@
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">EpisodeData</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../data_collector/">DataCollectorV0</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of DataCollectorV0</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../data_collector/">DataCollector</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of DataCollector</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../data_collector_callbacks/step_data_callback/">StepDataCallback</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../data_collector_callbacks/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
 </ul>
@@ -366,13 +366,13 @@
           </div>
           <article role="main">
             
-            <section id="episodedata">
+            <section class="tex2jax_ignore mathjax_ignore" id="episodedata">
 <h1>EpisodeData<a class="headerlink" href="#episodedata" title="Link to this heading">#</a></h1>
 <section id="minari-episodedata">
 <h2>minari.EpisodeData<a class="headerlink" href="#minari-episodedata" title="Link to this heading">#</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="minari.EpisodeData">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">minari.</span></span><span class="sig-name descname"><span class="pre">EpisodeData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_timesteps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rewards</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terminations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truncations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/minari/dataset/episode_data/#EpisodeData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#minari.EpisodeData" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">minari.</span></span><span class="sig-name descname"><span class="pre">EpisodeData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">total_timesteps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actions</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Any</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rewards</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terminations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">truncations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">infos</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/minari/dataset/episode_data/#EpisodeData"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#minari.EpisodeData" title="Link to this definition">#</a></dt>
 <dd><p>Contains the datasets data for a single episode.</p>
 <p>This is the object returned by <a class="reference internal" href="../minari_dataset/#minari.MinariDataset.sample_episodes" title="minari.MinariDataset.sample_episodes"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.MinariDataset.sample_episodes</span></code></a>.</p>
 </dd></dl>
@@ -399,14 +399,14 @@
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="minari.EpisodeData.observations">
-<span class="sig-prename descclassname"><span class="pre">EpisodeData.</span></span><span class="sig-name descname"><span class="pre">observations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#minari.EpisodeData.observations" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">EpisodeData.</span></span><span class="sig-name descname"><span class="pre">observations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span></em><a class="headerlink" href="#minari.EpisodeData.observations" title="Link to this definition">#</a></dt>
 <dd><p>The observations of the environment. The initial and final observations are included meaning that the number
 of observations will be increased by one compared to the number of timesteps</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="minari.EpisodeData.actions">
-<span class="sig-prename descclassname"><span class="pre">EpisodeData.</span></span><span class="sig-name descname"><span class="pre">actions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ndarray</span></em><a class="headerlink" href="#minari.EpisodeData.actions" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">EpisodeData.</span></span><span class="sig-name descname"><span class="pre">actions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Any</span></em><a class="headerlink" href="#minari.EpisodeData.actions" title="Link to this definition">#</a></dt>
 <dd><p>The actions taken in each episode timestep.</p>
 </dd></dl>
 
@@ -436,7 +436,7 @@ of observations will be increased by one compared to the number of timesteps</p>
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">DataCollectorV0</div>
+                <div class="title">DataCollector</div>
               </div>
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
@@ -596,7 +596,7 @@ of observations will be increased by one compared to the number of timesteps</p>
         })()
       </script>
 
-    <script src="../../../_static/documentation_options.js?v=28686c4f"></script>
+    <script src="../../../_static/documentation_options.js?v=d5185309"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>

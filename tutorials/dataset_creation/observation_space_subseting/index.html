@@ -230,7 +230,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../api/minari_dataset/episode_data/">EpisodeData</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/data_collector/">DataCollectorV0</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of DataCollectorV0</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/data_collector/">DataCollector</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of DataCollector</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector_callbacks/step_data_callback/">StepDataCallback</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector_callbacks/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
 </ul>
@@ -369,7 +369,7 @@
             
             <section class="sphx-glr-example-title" id="collecting-a-subset-of-a-dictionary-space-with-stepdatacallback">
 <span id="sphx-glr-tutorials-dataset-creation-observation-space-subseting-py"></span><h1>Collecting a subset of a dictionary space with StepDataCallback<a class="headerlink" href="#collecting-a-subset-of-a-dictionary-space-with-stepdatacallback" title="Link to this heading">#</a></h1>
-<p>In this tutorial you’ll learn how to have <a class="reference internal" href="../../../api/data_collector/#minari.DataCollectorV0" title="minari.DataCollectorV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollectorV0</span></code></a> only collect a subset
+<p>In this tutorial you’ll learn how to have <a class="reference internal" href="../../../api/data_collector/#minari.DataCollector" title="minari.DataCollector"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollector</span></code></a> only collect a subset
 of the observation space in PointMaze. Specifically, we’ll be collecting observations using
 random actions on PointMaze_UMaze-v3 from <a class="reference external" href="https://robotics.farama.org/envs/maze/point_maze/">Gymnasium-Robotics</a>
 and omitting <code class="docutils literal notranslate"><span class="pre">achieved_goal</span></code> from the observation space of PointMaze.
@@ -385,7 +385,7 @@ of any other environment.</p>
 <span class="kn">from</span> <span class="nn">gymnasium</span> <span class="kn">import</span> <span class="n">spaces</span>
 
 <span class="kn">import</span> <span class="nn">minari</span>
-<span class="kn">from</span> <span class="nn">minari</span> <span class="kn">import</span> <span class="n">DataCollectorV0</span>
+<span class="kn">from</span> <span class="nn">minari</span> <span class="kn">import</span> <span class="n">DataCollector</span>
 <span class="kn">from</span> <span class="nn">minari.data_collector.callbacks</span> <span class="kn">import</span> <span class="n">StepDataCallback</span>
 </pre></div>
 </div>
@@ -427,7 +427,7 @@ to modify <code class="docutils literal notranslate"><span class="pre">step_data
 </pre></div>
 </div>
 <p>Finally we’ll record 10 episodes with our observation space subset and
-callback passed to <a class="reference internal" href="../../../api/data_collector/#minari.DataCollectorV0" title="minari.DataCollectorV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollectorV0</span></code></a>.</p>
+callback passed to <a class="reference internal" href="../../../api/data_collector/#minari.DataCollector" title="minari.DataCollector"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollector</span></code></a>.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dataset_id</span> <span class="o">=</span> <span class="s2">&quot;point-maze-subseted-v3&quot;</span>
 
 <span class="c1"># delete the test dataset if it already exists</span>
@@ -435,7 +435,7 @@ callback passed to <a class="reference internal" href="../../../api/data_collect
 <span class="k">if</span> <span class="n">dataset_id</span> <span class="ow">in</span> <span class="n">local_datasets</span><span class="p">:</span>
     <span class="n">minari</span><span class="o">.</span><span class="n">delete_dataset</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
 
-<span class="n">env</span> <span class="o">=</span> <span class="n">DataCollectorV0</span><span class="p">(</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">DataCollector</span><span class="p">(</span>
     <span class="n">env</span><span class="p">,</span>
     <span class="n">observation_space</span><span class="o">=</span><span class="n">observation_space_subset</span><span class="p">,</span>
     <span class="c1"># action_space=action_space_subset,</span>
@@ -454,9 +454,8 @@ callback passed to <a class="reference internal" href="../../../api/data_collect
     <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
 <span class="c1"># Create Minari dataset and store locally</span>
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">create_dataset_from_collector_env</span><span class="p">(</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span>
     <span class="n">dataset_id</span><span class="o">=</span><span class="n">dataset_id</span><span class="p">,</span>
-    <span class="n">collector_env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
     <span class="n">algorithm_name</span><span class="o">=</span><span class="s2">&quot;random_policy&quot;</span><span class="p">,</span>
 <span class="p">)</span>
 
@@ -616,7 +615,7 @@ callback passed to <a class="reference internal" href="../../../api/data_collect
         })()
       </script>
 
-    <script src="../../../_static/documentation_options.js?v=28686c4f"></script>
+    <script src="../../../_static/documentation_options.js?v=d5185309"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>

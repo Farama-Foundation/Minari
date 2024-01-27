@@ -5,7 +5,7 @@ Serializing a custom space
 """
 # %%%
 # In this tutorial you'll learn how to serialize a custom Gymnasium observation space and use that
-# to create a Minari dataset with :class:`minari.DataCollectorV0`. We'll use the
+# to create a Minari dataset with :class:`minari.DataCollector`. We'll use the
 # `MiniGrid Empty <https://minigrid.farama.org/environments/minigrid/EmptyEnv/>`_ environment and
 # show how to serialize its unique observation space.
 #
@@ -26,7 +26,7 @@ import gymnasium as gym
 from minigrid.core.mission import MissionSpace
 
 import minari
-from minari import DataCollectorV0
+from minari import DataCollector
 from minari.serialization import deserialize_space, serialize_space
 
 
@@ -110,7 +110,7 @@ def deserialize_custom_space(space_dict: Dict) -> MissionSpace:
 
 dataset_id = "minigrid-custom-space-v0"
 
-env = DataCollectorV0(env)
+env = DataCollector(env)
 num_episodes = 10
 
 env.reset(seed=42)
@@ -127,9 +127,8 @@ for episode in range(num_episodes):
 # Finally we can create a Minari dataset.
 
 # %%
-dataset = minari.create_dataset_from_collector_env(
+dataset = env.create_dataset(
     dataset_id=dataset_id,
-    collector_env=env,
     algorithm_name="random_policy",
     author="Farama",
     author_email="contact@farama.org",
