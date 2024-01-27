@@ -230,7 +230,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../api/minari_dataset/episode_data/">EpisodeData</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/data_collector/">DataCollectorV0</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of DataCollectorV0</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/data_collector/">DataCollector</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of DataCollector</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector_callbacks/step_data_callback/">StepDataCallback</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector_callbacks/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
 </ul>
@@ -377,7 +377,7 @@ MuJoCo python bindings.</p>
 <li><p>First we need to create a planner that outputs a trajectory of waypoints that the agent can follow to reach the goal from its initial location in the maze. We will be using
 <a class="reference external" href="https://towardsdatascience.com/fundamental-iterative-methods-of-reinforcement-learning-df8ff078652a">Q-Value Iteration</a> [2] to solve the discrete grid maze, same as in D4RL.</p></li>
 <li><p>Then we also need to generate the actions so that the agent can follow the waypoints of the trajectory. For this purpose D4RL implements a PD controller.</p></li>
-<li><p>Finally, to create the Minari dataset, we will wrap the environment with a <a class="reference internal" href="../../../api/data_collector/#minari.DataCollectorV0" title="minari.DataCollectorV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollectorV0</span></code></a> and step through it by generating actions with the path planner and waypoint controller.</p></li>
+<li><p>Finally, to create the Minari dataset, we will wrap the environment with a <a class="reference internal" href="../../../api/data_collector/#minari.DataCollector" title="minari.DataCollector"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollector</span></code></a> and step through it by generating actions with the path planner and waypoint controller.</p></li>
 </ol>
 </dd>
 </dl>
@@ -388,8 +388,7 @@ will start from the location it’s currently at (no <code class="docutils liter
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">import</span> <span class="nn">minari</span>
-<span class="kn">from</span> <span class="nn">minari</span> <span class="kn">import</span> <span class="n">DataCollectorV0</span><span class="p">,</span> <span class="n">StepDataCallback</span>
+<span class="kn">from</span> <span class="nn">minari</span> <span class="kn">import</span> <span class="n">DataCollector</span><span class="p">,</span> <span class="n">StepDataCallback</span>
 </pre></div>
 </div>
 <section id="waypoint-planner">
@@ -715,7 +714,7 @@ case we will be generating new hdf5 datasets <code class="docutils literal notra
 <section id="collect-data-and-create-minari-dataset">
 <h2>Collect Data and Create Minari Dataset<a class="headerlink" href="#collect-data-and-create-minari-dataset" title="Link to this heading">#</a></h2>
 <p>Now we will finally perform our data collection and create the Minari dataset. This is as simple as wrapping the environment with
-the <a class="reference internal" href="../../../api/data_collector/#minari.DataCollectorV0" title="minari.DataCollectorV0"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollectorV0</span></code></a> wrapper and add the custom callback methods. Once we’ve done this we can step the environment with the <code class="docutils literal notranslate"><span class="pre">WayPointController</span></code>
+the <a class="reference internal" href="../../../api/data_collector/#minari.DataCollector" title="minari.DataCollector"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollector</span></code></a> wrapper and add the custom callback methods. Once we’ve done this we can step the environment with the <code class="docutils literal notranslate"><span class="pre">WayPointController</span></code>
 as our policy. For the tutorial, we collect 10,000 transitions. Thus, we initialize the environment with <code class="docutils literal notranslate"><span class="pre">max_episode_steps=10,000</span></code> since that’s the total amount of steps we want to
 collect for our dataset and we don’t want the environment to get <code class="docutils literal notranslate"><span class="pre">truncated</span></code> during the data collection due to a time limit.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dataset_name</span> <span class="o">=</span> <span class="s2">&quot;pointmaze-umaze-v0&quot;</span>
@@ -730,7 +729,7 @@ collect for our dataset and we don’t want the environment to get <code class="
 <span class="c1">#   * Custom StepDataCallback to add extra state information to &#39;infos&#39; and divide dataset in different episodes by overridng</span>
 <span class="c1">#     truncation value to True when target is reached</span>
 <span class="c1">#   * Record the &#39;info&#39; value of every step</span>
-<span class="n">collector_env</span> <span class="o">=</span> <span class="n">DataCollectorV0</span><span class="p">(</span>
+<span class="n">collector_env</span> <span class="o">=</span> <span class="n">DataCollector</span><span class="p">(</span>
     <span class="n">env</span><span class="p">,</span> <span class="n">step_data_callback</span><span class="o">=</span><span class="n">PointMazeStepDataCallback</span><span class="p">,</span> <span class="n">record_infos</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 
@@ -748,8 +747,7 @@ collect for our dataset and we don’t want the environment to get <code class="
 
     <span class="n">obs</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">collector_env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
 
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">create_dataset_from_collector_env</span><span class="p">(</span>
-    <span class="n">collector_env</span><span class="o">=</span><span class="n">collector_env</span><span class="p">,</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">collector_env</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span>
     <span class="n">dataset_id</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">,</span>
     <span class="n">algorithm_name</span><span class="o">=</span><span class="s2">&quot;QIteration&quot;</span><span class="p">,</span>
     <span class="n">code_permalink</span><span class="o">=</span><span class="s2">&quot;https://github.com/Farama-Foundation/Minari/blob/main/docs/tutorials/dataset_creation/point_maze_dataset.py&quot;</span><span class="p">,</span>
@@ -942,11 +940,12 @@ Apr 8, 2020, <a class="reference external" href="https://towardsdatascience.com/
         })()
       </script>
 
-    <script src="../../../_static/documentation_options.js?v=28686c4f"></script>
+    <script src="../../../_static/documentation_options.js?v=d5185309"></script>
     <script src="../../../_static/doctools.js?v=888ff710"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../../../_static/js/termynal.js?v=ff4c6923"></script>
     <script src="../../../_static/js/custom.js?v=a0ed09ce"></script>
     
