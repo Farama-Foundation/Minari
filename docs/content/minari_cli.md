@@ -24,7 +24,7 @@ $ minari --help
 
 <b> </b><font color="#F4BF75"><b>Usage: </b></font><b>minari [OPTIONS] COMMANDS [ARGS]...                       </b>
 <b>                                                     </b>
-Minari is a tool for collecting and hosting Offline datasets for Reinforcement Learning environments based on the Gymnaisum API. 
+Minari is a tool for collecting and hosting Offline datasets for Reinforcement Learning environments based on the Gymnaisum API.
 
 <font color="#A5A5A1">╭─ Options ─────────────────────────────────────────╮</font>
 <font color="#A5A5A1">│ </font><font color="#A1EFE4"><b>--version</b></font>       </font><font color="#03AC13"><b>-v</b></font>            Show installed      │
@@ -48,7 +48,7 @@ Minari is a tool for collecting and hosting Offline datasets for Reinforcement L
 
 ## List datasets
 
-The `minari list COMMAND` command shows a table with the existing Minari datasets as well as some of their metadata such as number of episodes and steps in the dataset as well as the author's name and email. 
+The `minari list COMMAND` command shows a table with the existing Minari datasets as well as some of their metadata such as number of episodes and steps in the dataset as well as the author's name and email.
 This command comes with other two required sub-commands:
 
 - `remote`: the Minari dataset table shows the datasets currently available in the remote Farama server.
@@ -67,21 +67,21 @@ This command comes with other two required sub-commands:
 // Show local datasets.
 $ minari list local
 
-               <i>Local Minari datasets('.minari/')</i>                   
-┌───────────────┬───────────┬───────────┬─────────┬───────────┐ 
+               <i>Local Minari datasets('.minari/')</i>
+┌───────────────┬───────────┬───────────┬─────────┬───────────┐
 │               │     <b>Total</b> │     <b>Total</b> │         │           │
 │ <b>Name</b>          │  <b>Episodes</b> │     <b>Steps</b> │  <b>Author</b> │ <b>Email</b>     │
 ┡───────────────╇───────────╇───────────╇─────────╇───────────┩
 │ <font color="#A1EFE4">pen-cloned-v0</font> │      <font color="#03AC13">3736</font> │    <font color="#03AC13">500000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
 │ <font color="#A1EFE4">pen-expert-v0</font> │      <font color="#03AC13">4958</font> │    <font color="#03AC13">499206</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
 │ <font color="#A1EFE4">pen-human-v0</font>  │        <font color="#03AC13">25</font> │      <font color="#03AC13">5000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
-└───────────────┴───────────┴───────────┴─────────┴───────────┘  
+└───────────────┴───────────┴───────────┴─────────┴───────────┘
 
 // Show remote datasets.
 $ minari list remote
 
-                 <i>Minari datasets in Farama server</i>                    
-┌────────────────┬───────────┬────────────┬─────────┬───────────┐ 
+                 <i>Minari datasets in Farama server</i>
+┌────────────────┬───────────┬────────────┬─────────┬───────────┐
 │                │     <b>Total</b> │      <b>Total</b> │         │           │
 │ <b>Name</b>           │  <b>Episodes</b> │      <b>Steps</b> │  <b>Author</b> │ <b>Email</b>     │
 ┡────────────────╇───────────╇────────────╇─────────╇───────────┩
@@ -91,7 +91,7 @@ $ minari list remote
 │ <font color="#A1EFE4">pen-cloned-v0</font>  │      <font color="#03AC13">3736</font> │     <font color="#03AC13">500000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
 │ <font color="#A1EFE4">pen-expert-v0</font>  │      <font color="#03AC13">4958</font> │     <font color="#03AC13">499206</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
 │ <font color="#A1EFE4">pen-human-v0</font>   │        <font color="#03AC13">25</font> │       <font color="#03AC13">5000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
-└────────────────┴───────────┴────────────┴─────────┴───────────┘ 
+└────────────────┴───────────┴────────────┴─────────┴───────────┘
 ```
 </div>
 
@@ -124,7 +124,7 @@ Dataset pen-expert-v0 downloaded to <path-to-local-datasets>/.minari/datasets/pe
 Downloading door-human-v0 from Farama servers...
 
    * Downloading data file 'door-human-v0/data/main_data.hdf5' ...
-   
+
 ---> 100%
 
 Dataset door-human-v0 downloaded to <path-to-local-datasets>/.minari/datasets/pen-expert-v0
@@ -142,14 +142,14 @@ Local Minari datasets can be deleted by instantiating the following command, `mi
 // Delete datasets pen-cloned-v0 and door-human-v0
 $ minari delete pen-cloned-v0 door-human-v0
 
-                   <i>Delete local Minari datasets</i>                    
-┌────────────────┬───────────┬────────────┬─────────┬───────────┐ 
+                   <i>Delete local Minari datasets</i>
+┌────────────────┬───────────┬────────────┬─────────┬───────────┐
 │                │     <b>Total</b> │      <b>Total</b> │         │           │
 │ <b>Name</b>           │  <b>Episodes</b> │      <b>Steps</b> │  <b>Author</b> │ <b>Email</b>     │
 ┡────────────────╇───────────╇────────────╇─────────╇───────────┩
 │ <font color="#A1EFE4">door-human-v0</font>  │        <font color="#03AC13">25</font> │       <font color="#03AC13">6729</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
 │ <font color="#A1EFE4">pen-cloned-v0</font>  │      <font color="#03AC13">3736</font> │     <font color="#03AC13">500000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
-└────────────────┴───────────┴────────────┴─────────┴───────────┘ 
+└────────────────┴───────────┴────────────┴─────────┴───────────┘
 
 # Are you sure you want to delete these local datasets? [y/N]:$ y
 
@@ -164,7 +164,7 @@ Dataset pen-cloned-v0 deleted!
 If you would like to upload your own Minari dataset to the remote server please get in touch with the Farama team at [contact@farama.org](mailto:contact@farama.org). We will share with you a json encryption key file to give you permission to upload data to our GCP bucket. Then you can upload your dataset with the command `minari upload DATASETS --key-path PATH_STRING/KEY_FILE.json`.
 
 ```{eval-rst}
-.. note:: 
+.. note::
    The progress bar shown in the example below is not currently implemented in the Minari package.
 ```
 

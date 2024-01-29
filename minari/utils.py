@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import importlib.metadata
 import os
+import re
 import warnings
 from typing import Any, Callable, Dict, List, Optional, Union
 
@@ -15,9 +16,10 @@ from gymnasium.wrappers.record_episode_statistics import RecordEpisodeStatistics
 from packaging.specifiers import InvalidSpecifier, SpecifierSet
 from packaging.version import Version
 
-from minari import DataCollectorV0
+from minari import DataCollector
 from minari.dataset.minari_dataset import MinariDataset
 from minari.dataset.minari_storage import MinariStorage
+from minari.serialization import deserialize_space
 from minari.storage.datasets_root_dir import get_dataset_path
 
 
@@ -150,42 +152,57 @@ def combine_minari_version_specifiers(specifier_set: SpecifierSet) -> SpecifierS
     return final_version_specifier
 
 
-def validate_datasets_to_combine(datasets_to_combine: List[MinariDataset]) -> EnvSpec:
+def validate_datasets_to_combine(
+    datasets_to_combine: List[MinariDataset],
+) -> EnvSpec | None:
     """Check if the given datasets can be combined.
 
     Tests if the datasets were created with the same environment (`env_spec`) and re-calculates the
     `max_episode_steps` argument.
+
+    Also checks that the datasets obs/act spaces are the same.
 
     Args:
         datasets_to_combine (List[MinariDataset]): list of MinariDataset to combine
 
     Returns:
         combined_dataset_env_spec (EnvSpec): the resulting EnvSpec of combining the MinariDatasets
+
     """
-    assert all(isinstance(dataset, MinariDataset) for dataset in datasets_to_combine)
+    # get first among the dataset's env_spec which is not None
+    first_not_none_env_spec = next((dataset.spec.env_spec for dataset in datasets_to_combine if dataset.spec.env_spec is not None), None)
 
-    # Check if there are any `None` max_episode_steps
-    if any(
-        (dataset.spec.env_spec.max_episode_steps is None)
-        for dataset in datasets_to_combine
-    ):
-        max_episode_steps = None
-    else:
-        max_episode_steps = max(
-            dataset.spec.env_spec.max_episode_steps for dataset in datasets_to_combine
-        )
+    # early return where all datasets have no env_spec
+    if first_not_none_env_spec is None:
+        return None
 
-    combine_env_spec = []
+    common_env_spec = copy.deepcopy(first_not_none_env_spec)
+
+    # updating the common_env_spec's max_episode_steps & checking equivalence of all env specs
     for dataset in datasets_to_combine:
-        dataset_env_spec = copy.deepcopy(dataset.spec.env_spec)
-        dataset_env_spec.max_episode_steps = max_episode_steps
-        combine_env_spec.append(dataset_env_spec)
+        assert isinstance(dataset, MinariDataset)
+        env_spec = dataset.spec.env_spec
+        if env_spec is not None:
+            if (
+                common_env_spec.max_episode_steps is None
+                or env_spec.max_episode_steps is None
+            ):
+                common_env_spec.max_episode_steps = None
+            else:
+                common_env_spec.max_episode_steps = max(
+                    common_env_spec.max_episode_steps, env_spec.max_episode_steps
+                )
+            # setting max_episode_steps in object's copy to same value for sake of checking equality
+            env_spec_copy = copy.deepcopy(env_spec)
+            env_spec_copy.max_episode_steps = common_env_spec.max_episode_steps
+            if env_spec_copy != common_env_spec:
+                raise ValueError(
+                    "The datasets to be combined have different values for `env_spec` attribute."
+                )
+        else:
+            raise ValueError("Cannot combine datasets having env_spec with those having no env_spec.")
 
-    assert all(
-        env_spec == combine_env_spec[0] for env_spec in combine_env_spec
-    ), "The datasets to be combined have different values for `env_spec` attribute."
-
-    return combine_env_spec[0]
+    return common_env_spec
 
 
 class RandomPolicy:
@@ -228,7 +245,9 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_id: s
     new_dataset_path = get_dataset_path(new_dataset_id)
     new_dataset_path.mkdir()
     new_storage = MinariStorage.new(
-        new_dataset_path.joinpath("data"), env_spec=combined_dataset_env_spec
+        new_dataset_path.joinpath("data"), env_spec=combined_dataset_env_spec,
+        observation_space=datasets_to_combine[0].observation_space,
+        action_space=datasets_to_combine[0].action_space
     )
 
     new_storage.update_metadata(
@@ -255,7 +274,7 @@ def split_dataset(
     Args:
         dataset (MinariDataset): the MinariDataset to split
         sizes (List[int]): sizes of the resulting datasets
-        seed (Optiona[int]): random seed
+        seed (Optional[int]): random seed
 
     Returns:
         datasets (List[MinariDataset]): resulting list of datasets
@@ -292,7 +311,7 @@ def get_average_reference_score(
     for _ in range(num_episodes):
         while True:
             action = policy(obs)
-            obs, _, terminated, truncated, info = env.step(action)
+            obs, _, terminated, truncated, info = env.step(action)  # pyright: ignore[reportGeneralTypeIssues]
             if terminated or truncated:
                 episode_returns.append(info["episode"]["r"])
                 obs, _ = env.reset()
@@ -302,10 +321,145 @@ def get_average_reference_score(
     return float(mean_ref_score)
 
 
+def _generate_dataset_path(dataset_id: str) -> str | os.PathLike:
+    """Checks if the dataset already exists locally, then create and return the data storage directory."""
+    dataset_path = get_dataset_path(dataset_id)
+    if os.path.exists(dataset_path):
+        raise ValueError(
+            f"A Minari dataset with ID {dataset_id} already exists and it cannot be overridden. Please use a different dataset name or version."
+        )
+
+    dataset_path = os.path.join(dataset_path, "data")
+    os.makedirs(dataset_path)
+
+    return dataset_path
+
+
+def _generate_dataset_metadata(
+    dataset_id: str,
+    env_spec: Optional[EnvSpec],
+    eval_env: Optional[str | gym.Env | EnvSpec],
+    algorithm_name: Optional[str],
+    author: Optional[str],
+    author_email: Optional[str],
+    code_permalink: Optional[str],
+    ref_min_score: Optional[float],
+    ref_max_score: Optional[float],
+    expert_policy: Optional[Callable[[ObsType], ActType]],
+    num_episodes_average_score: int,
+    minari_version: Optional[str],
+) -> Dict[str, Any]:
+    """Return the metadata dictionary of the dataset."""
+    dataset_metadata: Dict[str, Any] = {
+        "dataset_id": dataset_id,
+    }
+    # NoneType warnings
+    if code_permalink is None:
+        warnings.warn(
+            "`code_permalink` is set to None. For reproducibility purposes it is highly recommended to link your dataset to versioned code.",
+            UserWarning,
+        )
+    else:
+        dataset_metadata["code_permalink"] = code_permalink
+
+    if author is None:
+        warnings.warn(
+            "`author` is set to None. For longevity purposes it is highly recommended to provide an author name.",
+            UserWarning,
+        )
+    else:
+        dataset_metadata["author"] = author
+
+    if author_email is None:
+        warnings.warn(
+            "`author_email` is set to None. For longevity purposes it is highly recommended to provide an author email, or some other obvious contact information.",
+            UserWarning,
+        )
+    else:
+        dataset_metadata["author_email"] = author_email
+
+    if algorithm_name is None:
+        warnings.warn(
+            "`algorithm_name` is set to None. For reproducibility purpose it's highly recommended to set your algorithm",
+            UserWarning,
+        )
+    else:
+        dataset_metadata["algorithm_name"] = algorithm_name
+
+    if minari_version is None:
+        version = Version(__version__)
+        release = version.release
+        # For __version__ = X.Y.Z, by default compatibility with version X.Y or later, but not (X+1).0 or later.
+        minari_version = f"~={'.'.join(str(x) for x in release[:2])}"
+        warnings.warn(
+            f"`minari_version` is set to None. The compatible dataset version specifier for Minari will be set to {minari_version}.",
+            UserWarning,
+        )
+    # Check if the installed Minari version falls inside the minari_version specifier
+    try:
+        assert Version(__version__) in SpecifierSet(
+            minari_version
+        ), f"The installed Minari version {__version__} is not contained in the dataset version specifier {minari_version}."
+    except InvalidSpecifier:
+        print(f"{minari_version} is not a version specifier.")
+
+    dataset_metadata["minari_version"] = minari_version
+
+    if expert_policy is not None and ref_max_score is not None:
+        raise ValueError(
+            "Can't pass a value for `expert_policy` and `ref_max_score` at the same time."
+        )
+
+    if eval_env is None:
+        warnings.warn(
+            f"`eval_env` is set to None. If another environment is intended to be used for evaluation please specify corresponding Gymnasium environment (gym.Env | gym.envs.registration.EnvSpec).\
+              If None the environment used to collect the data (`env={env_spec}`) will be used for this purpose.",
+            UserWarning,
+        )
+        eval_env_spec = env_spec
+    else:
+        if isinstance(eval_env, str):
+            eval_env_spec = gym.spec(eval_env)
+        elif isinstance(eval_env, EnvSpec):
+            eval_env_spec = eval_env
+        elif isinstance(eval_env, gym.Env):
+            eval_env_spec = eval_env.spec
+        else:
+            raise ValueError(
+                "The `eval_env` argument must be of types str|EnvSpec|gym.Env"
+            )
+        assert eval_env_spec is not None
+        dataset_metadata["eval_env_spec"] = eval_env_spec.to_json()
+
+    if env_spec is None:
+        warnings.warn(
+            "env_spec is None, no environment spec is provided during collection for this dataset",
+            UserWarning,
+        )
+
+    if eval_env_spec is not None and (expert_policy is not None or ref_max_score is not None):
+        env_ref_score = gym.make(eval_env_spec)
+        if ref_min_score is None:
+            ref_min_score = get_average_reference_score(
+                env_ref_score, RandomPolicy(env_ref_score), num_episodes_average_score
+            )
+
+        if expert_policy is not None:
+            ref_max_score = get_average_reference_score(
+                env_ref_score, expert_policy, num_episodes_average_score
+            )
+        dataset_metadata["ref_max_score"] = ref_max_score
+        dataset_metadata["ref_min_score"] = ref_min_score
+        dataset_metadata["num_episodes_average_score"] = num_episodes_average_score
+
+    return dataset_metadata
+
+
 def create_dataset_from_buffers(
     dataset_id: str,
-    env: gym.Env,
     buffer: List[Dict[str, Union[list, Dict]]],
+    env: Optional[str | gym.Env | EnvSpec] = None,
+    eval_env: Optional[str | gym.Env | EnvSpec] = None,
     algorithm_name: Optional[str] = None,
     author: Optional[str] = None,
     author_email: Optional[str] = None,
@@ -334,9 +488,11 @@ def create_dataset_from_buffers(
     Other additional items can be added as long as the values are np.ndarray's or other nested dictionaries.
 
     Args:
-        dataset_id (str): name id to identify Minari dataset
-        env (gym.Env): Gymnasium environment used to collect the buffer data
-        buffer (list[Dict[str, Union[list, Dict]]]): list of episode dictionaries with data
+        dataset_id (str): name id to identify Minari dataset.
+        buffer (list[Dict[str, Union[list, Dict]]]): list of episode dictionaries with data.
+        env (Optional[str|gym.Env|EnvSpec]): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) used to collect the buffer data. Defaults to None.
+        eval_env (Optional[str|gym.Env|EnvSpec]): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) to use for evaluation with the dataset. After loading the dataset, the environment can be recovered as follows: `MinariDataset.recover_environment(eval_env=True).
+                                                If None, and if the `env` used to collect the buffer data is available, latter will be used for evaluation.
         algorithm_name (Optional[str], optional): name of the algorithm used to collect the data. Defaults to None.
         author (Optional[str], optional): author that generated the dataset. Defaults to None.
         author_email (Optional[str], optional): email of the author that generated the dataset. Defaults to None.
@@ -355,108 +511,66 @@ def create_dataset_from_buffers(
     Returns:
         MinariDataset
     """
-    # NoneType warnings
-    if code_permalink is None:
-        warnings.warn(
-            "`code_permalink` is set to None. For reproducibility purposes it is highly recommended to link your dataset to versioned code.",
-            UserWarning,
-        )
-    if author is None:
-        warnings.warn(
-            "`author` is set to None. For longevity purposes it is highly recommended to provide an author name.",
-            UserWarning,
-        )
-    if author_email is None:
-        warnings.warn(
-            "`author_email` is set to None. For longevity purposes it is highly recommended to provide an author email, or some other obvious contact information.",
-            UserWarning,
-        )
-    if algorithm_name is None:
-        warnings.warn(
-            "`algorithm_name` is set to None. For reproducibility purpose it's highly recommended to set your algorithm",
-            UserWarning,
-        )
+    dataset_path = _generate_dataset_path(dataset_id)
 
-    if minari_version is None:
-        version = Version(__version__)
-        release = version.release
-        # For __version__ = X.Y.Z, set version specifier by default to compatibility with version X.Y or later, but not (X+1).0 or later.
-        minari_version = f"~={'.'.join(str(x) for x in release[:2])}"
-        warnings.warn(
-            f"`minari_version` is set to None. The compatible dataset version specifier for Minari will be set to {minari_version}.",
-            UserWarning,
-        )
-    # Check if the installed Minari version falls inside the minari_version specifier
-    try:
-        assert Version(__version__) in SpecifierSet(
-            minari_version
-        ), f"The installed Minari version {__version__} is not contained in the dataset version specifier {minari_version}."
-    except InvalidSpecifier:
-        print(f"{minari_version} is not a version specifier.")
+    if isinstance(env, str):
+        env_spec = gym.spec(env)
+    elif isinstance(env, EnvSpec):
+        env_spec = env
+    elif isinstance(env, gym.Env):
+        env_spec = env.spec
+    elif env is None:
+        if observation_space is None or action_space is None:
+            raise ValueError("Both observation space and action space must be provided, if env is None")
+        env_spec = None
+    else:
+        raise ValueError("The `env` argument must be of types str|EnvSpec|gym.Env|None")
 
+    if isinstance(env, (str, EnvSpec)):
+        env = gym.make(env)
     if observation_space is None:
+        assert isinstance(env, gym.Env)
         observation_space = env.observation_space
     if action_space is None:
+        assert isinstance(env, gym.Env)
         action_space = env.action_space
 
-    if expert_policy is not None and ref_max_score is not None:
-        raise ValueError(
-            "Can't pass a value for `expert_policy` and `ref_max_score` at the same time."
-        )
+    metadata = _generate_dataset_metadata(
+        dataset_id,
+        env_spec,
+        eval_env,
+        algorithm_name,
+        author,
+        author_email,
+        code_permalink,
+        ref_min_score,
+        ref_max_score,
+        expert_policy,
+        num_episodes_average_score,
+        minari_version,
+    )
 
-    dataset_path = get_dataset_path(dataset_id)
-
-    # Check if dataset already exists
-    if os.path.exists(dataset_path):
-        raise ValueError(
-            f"A Minari dataset with ID {dataset_id} already exists and it cannot be overridden. Please use a different dataset name or version."
-        )
-    dataset_path.mkdir()
-
-    dataset_path = os.path.join(dataset_path, "data")
     storage = MinariStorage.new(
         dataset_path,
         observation_space=observation_space,
         action_space=action_space,
-        env_spec=env.spec,
+        env_spec=env_spec,
     )
 
-    metadata: Dict[str, Any] = {
-        "dataset_id": dataset_id,
-        "minari_version": minari_version,
-    }
-    if algorithm_name is not None:
-        metadata["algorithm_name"] = algorithm_name
-    if author is not None:
-        metadata["author"] = author
-    if author_email is not None:
-        metadata["author_email"] = author_email
-    if code_permalink is not None:
-        metadata["code_permalink"] = code_permalink
-    if expert_policy is not None or ref_max_score is not None:
-        env = copy.deepcopy(env)
-        if ref_min_score is None:
-            ref_min_score = get_average_reference_score(
-                env, RandomPolicy(env), num_episodes_average_score
-            )
-
-        if expert_policy is not None:
-            ref_max_score = get_average_reference_score(
-                env, expert_policy, num_episodes_average_score
-            )
-
-        metadata["ref_max_score"] = ref_max_score
-        metadata["ref_min_score"] = ref_min_score
-        metadata["num_episodes_average_score"] = num_episodes_average_score
-
+    # adding `update_metadata` before hand too, as for small envs, the absence of metadata is causing a difference of some 10ths of MBs leading to errors in unit tests.
     storage.update_metadata(metadata)
     storage.update_episodes(buffer)
+
+    metadata['dataset_size'] = storage.get_size()
+    storage.update_metadata(metadata)
+
     return MinariDataset(storage)
 
 
 def create_dataset_from_collector_env(
     dataset_id: str,
-    collector_env: DataCollectorV0,
+    collector_env: DataCollector,
+    eval_env: Optional[str | gym.Env | EnvSpec] = None,
     algorithm_name: Optional[str] = None,
     author: Optional[str] = None,
     author_email: Optional[str] = None,
@@ -467,7 +581,7 @@ def create_dataset_from_collector_env(
     num_episodes_average_score: int = 100,
     minari_version: Optional[str] = None,
 ):
-    """Create a Minari dataset using the data collected from stepping with a Gymnasium environment wrapped with a `DataCollectorV0` Minari wrapper.
+    """Create a Minari dataset using the data collected from stepping with a Gymnasium environment wrapped with a `DataCollector` Minari wrapper.
 
     The ``dataset_id`` parameter corresponds to the name of the dataset, with the syntax as follows:
     ``(env_name-)(dataset_name)(-v(version))`` where ``env_name`` identifies the name of the environment used to generate the dataset ``dataset_name``.
@@ -475,8 +589,10 @@ def create_dataset_from_collector_env(
 
     Args:
         dataset_id (str): name id to identify Minari dataset
-        collector_env (DataCollectorV0): Gymnasium environment used to collect the buffer data
+        collector_env (DataCollector): Gymnasium environment used to collect the buffer data
         buffer (list[Dict[str, Union[list, Dict]]]): list of episode dictionaries with data
+        eval_env (Optional[str|gym.Env|EnvSpec]): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) to use for evaluation with the dataset. After loading the dataset, the environment can be recovered as follows: `MinariDataset.recover_environment(eval_env=True).
+                                                If None the `env` used to collect the buffer data should be used for evaluation.
         algorithm_name (Optional[str], optional): name of the algorithm used to collect the data. Defaults to None.
         author (Optional[str], optional): author that generated the dataset. Defaults to None.
         author_email (Optional[str], optional): email of the author that generated the dataset. Defaults to None.
@@ -491,90 +607,21 @@ def create_dataset_from_collector_env(
     Returns:
         MinariDataset
     """
-    # NoneType warnings
-    if code_permalink is None:
-        warnings.warn(
-            "`code_permalink` is set to None. For reproducibility purposes it is highly recommended to link your dataset to versioned code.",
-            UserWarning,
-        )
-    if author is None:
-        warnings.warn(
-            "`author` is set to None. For longevity purposes it is highly recommended to provide an author name.",
-            UserWarning,
-        )
-    if author_email is None:
-        warnings.warn(
-            "`author_email` is set to None. For longevity purposes it is highly recommended to provide an author email, or some other obvious contact information.",
-            UserWarning,
-        )
-
-    if algorithm_name is None:
-        warnings.warn(
-            "`algorithm_name` is set to None. For reproducibility purpose it's highly recommended to set your algorithm",
-            UserWarning,
-        )
-
-    if expert_policy is not None and ref_max_score is not None:
-        raise ValueError(
-            "Can't pass a value for `expert_policy` and `ref_max_score` at the same time."
-        )
-    if minari_version is None:
-        version = Version(__version__)
-        release = version.release
-        # For __version__ = X.Y.Z, by default compatibility with version X.Y or later, but not (X+1).0 or later.
-        minari_version = f"~={'.'.join(str(x) for x in release[:2])}"
-        warnings.warn(
-            f"`minari_version` is set to None. The compatible dataset version specifier for Minari will be set to {minari_version}.",
-            UserWarning,
-        )
-    # Check if the installed Minari version falls inside the minari_version specifier
-    try:
-        assert Version(__version__) in SpecifierSet(
-            minari_version
-        ), f"The installed Minari version {__version__} is not contained in the dataset version specifier {minari_version}."
-    except InvalidSpecifier:
-        print(f"{minari_version} is not a version specifier.")
-
-    assert collector_env.datasets_path is not None
-    dataset_path = os.path.join(collector_env.datasets_path, dataset_id)
-
-    # Check if dataset already exists
-    if os.path.exists(dataset_path):
-        raise ValueError(
-            f"A Minari dataset with ID {dataset_id} already exists and it cannot be overridden. Please use a different dataset name or version."
-        )
-
-    dataset_path = os.path.join(dataset_path, "data")
-    os.makedirs(dataset_path)
-    dataset_metadata: Dict[str, Any] = {
-        "dataset_id": dataset_id,
-        "minari_version": minari_version,
-    }
-    if algorithm_name is not None:
-        dataset_metadata["algorithm_name"] = algorithm_name
-    if author is not None:
-        dataset_metadata["author"] = author
-    if author_email is not None:
-        dataset_metadata["author_email"] = author_email
-    if code_permalink is not None:
-        dataset_metadata["code_permalink"] = code_permalink
-    if expert_policy is not None or ref_max_score is not None:
-        env = copy.deepcopy(collector_env.env)
-        if ref_min_score is None:
-            ref_min_score = get_average_reference_score(
-                env, RandomPolicy(env), num_episodes_average_score
-            )
-
-        if expert_policy is not None:
-            ref_max_score = get_average_reference_score(
-                env, expert_policy, num_episodes_average_score
-            )
-        dataset_metadata["ref_max_score"] = ref_max_score
-        dataset_metadata["ref_min_score"] = ref_min_score
-        dataset_metadata["num_episodes_average_score"] = num_episodes_average_score
-
-    collector_env.save_to_disk(dataset_path, dataset_metadata)
-    return MinariDataset(dataset_path)
+    warnings.warn("This function is deprecated and will be removed in v0.5.0. Please use DataCollector.create_dataset() instead.", DeprecationWarning, stacklevel=2)
+    dataset = collector_env.create_dataset(
+        dataset_id=dataset_id,
+        eval_env=eval_env,
+        algorithm_name=algorithm_name,
+        author=author,
+        author_email=author_email,
+        code_permalink=code_permalink,
+        ref_min_score=ref_min_score,
+        ref_max_score=ref_max_score,
+        expert_policy=expert_policy,
+        num_episodes_average_score=num_episodes_average_score,
+        minari_version=minari_version,
+    )
+    return dataset
 
 
 def get_normalized_score(dataset: MinariDataset, returns: np.ndarray) -> np.ndarray:
@@ -607,3 +654,71 @@ def get_normalized_score(dataset: MinariDataset, returns: np.ndarray) -> np.ndar
         )
 
     return (returns - ref_min_score) / (ref_max_score - ref_min_score)
+
+
+def get_env_spec_dict(env_spec: EnvSpec) -> Dict[str, str]:
+    """Create dict of the environment specs, including observation and action space."""
+    env = gym.make(env_spec.id)
+
+    action_space_table = env.action_space.__repr__().replace("\n", "")
+    observation_space_table = env.observation_space.__repr__().replace("\n", "")
+
+    md_dict = {
+        "ID": env_spec.id,
+        "Observation Space": f"`{re.sub(' +', ' ', observation_space_table)}`",
+        "Action Space": f"`{re.sub(' +', ' ', action_space_table)}`",
+        "entry_point": f"`{env_spec.entry_point}`",
+        "max_episode_steps": env_spec.max_episode_steps,
+        "reward_threshold": env_spec.reward_threshold,
+        "nondeterministic": f"`{env_spec.nondeterministic}`",
+        "order_enforce": f"`{env_spec.order_enforce}`",
+        "autoreset": f"`{env_spec.autoreset}`",
+        "disable_env_checker": f"`{env_spec.disable_env_checker}`",
+        "kwargs": f"`{env_spec.kwargs}`",
+        "additional_wrappers": f"`{env_spec.additional_wrappers}`",
+        "vector_entry_point": f"`{env_spec.vector_entry_point}`",
+    }
+
+    return {k: str(v) for k, v in md_dict.items()}
+
+
+def get_dataset_spec_dict(
+        dataset_spec: Union[Dict[str, Union[str, int, bool]], Dict[str, str]],
+        print_version: bool = False
+) -> Dict[str, str]:
+    """Create dict of the dataset specs, including observation and action space."""
+    code_link = dataset_spec["code_permalink"]
+    action_space = dataset_spec["action_space"]
+    obs_space = dataset_spec["observation_space"]
+
+    assert isinstance(action_space, str)
+    assert isinstance(obs_space, str)
+
+    dataset_action_space = (
+        deserialize_space(action_space).__repr__().replace("\n", "")
+    )
+    dataset_observation_space = (
+        deserialize_space(obs_space)
+        .__repr__()
+        .replace("\n", "")
+    )
+
+    version = str(dataset_spec['minari_version'])
+
+    if print_version:
+        version += f" ({__version__} installed)"
+
+    md_dict = {
+        "Total Timesteps": dataset_spec["total_steps"],
+        "Total Episodes": dataset_spec["total_episodes"],
+        "Dataset Observation Space": f"`{dataset_observation_space}`",
+        "Dataset Action Space": f"`{dataset_action_space}`",
+        "Algorithm": dataset_spec["algorithm_name"],
+        "Author": dataset_spec["author"],
+        "Email": dataset_spec["author_email"],
+        "Code Permalink": f"[{code_link}]({code_link})",
+        "Minari Version": version,
+        "Download": f"`minari.download_dataset(\"{dataset_spec['dataset_id']}\")`"
+    }
+
+    return md_dict

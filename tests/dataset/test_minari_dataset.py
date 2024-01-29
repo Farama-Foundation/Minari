@@ -9,7 +9,7 @@ import numpy as np
 import pytest
 
 import minari
-from minari import DataCollectorV0, MinariDataset
+from minari import DataCollector, MinariDataset
 from minari.dataset.minari_dataset import EpisodeData
 from tests.common import (
     check_data_integrity,
@@ -31,8 +31,9 @@ def test_episode_data(space: gym.Space):
     seed = np.random.randint(1024)
     total_timestep = 100
     rewards = np.random.randn(total_timestep)
-    terminations = np.random.choice([True, False], size=(total_timestep,))
-    truncations = np.random.choice([True, False], size=(total_timestep,))
+    choices = np.array([True, False])
+    terminations = np.random.choice(choices, size=(total_timestep,))
+    truncations = np.random.choice(choices, size=(total_timestep,))
     episode_data = EpisodeData(
         id=id,
         seed=seed,
@@ -42,6 +43,7 @@ def test_episode_data(space: gym.Space):
         rewards=rewards,
         terminations=terminations,
         truncations=truncations,
+        infos={},
     )
 
     pattern = r"EpisodeData\("
@@ -53,6 +55,7 @@ def test_episode_data(space: gym.Space):
     pattern += r"rewards=.+, "
     pattern += r"terminations=.+, "
     pattern += r"truncations=.+"
+    pattern += r"infos=.+"
     pattern += r"\)"
     assert re.fullmatch(pattern, repr(episode_data))
 
@@ -76,14 +79,14 @@ def test_update_dataset_from_collector_env(dataset_id, env_id):
 
     env = gym.make(env_id)
 
-    env = DataCollectorV0(env)
+    env = DataCollector(env)
     num_episodes = 10
 
     dataset = create_dummy_dataset_with_collecter_env_helper(
         dataset_id, env, num_episodes=num_episodes
     )
 
-    # Step the environment, DataCollectorV0 wrapper will do the data collection job
+    # Step the environment, DataCollector wrapper will do the data collection job
     env.reset(seed=42)
 
     for episode in range(num_episodes):
@@ -98,6 +101,7 @@ def test_update_dataset_from_collector_env(dataset_id, env_id):
     env.add_to_dataset(dataset)
 
     assert isinstance(dataset, MinariDataset)
+    assert isinstance(dataset.total_steps, int)
     assert dataset.total_episodes == num_episodes * 2
     assert dataset.spec.total_episodes == num_episodes * 2
     assert len(dataset.episode_indices) == num_episodes * 2
@@ -131,7 +135,7 @@ def test_filter_episodes_and_subsequent_updates(dataset_id, env_id):
 
     env = gym.make(env_id)
 
-    env = DataCollectorV0(env)
+    env = DataCollector(env)
     num_episodes = 10
 
     dataset = create_dummy_dataset_with_collecter_env_helper(
@@ -153,7 +157,7 @@ def test_filter_episodes_and_subsequent_updates(dataset_id, env_id):
     )  # checks that the underlying episodes are still present in the `MinariStorage` object
     check_env_recovery(env.env, filtered_dataset)
 
-    # Step the environment, DataCollectorV0 wrapper will do the data collection job
+    # Step the environment, DataCollector wrapper will do the data collection job
     env.reset(seed=42)
 
     for episode in range(num_episodes):
@@ -168,6 +172,7 @@ def test_filter_episodes_and_subsequent_updates(dataset_id, env_id):
     env.add_to_dataset(filtered_dataset)
 
     assert isinstance(filtered_dataset, MinariDataset)
+    assert isinstance(filtered_dataset.spec.total_steps, int)
     assert filtered_dataset.total_episodes == 17
     assert filtered_dataset.spec.total_episodes == 17
     assert filtered_dataset.spec.total_steps == 17 * 5
@@ -245,6 +250,7 @@ def test_filter_episodes_and_subsequent_updates(dataset_id, env_id):
     filtered_dataset.update_dataset_from_buffer(buffer)
 
     assert isinstance(filtered_dataset, MinariDataset)
+    assert isinstance(filtered_dataset.spec.total_steps, int)
     assert filtered_dataset.total_episodes == 27
     assert filtered_dataset.spec.total_episodes == 27
     assert filtered_dataset.spec.total_steps == 27 * 5
@@ -304,7 +310,7 @@ def test_sample_episodes(dataset_id, env_id):
 
     env = gym.make(env_id)
 
-    env = DataCollectorV0(env)
+    env = DataCollector(env)
     num_episodes = 10
 
     dataset = create_dummy_dataset_with_collecter_env_helper(
@@ -347,7 +353,7 @@ def test_iterate_episodes(dataset_id, env_id):
 
     env = gym.make(env_id)
 
-    env = DataCollectorV0(env)
+    env = DataCollector(env)
     num_episodes = 10
 
     dataset = create_dummy_dataset_with_collecter_env_helper(
@@ -396,7 +402,7 @@ def test_update_dataset_from_buffer(dataset_id, env_id):
 
     env = gym.make(env_id)
 
-    collector_env = DataCollectorV0(env)
+    collector_env = DataCollector(env)
     num_episodes = 10
 
     dataset = create_dummy_dataset_with_collecter_env_helper(
@@ -465,12 +471,8 @@ def test_update_dataset_from_buffer(dataset_id, env_id):
 def test_missing_env_module():
     dataset_id = "dummy-test-v0"
 
-    local_datasets = minari.list_local_datasets()
-    if dataset_id in local_datasets:
-        minari.delete_dataset(dataset_id)
-
     env = gym.make("CartPole-v1")
-    env = DataCollectorV0(env)
+    env = DataCollector(env)
     num_episodes = 10
 
     dataset = create_dummy_dataset_with_collecter_env_helper(
@@ -480,13 +482,22 @@ def test_missing_env_module():
     path = os.path.join(dataset.storage.data_path, "metadata.json")
     with open(path) as file:
         metadata = json.load(file)
-    metadata[
-        "env_spec"
-    ] = r"""{"id": "DummyEnv-v0", "entry_point": "dummymodule:dummyenv", "reward_threshold": null, "nondeterministic": false, "max_episode_steps": 300, "order_enforce": true, "disable_env_checker": false, "apply_api_compatibility": false, "additional_wrappers": []}"""
+    metadata["env_spec"] = r"""{
+        "id": "DummyEnv-v0",
+        "entry_point": "dummymodule:dummyenv",
+        "reward_threshold": null,
+        "nondeterministic": false,
+        "max_episode_steps": 300,
+        "order_enforce": true,
+        "disable_env_checker": false,
+        "apply_api_compatibility": false,
+        "additional_wrappers": []
+    }"""
     with open(path, "w") as file:
         file.write(json.dumps(metadata))
 
+    dataset = minari.load_dataset(dataset_id)
     with pytest.raises(ModuleNotFoundError, match="No module named 'dummymodule'"):
-        dataset = minari.load_dataset(dataset_id)
+        dataset.recover_environment()
 
     minari.delete_dataset(dataset_id)

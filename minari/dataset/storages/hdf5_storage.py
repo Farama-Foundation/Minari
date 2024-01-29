@@ -76,6 +76,19 @@ class _HDF5Storage(MinariStorage):
             assert isinstance(hdf_ref, h5py.Dataset)
             return hdf_ref[()]
 
+    def _decode_infos(self, infos: h5py.Group):
+        result = {}
+        for key, value in infos.items():
+            if isinstance(value, h5py.Group):
+                result[key] = self._decode_infos(value)
+            elif isinstance(value, h5py.Dataset):
+                result[key] = value[()]
+            else:
+                raise ValueError(
+                    "Infos are in an unsupported format; see Minari documentation for supported formats."
+                )
+        return result
+
     def get_episodes(self, episode_indices: Iterable[int]) -> List[dict]:
         out = []
         with h5py.File(self._file_path, "r") as file:
@@ -83,16 +96,26 @@ class _HDF5Storage(MinariStorage):
                 ep_group = file[f"episode_{ep_idx}"]
                 assert isinstance(ep_group, h5py.Group)
 
+                seed = ep_group.attrs.get("seed")
+                if isinstance(seed, np.integer):
+                    seed = int(seed)
+                infos = None
+                if "infos" in ep_group:
+                    info_group = ep_group["infos"]
+                    assert isinstance(info_group, h5py.Group)
+                    infos = self._decode_infos(info_group)
+
                 ep_dict = {
                     "id": ep_group.attrs.get("id"),
                     "total_timesteps": ep_group.attrs.get("total_steps"),
-                    "seed": ep_group.attrs.get("seed"),
+                    "seed": seed,
                     "observations": self._decode_space(
                         ep_group["observations"], self.observation_space
                     ),
                     "actions": self._decode_space(
                         ep_group["actions"], self.action_space
                     ),
+                    "infos": infos
                 }
                 for key in {"rewards", "terminations", "truncations"}:
                     group_value = ep_group[key]
@@ -131,7 +154,7 @@ class _HDF5Storage(MinariStorage):
         )
 
     def update_from_storage(self, storage: MinariStorage):
-        if type(storage) != type(self):
+        if type(storage) is not type(self):
             # TODO: relax this constraint. In theory one can use MinariStorage API to update
             raise ValueError(f"{type(self)} cannot update from {type(storage)}")
 
@@ -153,11 +176,11 @@ class _HDF5Storage(MinariStorage):
                 file[f"episode_{new_id}"].attrs.modify("id", new_id)
 
             storage_metadata = storage.metadata
-            authors = [file.attrs.get("author"), storage_metadata.get("author")]
-            emails = [
+            authors = {file.attrs.get("author"), storage_metadata.get("author")}
+            emails = {
                 file.attrs.get("author_email"),
                 storage_metadata.get("author_email"),
-            ]
+            }
 
             self.update_metadata(
                 {

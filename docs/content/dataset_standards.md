@@ -177,7 +177,7 @@ The stepping data inside the episode group is divided into some required `datase
 </ul>
 </div>
 
-In the case where, the observation space is a relatively complex `Dict` space with the following definition: 
+In the case where, the observation space is a relatively complex `Dict` space with the following definition:
 ```
 spaces.Dict(
     {
@@ -191,7 +191,7 @@ spaces.Dict(
     }
 )
 ```
-and the action space is a `Box` space, the resulting Minari dataset `HDF5` file will end up looking as follows: 
+and the action space is a `Box` space, the resulting Minari dataset `HDF5` file will end up looking as follows:
 
 <div class="only-light">
 <ul class="directory-list">
@@ -256,7 +256,7 @@ and the action space is a `Box` space, the resulting Minari dataset `HDF5` file 
                         </ul>
                     </li>
                 </ul>
-                </li>                    
+                </li>
                 <li class="dataset-white">actions</li>
                 <li class="dataset-white">terminations</li>
                 <li class="dataset-white">truncations</li>
@@ -287,7 +287,7 @@ and the action space is a `Box` space, the resulting Minari dataset `HDF5` file 
 </ul>
 </div>
 
-Similarly, consider the case where we have a `Box` space as an observation space and a relatively complex `Tuple` space as an action space with the following definition: 
+Similarly, consider the case where we have a `Box` space as an observation space and a relatively complex `Tuple` space as an action space with the following definition:
 ```
 spaces.Tuple(
     (
@@ -301,7 +301,7 @@ spaces.Tuple(
     )
 )
 ```
-In this case, the resulting Minari dataset `HDF5` file will end up looking as follows: 
+In this case, the resulting Minari dataset `HDF5` file will end up looking as follows:
 
 <div class="only-light">
 <ul class="directory-list">
@@ -406,11 +406,11 @@ The required `datasets` found in the episode groups correspond to the data invol
 - `observations`: `shape=(num_steps + 1, observation_space_component_shape)`. Observations nest in the same way as actions if the top level space is a `Tuple` or `Dict` space. The value of `num_steps + 1` is the same for datasets at any level under `observations`. These datasets have an additional element because the initial observation of the environment when calling `obs, info = env.reset()` is also saved. `observation_space_component_shape` will vary between datasets, depending on the shapes of the simple spaces specified in the observation space.
 - `rewards`: `shape=(num_steps, 1)`, stores the returned reward in each step.
 - `terminations`: `shape=(num_steps, 1)`, the `dtype` is `np.bool` and the last element value will be `True` if the episode finished due to  a `terminated` step return.
-- `truncations`: `shape=(num_steps, 1)`, the `dtype` is `np.bool` and the last element value will be `True` if the episode finished due to a `truncated` step return.  
+- `truncations`: `shape=(num_steps, 1)`, the `dtype` is `np.bool` and the last element value will be `True` if the episode finished due to a `truncated` step return.
 
 The `dtype` of the numpy array datasets can be of any type compatible with [`h5py`](https://docs.h5py.org/en/latest/faq.html#what-datatypes-are-supported).
 
-The `info` dictionary returned in `env.step()` and `env.reset()` can be optionally saved in the dataset as a `sub-group`. The option to save the `info` data can be set in the `DataCollectorv0` wrapper with the  `record_infos` argument.
+The `info` dictionary returned in `env.step()` and `env.reset()` can be optionally saved in the dataset as a `sub-group`. The option to save the `info` data can be set in the `DataCollector` wrapper with the  `record_infos` argument.
 
 Also, additional `datasets` and nested `sub-groups` can be saved in each episode. This can be the case of environment data that doesn't participate in each `env.step()` or `env.reset()` call in the Gymnasium API, such as the full environment state in each step. This can be achieved by creating a custom `StepDataCallback` that returns extra keys and nested dictionaries in the `StepData` dictionary return.
 
@@ -472,9 +472,9 @@ The episode groups in the `HDF5` file will then have the following structure:
 </div>
 
 ### Default dataset metadata
-`HDF5` files can have metadata attached to `objects` as [`attributes`](https://docs.h5py.org/en/stable/high/attr.html). Minari uses these `attributes` to add metadata to the global dataset file, to each episode group, as well as to the individual datasets inside each episode. This                                                                                 metadata can be added by the user by overriding the `EpisodeMetadataCallback` in the `DataCollectorV0` wrapper. However, there is also some metadata added by default to every dataset.
+`HDF5` files can have metadata attached to `objects` as [`attributes`](https://docs.h5py.org/en/stable/high/attr.html). Minari uses these `attributes` to add metadata to the global dataset file, to each episode group, as well as to the individual datasets inside each episode. This                                                                                 metadata can be added by the user by overriding the `EpisodeMetadataCallback` in the `DataCollector` wrapper. However, there is also some metadata added by default to every dataset.
 
-When creating a Minari dataset with the `DataCollectorV0` wrapper the default global metadata will be the following:
+When creating a Minari dataset with the `DataCollector` wrapper the default global metadata will be the following:
 
 | Attribute               | Type       | Description |
 | ----------------------- | ---------- | ----------- |
@@ -526,7 +526,7 @@ The Minari storage format supports the following observation and action spaces:
 | [Text](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/text.py)         |The elements of this space are bounded strings from a charset. Note: at the moment, we don't guarantee support for all surrogate pairs.                                                                        |                                                                       |
 
 #### Space Serialization
-Spaces are serialized to a JSON format when saving to disk. This serialization supports all space types supported by Minari, and aims to be both human, and machine readable. The serialized action and observation spaces for the episodes in the dataset are saved as strings in the global HDF5 group metadata in `main_data.hdf5` for a particular dataset as `action_space` and `observation_space` respectively. All episodes in `main_data.hdf5` must have observations and actions that comply with these action and observation spaces. 
+Spaces are serialized to a JSON format when saving to disk. This serialization supports all space types supported by Minari, and aims to be both human, and machine readable. The serialized action and observation spaces for the episodes in the dataset are saved as strings in the global HDF5 group metadata in `main_data.hdf5` for a particular dataset as `action_space` and `observation_space` respectively. All episodes in `main_data.hdf5` must have observations and actions that comply with these action and observation spaces.
 
 ## Minari Data Structures
 
@@ -554,5 +554,12 @@ The `sampled_episodes` variable will be a list of 10 `EpisodeData` elements, eac
 | `rewards`         | `np.ndarray`                         | Rewards for each timestep.                                    |
 | `terminations`    | `np.ndarray`                         | Terminations for each timestep.                               |
 | `truncations`     | `np.ndarray`                         | Truncations for each timestep.                                |
+| `infos`           | `dict`                               | A dictionary containing additional information.               |
 
 As mentioned in the `Supported Spaces` section, many different observation and action spaces are supported so the data type for these fields are dependent on the environment being used.
+
+## Additional Information Formatting
+
+When creating a dataset with `DataCollector`, if the `DataCollector` is initialized with `record_infos=True`, an info dict must be provided from every call to the environment's `step` and `reset` function. The structure of the info dictionary must be the same across timesteps.
+
+Given that it is not guaranteed that all Gymnasium environments provide infos at every timestep, we provide the `StepDataCallback` which can modify the infos from a non-compliant environment so they have the same structure at every timestep. An example of this pattern is available in our test `test_data_collector_step_data_callback_info_correction` in test_step_data_callback.py.

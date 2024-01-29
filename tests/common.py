@@ -1,6 +1,8 @@
+import copy
 import sys
 import unicodedata
-from typing import Any, Iterable, List, Union
+from collections import OrderedDict
+from typing import Any, Dict, Iterable, List, Optional, Union
 
 import gymnasium as gym
 import numpy as np
@@ -9,7 +11,7 @@ from gymnasium.envs.registration import register
 from gymnasium.utils.env_checker import data_equivalence
 
 import minari
-from minari import DataCollectorV0, MinariDataset
+from minari import DataCollector, MinariDataset
 from minari.dataset.minari_dataset import EpisodeData
 from minari.dataset.minari_storage import MinariStorage
 
@@ -26,15 +28,42 @@ class DummyBoxEnv(gym.Env):
             low=-1, high=4, shape=(3,), dtype=np.float32
         )
 
+    def _get_info(self):
+        return {"timestep": np.array([self.timestep])}
+
     def step(self, action):
         terminated = self.timestep > 5
         self.timestep += 1
 
-        return self.observation_space.sample(), 0, terminated, False, {}
+        return (
+            self.observation_space.sample(),
+            0,
+            terminated,
+            False,
+            self._get_info(),
+        )
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
-        return self.observation_space.sample(), {}
+        self.observation_space.seed(seed)
+        return self.observation_space.sample(), self._get_info()
+
+
+class DummyInfoEnv(DummyBoxEnv):
+    def __init__(self, info=None):
+        super().__init__()
+        self.info = info if info is not None else {}
+
+    def _get_info(self):
+        return self.info
+
+
+class DummyInconsistentInfoEnv(DummyBoxEnv):
+    def __init__(self):
+        super().__init__()
+
+    def _get_info(self):
+        return super()._get_info() if self.timestep % 2 == 0 else {}
 
 
 class DummyMultiDimensionalBoxEnv(gym.Env):
@@ -54,6 +83,7 @@ class DummyMultiDimensionalBoxEnv(gym.Env):
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
+        self.observation_space.seed(seed)
         return self.observation_space.sample(), {}
 
 
@@ -72,15 +102,28 @@ class DummyTupleDiscreteBoxEnv(gym.Env):
             )
         )
 
+    def _get_info(self):
+        return {"timestep": np.array([self.timestep])}
+
     def step(self, action):
         terminated = self.timestep > 5
         self.timestep += 1
 
-        return self.observation_space.sample(), 0, terminated, False, {}
+        return (
+            self.observation_space.sample(),
+            0,
+            terminated,
+            False,
+            self._get_info(),
+        )
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
-        return self.observation_space.sample(), {}
+        self.observation_space.seed(seed)
+        return (
+            self.observation_space.sample(),
+            self._get_info(),
+        )
 
 
 class DummyDictEnv(gym.Env):
@@ -108,15 +151,29 @@ class DummyDictEnv(gym.Env):
             }
         )
 
+    def _get_info(self):
+        return {
+                "timestep": np.array([self.timestep]),
+                "component_1": {"next_timestep": np.array([self.timestep + 1])},
+            }
+
     def step(self, action):
         terminated = self.timestep > 5
         self.timestep += 1
 
-        return self.observation_space.sample(), 0, terminated, False, {}
+        return (
+            self.observation_space.sample(),
+            0,
+            terminated,
+            False,
+            self._get_info(),
+        )
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
-        return self.observation_space.sample(), {}
+        self.observation_space.seed(seed)
+
+        return self.observation_space.sample(), self._get_info()
 
 
 class DummyTupleEnv(gym.Env):
@@ -140,15 +197,23 @@ class DummyTupleEnv(gym.Env):
             )
         )
 
+    def _get_info(self):
+        return {
+            "info_1": np.ones((2, 2)),
+            "component_1": {"component_1_info_1": np.ones((2,))},
+        }
+
     def step(self, action):
         terminated = self.timestep > 5
         self.timestep += 1
 
-        return self.observation_space.sample(), 0, terminated, False, {}
+        return self.observation_space.sample(), 0, terminated, False, self._get_info()
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
-        return self.observation_space.sample(), {}
+        self.observation_space.seed(seed)
+
+        return self.observation_space.sample(), self._get_info()
 
 
 class DummyTextEnv(gym.Env):
@@ -164,6 +229,7 @@ class DummyTextEnv(gym.Env):
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
+        self.observation_space.seed(seed)
         return "者示序袋費欠走立🐝🗓🈸🐿🍯🚆▶️🎧🎇💫", {}
 
 
@@ -217,6 +283,7 @@ class DummyComboEnv(gym.Env):
 
     def reset(self, seed=0, options=None):
         self.timestep = 0
+        self.observation_space.seed(seed)
         return self.observation_space.sample(), {}
 
 
@@ -225,6 +292,18 @@ def register_dummy_envs():
     register(
         id="DummyBoxEnv-v0",
         entry_point="tests.common:DummyBoxEnv",
+        max_episode_steps=5,
+    )
+
+    register(
+        id="DummyInfoEnv-v0",
+        entry_point="tests.common:DummyInfoEnv",
+        max_episode_steps=5,
+    )
+
+    register(
+        id="DummyInconsistentInfoEnv-v0",
+        entry_point="tests.common:DummyInconsistentInfoEnv",
         max_episode_steps=5,
     )
 
@@ -421,12 +500,17 @@ def check_env_recovery_with_subset_spaces(
     assert data_equivalence(dataset.spec.action_space, action_space_subset)
 
 
-def check_env_recovery(gymnasium_environment: gym.Env, dataset: MinariDataset):
+def check_env_recovery(
+    gymnasium_environment: gym.Env,
+    dataset: MinariDataset,
+    evaluation_environment: Optional[gym.Env] = None,
+):
     """Test that the recovered environment from MinariDataset is the same as the one used to generate the dataset.
 
     Args:
-        gymnasium_environment (gym.Env): original Gymnasium environment
+        gymnasium_environment (gym.Env): original Gymnasium environment used to create the dataset.
         dataset (MinariDataset): Minari dataset created with gymnasium_environment
+        evaluation_environment (gym.Env): Gymnasium environment saved in the `eval_env` attribute of the MinariDataset that should be used for evaluation. This attribute is optional.
     """
     recovered_env = dataset.recover_environment()
 
@@ -448,6 +532,14 @@ def check_env_recovery(gymnasium_environment: gym.Env, dataset: MinariDataset):
     assert data_equivalence(
         dataset.spec.action_space, gymnasium_environment.action_space
     )
+
+    if evaluation_environment is not None:
+        recovered_eval_env = dataset.recover_environment(eval_env=True)
+
+        # Check that evaluation environment spec is the same
+        assert (
+            recovered_eval_env.spec == evaluation_environment.spec
+        ), f"recovered_eval_env spec: {recovered_eval_env.spec}\noriginal spec: {evaluation_environment}"
 
 
 def check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
@@ -488,6 +580,20 @@ def check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
         assert episode["total_timesteps"] == len(episode["terminations"])
         assert episode["total_timesteps"] == len(episode["truncations"])
     assert total_steps == data.total_steps
+
+
+def get_info_at_step_index(infos: Dict, step_index: int) -> Dict:
+    result = {}
+    for key in infos.keys():
+        if isinstance(infos[key], dict):
+            result[key] = get_info_at_step_index(infos[key], step_index)
+        elif isinstance(infos[key], np.ndarray):
+            result[key] = infos[key][step_index]
+        else:
+            raise ValueError(
+                "Infos are in an unsupported format; see Minari documentation for supported formats."
+            )
+    return result
 
 
 def _reconstuct_obs_or_action_at_index_recursive(
@@ -549,13 +655,13 @@ def check_load_and_delete_dataset(dataset_id: str):
 
 
 def create_dummy_dataset_with_collecter_env_helper(
-    dataset_id: str, env: DataCollectorV0, num_episodes: int = 10, **kwargs
+    dataset_id: str, env: DataCollector, num_episodes: int = 10, **kwargs
 ):
     local_datasets = minari.list_local_datasets()
     if dataset_id in local_datasets:
         minari.delete_dataset(dataset_id)
 
-    # Step the environment, DataCollectorV0 wrapper will do the data collection job
+    # Step the environment, DataCollector wrapper will do the data collection job
     env.reset(seed=42)
 
     for episode in range(num_episodes):
@@ -568,9 +674,8 @@ def create_dummy_dataset_with_collecter_env_helper(
         env.reset()
 
     # Create Minari dataset and store locally
-    dataset = minari.create_dataset_from_collector_env(
+    dataset = env.create_dataset(
         dataset_id=dataset_id,
-        collector_env=env,
         algorithm_name="random_policy",
         code_permalink="https://github.com/Farama-Foundation/Minari/blob/main/tests/common.py",
         author="WillDudley",
@@ -583,16 +688,18 @@ def create_dummy_dataset_with_collecter_env_helper(
 
 
 def check_episode_data_integrity(
-    episode_data_list: List[EpisodeData],
+    episode_data_list: Union[List[EpisodeData], MinariDataset],
     observation_space: gym.spaces.Space,
     action_space: gym.spaces.Space,
+    info_sample: Optional[dict] = None,
 ):
     """Checks to see if a list of EpisodeData instances has consistent data and that the observations and actions are in the appropriate spaces.
 
     Args:
         episode_data_list (List[EpisodeData]): A list of EpisodeData instances representing episodes.
-        observation_space(gym.spaces.Space): The environment's observation space.
-        action_space(gym.spaces.Space): The environment's action space.
+        observation_space (gym.spaces.Space): The environment's observation space.
+        action_space (gym.spaces.Space): The environment's action space.
+        info_sample (dict): An info returned by the environment used to build the dataset.
 
     """
     # verify the actions and observations are in the appropriate action space and observation space, and that the episode lengths are correct
@@ -606,7 +713,14 @@ def check_episode_data_integrity(
 
         for i in range(episode.total_timesteps + 1):
             obs = _reconstuct_obs_or_action_at_index_recursive(episode.observations, i)
+            if info_sample is not None:
+                assert check_infos_equal(
+                    get_info_at_step_index(episode.infos, i),
+                    info_sample
+                )
+
             assert observation_space.contains(obs)
+
         for i in range(episode.total_timesteps):
             action = _reconstuct_obs_or_action_at_index_recursive(episode.actions, i)
             assert action_space.contains(action)
@@ -614,3 +728,76 @@ def check_episode_data_integrity(
         assert episode.total_timesteps == len(episode.rewards)
         assert episode.total_timesteps == len(episode.terminations)
         assert episode.total_timesteps == len(episode.truncations)
+
+
+def check_infos_equal(info_1: Dict, info_2: Dict) -> bool:
+    if info_1.keys() != info_2.keys():
+        return False
+    for key in info_1.keys():
+        if isinstance(info_1[key], dict):
+            return check_infos_equal(info_1[key], info_2[key])
+        elif isinstance(info_1[key], np.ndarray):
+            return bool(np.all(info_1[key] == info_2[key]))
+        else:
+            return info_1[key] == info_2[key]
+    return True
+
+
+def _space_subset_helper(entry: Dict):
+
+    return OrderedDict(
+        {
+            "component_2": OrderedDict(
+                {"subcomponent_2": entry["component_2"]["subcomponent_2"]}
+            )
+        }
+    )
+
+
+def get_sample_buffer_for_dataset_from_env(env: gym.Env, num_episodes: int = 10):
+
+    buffer = []
+    observations = []
+    actions = []
+    rewards = []
+    terminations = []
+    truncations = []
+
+    observation, info = env.reset(seed=42)
+
+    # Step the environment, DataCollector wrapper will do the data collection job
+    observation, _ = env.reset()
+    observations.append(_space_subset_helper(observation))
+    for episode in range(num_episodes):
+        terminated = False
+        truncated = False
+
+        while not terminated and not truncated:
+            action = env.action_space.sample()
+            observation, reward, terminated, truncated, _ = env.step(action)
+            observations.append(_space_subset_helper(observation))
+            actions.append(_space_subset_helper(action))
+            rewards.append(reward)
+            terminations.append(terminated)
+            truncations.append(truncated)
+
+        episode_buffer = {
+            "observations": copy.deepcopy(observations),
+            "actions": copy.deepcopy(actions),
+            "rewards": np.asarray(rewards),
+            "terminations": np.asarray(terminations),
+            "truncations": np.asarray(truncations),
+        }
+
+        buffer.append(episode_buffer)
+
+        observations.clear()
+        actions.clear()
+        rewards.clear()
+        terminations.clear()
+        truncations.clear()
+
+        observation, _ = env.reset()
+        observations.append(_space_subset_helper(observation))
+
+    return buffer

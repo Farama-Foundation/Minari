@@ -8,24 +8,13 @@ Behavioral cloning with PyTorch
 # The objective is to balance the pole on the cart, and we receive a reward of +1 for each successful timestep.
 
 # %%
-# Policy training
-# ~~~~~~~~~~~~~~~~~~~
-# To train the expert policy, we use `SB3 <https://github.com/DLR-RM/stable-baselines3>`_'s `rl-zoo3 <https://github.com/DLR-RM/rl-baselines3-zoo>`_ library.
-# After installing the library, we train a PPO agent on the environment:
-
-!pip install rl_zoo3
-!python -m rl_zoo3.train --algo ppo --env CartPole-v1``
-
-# %%
-# This will generate a new folder named `log` with the expert policy.
-
-# %%
 # Imports
 # ~~~~~~~~~~~~~~~~~~~
-# Let's import all the required packages and set the random seed for reproducibility:
-
+# For this tutorial you will need the `RL Baselines3 Zoo <https://github.com/DLR-RM/rl-baselines3-zoo>`_ library, which you can install with `pip install rl_zoo3`.
+# Let's then import all the required packages and set the random seed for reproducibility:
 
 import os
+import sys
 
 import gymnasium as gym
 import numpy as np
@@ -33,22 +22,37 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from gymnasium import spaces
+from rl_zoo3.train import train
 from stable_baselines3 import PPO
 from torch.utils.data import DataLoader
 from tqdm.auto import tqdm
 
 import minari
-from minari import DataCollectorV0
+from minari import DataCollector
+
 
 torch.manual_seed(42)
 
 # %%
+# Policy training
+# ~~~~~~~~~~~~~~~~~~~
+# Now we can train the expert policy using RL Baselines3 Zoo.
+# We train a PPO agent on the environment:
+
+sys.argv = ["python", "--algo", "ppo", "--env", "CartPole-v1"]
+train()
+
+# %%
+# This will generate a new folder named `log` with the expert policy.
+
+
+# %%
 # Dataset generation
 # ~~~~~~~~~~~~~~~~~~~
-# Now let's generate the dataset using the `DataCollectorV0 <https://minari.farama.org/api/data_collector/>`_ wrapper:
+# Now let's generate the dataset using the `DataCollector <https://minari.farama.org/api/data_collector/>`_ wrapper:
 #
 
-env = DataCollectorV0(gym.make('CartPole-v1'))
+env = DataCollector(gym.make('CartPole-v1'))
 path = os.path.abspath('') + '/logs/ppo/CartPole-v1_1/best_model'
 agent = PPO.load(path)
 
@@ -62,9 +66,8 @@ for i in tqdm(range(total_episodes)):
         if terminated or truncated:
             break
 
-dataset = minari.create_dataset_from_collector_env(
+dataset = env.create_dataset(
     dataset_id="CartPole-v1-expert",
-    collector_env=env,
     algorithm_name="ExpertPolicy",
     code_permalink="https://minari.farama.org/tutorials/behavioral_cloning",
     author="Farama",

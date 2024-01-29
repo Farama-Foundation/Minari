@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import os
 import pathlib
+import warnings
 from abc import ABC, abstractmethod
 from typing import Any, Callable, Dict, Iterable, List, Optional, Union
 
@@ -106,25 +107,16 @@ class MinariStorage(ABC):
             raise ValueError(
                 "Since env_spec is not specified, you need to specify both action space and observation space"
             )
+        from minari.dataset.storages import registry  # avoid circular import
+        if data_format not in registry.keys():
+            raise ValueError(f"No storage implemented for {data_format}. Available formats: {registry.keys()}")
+
         data_path = pathlib.Path(data_path)
         data_path.mkdir(exist_ok=True)
         if data_path.joinpath("metadata.json").exists():
             raise ValueError(
                 f"A dataset is already available at {data_path}. Delete it or specify another path"
             )
-        metadata: Dict[str, Any] = {
-            "total_episodes": 0,
-            "total_steps": 0,
-            "data_format": data_format,
-        }
-        if observation_space is not None:
-            metadata["observation_space"] = serialize_space(observation_space)
-        if action_space is not None:
-            metadata["action_space"] = serialize_space(action_space)
-        if env_spec is not None:
-            metadata["env_spec"] = env_spec.to_json()
-        with open(data_path.joinpath(_METADATA_FILE_NAME), "w") as f:
-            json.dump(metadata, f)
 
         if observation_space is None or action_space is None:
             assert env_spec is not None
@@ -134,9 +126,21 @@ class MinariStorage(ABC):
             if action_space is None:
                 action_space = env.action_space
 
-        from minari.dataset.storages import registry  # avoid circular import
-        if data_format not in registry.keys():
-            raise ValueError(f"No storage implemented for {data_format}. Available formats: {registry.keys()}")
+        metadata: Dict[str, Any] = {
+            "total_episodes": 0,
+            "total_steps": 0,
+            "data_format": data_format,
+            "observation_space": serialize_space(observation_space),
+            "action_space": serialize_space(action_space),
+        }
+        if env_spec is not None:
+            try:
+                metadata["env_spec"] = env_spec.to_json()
+            except TypeError as e:
+                warnings.warn(f"env_spec is not serializable as {str(e)}. You will not be able to recover the environment from the dataset.")
+        with open(data_path.joinpath(_METADATA_FILE_NAME), "w") as f:
+            json.dump(metadata, f)
+
         obj = registry[data_format]._create(data_path, observation_space, action_space)
         return obj
 
@@ -231,7 +235,7 @@ class MinariStorage(ABC):
 
     @abstractmethod
     def update_episodes(self, episodes: Iterable[dict]):
-        """Update epsiodes in the storage from a list of episode buffer.
+        """Update episodes in the storage from a list of episode buffer.
 
         Args:
             episodes (Iterable[dict]): list of episodes buffer.
@@ -249,18 +253,35 @@ class MinariStorage(ABC):
         """
         ...
 
+    def get_size(self) -> float:
+        """Returns the dataset size in MB.
+
+        Returns:
+            datasize (float): size of the dataset in MB
+        """
+        datasize_list = []
+        if os.path.exists(self.data_path):
+
+            for filename in os.listdir(self.data_path):
+                datasize = os.path.getsize(os.path.join(self.data_path, filename))
+                datasize_list.append(datasize)
+
+        datasize = np.round(np.sum(datasize_list) / 1000000, 1)
+
+        return datasize
+
     @property
     def data_path(self) -> pathlib.Path:
         """Full path to the dataset."""
         return self._data_path
 
     @property
-    def total_episodes(self) -> np.int64:
+    def total_episodes(self) -> int:
         """Total episodes in the dataset."""
         return self.metadata["total_episodes"]
 
     @property
-    def total_steps(self) -> np.int64:
+    def total_steps(self) -> int:
         """Total steps in the dataset."""
         return self.metadata["total_steps"]
 
