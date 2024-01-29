@@ -137,7 +137,10 @@ class MinariStorage(ABC):
             try:
                 metadata["env_spec"] = env_spec.to_json()
             except TypeError as e:
-                warnings.warn(f"env_spec is not serializable as {str(e)}. You will not be able to recover the environment from the dataset.")
+                warnings.warn(
+                    f"env_spec is not serializable as {str(e)}. "
+                    "You will not be able to recover the environment from the dataset."
+                )
         with open(data_path.joinpath(_METADATA_FILE_NAME), "w") as f:
             json.dump(metadata, f)
 

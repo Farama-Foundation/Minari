@@ -109,4 +109,4 @@ reportUnboundVariable = "warning"
 [tool.pytest.ini_options]
 filterwarnings = ['ignore:.*The environment .* is out of date.*']
 # filterwarnings = ['ignore:.*step API.*:DeprecationWarning']
-addopts = '-k "not test_cli.py and not dataset/test_dataset_download.py" --ignore=docs/tutorials'
+addopts = ["--ignore=docs/tutorials"]

@@ -1,4 +1,10 @@
-from minari.dataset.storages.registry import registry
+from typing import Dict, Type
+
+from minari.dataset.minari_storage import MinariStorage
+
+from .hdf5_storage import _HDF5Storage
 
 
-__all__ = ["registry"]
+registry: Dict[str, Type[MinariStorage]] = {
+    "hdf5": _HDF5Storage,
+}

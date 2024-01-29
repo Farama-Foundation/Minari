@@ -6,10 +6,10 @@ import os
 import warnings
 from typing import Dict, List
 
-from google.cloud import storage  # pyright: ignore [reportGeneralTypeIssues]
+from google.cloud import storage
 from gymnasium import logger
 from packaging.specifiers import SpecifierSet
-from tqdm.auto import tqdm  # pyright: ignore [reportMissingModuleSource]
+from tqdm.auto import tqdm
 
 from minari.dataset.minari_dataset import parse_dataset_id
 from minari.storage.datasets_root_dir import get_dataset_path
@@ -40,12 +40,6 @@ def upload_dataset(dataset_id: str, path_to_private_key: str):
             else:
                 remote_path = os.path.join(gcs_path, local_file[1 + len(local_path) :])
                 blob = bucket.blob(remote_path)
-                # # add metadata to main data file of dataset
-                # if blob.name.endswith("main_data.hdf5"):
-                #     with h5py.File(
-                #         local_file, "r"
-                #     ) as file:  # TODO: remove h5py when migrating to JSON metadata
-                #         blob.metadata = file.attrs
                 blob.upload_from_filename(local_file)
 
     file_path = get_dataset_path(dataset_id)
@@ -230,7 +224,7 @@ def list_remote_datasets(
     remote_datasets = {}
     for blob in blobs:
         try:
-            if blob.name.endswith("main_data.hdf5"):
+            if blob.name.endswith("main_data.hdf5"):  # TODO: remove .hdf5 dependency
                 metadata = blob.metadata
                 if compatible_minari_version and __version__ not in SpecifierSet(
                     metadata["minari_version"]
