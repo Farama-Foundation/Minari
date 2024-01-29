@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import glob
 import importlib.metadata
+import json
 import os
 import warnings
 from typing import Dict, List
@@ -224,8 +225,8 @@ def list_remote_datasets(
     remote_datasets = {}
     for blob in blobs:
         try:
-            if blob.name.endswith("main_data.hdf5"):  # TODO: remove .hdf5 dependency
-                metadata = blob.metadata
+            if blob.name.endswith("metadata.json"):
+                metadata = json.loads(blob.download_as_string(client=None))
                 if compatible_minari_version and __version__ not in SpecifierSet(
                     metadata["minari_version"]
                 ):
