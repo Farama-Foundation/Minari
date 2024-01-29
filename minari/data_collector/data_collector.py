@@ -128,6 +128,7 @@ class DataCollector(gym.Wrapper):
         )
 
         self._record_infos = record_infos
+        self._reference_info = None
         self.max_buffer_steps = max_buffer_steps
 
         # Initialzie empty buffer
@@ -136,11 +137,11 @@ class DataCollector(gym.Wrapper):
         self._step_id = -1
         self._episode_id = -1
 
-    def _add_to_episode_buffer(
+    def _add_step_data(
         self,
         episode_buffer: EpisodeBuffer,
-        step_data: Union[StepData, Dict[str, StepData]],
-    ) -> EpisodeBuffer:
+        step_data: Union[StepData, Dict],
+    ):
         """Add step data dictionary to episode buffer.
 
         Args:
@@ -150,31 +151,43 @@ class DataCollector(gym.Wrapper):
         Returns:
             Dict: new dictionary episode buffer with added values from step_data
         """
+        dict_data = dict(step_data)
+        if not self._record_infos:
+            dict_data = {k: v for k, v in step_data.items() if k != "infos"}
+        else:
+            assert self._reference_info is not None
+            if not _check_infos_same_shape(
+                self._reference_info, step_data["infos"]
+            ):
+                raise ValueError(
+                    "Info structure inconsistent with info structure returned by original reset."
+                )
+
+        self._add_to_episode_buffer(episode_buffer, dict_data)
+
+    def _add_to_episode_buffer(
+        self,
+        episode_buffer: EpisodeBuffer,
+        step_data: Dict[str, Any],
+    ):
         for key, value in step_data.items():
-            if (not self._record_infos and key == "infos") or (value is None):
+            if value is None:
                 continue
 
             if key not in episode_buffer:
-                if isinstance(value, dict):
-                    episode_buffer[key] = self._add_to_episode_buffer({}, value)
-                else:
-                    episode_buffer[key] = [value]
+                episode_buffer[key] = {} if isinstance(value, dict) else []
+
+            if isinstance(value, dict):
+                assert isinstance(
+                    episode_buffer[key], dict
+                ), f"Element to be inserted is type 'dict', but buffer accepts type {type(episode_buffer[key])}"
+
+                self._add_to_episode_buffer(episode_buffer[key], value)
             else:
-                if isinstance(value, dict):
-                    assert isinstance(
-                        episode_buffer[key], dict
-                    ), f"Element to be inserted is type 'dict', but buffer accepts type {type(episode_buffer[key])}"
-
-                    episode_buffer[key] = self._add_to_episode_buffer(
-                        episode_buffer[key], value
-                    )
-                else:
-                    assert isinstance(
-                        episode_buffer[key], list
-                    ), f"Element to be inserted is type 'list', but buffer accepts type {type(episode_buffer[key])}"
-                    episode_buffer[key].append(value)
-
-        return episode_buffer
+                assert isinstance(
+                    episode_buffer[key], list
+                ), f"Element to be inserted is type 'list', but buffer accepts type {type(episode_buffer[key])}"
+                episode_buffer[key].append(value)
 
     def step(
         self, action: ActType
@@ -191,6 +204,9 @@ class DataCollector(gym.Wrapper):
             terminated=terminated,
             truncated=truncated,
         )
+
+        # Force step data dictionary to include keys corresponding to Gymnasium step returns:
+        # actions, observations, rewards, terminations, truncations, and infos
         assert STEP_DATA_KEYS.issubset(
             step_data.keys()
         ), "One or more required keys is missing from 'step-data'."
@@ -203,7 +219,7 @@ class DataCollector(gym.Wrapper):
         ), "Actions are not in action space."
 
         self._step_id += 1
-        self._buffer[-1] = self._add_to_episode_buffer(self._buffer[-1], step_data)
+        self._add_step_data(self._buffer[-1], step_data)
 
         if (
             self.max_buffer_steps is not None
@@ -219,7 +235,7 @@ class DataCollector(gym.Wrapper):
                 "observations": step_data["observations"],
                 "infos": step_data["infos"],
             }
-            eps_buff = self._add_to_episode_buffer(eps_buff, previous_data)
+            self._add_step_data(eps_buff, previous_data)
             self._buffer.append(eps_buff)
 
         return obs, rew, terminated, truncated, info
@@ -245,13 +261,16 @@ class DataCollector(gym.Wrapper):
             observation (ObsType): Observation of the initial state.
             info (dictionary): Auxiliary information complementing ``observation``.
         """
-        autoseed_enabled = (not options) or options.get("minari_autoseed", False)
+        autoseed_enabled = (not options) or options.get("minari_autoseed", True)
         if seed is None and autoseed_enabled:
             seed = secrets.randbits(AUTOSEED_BIT_SIZE)
 
         obs, info = self.env.reset(seed=seed, options=options)
         step_data = self._step_data_callback(env=self.env, obs=obs, info=info)
         self._episode_id += 1
+
+        if self._record_infos and self._reference_info is None:
+            self._reference_info = step_data["infos"]
 
         assert STEP_DATA_KEYS.issubset(
             step_data.keys()
@@ -262,7 +281,7 @@ class DataCollector(gym.Wrapper):
             "seed": str(None) if seed is None else seed,
             "id": self._episode_id
         }
-        episode_buffer = self._add_to_episode_buffer(episode_buffer, step_data)
+        self._add_step_data(episode_buffer, step_data)
         self._buffer.append(episode_buffer)
         return obs, info
 
@@ -418,3 +437,16 @@ class DataCollector(gym.Wrapper):
 
         self._buffer.clear()
         shutil.rmtree(self._tmp_dir.name)
+
+
+def _check_infos_same_shape(info_1: dict, info_2: dict):
+    if info_1.keys() != info_2.keys():
+        return False
+    for key in info_1.keys():
+        if type(info_1[key]) is not type(info_2[key]):
+            return False
+        if isinstance(info_1[key], dict):
+            return _check_infos_same_shape(info_1[key], info_2[key])
+        elif isinstance(info_1[key], np.ndarray):
+            return (info_1[key].shape == info_2[key].shape) and (info_1[key].dtype == info_2[key].dtype)
+    return True

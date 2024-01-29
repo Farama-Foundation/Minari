@@ -1,5 +1,6 @@
 import gymnasium as gym
 import numpy as np
+import pytest
 from gymnasium import spaces
 
 import minari
@@ -7,6 +8,7 @@ from minari import DataCollector, MinariDataset
 from minari.data_collector.callbacks import StepDataCallback
 from tests.common import (
     check_data_integrity,
+    check_env_recovery,
     check_env_recovery_with_subset_spaces,
     check_load_and_delete_dataset,
     register_dummy_envs,
@@ -37,13 +39,17 @@ class CustomSubsetStepDataCallback(StepDataCallback):
         return step_data
 
 
+class CustomSubsetInfoPadStepDataCallback(StepDataCallback):
+    def __call__(self, env, **kwargs):
+        step_data = super().__call__(env, **kwargs)
+        if step_data["infos"] == {}:
+            step_data["infos"] = {"timestep": np.array([-1])}
+        return step_data
+
+
 def test_data_collector_step_data_callback():
     """Test DataCollector wrapper and Minari dataset creation."""
     dataset_id = "dummy-dict-test-v0"
-    # delete the test dataset if it already exists
-    local_datasets = minari.list_local_datasets()
-    if dataset_id in local_datasets:
-        minari.delete_dataset(dataset_id)
 
     env = gym.make("DummyDictEnv-v0")
 
@@ -74,23 +80,20 @@ def test_data_collector_step_data_callback():
     )
     num_episodes = 10
 
-    # Step the environment, DataCollector wrapper will do the data collection job
     env.reset(seed=42)
-
     for episode in range(num_episodes):
         terminated = False
         truncated = False
         while not terminated and not truncated:
-            action = env.action_space.sample()  # User-defined policy function
+            action = env.action_space.sample()
             _, _, terminated, truncated, _ = env.step(action)
 
         env.reset()
 
-    # Create Minari dataset and store locally
     dataset = env.create_dataset(
         dataset_id=dataset_id,
         algorithm_name="random_policy",
-        code_permalink="https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
+        code_permalink=str(__file__),
         author="WillDudley",
         author_email="wdudley@farama.org",
     )
@@ -102,11 +105,78 @@ def test_data_collector_step_data_callback():
 
     check_data_integrity(dataset.storage, dataset.episode_indices)
 
-    # check that the environment can be recovered from the dataset
     check_env_recovery_with_subset_spaces(
         env.env, dataset, action_space_subset, observation_space_subset
     )
 
     env.close()
-    # check load and delete local dataset
     check_load_and_delete_dataset(dataset_id)
+
+
+def test_data_collector_step_data_callback_info_correction():
+    """Test DataCollector wrapper and Minari dataset creation."""
+    dataset_id = "dummy-inconsistent-info-v0"
+    env = gym.make("DummyInconsistentInfoEnv-v0")
+
+    env = DataCollector(
+        env,
+        record_infos=True,
+        step_data_callback=CustomSubsetInfoPadStepDataCallback,
+    )
+    num_episodes = 10
+
+    env.reset(seed=42)
+    for episode in range(num_episodes):
+        terminated = False
+        truncated = False
+        while not terminated and not truncated:
+            action = env.action_space.sample()
+            _, _, terminated, truncated, _ = env.step(action)
+
+        env.reset()
+
+    dataset = minari.create_dataset_from_collector_env(
+        dataset_id=dataset_id,
+        collector_env=env,
+        algorithm_name="random_policy",
+        code_permalink=str(__file__),
+        author="WillDudley",
+        author_email="wdudley@farama.org",
+    )
+
+    assert isinstance(dataset, MinariDataset)
+    assert dataset.total_episodes == num_episodes
+    assert dataset.spec.total_episodes == num_episodes
+    assert len(dataset.episode_indices) == num_episodes
+
+    check_data_integrity(dataset.storage, dataset.episode_indices)
+
+    check_env_recovery(env.env, dataset)
+
+    env.close()
+    check_load_and_delete_dataset(dataset_id)
+
+    env = gym.make("DummyInconsistentInfoEnv-v0")
+
+    env = DataCollector(
+        env,
+        record_infos=True,
+    )
+    # here we are checking to make sure that if we have an environment changing its info
+    # structure across timesteps, it is caught by the data_collector
+    with pytest.raises(
+        ValueError,
+        match=r"Info structure inconsistent with info structure returned by original reset."
+    ):
+
+        num_episodes = 10
+        env.reset(seed=42)
+        for _ in range(num_episodes):
+            terminated = False
+            truncated = False
+            while not terminated and not truncated:
+                action = env.action_space.sample()
+                _, _, terminated, truncated, _ = env.step(action)
+
+            env.reset()
+    env.close()

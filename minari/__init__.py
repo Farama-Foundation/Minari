@@ -38,7 +38,7 @@ __all__ = [
     "get_normalized_score",
 ]
 
-__version__ = "0.4.2"
+__version__ = "0.4.3"
 
 
 def __getattr__(name):
