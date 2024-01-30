@@ -70,7 +70,6 @@ for episode_data in dataset.iterate_episodes():
     terminations = episode_data.terminations
     truncations = episode_data.truncations
     infos = episode_data.infos
-
     ...
 ```
 
