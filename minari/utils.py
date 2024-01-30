@@ -11,6 +11,7 @@ import gymnasium as gym
 import numpy as np
 import portion as P
 from gymnasium.core import ActType, ObsType
+from gymnasium.error import NameNotFound
 from gymnasium.envs.registration import EnvSpec
 from gymnasium.wrappers.record_episode_statistics import RecordEpisodeStatistics
 from packaging.specifiers import InvalidSpecifier, SpecifierSet
@@ -658,15 +659,20 @@ def get_normalized_score(dataset: MinariDataset, returns: np.ndarray) -> np.ndar
 
 def get_env_spec_dict(env_spec: EnvSpec) -> Dict[str, str]:
     """Create dict of the environment specs, including observation and action space."""
-    env = gym.make(env_spec.id)
+    try:
+        env = gym.make(env_spec.id)
+        action_space_table = env.action_space.__repr__().replace("\n", "")
+        observation_space_table = env.observation_space.__repr__().replace("\n", "")
+    except NameNotFound:
+        action_space_table, observation_space_table = None, None
 
-    action_space_table = env.action_space.__repr__().replace("\n", "")
-    observation_space_table = env.observation_space.__repr__().replace("\n", "")
-
-    md_dict = {
-        "ID": env_spec.id,
-        "Observation Space": f"`{re.sub(' +', ' ', observation_space_table)}`",
-        "Action Space": f"`{re.sub(' +', ' ', action_space_table)}`",
+    md_dict = {"ID": env_spec.id}
+    if observation_space_table is not None:
+        md_dict["Observation Space"] = f"`{re.sub(' +', ' ', observation_space_table)}`"
+    if action_space_table is not None:
+        md_dict["Action Space"] = f"`{re.sub(' +', ' ', action_space_table)}`"
+    
+    md_dict.update({
         "entry_point": f"`{env_spec.entry_point}`",
         "max_episode_steps": env_spec.max_episode_steps,
         "reward_threshold": env_spec.reward_threshold,
@@ -677,7 +683,7 @@ def get_env_spec_dict(env_spec: EnvSpec) -> Dict[str, str]:
         "kwargs": f"`{env_spec.kwargs}`",
         "additional_wrappers": f"`{env_spec.additional_wrappers}`",
         "vector_entry_point": f"`{env_spec.vector_entry_point}`",
-    }
+    })
 
     return {k: str(v) for k, v in md_dict.items()}
 
