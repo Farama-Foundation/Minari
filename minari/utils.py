@@ -11,8 +11,8 @@ import gymnasium as gym
 import numpy as np
 import portion as P
 from gymnasium.core import ActType, ObsType
-from gymnasium.error import NameNotFound
 from gymnasium.envs.registration import EnvSpec
+from gymnasium.error import NameNotFound
 from gymnasium.wrappers.record_episode_statistics import RecordEpisodeStatistics
 from packaging.specifiers import InvalidSpecifier, SpecifierSet
 from packaging.version import Version
@@ -671,11 +671,11 @@ def get_env_spec_dict(env_spec: EnvSpec) -> Dict[str, str]:
         md_dict["Observation Space"] = f"`{re.sub(' +', ' ', observation_space_table)}`"
     if action_space_table is not None:
         md_dict["Action Space"] = f"`{re.sub(' +', ' ', action_space_table)}`"
-    
+
     md_dict.update({
         "entry_point": f"`{env_spec.entry_point}`",
-        "max_episode_steps": env_spec.max_episode_steps,
-        "reward_threshold": env_spec.reward_threshold,
+        "max_episode_steps": str(env_spec.max_episode_steps),
+        "reward_threshold": str(env_spec.reward_threshold),
         "nondeterministic": f"`{env_spec.nondeterministic}`",
         "order_enforce": f"`{env_spec.order_enforce}`",
         "autoreset": f"`{env_spec.autoreset}`",
