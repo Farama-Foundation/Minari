@@ -39,7 +39,6 @@ dynamic = ["version"]
 [project.optional-dependencies]
 testing = [
     "pytest>=7.1.3",
-    "pytest-markdown-docs>=0.4.3",
     "nbmake",
     "gymnasium-robotics>=1.2.3",
     "imageio>=2.14.1",
