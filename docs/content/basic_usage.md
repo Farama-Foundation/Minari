@@ -162,7 +162,7 @@ Minari will only be able to load datasets that are stored in your `local root di
 ```python
 >>> import minari
 >>> dataset = minari.load_dataset('cartpole-test-v0')
->>> dataset.name
+>>> dataset.id
 'cartpole-test-v0'
 ```
 
@@ -361,7 +361,7 @@ Lastly, in the case of having two or more Minari datasets created with the same 
 >>> expert_dataset = minari.load_dataset('door-expert-v0')
 >>> combine_dataset = minari.combine_datasets(datasets_to_combine=[human_dataset,               expert_dataset],
                                         new_dataset_id="door-all-v0")
->>> combine_dataset.name
+>>> combine_dataset.id
 'door-all-v0'
 >>> minari.list_local_datasets()
 dict_keys(['door-all-v0', 'door-human-v0', 'door-expert-v0'])

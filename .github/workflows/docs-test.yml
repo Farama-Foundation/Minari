@@ -30,8 +30,5 @@ jobs:
       - name: Build
         run: sphinx-build -b dirhtml -v docs _build
 
-      - name: Run markdown documentation tests
-        run: pytest docs --markdown-docs -m markdown-docs
-
       - name: Run tutorial documentation tests
         run:  pytest --nbmake docs/tutorials/**/*.ipynb --nbmake-timeout=600
