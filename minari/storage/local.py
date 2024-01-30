@@ -2,6 +2,7 @@ import importlib.metadata
 import os
 import shutil
 from typing import Dict, Union
+import warnings
 
 from packaging.specifiers import SpecifierSet
 
@@ -68,7 +69,12 @@ def list_local_datasets(
             continue
 
         data_path = os.path.join(datasets_path, dst_id, "data")
-        metadata = MinariStorage.read(data_path).metadata
+        try:
+            metadata = MinariStorage.read(data_path).metadata
+        except Exception as e:
+            warnings.warn(f"Misconfigured dataset named {dst_id}: {e}")
+            continue
+
         if ("minari_version" not in metadata) or (
             compatible_minari_version
             and __version__ not in SpecifierSet(metadata["minari_version"])
