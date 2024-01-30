@@ -489,7 +489,7 @@
 <p>Minari will only be able to load datasets that are stored in your <a class="reference external" href="/content/dataset_standards">local root directory</a> . In order to use any of the dataset sampling features of Minari we first need to load the dataset as a <a class="reference internal" href="../../api/minari_dataset/minari_dataset/#minari.MinariDataset" title="minari.MinariDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.MinariDataset</span></code></a> object using the <a class="reference internal" href="../../api/minari_functions/#minari.load_dataset" title="minari.load_dataset"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.load_dataset()</span></code></a> function as follows:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">minari</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;cartpole-test-v0&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">dataset</span><span class="o">.</span><span class="n">name</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dataset</span><span class="o">.</span><span class="n">id</span>
 <span class="go">&#39;cartpole-test-v0&#39;</span>
 </pre></div>
 </div>
@@ -638,7 +638,7 @@ To create your own buffers and dataloaders, you may need the ability to iterate 
 <span class="gp">&gt;&gt;&gt; </span><span class="n">expert_dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;door-expert-v0&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">combine_dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">combine_datasets</span><span class="p">(</span><span class="n">datasets_to_combine</span><span class="o">=</span><span class="p">[</span><span class="n">human_dataset</span><span class="p">,</span>               <span class="n">expert_dataset</span><span class="p">],</span>
 <span class="go">                                        new_dataset_id=&quot;door-all-v0&quot;)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">combine_dataset</span><span class="o">.</span><span class="n">name</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">combine_dataset</span><span class="o">.</span><span class="n">id</span>
 <span class="go">&#39;door-all-v0&#39;</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">minari</span><span class="o">.</span><span class="n">list_local_datasets</span><span class="p">()</span>
 <span class="go">dict_keys([&#39;door-all-v0&#39;, &#39;door-human-v0&#39;, &#39;door-expert-v0&#39;])</span>
