@@ -162,7 +162,7 @@ Minari will only be able to load datasets that are stored in your `local root di
 ```python
 >>> import minari
 >>> dataset = minari.load_dataset('cartpole-test-v0')
->>> dataset.id
+>>> dataset.name
 'cartpole-test-v0'
 ```
 
