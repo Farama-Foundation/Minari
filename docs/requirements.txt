@@ -6,6 +6,7 @@ google-cloud-storage==2.5.0
 gymnasium-robotics>=1.2.1
 minigrid>=2.2.0
 rl_zoo3>=2.0.0
+imageio>=2.14.1
+nbmake
 git+https://github.com/sphinx-gallery/sphinx-gallery.git@4006662c8c1984453a247dc6d3df6260e5b00f4b#egg=sphinx_gallery
 git+https://github.com/Farama-Foundation/Celshast#egg=furo
-git+https://github.com/younik/pytest-markdown-docs.git

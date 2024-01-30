@@ -19,7 +19,6 @@ from packaging.version import Version
 from minari import DataCollector
 from minari.dataset.minari_dataset import MinariDataset
 from minari.dataset.minari_storage import MinariStorage
-from minari.serialization import deserialize_space
 from minari.storage.datasets_root_dir import get_dataset_path
 
 
@@ -683,7 +682,7 @@ def get_env_spec_dict(env_spec: EnvSpec) -> Dict[str, str]:
 
 
 def get_dataset_spec_dict(
-        dataset_spec: Union[Dict[str, Union[str, int, bool]], Dict[str, str]],
+        dataset_spec: Dict,
         print_version: bool = False
 ) -> Dict[str, str]:
     """Create dict of the dataset specs, including observation and action space."""
@@ -691,17 +690,8 @@ def get_dataset_spec_dict(
     action_space = dataset_spec["action_space"]
     obs_space = dataset_spec["observation_space"]
 
-    assert isinstance(action_space, str)
-    assert isinstance(obs_space, str)
-
-    dataset_action_space = (
-        deserialize_space(action_space).__repr__().replace("\n", "")
-    )
-    dataset_observation_space = (
-        deserialize_space(obs_space)
-        .__repr__()
-        .replace("\n", "")
-    )
+    dataset_action_space = action_space.__repr__().replace("\n", "")
+    dataset_observation_space = obs_space.__repr__().replace("\n", "")
 
     version = str(dataset_spec['minari_version'])
 
