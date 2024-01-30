@@ -9,8 +9,6 @@ Minari is a Python library for conducting research in offline reinforcement lear
 
 The documentation website is at [minari.farama.org](https://minari.farama.org/main/). We also have a public discord server (which we use for Q&A and to coordinate development work) that you can join here: https://discord.gg/bnJ6kubTg6.
 
-Note: Minari was previously developed under the name Kabuki.
-
 
 ## Installation
 To install Minari from [PyPI](https://pypi.org/project/minari/):

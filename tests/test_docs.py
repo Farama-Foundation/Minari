@@ -1,4 +1,5 @@
 import pathlib
+
 import pytest
 from mktestdocs import check_md_file
 
