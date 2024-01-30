@@ -378,7 +378,6 @@
 <span class="kn">from</span> <span class="nn">minari</span> <span class="kn">import</span> <span class="n">DataCollector</span>
 <span class="kn">from</span> <span class="nn">minari.dataset.minari_dataset</span> <span class="kn">import</span> <span class="n">MinariDataset</span>
 <span class="kn">from</span> <span class="nn">minari.dataset.minari_storage</span> <span class="kn">import</span> <span class="n">MinariStorage</span>
-<span class="kn">from</span> <span class="nn">minari.serialization</span> <span class="kn">import</span> <span class="n">deserialize_space</span>
 <span class="kn">from</span> <span class="nn">minari.storage.datasets_root_dir</span> <span class="kn">import</span> <span class="n">get_dataset_path</span>
 
 
@@ -1054,7 +1053,7 @@
 
 
 <span class="k">def</span> <span class="nf">get_dataset_spec_dict</span><span class="p">(</span>
-        <span class="n">dataset_spec</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
+        <span class="n">dataset_spec</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span>
         <span class="n">print_version</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create dict of the dataset specs, including observation and action space.&quot;&quot;&quot;</span>
@@ -1062,17 +1061,8 @@
     <span class="n">action_space</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="p">[</span><span class="s2">&quot;action_space&quot;</span><span class="p">]</span>
     <span class="n">obs_space</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="p">[</span><span class="s2">&quot;observation_space&quot;</span><span class="p">]</span>
 
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action_space</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs_space</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
-
-    <span class="n">dataset_action_space</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">deserialize_space</span><span class="p">(</span><span class="n">action_space</span><span class="p">)</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-    <span class="p">)</span>
-    <span class="n">dataset_observation_space</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">deserialize_space</span><span class="p">(</span><span class="n">obs_space</span><span class="p">)</span>
-        <span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
-        <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-    <span class="p">)</span>
+    <span class="n">dataset_action_space</span> <span class="o">=</span> <span class="n">action_space</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">dataset_observation_space</span> <span class="o">=</span> <span class="n">obs_space</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
 
     <span class="n">version</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">dataset_spec</span><span class="p">[</span><span class="s1">&#39;minari_version&#39;</span><span class="p">])</span>
 
