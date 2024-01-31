@@ -13,6 +13,7 @@ import gymnasium as gym
 import numpy as np
 from gymnasium.core import ActType, ObsType
 from gymnasium.envs.registration import EnvSpec
+from gymnasium.spaces import Box, Dict as DictSpace, Discrete, MultiBinary, MultiDiscrete, Text
 
 from minari.data_collector.callbacks import (
     STEP_DATA_KEYS,
@@ -165,6 +166,44 @@ class DataCollector(gym.Wrapper):
 
         self._add_to_episode_buffer(episode_buffer, dict_data)
 
+    def _parse_action_space(self, action_space):
+        """ Recursively parses action space and returns an appropriate action definition consisting of np.nan and Null values only"""
+        
+        if isinstance(action_space, Discrete):
+            return np.nan
+        if isinstance(action_space, (Box, MultiBinary, MultiDiscrete)):
+            shape = action_space.shape # TODO - test if this works for MultiBinary and MultiDiscrete
+            return np.full(shape, np.nan)
+        if isinstance(action_space, Text):
+            return None
+        if isinstance(action_space, DictSpace):
+            res = {}
+            for key, val in action_space.items:
+                res[key] = self._parse_action_space(val)
+            return res
+        
+        raise TypeError(f"Encountered non supported type {type(action_space)} while parsing action spcace.")
+        
+    def _add_dummy_action_reward_truncated_terminated_values(
+            self,
+            action_space: Union[Box, Dict, Discrete, MultiBinary, MultiDiscrete, Text],
+            step_data: Dict[str, Any],
+    ):
+        """Add dummy action, reward, truncated, terminated values to episode buffer in order for the total number of observations 
+         in the buffer to be the same as the total number of actions, rewards, terminations and truncations
+
+        Args:
+            action_space (TODO): action space of the recorded environment
+            step_data (Dict): dictionary representing data for a given (in this case first) step in the environment
+
+        Returns:
+            Dict: new dictionary episode buffer with added values from step_data
+        """
+        step_data["rewards"] = np.nan
+        step_data["truncations"] = False
+        step_data["terminations"] = False
+        step_data["actions"] = self._parse_action_space(action_space)
+
     def _add_to_episode_buffer(
         self,
         episode_buffer: EpisodeBuffer,
@@ -267,6 +306,8 @@ class DataCollector(gym.Wrapper):
 
         obs, info = self.env.reset(seed=seed, options=options)
         step_data = self._step_data_callback(env=self.env, obs=obs, info=info)
+        step_data = self._add_dummy_action_reward_truncated_terminated_values(action_space=env.action_space, step_data=step_data)
+
         self._episode_id += 1
 
         if self._record_infos and self._reference_info is None:
