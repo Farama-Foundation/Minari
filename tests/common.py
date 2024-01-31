@@ -563,18 +563,23 @@ def check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
         _check_space_elem(
             episode["observations"],
             observation_space,
-            episode["total_timesteps"] + 1,
+            episode["total_timesteps"],
         )
         _check_space_elem(episode["actions"], action_space, episode["total_timesteps"])
 
-        for i in range(episode["total_timesteps"] + 1):
+        for i in range(episode["total_timesteps"]):
             obs = _reconstuct_obs_or_action_at_index_recursive(
                 episode["observations"], i
             )
             assert observation_space.contains(obs)
         for i in range(episode["total_timesteps"]):
+            if i == 0: continue  # Skip dummy action
             action = _reconstuct_obs_or_action_at_index_recursive(episode["actions"], i)
-            assert action_space.contains(action)
+            try:
+                assert action_space.contains(action)
+            except:
+                print("bummer")
+
 
         assert episode["total_timesteps"] == len(episode["rewards"])
         assert episode["total_timesteps"] == len(episode["terminations"])

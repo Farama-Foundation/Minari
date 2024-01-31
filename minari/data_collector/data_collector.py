@@ -178,14 +178,14 @@ class DataCollector(gym.Wrapper):
         elif isinstance(sample_action, list):
             return [self._get_dummy_action_sample(val) for val in sample_action]
 
-        # Leaf
-        elif isinstance(sample_action, str):
+        # Leaf, see https://numpy.org/doc/stable/reference/arrays.scalars.html
+        elif isinstance(sample_action, (str, np.flexible)):
             return None
 
         elif isinstance(sample_action, np.ndarray):
             return np.full(shape=sample_action.shape, fill_value=np.nan, dtype=sample_action.dtype)
 
-        elif isinstance(sample_action, (int, float)):
+        elif isinstance(sample_action, (int, float, np.number)):
             return np.nan
 
         raise TypeError(f"Encountered non supported type {type(sample_action)} while parsing action spcace.")
