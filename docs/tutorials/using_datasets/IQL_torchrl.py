@@ -409,7 +409,7 @@ def evaluate_policy(env, policy, num_eval_episodes=20):
 # %%
 from tqdm.auto import tqdm
 
-iterations = 10_000 # Set to 50_000 to reproduce the results below
+iterations = 10_000  # Set to 50_000 to reproduce the results below
 eval_interval = 1_000
 
 loss_logs = []

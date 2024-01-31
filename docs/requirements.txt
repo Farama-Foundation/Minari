@@ -15,3 +15,4 @@ git+https://github.com/sphinx-gallery/sphinx-gallery.git@4006662c8c1984453a247dc
 git+https://github.com/Farama-Foundation/Celshast#egg=furo
 torchrl-nightly>=2023.12.30
 pyvirtualdisplay
+moviepy
