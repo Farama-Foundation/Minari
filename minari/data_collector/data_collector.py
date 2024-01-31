@@ -8,6 +8,7 @@ import shutil
 import tempfile
 import warnings
 from typing import Any, Callable, Dict, List, Optional, SupportsFloat, Type, Union
+
 import gymnasium as gym
 import numpy as np
 from gymnasium.core import ActType, ObsType
@@ -173,28 +174,28 @@ class DataCollector(gym.Wrapper):
             }
         elif isinstance(sample_action, tuple):
             return tuple([self._get_dummy_action_sample(val) for val in sample_action])
-        
-        elif isinstance(sample_action, list): 
+
+        elif isinstance(sample_action, list):
             return [self._get_dummy_action_sample(val) for val in sample_action]
-        
+
         # Leaf
         elif isinstance(sample_action, str):
             return None
-        
+
         elif isinstance(sample_action, np.ndarray):
             return np.full(shape=sample_action.shape, fill_value=np.nan, dtype=sample_action.dtype)
-        
+
         elif isinstance(sample_action, (int, float)):
             return np.nan
-        
+
         raise TypeError(f"Encountered non supported type {type(sample_action)} while parsing action spcace.")
-        
-    def _add_dummy_action_reward_truncated_terminated_values(
+
+    def _add_dummy_buffer_entries(
             self,
             action_space: gym.Space,
-            step_data: Dict[str, Any],
+            step_data: Union[StepData, Dict[str, Any]],
     ):
-        """Add dummy action, reward, truncated, terminated values to episode buffer in order for the total number of observations 
+        """Add dummy action, reward, truncated, terminated values to episode buffer in order for the total number of observations
          in the buffer to be the same as the total number of actions, rewards, terminations and truncations
 
         Args:
@@ -312,7 +313,7 @@ class DataCollector(gym.Wrapper):
 
         obs, info = self.env.reset(seed=seed, options=options)
         step_data = self._step_data_callback(env=self.env, obs=obs, info=info)
-        step_data = self._add_dummy_action_reward_truncated_terminated_values(action_space=self._storage.action_space, step_data=step_data)
+        step_data = self._add_dummy_buffer_entries(action_space=self._storage.action_space, step_data=step_data)
 
         self._episode_id += 1
 
