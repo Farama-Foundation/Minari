@@ -166,7 +166,7 @@ class DataCollector(gym.Wrapper):
         self._add_to_episode_buffer(episode_buffer, dict_data)
 
     def _get_dummy_action_sample(self, sample_action):
-        """ Recursively parses action space and returns an appropriate action definition consisting of np.nan and Null values only"""
+        """Recursively parses action space and returns an appropriate action definition consisting of np.nan and Null values only."""
         if isinstance(sample_action, dict):
             return {
                 key: self._get_dummy_action_sample(val)
@@ -195,12 +195,14 @@ class DataCollector(gym.Wrapper):
             action_space: gym.Space,
             step_data: Union[StepData, Dict[str, Any]],
     ):
-        """Add dummy action, reward, truncated, terminated values to episode buffer in order for the total number of observations
-         in the buffer to be the same as the total number of actions, rewards, terminations and truncations
+        """Add dummy action, reward, truncated, terminated values.
+
+        Add dummy action, reward, truncated, terminated values to respective buffers in order for the total number of entries
+        in those buffers to be the same as the total number of observations.
 
         Args:
-            action_space (TODO): action space of the recorded environment
-            step_data (Dict): dictionary representing data for a given (in this case first) step in the environment
+            action_space (gym.Space): action space of the recorded environment
+            step_data (Union[StepData, Dict[str, any]]): dictionary representing data for a given (in this case first) step in the environment
 
         Returns:
             Dict: new dictionary episode buffer with added values from step_data
@@ -336,7 +338,7 @@ class DataCollector(gym.Wrapper):
     def _validate_buffer(self):
         if len(self._buffer) > 0:
             # Pop last episode from the buffer if "actions" key is not present (old check) or if only a single dummy action is present (new).
-            # Equivalently we could check if there is only a single "reward" entry == np.nan 
+            # Equivalently we could check if there is only a single "reward" entry == np.nan
             if "actions" not in self._buffer[-1].keys() or len(self._buffer[-1]["actions"]) == 1:
                 self._buffer.pop()
                 self._episode_id -= 1
