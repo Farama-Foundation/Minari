@@ -1,8 +1,8 @@
 import importlib.metadata
 import os
 import shutil
-from typing import Dict, Union
 import warnings
+from typing import Dict, Union
 
 from packaging.specifiers import SpecifierSet
 
