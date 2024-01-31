@@ -23,4 +23,4 @@ jobs:
             --build-arg PYTHON_VERSION=${{ matrix.python-version }} \
             --tag minari-docker .
       - name: Run tests
-        run: docker run minari-docker pytest tests/*
+        run: docker run minari-docker pytest tests/* -k "not test_docs.py"

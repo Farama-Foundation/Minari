@@ -15,7 +15,7 @@ To install the most recent version of the Minari library run this command:
 pip install minari
 ```
 
-The beta release is currently under development. If you'd like to start testing or contribute to Minari then please install this project from source with:
+If you'd like to start testing or contribute to Minari then please install this project from source with:
 
 ```
 git clone https://github.com/Farama-Foundation/Minari.git
@@ -23,7 +23,7 @@ cd Minari
 pip install -e .
 ```
 
-We support Python 3.8, 3.9, 3.10 and 3.11 on Linux and macOS.
+We support Python with minimum version 3.8 on Linux and macOS.
 
 ## Create Minari Dataset
 
@@ -77,11 +77,13 @@ for _ in range(total_episodes):
         if terminated or truncated:
             break
 
-dataset = env.create_dataset(dataset_id="cartpole-test-v0",
-                                                   algorithm_name="Random-Policy",
-                                                   code_permalink="https://github.com/Farama-Foundation/Minari",
-                                                   author="Farama",
-                                                   author_email="contact@farama.org")
+dataset = env.create_dataset(
+    dataset_id="cartpole-test-v0",
+    algorithm_name="Random-Policy",
+    code_permalink="https://github.com/Farama-Foundation/Minari",
+    author="Farama",
+    author_email="contact@farama.org"
+)
 ```
 
 ```{eval-rst}
@@ -92,11 +94,16 @@ The :func:`DataCollector.create_dataset` function returns a :class:`minari.Minar
 Once the dataset has been created we can check if the Minari dataset id appears in the list of local datasets:
 ```
 
-```python
->>> import minari
->>> local_datasets = minari.list_local_datasets()
->>> local_datasets.keys()
-dict_keys(['cartpole-test-v0'])
+```bash
+minari list local
+```
+```
+                     Local Minari datasets('/Users/farama/.minari/datasets/')
+┏━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┓
+┃ Name             ┃ Total Episodes ┃ Total Steps ┃ Dataset Size ┃ Author ┃ Email              ┃
+┡━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━┩
+│ cartpole-test-v0 │            100 │        2059 │ 1.6 MB       │ Farama │ contact@farama.org │
+└──────────────────┴────────────────┴─────────────┴──────────────┴────────┴────────────────────┘
 ```
 
 ```{eval-rst}
@@ -144,11 +151,13 @@ for episode_id in range(total_episodes):
         # Update local Minari dataset every 10 episodes.
         # This works as a checkpoint to not lose the already collected data
         if dataset is None:
-            dataset = env.create_dataset(dataset_id=dataset_name,
-                                                    algorithm_name="Random-Policy",
-                                                    code_permalink="https://github.com/Farama-Foundation/Minari",
-                                                    author="Farama",
-                                                    author_email="contact@farama.org")
+            dataset = env.create_dataset(
+                dataset_id=dataset_name,
+                algorithm_name="Random-Policy",
+                code_permalink="https://github.com/Farama-Foundation/Minari",
+                author="Farama",
+                author_email="contact@farama.org"
+            )
         else:
             env.add_to_dataset(dataset)
 ```
@@ -160,10 +169,12 @@ Minari will only be able to load datasets that are stored in your `local root di
 ```
 
 ```python
->>> import minari
->>> dataset = minari.load_dataset('cartpole-test-v0')
->>> dataset.id
-'cartpole-test-v0'
+import minari
+dataset = minari.load_dataset('cartpole-test-v0')
+print(dataset.id)
+```
+```
+cartpole-test-v0
 ```
 
 ### Download Remote Datasets
@@ -172,11 +183,18 @@ Minari will only be able to load datasets that are stored in your `local root di
 Minari also has a remote storage in a Google Cloud Platform (GCP) bucket which provides access to  standardize Minari datasets. The datasets hosted in the remote Farama server can be listed with :func:`minari.list_remote_datasets`:
 ```
 
-```python
->>> import minari
->>> remote_datasets = minari.list_remote_datasets()
->>> remote_datasets.keys()
-dict_keys(['door-expert-v1', 'door-human-v1', 'door-cloned-v1'])
+```bash
+minari list remote
+```
+```
+                                                Minari datasets in Farama server
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Name                         ┃ Total Episodes ┃ Total Steps ┃ Dataset Size ┃ Author            ┃ Email                  ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ antmaze-large-diverse-v0     │           1000 │     1000000 │ 700.5 MB     │ Alex Davey        │ amd1g13@soton.ac.uk    │
+│ antmaze-large-play-v0        │           1000 │     1000000 │ 700.5 MB     │ Alex Davey        │ amd1g13@soton.ac.uk    │
+│ antmaze-medium-diverse-v0    │           1000 │     1000000 │ 700.5 MB     │ Alex Davey        │ amd1g13@soton.ac.uk    │
+│             ...              │       ...      │     ...     │     ...      │        ...        │           ...          │
 ```
 
 ```{eval-rst}
@@ -185,12 +203,17 @@ Same as the :func:`minari.list_local_datasets` function, the :func:`minari.list_
 To download any of the remote datasets into the local `Minari root path </content/dataset_standards>`_ use the function :func:`minari.download_dataset`:
 ```
 
-```python
->>> import minari
->>> minari.download_dataset(dataset_id="door-cloned-v1")
->>> local_datasets = minari.list_local_datasets()
->>> local_datasets.keys()
-dict_keys(['door-cloned-v0'])
+```bash
+minari download door-human-v1
+minari list local
+```
+```
+                            Local Minari datasets('/Users/farama/.minari/datasets/')
+┏━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Name          ┃ Total Episodes ┃ Total Steps ┃ Dataset Size ┃ Author             ┃ Email                    ┃
+┡━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ door-human-v1 │             25 │        6729 │ 7.1 MB       │ Rodrigo de Lazcano │ rperezvicente@farama.org │
+└───────────────┴────────────────┴─────────────┴──────────────┴────────────────────┴──────────────────────────┘
 ```
 
 ### Sampling Episodes
@@ -217,12 +240,12 @@ for i in range(5):
 This code will show the following.
 ```
 
-```bash
->>> EPISODE ID'S SAMPLE 0: [1, 13, 0, 22, 15]
->>> EPISODE ID'S SAMPLE 1: [3, 10, 23, 7, 18]
->>> EPISODE ID'S SAMPLE 2: [12, 6, 0, 18, 19]
->>> EPISODE ID'S SAMPLE 3: [9, 4, 15, 3, 17]
->>> EPISODE ID'S SAMPLE 4: [19, 4, 12, 17, 21]
+```
+EPISODE ID'S SAMPLE 0: [1, 13, 0, 22, 15]
+EPISODE ID'S SAMPLE 1: [3, 10, 23, 7, 18]
+EPISODE ID'S SAMPLE 2: [12, 6, 0, 18, 19]
+EPISODE ID'S SAMPLE 3: [9, 4, 15, 3, 17]
+EPISODE ID'S SAMPLE 4: [19, 4, 12, 17, 21]
 ```
 
 ```{eval-rst}
@@ -246,10 +269,10 @@ for episode in episodes_generator:
 This code will show the following.
 ```
 
-```bash
->>> EPISODE ID 1
->>> EPISODE ID 2
->>> EPISODE ID 0
+```
+EPISODE ID 1
+EPISODE ID 2
+EPISODE ID 0
 ```
 
 ```{eval-rst}
@@ -287,9 +310,9 @@ print(f'TOTAL EPISODES FILTER DATASET: {filter_dataset.total_episodes}')
 
 Some episodes were removed from the dataset:
 
-```bash
->>> TOTAL EPISODES ORIGINAL DATASET: 25
->>> TOTAL EPISODES FILTER DATASET: 18
+```
+TOTAL EPISODES ORIGINAL DATASET: 25
+TOTAL EPISODES FILTER DATASET: 18
 ```
 
 #### Split Dataset
@@ -309,9 +332,9 @@ print(f'TOTAL EPISODES FIRST SPLIT: {split_datasets[0].total_episodes}')
 print(f'TOTAL EPISODES SECOND SPLIT: {split_datasets[1].total_episodes}')
 ```
 
-```bash
->>> TOTAL EPISODES FIRST SPLIT: 20
->>> TOTAL EPISODES SECOND SPLIT: 5
+```
+TOTAL EPISODES FIRST SPLIT: 20
+TOTAL EPISODES SECOND SPLIT: 5
 ```
 
 ### Recover Environment
@@ -352,17 +375,21 @@ for _ in range(100):
 ### Combine Minari Datasets
 
 ```{eval-rst}
-Lastly, in the case of having two or more Minari datasets created with the same environment we can combine these datasets into a single one by using the Minari function :func:`minari.combine_datasets`, i.e. the ``'AdroitHandDoor-v1'`` environment has two datasets available in the remote Farama servers, ``door-human-v0`` and ``door-expert-v0``, we can combine the episodes in these two datasets into a new Minari dataset ``door-all-v0``:
+Lastly, in the case of having two or more Minari datasets created with the same environment we can combine these datasets into a single one by using the Minari function :func:`minari.combine_datasets`, i.e. the ``'AdroitHandDoor-v1'`` environment has two datasets available in the remote Farama servers, ``door-human-v1`` and ``door-expert-v1``, we can combine the episodes in these two datasets into a new Minari dataset ``door-all-v1``:
 ```
 
-```python
->>> import minari
->>> human_dataset = minari.load_dataset('door-human-v0')
->>> expert_dataset = minari.load_dataset('door-expert-v0')
->>> combine_dataset = minari.combine_datasets(datasets_to_combine=[human_dataset,               expert_dataset],
-                                        new_dataset_id="door-all-v0")
->>> combine_dataset.id
-'door-all-v0'
->>> minari.list_local_datasets()
-dict_keys(['door-all-v0', 'door-human-v0', 'door-expert-v0'])
+```bash
+minari download door-expert-v1
+minari combine door-human-v1 door-expert-v1 --dataset-id=door-all-v1
+minari list local
+```
+```
+                             Local Minari datasets('/Users/farama/.minari/datasets/')
+┏━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃ Name           ┃ Total Episodes ┃ Total Steps ┃ Dataset Size ┃ Author             ┃ Email                    ┃
+┡━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━┩
+│ door-all-v1    │           5025 │     1006729 │ 1103.5 MB    │ Rodrigo de Lazcano │ rperezvicente@farama.org │
+│ door-expert-v1 │           5000 │     1000000 │ 1096.4 MB    │ Rodrigo de Lazcano │ rperezvicente@farama.org │
+│ door-human-v1  │             25 │        6729 │ 7.1 MB       │ Rodrigo de Lazcano │ rperezvicente@farama.org │
+└────────────────┴────────────────┴─────────────┴──────────────┴────────────────────┴──────────────────────────┘
 ```
