@@ -287,7 +287,9 @@ class DataCollector(gym.Wrapper):
 
     def _validate_buffer(self):
         if len(self._buffer) > 0:
-            if "actions" not in self._buffer[-1].keys():
+            # Pop last episode from the buffer if "actions" key is not present (old check) or if only a single dummy action is present (new).
+            # Equivalently we could check if there is only a single "reward" entry == np.nan 
+            if "actions" not in self._buffer[-1].keys() or len(self._buffer[-1]["actions"]) == 1:
                 self._buffer.pop()
                 self._episode_id -= 1
             elif not self._buffer[-1]["terminations"][-1]:
