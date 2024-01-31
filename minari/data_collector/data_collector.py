@@ -8,12 +8,10 @@ import shutil
 import tempfile
 import warnings
 from typing import Any, Callable, Dict, List, Optional, SupportsFloat, Type, Union
-
 import gymnasium as gym
 import numpy as np
 from gymnasium.core import ActType, ObsType
 from gymnasium.envs.registration import EnvSpec
-from gymnasium.spaces import Box, Dict as DictSpace, Discrete, MultiBinary, MultiDiscrete, Text
 
 from minari.data_collector.callbacks import (
     STEP_DATA_KEYS,
@@ -166,27 +164,34 @@ class DataCollector(gym.Wrapper):
 
         self._add_to_episode_buffer(episode_buffer, dict_data)
 
-    def _parse_action_space(self, action_space):
+    def _get_dummy_action_sample(self, sample_action):
         """ Recursively parses action space and returns an appropriate action definition consisting of np.nan and Null values only"""
+        if isinstance(sample_action, dict):
+            return {
+                key: self._get_dummy_action_sample(val)
+                for key, val in sample_action.items()
+            }
+        elif isinstance(sample_action, tuple):
+            return tuple([self._get_dummy_action_sample(val) for val in sample_action])
         
-        if isinstance(action_space, Discrete):
-            return np.nan
-        if isinstance(action_space, (Box, MultiBinary, MultiDiscrete)):
-            shape = action_space.shape # TODO - test if this works for MultiBinary and MultiDiscrete
-            return np.full(shape, np.nan)
-        if isinstance(action_space, Text):
+        elif isinstance(sample_action, list): 
+            return [self._get_dummy_action_sample(val) for val in sample_action]
+        
+        # Leaf
+        elif isinstance(sample_action, str):
             return None
-        if isinstance(action_space, DictSpace):
-            res = {}
-            for key, val in action_space.items:
-                res[key] = self._parse_action_space(val)
-            return res
         
-        raise TypeError(f"Encountered non supported type {type(action_space)} while parsing action spcace.")
+        elif isinstance(sample_action, np.ndarray):
+            return np.full(shape=sample_action.shape, fill_value=np.nan, dtype=sample_action.dtype)
+        
+        elif isinstance(sample_action, (int, float)):
+            return np.nan
+        
+        raise TypeError(f"Encountered non supported type {type(sample_action)} while parsing action spcace.")
         
     def _add_dummy_action_reward_truncated_terminated_values(
             self,
-            action_space: Union[Box, Dict, Discrete, MultiBinary, MultiDiscrete, Text],
+            action_space: gym.Space,
             step_data: Dict[str, Any],
     ):
         """Add dummy action, reward, truncated, terminated values to episode buffer in order for the total number of observations 
@@ -202,7 +207,8 @@ class DataCollector(gym.Wrapper):
         step_data["rewards"] = np.nan
         step_data["truncations"] = False
         step_data["terminations"] = False
-        step_data["actions"] = self._parse_action_space(action_space)
+        step_data["actions"] = self._get_dummy_action_sample(action_space.sample())
+        return step_data
 
     def _add_to_episode_buffer(
         self,
@@ -306,7 +312,7 @@ class DataCollector(gym.Wrapper):
 
         obs, info = self.env.reset(seed=seed, options=options)
         step_data = self._step_data_callback(env=self.env, obs=obs, info=info)
-        step_data = self._add_dummy_action_reward_truncated_terminated_values(action_space=env.action_space, step_data=step_data)
+        step_data = self._add_dummy_action_reward_truncated_terminated_values(action_space=self._storage.action_space, step_data=step_data)
 
         self._episode_id += 1
 
