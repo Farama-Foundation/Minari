@@ -45,8 +45,9 @@ import gymnasium
 import torch
 import torchrl
 
-torch.manual_seed(0)
-np.random.seed(0)
+seed = 42
+torch.manual_seed(seed)
+np.random.seed(seed)
 warnings.simplefilter("ignore")
 
 # %%
@@ -89,6 +90,7 @@ from torchrl.envs import DoubleToFloat, TransformedEnv
 # %%
 env_id = "AdroitHandPen-v1"
 example_env = GymEnv(env_id, from_pixels=True, pixels_only=False)
+example_env.set_seed(seed)
 
 # %%
 # ``GymEnv`` provides the usual methods such as ``env.step()`` and ``env.reset()``. However, instead of returning a tuple of step/reset data, they return a ``TensorDict``. A tensordict is essentially a dictionary of tensors whose first axis (the batch dimension) has the same size, and share some other properties like the device they are on. The tensordict returned has fields for each type of step data (e.g. ``observations``, ``actions``, ``rewards``):
@@ -129,7 +131,7 @@ print(f"Cumulative reward: {tensordict['next', 'reward'].sum():.2f}")
 # %%
 # .. code-block:: text
 #
-#     Cumulative reward: -31.10
+#     Cumulative reward: 884.10
 #
 
 # %%
@@ -155,6 +157,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 base_env = GymEnv(env_id, device=device)
 env = TransformedEnv(base_env, DoubleToFloat())
+env.set_seed(seed)
 
 # %%
 # Building a replay buffer
@@ -406,7 +409,7 @@ def evaluate_policy(env, policy, num_eval_episodes=20):
 # %%
 from tqdm.auto import tqdm
 
-iterations = 50_000
+iterations = 10_000 # Set to 50_000 to reproduce the results below
 eval_interval = 1_000
 
 loss_logs = []
@@ -450,6 +453,7 @@ axes[1].plot(eval_interval * np.arange(len(eval_reward_logs)), eval_reward_logs)
 axes[1].set_title("Cumulative reward")
 axes[1].set_xlabel("iterations")
 fig.tight_layout()
+plt.show()
 
 # %%
 # .. image:: /_static/img/tutorials/IQL_torchrl_training_graphs.png
@@ -476,7 +480,7 @@ print(f"Cumulative reward (averaged over 100 episodes): {final_score:.2f}")
 # %%
 # .. code-block:: text
 #
-#     Cumulative reward (averaged over 100 episodes): 1952.30
+#     Cumulative reward (averaged over 100 episodes): 1872.69
 #
 
 # %%
@@ -488,6 +492,7 @@ viewer_env = TransformedEnv(
     GymEnv(env_id, from_pixels=True, pixels_only=False),
     DoubleToFloat()
 )
+viewer_env.set_seed(seed)
 
 tensordict = viewer_env.rollout(max_steps=max_episode_steps, policy=model[0], auto_cast_to_device=True)
 print(f"Cumulative reward: {tensordict['next', 'reward'].sum():.2f}")
@@ -519,4 +524,4 @@ HTML("""
 #    :width: 32%
 #    :alt: Example episode 3 for Adroit Pen environment
 #
-# The performance varies quite a bit from episode to episode, but overall it's decent considering the small number of iterations and a mere 25 demonstrations in the original dataset! To improve performance further, you could try training it for the full 1M iterations, increasing the hidden layer size to 256, and tuning the other hyperparameters, such as the inverse temperature :math:`\beta` and the expectile :math:`\tau`.
+# The performance varies quite a bit from episode to episode, but overall it's decent considering there are only 25 demonstrations in the original dataset! To improve performance, you could try tuning the hyperparameters, such as the inverse temperature :math:`\beta` and the expectile :math:`\tau`, or use a larger dataset such as `pen-expert-v1` which has around 5000 episodes.
