@@ -3,7 +3,6 @@ import numpy as np
 import pytest
 from gymnasium import spaces
 
-import minari
 from minari import DataCollector, MinariDataset
 from minari.data_collector.callbacks import StepDataCallback
 from tests.common import (
@@ -43,7 +42,7 @@ class CustomSubsetInfoPadStepDataCallback(StepDataCallback):
     def __call__(self, env, **kwargs):
         step_data = super().__call__(env, **kwargs)
         if step_data["infos"] == {}:
-            step_data["infos"] = {"step": np.array([-1])}
+            step_data["infos"] = {"timestep": np.array([-1])}
         return step_data
 
 
@@ -135,9 +134,8 @@ def test_data_collector_step_data_callback_info_correction():
 
         env.reset()
 
-    dataset = minari.create_dataset_from_collector_env(
+    dataset = env.create_dataset(
         dataset_id=dataset_id,
-        collector_env=env,
         algorithm_name="random_policy",
         code_permalink=str(__file__),
         author="WillDudley",

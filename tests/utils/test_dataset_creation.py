@@ -131,9 +131,8 @@ def test_record_infos_collector_env(info_override):
 
         env.reset()
 
-    dataset = minari.create_dataset_from_collector_env(
+    dataset = env.create_dataset(
         dataset_id=dataset_id,
-        collector_env=env,
         algorithm_name="random_policy",
         code_permalink=CODELINK,
         author="WillDudley",

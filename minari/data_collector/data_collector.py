@@ -1,14 +1,11 @@
 from __future__ import annotations
 
 import copy
-import inspect
 import os
 import secrets
 import shutil
 import tempfile
-import warnings
 from typing import Any, Callable, Dict, List, Optional, SupportsFloat, Type, Union
-from minari.utils import _generate_dataset_metadata, _generate_dataset_path
 
 import gymnasium as gym
 import numpy as np
@@ -23,6 +20,7 @@ from minari.data_collector.callbacks import (
 )
 from minari.dataset.minari_dataset import MinariDataset
 from minari.dataset.minari_storage import MinariStorage
+from minari.utils import _generate_dataset_metadata, _generate_dataset_path
 
 
 # H5Py supports ints up to uint64
