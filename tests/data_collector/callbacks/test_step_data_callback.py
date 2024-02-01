@@ -43,7 +43,7 @@ class CustomSubsetInfoPadStepDataCallback(StepDataCallback):
     def __call__(self, env, **kwargs):
         step_data = super().__call__(env, **kwargs)
         if step_data["infos"] == {}:
-            step_data["infos"] = {"timestep": np.array([-1])}
+            step_data["infos"] = {"step": np.array([-1])}
         return step_data
 
 
@@ -163,7 +163,7 @@ def test_data_collector_step_data_callback_info_correction():
         record_infos=True,
     )
     # here we are checking to make sure that if we have an environment changing its info
-    # structure across timesteps, it is caught by the data_collector
+    # structure across steps, it is caught by the data_collector
     with pytest.raises(
         ValueError,
         match=r"Info structure inconsistent with info structure returned by original reset."

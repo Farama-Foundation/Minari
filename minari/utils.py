@@ -709,7 +709,7 @@ def get_dataset_spec_dict(
         version += f" ({__version__} installed)"
 
     md_dict = {
-        "Total Timesteps": dataset_spec["total_steps"],
+        "Total steps": dataset_spec["total_steps"],
         "Total Episodes": dataset_spec["total_episodes"],
         "Dataset Observation Space": f"`{dataset_observation_space}`",
         "Dataset Action Space": f"`{dataset_action_space}`",

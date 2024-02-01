@@ -5,7 +5,7 @@ Behavioral cloning with PyTorch
 # %%%
 # We present here how to perform behavioral cloning on a Minari dataset using `PyTorch <https://pytorch.org/>`_.
 # We will start generating the dataset of the expert policy for the `CartPole-v1 <https://gymnasium.farama.org/environments/classic_control/cart_pole/>`_ environment, which is a classic control problem.
-# The objective is to balance the pole on the cart, and we receive a reward of +1 for each successful timestep.
+# The objective is to balance the pole on the cart, and we receive a reward of +1 for each successful step.
 
 # %%
 # Imports

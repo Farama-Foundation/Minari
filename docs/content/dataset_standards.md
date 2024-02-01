@@ -560,6 +560,6 @@ As mentioned in the `Supported Spaces` section, many different observation and a
 
 ## Additional Information Formatting
 
-When creating a dataset with `DataCollector`, if the `DataCollector` is initialized with `record_infos=True`, an info dict must be provided from every call to the environment's `step` and `reset` function. The structure of the info dictionary must be the same across timesteps.
+When creating a dataset with `DataCollector`, if the `DataCollector` is initialized with `record_infos=True`, an info dict must be provided from every call to the environment's `step` and `reset` function. The structure of the info dictionary must be the same across steps.
 
-Given that it is not guaranteed that all Gymnasium environments provide infos at every timestep, we provide the `StepDataCallback` which can modify the infos from a non-compliant environment so they have the same structure at every timestep. An example of this pattern is available in our test `test_data_collector_step_data_callback_info_correction` in test_step_data_callback.py.
+Given that it is not guaranteed that all Gymnasium environments provide infos at every step, we provide the `StepDataCallback` which can modify the infos from a non-compliant environment so they have the same structure at every step. An example of this pattern is available in our test `test_data_collector_step_data_callback_info_correction` in test_step_data_callback.py.
