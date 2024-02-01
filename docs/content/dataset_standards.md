@@ -548,12 +548,12 @@ The `sampled_episodes` variable will be a list of 10 `EpisodeData` elements, eac
 | ----------------- | ------------------------------------ | ------------------------------------------------------------- |
 | `id`              | `np.int64`                           | ID of the episode.                                            |
 | `seed`            | `np.int64`                           | Seed used to reset the episode.                               |
-| `total_steps` | `np.int64`                           | Number of timesteps in the episode.                           |
-| `observations`    | `np.ndarray`, `list`, `tuple`, `dict` | Observations for each timestep including initial observation. |
-| `actions`         | `np.ndarray`, `list`, `tuple`, `dict` | Actions for each timestep.                                    |
-| `rewards`         | `np.ndarray`                         | Rewards for each timestep.                                    |
-| `terminations`    | `np.ndarray`                         | Terminations for each timestep.                               |
-| `truncations`     | `np.ndarray`                         | Truncations for each timestep.                                |
+| `total_steps`     | `np.int64`                           | Number of steps in the episode.                               |
+| `observations`    | `np.ndarray`, `list`, `tuple`, `dict` | Observations for each step including initial observation.    |
+| `actions`         | `np.ndarray`, `list`, `tuple`, `dict` | Actions for each step.                                       |
+| `rewards`         | `np.ndarray`                         | Rewards for each step.                                        |
+| `terminations`    | `np.ndarray`                         | Terminations for each step.                                   |
+| `truncations`     | `np.ndarray`                         | Truncations for each step.                                    |
 | `infos`           | `dict`                               | A dictionary containing additional information.               |
 
 As mentioned in the `Supported Spaces` section, many different observation and action spaces are supported so the data type for these fields are dependent on the environment being used.
