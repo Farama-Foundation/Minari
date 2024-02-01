@@ -323,7 +323,8 @@ class DataCollector(gym.Wrapper):
 
     def _validate_buffer(self):
         if len(self._buffer) > 0:
-            if len(self._buffer[-1]["rewards"]) == 1:
+            rewards = self._buffer[-1]["rewards"]
+            if len(rewards) == 1 and np.isnan(rewards[0]):
                 self._buffer.pop()
                 self._episode_id -= 1
             elif not self._buffer[-1]["terminations"][-1]:
