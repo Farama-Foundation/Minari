@@ -361,12 +361,10 @@
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">secrets</span>
 <span class="kn">import</span> <span class="nn">shutil</span>
 <span class="kn">import</span> <span class="nn">tempfile</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
@@ -382,23 +380,13 @@
 <span class="p">)</span>
 <span class="kn">from</span> <span class="nn">minari.dataset.minari_dataset</span> <span class="kn">import</span> <span class="n">MinariDataset</span>
 <span class="kn">from</span> <span class="nn">minari.dataset.minari_storage</span> <span class="kn">import</span> <span class="n">MinariStorage</span>
+<span class="kn">from</span> <span class="nn">minari.utils</span> <span class="kn">import</span> <span class="n">_generate_dataset_metadata</span><span class="p">,</span> <span class="n">_generate_dataset_path</span>
 
 
 <span class="c1"># H5Py supports ints up to uint64</span>
 <span class="n">AUTOSEED_BIT_SIZE</span> <span class="o">=</span> <span class="mi">64</span>
 
 <span class="n">EpisodeBuffer</span> <span class="o">=</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span>  <span class="c1"># TODO: narrow this down</span>
-
-
-<span class="k">def</span> <span class="fm">__getattr__</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;DataCollectorV0&quot;</span><span class="p">:</span>
-        <span class="n">stacklevel</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">inspect</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;DataCollectorV0 is deprecated and will be removed. Use DataCollector instead.&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="n">stacklevel</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">DataCollector</span>
-    <span class="k">elif</span> <span class="n">name</span> <span class="o">==</span> <span class="s2">&quot;__path__&quot;</span><span class="p">:</span>
-        <span class="k">return</span> <span class="kc">False</span>  <span class="c1"># see https://stackoverflow.com/a/60803436</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;cannot import name &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; from &#39;</span><span class="si">{</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39; (</span><span class="si">{</span><span class="vm">__file__</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="DataCollector">
@@ -719,8 +707,6 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            MinariDataset</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># TODO: move the import to top of the file after removing minari.create_dataset_from_collector_env() in 0.5.0</span>
-        <span class="kn">from</span> <span class="nn">minari.utils</span> <span class="kn">import</span> <span class="n">_generate_dataset_metadata</span><span class="p">,</span> <span class="n">_generate_dataset_path</span>
         <span class="n">dataset_path</span> <span class="o">=</span> <span class="n">_generate_dataset_path</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
         <span class="n">metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="n">_generate_dataset_metadata</span><span class="p">(</span>
             <span class="n">dataset_id</span><span class="p">,</span>
@@ -737,7 +723,7 @@
             <span class="n">minari_version</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">save_to_disk</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_save_to_disk</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
 
         <span class="c1"># will be able to calculate dataset size only after saving the disk, so updating the dataset metadata post `save_to_disk` method</span>
 
@@ -746,7 +732,7 @@
         <span class="n">dataset</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">update_metadata</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">dataset</span>
 
-    <span class="k">def</span> <span class="nf">save_to_disk</span><span class="p">(</span>
+    <span class="k">def</span> <span class="nf">_save_to_disk</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span> <span class="n">dataset_metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Save all in-memory buffer data and move temporary files to a permanent location in disk.</span>
@@ -755,7 +741,6 @@
 <span class="sd">            path (str): path to store the dataset, e.g.: &#39;/home/foo/datasets/data&#39;</span>
 <span class="sd">            dataset_metadata (Dict, optional): additional metadata to add to the dataset file. Defaults to {}.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;This method is deprecated and will become private in v0.5.0.&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_validate_buffer</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_storage</span><span class="o">.</span><span class="n">update_episodes</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>

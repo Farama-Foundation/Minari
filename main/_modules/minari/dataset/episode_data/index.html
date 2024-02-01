@@ -375,7 +375,7 @@
 
     <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
-    <span class="n">total_timesteps</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">total_steps</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">observations</span><span class="p">:</span> <span class="n">Any</span>
     <span class="n">actions</span><span class="p">:</span> <span class="n">Any</span>
     <span class="n">rewards</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
@@ -388,7 +388,7 @@
             <span class="s2">&quot;EpisodeData(&quot;</span>
             <span class="sa">f</span><span class="s2">&quot;id=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;seed=</span><span class="si">{</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seed</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;total_timesteps=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">total_timesteps</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;total_steps=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">total_steps</span><span class="si">}</span><span class="s2">, &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;observations=</span><span class="si">{</span><span class="n">EpisodeData</span><span class="o">.</span><span class="n">_repr_space_values</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">observations</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;actions=</span><span class="si">{</span><span class="n">EpisodeData</span><span class="o">.</span><span class="n">_repr_space_values</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">)</span><span class="si">}</span><span class="s2">, &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;rewards=ndarray of </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rewards</span><span class="p">)</span><span class="si">}</span><span class="s2"> floats, &quot;</span>

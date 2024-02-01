@@ -999,29 +999,29 @@
 <td><p><code class="docutils literal notranslate"><span class="pre">np.int64</span></code></p></td>
 <td><p>Seed used to reset the episode.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">total_timesteps</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">total_steps</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">np.int64</span></code></p></td>
-<td><p>Number of timesteps in the episode.</p></td>
+<td><p>Number of steps in the episode.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">observations</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code>, <code class="docutils literal notranslate"><span class="pre">list</span></code>, <code class="docutils literal notranslate"><span class="pre">tuple</span></code>, <code class="docutils literal notranslate"><span class="pre">dict</span></code></p></td>
-<td><p>Observations for each timestep including initial observation.</p></td>
+<td><p>Observations for each step including initial observation.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">actions</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code>, <code class="docutils literal notranslate"><span class="pre">list</span></code>, <code class="docutils literal notranslate"><span class="pre">tuple</span></code>, <code class="docutils literal notranslate"><span class="pre">dict</span></code></p></td>
-<td><p>Actions for each timestep.</p></td>
+<td><p>Actions for each step.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">rewards</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code></p></td>
-<td><p>Rewards for each timestep.</p></td>
+<td><p>Rewards for each step.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">terminations</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code></p></td>
-<td><p>Terminations for each timestep.</p></td>
+<td><p>Terminations for each step.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">truncations</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code></p></td>
-<td><p>Truncations for each timestep.</p></td>
+<td><p>Truncations for each step.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">infos</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">dict</span></code></p></td>
@@ -1035,8 +1035,8 @@
 </section>
 <section id="additional-information-formatting">
 <h2>Additional Information Formatting<a class="headerlink" href="#additional-information-formatting" title="Link to this heading">#</a></h2>
-<p>When creating a dataset with <code class="docutils literal notranslate"><span class="pre">DataCollector</span></code>, if the <code class="docutils literal notranslate"><span class="pre">DataCollector</span></code> is initialized with <code class="docutils literal notranslate"><span class="pre">record_infos=True</span></code>, an info dict must be provided from every call to the environment’s <code class="docutils literal notranslate"><span class="pre">step</span></code> and <code class="docutils literal notranslate"><span class="pre">reset</span></code> function. The structure of the info dictionary must be the same across timesteps.</p>
-<p>Given that it is not guaranteed that all Gymnasium environments provide infos at every timestep, we provide the <code class="docutils literal notranslate"><span class="pre">StepDataCallback</span></code> which can modify the infos from a non-compliant environment so they have the same structure at every timestep. An example of this pattern is available in our test <code class="docutils literal notranslate"><span class="pre">test_data_collector_step_data_callback_info_correction</span></code> in test_step_data_callback.py.</p>
+<p>When creating a dataset with <code class="docutils literal notranslate"><span class="pre">DataCollector</span></code>, if the <code class="docutils literal notranslate"><span class="pre">DataCollector</span></code> is initialized with <code class="docutils literal notranslate"><span class="pre">record_infos=True</span></code>, an info dict must be provided from every call to the environment’s <code class="docutils literal notranslate"><span class="pre">step</span></code> and <code class="docutils literal notranslate"><span class="pre">reset</span></code> function. The structure of the info dictionary must be the same across steps.</p>
+<p>Given that it is not guaranteed that all Gymnasium environments provide infos at every step, we provide the <code class="docutils literal notranslate"><span class="pre">StepDataCallback</span></code> which can modify the infos from a non-compliant environment so they have the same structure at every step. An example of this pattern is available in our test <code class="docutils literal notranslate"><span class="pre">test_data_collector_step_data_callback_info_correction</span></code> in test_step_data_callback.py.</p>
 </section>
 </section>
 
