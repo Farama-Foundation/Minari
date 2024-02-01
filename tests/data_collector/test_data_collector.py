@@ -194,9 +194,7 @@ def test_reproducibility(seed):
 
         assert np.allclose(obs, episode.observations[0])
 
-        for k in range(episode.total_timesteps):
-            if k == 0:
-                continue  # Skip first dummy action
+        for k in range(1, episode.total_timesteps):
             obs, rew, term, trunc, _ = env.step(episode.actions[k])
             assert np.allclose(obs, episode.observations[k])
             assert rew == episode.rewards[k]

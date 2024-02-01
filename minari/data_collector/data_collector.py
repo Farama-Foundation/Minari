@@ -190,29 +190,6 @@ class DataCollector(gym.Wrapper):
 
         raise TypeError(f"Encountered non supported type {type(sample_action)} while parsing action spcace.")
 
-    def _add_dummy_buffer_entries(
-            self,
-            action_space: gym.Space,
-            step_data: Union[StepData, Dict[str, Any]],
-    ):
-        """Add dummy action, reward, truncated, terminated values.
-
-        Add dummy action, reward, truncated, terminated values to respective buffers in order for the total number of entries
-        in those buffers to be the same as the total number of observations.
-
-        Args:
-            action_space (gym.Space): action space of the recorded environment
-            step_data (Union[StepData, Dict[str, any]]): dictionary representing data for a given (in this case first) step in the environment
-
-        Returns:
-            Dict: new dictionary episode buffer with added values from step_data
-        """
-        step_data["rewards"] = np.nan
-        step_data["truncations"] = False
-        step_data["terminations"] = False
-        step_data["actions"] = self._get_dummy_action_sample(action_space.sample())
-        return step_data
-
     def _add_to_episode_buffer(
         self,
         episode_buffer: EpisodeBuffer,
@@ -279,8 +256,13 @@ class DataCollector(gym.Wrapper):
         if step_data["terminations"] or step_data["truncations"]:
             self._episode_id += 1
             eps_buff = {"id": self._episode_id}
+            sample_action = self._storage.action_space.sample()
             previous_data = {
                 "observations": step_data["observations"],
+                "rewards": np.nan,
+                "truncations": False,
+                "terminations": False,
+                "actions": self._get_dummy_action_sample(sample_action),
                 "infos": step_data["infos"],
             }
             self._add_step_data(eps_buff, previous_data)
@@ -315,7 +297,11 @@ class DataCollector(gym.Wrapper):
 
         obs, info = self.env.reset(seed=seed, options=options)
         step_data = self._step_data_callback(env=self.env, obs=obs, info=info)
-        step_data = self._add_dummy_buffer_entries(action_space=self._storage.action_space, step_data=step_data)
+        step_data["rewards"] = np.nan
+        step_data["truncations"] = False
+        step_data["terminations"] = False
+        sample_action = self._storage.action_space.sample()
+        step_data["actions"] = self._get_dummy_action_sample(sample_action)
 
         self._episode_id += 1
 
@@ -337,9 +323,7 @@ class DataCollector(gym.Wrapper):
 
     def _validate_buffer(self):
         if len(self._buffer) > 0:
-            # Pop last episode from the buffer if "actions" key is not present (old check) or if only a single dummy action is present (new).
-            # Equivalently we could check if there is only a single "reward" entry == np.nan
-            if "actions" not in self._buffer[-1].keys() or len(self._buffer[-1]["actions"]) == 1:
+            if len(self._buffer[-1]["rewards"]) == 1:
                 self._buffer.pop()
                 self._episode_id -= 1
             elif not self._buffer[-1]["terminations"][-1]:
