@@ -17,7 +17,7 @@
 
     The seed used to reset this episode in the Gymnasium API.
 
-.. autoattribute:: minari.EpisodeData.total_timesteps
+.. autoattribute:: minari.EpisodeData.total_steps
 
     The number of timesteps contained in this episode.
 

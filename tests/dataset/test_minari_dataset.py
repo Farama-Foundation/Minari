@@ -38,7 +38,7 @@ def test_episode_data(space: gym.Space):
     episode_data = EpisodeData(
         id=id,
         seed=seed,
-        total_timesteps=total_timestep,
+        total_steps=total_timestep,
         observations=space.sample(),
         actions=space.sample(),
         rewards=rewards,
@@ -50,7 +50,7 @@ def test_episode_data(space: gym.Space):
     pattern = r"EpisodeData\("
     pattern += r"id=\d+, "
     pattern += r"seed=\d+, "
-    pattern += r"total_timesteps=100, "
+    pattern += r"total_steps=100, "
     pattern += r"observations=.+, "
     pattern += r"actions=.+, "
     pattern += r"rewards=.+, "
