@@ -270,7 +270,7 @@ class MinariStorage:
                     assert "seed" not in episode_group.attrs.keys()
                     episode_group.attrs["seed"] = eps_buff.pop("seed")
                 total_steps = len(eps_buff["rewards"])
-                if eps_buff["rewards"][0] == np.nan:
+                if np.isnan(eps_buff["rewards"][0]):
                     total_steps -= 1
                 episode_group.attrs["total_steps"] = total_steps
                 additional_steps += total_steps
