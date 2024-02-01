@@ -227,7 +227,7 @@ class MinariStorage:
 
                 ep_dict = {
                     "id": ep_group.attrs.get("id"),
-                    "total_timesteps": ep_group.attrs.get("total_steps"),
+                    "total_steps": ep_group.attrs.get("total_steps"),
                     "seed": seed,
                     "observations": self._decode_space(
                         ep_group["observations"], self.observation_space

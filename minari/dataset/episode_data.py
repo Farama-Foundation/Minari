@@ -13,7 +13,7 @@ class EpisodeData:
 
     id: int
     seed: Optional[int]
-    total_timesteps: int
+    total_steps: int
     observations: Any
     actions: Any
     rewards: np.ndarray
@@ -26,7 +26,7 @@ class EpisodeData:
             "EpisodeData("
             f"id={repr(self.id)}, "
             f"seed={repr(self.seed)}, "
-            f"total_timesteps={self.total_timesteps}, "
+            f"total_steps={self.total_steps}, "
             f"observations={EpisodeData._repr_space_values(self.observations)}, "
             f"actions={EpisodeData._repr_space_values(self.actions)}, "
             f"rewards=ndarray of {len(self.rewards)} floats, "

@@ -3,7 +3,6 @@ import numpy as np
 import pytest
 from gymnasium import spaces
 
-import minari
 from minari import DataCollector, MinariDataset
 from minari.data_collector.callbacks import StepDataCallback
 from tests.common import (
@@ -135,9 +134,8 @@ def test_data_collector_step_data_callback_info_correction():
 
         env.reset()
 
-    dataset = minari.create_dataset_from_collector_env(
+    dataset = env.create_dataset(
         dataset_id=dataset_id,
-        collector_env=env,
         algorithm_name="random_policy",
         code_permalink=str(__file__),
         author="WillDudley",
@@ -163,7 +161,7 @@ def test_data_collector_step_data_callback_info_correction():
         record_infos=True,
     )
     # here we are checking to make sure that if we have an environment changing its info
-    # structure across timesteps, it is caught by the data_collector
+    # structure across steps, it is caught by the data_collector
     with pytest.raises(
         ValueError,
         match=r"Info structure inconsistent with info structure returned by original reset."

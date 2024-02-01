@@ -80,7 +80,7 @@ def get_single_step_from_episode(episode: EpisodeData, index: int) -> EpisodeDat
 
     step_data = {
         "id": episode.id,
-        "total_timesteps": 1,
+        "total_steps": 1,
         "seed": None,
         "observations": observation,
         "actions": action,
@@ -135,7 +135,7 @@ def test_truncation_without_reset(dataset_id, env_id):
     episodes_generator = dataset.iterate_episodes()
     last_step = get_single_step_from_episode(next(episodes_generator), -1)
     for episode in episodes_generator:
-        assert episode.total_timesteps == ForceTruncateStepDataCallback.episode_steps
+        assert episode.total_steps == ForceTruncateStepDataCallback.episode_steps
         first_step = get_single_step_from_episode(episode, 0)
         # Check that the last observation of the previous episode is carried over to the next episode
         # as the reset observation.
@@ -194,7 +194,7 @@ def test_reproducibility(seed):
 
         assert np.allclose(obs, episode.observations[0])
 
-        for k in range(episode.total_timesteps):
+        for k in range(episode.total_steps):
             obs, rew, term, trunc, _ = env.step(episode.actions[k])
             assert np.allclose(obs, episode.observations[k + 1])
             assert rew == episode.rewards[k]

@@ -200,7 +200,7 @@ def test_episode_metadata(tmp_dataset_dir):
     ],
 )
 def test_minari_get_dataset_size_from_collector_env(dataset_id, env_id):
-    """Test get_dataset_size method for dataset made using create_dataset_from_collector_env method."""
+    """Test get_dataset_size method for dataset made with DataCollector environment."""
     # delete the test dataset if it already exists
     local_datasets = minari.list_local_datasets()
     if dataset_id in local_datasets:

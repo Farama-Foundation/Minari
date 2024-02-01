@@ -31,14 +31,14 @@ register_dummy_envs()
 def test_episode_data(space: gym.Space):
     id = np.random.randint(1024)
     seed = np.random.randint(1024)
-    total_timestep = 100
-    rewards = np.random.randn(total_timestep)
-    terminations = np.random.choice([True, False], size=(total_timestep,))
-    truncations = np.random.choice([True, False], size=(total_timestep,))
+    total_step = 100
+    rewards = np.random.randn(total_step)
+    terminations = np.random.choice([True, False], size=(total_step,))
+    truncations = np.random.choice([True, False], size=(total_step,))
     episode_data = EpisodeData(
         id=id,
         seed=seed,
-        total_timesteps=total_timestep,
+        total_steps=total_step,
         observations=space.sample(),
         actions=space.sample(),
         rewards=rewards,
@@ -50,7 +50,7 @@ def test_episode_data(space: gym.Space):
     pattern = r"EpisodeData\("
     pattern += r"id=\d+, "
     pattern += r"seed=\d+, "
-    pattern += r"total_timesteps=100, "
+    pattern += r"total_steps=100, "
     pattern += r"observations=.+, "
     pattern += r"actions=.+, "
     pattern += r"rewards=.+, "
