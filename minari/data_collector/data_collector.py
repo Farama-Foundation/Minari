@@ -187,6 +187,7 @@ class DataCollector(gym.Wrapper):
 
         elif isinstance(sample_action, (int, float, np.number)):
             return np.nan
+            # return 0
 
         raise TypeError(f"Encountered non supported type {type(sample_action)} while parsing action spcace.")
 
@@ -196,9 +197,6 @@ class DataCollector(gym.Wrapper):
         step_data: Dict[str, Any],
     ):
         for key, value in step_data.items():
-            if value is None:
-                continue
-
             if key not in episode_buffer:
                 episode_buffer[key] = {} if isinstance(value, dict) else []
 

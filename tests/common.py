@@ -632,6 +632,9 @@ def _check_space_elem(data: Any, space: spaces.Space, n_elements: int):
         for key in data.keys():
             _check_space_elem(data[key], space[key], n_elements)
     else:
+        x = data
+        y = len(data)
+        z = n_elements
         assert len(data) == n_elements
 
 
@@ -711,7 +714,8 @@ def check_episode_data_integrity(
             observation_space,
             episode.total_timesteps + 1,
         )
-        _check_space_elem(episode.actions, action_space, episode.total_timesteps)
+        offset = 1 if np.isnan(episode.rewards[0]) else 0
+        _check_space_elem(episode.actions, action_space, episode.total_timesteps + offset)
 
         for i in range(episode.total_timesteps + 1):
             obs = _reconstuct_obs_or_action_at_index_recursive(episode.observations, i)
@@ -723,13 +727,13 @@ def check_episode_data_integrity(
 
             assert observation_space.contains(obs)
 
-        for i in range(episode.total_timesteps):
+        for i in range(offset, episode.total_timesteps + offset):
             action = _reconstuct_obs_or_action_at_index_recursive(episode.actions, i)
             assert action_space.contains(action)
 
-        assert episode.total_timesteps == len(episode.rewards)
-        assert episode.total_timesteps == len(episode.terminations)
-        assert episode.total_timesteps == len(episode.truncations)
+        assert episode.total_timesteps + offset == len(episode.rewards)
+        assert episode.total_timesteps + offset == len(episode.terminations)
+        assert episode.total_timesteps + offset == len(episode.truncations)
 
 
 def check_infos_equal(info_1: Dict, info_2: Dict) -> bool:
