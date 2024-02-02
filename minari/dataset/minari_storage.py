@@ -190,7 +190,7 @@ class MinariStorage:
             for i in range(len(hdf_ref.keys())):
                 result.append(
                     self._decode_space(hdf_ref[f"_index_{i}"], space.spaces[i])
-                )  
+                )
             return tuple(result)
         elif isinstance(space, gym.spaces.Dict):
             assert isinstance(hdf_ref, h5py.Group)

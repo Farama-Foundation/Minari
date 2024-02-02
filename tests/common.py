@@ -633,9 +633,6 @@ def _check_space_elem(data: Any, space: spaces.Space, n_elements: int):
         for key in data.keys():
             _check_space_elem(data[key], space[key], n_elements)
     else:
-        x = data
-        y = len(data)
-        z = n_elements
         assert len(data) == n_elements
 
 
