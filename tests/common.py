@@ -560,27 +560,28 @@ def check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
     # verify the actions and observations are in the appropriate action space and observation space, and that the episode lengths are correct
     for episode in episodes:
         offset = 1 if np.isnan(episode["rewards"][0]) else 0
-        total_steps += episode["total_timesteps"]
+        total_steps += episode["total_steps"]
         _check_space_elem(
             episode["observations"],
             observation_space,
-            episode["total_timesteps"] + 1,
+            episode["total_steps"] + 1,
         )
-        _check_space_elem(episode["actions"], action_space, episode["total_timesteps"] + offset)
+        _check_space_elem(episode["actions"], action_space, episode["total_steps"] + offset)
 
-        for i in range(episode["total_timesteps"] + 1):
+        for i in range(episode["total_steps"] + 1):
             obs = _reconstuct_obs_or_action_at_index_recursive(
                 episode["observations"], i
             )
             assert observation_space.contains(obs)
-        for i in range(1, episode["total_timesteps"] + offset):
+
+        for i in range(1, episode["total_steps"] + offset):
             action = _reconstuct_obs_or_action_at_index_recursive(episode["actions"], i)
             res = action_space.contains(action)
             assert res
 
-        assert episode["total_timesteps"] + offset == len(episode["rewards"]) 
-        assert episode["total_timesteps"] + offset == len(episode["terminations"])
-        assert episode["total_timesteps"] + offset == len(episode["truncations"])
+        assert episode["total_steps"] + offset == len(episode["rewards"])
+        assert episode["total_steps"] + offset == len(episode["terminations"])
+        assert episode["total_steps"] + offset == len(episode["truncations"])
     assert total_steps == data.total_steps
 
 
@@ -712,12 +713,12 @@ def check_episode_data_integrity(
         _check_space_elem(
             episode.observations,
             observation_space,
-            episode.total_timesteps + 1,
+            episode.total_steps + 1,
         )
         offset = 1 if np.isnan(episode.rewards[0]) else 0
-        _check_space_elem(episode.actions, action_space, episode.total_timesteps + offset)
+        _check_space_elem(episode.actions, action_space, episode.total_steps + offset)
 
-        for i in range(episode.total_timesteps + 1):
+        for i in range(episode.total_steps + 1):
             obs = _reconstuct_obs_or_action_at_index_recursive(episode.observations, i)
             if info_sample is not None:
                 assert check_infos_equal(
@@ -727,13 +728,13 @@ def check_episode_data_integrity(
 
             assert observation_space.contains(obs)
 
-        for i in range(offset, episode.total_timesteps + offset):
+        for i in range(offset, episode.total_steps + offset):
             action = _reconstuct_obs_or_action_at_index_recursive(episode.actions, i)
             assert action_space.contains(action)
 
-        assert episode.total_timesteps + offset == len(episode.rewards)
-        assert episode.total_timesteps + offset == len(episode.terminations)
-        assert episode.total_timesteps + offset == len(episode.truncations)
+        assert episode.total_steps + offset == len(episode.rewards)
+        assert episode.total_steps + offset == len(episode.terminations)
+        assert episode.total_steps + offset == len(episode.truncations)
 
 
 def check_infos_equal(info_1: Dict, info_2: Dict) -> bool:
