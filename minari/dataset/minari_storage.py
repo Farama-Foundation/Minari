@@ -190,7 +190,7 @@ class MinariStorage:
             for i in range(len(hdf_ref.keys())):
                 result.append(
                     self._decode_space(hdf_ref[f"_index_{i}"], space.spaces[i])
-                )
+                )  
             return tuple(result)
         elif isinstance(space, gym.spaces.Dict):
             assert isinstance(hdf_ref, h5py.Group)
@@ -204,7 +204,12 @@ class MinariStorage:
             return list(result)
         else:
             assert isinstance(hdf_ref, h5py.Dataset)
-            return hdf_ref[()]
+            array = hdf_ref[()]
+            # Dirty trick to handle Discrete spaces since it is not possible to store np.nan in an array of int dtype.
+            # See SO discussion: https://stackoverflow.com/questions/11548005/numpy-or-pandas-keeping-array-type-as-integer-while-having-a-nan-value
+            if len(array.shape) == 1 and np.isnan(array[0]) and np.all([x.is_integer() for x in array[1:]]):
+                array = [np.nan] + [int(x) for x in array[1:]]
+            return array
 
     def get_episodes(self, episode_indices: Iterable[int]) -> List[dict]:
         """Get a list of episodes.

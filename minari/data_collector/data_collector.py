@@ -197,6 +197,9 @@ class DataCollector(gym.Wrapper):
         step_data: Dict[str, Any],
     ):
         for key, value in step_data.items():
+            # if value is None:
+            #     continue
+
             if key not in episode_buffer:
                 episode_buffer[key] = {} if isinstance(value, dict) else []
 
