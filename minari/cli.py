@@ -159,7 +159,7 @@ def show(dataset: Annotated[str, typer.Argument()]):
     dataset_spec_table.add_column(style="not bold")
 
     for key, value in get_dataset_spec_dict(dst_metadata, print_version=True).items():
-        md = Markdown(value, inline_code_lexer="python", inline_code_theme="monokai")
+        md = Markdown(str(value), inline_code_lexer="python", inline_code_theme="monokai")
         dataset_spec_table.add_row(key, md)
 
     print(Markdown(f"""# {dataset_id_text}"""))

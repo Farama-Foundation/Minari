@@ -17,18 +17,18 @@
 
     The seed used to reset this episode in the Gymnasium API.
 
-.. autoattribute:: minari.EpisodeData.total_timesteps
+.. autoattribute:: minari.EpisodeData.total_steps
 
-    The number of timesteps contained in this episode.
+    The number of steps contained in this episode.
 
 .. autoattribute:: minari.EpisodeData.observations
 
     The observations of the environment. The initial and final observations are included meaning that the number
-    of observations will be increased by one compared to the number of timesteps
+    of observations will be increased by one compared to the number of steps.
 
 .. autoattribute:: minari.EpisodeData.actions
 
-    The actions taken in each episode timestep.
+    The actions taken in each episode step.
 
 .. autoattribute:: minari.EpisodeData.terminations
 
