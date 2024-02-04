@@ -15,7 +15,7 @@ from minari.serialization import deserialize_space, serialize_space
 
 
 PathLike = Union[str, os.PathLike]
-_METADATA_FILE_NAME = "metadata.json"
+METADATA_FILE_NAME = "metadata.json"
 
 
 class MinariStorage(ABC):
@@ -27,27 +27,27 @@ class MinariStorage(ABC):
         observation_space: gym.Space,
         action_space: gym.Space,
     ):
-        """Initialize a MinariStorage with an existing data path.
-
-        To create a new dataset, use the class method `new`.
-
-        Args:
-            data_path (str or Path): directory containing the data.
-
-        Raises:
-            ValueError: if the specified path doesn't exist or doesn't contain any data.
-
-        """
         self._data_path: pathlib.Path = data_path
         self._observation_space = observation_space
         self._action_space = action_space
 
     @classmethod
-    def read(cls, data_path: PathLike) -> MinariStorage:  # TODO: docs
+    def read(cls, data_path: PathLike) -> MinariStorage:
+        """Create a MinariStorage to read data from a path.
+
+        Args:
+            data_path (str or Path): directory where the data is stored.
+
+        Returns:
+            A new MinariStorage object to read the data.
+
+        Raises:
+            ValueError: if the specified path doesn't exist or doesn't contain any data.
+        """
         data_path = pathlib.Path(data_path)
-        if not data_path.exists() or not data_path.is_dir():
+        if not data_path.is_dir():
             raise ValueError(f"The data path {data_path} doesn't exist")
-        metadata_file_path = data_path.joinpath(_METADATA_FILE_NAME)
+        metadata_file_path = data_path.joinpath(METADATA_FILE_NAME)
         if not metadata_file_path.exists():
             raise ValueError(f"No data found in data path {data_path}")
         with open(metadata_file_path) as file:
@@ -98,10 +98,11 @@ class MinariStorage(ABC):
             data_format (str): Format of the data. Default value is "hdf5".
 
         Returns:
-            A new MinariStorage object.
+            A new MinariStorage object to write new data.
 
         Raises:
-            ValueError: if you don't specify the env_spec, you need to specify both observation_space and action_space.
+            ValueError: if the data format is incorrect or the data path already exists.
+              Moreover, you need to specify the env_spec or both the observation_space and action_space.
         """
         if env_spec is None and (observation_space is None or action_space is None):
             raise ValueError(
@@ -113,7 +114,7 @@ class MinariStorage(ABC):
 
         data_path = pathlib.Path(data_path)
         data_path.mkdir(exist_ok=True)
-        if data_path.joinpath("metadata.json").exists():
+        if data_path.joinpath(METADATA_FILE_NAME).exists():
             raise ValueError(
                 f"A dataset is already available at {data_path}. Delete it or specify another path"
             )
@@ -141,7 +142,7 @@ class MinariStorage(ABC):
                     f"env_spec is not serializable as {str(e)}. "
                     "You will not be able to recover the environment from the dataset."
                 )
-        with open(data_path.joinpath(_METADATA_FILE_NAME), "w") as f:
+        with open(data_path.joinpath(METADATA_FILE_NAME), "w") as f:
             json.dump(metadata, f)
 
         obj = registry[data_format]._create(data_path, observation_space, action_space)
@@ -160,7 +161,7 @@ class MinariStorage(ABC):
     @property
     def metadata(self) -> Dict[str, Any]:
         """Metadata of the dataset."""
-        with open(self.data_path.joinpath(_METADATA_FILE_NAME)) as file:
+        with open(self.data_path.joinpath(METADATA_FILE_NAME)) as file:
             metadata = json.load(file)
 
         metadata["observation_space"] = self.observation_space
@@ -181,12 +182,12 @@ class MinariStorage(ABC):
                 f"You are not allowed to update values for {', '.join(forbidden_keys)}"
             )
 
-        with open(os.path.join(self.data_path, _METADATA_FILE_NAME)) as file:
+        with open(self.data_path.joinpath(METADATA_FILE_NAME)) as file:
             saved_metadata = json.load(file)
 
         saved_metadata.update(metadata)
-        with open(os.path.join(self.data_path, _METADATA_FILE_NAME), "w") as file:
-            file.write(json.dumps(saved_metadata))
+        with open(self.data_path.joinpath(METADATA_FILE_NAME), "w") as file:
+            json.dump(saved_metadata, file)
 
     @abstractmethod
     def update_episode_metadata(
@@ -198,9 +199,6 @@ class MinariStorage(ABC):
             metadatas (Iterable[Dict]): metadatas, one for each episode.
             episode_indices (Iterable, optional): episode indices to update.
             If not specified, all the episodes are considered.
-
-        Warning:
-            In case metadatas and episode_indices have different lengths, the longest is truncated silently.
         """
         ...
 
@@ -262,16 +260,13 @@ class MinariStorage(ABC):
         Returns:
             datasize (float): size of the dataset in MB
         """
-        datasize_list = []
-        if os.path.exists(self.data_path):
+        datasize = 0
+        if self.data_path.exists():
+            for filename in self.data_path.glob('**/*'):
+                st_size = self.data_path.joinpath(filename).stat().st_size
+                datasize += st_size / 1000000
 
-            for filename in os.listdir(self.data_path):
-                datasize = os.path.getsize(os.path.join(self.data_path, filename))
-                datasize_list.append(datasize)
-
-        datasize = np.round(np.sum(datasize_list) / 1000000, 1)
-
-        return datasize
+        return np.round(datasize, 1)
 
     @property
     def data_path(self) -> pathlib.Path:

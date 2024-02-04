@@ -13,6 +13,7 @@ from packaging.specifiers import SpecifierSet
 from tqdm.auto import tqdm
 
 from minari.dataset.minari_dataset import parse_dataset_id
+from minari.dataset.minari_storage import METADATA_FILE_NAME
 from minari.storage.datasets_root_dir import get_dataset_path
 from minari.storage.local import load_dataset
 
@@ -225,7 +226,7 @@ def list_remote_datasets(
     remote_datasets = {}
     for blob in blobs:
         try:
-            if blob.name.endswith("metadata.json"):
+            if blob.name.endswith(METADATA_FILE_NAME):
                 metadata = json.loads(blob.download_as_string(client=None))
                 if compatible_minari_version and __version__ not in SpecifierSet(
                     metadata["minari_version"]

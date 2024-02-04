@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-import os
 import pathlib
 from collections import OrderedDict
+from itertools import zip_longest
 from typing import Dict, Iterable, List, Optional, Tuple, Union
 
 import gymnasium as gym
@@ -10,6 +10,9 @@ import h5py
 import numpy as np
 
 from minari.dataset.minari_storage import MinariStorage
+
+
+_MAIN_FILE_NAME = "main_data.hdf5"
 
 
 class _HDF5Storage(MinariStorage):
@@ -20,8 +23,8 @@ class _HDF5Storage(MinariStorage):
         action_space: gym.Space,
     ):
         super().__init__(data_path, observation_space, action_space)
-        file_path = os.path.join(self.data_path, "main_data.hdf5")
-        if not os.path.exists(file_path):
+        file_path = self.data_path.joinpath(_MAIN_FILE_NAME)
+        if not file_path.exists():
             raise ValueError(f"No data found in data path {self.data_path}")
         self._file_path = file_path
 
@@ -32,7 +35,7 @@ class _HDF5Storage(MinariStorage):
         observation_space: gym.Space,
         action_space: gym.Space,
     ) -> MinariStorage:
-        data_path.joinpath("main_data.hdf5").touch(exist_ok=False)
+        data_path.joinpath(_MAIN_FILE_NAME).touch(exist_ok=False)
         obj = cls(data_path, observation_space, action_space)
         return obj
 
@@ -42,8 +45,13 @@ class _HDF5Storage(MinariStorage):
         if episode_indices is None:
             episode_indices = range(self.total_episodes)
 
+        sentinel = object()
         with h5py.File(self._file_path, "a") as file:
-            for metadata, episode_id in zip(metadatas, episode_indices):
+            for metadata, episode_id in zip_longest(metadatas, episode_indices, fillvalue=sentinel):
+                if sentinel in (metadata, episode_id):
+                    raise ValueError('Metadatas and episode_indices have different lengths')
+
+                assert isinstance(metadata, dict)
                 ep_group = file[f"episode_{episode_id}"]
                 ep_group.attrs.update(metadata)
 
@@ -207,16 +215,14 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
         if isinstance(data, dict):
             episode_group_to_clear = _get_from_h5py(episode_group, key)
             _add_episode_to_group(data, episode_group_to_clear)
-        elif all([isinstance(entry, tuple) for entry in data]):  # list of tuples
+        elif all(isinstance(entry, tuple) for entry in data):  # list of tuples
             dict_data = {
                 f"_index_{str(i)}": [entry[i] for entry in data]
                 for i, _ in enumerate(data[0])
             }
             episode_group_to_clear = _get_from_h5py(episode_group, key)
             _add_episode_to_group(dict_data, episode_group_to_clear)
-        elif all(
-            [isinstance(entry, OrderedDict) for entry in data]
-        ):  # list of OrderedDict
+        elif all(isinstance(entry, OrderedDict) for entry in data):  # list of OrderedDict
             dict_data = {key: [entry[key] for entry in data] for key in data[0].keys()}
             episode_group_to_clear = _get_from_h5py(episode_group, key)
             _add_episode_to_group(dict_data, episode_group_to_clear)

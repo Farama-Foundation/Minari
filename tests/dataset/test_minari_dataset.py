@@ -11,6 +11,7 @@ import pytest
 import minari
 from minari import DataCollector, MinariDataset
 from minari.dataset.minari_dataset import EpisodeData
+from minari.dataset.minari_storage import METADATA_FILE_NAME
 from tests.common import (
     check_data_integrity,
     check_env_recovery,
@@ -479,7 +480,7 @@ def test_missing_env_module():
         dataset_id, env, num_episodes=num_episodes
     )
 
-    path = os.path.join(dataset.storage.data_path, "metadata.json")
+    path = os.path.join(dataset.storage.data_path, METADATA_FILE_NAME)
     with open(path) as file:
         metadata = json.load(file)
     metadata["env_spec"] = r"""{
@@ -494,7 +495,7 @@ def test_missing_env_module():
         "additional_wrappers": []
     }"""
     with open(path, "w") as file:
-        file.write(json.dumps(metadata))
+        json.dump(metadata, file)
 
     dataset = minari.load_dataset(dataset_id)
     with pytest.raises(ModuleNotFoundError, match="No module named 'dummymodule'"):
