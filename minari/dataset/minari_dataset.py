@@ -265,7 +265,7 @@ class MinariDataset:
             else:
                 self._total_steps = sum(
                     self.storage.apply(
-                        lambda episode: episode["total_timesteps"],
+                        lambda episode: episode["total_steps"],
                         episode_indices=self.episode_indices,
                     )
                 )

@@ -9,8 +9,6 @@ Minari is a Python library for conducting research in offline reinforcement lear
 
 The documentation website is at [minari.farama.org](https://minari.farama.org/main/). We also have a public discord server (which we use for Q&A and to coordinate development work) that you can join here: https://discord.gg/bnJ6kubTg6.
 
-Note: Minari was previously developed under the name Kabuki.
-
 
 ## Installation
 To install Minari from [PyPI](https://pypi.org/project/minari/):
@@ -66,6 +64,12 @@ import minari
 dataset = minari.load_dataset("door-human-v1")
 
 for episode_data in dataset.iterate_episodes():
+    observations = episode_data.observations
+    actions = episode_data.actions
+    rewards = episode_data.rewards
+    terminations = episode_data.terminations
+    truncations = episode_data.truncations
+    infos = episode_data.infos
     ...
 ```
 
@@ -77,18 +81,18 @@ import gymnasium as gym
 from minari import DataCollector
 
 
-env = gym.make('LunarLander-v2')
+env = gym.make('FrozenLake-v1')
 env = DataCollector(env)
 
 for _ in range(100):
     env.reset()
     done = False
     while not done:
-        action = ...
+        action = env.action_space.sample()  # <- use your policy here
         obs, rew, terminated, truncated, info = env.step(action)
         done = terminated or truncated
 
-dataset = env.create_dataset("LunarLander-v2-test-v0")
+dataset = env.create_dataset("frozenlake-test-v0")
 ```
 
 For other examples, see [Basic Usage](https://minari.farama.org/main/content/basic_usage/). For a complete tutorial on how to create new datasets using Minari, see our [Pointmaze D4RL Dataset](https://minari.farama.org/main/tutorials/dataset_creation/point_maze_dataset/) tutorial, which re-creates the Maze2D datasets from [D4RL](https://github.com/Farama-Foundation/D4RL).

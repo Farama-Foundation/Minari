@@ -1,12 +1,10 @@
 from __future__ import annotations
 
 import copy
-import inspect
 import os
 import secrets
 import shutil
 import tempfile
-import warnings
 from typing import Any, Callable, Dict, List, Optional, SupportsFloat, Type, Union
 
 import gymnasium as gym
@@ -22,23 +20,13 @@ from minari.data_collector.callbacks import (
 )
 from minari.dataset.minari_dataset import MinariDataset
 from minari.dataset.minari_storage import MinariStorage
+from minari.utils import _generate_dataset_metadata, _generate_dataset_path
 
 
 # H5Py supports ints up to uint64
 AUTOSEED_BIT_SIZE = 64
 
 EpisodeBuffer = Dict[str, Any]  # TODO: narrow this down
-
-
-def __getattr__(name):
-    if name == "DataCollectorV0":
-        stacklevel = len(inspect.stack(0))
-        warnings.warn("DataCollectorV0 is deprecated and will be removed. Use DataCollector instead.", DeprecationWarning, stacklevel=stacklevel)
-        return DataCollector
-    elif name == "__path__":
-        return False  # see https://stackoverflow.com/a/60803436
-    else:
-        raise ImportError(f"cannot import name '{name}' from '{__name__}' ({__file__})")
 
 
 class DataCollector(gym.Wrapper):
@@ -357,8 +345,6 @@ class DataCollector(gym.Wrapper):
         Returns:
             MinariDataset
         """
-        # TODO: move the import to top of the file after removing minari.create_dataset_from_collector_env() in 0.5.0
-        from minari.utils import _generate_dataset_metadata, _generate_dataset_path
         dataset_path = _generate_dataset_path(dataset_id)
         metadata: Dict[str, Any] = _generate_dataset_metadata(
             dataset_id,
@@ -375,7 +361,7 @@ class DataCollector(gym.Wrapper):
             minari_version,
         )
 
-        self.save_to_disk(dataset_path, metadata)
+        self._save_to_disk(dataset_path, metadata)
 
         # will be able to calculate dataset size only after saving the disk, so updating the dataset metadata post `save_to_disk` method
 
@@ -384,7 +370,7 @@ class DataCollector(gym.Wrapper):
         dataset.storage.update_metadata(metadata)
         return dataset
 
-    def save_to_disk(
+    def _save_to_disk(
         self, path: str | os.PathLike, dataset_metadata: Dict[str, Any] = {}
     ):
         """Save all in-memory buffer data and move temporary files to a permanent location in disk.
@@ -393,7 +379,6 @@ class DataCollector(gym.Wrapper):
             path (str): path to store the dataset, e.g.: '/home/foo/datasets/data'
             dataset_metadata (Dict, optional): additional metadata to add to the dataset file. Defaults to {}.
         """
-        warnings.warn("This method is deprecated and will become private in v0.5.0.", DeprecationWarning, stacklevel=2)
         self._validate_buffer()
         self._storage.update_episodes(self._buffer)
         self._buffer.clear()
