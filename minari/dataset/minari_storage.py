@@ -446,7 +446,6 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
             if data[0] is None:
                 data = copy.deepcopy(data)
                 data[0] = ""
-
             if all(map(lambda elem: isinstance(elem, str), data)):
                 dtype = h5py.string_dtype(encoding="utf-8")
             dshape = ()
