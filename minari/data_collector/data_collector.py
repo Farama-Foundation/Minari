@@ -6,6 +6,7 @@ import secrets
 import shutil
 import tempfile
 from typing import Any, Callable, Dict, List, Optional, SupportsFloat, Type, Union
+from collections import OrderedDict
 
 import gymnasium as gym
 import numpy as np
@@ -153,16 +154,17 @@ class DataCollector(gym.Wrapper):
 
         self._add_to_episode_buffer(episode_buffer, dict_data)
 
-    def _get_dummy_action_sample(self, sample_action: Union[dict, tuple, list, str, int, float, np.generic] | None = None):
+    def _get_dummy_action_sample(self, sample_action: Union[OrderedDict, tuple, list, str, int, float, np.generic] | None = None):
         """Recursively parses action space and returns an appropriate action definition consisting of np.nan and Null values only."""
         if sample_action is None:
             sample_action = self._storage.action_space.sample()
 
         if isinstance(sample_action, dict):
-            return {
-                key: self._get_dummy_action_sample(val)
-                for key, val in sample_action.items()
-            }
+            return OrderedDict(sample_action.items())
+            # {
+            #     key: self._get_dummy_action_sample(val)
+            #     for key, val in sample_action.items()
+            # }
         elif isinstance(sample_action, tuple):
             return tuple([self._get_dummy_action_sample(val) for val in sample_action])
 

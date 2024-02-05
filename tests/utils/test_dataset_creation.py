@@ -179,6 +179,7 @@ def test_generate_dataset_with_external_buffer(dataset_id, env_id):
         minari.delete_dataset(dataset_id)
 
     env = gym.make(env_id)
+    env = DataCollector(env)
 
     observations = []
     actions = []
@@ -196,6 +197,11 @@ def test_generate_dataset_with_external_buffer(dataset_id, env_id):
     for episode in range(num_episodes):
         terminated = False
         truncated = False
+        
+        actions.append(env._get_dummy_action_sample())
+        rewards.append(np.nan)
+        terminations.append(False)
+        truncations.append(False)
 
         while not terminated and not truncated:
             action = env.action_space.sample()  # User-defined policy function

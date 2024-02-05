@@ -425,6 +425,11 @@ def test_update_dataset_from_buffer(dataset_id, env_id):
     observation, _ = env.reset()
     observations.append(observation)
     for episode in range(num_episodes):
+        actions.append(collector_env._get_dummy_action_sample())
+        rewards.append(np.nan)
+        terminations.append(False)
+        truncations.append(False)
+
         terminated = False
         truncated = False
 
