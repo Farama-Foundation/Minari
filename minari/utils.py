@@ -635,28 +635,31 @@ def get_dataset_spec_dict(
 ) -> Dict[str, str]:
     """Create dict of the dataset specs, including observation and action space."""
     code_link = dataset_spec["code_permalink"]
-    action_space = dataset_spec["action_space"]
-    obs_space = dataset_spec["observation_space"]
-
-    dataset_action_space = action_space.__repr__().replace("\n", "")
-    dataset_observation_space = obs_space.__repr__().replace("\n", "")
-
-    version = str(dataset_spec['minari_version'])
-
-    if print_version:
-        version += f" ({__version__} installed)"
+    action_space = dataset_spec.get("action_space")
+    obs_space = dataset_spec.get("observation_space")
+    version = dataset_spec['minari_version']
 
     md_dict = {
         "Total Steps": str(dataset_spec["total_steps"]),
         "Total Episodes": str(dataset_spec["total_episodes"]),
-        "Dataset Observation Space": f"`{dataset_observation_space}`",
-        "Dataset Action Space": f"`{dataset_action_space}`",
+    }
+
+    if obs_space is not None:
+        dataset_observation_space = obs_space.__repr__().replace("\n", "")
+        md_dict["Dataset Observation Space"] = f"`{dataset_observation_space}`"
+
+    if action_space is not None:
+        dataset_action_space = action_space.__repr__().replace("\n", "")
+        md_dict["Dataset Action Space"] = f"`{dataset_action_space}`"
+    
+    add_version = f" ({__version__} installed)"
+    md_dict.update({
         "Algorithm": dataset_spec["algorithm_name"],
         "Author": dataset_spec["author"],
         "Email": dataset_spec["author_email"],
         "Code Permalink": f"[{code_link}]({code_link})",
-        "Minari Version": version,
+        "Minari Version": f"{version} {add_version if print_version else ''}",
         "Download": f"`minari.download_dataset(\"{dataset_spec['dataset_id']}\")`"
-    }
+    })
 
     return md_dict
