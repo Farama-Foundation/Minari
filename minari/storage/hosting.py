@@ -2,17 +2,18 @@ from __future__ import annotations
 
 import glob
 import importlib.metadata
+import json
 import os
 import warnings
 from typing import Dict, List
 
-import h5py
-from google.cloud import storage  # pyright: ignore [reportGeneralTypeIssues]
+from google.cloud import storage
 from gymnasium import logger
 from packaging.specifiers import SpecifierSet
-from tqdm.auto import tqdm  # pyright: ignore [reportMissingModuleSource]
+from tqdm.auto import tqdm
 
 from minari.dataset.minari_dataset import parse_dataset_id
+from minari.dataset.minari_storage import METADATA_FILE_NAME
 from minari.storage.datasets_root_dir import get_dataset_path
 from minari.storage.local import load_dataset
 
@@ -41,12 +42,6 @@ def upload_dataset(dataset_id: str, path_to_private_key: str):
             else:
                 remote_path = os.path.join(gcs_path, local_file[1 + len(local_path) :])
                 blob = bucket.blob(remote_path)
-                # add metadata to main data file of dataset
-                if blob.name.endswith("main_data.hdf5"):
-                    with h5py.File(
-                        local_file, "r"
-                    ) as file:  # TODO: remove h5py when migrating to JSON metadata
-                        blob.metadata = file.attrs
                 blob.upload_from_filename(local_file)
 
     file_path = get_dataset_path(dataset_id)
@@ -231,8 +226,8 @@ def list_remote_datasets(
     remote_datasets = {}
     for blob in blobs:
         try:
-            if blob.name.endswith("main_data.hdf5"):
-                metadata = blob.metadata
+            if blob.name.endswith(METADATA_FILE_NAME):
+                metadata = json.loads(blob.download_as_string(client=None))
                 if compatible_minari_version and __version__ not in SpecifierSet(
                     metadata["minari_version"]
                 ):
