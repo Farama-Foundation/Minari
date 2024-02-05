@@ -651,7 +651,7 @@ def get_dataset_spec_dict(
     if action_space is not None:
         dataset_action_space = action_space.__repr__().replace("\n", "")
         md_dict["Dataset Action Space"] = f"`{dataset_action_space}`"
-    
+
     add_version = f" ({__version__} installed)"
     md_dict.update({
         "Algorithm": dataset_spec["algorithm_name"],
