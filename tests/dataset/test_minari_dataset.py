@@ -1,18 +1,17 @@
 import copy
+import json
 import os
 import re
-import shutil
 from typing import Any
 
 import gymnasium as gym
 import numpy as np
 import pytest
-from gymnasium.envs.registration import EnvSpec
 
 import minari
 from minari import DataCollector, MinariDataset
 from minari.dataset.minari_dataset import EpisodeData
-from minari.dataset.minari_storage import MinariStorage
+from minari.dataset.minari_storage import METADATA_FILE_NAME
 from tests.common import (
     check_data_integrity,
     check_env_recovery,
@@ -33,8 +32,9 @@ def test_episode_data(space: gym.Space):
     seed = np.random.randint(1024)
     total_step = 100
     rewards = np.random.randn(total_step)
-    terminations = np.random.choice([True, False], size=(total_step,))
-    truncations = np.random.choice([True, False], size=(total_step,))
+    choices = np.array([True, False])
+    terminations = np.random.choice(choices, size=(total_step,))
+    truncations = np.random.choice(choices, size=(total_step,))
     episode_data = EpisodeData(
         id=id,
         seed=seed,
@@ -469,28 +469,36 @@ def test_update_dataset_from_buffer(dataset_id, env_id):
     check_load_and_delete_dataset(dataset_id)
 
 
-def test_missing_env_module(tmp_dataset_dir):
-    data_path = os.path.join(
-        tmp_dataset_dir, "dummy-test-v0"
+def test_missing_env_module():
+    dataset_id = "dummy-test-v0"
+
+    env = gym.make("CartPole-v1")
+    env = DataCollector(env)
+    num_episodes = 10
+
+    dataset = create_dummy_dataset_with_collecter_env_helper(
+        dataset_id, env, num_episodes=num_episodes
     )
 
-    class FakeEnvSpec(EnvSpec):
-        def to_json(self) -> str:
-            return r"""{"id": "DummyEnv-v0", "entry_point": "dummymodule:dummyenv", "reward_threshold": null, "nondeterministic": false, "max_episode_steps": 300, "order_enforce": true, "disable_env_checker": false, "apply_api_compatibility": false, "additional_wrappers": []}"""
+    path = os.path.join(dataset.storage.data_path, METADATA_FILE_NAME)
+    with open(path) as file:
+        metadata = json.load(file)
+    metadata["env_spec"] = r"""{
+        "id": "DummyEnv-v0",
+        "entry_point": "dummymodule:dummyenv",
+        "reward_threshold": null,
+        "nondeterministic": false,
+        "max_episode_steps": 300,
+        "order_enforce": true,
+        "disable_env_checker": false,
+        "apply_api_compatibility": false,
+        "additional_wrappers": []
+    }"""
+    with open(path, "w") as file:
+        json.dump(metadata, file)
 
-    # dummy spaces so that MinariStorage won't throw an error when inferring spaces from env
-    action_space = gym.spaces.Box(low=0, high=1, shape=(1,))
-    observation_space = gym.spaces.Box(low=0, high=1, shape=(1,))
-    storage = MinariStorage.new(
-        data_path,
-        env_spec=FakeEnvSpec("DummyEnv-v0"),
-        action_space=action_space,
-        observation_space=observation_space
-    )
-    storage.update_metadata({"dataset_id": "dummy-dataset-v0", "minari_version": f"=={minari.__version__}"})
-
-    dataset = MinariDataset(storage.data_path)
+    dataset = minari.load_dataset(dataset_id)
     with pytest.raises(ModuleNotFoundError, match="No module named 'dummymodule'"):
         dataset.recover_environment()
 
-    shutil.rmtree(data_path)
+    minari.delete_dataset(dataset_id)
