@@ -210,7 +210,8 @@ class MinariStorage:
         else:
             assert isinstance(hdf_ref, h5py.Dataset)
             array = hdf_ref[()]
-            if isinstance(space, (gym.spaces.Discrete, gym.spaces.MultiDiscrete,)) or (isinstance(space, gym.spaces.Box) and np.issubdtype(space.dtype, np.integer)):
+            if (isinstance(space, (gym.spaces.Discrete, gym.spaces.MultiDiscrete)) or
+                    (isinstance(space, gym.spaces.Box) and np.issubdtype(space.dtype, np.integer))):
                 return pd.array(array, dtype=pd.Int32Dtype())
             return array
 
