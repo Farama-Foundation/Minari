@@ -6,6 +6,7 @@ from typing import Any, Dict, Iterable, List, Optional, Union
 
 import gymnasium as gym
 import numpy as np
+import pandas as pd
 from gymnasium import spaces
 from gymnasium.envs.registration import register
 from gymnasium.utils.env_checker import data_equivalence
@@ -569,15 +570,14 @@ def check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
         _check_space_elem(episode["actions"], action_space, episode["total_steps"] + offset)
 
         for i in range(episode["total_steps"] + 1):
-            obs = _reconstuct_obs_or_action_at_index_recursive(
+            obs = _reconstruct_obs_or_action_at_index_recursive(
                 episode["observations"], i
             )
             assert observation_space.contains(obs)
 
         for i in range(1, episode["total_steps"] + offset):
-            action = _reconstuct_obs_or_action_at_index_recursive(episode["actions"], i)
-            res = action_space.contains(action)
-            assert res
+            action = _reconstruct_obs_or_action_at_index_recursive(episode["actions"], i)
+            assert action_space.contains(action)
 
         assert episode["total_steps"] + offset == len(episode["rewards"])
         assert episode["total_steps"] + offset == len(episode["terminations"])
@@ -599,24 +599,24 @@ def get_info_at_step_index(infos: Dict, step_index: int) -> Dict:
     return result
 
 
-def _reconstuct_obs_or_action_at_index_recursive(
+def _reconstruct_obs_or_action_at_index_recursive(
     data: Union[dict, tuple, np.ndarray], index: int
 ) -> Union[np.ndarray, dict, tuple]:
     if isinstance(data, dict):
         return {
-            key: _reconstuct_obs_or_action_at_index_recursive(data[key], index)
+            key: _reconstruct_obs_or_action_at_index_recursive(data[key], index)
             for key in data.keys()
         }
     elif isinstance(data, tuple):
         return tuple(
             [
-                _reconstuct_obs_or_action_at_index_recursive(entry, index)
+                _reconstruct_obs_or_action_at_index_recursive(entry, index)
                 for entry in data
             ]
         )
     else:
         assert isinstance(
-            data, (np.ndarray, List)
+            data, (np.ndarray, List, pd.arrays.IntegerArray)
         ), "error, invalid observation or action structure"
         return data[index]
 
@@ -716,7 +716,7 @@ def check_episode_data_integrity(
         _check_space_elem(episode.actions, action_space, episode.total_steps + offset)
 
         for i in range(episode.total_steps + 1):
-            obs = _reconstuct_obs_or_action_at_index_recursive(episode.observations, i)
+            obs = _reconstruct_obs_or_action_at_index_recursive(episode.observations, i)
             if info_sample is not None:
                 assert check_infos_equal(
                     get_info_at_step_index(episode.infos, i),
@@ -726,7 +726,7 @@ def check_episode_data_integrity(
             assert observation_space.contains(obs)
 
         for i in range(offset, episode.total_steps + offset):
-            action = _reconstuct_obs_or_action_at_index_recursive(episode.actions, i)
+            action = _reconstruct_obs_or_action_at_index_recursive(episode.actions, i)
             assert action_space.contains(action)
 
         assert episode.total_steps + offset == len(episode.rewards)

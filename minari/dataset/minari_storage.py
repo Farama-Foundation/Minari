@@ -4,10 +4,12 @@ import os
 import pathlib
 from collections import OrderedDict
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
+import copy
 
 import gymnasium as gym
 import h5py
 import numpy as np
+import pandas as pd
 from gymnasium.envs.registration import EnvSpec
 
 from minari.serialization import deserialize_space, serialize_space
@@ -181,7 +183,7 @@ class MinariStorage:
         self,
         hdf_ref: Union[h5py.Group, h5py.Dataset, h5py.Datatype],
         space: gym.spaces.Space,
-    ) -> Union[Dict, Tuple, List, np.ndarray]:
+    ) -> Union[Dict, Tuple, List, np.ndarray, pd.arrays.IntegerArray]:
         assert not isinstance(hdf_ref, h5py.Datatype)
 
         if isinstance(space, gym.spaces.Tuple):
@@ -201,14 +203,15 @@ class MinariStorage:
         elif isinstance(space, gym.spaces.Text):
             assert isinstance(hdf_ref, h5py.Dataset)
             result = map(lambda string: string.decode("utf-8"), hdf_ref[()])
-            return list(result)
+            res = list(result)
+            if res[0] == "":
+                res [0] = None
+            return res
         else:
             assert isinstance(hdf_ref, h5py.Dataset)
             array = hdf_ref[()]
-            # Dirty trick to handle Discrete spaces since it is not possible to store np.nan in an array of int dtype.
-            # See SO discussion: https://stackoverflow.com/questions/11548005/numpy-or-pandas-keeping-array-type-as-integer-while-having-a-nan-value
-            if len(array.shape) == 1 and np.isnan(array[0]) and np.all([x.is_integer() for x in array[1:]]):
-                array = [np.nan] + [int(x) for x in array[1:]]
+            if isinstance(space, (gym.spaces.Discrete, gym.spaces.MultiDiscrete,)) or (isinstance(space, gym.spaces.Box) and np.issubdtype(space.dtype, np.integer)):
+                return pd.array(array, dtype=pd.Int32Dtype())
             return array
 
     def get_episodes(self, episode_indices: Iterable[int]) -> List[dict]:
@@ -439,6 +442,11 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
             dataset[-len(data) :] = data
         else:
             dtype = None
+
+            if data[0] is None:
+                data = copy.deepcopy(data)
+                data[0] = ""
+                
             if all(map(lambda elem: isinstance(elem, str), data)):
                 dtype = h5py.string_dtype(encoding="utf-8")
             dshape = ()
