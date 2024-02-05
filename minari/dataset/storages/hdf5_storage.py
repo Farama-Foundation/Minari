@@ -9,7 +9,11 @@ from typing import Dict, Iterable, List, Optional, Tuple, Union
 import gymnasium as gym
 import h5py
 import numpy as np
+<<<<<<< HEAD
 import pandas as pd
+=======
+import copy
+>>>>>>> 0e2eb0ac7b34b7078b60a8fdd93fa9b55e589462
 
 from minari.dataset.minari_storage import MinariStorage
 
