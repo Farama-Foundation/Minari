@@ -9,7 +9,6 @@ from typing import Any, Callable, Dict, Iterable, List, Optional, Union
 
 import gymnasium as gym
 import numpy as np
-import pandas as pd
 from gymnasium.envs.registration import EnvSpec
 
 from minari.serialization import deserialize_space, serialize_space
