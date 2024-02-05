@@ -153,8 +153,11 @@ class DataCollector(gym.Wrapper):
 
         self._add_to_episode_buffer(episode_buffer, dict_data)
 
-    def _get_dummy_action_sample(self, sample_action):
+    def _get_dummy_action_sample(self, sample_action: Union[dict, tuple, list, str, int, float, np.generic] | None = None):
         """Recursively parses action space and returns an appropriate action definition consisting of np.nan and Null values only."""
+        if sample_action is None:
+            sample_action = self._storage.action_space.sample()
+
         if isinstance(sample_action, dict):
             return {
                 key: self._get_dummy_action_sample(val)
@@ -168,7 +171,7 @@ class DataCollector(gym.Wrapper):
 
         # Leaf, see https://numpy.org/doc/stable/reference/arrays.scalars.html
         elif isinstance(sample_action, (str, np.flexible)):
-            return ""  # We have to use an empty string since hdf5 does not support None in string arrays
+            return None
 
         elif isinstance(sample_action, np.ndarray):
             return np.full(shape=sample_action.shape, fill_value=np.nan, dtype=sample_action.dtype)
@@ -184,9 +187,6 @@ class DataCollector(gym.Wrapper):
         step_data: Dict[str, Any],
     ):
         for key, value in step_data.items():
-            # if value is None:
-            #     continue
-
             if key not in episode_buffer:
                 episode_buffer[key] = {} if isinstance(value, dict) else []
 
@@ -244,13 +244,12 @@ class DataCollector(gym.Wrapper):
         if step_data["terminations"] or step_data["truncations"]:
             self._episode_id += 1
             eps_buff = {"id": self._episode_id}
-            sample_action = self._storage.action_space.sample()
             previous_data = {
                 "observations": step_data["observations"],
                 "rewards": np.nan,
                 "truncations": False,
                 "terminations": False,
-                "actions": self._get_dummy_action_sample(sample_action),
+                "actions": self._get_dummy_action_sample(),
                 "infos": step_data["infos"],
             }
             self._add_step_data(eps_buff, previous_data)
@@ -312,7 +311,7 @@ class DataCollector(gym.Wrapper):
     def _validate_buffer(self):
         if len(self._buffer) > 0:
             rewards = self._buffer[-1]["rewards"]
-            if len(rewards) == 1 and np.isnan(rewards[0]):
+            if np.isnan(rewards[0]):
                 self._buffer.pop()
                 self._episode_id -= 1
             elif not self._buffer[-1]["terminations"][-1]:
