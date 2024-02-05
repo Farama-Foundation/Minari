@@ -24,6 +24,7 @@ all_remote_datasets = list_remote_datasets()
 for dataset_id in all_remote_datasets.keys():
 
     env_name, dataset_name, version = parse_dataset_id(dataset_id)
+    assert env_name is not None
 
     if dataset_name not in filtered_datasets[env_name]:
         max_version = get_remote_dataset_versions(env_name, dataset_name, True)[0]
