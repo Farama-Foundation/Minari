@@ -1,7 +1,6 @@
 import gymnasium as gym
 import h5py
 import pytest
-
 from agilerl.components.replay_buffer import ReplayBuffer
 from agilerl.utils.minari_utils import MinariToAgileBuffer, MinariToAgileDataset
 
@@ -9,9 +8,11 @@ import minari
 from minari import DataCollector
 from tests.common import create_dummy_dataset_with_collecter_env_helper
 
+
 @pytest.fixture(name="dataset_id")
 def dataset_id():
     return "cartpole-test-v0"
+
 
 @pytest.fixture(autouse=True)
 def createAndDestroyMinariDataset(dataset_id):
@@ -26,6 +27,7 @@ def createAndDestroyMinariDataset(dataset_id):
 
     minari.delete_dataset(dataset_id)
 
+
 def test_agile_create_dataset(dataset_id):
     """
     Tests that the AgileRL MinariToAgileDataset method works as expected.
@@ -39,6 +41,7 @@ def test_agile_create_dataset(dataset_id):
     assert dataset["actions"].size > 0
     assert dataset["rewards"].size > 0
     assert dataset["terminals"].size > 0
+
 
 def test_agile_create_buffer(dataset_id):
     """

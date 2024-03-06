@@ -2,11 +2,12 @@ import gymnasium as gym
 import pytest
 from torchrl.data.datasets.minari_data import MinariExperienceReplay
 
+
 def test_torch_minari_experience_replay():
     """
     Tests creation of the torchrl MinariExperienceReplay object.
 
-    According to their documentation, torchrl uses the MinariExperienceReplay 
+    According to their documentation, torchrl uses the MinariExperienceReplay
     object as a way to download datasets from the remote Farama server.
     """
 
