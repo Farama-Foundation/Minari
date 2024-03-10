@@ -387,7 +387,6 @@ def _generate_dataset_metadata(
         dataset_metadata["algorithm_name"] = algorithm_name
 
     if description is None:
-        print("here")
         warnings.warn(
             "`description` is set to None. For longevity purposes it is highly recommended to provide a description of the dataset",
             UserWarning,
