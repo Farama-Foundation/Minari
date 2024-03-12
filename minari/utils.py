@@ -347,6 +347,7 @@ def _generate_dataset_metadata(
     expert_policy: Optional[Callable[[ObsType], ActType]],
     num_episodes_average_score: int,
     minari_version: Optional[str],
+    description: Optional[str],
 ) -> Dict[str, Any]:
     """Return the metadata dictionary of the dataset."""
     dataset_metadata: Dict[str, Any] = {
@@ -384,6 +385,14 @@ def _generate_dataset_metadata(
         )
     else:
         dataset_metadata["algorithm_name"] = algorithm_name
+
+    if description is None:
+        warnings.warn(
+            "`description` is set to None. For longevity purposes it is highly recommended to provide a description of the dataset",
+            UserWarning,
+        )
+    else:
+        dataset_metadata["description"] = description
 
     if minari_version is None:
         version = Version(__version__)
@@ -470,6 +479,7 @@ def create_dataset_from_buffers(
     ref_max_score: Optional[float] = None,
     expert_policy: Optional[Callable[[ObsType], ActType]] = None,
     num_episodes_average_score: int = 100,
+    description: Optional[str] = None,
 ):
     """Create Minari dataset from a list of episode dictionary buffers.
 
@@ -506,6 +516,7 @@ def create_dataset_from_buffers(
         action_space (Optional[gym.spaces.Space]): action space of the environment. If None (default) use the environment action space.
         observation_space (Optional[gym.spaces.Space]): observation space of the environment. If None (default) use the environment observation space.
         minari_version (Optional[str], optional): Minari version specifier compatible with the dataset. If None (default) use the installed Minari version.
+        description (Optional[str], optional): description of the dataset being created. Defaults to None.
 
     Returns:
         MinariDataset
@@ -547,6 +558,7 @@ def create_dataset_from_buffers(
         expert_policy,
         num_episodes_average_score,
         minari_version,
+        description,
     )
 
     storage = MinariStorage.new(

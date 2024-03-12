@@ -319,6 +319,7 @@ class DataCollector(gym.Wrapper):
         expert_policy: Optional[Callable[[ObsType], ActType]] = None,
         num_episodes_average_score: int = 100,
         minari_version: Optional[str] = None,
+        description: Optional[str] = None,
     ):
         """Create a Minari dataset using the data collected from stepping with a Gymnasium environment wrapped with a `DataCollector` Minari wrapper.
 
@@ -341,6 +342,7 @@ class DataCollector(gym.Wrapper):
                                                                             `ref_max_score` and `expert_policy` can't be passed at the same time. Default to None
             num_episodes_average_score (int): number of episodes to average over the returns to compute `ref_min_score` and `ref_max_score`. Default to 100.
             minari_version (Optional[str], optional): Minari version specifier compatible with the dataset. If None (default) use the installed Minari version.
+            description (Optional[str], optional): description of the dataset being created. Defaults to None.
 
         Returns:
             MinariDataset
@@ -359,6 +361,7 @@ class DataCollector(gym.Wrapper):
             expert_policy,
             num_episodes_average_score,
             minari_version,
+            description,
         )
 
         self._save_to_disk(dataset_path, metadata)
