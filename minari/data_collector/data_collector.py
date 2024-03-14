@@ -107,6 +107,11 @@ class DataCollector(gym.Wrapper):
         if not os.path.exists(self.datasets_path):
             os.makedirs(self.datasets_path)
 
+        if observation_space is None:
+            observation_space = env.observation_space
+        if action_space is None:
+            action_space = env.action_space
+
         self._tmp_dir = tempfile.TemporaryDirectory(dir=self.datasets_path)
         self._storage = MinariStorage.new(
             self._tmp_dir.name,
