@@ -133,7 +133,10 @@ def download_dataset(dataset_id: str, force_download: bool = False):
 
     # 4. Check that the dataset version is compatible with the local installed Minari version
     compatible_dataset_versions = get_remote_dataset_versions(
-        download_env_name, download_dataset_name, True
+        download_env_name,
+        download_dataset_name,
+        latest_version=False,
+        compatible_minari_version=True,
     )
     if download_version not in compatible_dataset_versions:
         e_msg = f"The version you are trying to download for dataset, {dataset_id}, is not compatible with\
