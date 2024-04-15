@@ -1,6 +1,7 @@
 """Minari CLI commands."""
 import os
-from typing import List, Optional
+from collections import defaultdict
+from typing import Any, Dict, List, Optional
 from typing_extensions import Annotated
 
 import typer
@@ -12,6 +13,7 @@ from rich.text import Text
 from rich.tree import Tree
 
 from minari import __version__
+from minari.dataset.minari_dataset import parse_dataset_id
 from minari.storage import get_dataset_path, hosting, local
 from minari.utils import combine_datasets, get_dataset_spec_dict, get_env_spec_dict
 
@@ -28,17 +30,34 @@ def _version_callback(value: bool):
         raise typer.Exit()
 
 
-def _show_dataset_table(datasets, table_title):
+def _show_dataset_table(datasets: Dict[str, Dict[str, Any]], table_title: str):
+    # Collect compatible versions of each dataset
+    dataset_versions = defaultdict(list)
+
+    for dataset_id in datasets.keys():
+        env_name, dataset_name, version = parse_dataset_id(dataset_id)
+        dataset_versions[f"{env_name}-{dataset_name}"].append(version)
+
+    # "Versions" column is only displayed if there are multiple versions
+    display_versions = any([len(x) > 1 for x in dataset_versions.values()])
+
+    # Build the Rich Table
     table = Table(title=table_title)
 
     table.add_column("Name", justify="left", style="cyan", no_wrap=True)
+
+    if display_versions:
+        table.add_column("Versions", justify="right", style="green", no_wrap=True)
+
     table.add_column("Total Episodes", justify="right", style="green", no_wrap=True)
     table.add_column("Total Steps", justify="right", style="green", no_wrap=True)
     table.add_column("Dataset Size", justify="left", style="green", no_wrap=True)
     table.add_column("Author", justify="left", style="magenta", no_wrap=True)
-    table.add_column("Email", justify="left", style="magenta", no_wrap=True)
 
-    for dst_metadata in datasets.values():
+    for dataset_prefix, versions in dataset_versions.items():
+        dataset_id = f"{dataset_prefix}-v{max(versions)}"
+        dst_metadata = datasets[dataset_id]
+
         author = dst_metadata.get("author", "Unknown")
         dataset_size = dst_metadata.get("dataset_size", "Unknown")
         if dataset_size != "Unknown":
@@ -49,22 +68,28 @@ def _show_dataset_table(datasets, table_title):
         assert isinstance(author, str)
         assert isinstance(author_email, str)
 
-        dataset_id = dst_metadata["dataset_id"]
         docs_url = dst_metadata.get("docs_url", None)
+        compatible_versions = ", ".join(
+            [f"v{x}" for x in sorted(versions, reverse=True)]
+        )
 
         if docs_url is not None:
             dataset_id_text = f"[link={docs_url}]{dataset_id}[/link]"
         else:
             dataset_id_text = dataset_id
 
-        table.add_row(
-            dataset_id_text,
-            str(dst_metadata["total_episodes"]),
-            str(dst_metadata["total_steps"]),
-            dataset_size,
-            author,
-            author_email,
-        )
+        # Build the current table row
+        rows = []
+        rows.append(dataset_id_text)
+
+        if display_versions:
+            rows.append(compatible_versions)
+
+        rows.append(str(dst_metadata["total_episodes"]))
+        rows.append(str(dst_metadata["total_steps"]))
+        rows.append(dataset_size)
+        rows.append(author)
+        table.add_row(*rows)
 
     print(table)
 
@@ -96,7 +121,7 @@ def list_remote(
         datasets = hosting.list_remote_datasets()
     else:
         datasets = hosting.list_remote_datasets(
-            latest_version=True, compatible_minari_version=True
+            latest_version=False, compatible_minari_version=True
         )
     table_title = "Minari datasets in Farama server"
     _show_dataset_table(datasets, table_title)
@@ -113,7 +138,7 @@ def list_local(
         datasets = local.list_local_datasets()
     else:
         datasets = local.list_local_datasets(
-            latest_version=True, compatible_minari_version=True
+            latest_version=False, compatible_minari_version=True
         )
     dataset_dir = os.environ.get(
         "MINARI_DATASETS_PATH",
