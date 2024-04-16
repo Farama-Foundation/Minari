@@ -5,6 +5,7 @@ import gymnasium as gym
 import numpy as np
 import pytest
 from gymnasium import spaces
+import jax.tree_util as jtu
 
 import minari
 from minari import DataCollector
@@ -105,7 +106,6 @@ def test_add_episodes(tmp_dataset_dir):
 
     for i, ep in enumerate(episodes):
         storage_ep = storage.get_episodes([i])[0]
-
         assert np.all(ep["observations"] == storage_ep["observations"])
         assert np.all(ep["actions"] == storage_ep["actions"])
         assert np.all(ep["rewards"] == storage_ep["rewards"])
@@ -290,10 +290,10 @@ def test_minari_get_dataset_size_from_buffer(dataset_id, env_id):
             rewards.append(reward)
             terminations.append(terminated)
             truncations.append(truncated)
-
+        
         episode_buffer = {
-            "observations": copy.deepcopy(observations),
-            "actions": copy.deepcopy(actions),
+            "observations": jtu.tree_map(lambda *v: np.stack(v), *observations),
+            "actions": jtu.tree_map(lambda *v: np.stack(v), *actions),
             "rewards": np.asarray(rewards),
             "terminations": np.asarray(terminations),
             "truncations": np.asarray(truncations),

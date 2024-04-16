@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from typing import Any, Optional
-
 import numpy as np
 
 
@@ -19,7 +18,7 @@ class EpisodeData:
     rewards: np.ndarray
     terminations: np.ndarray
     truncations: np.ndarray
-    infos: dict
+    infos: Optional[dict]
 
     def __repr__(self) -> str:
         return (
@@ -32,7 +31,7 @@ class EpisodeData:
             f"rewards=ndarray of {len(self.rewards)} floats, "
             f"terminations=ndarray of {len(self.terminations)} bools, "
             f"truncations=ndarray of {len(self.truncations)} bools, "
-            f"infos=dict with the following keys: {list(self.infos.keys())}"
+            f"{'infos=dict with the following keys: {list(self.infos.keys())}' if self.infos else ''}"
             ")"
         )
 

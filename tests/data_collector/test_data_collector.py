@@ -25,10 +25,10 @@ class ForceTruncateStepDataCallback(StepDataCallback):
 
     def __call__(self, env, **kwargs):
         step_data = super().__call__(env, **kwargs)
-
-        step_data["terminations"] = False
-        if self.time_steps % self.episode_steps == 0:
-            step_data["truncations"] = True
+        if self.time_steps != 0:
+            step_data["terminations"] = False
+            if self.time_steps % self.episode_steps == 0:
+                step_data["truncations"] = True
 
         self.time_steps += 1
         return step_data

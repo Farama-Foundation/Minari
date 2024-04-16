@@ -25,7 +25,7 @@ class MinariStorage(ABC):
         self,
         data_path: pathlib.Path,
         observation_space: gym.Space,
-        action_space: gym.Space,
+        action_space: gym.Space
     ):
         self._data_path: pathlib.Path = data_path
         self._observation_space = observation_space
@@ -74,9 +74,11 @@ class MinariStorage(ABC):
             if action_space is None:
                 action_space = env.action_space
 
-        from minari.dataset.storages import registry  # avoid circular import
+        from minari.dataset._storages import registry  # avoid circular import
         return registry[metadata["data_format"]](
-            data_path, observation_space, action_space
+            data_path,
+            observation_space,
+            action_space,
         )
 
     @classmethod
@@ -86,7 +88,7 @@ class MinariStorage(ABC):
         observation_space: Optional[gym.Space] = None,
         action_space: Optional[gym.Space] = None,
         env_spec: Optional[EnvSpec] = None,
-        data_format: str = "hdf5",
+        data_format: str = "arrow",
     ) -> MinariStorage:
         """Class method to create a new data storage.
 
@@ -108,7 +110,7 @@ class MinariStorage(ABC):
             raise ValueError(
                 "Since env_spec is not specified, you need to specify both action space and observation space"
             )
-        from minari.dataset.storages import registry  # avoid circular import
+        from minari.dataset._storages import registry  # avoid circular import
         if data_format not in registry.keys():
             raise ValueError(f"No storage implemented for {data_format}. Available formats: {registry.keys()}")
 

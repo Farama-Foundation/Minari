@@ -22,6 +22,8 @@ from minari.dataset.minari_dataset import MinariDataset
 from minari.dataset.minari_storage import MinariStorage
 from minari.utils import _generate_dataset_metadata, _generate_dataset_path
 
+from jax import tree_util as jtu
+
 
 # H5Py supports ints up to uint64
 AUTOSEED_BIT_SIZE = 64
@@ -145,8 +147,10 @@ class DataCollector(gym.Wrapper):
             Dict: new dictionary episode buffer with added values from step_data
         """
         dict_data = dict(step_data)
+        data_keys = set({key for key, value in dict_data.items() if value is not None})
+
         if not self._record_infos:
-            dict_data = {k: v for k, v in step_data.items() if k != "infos"}
+            data_keys.remove("infos")
         else:
             assert self._reference_info is not None
             if not _check_infos_same_shape(
@@ -155,32 +159,23 @@ class DataCollector(gym.Wrapper):
                 raise ValueError(
                     "Info structure inconsistent with info structure returned by original reset."
                 )
-
-        self._add_to_episode_buffer(episode_buffer, dict_data)
-
-    def _add_to_episode_buffer(
-        self,
-        episode_buffer: EpisodeBuffer,
-        step_data: Dict[str, Any],
-    ):
-        for key, value in step_data.items():
-            if value is None:
-                continue
-
-            if key not in episode_buffer:
-                episode_buffer[key] = {} if isinstance(value, dict) else []
-
-            if isinstance(value, dict):
-                assert isinstance(
-                    episode_buffer[key], dict
-                ), f"Element to be inserted is type 'dict', but buffer accepts type {type(episode_buffer[key])}"
-
-                self._add_to_episode_buffer(episode_buffer[key], value)
+        
+        keys_intersection = data_keys.intersection(episode_buffer.keys())
+        data_slice = {key: dict_data[key] for key in keys_intersection}
+        buffer_slice = {key: episode_buffer[key] for key in keys_intersection}
+        def _append(data, buffer):
+            if isinstance(buffer, list):
+                buffer.append(data)
+                return buffer
             else:
-                assert isinstance(
-                    episode_buffer[key], list
-                ), f"Element to be inserted is type 'list', but buffer accepts type {type(episode_buffer[key])}"
-                episode_buffer[key].append(value)
+                return [buffer, data]
+        updated_slice = jtu.tree_map(_append, data_slice, buffer_slice)
+
+        for key in data_keys:
+            if key in keys_intersection:
+                episode_buffer[key] = updated_slice[key]
+            else:
+                episode_buffer[key] = dict_data[key]
 
     def step(
         self, action: ActType
@@ -272,7 +267,7 @@ class DataCollector(gym.Wrapper):
         self._validate_buffer()
         episode_buffer = {
             "seed": str(None) if seed is None else seed,
-            "id": self._episode_id
+            "id": self._episode_id,
         }
         self._add_step_data(episode_buffer, step_data)
         self._buffer.append(episode_buffer)
@@ -283,6 +278,8 @@ class DataCollector(gym.Wrapper):
             if "actions" not in self._buffer[-1].keys():
                 self._buffer.pop()
                 self._episode_id -= 1
+            elif not self._buffer[-1]["terminations"]:  # single step case
+                self._buffer[-1]["truncations"] = True
             elif not self._buffer[-1]["terminations"][-1]:
                 self._buffer[-1]["truncations"][-1] = True
 

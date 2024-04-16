@@ -12,8 +12,8 @@ from gymnasium import error, logger
 from gymnasium.envs.registration import EnvSpec
 from packaging.specifiers import InvalidSpecifier, SpecifierSet
 from packaging.version import Version
-
 from minari.dataset.episode_data import EpisodeData
+
 from minari.dataset.minari_storage import MinariStorage, PathLike
 
 

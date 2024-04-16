@@ -15,12 +15,12 @@ from minari.dataset.minari_storage import MinariStorage
 _MAIN_FILE_NAME = "main_data.hdf5"
 
 
-class _HDF5Storage(MinariStorage):
+class HDF5Storage(MinariStorage):
     def __init__(
         self,
         data_path: pathlib.Path,
         observation_space: gym.Space,
-        action_space: gym.Space,
+        action_space: gym.Space
     ):
         super().__init__(data_path, observation_space, action_space)
         file_path = self.data_path.joinpath(_MAIN_FILE_NAME)
@@ -29,11 +29,9 @@ class _HDF5Storage(MinariStorage):
         self._file_path = file_path
 
     @classmethod
-    def _create(
-        cls,
-        data_path: pathlib.Path,
+    def _create(cls, data_path: pathlib.Path,
         observation_space: gym.Space,
-        action_space: gym.Space,
+        action_space: gym.Space
     ) -> MinariStorage:
         data_path.joinpath(_MAIN_FILE_NAME).touch(exist_ok=False)
         obj = cls(data_path, observation_space, action_space)
@@ -98,7 +96,7 @@ class _HDF5Storage(MinariStorage):
         return result
 
     def get_episodes(self, episode_indices: Iterable[int]) -> List[dict]:
-        out = []
+        outs = []
         with h5py.File(self._file_path, "r") as file:
             for ep_idx in episode_indices:
                 ep_group = file[f"episode_{ep_idx}"]
@@ -130,9 +128,9 @@ class _HDF5Storage(MinariStorage):
                     assert isinstance(group_value, h5py.Dataset)
                     ep_dict[key] = group_value[:]
 
-                out.append(ep_dict)
-
-        return out
+                outs.append(ep_dict)
+        
+        return outs
 
     def update_episodes(self, episodes: Iterable[dict]):
         additional_steps = 0

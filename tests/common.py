@@ -549,9 +549,9 @@ def check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
         data (MinariStorage): a MinariStorage instance
         episode_indices (Iterable[int]): the list of episode indices expected
     """
-    episodes = data.get_episodes(episode_indices)
+    episodes = list(data.get_episodes(episode_indices))
     # verify we have the right number of episodes, available at the right indices
-    assert data.total_episodes == len(episodes)
+    assert data.total_episodes == len(episodes), f"{data.total_episodes} != {len(episodes)}"
     total_steps = 0
 
     observation_space = data.metadata["observation_space"]
@@ -579,6 +579,7 @@ def check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
         assert episode["total_steps"] == len(episode["rewards"])
         assert episode["total_steps"] == len(episode["terminations"])
         assert episode["total_steps"] == len(episode["truncations"])
+
     assert total_steps == data.total_steps
 
 
@@ -714,6 +715,7 @@ def check_episode_data_integrity(
         for i in range(episode.total_steps + 1):
             obs = _reconstuct_obs_or_action_at_index_recursive(episode.observations, i)
             if info_sample is not None:
+                assert episode.infos is not None
                 assert check_infos_equal(
                     get_info_at_step_index(episode.infos, i),
                     info_sample
