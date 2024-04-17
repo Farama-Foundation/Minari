@@ -658,15 +658,15 @@ def get_dataset_spec_dict(
     }
 
     if obs_space is not None:
-        dataset_observation_space = (
-            deserialize_space(obs_space).__repr__().replace("\n", "")
-        )
+        if isinstance(obs_space, (dict, str)):
+            obs_space = deserialize_space(obs_space)
+        dataset_observation_space = obs_space.__repr__().replace("\n", "")
         md_dict["Dataset Observation Space"] = f"`{dataset_observation_space}`"
 
     if action_space is not None:
-        dataset_action_space = (
-            deserialize_space(action_space).__repr__().replace("\n", "")
-        )
+        if isinstance(action_space, (dict, str)):
+            action_space = deserialize_space(action_space)
+        dataset_action_space = action_space.__repr__().replace("\n", "")
         md_dict["Dataset Action Space"] = f"`{dataset_action_space}`"
 
     add_version = f" (`{__version__}` installed)"
