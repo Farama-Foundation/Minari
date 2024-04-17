@@ -117,15 +117,7 @@ def test_download_error_messages(monkeypatch):
             latest_version=False,
             compatible_minari_version=False,
         ):
-            if env_name == "door" and dataset_name == "human":
-                return versions[int(latest_version)][int(compatible_minari_version)]
-
-            return get_remote_dataset_versions(
-                env_name,
-                dataset_name,
-                latest_version=latest_version,
-                compatible_minari_version=compatible_minari_version,
-            )
+            return versions[int(latest_version)][int(compatible_minari_version)]
 
         return patched_get_remote
 
@@ -138,7 +130,7 @@ def test_download_error_messages(monkeypatch):
 
         with pytest.raises(
             ValueError,
-            match="door-human-v1, is not compatible with your local installed version of Minari, 0.4.3.",
+            match="door-human-v1, is not compatible with your local installed version of Minari",
         ):
             minari.download_dataset("door-human-v1")
 
@@ -151,7 +143,6 @@ def test_download_error_messages(monkeypatch):
     # 5. Warning to recommend downloading the latest compatible version of the dataset
     # Pretend that door-human-v2 exists and try to download door-human-v1
     with monkeypatch.context() as mp:
-        mp.setattr("minari.storage.hosting.__version__", "0.4.3")
         mp.setattr(
             "minari.storage.hosting.get_remote_dataset_versions",
             patch_get_remote_dataset_versions([[[1, 2], [1, 2]], [[2], [2]]]),
