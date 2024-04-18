@@ -119,8 +119,8 @@ class ArrowStorage(MinariStorage):
             del episode["id"]
             self.update_episodes([episode])
         
-        authors = {self.metadata["author"], storage.metadata.get("author")}
-        emails = {self.metadata["author_email"], storage.metadata.get("author_email")}
+        authors = {self.metadata.get("author"), storage.metadata.get("author")}
+        emails = {self.metadata.get("author_email"), storage.metadata.get("author_email")}
         self.update_metadata(
             {
                 "author": "; ".join([aut for aut in authors if aut is not None]),
@@ -131,14 +131,14 @@ class ArrowStorage(MinariStorage):
 
 def _encode_space(space: gym.Space, values: Any, pad: int = 0):
     if isinstance(space, gym.spaces.Dict):
-        assert isinstance(values, dict)
+        assert isinstance(values, dict), values
         arrays, names = [], []
         for key, value in values.items():
             names.append(key)
             arrays.append(_encode_space(space[key], value, pad=pad))
         return pa.StructArray.from_arrays(arrays, names=names)
     if isinstance(space, gym.spaces.Tuple):
-        assert isinstance(values, tuple)
+        assert isinstance(values, tuple), values
         arrays, names = [], []
         for i, value in enumerate(values):
             names.append(str(i))
@@ -162,7 +162,6 @@ def _encode_space(space: gym.Space, values: Any, pad: int = 0):
         raise ValueError(f"{space} is not a supported space type")
                     
 
-
 def _decode_space(space, values: pa.Array):
     if isinstance(space, gym.spaces.Dict):
         return {
@@ -185,25 +184,37 @@ def _decode_space(space, values: pa.Array):
         raise ValueError(f"Not supported space type")
 
 
-def _encode_info(values: Any):
-    if isinstance(values, (dict, tuple)):
-        arrays, names = [], []
-        iterator = values.items() if isinstance(values, dict) else enumerate(values)
-        for key, value in iterator:
-            data = _encode_info(value)
-            arrays.append(data)
-            names.append(str(key))
-        return pa.StructArray.from_arrays(arrays, names=names)
-    elif isinstance(values, np.ndarray) or (isinstance(values, Sequence) and isinstance(values[0], np.ndarray)):
-        if isinstance(values, Sequence):
-            values = np.stack(values)
-        values = values.reshape(len(values), -1)
-        dtype = pa.from_numpy_dtype(values.dtype)
-        struct = pa.list_(dtype, list_size=values.shape[1])
-        return pa.FixedSizeListArray.from_arrays(values.reshape(-1), type=struct)            
-    else:
-        return pa.array(list(values))
+def _encode_info(info: dict):
+    arrays, fields = [], []
 
+    for key, values in info.items():        
+        if isinstance(values, dict):
+            array = _encode_info(values)
+            arrays.append(array)
+            fields.append(pa.field(key, array.type))
+
+        elif isinstance(values, tuple):
+            array = _encode_info({str(i): v for i, v in enumerate(values)})
+            arrays.append(array)
+            fields.append(pa.field(key, array.type))
+
+        elif isinstance(values, np.ndarray) or (isinstance(values, Sequence) and isinstance(values[0], np.ndarray)):
+            if isinstance(values, Sequence):
+                values = np.stack(values)
+
+            data_shape = values.shape[1:]
+            values = values.reshape(len(values), -1)
+            dtype = pa.from_numpy_dtype(values.dtype)
+            struct = pa.list_(dtype, list_size=values.shape[1])
+            arrays.append(pa.FixedSizeListArray.from_arrays(values.reshape(-1), type=struct))
+            fields.append(pa.field(key, struct, metadata={"shape": bytes(data_shape)}))
+
+        else:
+            array = pa.array(list(values))
+            arrays.append(array)
+            fields.append(pa.field(key, array.type))
+
+    return pa.StructArray.from_arrays(arrays, fields=fields)
 
 def _decode_info(values: pa.Array):
     nested_dict = {}
@@ -211,5 +222,9 @@ def _decode_info(values: pa.Array):
         if isinstance(field, pa.StructArray):
             nested_dict[field.name] = _decode_info(values.field(i))
         else:
-            nested_dict[field.name] = values.field(i).to_numpy(zero_copy_only=False)
+            value = np.stack(values.field(i).to_numpy(zero_copy_only=False))
+            if field.metadata is not None and b'shape' in field.metadata:
+                data_shape = tuple(field.metadata[b'shape'])
+                value = value.reshape(len(value), *data_shape)
+            nested_dict[field.name] = value
     return nested_dict

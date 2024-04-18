@@ -4,6 +4,7 @@ import gymnasium as gym
 import numpy as np
 import pytest
 from gymnasium import spaces
+import jax.tree_util as jtu
 
 import minari
 from minari import DataCollector, MinariDataset
@@ -207,8 +208,8 @@ def test_generate_dataset_with_external_buffer(dataset_id, env_id):
             truncations.append(truncated)
 
         episode_buffer = {
-            "observations": copy.deepcopy(observations),
-            "actions": copy.deepcopy(actions),
+            "observations": jtu.tree_map(lambda *v: np.stack(v), *observations),
+            "actions": jtu.tree_map(lambda *v: np.stack(v), *actions),
             "rewards": np.asarray(rewards),
             "terminations": np.asarray(terminations),
             "truncations": np.asarray(truncations),

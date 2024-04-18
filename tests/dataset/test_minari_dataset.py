@@ -3,6 +3,7 @@ import json
 import os
 import re
 from typing import Any
+import jax.tree_util as jtu
 
 import gymnasium as gym
 import numpy as np
@@ -231,8 +232,8 @@ def test_filter_episodes_and_subsequent_updates(dataset_id, env_id):
             truncations.append(truncated)
 
         episode_buffer = {
-            "observations": copy.deepcopy(observations),
-            "actions": copy.deepcopy(actions),
+            "observations": jtu.tree_map(lambda *v: np.stack(v), *observations),
+            "actions": jtu.tree_map(lambda *v: np.stack(v), *actions),
             "rewards": np.asarray(rewards),
             "terminations": np.asarray(terminations),
             "truncations": np.asarray(truncations),
@@ -438,8 +439,8 @@ def test_update_dataset_from_buffer(dataset_id, env_id):
             truncations.append(truncated)
 
         episode_buffer = {
-            "observations": copy.deepcopy(observations),
-            "actions": copy.deepcopy(actions),
+            "observations": jtu.tree_map(lambda *v: np.stack(v), *observations),
+            "actions": jtu.tree_map(lambda *v: np.stack(v), *actions),
             "rewards": np.asarray(rewards),
             "terminations": np.asarray(terminations),
             "truncations": np.asarray(truncations),
