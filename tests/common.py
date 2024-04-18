@@ -153,9 +153,9 @@ class DummyDictEnv(gym.Env):
 
     def _get_info(self):
         return {
-                "timestep": np.array([self.timestep]),
-                "component_1": {"next_timestep": np.array([self.timestep + 1])},
-            }
+            "timestep": np.array([self.timestep]),
+            "component_1": {"next_timestep": np.array([self.timestep + 1])},
+        }
 
     def step(self, action):
         terminated = self.timestep > 5
@@ -288,7 +288,6 @@ class DummyComboEnv(gym.Env):
 
 
 def register_dummy_envs():
-
     register(
         id="DummyBoxEnv-v0",
         entry_point="tests.common:DummyBoxEnv",
@@ -715,8 +714,7 @@ def check_episode_data_integrity(
             obs = _reconstuct_obs_or_action_at_index_recursive(episode.observations, i)
             if info_sample is not None:
                 assert check_infos_equal(
-                    get_info_at_step_index(episode.infos, i),
-                    info_sample
+                    get_info_at_step_index(episode.infos, i), info_sample
                 )
 
             assert observation_space.contains(obs)
@@ -744,7 +742,6 @@ def check_infos_equal(info_1: Dict, info_2: Dict) -> bool:
 
 
 def _space_subset_helper(entry: Dict):
-
     return OrderedDict(
         {
             "component_2": OrderedDict(
@@ -755,7 +752,6 @@ def _space_subset_helper(entry: Dict):
 
 
 def get_sample_buffer_for_dataset_from_env(env: gym.Env, num_episodes: int = 10):
-
     buffer = []
     observations = []
     actions = []

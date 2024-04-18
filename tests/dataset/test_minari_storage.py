@@ -233,7 +233,7 @@ def test_minari_get_dataset_size_from_collector_env(dataset_id, env_id):
         author_email="wdudley@farama.org",
     )
 
-    assert dataset.storage.metadata['dataset_size'] == dataset.storage.get_size()
+    assert dataset.storage.metadata["dataset_size"] == dataset.storage.get_size()
 
     check_data_integrity(dataset.storage, dataset.episode_indices)
 
@@ -320,7 +320,7 @@ def test_minari_get_dataset_size_from_buffer(dataset_id, env_id):
         author_email="wdudley@farama.org",
     )
 
-    assert dataset.storage.metadata['dataset_size'] == dataset.storage.get_size()
+    assert dataset.storage.metadata["dataset_size"] == dataset.storage.get_size()
 
     check_data_integrity(dataset.storage, dataset.episode_indices)
 

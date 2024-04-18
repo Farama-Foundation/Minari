@@ -149,9 +149,7 @@ class DataCollector(gym.Wrapper):
             dict_data = {k: v for k, v in step_data.items() if k != "infos"}
         else:
             assert self._reference_info is not None
-            if not _check_infos_same_shape(
-                self._reference_info, step_data["infos"]
-            ):
+            if not _check_infos_same_shape(self._reference_info, step_data["infos"]):
                 raise ValueError(
                     "Info structure inconsistent with info structure returned by original reset."
                 )
@@ -272,7 +270,7 @@ class DataCollector(gym.Wrapper):
         self._validate_buffer()
         episode_buffer = {
             "seed": str(None) if seed is None else seed,
-            "id": self._episode_id
+            "id": self._episode_id,
         }
         self._add_step_data(episode_buffer, step_data)
         self._buffer.append(episode_buffer)
@@ -374,7 +372,7 @@ class DataCollector(gym.Wrapper):
         # will be able to calculate dataset size only after saving the disk, so updating the dataset metadata post `save_to_disk` method
 
         dataset = MinariDataset(dataset_path)
-        metadata['dataset_size'] = dataset.storage.get_size()
+        metadata["dataset_size"] = dataset.storage.get_size()
         dataset.storage.update_metadata(metadata)
         return dataset
 
@@ -441,5 +439,7 @@ def _check_infos_same_shape(info_1: dict, info_2: dict):
         if isinstance(info_1[key], dict):
             return _check_infos_same_shape(info_1[key], info_2[key])
         elif isinstance(info_1[key], np.ndarray):
-            return (info_1[key].shape == info_2[key].shape) and (info_1[key].dtype == info_2[key].dtype)
+            return (info_1[key].shape == info_2[key].shape) and (
+                info_1[key].dtype == info_2[key].dtype
+            )
     return True

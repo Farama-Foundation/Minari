@@ -75,6 +75,7 @@ class MinariStorage(ABC):
                 action_space = env.action_space
 
         from minari.dataset.storages import registry  # avoid circular import
+
         return registry[metadata["data_format"]](
             data_path, observation_space, action_space
         )
@@ -109,8 +110,11 @@ class MinariStorage(ABC):
                 "Since env_spec is not specified, you need to specify both action space and observation space"
             )
         from minari.dataset.storages import registry  # avoid circular import
+
         if data_format not in registry.keys():
-            raise ValueError(f"No storage implemented for {data_format}. Available formats: {registry.keys()}")
+            raise ValueError(
+                f"No storage implemented for {data_format}. Available formats: {registry.keys()}"
+            )
 
         data_path = pathlib.Path(data_path)
         data_path.mkdir(exist_ok=True)
@@ -262,7 +266,7 @@ class MinariStorage(ABC):
         """
         datasize = 0
         if self.data_path.exists():
-            for filename in self.data_path.glob('**/*'):
+            for filename in self.data_path.glob("**/*"):
                 st_size = self.data_path.joinpath(filename).stat().st_size
                 datasize += st_size / 1000000
 

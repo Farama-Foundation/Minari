@@ -100,15 +100,15 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
 @pytest.mark.parametrize(
     "info_override",
     [
-        None, {}, {"foo": np.ones((10, 10), dtype=np.float32)},
-        {"int": 1}, {"bool": False},
+        None,
+        {},
+        {"foo": np.ones((10, 10), dtype=np.float32)},
+        {"int": 1},
+        {"bool": False},
         {
             "value1": True,
             "value2": 5,
-            "value3": {
-                "nested1": False,
-                "nested2": np.empty(10)
-            }
+            "value3": {"nested1": False, "nested2": np.empty(10)},
         },
     ],
 )
@@ -250,7 +250,9 @@ def test_generate_dataset_with_external_buffer(dataset_id, env_id):
         assert len(dataset.episode_indices) == num_episodes
 
         check_data_integrity(dataset.storage, dataset.episode_indices)
-        check_episode_data_integrity(dataset, dataset.spec.observation_space, dataset.spec.action_space)
+        check_episode_data_integrity(
+            dataset, dataset.spec.observation_space, dataset.spec.action_space
+        )
         check_env_recovery(env, dataset, eval_env)
 
         check_load_and_delete_dataset(dataset_id)
@@ -319,7 +321,9 @@ def test_generate_dataset_with_space_subset_external_buffer(is_env_needed):
     assert len(dataset.episode_indices) == num_episodes
 
     check_data_integrity(dataset.storage, dataset.episode_indices)
-    check_episode_data_integrity(dataset, dataset.spec.observation_space, dataset.spec.action_space)
+    check_episode_data_integrity(
+        dataset, dataset.spec.observation_space, dataset.spec.action_space
+    )
     if is_env_needed:
         check_env_recovery_with_subset_spaces(
             env, dataset, action_space_subset, observation_space_subset

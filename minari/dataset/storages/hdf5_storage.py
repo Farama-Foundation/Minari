@@ -47,9 +47,13 @@ class _HDF5Storage(MinariStorage):
 
         sentinel = object()
         with h5py.File(self._file_path, "a") as file:
-            for metadata, episode_id in zip_longest(metadatas, episode_indices, fillvalue=sentinel):
+            for metadata, episode_id in zip_longest(
+                metadatas, episode_indices, fillvalue=sentinel
+            ):
                 if sentinel in (metadata, episode_id):
-                    raise ValueError('Metadatas and episode_indices have different lengths')
+                    raise ValueError(
+                        "Metadatas and episode_indices have different lengths"
+                    )
 
                 assert isinstance(metadata, dict)
                 ep_group = file[f"episode_{episode_id}"]
@@ -123,7 +127,7 @@ class _HDF5Storage(MinariStorage):
                     "actions": self._decode_space(
                         ep_group["actions"], self.action_space
                     ),
-                    "infos": infos
+                    "infos": infos,
                 }
                 for key in {"rewards", "terminations", "truncations"}:
                     group_value = ep_group[key]
@@ -222,7 +226,9 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
             }
             episode_group_to_clear = _get_from_h5py(episode_group, key)
             _add_episode_to_group(dict_data, episode_group_to_clear)
-        elif all(isinstance(entry, OrderedDict) for entry in data):  # list of OrderedDict
+        elif all(
+            isinstance(entry, OrderedDict) for entry in data
+        ):  # list of OrderedDict
             dict_data = {key: [entry[key] for entry in data] for key in data[0].keys()}
             episode_group_to_clear = _get_from_h5py(episode_group, key)
             _add_episode_to_group(dict_data, episode_group_to_clear)
