@@ -22,7 +22,6 @@ filtered_datasets = defaultdict(defaultdict)
 all_remote_datasets = list_remote_datasets()
 
 for dataset_id in all_remote_datasets.keys():
-
     env_name, dataset_name, version = parse_dataset_id(dataset_id)
     assert env_name is not None
 

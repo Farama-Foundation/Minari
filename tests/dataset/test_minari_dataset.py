@@ -73,7 +73,6 @@ def test_episode_data(space: gym.Space):
     ],
 )
 def test_update_dataset_from_collector_env(dataset_id, env_id):
-
     local_datasets = minari.list_local_datasets()
     if dataset_id in local_datasets:
         minari.delete_dataset(dataset_id)
@@ -396,7 +395,6 @@ def test_iterate_episodes(dataset_id, env_id):
     ],
 )
 def test_update_dataset_from_buffer(dataset_id, env_id):
-
     local_datasets = minari.list_local_datasets()
     if dataset_id in local_datasets:
         minari.delete_dataset(dataset_id)
@@ -483,7 +481,9 @@ def test_missing_env_module():
     path = os.path.join(dataset.storage.data_path, METADATA_FILE_NAME)
     with open(path) as file:
         metadata = json.load(file)
-    metadata["env_spec"] = r"""{
+    metadata[
+        "env_spec"
+    ] = r"""{
         "id": "DummyEnv-v0",
         "entry_point": "dummymodule:dummyenv",
         "reward_threshold": null,

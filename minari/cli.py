@@ -163,11 +163,13 @@ def show(dataset: Annotated[str, typer.Argument()]):
             dst_metadata = remote_datasets[dataset]
         else:
             local_dataset_path = get_dataset_path("")
-            print(Text(
-                f"""The dataset `{dataset}` can't be found locally"""
-                f"""(at `{local_dataset_path}`) or remotely.""",
-                style="red",
-            ))
+            print(
+                Text(
+                    f"""The dataset `{dataset}` can't be found locally"""
+                    f"""(at `{local_dataset_path}`) or remotely.""",
+                    style="red",
+                )
+            )
             raise typer.Abort()
 
     dataset_id = dst_metadata["dataset_id"]
@@ -184,7 +186,9 @@ def show(dataset: Annotated[str, typer.Argument()]):
     dataset_spec_table.add_column(style="not bold")
 
     for key, value in get_dataset_spec_dict(dst_metadata, print_version=True).items():
-        md = Markdown(str(value), inline_code_lexer="python", inline_code_theme="monokai")
+        md = Markdown(
+            str(value), inline_code_lexer="python", inline_code_theme="monokai"
+        )
         dataset_spec_table.add_row(key, md)
 
     print(Markdown(f"""# {dataset_id_text}"""))
@@ -206,7 +210,9 @@ def show(dataset: Annotated[str, typer.Argument()]):
             env_spec_table.add_column(style="not bold")
 
             for key, value in get_env_spec_dict(env_spec).items():
-                md = Markdown(value, inline_code_lexer="python", inline_code_theme="monokai")
+                md = Markdown(
+                    value, inline_code_lexer="python", inline_code_theme="monokai"
+                )
                 env_spec_table.add_row(key, md)
 
             if env_type == "env_spec":
