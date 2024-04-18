@@ -467,7 +467,10 @@
 
     <span class="c1"># 2. Check if there are any remote compatible versions with the local installed Minari version</span>
     <span class="n">max_version</span> <span class="o">=</span> <span class="n">get_remote_dataset_versions</span><span class="p">(</span>
-        <span class="n">download_env_name</span><span class="p">,</span> <span class="n">download_dataset_name</span><span class="p">,</span> <span class="n">latest_version</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">compatible_minari_version</span><span class="o">=</span><span class="kc">True</span>
+        <span class="n">download_env_name</span><span class="p">,</span>
+        <span class="n">download_dataset_name</span><span class="p">,</span>
+        <span class="n">latest_version</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">compatible_minari_version</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">max_version</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">force_download</span><span class="p">:</span>
@@ -501,8 +504,10 @@
         <span class="n">compatible_minari_version</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">if</span> <span class="n">download_version</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">compatible_dataset_versions</span><span class="p">:</span>
-        <span class="n">e_msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The version you are trying to download for dataset, </span><span class="si">{</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2">, is not compatible with &quot;</span>
-                 <span class="sa">f</span><span class="s2">&quot;your local installed version of Minari, </span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="n">e_msg</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;The version you are trying to download for dataset, </span><span class="si">{</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2">, is not compatible with &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;your local installed version of Minari, </span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">force_download</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="n">e_msg</span>
