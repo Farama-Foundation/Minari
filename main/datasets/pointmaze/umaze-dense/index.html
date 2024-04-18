@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Medium-Dense" href="../medium-dense/" /><link rel="prev" title="Open-Dense" href="../open-dense/" />
         <link rel="canonical" href="https://minari.farama.org/datasets/pointmaze/umaze-dense.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.6 and Furo 2023.08.19.dev1 -->
         <title>Umaze-Dense - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -359,14 +359,14 @@
           <article role="main">
             
             <section class="tex2jax_ignore mathjax_ignore" id="umaze-dense">
-<h1>Umaze-Dense<a class="headerlink" href="#umaze-dense" title="Link to this heading">#</a></h1>
-<img src="https://storage.googleapis.com/minari-datasets/pointmaze-umaze-dense-v1/_docs/_imgs/pointmaze-umaze-dense-v1.gif" width="200" style="display: block; margin:0 auto"/>
+<h1>Umaze-Dense<a class="headerlink" href="#umaze-dense" title="Link to this heading">¶</a></h1>
+<img src="https://storage.googleapis.com/minari-datasets/pointmaze-umaze-dense-v2/_docs/_imgs/pointmaze-umaze-dense-v2.gif" width="200" style="display: block; margin:0 auto"/>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
 <p>The data is collected from the <a class="reference external" href="https://robotics.farama.org/envs/maze/point_maze/"><code class="docutils literal notranslate"><span class="pre">PointMaze_UMazeDense-v3</span></code></a> environment, which contains a U shape maze. The agent uses a PD controller to follow a path of waypoints generated with QIteration until it reaches the goal. The task is continuing which means that when the agent reaches the goal the environment generates a new random goal without resetting the location of the agent. The reward function is dense, being the negative Euclidean distance between the goal and the agent. To add variance to the collected paths random noise is added to the actions taken by the agent.</p>
 </section>
 <section id="dataset-specs">
-<h2>Dataset Specs<a class="headerlink" href="#dataset-specs" title="Link to this heading">#</a></h2>
+<h2>Dataset Specs<a class="headerlink" href="#dataset-specs" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -379,7 +379,13 @@
 <td><p>1000000</p></td>
 </tr>
 <tr class="row-odd"><td><p>Total Episodes</p></td>
-<td><p>13289</p></td>
+<td><p>13210</p></td>
+</tr>
+<tr class="row-even"><td><p>Dataset Observation Space</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Dict('achieved_goal':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(2,),</span> <span class="pre">float64),</span> <span class="pre">'desired_goal':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(2,),</span> <span class="pre">float64),</span> <span class="pre">'observation':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(4,),</span> <span class="pre">float64))</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Dataset Action Space</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Box(-1.0,</span> <span class="pre">1.0,</span> <span class="pre">(2,),</span> <span class="pre">float32)</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>Algorithm</p></td>
 <td><p>QIteration</p></td>
@@ -394,17 +400,17 @@
 <td><p><a class="reference external" href="https://github.com/rodrigodelazcano/d4rl-minari-dataset-generation">https://github.com/rodrigodelazcano/d4rl-minari-dataset-generation</a></p></td>
 </tr>
 <tr class="row-even"><td><p>Minari Version</p></td>
-<td><p>~=0.4</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">~=0.4</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Download</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">minari.download_dataset(&quot;pointmaze-umaze-dense-v1&quot;)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">minari.download_dataset(&quot;pointmaze-umaze-dense-v2&quot;)</span></code></p></td>
 </tr>
 </tbody>
 </table>
 </div>
 </section>
 <section id="environment-specs">
-<h2>Environment Specs<a class="headerlink" href="#environment-specs" title="Link to this heading">#</a></h2>
+<h2>Environment Specs<a class="headerlink" href="#environment-specs" title="Link to this heading">¶</a></h2>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The following table rows correspond to (in addition to the action and observation space) the Gymnasium environment specifications used to generate the dataset.
@@ -412,7 +418,7 @@ To read more about what each parameter means you can have a look at the Gymnasiu
 <p>This environment can be recovered from the Minari dataset as follows:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">minari</span>
 
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;pointmaze-umaze-dense-v1&#39;</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;pointmaze-umaze-dense-v2&#39;</span><span class="p">)</span>
 <span class="n">env</span>  <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">recover_environment</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -469,13 +475,13 @@ To read more about what each parameter means you can have a look at the Gymnasiu
 </div>
 </section>
 <section id="evaluation-environment-specs">
-<h2>Evaluation Environment Specs<a class="headerlink" href="#evaluation-environment-specs" title="Link to this heading">#</a></h2>
+<h2>Evaluation Environment Specs<a class="headerlink" href="#evaluation-environment-specs" title="Link to this heading">¶</a></h2>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This environment can be recovered from the Minari dataset as follows:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">minari</span>
 
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;pointmaze-umaze-dense-v1&#39;</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;pointmaze-umaze-dense-v2&#39;</span><span class="p">)</span>
 <span class="n">eval_env</span>  <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">recover_environment</span><span class="p">(</span><span class="n">eval_env</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -694,7 +700,7 @@ To read more about what each parameter means you can have a look at the Gymnasiu
       </script>
 
     <script src="../../../_static/documentation_options.js?v=d5185309"></script>
-    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
     <script src="../../../_static/js/termynal.js?v=ff4c6923"></script>

@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" />
         <link rel="canonical" href="https://minari.farama.org/datasets/minigrid/fourrooms-random.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.6 and Furo 2023.08.19.dev1 -->
         <title>Fourrooms-Random - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -359,14 +359,13 @@
           <article role="main">
             
             <section class="tex2jax_ignore mathjax_ignore" id="fourrooms-random">
-<h1>Fourrooms-Random<a class="headerlink" href="#fourrooms-random" title="Link to this heading">#</a></h1>
+<h1>Fourrooms-Random<a class="headerlink" href="#fourrooms-random" title="Link to this heading">¶</a></h1>
 <img src="https://storage.googleapis.com/minari-datasets/minigrid-fourrooms-random-v0/_docs/_imgs/minigrid-fourrooms-random-v0.gif" width="200" style="display: block; margin:0 auto"/>
 <section id="description">
-<h2>Description<a class="headerlink" href="#description" title="Link to this heading">#</a></h2>
-<p>This dataset was generated using a random policy.</p>
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
 </section>
 <section id="dataset-specs">
-<h2>Dataset Specs<a class="headerlink" href="#dataset-specs" title="Link to this heading">#</a></h2>
+<h2>Dataset Specs<a class="headerlink" href="#dataset-specs" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -376,10 +375,16 @@
 </thead>
 <tbody>
 <tr class="row-even"><td><p>Total Steps</p></td>
-<td><p>1000033</p></td>
+<td><p>1000070</p></td>
 </tr>
 <tr class="row-odd"><td><p>Total Episodes</p></td>
-<td><p>10181</p></td>
+<td><p>10174</p></td>
+</tr>
+<tr class="row-even"><td><p>Dataset Observation Space</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Dict('direction':</span> <span class="pre">Discrete(4),</span> <span class="pre">'image':</span> <span class="pre">Box(0,</span> <span class="pre">255,</span> <span class="pre">(7,</span> <span class="pre">7,</span> <span class="pre">3),</span> <span class="pre">uint8),</span> <span class="pre">'mission':</span> <span class="pre">Text(1,</span> <span class="pre">14,</span> <span class="pre">charset=</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''(),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdeeeffghijklmnnoopqrrssttuvwxyzz{}))</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Dataset Action Space</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Discrete(7)</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>Algorithm</p></td>
 <td><p>RandomPolicy</p></td>
@@ -388,13 +393,13 @@
 <td><p>Omar G. Younis</p></td>
 </tr>
 <tr class="row-even"><td><p>Email</p></td>
-<td><p>omar.younis98&#64;gmail.com</p></td>
+<td><p>omar.g.younis&#64;gmail.com</p></td>
 </tr>
 <tr class="row-odd"><td><p>Code Permalink</p></td>
 <td><p><a class="reference external" href="https://github.com/rodrigodelazcano/d4rl-minari-dataset-generation">https://github.com/rodrigodelazcano/d4rl-minari-dataset-generation</a></p></td>
 </tr>
 <tr class="row-even"><td><p>Minari Version</p></td>
-<td><p>&gt;=0.4.0</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&gt;=0.4.0</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Download</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">minari.download_dataset(&quot;minigrid-fourrooms-random-v0&quot;)</span></code></p></td>
@@ -404,7 +409,7 @@
 </div>
 </section>
 <section id="environment-specs">
-<h2>Environment Specs<a class="headerlink" href="#environment-specs" title="Link to this heading">#</a></h2>
+<h2>Environment Specs<a class="headerlink" href="#environment-specs" title="Link to this heading">¶</a></h2>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The following table rows correspond to (in addition to the action and observation space) the Gymnasium environment specifications used to generate the dataset.
@@ -429,7 +434,7 @@ To read more about what each parameter means you can have a look at the Gymnasiu
 <td><p>MiniGrid-FourRooms-v0</p></td>
 </tr>
 <tr class="row-odd"><td><p>Observation Space</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">Dict('direction':</span> <span class="pre">Discrete(4),</span> <span class="pre">'image':</span> <span class="pre">Box(0,</span> <span class="pre">255,</span> <span class="pre">(7,</span> <span class="pre">7,</span> <span class="pre">3),</span> <span class="pre">uint8),</span> <span class="pre">'mission':</span> <span class="pre">MissionSpace(&lt;function</span> <span class="pre">FourRoomsEnv._gen_mission</span> <span class="pre">at</span> <span class="pre">0x7a6666521670&gt;,</span> <span class="pre">None))</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Dict('direction':</span> <span class="pre">Discrete(4),</span> <span class="pre">'image':</span> <span class="pre">Box(0,</span> <span class="pre">255,</span> <span class="pre">(7,</span> <span class="pre">7,</span> <span class="pre">3),</span> <span class="pre">uint8),</span> <span class="pre">'mission':</span> <span class="pre">MissionSpace(&lt;function</span> <span class="pre">FourRoomsEnv._gen_mission</span> <span class="pre">at</span> <span class="pre">0x7f50e0d7f790&gt;,</span> <span class="pre">None))</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>Action Space</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Discrete(7)</span></code></p></td>
@@ -469,7 +474,7 @@ To read more about what each parameter means you can have a look at the Gymnasiu
 </div>
 </section>
 <section id="evaluation-environment-specs">
-<h2>Evaluation Environment Specs<a class="headerlink" href="#evaluation-environment-specs" title="Link to this heading">#</a></h2>
+<h2>Evaluation Environment Specs<a class="headerlink" href="#evaluation-environment-specs" title="Link to this heading">¶</a></h2>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This dataset doesn’t contain an <cite>eval_env_spec</cite> attribute which means that the specs of the environment used for evaluation are the same as the specs of the environment used for creating the dataset. The following calls will return the same environment:</p>
@@ -625,7 +630,7 @@ To read more about what each parameter means you can have a look at the Gymnasiu
       </script>
 
     <script src="../../../_static/documentation_options.js?v=d5185309"></script>
-    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
     <script src="../../../_static/js/termynal.js?v=ff4c6923"></script>

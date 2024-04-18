@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Minari CLI" href="../minari_cli/" /><link rel="prev" title="Basic Usage" href="../basic_usage/" />
         <link rel="canonical" href="https://minari.farama.org/content/dataset_standards.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.6 and Furo 2023.08.19.dev1 -->
         <title>Dataset Standards - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=3e7f4c72" />
@@ -368,11 +368,11 @@
           <article role="main">
             
             <section class="tex2jax_ignore mathjax_ignore" id="dataset-standards">
-<h1>Dataset Standards<a class="headerlink" href="#dataset-standards" title="Link to this heading">#</a></h1>
+<h1>Dataset Standards<a class="headerlink" href="#dataset-standards" title="Link to this heading">¶</a></h1>
 <section id="minari-storage">
-<h2>Minari Storage<a class="headerlink" href="#minari-storage" title="Link to this heading">#</a></h2>
+<h2>Minari Storage<a class="headerlink" href="#minari-storage" title="Link to this heading">¶</a></h2>
 <section id="minari-root">
-<h3>Minari root<a class="headerlink" href="#minari-root" title="Link to this heading">#</a></h3>
+<h3>Minari root<a class="headerlink" href="#minari-root" title="Link to this heading">¶</a></h3>
 <p>Minari stores the offline datasets under a common root directory. The root directory path for the local datasets is set by default to <code class="docutils literal notranslate"><span class="pre">~/.minari/datasets/</span></code>. However, this path can be modified by setting the environment variable <code class="docutils literal notranslate"><span class="pre">MINARI_DATASETS_PATH</span></code>.</p>
 <p>The remote datasets are kept in the public Google Cloud Platform (GCP) bucket <a class="reference external" href="https://console.cloud.google.com/storage/browser/minari-datasets;tab=objects?forceOnBucketsSortingFiltering=false&amp;amp;project=mcmes-345620&amp;amp;prefix=&amp;amp;forceOnObjectsSortingFiltering=false"><code class="docutils literal notranslate"><span class="pre">minari-datasets</span></code></a>.</p>
 <p>The first level of the root directory tree contains the Minari dataset directories, which are named after the datasets <code class="docutils literal notranslate"><span class="pre">id</span></code>. The datasets <code class="docutils literal notranslate"><span class="pre">id</span></code> must follow the syntax <code class="docutils literal notranslate"><span class="pre">(env_name-)(dataset_name)(-v(version))</span></code>, where:</p>
@@ -384,7 +384,7 @@
 <p>In the end, the <code class="docutils literal notranslate"><span class="pre">id</span></code> of the dataset for the initial version of the <code class="docutils literal notranslate"><span class="pre">AdroitHandDoor</span></code> environment example will be <code class="docutils literal notranslate"><span class="pre">door-human-v0</span></code>.</p>
 </section>
 <section id="data-files">
-<h3>Data files<a class="headerlink" href="#data-files" title="Link to this heading">#</a></h3>
+<h3>Data files<a class="headerlink" href="#data-files" title="Link to this heading">¶</a></h3>
 <p>Each Minari dataset directory contains another directory named <code class="docutils literal notranslate"><span class="pre">data</span></code> where the files of the collected offline data are stored (more directories are yet to be included for additional information, <code class="docutils literal notranslate"><span class="pre">_docs</span></code> and <code class="docutils literal notranslate"><span class="pre">policies</span></code> are WIP). The <code class="docutils literal notranslate"><span class="pre">data</span></code> directory can contain multiple <code class="docutils literal notranslate"><span class="pre">.hdf5</span></code> files storing the offline data. When using a Minari dataset the offline data is loaded homogeneously from all <code class="docutils literal notranslate"><span class="pre">.hdf5</span></code> as if it were a single file. The names for these files are:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">main_data.hdf5</span></code>: root file that aside from raw data it also contains all the metadata of the global dataset and external links to the data in the other files. Minari will read this file when a dataset is loaded.</p></li>
@@ -452,11 +452,11 @@
 </section>
 </section>
 <section id="dataset-file-format">
-<h2>Dataset File Format<a class="headerlink" href="#dataset-file-format" title="Link to this heading">#</a></h2>
+<h2>Dataset File Format<a class="headerlink" href="#dataset-file-format" title="Link to this heading">¶</a></h2>
 <p>Minari datasets are stored in <a class="reference external" href="https://www.hdfgroup.org/solutions/hdf5/"><code class="docutils literal notranslate"><span class="pre">HDF5</span></code></a> file format by using the <a class="reference external" href="https://www.h5py.org/"><code class="docutils literal notranslate"><span class="pre">h5py</span></code></a> Python interface. We leverage the hierarchical structure of <code class="docutils literal notranslate"><span class="pre">HDF5</span></code> files of <a class="reference external" href="https://docs.h5py.org/en/stable/high/group.html"><code class="docutils literal notranslate"><span class="pre">group</span></code></a> and <a class="reference external" href="https://docs.h5py.org/en/stable/high/dataset.html"><code class="docutils literal notranslate"><span class="pre">dataset</span></code></a> elements to clearly divide the recorded step data into episode <code class="docutils literal notranslate"><span class="pre">groups</span></code> and add custom metadata to the whole dataset, to each episode <code class="docutils literal notranslate"><span class="pre">group</span></code>, or to the individual <code class="docutils literal notranslate"><span class="pre">HDF5</span></code> <code class="docutils literal notranslate"><span class="pre">datasets</span></code> that comprise each episode <code class="docutils literal notranslate"><span class="pre">group</span></code>.</p>
 <p>More information about the features that the <code class="docutils literal notranslate"><span class="pre">HDF5</span></code> file format support can be read in this <a class="reference external" href="https://www.neonscience.org/resources/learning-hub/tutorials/about-hdf5">link</a></p>
 <section id="hdf5-file-structure">
-<h3>HDF5 file structure<a class="headerlink" href="#hdf5-file-structure" title="Link to this heading">#</a></h3>
+<h3>HDF5 file structure<a class="headerlink" href="#hdf5-file-structure" title="Link to this heading">¶</a></h3>
 <p>The offline data is organized inside the <code class="docutils literal notranslate"><span class="pre">main_data.hdf5</span></code> file in episode <a class="reference external" href="https://docs.h5py.org/en/stable/high/dataset.html"><code class="docutils literal notranslate"><span class="pre">groups</span></code></a> named as <code class="docutils literal notranslate"><span class="pre">episode_id</span></code>. Each episode group contains all the stepping data from a Gymnasium environment until the environment is <code class="docutils literal notranslate"><span class="pre">terminated</span></code> or <code class="docutils literal notranslate"><span class="pre">truncated</span></code>.</p>
 <p>The stepping data inside the episode group is divided into some required <code class="docutils literal notranslate"><span class="pre">datasets</span></code> (<code class="docutils literal notranslate"><span class="pre">StepData</span></code>) plus other optional <code class="docutils literal notranslate"><span class="pre">groups</span></code> and nested <code class="docutils literal notranslate"><span class="pre">sub-groups</span></code> such as <code class="docutils literal notranslate"><span class="pre">infos</span></code>. If the action and observation spaces both are simple spaces (not <code class="docutils literal notranslate"><span class="pre">Tuple</span></code> and not <code class="docutils literal notranslate"><span class="pre">Dict</span></code>), then the hierarchical tree of the Minari dataset <code class="docutils literal notranslate"><span class="pre">HDF5</span></code> file will end up looking as follows:</p>
 <div class="only-light">
@@ -810,7 +810,7 @@
 </div>
 </section>
 <section id="default-dataset-metadata">
-<h3>Default dataset metadata<a class="headerlink" href="#default-dataset-metadata" title="Link to this heading">#</a></h3>
+<h3>Default dataset metadata<a class="headerlink" href="#default-dataset-metadata" title="Link to this heading">¶</a></h3>
 <p><code class="docutils literal notranslate"><span class="pre">HDF5</span></code> files can have metadata attached to <code class="docutils literal notranslate"><span class="pre">objects</span></code> as <a class="reference external" href="https://docs.h5py.org/en/stable/high/attr.html"><code class="docutils literal notranslate"><span class="pre">attributes</span></code></a>. Minari uses these <code class="docutils literal notranslate"><span class="pre">attributes</span></code> to add metadata to the global dataset file, to each episode group, as well as to the individual datasets inside each episode. This                                                                                 metadata can be added by the user by overriding the <code class="docutils literal notranslate"><span class="pre">EpisodeMetadataCallback</span></code> in the <code class="docutils literal notranslate"><span class="pre">DataCollector</span></code> wrapper. However, there is also some metadata added by default to every dataset.</p>
 <p>When creating a Minari dataset with the <code class="docutils literal notranslate"><span class="pre">DataCollector</span></code> wrapper the default global metadata will be the following:</p>
 <div class="table-wrapper colwidths-auto docutils container">
@@ -934,10 +934,10 @@
 </section>
 </section>
 <section id="observation-and-action-spaces">
-<h2>Observation and Action Spaces<a class="headerlink" href="#observation-and-action-spaces" title="Link to this heading">#</a></h2>
+<h2>Observation and Action Spaces<a class="headerlink" href="#observation-and-action-spaces" title="Link to this heading">¶</a></h2>
 <p>The Minari storage format supports the following observation and action spaces:</p>
 <section id="supported-spaces">
-<h3>Supported Spaces<a class="headerlink" href="#supported-spaces" title="Link to this heading">#</a></h3>
+<h3>Supported Spaces<a class="headerlink" href="#supported-spaces" title="Link to this heading">¶</a></h3>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -965,16 +965,16 @@
 </table>
 </div>
 <section id="space-serialization">
-<h4>Space Serialization<a class="headerlink" href="#space-serialization" title="Link to this heading">#</a></h4>
+<h4>Space Serialization<a class="headerlink" href="#space-serialization" title="Link to this heading">¶</a></h4>
 <p>Spaces are serialized to a JSON format when saving to disk. This serialization supports all space types supported by Minari, and aims to be both human, and machine readable. The serialized action and observation spaces for the episodes in the dataset are saved as strings in the global HDF5 group metadata in <code class="docutils literal notranslate"><span class="pre">main_data.hdf5</span></code> for a particular dataset as <code class="docutils literal notranslate"><span class="pre">action_space</span></code> and <code class="docutils literal notranslate"><span class="pre">observation_space</span></code> respectively. All episodes in <code class="docutils literal notranslate"><span class="pre">main_data.hdf5</span></code> must have observations and actions that comply with these action and observation spaces.</p>
 </section>
 </section>
 </section>
 <section id="minari-data-structures">
-<h2>Minari Data Structures<a class="headerlink" href="#minari-data-structures" title="Link to this heading">#</a></h2>
+<h2>Minari Data Structures<a class="headerlink" href="#minari-data-structures" title="Link to this heading">¶</a></h2>
 <p>A Minari dataset is encapsulated in the <code class="docutils literal notranslate"><span class="pre">MinariDataset</span></code> class which allows for iterating and sampling through episodes which are defined as <code class="docutils literal notranslate"><span class="pre">EpisodeData</span></code> data class.</p>
 <section id="episodedata-structure">
-<h3>EpisodeData Structure<a class="headerlink" href="#episodedata-structure" title="Link to this heading">#</a></h3>
+<h3>EpisodeData Structure<a class="headerlink" href="#episodedata-structure" title="Link to this heading">¶</a></h3>
 <p>Episodes can be accessed from a Minari dataset through iteration, random sampling, or even filtering episodes from a dataset through an arbitrary condition via the <code class="docutils literal notranslate"><span class="pre">filter_episodes</span></code> method. Take the following example where we load the <code class="docutils literal notranslate"><span class="pre">door-human-v0</span></code> dataset and randomly sample 10 episodes:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">minari</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;door-human-v1&quot;</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1034,7 +1034,7 @@
 </section>
 </section>
 <section id="additional-information-formatting">
-<h2>Additional Information Formatting<a class="headerlink" href="#additional-information-formatting" title="Link to this heading">#</a></h2>
+<h2>Additional Information Formatting<a class="headerlink" href="#additional-information-formatting" title="Link to this heading">¶</a></h2>
 <p>When creating a dataset with <code class="docutils literal notranslate"><span class="pre">DataCollector</span></code>, if the <code class="docutils literal notranslate"><span class="pre">DataCollector</span></code> is initialized with <code class="docutils literal notranslate"><span class="pre">record_infos=True</span></code>, an info dict must be provided from every call to the environment’s <code class="docutils literal notranslate"><span class="pre">step</span></code> and <code class="docutils literal notranslate"><span class="pre">reset</span></code> function. The structure of the info dictionary must be the same across steps.</p>
 <p>Given that it is not guaranteed that all Gymnasium environments provide infos at every step, we provide the <code class="docutils literal notranslate"><span class="pre">StepDataCallback</span></code> which can modify the infos from a non-compliant environment so they have the same structure at every step. An example of this pattern is available in our test <code class="docutils literal notranslate"><span class="pre">test_data_collector_step_data_callback_info_correction</span></code> in test_step_data_callback.py.</p>
 </section>
@@ -1219,7 +1219,7 @@
       </script>
 
     <script src="../../_static/documentation_options.js?v=d5185309"></script>
-    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=7660844c"></script>
     <script src="../../_static/js/termynal.js?v=ff4c6923"></script>

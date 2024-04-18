@@ -10,7 +10,7 @@
     <meta property="og:url" content="https://minari.farama.org/_modules/minari/storage/hosting.html" /><meta property="og:image" content="https://minari.farama.org/_static/img/robotics-github.png" /><meta name="twitter:card" content="summary_large_image"><link rel="index" title="Index" href="../../../../genindex/" /><link rel="search" title="Search" href="../../../../search/" />
         <link rel="canonical" href="https://minari.farama.org/_modules/minari/storage/hosting.html" />
 
-    <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.6 and Furo 2023.08.19.dev1 -->
         <title>minari.storage.hosting - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -467,7 +467,7 @@
 
     <span class="c1"># 2. Check if there are any remote compatible versions with the local installed Minari version</span>
     <span class="n">max_version</span> <span class="o">=</span> <span class="n">get_remote_dataset_versions</span><span class="p">(</span>
-        <span class="n">download_env_name</span><span class="p">,</span> <span class="n">download_dataset_name</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span>
+        <span class="n">download_env_name</span><span class="p">,</span> <span class="n">download_dataset_name</span><span class="p">,</span> <span class="n">latest_version</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">compatible_minari_version</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">max_version</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">force_download</span><span class="p">:</span>
@@ -495,11 +495,14 @@
 
     <span class="c1"># 4. Check that the dataset version is compatible with the local installed Minari version</span>
     <span class="n">compatible_dataset_versions</span> <span class="o">=</span> <span class="n">get_remote_dataset_versions</span><span class="p">(</span>
-        <span class="n">download_env_name</span><span class="p">,</span> <span class="n">download_dataset_name</span><span class="p">,</span> <span class="kc">True</span>
+        <span class="n">download_env_name</span><span class="p">,</span>
+        <span class="n">download_dataset_name</span><span class="p">,</span>
+        <span class="n">latest_version</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">compatible_minari_version</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">if</span> <span class="n">download_version</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">compatible_dataset_versions</span><span class="p">:</span>
-        <span class="n">e_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;The version you are trying to download for dataset, </span><span class="si">{</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2">, is not compatible with</span><span class="se">\</span>
-<span class="s2">                                    your local installed version of Minari, </span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2">.&quot;</span>
+        <span class="n">e_msg</span> <span class="o">=</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The version you are trying to download for dataset, </span><span class="si">{</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2">, is not compatible with &quot;</span>
+                 <span class="sa">f</span><span class="s2">&quot;your local installed version of Minari, </span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">force_download</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="n">e_msg</span>
@@ -768,7 +771,7 @@
       </script>
 
     <script src="../../../../_static/documentation_options.js?v=d5185309"></script>
-    <script src="../../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/scripts/furo.js?v=7660844c"></script>
     <script src="../../../../_static/js/termynal.js?v=ff4c6923"></script>

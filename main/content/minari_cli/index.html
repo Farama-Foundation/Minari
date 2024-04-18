@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Minari" href="../../api/minari_functions/" /><link rel="prev" title="Dataset Standards" href="../dataset_standards/" />
         <link rel="canonical" href="https://minari.farama.org/content/minari_cli.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.6 and Furo 2023.08.19.dev1 -->
         <title>Minari CLI - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=3e7f4c72" />
@@ -368,7 +368,7 @@
           <article role="main">
             
             <section class="tex2jax_ignore mathjax_ignore" id="minari-cli">
-<h1>Minari CLI<a class="headerlink" href="#minari-cli" title="Link to this heading">#</a></h1>
+<h1>Minari CLI<a class="headerlink" href="#minari-cli" title="Link to this heading">¶</a></h1>
 <p>Minari is also packaged with some useful CLI commands. The CLI tool is build on top off <a class="reference external" href="https://typer.tiangolo.com/">Typer</a> and it will be available after installing Minari.
 The Minari CLI gives access to most of the package functions through the command-line such as listing existing datasets, downloading and deleting.</p>
 <div class="termy">
@@ -408,7 +408,7 @@ The Minari CLI gives access to most of the package functions through the command
 </div>
 </div>
 <section id="list-datasets">
-<h2>List datasets<a class="headerlink" href="#list-datasets" title="Link to this heading">#</a></h2>
+<h2>List datasets<a class="headerlink" href="#list-datasets" title="Link to this heading">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">minari</span> <span class="pre">list</span> <span class="pre">COMMAND</span></code> command shows a table with the existing Minari datasets as well as some of their metadata such as number of episodes and steps in the dataset as well as the author’s name and email.
 This command comes with other two required sub-commands:</p>
 <ul class="simple">
@@ -453,7 +453,7 @@ This command comes with other two required sub-commands:</p>
 </div>
 </section>
 <section id="download-datasets">
-<h2>Download datasets<a class="headerlink" href="#download-datasets" title="Link to this heading">#</a></h2>
+<h2>Download datasets<a class="headerlink" href="#download-datasets" title="Link to this heading">¶</a></h2>
 <p>With the command <code class="docutils literal notranslate"><span class="pre">minari</span> <span class="pre">download</span> <span class="pre">DATASETS</span></code> you can download a group of datasets that are available in the remote Farama server. If the dataset name already exist locally, the Minari CLI will prompt you to override the
 current content of the local dataset.</p>
 <div class="admonition note">
@@ -484,7 +484,7 @@ current content of the local dataset.</p>
 </div>
 </section>
 <section id="delete-local-datasets">
-<h2>Delete local datasets<a class="headerlink" href="#delete-local-datasets" title="Link to this heading">#</a></h2>
+<h2>Delete local datasets<a class="headerlink" href="#delete-local-datasets" title="Link to this heading">¶</a></h2>
 <p>Local Minari datasets can be deleted by instantiating the following command, <code class="docutils literal notranslate"><span class="pre">minari</span> <span class="pre">delete</span> <span class="pre">DATASETS</span></code>. This command will also prompt a confirmation message to proceed with the deletion of the given datasets.</p>
 <div class="termy">
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">// Delete datasets pen-cloned-v0 and door-human-v0</span>
@@ -508,7 +508,7 @@ current content of the local dataset.</p>
 </div>
 </section>
 <section id="upload-datasets">
-<h2>Upload datasets<a class="headerlink" href="#upload-datasets" title="Link to this heading">#</a></h2>
+<h2>Upload datasets<a class="headerlink" href="#upload-datasets" title="Link to this heading">¶</a></h2>
 <p>If you would like to upload your own Minari dataset to the remote server please get in touch with the Farama team at <a class="reference external" href="mailto:contact&#37;&#52;&#48;farama&#46;org">contact<span>&#64;</span>farama<span>&#46;</span>org</a>. We will share with you a json encryption key file to give you permission to upload data to our GCP bucket. Then you can upload your dataset with the command <code class="docutils literal notranslate"><span class="pre">minari</span> <span class="pre">upload</span> <span class="pre">DATASETS</span> <span class="pre">--key-path</span> <span class="pre">PATH_STRING/KEY_FILE.json</span></code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -528,7 +528,7 @@ current content of the local dataset.</p>
 </div>
 </section>
 <section id="combine-datasets">
-<h2>Combine datasets<a class="headerlink" href="#combine-datasets" title="Link to this heading">#</a></h2>
+<h2>Combine datasets<a class="headerlink" href="#combine-datasets" title="Link to this heading">¶</a></h2>
 <p>Minari datasets can also be merged together into a single dataset with the following command, <code class="docutils literal notranslate"><span class="pre">minari</span> <span class="pre">combine</span> <span class="pre">DATASETS</span> <span class="pre">--dataset-name</span> <span class="pre">NEW_DATASET_NAME</span></code>.</p>
 <div class="termy">
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">// Combine datasets pen-cloned-v0, pen-expert-v0 and pen-human-v0 into pen-all-v0.</span>
@@ -703,7 +703,7 @@ current content of the local dataset.</p>
       </script>
 
     <script src="../../_static/documentation_options.js?v=d5185309"></script>
-    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=7660844c"></script>
     <script src="../../_static/js/termynal.js?v=ff4c6923"></script>

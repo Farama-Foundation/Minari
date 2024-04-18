@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="MiniGrid" href="../../../datasets/minigrid/" /><link rel="prev" title="Behavioral cloning with PyTorch" href="../behavioral_cloning/" />
         <link rel="canonical" href="https://minari.farama.org/tutorials/using_datasets/IQL_torchrl.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.6 and Furo 2023.08.19.dev1 -->
         <title>Implicit Q-Learning with TorchRL - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -369,7 +369,7 @@
           <article role="main">
             
             <section class="sphx-glr-example-title" id="implicit-q-learning-with-torchrl">
-<span id="sphx-glr-tutorials-using-datasets-iql-torchrl-py"></span><h1>Implicit Q-Learning with TorchRL<a class="headerlink" href="#implicit-q-learning-with-torchrl" title="Link to this heading">#</a></h1>
+<span id="sphx-glr-tutorials-using-datasets-iql-torchrl-py"></span><h1>Implicit Q-Learning with TorchRL<a class="headerlink" href="#implicit-q-learning-with-torchrl" title="Link to this heading">¶</a></h1>
 <a class="reference internal image-reference" href="../../../_images/IQL_torchrl_adroit_pen_example_1.gif"><img alt="Example episode 1 for Adroit Pen environment" class="align-right" src="../../../_images/IQL_torchrl_adroit_pen_example_1.gif" style="width: 300px;" /></a>
 <p>This tutorial demonstrates how to use a Minari dataset in conjunction with TorchRL to train an offline RL agent. We use Implicit Q-Learning to learn how to control a 24-dof hand to manipulate a pen, learning from a dataset of just 25 human demonstrations. We will cover:</p>
 <ul class="simple">
@@ -380,7 +380,7 @@
 </ul>
 <p>The IQL implementation here is based in part on the <a class="reference external" href="https://github.com/pytorch/rl/blob/main/examples/iql/iql_offline.py">offline IQL example script</a> in TorchRL. Other offline RL algorithms are available there as well.</p>
 <section id="pre-requisites">
-<h2>Pre-requisites<a class="headerlink" href="#pre-requisites" title="Link to this heading">#</a></h2>
+<h2>Pre-requisites<a class="headerlink" href="#pre-requisites" title="Link to this heading">¶</a></h2>
 <p>This tutorial currently requires a recent nightly build of TorchRL:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>!<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;torchrl-nightly&gt;=2023.12.30&quot;</span>
 !<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>matplotlib<span class="w"> </span>minari<span class="w"> </span>gymnasium-robotics
@@ -403,7 +403,7 @@
 </div>
 </section>
 <section id="for-headless-environments">
-<h2>For headless environments<a class="headerlink" href="#for-headless-environments" title="Link to this heading">#</a></h2>
+<h2>For headless environments<a class="headerlink" href="#for-headless-environments" title="Link to this heading">¶</a></h2>
 <p>If you are in a headless environment (e.g. a Google Colab notebook), you will also need to install a virtual display. First, install the prerequisites:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>!<span class="w"> </span>sudo<span class="w"> </span>apt-get<span class="w"> </span>update
 !<span class="w"> </span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>python3-opengl
@@ -421,7 +421,7 @@
 </div>
 </section>
 <section id="the-adroit-pen-environment">
-<h2>The Adroit Pen environment<a class="headerlink" href="#the-adroit-pen-environment" title="Link to this heading">#</a></h2>
+<h2>The Adroit Pen environment<a class="headerlink" href="#the-adroit-pen-environment" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torchrl.envs.libs.gym</span> <span class="kn">import</span> <span class="n">GymEnv</span>
 <span class="kn">from</span> <span class="nn">torchrl.envs</span> <span class="kn">import</span> <span class="n">DoubleToFloat</span><span class="p">,</span> <span class="n">TransformedEnv</span>
 </pre></div>
@@ -477,7 +477,7 @@
 </div>
 </section>
 <section id="building-a-replay-buffer">
-<h2>Building a replay buffer<a class="headerlink" href="#building-a-replay-buffer" title="Link to this heading">#</a></h2>
+<h2>Building a replay buffer<a class="headerlink" href="#building-a-replay-buffer" title="Link to this heading">¶</a></h2>
 <p>The Minari dataset we will be using is <a class="reference external" href="https://minari.farama.org/main/datasets/pen/human/">pen-human-v1</a>, which consists of 25 human demonstrations. We can create a replay buffer using <code class="docutils literal notranslate"><span class="pre">MinariExperienceReplay()</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torchrl.data.datasets.minari_data</span> <span class="kn">import</span> <span class="n">MinariExperienceReplay</span>
 <span class="kn">from</span> <span class="nn">torchrl.data.replay_buffers</span> <span class="kn">import</span> <span class="n">SamplerWithoutReplacement</span>
@@ -498,7 +498,7 @@
 <p>On the first run, the dataset will be downloaded from Farama servers and stored in the local cache directory (e.g. <code class="docutils literal notranslate"><span class="pre">~/.cache/torchrl/minari/</span></code>). Once the dataset is loaded we can iterate over the replay buffer or use <code class="docutils literal notranslate"><span class="pre">replay_buffer.sample()</span></code> to load batches of transitions.</p>
 </section>
 <section id="implicit-q-learning">
-<h2>Implicit Q-Learning<a class="headerlink" href="#implicit-q-learning" title="Link to this heading">#</a></h2>
+<h2>Implicit Q-Learning<a class="headerlink" href="#implicit-q-learning" title="Link to this heading">¶</a></h2>
 <p>For completeness, we give a quick overview of <a class="reference external" href="https://arxiv.org/abs/2110.06169">Implicit Q-Learning (IQL)</a> and how it tries to tackle some of the challenges of offline RL. Those who are familiar with IQL or are only interested in the practical implementation can skip to the next section: <a class="reference internal" href="#label-defining-the-model"><span class="std std-ref">Defining the model</span></a>.</p>
 <p>The main challenge in offline RL is <strong>distribution shift</strong>: Function approximators (e.g. for the Q-function) are trained on one distribution of data, the offline dataset, but are evaluated on another distribution, that of the newly trained policy. When evaluating state-action pairs well outside of the original distribution, they may extrapolate poorly, resulting in a policy that performs well on the dataset but poorly in practice. To make this more precise, consider an offline dataset <span class="math notranslate nohighlight">\(\mathcal{D} = \{(s_t, a_t, r_t, s_{t+1}), \dots\}\)</span>. A standard starting point for offline RL algorithms is minimising the temporal difference error, by optimizing the objective</p>
 <div class="math-wrapper docutils container">
@@ -508,7 +508,7 @@
 <figure class="align-right" id="id2" style="width: 300px">
 <a class="reference internal image-reference" href="../../../_images/IQL_torchrl_expectile_example.png"><img alt="../../../_images/IQL_torchrl_expectile_example.png" src="../../../_images/IQL_torchrl_expectile_example.png" style="width: 250px;" /></a>
 <figcaption>
-<p><span class="caption-text">Expectiles of an example conditional distribution <span class="math notranslate nohighlight">\(y \sim m_\tau(s)\)</span>. For <span class="math notranslate nohighlight">\(\tau = 0.5\)</span> the expectile is the mean while for <span class="math notranslate nohighlight">\(\tau \approx 1\)</span> it approximates the maximum of the distribution <a class="reference external" href="https://arxiv.org/abs/2110.06169">(Kostrikov et al 2021)</a>.</span><a class="headerlink" href="#id2" title="Link to this image">#</a></p>
+<p><span class="caption-text">Expectiles of an example conditional distribution <span class="math notranslate nohighlight">\(y \sim m_\tau(s)\)</span>. For <span class="math notranslate nohighlight">\(\tau = 0.5\)</span> the expectile is the mean while for <span class="math notranslate nohighlight">\(\tau \approx 1\)</span> it approximates the maximum of the distribution <a class="reference external" href="https://arxiv.org/abs/2110.06169">(Kostrikov et al 2021)</a>.</span><a class="headerlink" href="#id2" title="Link to this image">¶</a></p>
 </figcaption>
 </figure>
 <p>where <span class="math notranslate nohighlight">\(Q_{\hat{\theta}}\)</span> is a target network, a lagged copy of <span class="math notranslate nohighlight">\(Q_{\theta}\)</span>. Using the Q-function, one can then define a policy by <span class="math notranslate nohighlight">\(\pi(s) \equiv \arg\max_a Q_\theta(s, a)\)</span>. However, this objective <span class="math notranslate nohighlight">\(L_{\rm TD}\)</span> requires evaluating the value of next actions <span class="math notranslate nohighlight">\(a'\)</span> that may not be in the dataset. If <span class="math notranslate nohighlight">\(Q_{\hat{\theta}}(s', a')\)</span> overestimates the value of the state-action <span class="math notranslate nohighlight">\((s', a')\)</span>, the resulting arg-max policy may be overconfident. It is therefore important to limit overestimation of the values of out-of-distribution actions.</p>
@@ -539,7 +539,7 @@
 <p><strong>Note:</strong> The IQL implementation here is designed to be simple, rather than a benchmarkable implementation. For an implementation that accurately reproduces benchmark scores, see e.g. <a class="reference external" href="https://github.com/corl-team/CORL">CORL</a>.</p>
 </section>
 <section id="defining-the-model">
-<span id="label-defining-the-model"></span><h2>Defining the model<a class="headerlink" href="#defining-the-model" title="Link to this heading">#</a></h2>
+<span id="label-defining-the-model"></span><h2>Defining the model<a class="headerlink" href="#defining-the-model" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tensordict.nn</span> <span class="kn">import</span> <span class="n">TensorDictModule</span>
 <span class="kn">from</span> <span class="nn">tensordict.nn.distributions</span> <span class="kn">import</span> <span class="n">NormalParamExtractor</span>
 <span class="kn">from</span> <span class="nn">torchrl.envs.utils</span> <span class="kn">import</span> <span class="n">ExplorationType</span><span class="p">,</span> <span class="n">set_exploration_type</span>
@@ -637,7 +637,7 @@
 </div>
 </section>
 <section id="loss-and-optimizer">
-<h2>Loss and optimizer<a class="headerlink" href="#loss-and-optimizer" title="Link to this heading">#</a></h2>
+<h2>Loss and optimizer<a class="headerlink" href="#loss-and-optimizer" title="Link to this heading">¶</a></h2>
 <p>The explicit details of the Implicit Q-Learning losses are captured by TorchRL’s <code class="docutils literal notranslate"><span class="pre">IQLLoss</span></code> module:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">loss_module</span> <span class="o">=</span> <span class="n">IQLLoss</span><span class="p">(</span>
     <span class="n">model</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
@@ -660,7 +660,7 @@
 </div>
 </section>
 <section id="training">
-<h2>Training<a class="headerlink" href="#training" title="Link to this heading">#</a></h2>
+<h2>Training<a class="headerlink" href="#training" title="Link to this heading">¶</a></h2>
 <p>To demonstrate training, we run IQL for 50,000 iterations. During training, we will evaluate the policy every 1000 iterations. But note that this is for evaluation purposes only. Unlike online RL, we do not collect new data during training.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
 <span class="k">def</span> <span class="nf">evaluate_policy</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">num_eval_episodes</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
@@ -729,7 +729,7 @@
 <a class="reference internal image-reference" href="../../../_images/IQL_torchrl_training_graphs.png"><img alt="Loss and eval reward during training" class="align-center" src="../../../_images/IQL_torchrl_training_graphs.png" style="width: 100%;" /></a>
 </section>
 <section id="results">
-<h2>Results<a class="headerlink" href="#results" title="Link to this heading">#</a></h2>
+<h2>Results<a class="headerlink" href="#results" title="Link to this heading">¶</a></h2>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">HTML</span>
 <span class="kn">from</span> <span class="nn">gymnasium.utils.save_video</span> <span class="kn">import</span> <span class="n">save_video</span>
 <span class="kn">from</span> <span class="nn">base64</span> <span class="kn">import</span> <span class="n">b64encode</span>
@@ -948,7 +948,7 @@
       </script>
 
     <script src="../../../_static/documentation_options.js?v=d5185309"></script>
-    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>

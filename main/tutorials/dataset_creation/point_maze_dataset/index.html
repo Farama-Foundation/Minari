@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Using Datasets" href="../../using_datasets/" /><link rel="prev" title="Serializing a custom space" href="../custom_space_serialization/" />
         <link rel="canonical" href="https://minari.farama.org/tutorials/dataset_creation/point_maze_dataset.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.6 and Furo 2023.08.19.dev1 -->
         <title>PointMaze D4RL dataset - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -369,7 +369,7 @@
           <article role="main">
             
             <section class="sphx-glr-example-title" id="pointmaze-d4rl-dataset">
-<span id="sphx-glr-tutorials-dataset-creation-point-maze-dataset-py"></span><h1>PointMaze D4RL dataset<a class="headerlink" href="#pointmaze-d4rl-dataset" title="Link to this heading">#</a></h1>
+<span id="sphx-glr-tutorials-dataset-creation-point-maze-dataset-py"></span><h1>PointMaze D4RL dataset<a class="headerlink" href="#pointmaze-d4rl-dataset" title="Link to this heading">¶</a></h1>
 <p>In this tutorial you will learn how to re-create the Maze2D datasets from <a class="reference external" href="https://sites.google.com/view/d4rl/home">D4RL</a> [1] with Minari.
 We will be using the refactored version of the PointMaze environments in <a class="reference external" href="https://robotics.farama.org/envs/maze/point_maze/">Gymnasium-Robotics</a> which support the Gymnasium API as well as the latest
 MuJoCo python bindings.</p>
@@ -393,7 +393,7 @@ will start from the location it’s currently at (no <code class="docutils liter
 </pre></div>
 </div>
 <section id="waypoint-planner">
-<h2>WayPoint Planner<a class="headerlink" href="#waypoint-planner" title="Link to this heading">#</a></h2>
+<h2>WayPoint Planner<a class="headerlink" href="#waypoint-planner" title="Link to this heading">¶</a></h2>
 <p>Our first task is to create a method that generates a trajectory to the goal in the maze.
 We have the advantage that the MuJoCo maze can be discretized into a grid of cells, which reduces
 the size of the state space. The action space for this solver will also be reduced to <code class="docutils literal notranslate"><span class="pre">UP</span></code>, <code class="docutils literal notranslate"><span class="pre">DOWN</span></code>, <code class="docutils literal notranslate"><span class="pre">LEFT</span></code>,
@@ -529,13 +529,13 @@ such as:</p>
 </div>
 </section>
 <section id="waypoint-controller">
-<h2>Waypoint Controller<a class="headerlink" href="#waypoint-controller" title="Link to this heading">#</a></h2>
+<h2>Waypoint Controller<a class="headerlink" href="#waypoint-controller" title="Link to this heading">¶</a></h2>
 <p>The step will be to create a controller to allow the agent to follow the waypoint trajectory.
 D4RL uses a PD controller to output continuous force actions from position and velocity.
 A PD controller is a variation of the PID controller often used in classical Control Theory.
 PID combines three components: a Proportial Term(P), Integral Term(I) and Derivative Term (D)</p>
 <section id="proportional-term-p">
-<h3>1. Proportional Term (P)<a class="headerlink" href="#proportional-term-p" title="Link to this heading">#</a></h3>
+<h3>1. Proportional Term (P)<a class="headerlink" href="#proportional-term-p" title="Link to this heading">¶</a></h3>
 <p>The proportional term in a PID controller adjusts the control action based on the current error, which
 is the difference between the desired value (setpoint) and the current value of the process variable.
 The control action is directly proportional to the error. A higher error results in a stronger control action.
@@ -546,7 +546,7 @@ However, the proportional term alone can lead to overshooting or instability. No
 </div>
 </section>
 <section id="derivative-term-d">
-<h3>2. Derivative Term (D)<a class="headerlink" href="#derivative-term-d" title="Link to this heading">#</a></h3>
+<h3>2. Derivative Term (D)<a class="headerlink" href="#derivative-term-d" title="Link to this heading">¶</a></h3>
 <p>The derivative term in a PD controller considers the rate of change of the error over time.
 It helps to predict the future behavior of the error. By dampening the control action based
 on the rate of change of the error, the derivative term contributes to system stability and reduces overshooting.
@@ -562,7 +562,7 @@ It also helps the system respond quickly to changes in the error.</p>
 </div>
 </section>
 <section id="integral-term-i">
-<h3>3. Integral Term (I)<a class="headerlink" href="#integral-term-i" title="Link to this heading">#</a></h3>
+<h3>3. Integral Term (I)<a class="headerlink" href="#integral-term-i" title="Link to this heading">¶</a></h3>
 <p>The integral term in a PID controller integrates the cumulative error over time.
 It helps to address steady-state errors or biases that may exist in the system.
 The integral term continuously adjusts the control action based on the accumulated error,
@@ -677,7 +677,7 @@ the <span class="math notranslate nohighlight">\(x\)</span> and <span class="mat
 </section>
 </section>
 <section id="modified-stepdatacallback">
-<h2>Modified StepDataCallback<a class="headerlink" href="#modified-stepdatacallback" title="Link to this heading">#</a></h2>
+<h2>Modified StepDataCallback<a class="headerlink" href="#modified-stepdatacallback" title="Link to this heading">¶</a></h2>
 <p>We will also need to create our own custom callback function to record the data after each step.
 As previously mentioned, the task is continuing and the environment won’t be <code class="docutils literal notranslate"><span class="pre">terminated</span></code> or <code class="docutils literal notranslate"><span class="pre">truncated</span></code> when reaching a goal.
 Instead a new target will be randomly selected in the map and the agent will continue stepping to this new goal. For this reason, to divide the dataset into episodes,
@@ -713,7 +713,7 @@ case we will be generating new hdf5 datasets <code class="docutils literal notra
 </div>
 </section>
 <section id="collect-data-and-create-minari-dataset">
-<h2>Collect Data and Create Minari Dataset<a class="headerlink" href="#collect-data-and-create-minari-dataset" title="Link to this heading">#</a></h2>
+<h2>Collect Data and Create Minari Dataset<a class="headerlink" href="#collect-data-and-create-minari-dataset" title="Link to this heading">¶</a></h2>
 <p>Now we will finally perform our data collection and create the Minari dataset. This is as simple as wrapping the environment with
 the <a class="reference internal" href="../../../api/data_collector/#minari.DataCollector" title="minari.DataCollector"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollector</span></code></a> wrapper and add the custom callback methods. Once we’ve done this we can step the environment with the <code class="docutils literal notranslate"><span class="pre">WayPointController</span></code>
 as our policy. For the tutorial, we collect 10,000 transitions. Thus, we initialize the environment with <code class="docutils literal notranslate"><span class="pre">max_episode_steps=10,000</span></code> since that’s the total amount of steps we want to
@@ -759,7 +759,7 @@ collect for our dataset and we don’t want the environment to get <code class="
 </div>
 </section>
 <section id="references">
-<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
 <p>[1] Fu, Justin, et al. ‘D4RL: Datasets for Deep Data-Driven Reinforcement Learning’.
 CoRR, vol. abs/2004.07219, 2020, <a class="reference external" href="https://arxiv.org/abs/2004.07219">https://arxiv.org/abs/2004.07219</a>..</p>
 <p>[2] Lambert, Nathan. ‘Fundamental Iterative Methods of Reinforcement Learnin’.
@@ -942,7 +942,7 @@ Apr 8, 2020, <a class="reference external" href="https://towardsdatascience.com/
       </script>
 
     <script src="../../../_static/documentation_options.js?v=d5185309"></script>
-    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
