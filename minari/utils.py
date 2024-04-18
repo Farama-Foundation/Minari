@@ -19,6 +19,7 @@ from packaging.version import Version
 
 from minari.dataset.minari_dataset import MinariDataset
 from minari.dataset.minari_storage import MinariStorage
+from minari.serialization import deserialize_space
 from minari.storage.datasets_root_dir import get_dataset_path
 
 
@@ -657,21 +658,25 @@ def get_dataset_spec_dict(
     }
 
     if obs_space is not None:
+        if isinstance(obs_space, (dict, str)):
+            obs_space = deserialize_space(obs_space)
         dataset_observation_space = obs_space.__repr__().replace("\n", "")
         md_dict["Dataset Observation Space"] = f"`{dataset_observation_space}`"
 
     if action_space is not None:
+        if isinstance(action_space, (dict, str)):
+            action_space = deserialize_space(action_space)
         dataset_action_space = action_space.__repr__().replace("\n", "")
         md_dict["Dataset Action Space"] = f"`{dataset_action_space}`"
 
-    add_version = f" ({__version__} installed)"
+    add_version = f" (`{__version__}` installed)"
     md_dict.update({
         "Algorithm": dataset_spec["algorithm_name"],
         "Author": dataset_spec["author"],
         "Email": dataset_spec["author_email"],
         "Code Permalink": f"[{code_link}]({code_link})",
-        "Minari Version": f"{version} {add_version if print_version else ''}",
-        "Download": f"`minari.download_dataset(\"{dataset_spec['dataset_id']}\")`"
+        "Minari Version": f"`{version}` {add_version if print_version else ''}",
+        "Download": f"`minari.download_dataset(\"{dataset_spec['dataset_id']}\")`",
     })
 
     return md_dict
