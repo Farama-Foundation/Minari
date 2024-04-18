@@ -3,7 +3,7 @@ import json
 
 import pathlib
 from itertools import zip_longest
-from typing import Any, Dict, Iterable, List, Optional
+from typing import Any, Dict, Iterable, List, Optional, Sequence
 import gymnasium as gym
 import pyarrow as pa
 import pyarrow.dataset as ds
@@ -17,8 +17,6 @@ class ArrowStorage(MinariStorage):
         action_space: gym.Space
     ):
         super().__init__(data_path, observation_space, action_space)
-        self._observation_struct = _make_struct(observation_space)
-        self._action_struct = _make_struct(action_space)
 
     @classmethod
     def _create(cls, data_path: pathlib.Path,
@@ -47,10 +45,7 @@ class ArrowStorage(MinariStorage):
                     metadata = json.load(file)
             metadata.update(new_metadata)
             with open(metadata_path, "w") as file:
-                try:
-                    json.dump(metadata, file)
-                except Exception as e:
-                    import pdb; pdb.set_trace()
+                json.dump(metadata, file)
 
     def get_episodes(self, episode_indices: Iterable[int]) -> List[dict]:
         episode_indices = list(episode_indices)
@@ -72,7 +67,7 @@ class ArrowStorage(MinariStorage):
                 "rewards": np.asarray(episode["rewards"])[:-1],
                 "terminations": np.asarray(episode["terminations"])[:-1],
                 "truncations": np.asarray(episode["truncations"])[:-1],
-                "infos": episode["infos"].as_pydict() if "infos" in episode.column_names else None,
+                "infos": _decode_info(episode["infos"]) if "infos" in episode.column_names else {},
             }
         episodes = map(_to_dict, episodes.to_batches())
         return list(episodes)
@@ -84,12 +79,12 @@ class ArrowStorage(MinariStorage):
         for episode_data in episodes:
             episode_id = episode_data.get("id", total_episodes)
             total_episodes = max(total_episodes, episode_id + 1)
-            observations = _encode_space(self._observation_struct, episode_data["observations"])
+            observations= _encode_space(self.observation_space, episode_data["observations"])
             rewards = np.asarray(episode_data["rewards"]).reshape(-1)
             terminations = np.asarray(episode_data["terminations"]).reshape(-1)
             truncations = np.asarray(episode_data["truncations"]).reshape(-1)
             pad = len(observations) - len(rewards)  # MULTIPLE STORES SAME EP; PAD MULTIPLES?
-            actions = _encode_space(self._action_struct, episode_data["actions"], pad=pad)
+            actions = _encode_space(self._action_space, episode_data["actions"], pad=pad)
 
             episode_batch = {
                 "episode_id": np.full(len(observations), episode_id, dtype=np.int32),
@@ -101,6 +96,8 @@ class ArrowStorage(MinariStorage):
             }
             if "seed" in episode_data:
                 episode_batch["seed"] = np.full(len(observations), episode_data["seed"], dtype=np.uint64)
+            if episode_data.get("infos", {}):
+                episode_batch["infos"] = _encode_info(episode_data["infos"])
             episode_batch = pa.RecordBatch.from_pydict(episode_batch)
 
             total_steps += len(rewards)
@@ -131,28 +128,41 @@ class ArrowStorage(MinariStorage):
             }
         )
 
-def _encode_space(struct: pa.DataType, values: Any, pad: int = 0):
-    if isinstance(struct, pa.StructType):
-        arrays = []
-        for i in range(struct.num_fields):
-            field = struct.field(i)
-            key, dtype = field.name, field.type
-            key = key if isinstance(values, dict) else int(key)
-            arrays.append(_encode_space(dtype, values[key], pad=pad))
-        return pa.StructArray.from_arrays(arrays, fields=struct)
-    elif struct == pa.string():
-        values = list(values)
-        values.extend([None] * pad)
-        return pa.array(values, type=struct)
-    else:
+
+def _encode_space(space: gym.Space, values: Any, pad: int = 0):
+    if isinstance(space, gym.spaces.Dict):
+        assert isinstance(values, dict)
+        arrays, names = [], []
+        for key, value in values.items():
+            names.append(key)
+            arrays.append(_encode_space(space[key], value, pad=pad))
+        return pa.StructArray.from_arrays(arrays, names=names)
+    if isinstance(space, gym.spaces.Tuple):
+        assert isinstance(values, tuple)
+        arrays, names = [], []
+        for i, value in enumerate(values):
+            names.append(str(i))
+            arrays.append(_encode_space(space[i], value, pad=pad))
+        return pa.StructArray.from_arrays(arrays, names=names)
+    elif isinstance(space, gym.spaces.Box):
         values = np.asarray(values).reshape(len(values), -1)
         values = np.pad(values, ((0, pad), (0, 0)))
-        if isinstance(struct, pa.FixedSizeListType):
-            values.shape = -1
-            return pa.FixedSizeListArray.from_arrays(values, type=struct)
-        else:
-            return pa.array(values.squeeze(-1), type=struct)
-    
+        dtype = pa.list_(pa.from_numpy_dtype(space.dtype), list_size=values.shape[1])
+        return pa.FixedSizeListArray.from_arrays(values.reshape(-1), type=dtype)
+    elif isinstance(space, gym.spaces.Discrete):
+        values = np.asarray(values).reshape(len(values), -1)
+        values = np.pad(values, ((0, pad), (0, 0)))
+        return pa.array(values.squeeze(-1), type=pa.int32())
+    elif isinstance(space, gym.spaces.Text):
+        if not isinstance(values, list):
+            values = list(values)
+        values.extend([None] * pad)
+        return pa.array(values, type=pa.string())
+    else:
+        raise ValueError(f"{space} is not a supported space type")
+                    
+
+
 def _decode_space(space, values: pa.Array):
     if isinstance(space, gym.spaces.Dict):
         return {
@@ -165,7 +175,8 @@ def _decode_space(space, values: pa.Array):
             for i, subspace in enumerate(space.spaces)
         ])
     elif isinstance(space, gym.spaces.Box):
-        return np.stack(values.to_numpy(zero_copy_only=False))
+        data = np.stack(values.to_numpy(zero_copy_only=False))
+        return data.reshape(-1, *space.shape)
     elif isinstance(space, gym.spaces.Discrete):
         return values.to_numpy()
     elif isinstance(space, gym.spaces.Text):
@@ -173,24 +184,32 @@ def _decode_space(space, values: pa.Array):
     else:
         raise ValueError(f"Not supported space type")
 
-def _make_struct(space: gym.Space) -> pa.StructType: 
-    if isinstance(space, gym.spaces.Dict):
-        return pa.struct([
-            (key, _make_struct(subspace))
-            for key, subspace in space.spaces.items()
-        ])
-    elif isinstance(space, gym.spaces.Tuple):
-        return pa.struct([
-            (str(i), _make_struct(subspace))
-            for i, subspace in enumerate(space.spaces)
-        ])
 
-    elif isinstance(space, gym.spaces.Box):
-        dtype = pa.from_numpy_dtype(space.dtype)
-        return pa.list_(dtype, list_size=np.prod(space.shape))
-    elif isinstance(space, gym.spaces.Discrete):
-        return pa.int32()
-    elif isinstance(space, gym.spaces.Text):
-        return pa.string()
+def _encode_info(values: Any):
+    if isinstance(values, (dict, tuple)):
+        arrays, names = [], []
+        iterator = values.items() if isinstance(values, dict) else enumerate(values)
+        for key, value in iterator:
+            data = _encode_info(value)
+            arrays.append(data)
+            names.append(str(key))
+        return pa.StructArray.from_arrays(arrays, names=names)
+    elif isinstance(values, np.ndarray) or (isinstance(values, Sequence) and isinstance(values[0], np.ndarray)):
+        if isinstance(values, Sequence):
+            values = np.stack(values)
+        values = values.reshape(len(values), -1)
+        dtype = pa.from_numpy_dtype(values.dtype)
+        struct = pa.list_(dtype, list_size=values.shape[1])
+        return pa.FixedSizeListArray.from_arrays(values.reshape(-1), type=struct)            
     else:
-        raise ValueError(f"Not supported space type")
+        return pa.array(list(values))
+
+
+def _decode_info(values: pa.Array):
+    nested_dict = {}
+    for i, field in enumerate(values.type):
+        if isinstance(field, pa.StructArray):
+            nested_dict[field.name] = _decode_info(values.field(i))
+        else:
+            nested_dict[field.name] = values.field(i).to_numpy(zero_copy_only=False)
+    return nested_dict

@@ -1,7 +1,6 @@
 import copy
 import sys
 import unicodedata
-from collections import OrderedDict
 from typing import Any, Dict, Iterable, List, Optional, Union
 
 import gymnasium as gym
@@ -571,6 +570,8 @@ def check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
             obs = _reconstuct_obs_or_action_at_index_recursive(
                 episode["observations"], i
             )
+            if not observation_space.contains(obs):
+                import pdb; pdb.set_trace()
             assert observation_space.contains(obs)
         for i in range(episode["total_steps"]):
             action = _reconstuct_obs_or_action_at_index_recursive(episode["actions"], i)
@@ -591,6 +592,7 @@ def get_info_at_step_index(infos: Dict, step_index: int) -> Dict:
         elif isinstance(infos[key], np.ndarray):
             result[key] = infos[key][step_index]
         else:
+            import pdb; pdb.set_trace()
             raise ValueError(
                 "Infos are in an unsupported format; see Minari documentation for supported formats."
             )
@@ -746,14 +748,7 @@ def check_infos_equal(info_1: Dict, info_2: Dict) -> bool:
 
 
 def _space_subset_helper(entry: Dict):
-
-    return OrderedDict(
-        {
-            "component_2": OrderedDict(
-                {"subcomponent_2": entry["component_2"]["subcomponent_2"]}
-            )
-        }
-    )
+    return {"component_2": {"subcomponent_2": entry["component_2"]["subcomponent_2"]}}
 
 
 def get_sample_buffer_for_dataset_from_env(env: gym.Env, num_episodes: int = 10):
