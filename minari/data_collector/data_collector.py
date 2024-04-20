@@ -11,6 +11,7 @@ import gymnasium as gym
 import numpy as np
 from gymnasium.core import ActType, ObsType
 from gymnasium.envs.registration import EnvSpec
+from jax import tree_util as jtu
 
 from minari.data_collector.callbacks import (
     STEP_DATA_KEYS,
@@ -21,8 +22,6 @@ from minari.data_collector.callbacks import (
 from minari.dataset.minari_dataset import MinariDataset
 from minari.dataset.minari_storage import MinariStorage
 from minari.utils import _generate_dataset_metadata, _generate_dataset_path
-
-from jax import tree_util as jtu
 
 
 # H5Py supports ints up to uint64
@@ -157,16 +156,18 @@ class DataCollector(gym.Wrapper):
                 raise ValueError(
                     "Info structure inconsistent with info structure returned by original reset."
                 )
-        
+
         keys_intersection = data_keys.intersection(episode_buffer.keys())
         data_slice = {key: dict_data[key] for key in keys_intersection}
         buffer_slice = {key: episode_buffer[key] for key in keys_intersection}
+
         def _append(data, buffer):
             if isinstance(buffer, list):
                 buffer.append(data)
                 return buffer
             else:
                 return [buffer, data]
+
         updated_slice = jtu.tree_map(_append, data_slice, buffer_slice)
 
         for key in data_keys:

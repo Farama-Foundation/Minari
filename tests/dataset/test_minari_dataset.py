@@ -1,11 +1,10 @@
-import copy
 import json
 import os
 import re
 from typing import Any
-import jax.tree_util as jtu
 
 import gymnasium as gym
+import jax.tree_util as jtu
 import numpy as np
 import pytest
 

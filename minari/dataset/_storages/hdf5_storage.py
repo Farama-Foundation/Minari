@@ -20,7 +20,7 @@ class HDF5Storage(MinariStorage):
         self,
         data_path: pathlib.Path,
         observation_space: gym.Space,
-        action_space: gym.Space
+        action_space: gym.Space,
     ):
         super().__init__(data_path, observation_space, action_space)
         file_path = self.data_path.joinpath(_MAIN_FILE_NAME)
@@ -29,9 +29,11 @@ class HDF5Storage(MinariStorage):
         self._file_path = file_path
 
     @classmethod
-    def _create(cls, data_path: pathlib.Path,
+    def _create(
+        cls,
+        data_path: pathlib.Path,
         observation_space: gym.Space,
-        action_space: gym.Space
+        action_space: gym.Space,
     ) -> MinariStorage:
         data_path.joinpath(_MAIN_FILE_NAME).touch(exist_ok=False)
         obj = cls(data_path, observation_space, action_space)
@@ -133,7 +135,7 @@ class HDF5Storage(MinariStorage):
                     ep_dict[key] = group_value[:]
 
                 outs.append(ep_dict)
-        
+
         return outs
 
     def update_episodes(self, episodes: Iterable[dict]):

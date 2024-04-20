@@ -1,10 +1,8 @@
-import copy
-
 import gymnasium as gym
+import jax.tree_util as jtu
 import numpy as np
 import pytest
 from gymnasium import spaces
-import jax.tree_util as jtu
 
 import minari
 from minari import DataCollector, MinariDataset

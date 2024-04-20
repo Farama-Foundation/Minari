@@ -25,7 +25,7 @@ class MinariStorage(ABC):
         self,
         data_path: pathlib.Path,
         observation_space: gym.Space,
-        action_space: gym.Space
+        action_space: gym.Space,
     ):
         self._data_path: pathlib.Path = data_path
         self._observation_space = observation_space

@@ -1,7 +1,5 @@
 from typing import Dict
 
-import numpy as np
-
 
 class EpisodeMetadataCallback:
     """Callback to full episode after saving to hdf5 file as a group.

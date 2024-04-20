@@ -1,9 +1,9 @@
 import sys
 import unicodedata
 from typing import Any, Dict, Iterable, List, Optional, Union
-import jax.tree_util as jtu
 
 import gymnasium as gym
+import jax.tree_util as jtu
 import numpy as np
 from gymnasium import spaces
 from gymnasium.envs.registration import register
@@ -549,7 +549,9 @@ def check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
     """
     episodes = list(data.get_episodes(episode_indices))
     # verify we have the right number of episodes, available at the right indices
-    assert data.total_episodes == len(episodes), f"{data.total_episodes} != {len(episodes)}"
+    assert data.total_episodes == len(
+        episodes
+    ), f"{data.total_episodes} != {len(episodes)}"
     total_steps = 0
 
     observation_space = data.metadata["observation_space"]
@@ -569,8 +571,6 @@ def check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
             obs = _reconstuct_obs_or_action_at_index_recursive(
                 episode["observations"], i
             )
-            if not observation_space.contains(obs):
-                import pdb; pdb.set_trace()
             assert observation_space.contains(obs)
         for i in range(episode["total_steps"]):
             action = _reconstuct_obs_or_action_at_index_recursive(episode["actions"], i)
@@ -591,7 +591,6 @@ def get_info_at_step_index(infos: Dict, step_index: int) -> Dict:
         elif isinstance(infos[key], np.ndarray):
             result[key] = infos[key][step_index]
         else:
-            import pdb; pdb.set_trace()
             raise ValueError(
                 "Infos are in an unsupported format; see Minari documentation for supported formats."
             )
@@ -747,6 +746,7 @@ def check_infos_equal(info_1: Dict, info_2: Dict) -> bool:
 
 def _space_subset_helper(entry: Dict):
     return {"component_2": {"subcomponent_2": entry["component_2"]["subcomponent_2"]}}
+
 
 def get_sample_buffer_for_dataset_from_env(env: gym.Env, num_episodes: int = 10):
     buffer = []

@@ -1,11 +1,10 @@
-import copy
 import os
 
 import gymnasium as gym
+import jax.tree_util as jtu
 import numpy as np
 import pytest
 from gymnasium import spaces
-import jax.tree_util as jtu
 
 import minari
 from minari import DataCollector
@@ -290,7 +289,7 @@ def test_minari_get_dataset_size_from_buffer(dataset_id, env_id):
             rewards.append(reward)
             terminations.append(terminated)
             truncations.append(truncated)
-        
+
         episode_buffer = {
             "observations": jtu.tree_map(lambda *v: np.stack(v), *observations),
             "actions": jtu.tree_map(lambda *v: np.stack(v), *actions),
