@@ -114,7 +114,7 @@ class ArrowStorage(MinariStorage):
                 "terminations": np.pad(terminations, ((0, pad))),
                 "truncations": np.pad(truncations, ((0, pad))),
             }
-            if "seed" in episode_data:
+            if episode_data.get("seed") is not None:
                 episode_batch["seed"] = np.full(
                     len(observations), episode_data["seed"], dtype=np.uint64
                 )
