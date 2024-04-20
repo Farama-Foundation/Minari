@@ -164,9 +164,8 @@ def test_data_collector_step_data_callback_info_correction():
     # structure across steps, it is caught by the data_collector
     with pytest.raises(
         ValueError,
-        match=r"Info structure inconsistent with info structure returned by original reset."
+        match="Info structure inconsistent with info structure returned by original reset.",
     ):
-
         num_episodes = 10
         env.reset(seed=42)
         for _ in range(num_episodes):

@@ -10,11 +10,7 @@ def test_readme():
     check_md_file(fpath=fpath)
 
 
-@pytest.mark.parametrize(
-        'fpath',
-        [*pathlib.Path("docs").glob("**/*.md")],
-        ids=str
-)
+@pytest.mark.parametrize("fpath", [*pathlib.Path("docs").glob("**/*.md")], ids=str)
 def test_markdown(fpath):
     check_md_file(fpath=fpath, lang="bash")
     check_md_file(fpath=fpath)

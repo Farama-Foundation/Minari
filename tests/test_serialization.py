@@ -6,7 +6,6 @@ from tests.common import test_spaces, unsupported_test_spaces
 
 @pytest.mark.parametrize("space", test_spaces)
 def test_space_serialize_deserialize(space):
-
     space_str = serialize_space(space)
     reconstructed_space = deserialize_space(space_str)
     reserialized_space_str = serialize_space(reconstructed_space)
@@ -22,7 +21,6 @@ def test_space_serialize_deserialize(space):
 
 @pytest.mark.parametrize("space", unsupported_test_spaces)
 def test_space_serialize_deserialize_unsupported(space):
-
     with pytest.raises(
         NotImplementedError, match=r"No serialization method available for .+"
     ):

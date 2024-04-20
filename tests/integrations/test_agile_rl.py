@@ -16,12 +16,10 @@ def dataset_id():
 
 @pytest.fixture(autouse=True)
 def createAndDestroyMinariDataset(dataset_id):
-    env = gym.make('CartPole-v1')
+    env = gym.make("CartPole-v1")
     env = DataCollector(env, record_infos=True, max_buffer_steps=100000)
 
-    create_dummy_dataset_with_collecter_env_helper(
-        dataset_id, env, num_episodes=10
-    )
+    create_dummy_dataset_with_collecter_env_helper(dataset_id, env, num_episodes=10)
 
     yield
 
@@ -49,10 +47,9 @@ def test_agile_create_buffer(dataset_id):
     """
 
     field_names = ["state", "action", "reward", "next_state", "done"]
-    memory = ReplayBuffer(action_dim=2,
-                          memory_size=10000,
-                          field_names=field_names,
-                          device="cpu")
+    memory = ReplayBuffer(
+        action_dim=2, memory_size=10000, field_names=field_names, device="cpu"
+    )
 
     assert memory.counter == 0
 
