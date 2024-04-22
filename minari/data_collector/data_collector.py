@@ -264,10 +264,9 @@ class DataCollector(gym.Wrapper):
         ), "One or more required keys is missing from 'step-data'"
 
         self._validate_buffer()
-        episode_buffer = {
-            "seed": str(None) if seed is None else seed,
-            "id": self._episode_id,
-        }
+        episode_buffer = {"id": self._episode_id}
+        if seed is not None:
+            episode_buffer["seed"] = seed
         self._add_step_data(episode_buffer, step_data)
         self._buffer.append(episode_buffer)
         return obs, info

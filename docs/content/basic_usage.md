@@ -204,7 +204,7 @@ To download any of the remote datasets into the local `Minari root path </conten
 ```
 
 ```bash
-minari download door-human-v1
+minari download door-human-v2
 minari list local
 ```
 ```
@@ -212,7 +212,7 @@ minari list local
 ┏━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃ Name          ┃ Total Episodes ┃ Total Steps ┃ Dataset Size ┃ Author             ┃ Email                    ┃
 ┡━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━┩
-│ door-human-v1 │             25 │        6729 │ 7.1 MB       │ Rodrigo de Lazcano │ rperezvicente@farama.org │
+│ door-human-v2 │             25 │        6729 │ 7.1 MB       │ Rodrigo de Lazcano │ rperezvicente@farama.org │
 └───────────────┴────────────────┴─────────────┴──────────────┴────────────────────┴──────────────────────────┘
 ```
 
@@ -225,7 +225,7 @@ Minari can retrieve a certain amount of episode shards from the dataset files as
 ```python
 import minari
 
-dataset = minari.load_dataset("door-human-v1", download=True)
+dataset = minari.load_dataset("door-human-v2", download=True)
 dataset.set_seed(seed=123)
 
 for i in range(5):
@@ -258,7 +258,7 @@ To create your own buffers and dataloaders, you may need the ability to iterate 
 ```python
 import minari
 
-dataset = minari.load_dataset("door-human-v1", download=True)
+dataset = minari.load_dataset("door-human-v2", download=True)
 episodes_generator = dataset.iterate_episodes(episode_indices=[1, 2, 0])
 
 for episode in episodes_generator:
@@ -282,7 +282,7 @@ In addition, the :class:`minari.MinariDataset` dataset itself is iterable. Howev
 ```python
 import minari
 
-dataset = minari.load_dataset("door-human-v1", download=True)
+dataset = minari.load_dataset("door-human-v2", download=True)
 
 for episode in dataset:
     print(f"EPISODE ID {episode.id}")
@@ -298,7 +298,7 @@ The episodes in the dataset can be filtered before sampling. This is done with a
 ```python
 import minari
 
-dataset = minari.load_dataset("door-human-v1", download=True)
+dataset = minari.load_dataset("door-human-v2", download=True)
 
 print(f'TOTAL EPISODES ORIGINAL DATASET: {dataset.total_episodes}')
 
@@ -324,7 +324,7 @@ Minari provides another utility function to divide a dataset into multiple datas
 ```python
 import minari
 
-dataset = minari.load_dataset("door-human-v1", download=True)
+dataset = minari.load_dataset("door-human-v2", download=True)
 
 split_datasets = minari.split_dataset(dataset, sizes=[20, 5], seed=123)
 
@@ -379,8 +379,8 @@ Lastly, in the case of having two or more Minari datasets created with the same 
 ```
 
 ```bash
-minari download door-expert-v1
-minari combine door-human-v1 door-expert-v1 --dataset-id=door-all-v1
+minari download door-expert-v2
+minari combine door-human-v2 door-expert-v2 --dataset-id=door-all-v0
 minari list local
 ```
 ```
@@ -388,8 +388,8 @@ minari list local
 ┏━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃ Name           ┃ Total Episodes ┃ Total Steps ┃ Dataset Size ┃ Author             ┃ Email                    ┃
 ┡━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━┩
-│ door-all-v1    │           5025 │     1006729 │ 1103.5 MB    │ Rodrigo de Lazcano │ rperezvicente@farama.org │
-│ door-expert-v1 │           5000 │     1000000 │ 1096.4 MB    │ Rodrigo de Lazcano │ rperezvicente@farama.org │
-│ door-human-v1  │             25 │        6729 │ 7.1 MB       │ Rodrigo de Lazcano │ rperezvicente@farama.org │
+│ door-all-v0    │           5025 │     1006729 │ 1103.5 MB    │ Rodrigo de Lazcano │ rperezvicente@farama.org │
+│ door-expert-v2 │           5000 │     1000000 │ 1096.4 MB    │ Rodrigo de Lazcano │ rperezvicente@farama.org │
+│ door-human-v2  │             25 │        6729 │ 7.1 MB       │ Rodrigo de Lazcano │ rperezvicente@farama.org │
 └────────────────┴────────────────┴─────────────┴──────────────┴────────────────────┴──────────────────────────┘
 ```
