@@ -169,7 +169,7 @@ def _encode_space(space: gym.Space, values: Any, pad: int = 0):
             arrays.append(_encode_space(space[i], value, pad=pad))
         return pa.StructArray.from_arrays(arrays, names=names)
     elif isinstance(space, gym.spaces.Box):
-        values = np.asarray(values).reshape(len(values), -1)
+        values = np.asarray(values).reshape(-1, np.prod(space.shape))
         values = np.pad(values, ((0, pad), (0, 0)))
         dtype = pa.list_(pa.from_numpy_dtype(space.dtype), list_size=values.shape[1])
         return pa.FixedSizeListArray.from_arrays(values.reshape(-1), type=dtype)
@@ -177,13 +177,11 @@ def _encode_space(space: gym.Space, values: Any, pad: int = 0):
         values = np.asarray(values).reshape(len(values), -1)
         values = np.pad(values, ((0, pad), (0, 0)))
         return pa.array(values.squeeze(-1), type=pa.int32())
-    elif isinstance(space, gym.spaces.Text):
+    else:
         if not isinstance(values, list):
             values = list(values)
         values.extend([None] * pad)
-        return pa.array(values, type=pa.string())
-    else:
-        raise ValueError(f"{space} is not a supported space type")
+        return pa.array(values)
 
 
 def _decode_space(space, values: pa.Array):
@@ -204,10 +202,8 @@ def _decode_space(space, values: pa.Array):
         return data.reshape(-1, *space.shape)
     elif isinstance(space, gym.spaces.Discrete):
         return values.to_numpy()
-    elif isinstance(space, gym.spaces.Text):
-        return values.to_pylist()
     else:
-        raise ValueError(f"{space} is not currently supported.")
+        return values.to_pylist()
 
 
 def _encode_info(info: dict):
