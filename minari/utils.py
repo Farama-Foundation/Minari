@@ -688,9 +688,9 @@ def get_dataset_spec_dict(
     add_version = f" (`{__version__}` installed)"
     md_dict.update(
         {
-            "Algorithm": dataset_spec["algorithm_name"],
-            "Author": dataset_spec["author"],
-            "Email": dataset_spec["author_email"],
+            "Algorithm": dataset_spec.get("algorithm_name", "Not provided"),
+            "Author": dataset_spec.get("author", "Not provided"),
+            "Email": dataset_spec.get("author_email", "Not provided"),
             "Code Permalink": f"[{code_link}]({code_link})",
             "Minari Version": f"`{version}` {add_version if print_version else ''}",
             "Download": f"`minari.download_dataset(\"{dataset_spec['dataset_id']}\")`",
