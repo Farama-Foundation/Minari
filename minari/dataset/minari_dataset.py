@@ -13,6 +13,7 @@ from gymnasium.envs.registration import EnvSpec
 from packaging.specifiers import InvalidSpecifier, SpecifierSet
 from packaging.version import Version
 
+from minari.data_collector.episode_buffer import EpisodeBuffer
 from minari.dataset.episode_data import EpisodeData
 from minari.dataset.minari_storage import MinariStorage, PathLike
 
@@ -220,20 +221,11 @@ class MinariDataset:
             data = self.storage.get_episodes([episode_index])[0]
             yield EpisodeData(**data)
 
-    def update_dataset_from_buffer(self, buffer: List[dict]):
+    def update_dataset_from_buffer(self, buffer: List[EpisodeBuffer]):
         """Additional data can be added to the Minari Dataset from a list of episode dictionary buffers.
 
-        Each episode dictionary buffer must have the following items:
-            * `observations`: np.ndarray of step observations. shape = (total_episode_steps + 1, (observation_shape)). Should include initial and final observation
-            * `actions`: np.ndarray of step action. shape = (total_episode_steps + 1, (action_shape)).
-            * `rewards`: np.ndarray of step rewards. shape = (total_episode_steps + 1, 1).
-            * `terminations`: np.ndarray of step terminations. shape = (total_episode_steps + 1, 1).
-            * `truncations`: np.ndarray of step truncations. shape = (total_episode_steps + 1, 1).
-
-        Other additional items can be added as long as the values are np.ndarray's or other nested dictionaries.
-
         Args:
-            buffer (list[dict]): list of episode dictionary buffers to add to dataset
+            buffer (list[EpisodeBuffer]): list of episode dictionary buffers to add to dataset
         """
         first_id = self.storage.total_episodes
         self.storage.update_episodes(buffer)

@@ -10,6 +10,7 @@ import numpy as np
 import pyarrow as pa
 import pyarrow.dataset as ds
 
+from minari.data_collector.episode_buffer import EpisodeBuffer
 from minari.dataset.minari_storage import MinariStorage
 
 
@@ -87,22 +88,22 @@ class ArrowStorage(MinariStorage):
         episodes = map(_to_dict, episodes.to_batches())
         return list(episodes)
 
-    def update_episodes(self, episodes: Iterable[dict]):
+    def update_episodes(self, episodes: Iterable[EpisodeBuffer]):
         total_steps = self.total_steps
         total_episodes = self.total_episodes
         for episode_data in episodes:
-            episode_id = episode_data.get("id", total_episodes)
+            episode_id = (
+                episode_data.id if episode_data.id is not None else total_episodes
+            )
             total_episodes = max(total_episodes, episode_id + 1)
             observations = _encode_space(
-                self.observation_space, episode_data["observations"]
+                self.observation_space, episode_data.observations
             )
-            rewards = np.asarray(episode_data["rewards"]).reshape(-1)
-            terminations = np.asarray(episode_data["terminations"]).reshape(-1)
-            truncations = np.asarray(episode_data["truncations"]).reshape(-1)
+            rewards = np.asarray(episode_data.rewards).reshape(-1)
+            terminations = np.asarray(episode_data.terminations).reshape(-1)
+            truncations = np.asarray(episode_data.truncations).reshape(-1)
             pad = len(observations) - len(rewards)
-            actions = _encode_space(
-                self._action_space, episode_data["actions"], pad=pad
-            )
+            actions = _encode_space(self._action_space, episode_data.actions, pad=pad)
 
             episode_batch = {
                 "episode_id": np.full(len(observations), episode_id, dtype=np.int32),
@@ -112,12 +113,12 @@ class ArrowStorage(MinariStorage):
                 "terminations": np.pad(terminations, ((0, pad))),
                 "truncations": np.pad(truncations, ((0, pad))),
             }
-            if episode_data.get("seed") is not None:
+            if episode_data.seed is not None:
                 episode_batch["seed"] = np.full(
-                    len(observations), episode_data["seed"], dtype=np.uint64
+                    len(observations), episode_data.seed, dtype=np.uint64
                 )
-            if episode_data.get("infos", {}):
-                episode_batch["infos"] = _encode_info(episode_data["infos"])
+            if episode_data.infos:
+                episode_batch["infos"] = _encode_info(episode_data.infos)
             episode_batch = pa.RecordBatch.from_pydict(episode_batch)
 
             total_steps += len(rewards)
@@ -126,7 +127,7 @@ class ArrowStorage(MinariStorage):
                 self.data_path,
                 format="parquet",
                 partitioning=["episode_id"],
-                existing_data_behavior="overwrite_or_ignore"
+                existing_data_behavior="overwrite_or_ignore",
             )
 
         self.update_metadata(
@@ -135,8 +136,16 @@ class ArrowStorage(MinariStorage):
 
     def update_from_storage(self, storage: MinariStorage):
         for episode in storage.get_episodes(range(storage.total_episodes)):
-            del episode["id"]
-            self.update_episodes([episode])
+            episode_buffer = EpisodeBuffer(
+                id=None,
+                observations=episode["observations"],
+                actions=episode["actions"],
+                rewards=episode["rewards"],
+                terminations=episode["terminations"],
+                truncations=episode["truncations"],
+                infos=episode["infos"],
+            )
+            self.update_episodes([episode_buffer])
 
         authors = {self.metadata.get("author"), storage.metadata.get("author")}
         emails = {

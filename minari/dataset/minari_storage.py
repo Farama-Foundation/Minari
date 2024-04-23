@@ -11,6 +11,7 @@ import gymnasium as gym
 import numpy as np
 from gymnasium.envs.registration import EnvSpec
 
+from minari.data_collector.episode_buffer import EpisodeBuffer
 from minari.serialization import deserialize_space, serialize_space
 
 
@@ -241,11 +242,11 @@ class MinariStorage(ABC):
         ...
 
     @abstractmethod
-    def update_episodes(self, episodes: Iterable[dict]):
+    def update_episodes(self, episodes: Iterable[EpisodeBuffer]):
         """Update episodes in the storage from a list of episode buffer.
 
         Args:
-            episodes (Iterable[dict]): list of episodes buffer.
+            episodes (Iterable[EpisodeBuffer]): list of episodes buffer.
             They must contain the keys specified in EpsiodeData dataclass, except for `id` which is optional.
             If `id` is specified and exists, the new data is appended to the one in the storage.
         """

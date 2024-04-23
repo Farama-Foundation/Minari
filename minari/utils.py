@@ -5,7 +5,7 @@ import importlib.metadata
 import os
 import re
 import warnings
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional
 
 import gymnasium as gym
 import numpy as np
@@ -17,6 +17,7 @@ from gymnasium.wrappers.record_episode_statistics import RecordEpisodeStatistics
 from packaging.specifiers import InvalidSpecifier, SpecifierSet
 from packaging.version import Version
 
+from minari.data_collector.episode_buffer import EpisodeBuffer
 from minari.dataset.minari_dataset import MinariDataset
 from minari.dataset.minari_storage import MinariStorage
 from minari.serialization import deserialize_space
@@ -479,7 +480,7 @@ def _generate_dataset_metadata(
 
 def create_dataset_from_buffers(
     dataset_id: str,
-    buffer: List[Dict[str, Union[list, Dict]]],
+    buffer: List[EpisodeBuffer],
     env: Optional[str | gym.Env | EnvSpec] = None,
     eval_env: Optional[str | gym.Env | EnvSpec] = None,
     algorithm_name: Optional[str] = None,

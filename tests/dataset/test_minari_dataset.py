@@ -4,12 +4,13 @@ import re
 from typing import Any
 
 import gymnasium as gym
-import jax.tree_util as jtu
 import numpy as np
 import pytest
 
 import minari
 from minari import DataCollector, MinariDataset
+from minari.data_collector.callbacks.step_data import StepData
+from minari.data_collector.episode_buffer import EpisodeBuffer
 from minari.dataset.minari_dataset import EpisodeData
 from minari.dataset.minari_storage import METADATA_FILE_NAME
 from tests.common import (
@@ -204,48 +205,31 @@ def test_filter_episodes_and_subsequent_updates(dataset_id, env_id):
     env = gym.make(env_id)
     buffer = []
 
-    observations = []
-    actions = []
-    rewards = []
-    terminations = []
-    truncations = []
-
     num_episodes = 10
+    seed = 42
+    observation, _ = env.reset(seed=seed)
+    episode_buffer = EpisodeBuffer(observations=observation, seed=seed)
 
-    observation, info = env.reset(seed=42)
-
-    observation, _ = env.reset()
-    observations.append(observation)
     for episode in range(num_episodes):
         terminated = False
         truncated = False
 
         while not terminated and not truncated:
-            action = env.action_space.sample()  # User-defined policy function
+            action = env.action_space.sample()
             observation, reward, terminated, truncated, _ = env.step(action)
-            observations.append(observation)
-            actions.append(action)
-            rewards.append(reward)
-            terminations.append(terminated)
-            truncations.append(truncated)
+            step_data: StepData = {
+                "observations": observation,
+                "actions": action,
+                "rewards": reward,
+                "terminations": terminated,
+                "truncations": truncated,
+                "infos": {},
+            }
+            episode_buffer = episode_buffer.add_step_data(step_data)
 
-        episode_buffer = {
-            "observations": jtu.tree_map(lambda *v: np.stack(v), *observations),
-            "actions": jtu.tree_map(lambda *v: np.stack(v), *actions),
-            "rewards": np.asarray(rewards),
-            "terminations": np.asarray(terminations),
-            "truncations": np.asarray(truncations),
-        }
         buffer.append(episode_buffer)
-
-        observations.clear()
-        actions.clear()
-        rewards.clear()
-        terminations.clear()
-        truncations.clear()
-
         observation, _ = env.reset()
-        observations.append(observation)
+        episode_buffer = EpisodeBuffer(observations=observation)
 
     filtered_dataset.update_dataset_from_buffer(buffer)
 
@@ -410,48 +394,32 @@ def test_update_dataset_from_buffer(dataset_id, env_id):
 
     buffer = []
 
-    observations = []
-    actions = []
-    rewards = []
-    terminations = []
-    truncations = []
-
     num_episodes = 10
+    seed = 42
+    observation, _ = env.reset(seed=seed)
+    episode_buffer = EpisodeBuffer(observations=observation, seed=seed)
 
-    observation, info = env.reset(seed=42)
-
-    observation, _ = env.reset()
-    observations.append(observation)
     for episode in range(num_episodes):
         terminated = False
         truncated = False
 
         while not terminated and not truncated:
-            action = env.action_space.sample()  # User-defined policy function
+            action = env.action_space.sample()
             observation, reward, terminated, truncated, _ = env.step(action)
-            observations.append(observation)
-            actions.append(action)
-            rewards.append(reward)
-            terminations.append(terminated)
-            truncations.append(truncated)
+            step_data: StepData = {
+                "observations": observation,
+                "actions": action,
+                "rewards": reward,
+                "terminations": terminated,
+                "truncations": truncated,
+                "infos": {},
+            }
+            episode_buffer = episode_buffer.add_step_data(step_data)
 
-        episode_buffer = {
-            "observations": jtu.tree_map(lambda *v: np.stack(v), *observations),
-            "actions": jtu.tree_map(lambda *v: np.stack(v), *actions),
-            "rewards": np.asarray(rewards),
-            "terminations": np.asarray(terminations),
-            "truncations": np.asarray(truncations),
-        }
         buffer.append(episode_buffer)
 
-        observations.clear()
-        actions.clear()
-        rewards.clear()
-        terminations.clear()
-        truncations.clear()
-
         observation, _ = env.reset()
-        observations.append(observation)
+        episode_buffer = EpisodeBuffer(observations=observation)
 
     dataset.update_dataset_from_buffer(buffer)
 
