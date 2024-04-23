@@ -78,7 +78,6 @@ class DataCollector(gym.Wrapper):
             EpisodeMetadataCallback
         ] = EpisodeMetadataCallback,
         record_infos: bool = False,
-        max_buffer_steps: Optional[int] = None,
         observation_space=None,
         action_space=None,
     ):
@@ -89,7 +88,6 @@ class DataCollector(gym.Wrapper):
             step_data_callback (type[StepDataCallback], optional): Callback class to edit/update step databefore storing to buffer. Defaults to StepDataCallback.
             episode_metadata_callback (type[EpisodeMetadataCallback], optional): Callback class to add custom metadata to episode group in HDF5 file. Defaults to EpisodeMetadataCallback.
             record_infos (bool, optional): If True record the info return key of each step. Defaults to False.
-            max_buffer_steps (Optional[int], optional): number of steps saved in-memory buffers before dumping to HDF5 file in disk. Defaults to None.
 
         Raises:
             ValueError: `max_buffer_steps` and `max_buffer_episodes` can't be passed at the same time
@@ -123,12 +121,9 @@ class DataCollector(gym.Wrapper):
 
         self._record_infos = record_infos
         self._reference_info = None
-        self.max_buffer_steps = max_buffer_steps
 
         # Initialzie empty buffer
         self._buffer: List[EpisodeBuffer] = []
-
-        self._step_id = -1
         self._episode_id = -1
 
     def _add_step_data(
@@ -205,16 +200,8 @@ class DataCollector(gym.Wrapper):
             step_data["actions"]
         ), "Actions are not in action space."
 
-        self._step_id += 1
         self._add_step_data(self._buffer[-1], step_data)
 
-        if (
-            self.max_buffer_steps is not None
-            and self._step_id != 0
-            and self._step_id % self.max_buffer_steps == 0
-        ):
-            self._storage.update_episodes(self._buffer)
-            self._buffer = [{"id": self._episode_id}]
         if step_data["terminations"] or step_data["truncations"]:
             self._episode_id += 1
             eps_buff = {"id": self._episode_id}
@@ -422,7 +409,6 @@ class DataCollector(gym.Wrapper):
         Clear buffer and close temporary directory.
         """
         super().close()
-
         self._buffer.clear()
         shutil.rmtree(self._tmp_dir.name)
 
