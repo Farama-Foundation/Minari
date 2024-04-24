@@ -219,7 +219,8 @@ def test_episode_metadata(tmp_dataset_dir, data_format):
         ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
     ],
 )
-def test_minari_get_dataset_size_from_collector_env(dataset_id, env_id):
+@pytest.mark.parametrize("data_format", storage_registry.keys())
+def test_minari_get_dataset_size_from_collector_env(dataset_id, env_id, data_format):
     """Test get_dataset_size method for dataset made with DataCollector environment."""
     # delete the test dataset if it already exists
     local_datasets = minari.list_local_datasets()
@@ -228,7 +229,7 @@ def test_minari_get_dataset_size_from_collector_env(dataset_id, env_id):
 
     env = gym.make(env_id)
 
-    env = DataCollector(env)
+    env = DataCollector(env, data_format=data_format)
     num_episodes = 100
 
     # Step the environment, DataCollector wrapper will do the data collection job
@@ -273,7 +274,8 @@ def test_minari_get_dataset_size_from_collector_env(dataset_id, env_id):
         ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
     ],
 )
-def test_minari_get_dataset_size_from_buffer(dataset_id, env_id):
+@pytest.mark.parametrize("data_format", storage_registry.keys())
+def test_minari_get_dataset_size_from_buffer(dataset_id, env_id, data_format):
     """Test get_dataset_size method for dataset made using create_dataset_from_buffers method."""
     buffer = []
 
@@ -320,6 +322,7 @@ def test_minari_get_dataset_size_from_buffer(dataset_id, env_id):
         code_permalink="https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
         author="WillDudley",
         author_email="wdudley@farama.org",
+        data_format=data_format
     )
 
     assert dataset.storage.metadata["dataset_size"] == dataset.storage.get_size()

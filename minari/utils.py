@@ -495,6 +495,7 @@ def create_dataset_from_buffers(
     expert_policy: Optional[Callable[[ObsType], ActType]] = None,
     num_episodes_average_score: int = 100,
     description: Optional[str] = None,
+    data_format: Optional[str] = None,
 ):
     """Create Minari dataset from a list of episode dictionary buffers.
 
@@ -523,6 +524,7 @@ def create_dataset_from_buffers(
         observation_space (Optional[gym.spaces.Space]): observation space of the environment. If None (default) use the environment observation space.
         minari_version (Optional[str], optional): Minari version specifier compatible with the dataset. If None (default) use the installed Minari version.
         description (Optional[str], optional): description of the dataset being created. Defaults to None.
+        data_format (str, optional): Data format to store the data in the Minari dataset. If None (defaults), it will use the default format of MinariStorage.
 
     Returns:
         MinariDataset
@@ -569,11 +571,13 @@ def create_dataset_from_buffers(
         description,
     )
 
+    data_format_kwarg = {"data_format": data_format} if data_format is not None else {}
     storage = MinariStorage.new(
         dataset_path,
         observation_space=observation_space,
         action_space=action_space,
         env_spec=env_spec,
+        **data_format_kwarg
     )
 
     # adding `update_metadata` before hand too, as for small envs, the absence of metadata is causing a difference of some 10ths of MBs leading to errors in unit tests.

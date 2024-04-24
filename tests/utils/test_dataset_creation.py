@@ -6,6 +6,7 @@ from gymnasium import spaces
 import minari
 from minari import DataCollector, MinariDataset
 from minari.data_collector import EpisodeBuffer, StepData
+from minari.dataset._storages import registry as storage_registry
 from tests.common import (
     check_data_integrity,
     check_env_recovery,
@@ -167,7 +168,8 @@ def test_record_infos_collector_env(info_override):
         ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
     ],
 )
-def test_generate_dataset_with_external_buffer(dataset_id, env_id):
+@pytest.mark.parametrize("data_format", storage_registry.keys())
+def test_generate_dataset_with_external_buffer(dataset_id, env_id, data_format):
     """Test create dataset from external buffers without using DataCollector."""
     buffer = []
 
@@ -223,6 +225,7 @@ def test_generate_dataset_with_external_buffer(dataset_id, env_id):
             code_permalink=CODELINK,
             author="WillDudley",
             author_email="wdudley@farama.org",
+            data_format=data_format
         )
 
         assert isinstance(dataset, MinariDataset)
@@ -243,7 +246,8 @@ def test_generate_dataset_with_external_buffer(dataset_id, env_id):
 
 
 @pytest.mark.parametrize("is_env_needed", [True, False])
-def test_generate_dataset_with_space_subset_external_buffer(is_env_needed):
+@pytest.mark.parametrize("data_format", storage_registry.keys())
+def test_generate_dataset_with_space_subset_external_buffer(is_env_needed, data_format):
     """Test create dataset from external buffers without using DataCollector or environment."""
     dataset_id = "dummy-dict-test-v0"
 
@@ -314,6 +318,7 @@ def test_generate_dataset_with_space_subset_external_buffer(is_env_needed):
         author_email="wdudley@farama.org",
         action_space=action_space_subset,
         observation_space=observation_space_subset,
+        data_format=data_format
     )
 
     metadata = dataset.storage.metadata
