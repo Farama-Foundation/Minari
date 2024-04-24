@@ -82,6 +82,8 @@ class DataCollector(gym.Wrapper):
             step_data_callback (type[StepDataCallback], optional): Callback class to edit/update step databefore storing to buffer. Defaults to StepDataCallback.
             episode_metadata_callback (type[EpisodeMetadataCallback], optional): Callback class to add custom metadata to episode group in HDF5 file. Defaults to EpisodeMetadataCallback.
             record_infos (bool, optional): If True record the info return key of each step. Defaults to False.
+            observation_space (gym.Space): Observation space of the dataset. The default value is the environment observation space.
+            action_space (gym.Space): Action space of the dataset. The default value is the environment action space.
         """
         super().__init__(env)
         self._step_data_callback = step_data_callback()
