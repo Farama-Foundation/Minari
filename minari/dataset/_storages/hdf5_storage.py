@@ -8,8 +8,8 @@ from typing import Dict, Iterable, List, Optional, Tuple, Union
 import gymnasium as gym
 import h5py
 import numpy as np
-from minari.data_collector import EpisodeBuffer
 
+from minari.data_collector import EpisodeBuffer
 from minari.dataset.minari_storage import MinariStorage
 
 
