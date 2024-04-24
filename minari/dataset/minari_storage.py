@@ -90,7 +90,7 @@ class MinariStorage(ABC):
         observation_space: Optional[gym.Space] = None,
         action_space: Optional[gym.Space] = None,
         env_spec: Optional[EnvSpec] = None,
-        data_format: str = "arrow",
+        data_format: str = "hdf5",
     ) -> MinariStorage:
         """Class method to create a new data storage.
 

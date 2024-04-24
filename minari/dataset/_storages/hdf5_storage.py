@@ -8,6 +8,7 @@ from typing import Dict, Iterable, List, Optional, Tuple, Union
 import gymnasium as gym
 import h5py
 import numpy as np
+from minari.data_collector import EpisodeBuffer
 
 from minari.dataset.minari_storage import MinariStorage
 
@@ -138,25 +139,33 @@ class HDF5Storage(MinariStorage):
 
         return outs
 
-    def update_episodes(self, episodes: Iterable[dict]):
+    def update_episodes(self, episodes: Iterable[EpisodeBuffer]):
         additional_steps = 0
         with h5py.File(self._file_path, "a", track_order=True) as file:
             for eps_buff in episodes:
                 total_episodes = len(file.keys())
-                episode_id = eps_buff.pop("id", total_episodes)
+                episode_id = eps_buff.id if eps_buff.id is not None else total_episodes
                 assert (
                     episode_id <= total_episodes
                 ), "Invalid episode id; ids must be sequential."
                 episode_group = _get_from_h5py(file, f"episode_{episode_id}")
                 episode_group.attrs["id"] = episode_id
-                if "seed" in eps_buff.keys():
+                if eps_buff.seed is not None:
                     assert "seed" not in episode_group.attrs.keys()
-                    episode_group.attrs["seed"] = eps_buff.pop("seed")
-                episode_steps = len(eps_buff["rewards"])
+                    episode_group.attrs["seed"] = eps_buff.seed
+                episode_steps = len(eps_buff.rewards)
                 episode_group.attrs["total_steps"] = episode_steps
                 additional_steps += episode_steps
 
-                _add_episode_to_group(eps_buff, episode_group)
+                dict_buffer = {
+                    "observations": eps_buff.observations,
+                    "actions": eps_buff.actions,
+                    "rewards": eps_buff.rewards,
+                    "terminations": eps_buff.terminations,
+                    "truncations": eps_buff.truncations,
+                    "infos": eps_buff.infos,
+                }
+                _add_episode_to_group(dict_buffer, episode_group)
 
             total_episodes = len(file.keys())
 
@@ -219,11 +228,8 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
         if isinstance(data, dict):
             episode_group_to_clear = _get_from_h5py(episode_group, key)
             _add_episode_to_group(data, episode_group_to_clear)
-        elif all(isinstance(entry, tuple) for entry in data):  # list of tuples
-            dict_data = {
-                f"_index_{str(i)}": [entry[i] for entry in data]
-                for i, _ in enumerate(data[0])
-            }
+        elif isinstance(data, tuple):
+            dict_data = {f"_index_{i}": subdata for i, subdata in enumerate(data)}
             episode_group_to_clear = _get_from_h5py(episode_group, key)
             _add_episode_to_group(dict_data, episode_group_to_clear)
         elif all(
