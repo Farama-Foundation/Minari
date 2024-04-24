@@ -40,11 +40,11 @@ from minari import DataCollector
 import gymnasium as gym
 
 env = gym.make('CartPole-v1')
-env = DataCollector(env, record_infos=True, max_buffer_steps=100000)
+env = DataCollector(env, record_infos=True)
 ```
 
 ```{eval-rst}
-In this example, the :class:`minari.DataCollector` wraps the `'CartPole-v1'` environment from Gymnasium. The arguments passed are ``record_infos`` (when set to ``True`` the wrapper will also collect the returned ``info`` dictionaries to create the dataset), and the ``max_buffer_steps`` argument, which specifies a caching scheduler by giving the number of data steps to store in-memory before moving them to a temporary file on disk. There are more arguments that can be passed to this wrapper, a detailed description of them can be read in the :class:`minari.DataCollector` documentation.
+In this example, the :class:`minari.DataCollector` wraps the `'CartPole-v1'` environment from Gymnasium. We set ``record_infos=True`` so the wrapper will also collect the returned ``info`` dictionaries to create the dataset. For the full list of arguments, read the :class:`minari.DataCollector` documentation.
 ```
 
 ### Save Dataset
@@ -63,7 +63,7 @@ import gymnasium as gym
 from minari import DataCollector
 
 env = gym.make('CartPole-v1')
-env = DataCollector(env, record_infos=True, max_buffer_steps=100000)
+env = DataCollector(env, record_infos=True)
 
 total_episodes = 100
 
@@ -129,7 +129,7 @@ import gymnasium as gym
 from minari import DataCollector
 
 env = gym.make('CartPole-v1')
-env = DataCollector(env, record_infos=True, max_buffer_steps=100000)
+env = DataCollector(env, record_infos=True)
 
 total_episodes = 100
 dataset_name = "cartpole-test-v0"

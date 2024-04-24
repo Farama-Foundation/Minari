@@ -62,9 +62,6 @@ class DataCollector(gym.Wrapper):
         * A new episode dictionary buffer is created if the env.step(action) call returns `truncated` or `terminated`, or if the environment calls
           env.reset(). If calling reset and the previous episode was not `truncated` or `terminated`, this will automatically be `truncated`.
 
-        * To perform caching the user can set the `max_buffer_steps` or `max_buffer_episodes` before saving the in-memory buffers to a temporary HDF5
-          file in disk. If non of `max_buffer_steps` or `max_buffer_episodes` are set, the data will move from in-memory to a permanent location only
-          when the Minari dataset is created. To move all the stored data to a permanent location use DataCollector.save_to_disK(path_to_permanent_location).
     """
 
     def __init__(
@@ -85,9 +82,6 @@ class DataCollector(gym.Wrapper):
             step_data_callback (type[StepDataCallback], optional): Callback class to edit/update step databefore storing to buffer. Defaults to StepDataCallback.
             episode_metadata_callback (type[EpisodeMetadataCallback], optional): Callback class to add custom metadata to episode group in HDF5 file. Defaults to EpisodeMetadataCallback.
             record_infos (bool, optional): If True record the info return key of each step. Defaults to False.
-
-        Raises:
-            ValueError: `max_buffer_steps` and `max_buffer_episodes` can't be passed at the same time
         """
         super().__init__(env)
         self._step_data_callback = step_data_callback()
