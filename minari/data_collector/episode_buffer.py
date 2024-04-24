@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from typing import Optional, Union
+
 import jax.tree_util as jtu
 
 from minari.data_collector import StepData
@@ -13,9 +14,9 @@ class EpisodeBuffer:
     seed: Optional[int] = None
     observations: Union[None, list, dict, tuple] = None
     actions: Union[None, list, dict, tuple] = None
-    rewards: list = field(default_factory=list) 
-    terminations: list = field(default_factory=list) 
-    truncations: list = field(default_factory=list) 
+    rewards: list = field(default_factory=list)
+    terminations: list = field(default_factory=list)
+    truncations: list = field(default_factory=list)
     infos: Optional[dict] = None
 
     def add_step_data(self, step_data: StepData):
@@ -27,6 +28,7 @@ class EpisodeBuffer:
         Returns:
             EpisodeBuffer: episode buffer with appended data
         """
+
         def _append(data, buffer):
             if isinstance(buffer, list):
                 buffer.append(data)
@@ -36,7 +38,9 @@ class EpisodeBuffer:
 
         observations = step_data["observations"]
         if self.observations is not None:
-            observations = jtu.tree_map(_append, step_data["observations"], self.observations)
+            observations = jtu.tree_map(
+                _append, step_data["observations"], self.observations
+            )
         actions = step_data["actions"]
         if self.actions is not None:
             actions = jtu.tree_map(_append, step_data["actions"], self.actions)
@@ -46,7 +50,7 @@ class EpisodeBuffer:
         self.rewards.append(step_data["rewards"])
         self.terminations.append(step_data["terminations"])
         self.truncations.append(step_data["truncations"])
-        
+
         return EpisodeBuffer(
             id=self.id,
             seed=self.seed,
@@ -55,7 +59,7 @@ class EpisodeBuffer:
             rewards=self.rewards,
             terminations=self.terminations,
             truncations=self.truncations,
-            infos=infos
+            infos=infos,
         )
 
     def __len__(self):

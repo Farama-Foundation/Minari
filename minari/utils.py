@@ -502,18 +502,9 @@ def create_dataset_from_buffers(
     ``(env_name-)(dataset_name)(-v(version))`` where ``env_name`` identifies the name of the environment used to generate the dataset ``dataset_name``.
     This ``dataset_id`` is used to load the Minari datasets with :meth:`minari.load_dataset`.
 
-    Each episode dictionary buffer must have the following items:
-        * `observations`: np.ndarray of step observations. shape = (total_episode_steps + 1, (observation_shape)). Should include initial and final observation
-        * `actions`: np.ndarray of step action. shape = (total_episode_steps, (action_shape)).
-        * `rewards`: np.ndarray of step rewards. shape = (total_episode_steps, 1).
-        * `terminations`: np.ndarray of step terminations. shape = (total_episode_steps, 1).
-        * `truncations`: np.ndarray of step truncations. shape = (total_episode_steps, 1).
-
-    Other additional items can be added as long as the values are np.ndarray's or other nested dictionaries.
-
     Args:
         dataset_id (str): name id to identify Minari dataset.
-        buffer (list[Dict[str, Union[list, Dict]]]): list of episode dictionaries with data.
+        buffer (list[EpisodeBuffer]): list of episode buffer with data.
         env (Optional[str|gym.Env|EnvSpec]): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) used to collect the buffer data. Defaults to None.
         eval_env (Optional[str|gym.Env|EnvSpec]): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) to use for evaluation with the dataset. After loading the dataset, the environment can be recovered as follows: `MinariDataset.recover_environment(eval_env=True).
                                                 If None, and if the `env` used to collect the buffer data is available, latter will be used for evaluation.

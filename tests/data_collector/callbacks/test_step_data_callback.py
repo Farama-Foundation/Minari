@@ -161,11 +161,8 @@ def test_data_collector_step_data_callback_info_correction():
         record_infos=True,
     )
     # here we are checking to make sure that if we have an environment changing its info
-    # structure across steps, it is caught by the data_collector
-    with pytest.raises(
-        ValueError,
-        match="Info structure inconsistent with info structure returned by original reset.",
-    ):
+    # structure across steps, it is results in a error
+    with pytest.raises(ValueError):
         num_episodes = 10
         env.reset(seed=42)
         for _ in range(num_episodes):

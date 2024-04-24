@@ -1,11 +1,11 @@
 import gymnasium as gym
-import jax.tree_util as jtu
 import numpy as np
 import pytest
 from gymnasium import spaces
 
 import minari
 from minari import DataCollector, MinariDataset
+from minari.data_collector import EpisodeBuffer, StepData
 from tests.common import (
     check_data_integrity,
     check_env_recovery,
@@ -179,49 +179,31 @@ def test_generate_dataset_with_external_buffer(dataset_id, env_id):
 
     env = gym.make(env_id)
 
-    observations = []
-    actions = []
-    rewards = []
-    terminations = []
-    truncations = []
-
     num_episodes = 10
+    seed = 42
+    observation, _ = env.reset(seed=seed)
+    episode_buffer = EpisodeBuffer(observations=observation, seed=seed)
 
-    observation, info = env.reset(seed=42)
-
-    # Step the environment, DataCollector wrapper will do the data collection job
-    observation, _ = env.reset()
-    observations.append(observation)
     for episode in range(num_episodes):
         terminated = False
         truncated = False
 
         while not terminated and not truncated:
-            action = env.action_space.sample()  # User-defined policy function
+            action = env.action_space.sample()
             observation, reward, terminated, truncated, _ = env.step(action)
-            observations.append(observation)
-            actions.append(action)
-            rewards.append(reward)
-            terminations.append(terminated)
-            truncations.append(truncated)
+            step_data: StepData = {
+                "observations": observation,
+                "actions": action,
+                "rewards": reward,
+                "terminations": terminated,
+                "truncations": truncated,
+                "infos": {},
+            }
+            episode_buffer = episode_buffer.add_step_data(step_data)
 
-        episode_buffer = {
-            "observations": jtu.tree_map(lambda *v: np.stack(v), *observations),
-            "actions": jtu.tree_map(lambda *v: np.stack(v), *actions),
-            "rewards": np.asarray(rewards),
-            "terminations": np.asarray(terminations),
-            "truncations": np.asarray(truncations),
-        }
         buffer.append(episode_buffer)
-
-        observations.clear()
-        actions.clear()
-        rewards.clear()
-        terminations.clear()
-        truncations.clear()
-
         observation, _ = env.reset()
-        observations.append(observation)
+        episode_buffer = EpisodeBuffer(observations=observation)
 
     # Save a different environment spec for evaluation (different max_episode_steps)
     eval_env_spec = gym.spec(env_id)
@@ -293,12 +275,38 @@ def test_generate_dataset_with_space_subset_external_buffer(is_env_needed):
     env = gym.make("DummyDictEnv-v0")
     num_episodes = 10
     buffer = get_sample_buffer_for_dataset_from_env(env, num_episodes)
+    sub_buffer = []
+    for episode_buffer in buffer:
+        observations = {
+            "component_2": {
+                "subcomponent_2": episode_buffer.observations["component_2"][
+                    "subcomponent_2"
+                ]
+            }
+        }
+        actions = {
+            "component_2": {
+                "subcomponent_2": episode_buffer.actions["component_2"][
+                    "subcomponent_2"
+                ]
+            }
+        }
+        sub_buffer.append(
+            EpisodeBuffer(
+                observations=observations,
+                actions=actions,
+                rewards=episode_buffer.rewards,
+                terminations=episode_buffer.terminations,
+                truncations=episode_buffer.truncations,
+                infos=episode_buffer.infos,
+            )
+        )
 
     # Create Minari dataset and store locally
     env_to_pass = env if is_env_needed else None
     dataset = minari.create_dataset_from_buffers(
         dataset_id=dataset_id,
-        buffer=buffer,
+        buffer=sub_buffer,
         env=env_to_pass,
         algorithm_name="random_policy",
         code_permalink=CODELINK,

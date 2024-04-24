@@ -3,7 +3,6 @@ import unicodedata
 from typing import Any, Dict, Iterable, List, Optional, Union
 
 import gymnasium as gym
-import jax.tree_util as jtu
 import numpy as np
 from gymnasium import spaces
 from gymnasium.envs.registration import register
@@ -11,6 +10,7 @@ from gymnasium.utils.env_checker import data_equivalence
 
 import minari
 from minari import DataCollector, MinariDataset
+from minari.data_collector import EpisodeBuffer, StepData
 from minari.dataset.minari_dataset import EpisodeData
 from minari.dataset.minari_storage import MinariStorage
 
@@ -750,17 +750,10 @@ def _space_subset_helper(entry: Dict):
 
 def get_sample_buffer_for_dataset_from_env(env: gym.Env, num_episodes: int = 10):
     buffer = []
-    observations = []
-    actions = []
-    rewards = []
-    terminations = []
-    truncations = []
+    seed = 42
+    observation, _ = env.reset(seed=seed)
+    episode_buffer = EpisodeBuffer(observations=observation, seed=seed)
 
-    observation, info = env.reset(seed=42)
-
-    # Step the environment, DataCollector wrapper will do the data collection job
-    observation, _ = env.reset()
-    observations.append(_space_subset_helper(observation))
     for episode in range(num_episodes):
         terminated = False
         truncated = False
@@ -768,29 +761,19 @@ def get_sample_buffer_for_dataset_from_env(env: gym.Env, num_episodes: int = 10)
         while not terminated and not truncated:
             action = env.action_space.sample()
             observation, reward, terminated, truncated, _ = env.step(action)
-            observations.append(_space_subset_helper(observation))
-            actions.append(_space_subset_helper(action))
-            rewards.append(reward)
-            terminations.append(terminated)
-            truncations.append(truncated)
-
-        episode_buffer = {
-            "observations": jtu.tree_map(lambda *v: np.stack(v), *observations),
-            "actions": jtu.tree_map(lambda *v: np.stack(v), *actions),
-            "rewards": np.asarray(rewards),
-            "terminations": np.asarray(terminations),
-            "truncations": np.asarray(truncations),
-        }
+            step_data: StepData = {
+                "observations": observation,
+                "actions": action,
+                "rewards": reward,
+                "terminations": terminated,
+                "truncations": truncated,
+                "infos": {},
+            }
+            episode_buffer = episode_buffer.add_step_data(step_data)
 
         buffer.append(episode_buffer)
 
-        observations.clear()
-        actions.clear()
-        rewards.clear()
-        terminations.clear()
-        truncations.clear()
-
         observation, _ = env.reset()
-        observations.append(_space_subset_helper(observation))
+        episode_buffer = EpisodeBuffer(observations=observation)
 
     return buffer

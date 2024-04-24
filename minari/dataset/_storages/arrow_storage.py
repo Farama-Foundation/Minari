@@ -187,8 +187,7 @@ def _encode_space(space: gym.Space, values: Any, pad: int = 0):
     else:
         if not isinstance(values, list):
             values = list(values)
-        values.extend([None] * pad)
-        return pa.array(values)
+        return pa.array(values + [None] * pad)
 
 
 def _decode_space(space, values: pa.Array):
