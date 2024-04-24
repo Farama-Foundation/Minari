@@ -577,7 +577,7 @@ def create_dataset_from_buffers(
         observation_space=observation_space,
         action_space=action_space,
         env_spec=env_spec,
-        **data_format_kwarg
+        **data_format_kwarg,
     )
 
     # adding `update_metadata` before hand too, as for small envs, the absence of metadata is causing a difference of some 10ths of MBs leading to errors in unit tests.

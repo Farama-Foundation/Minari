@@ -322,7 +322,7 @@ def test_minari_get_dataset_size_from_buffer(dataset_id, env_id, data_format):
         code_permalink="https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
         author="WillDudley",
         author_email="wdudley@farama.org",
-        data_format=data_format
+        data_format=data_format,
     )
 
     assert dataset.storage.metadata["dataset_size"] == dataset.storage.get_size()

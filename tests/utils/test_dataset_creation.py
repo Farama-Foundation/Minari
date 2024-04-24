@@ -225,7 +225,7 @@ def test_generate_dataset_with_external_buffer(dataset_id, env_id, data_format):
             code_permalink=CODELINK,
             author="WillDudley",
             author_email="wdudley@farama.org",
-            data_format=data_format
+            data_format=data_format,
         )
 
         assert isinstance(dataset, MinariDataset)
@@ -318,7 +318,7 @@ def test_generate_dataset_with_space_subset_external_buffer(is_env_needed, data_
         author_email="wdudley@farama.org",
         action_space=action_space_subset,
         observation_space=observation_space_subset,
-        data_format=data_format
+        data_format=data_format,
     )
 
     metadata = dataset.storage.metadata

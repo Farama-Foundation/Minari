@@ -1,5 +1,3 @@
-from typing import Optional
-
 import gymnasium as gym
 import pytest
 from gymnasium.utils.env_checker import data_equivalence
@@ -65,14 +63,18 @@ def test_combine_datasets():
 
     # generating multiple test datasets
     test_max_episode_steps = [5, 3, 7, 10, None]
-    
+
     test_datasets = []
     for dataset_id, max_episode_steps in zip(test_datasets_ids, test_max_episode_steps):
         env = gym.make("CartPole-v1", max_episode_steps=max_episode_steps)
         assert env.spec is not None
-        env.spec.max_episode_steps = max_episode_steps  # with None max_episode_steps=default
+        env.spec.max_episode_steps = (
+            max_episode_steps  # with None max_episode_steps=default
+        )
         env = DataCollector(env)
-        dataset = create_dummy_dataset_with_collecter_env_helper(dataset_id, env, num_episodes)
+        dataset = create_dummy_dataset_with_collecter_env_helper(
+            dataset_id, env, num_episodes
+        )
         test_datasets.append(dataset)
 
     combined_dataset = combine_datasets(
@@ -81,7 +83,9 @@ def test_combine_datasets():
 
     assert test_datasets[1][0].id == 0
     assert isinstance(combined_dataset, MinariDataset)
-    assert list(combined_dataset.spec.combined_datasets) == test_datasets_ids, list(combined_dataset.spec.combined_datasets)
+    assert list(combined_dataset.spec.combined_datasets) == test_datasets_ids, list(
+        combined_dataset.spec.combined_datasets
+    )
     assert combined_dataset.spec.total_episodes == num_datasets * num_episodes
     assert isinstance(combined_dataset.spec.total_steps, int)
     assert combined_dataset.spec.total_steps == sum(
@@ -99,8 +103,13 @@ def test_combine_datasets():
         test_datasets, new_dataset_id="cartpole-combined-test-v0"
     )
     assert combined_dataset.spec.env_spec is not None
-    assert combined_dataset.spec.env_spec.max_episode_steps == max(test_max_episode_steps)
-    _check_env_recovery(gym.make("CartPole-v1", max_episode_steps=max(test_max_episode_steps)), combined_dataset)
+    assert combined_dataset.spec.env_spec.max_episode_steps == max(
+        test_max_episode_steps
+    )
+    _check_env_recovery(
+        gym.make("CartPole-v1", max_episode_steps=max(test_max_episode_steps)),
+        combined_dataset,
+    )
     _check_load_and_delete_dataset("cartpole-combined-test-v0")
 
 
