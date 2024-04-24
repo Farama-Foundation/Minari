@@ -90,7 +90,7 @@ class MinariStorage(ABC):
         observation_space: Optional[gym.Space] = None,
         action_space: Optional[gym.Space] = None,
         env_spec: Optional[EnvSpec] = None,
-        data_format: str = "hdf5",
+        data_format: str = "arrow",
     ) -> MinariStorage:
         """Class method to create a new data storage.
 
@@ -99,7 +99,7 @@ class MinariStorage(ABC):
             observation_space (gymnasium.Space, optional): Gymnasium observation space of the dataset.
             action_space (gymnasium.Space, optional): Gymnasium action space of the dataset.
             env_spec (EnvSpec, optional): Gymnasium EnvSpec of the environment that generates the dataset.
-            data_format (str): Format of the data. Default value is "hdf5".
+            data_format (str): Format of the data. Default value is "arrow".
 
         Returns:
             A new MinariStorage object to write new data.
@@ -252,14 +252,35 @@ class MinariStorage(ABC):
         """
         ...
 
-    @abstractmethod
     def update_from_storage(self, storage: MinariStorage):
         """Update the dataset using another MinariStorage.
 
         Args:
             storage (MinariStorage): the other MinariStorage from which the data will be taken
         """
-        ...
+        for episode in storage.get_episodes(range(storage.total_episodes)):
+            episode_buffer = EpisodeBuffer(
+                id=None,
+                observations=episode["observations"],
+                actions=episode["actions"],
+                rewards=episode["rewards"],
+                terminations=episode["terminations"],
+                truncations=episode["truncations"],
+                infos=episode["infos"],
+            )
+            self.update_episodes([episode_buffer])
+
+        authors = {self.metadata.get("author"), storage.metadata.get("author")}
+        emails = {
+            self.metadata.get("author_email"),
+            storage.metadata.get("author_email"),
+        }
+        self.update_metadata(
+            {
+                "author": "; ".join([aut for aut in authors if aut is not None]),
+                "author_email": "; ".join([e for e in emails if e is not None]),
+            }
+        )
 
     def get_size(self) -> float:
         """Returns the dataset size in MB.

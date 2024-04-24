@@ -134,31 +134,6 @@ class ArrowStorage(MinariStorage):
             {"total_steps": total_steps, "total_episodes": total_episodes}
         )
 
-    def update_from_storage(self, storage: MinariStorage):
-        for episode in storage.get_episodes(range(storage.total_episodes)):
-            episode_buffer = EpisodeBuffer(
-                id=None,
-                observations=episode["observations"],
-                actions=episode["actions"],
-                rewards=episode["rewards"],
-                terminations=episode["terminations"],
-                truncations=episode["truncations"],
-                infos=episode["infos"],
-            )
-            self.update_episodes([episode_buffer])
-
-        authors = {self.metadata.get("author"), storage.metadata.get("author")}
-        emails = {
-            self.metadata.get("author_email"),
-            storage.metadata.get("author_email"),
-        }
-        self.update_metadata(
-            {
-                "author": "; ".join([aut for aut in authors if aut is not None]),
-                "author_email": "; ".join([e for e in emails if e is not None]),
-            }
-        )
-
 
 def _encode_space(space: gym.Space, values: Any, pad: int = 0):
     if isinstance(space, gym.spaces.Dict):

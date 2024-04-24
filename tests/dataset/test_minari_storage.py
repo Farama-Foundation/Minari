@@ -9,6 +9,7 @@ import minari
 from minari import DataCollector
 from minari.data_collector.callbacks.step_data import StepData
 from minari.data_collector.episode_buffer import EpisodeBuffer
+from minari.dataset._storages import registry as storage_registry
 from minari.dataset.minari_storage import MinariStorage
 from tests.common import (
     check_data_integrity,
@@ -58,13 +59,15 @@ def test_non_existing_data(tmp_dataset_dir):
         MinariStorage.read(tmp_dataset_dir)
 
 
-def test_metadata(tmp_dataset_dir):
+@pytest.mark.parametrize("data_format", storage_registry.keys())
+def test_metadata(tmp_dataset_dir, data_format):
     action_space = spaces.Box(-1, 1)
     observation_space = spaces.Box(-1, 1)
     storage = MinariStorage.new(
         data_path=tmp_dataset_dir,
         observation_space=observation_space,
         action_space=action_space,
+        data_format=data_format,
     )
     assert str(storage.data_path) == tmp_dataset_dir
 
@@ -91,7 +94,8 @@ def test_metadata(tmp_dataset_dir):
     assert storage_metadata == storage2.metadata
 
 
-def test_add_episodes(tmp_dataset_dir):
+@pytest.mark.parametrize("data_format", storage_registry.keys())
+def test_add_episodes(tmp_dataset_dir, data_format):
     action_space = spaces.Box(-1, 1, shape=(10,))
     observation_space = spaces.Text(max_length=5)
     n_episodes = 10
@@ -106,6 +110,7 @@ def test_add_episodes(tmp_dataset_dir):
         data_path=tmp_dataset_dir,
         observation_space=observation_space,
         action_space=action_space,
+        data_format=data_format,
     )
     storage.update_episodes(episodes)
     del storage
@@ -149,7 +154,8 @@ def test_add_episodes(tmp_dataset_dir):
 #     assert storage.total_steps == sum(lens)
 
 
-def test_apply(tmp_dataset_dir):
+@pytest.mark.parametrize("data_format", storage_registry.keys())
+def test_apply(tmp_dataset_dir, data_format):
     action_space = spaces.Box(-1, 1, shape=(10,))
     observation_space = spaces.Text(max_length=5)
     n_episodes = 10
@@ -161,6 +167,7 @@ def test_apply(tmp_dataset_dir):
         data_path=tmp_dataset_dir,
         observation_space=observation_space,
         action_space=action_space,
+        data_format=data_format,
     )
     storage.update_episodes(episodes)
 
@@ -174,7 +181,8 @@ def test_apply(tmp_dataset_dir):
         assert np.array(episodes[i].actions).sum() == result
 
 
-def test_episode_metadata(tmp_dataset_dir):
+@pytest.mark.parametrize("data_format", storage_registry.keys())
+def test_episode_metadata(tmp_dataset_dir, data_format):
     action_space = spaces.Box(-1, 1, shape=(10,))
     observation_space = spaces.Text(max_length=5)
     n_episodes = 10
@@ -186,6 +194,7 @@ def test_episode_metadata(tmp_dataset_dir):
         data_path=tmp_dataset_dir,
         observation_space=observation_space,
         action_space=action_space,
+        data_format=data_format,
     )
     storage.update_episodes(episodes)
 

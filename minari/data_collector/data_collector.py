@@ -55,9 +55,7 @@ class DataCollector(gym.Wrapper):
 
         * The step data is stored per episode in dictionaries. This dictionaries are then stored in-memory in a global list buffer. The
           episode dictionaries contain items with list buffers as values for the main episode step datasets `observations`, `actions`,
-          `terminations`, and `truncations`, the `infos` key can be a list or another nested dictionary with extra datasets. Separate data
-          keys can be added by passing a custom `StepDataCallback` to the wrapper. When creating the HDF5 file the list values in the episode
-          dictionary will be stored as datasets and the nested dictionaries will generate a new HDF5 group.
+          `terminations`, and `truncations`, the `infos` key can be a list or another nested dictionary with extra datasets.
 
         * A new episode dictionary buffer is created if the env.step(action) call returns `truncated` or `terminated`, or if the environment calls
           env.reset(). If calling reset and the previous episode was not `truncated` or `terminated`, this will automatically be `truncated`.
@@ -72,8 +70,9 @@ class DataCollector(gym.Wrapper):
             EpisodeMetadataCallback
         ] = EpisodeMetadataCallback,
         record_infos: bool = False,
-        observation_space=None,
-        action_space=None,
+        observation_space: Optional[gym.Space] = None,
+        action_space: Optional[gym.Space] = None,
+        data_format: Optional[str] = None,
     ):
         """Initialize the data collector attributes and create the temporary directory for caching.
 
@@ -84,18 +83,17 @@ class DataCollector(gym.Wrapper):
             record_infos (bool, optional): If True record the info return key of each step. Defaults to False.
             observation_space (gym.Space): Observation space of the dataset. The default value is the environment observation space.
             action_space (gym.Space): Action space of the dataset. The default value is the environment action space.
+            data_format (str, optional): Data format to store the data in the Minari dataset. If None (defaults), it will use the default format of MinariStorage.
         """
         super().__init__(env)
         self._step_data_callback = step_data_callback()
         self._episode_metadata_callback = episode_metadata_callback()
 
-        # get path to minari datasets directory
         self.datasets_path = os.environ.get("MINARI_DATASETS_PATH")
         if self.datasets_path is None:
             self.datasets_path = os.path.join(
                 os.path.expanduser("~"), ".minari", "datasets"
             )
-        # create local directory if it doesn't exist
         if not os.path.exists(self.datasets_path):
             os.makedirs(self.datasets_path)
 
@@ -105,16 +103,19 @@ class DataCollector(gym.Wrapper):
             action_space = env.action_space
 
         self._tmp_dir = tempfile.TemporaryDirectory(dir=self.datasets_path)
+        data_format_kwarg = (
+            {"data_format": data_format} if data_format is not None else {}
+        )
         self._storage = MinariStorage.new(
             self._tmp_dir.name,
             observation_space=observation_space,
             action_space=action_space,
             env_spec=self.env.spec,
+            **data_format_kwarg,
         )
 
         self._record_infos = record_infos
 
-        # Initialzie empty buffer
         self._buffer: Optional[EpisodeBuffer] = None
         self._episode_id = 0
 

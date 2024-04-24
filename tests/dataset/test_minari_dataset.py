@@ -11,6 +11,7 @@ import minari
 from minari import DataCollector, MinariDataset
 from minari.data_collector.callbacks.step_data import StepData
 from minari.data_collector.episode_buffer import EpisodeBuffer
+from minari.dataset._storages import registry as storage_registry
 from minari.dataset.minari_dataset import EpisodeData
 from minari.dataset.minari_storage import METADATA_FILE_NAME
 from tests.common import (
@@ -73,14 +74,15 @@ def test_episode_data(space: gym.Space):
         ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
     ],
 )
-def test_update_dataset_from_collector_env(dataset_id, env_id):
+@pytest.mark.parametrize("data_format", storage_registry.keys())
+def test_update_dataset_from_collector_env(dataset_id, env_id, data_format):
     local_datasets = minari.list_local_datasets()
     if dataset_id in local_datasets:
         minari.delete_dataset(dataset_id)
 
     env = gym.make(env_id)
 
-    env = DataCollector(env)
+    env = DataCollector(env, data_format=data_format)
     num_episodes = 10
 
     dataset = create_dummy_dataset_with_collecter_env_helper(
@@ -125,7 +127,8 @@ def test_update_dataset_from_collector_env(dataset_id, env_id):
         ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
     ],
 )
-def test_filter_episodes_and_subsequent_updates(dataset_id, env_id):
+@pytest.mark.parametrize("data_format", storage_registry.keys())
+def test_filter_episodes_and_subsequent_updates(dataset_id, env_id, data_format):
     """Tests to make sure that episodes are filtered filtered correctly.
 
     Additionally ensures indices are correctly updated when adding more episodes to a filtered dataset.
@@ -136,7 +139,7 @@ def test_filter_episodes_and_subsequent_updates(dataset_id, env_id):
 
     env = gym.make(env_id)
 
-    env = DataCollector(env)
+    env = DataCollector(env, data_format=data_format)
     num_episodes = 10
 
     dataset = create_dummy_dataset_with_collecter_env_helper(
@@ -287,14 +290,15 @@ def test_filter_episodes_and_subsequent_updates(dataset_id, env_id):
         ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
     ],
 )
-def test_sample_episodes(dataset_id, env_id):
+@pytest.mark.parametrize("data_format", storage_registry.keys())
+def test_sample_episodes(dataset_id, env_id, data_format):
     local_datasets = minari.list_local_datasets()
     if dataset_id in local_datasets:
         minari.delete_dataset(dataset_id)
 
     env = gym.make(env_id)
 
-    env = DataCollector(env)
+    env = DataCollector(env, data_format=data_format)
     num_episodes = 10
 
     dataset = create_dummy_dataset_with_collecter_env_helper(
@@ -320,7 +324,7 @@ def test_sample_episodes(dataset_id, env_id):
 
 
 @pytest.mark.parametrize(
-    "dataset_id,env_id",
+    "dataset_id, env_id",
     [
         ("cartpole-test-v0", "CartPole-v1"),
         ("dummy-dict-test-v0", "DummyDictEnv-v0"),
@@ -330,14 +334,15 @@ def test_sample_episodes(dataset_id, env_id):
         ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
     ],
 )
-def test_iterate_episodes(dataset_id, env_id):
+@pytest.mark.parametrize("data_format", storage_registry.keys())
+def test_iterate_episodes(dataset_id, env_id, data_format):
     local_datasets = minari.list_local_datasets()
     if dataset_id in local_datasets:
         minari.delete_dataset(dataset_id)
 
     env = gym.make(env_id)
 
-    env = DataCollector(env)
+    env = DataCollector(env, data_format=data_format)
     num_episodes = 10
 
     dataset = create_dummy_dataset_with_collecter_env_helper(
@@ -378,14 +383,15 @@ def test_iterate_episodes(dataset_id, env_id):
         ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
     ],
 )
-def test_update_dataset_from_buffer(dataset_id, env_id):
+@pytest.mark.parametrize("data_format", storage_registry.keys())
+def test_update_dataset_from_buffer(dataset_id, env_id, data_format):
     local_datasets = minari.list_local_datasets()
     if dataset_id in local_datasets:
         minari.delete_dataset(dataset_id)
 
     env = gym.make(env_id)
 
-    collector_env = DataCollector(env)
+    collector_env = DataCollector(env, data_format=data_format)
     num_episodes = 10
 
     dataset = create_dummy_dataset_with_collecter_env_helper(
@@ -435,11 +441,12 @@ def test_update_dataset_from_buffer(dataset_id, env_id):
     check_load_and_delete_dataset(dataset_id)
 
 
-def test_missing_env_module():
+@pytest.mark.parametrize("data_format", storage_registry.keys())
+def test_missing_env_module(data_format):
     dataset_id = "dummy-test-v0"
 
     env = gym.make("CartPole-v1")
-    env = DataCollector(env)
+    env = DataCollector(env, data_format=data_format)
     num_episodes = 10
 
     dataset = create_dummy_dataset_with_collecter_env_helper(

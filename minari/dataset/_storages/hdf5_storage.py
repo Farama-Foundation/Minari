@@ -174,44 +174,6 @@ class HDF5Storage(MinariStorage):
             {"total_steps": total_steps, "total_episodes": total_episodes}
         )
 
-    def update_from_storage(self, storage: MinariStorage):
-        if type(storage) is not type(self):
-            # TODO: relax this constraint. In theory one can use MinariStorage API to update
-            raise ValueError(f"{type(self)} cannot update from {type(storage)}")
-
-        with h5py.File(self._file_path, "a", track_order=True) as file:
-            self_total_episodes = self.total_episodes
-            storage_total_episodes = storage.total_episodes
-
-            for id in range(storage.total_episodes):
-                new_id = self_total_episodes + id
-                with h5py.File(
-                    storage._file_path, "r", track_order=True
-                ) as storage_file:
-                    storage_file.copy(
-                        storage_file[f"episode_{id}"],
-                        file,
-                        name=f"episode_{new_id}",
-                    )
-
-                file[f"episode_{new_id}"].attrs.modify("id", new_id)
-
-            storage_metadata = storage.metadata
-            authors = {file.attrs.get("author"), storage_metadata.get("author")}
-            emails = {
-                file.attrs.get("author_email"),
-                storage_metadata.get("author_email"),
-            }
-
-            self.update_metadata(
-                {
-                    "total_episodes": self_total_episodes + storage_total_episodes,
-                    "total_steps": self.total_steps + storage.total_steps,
-                    "author": "; ".join([aut for aut in authors if aut is not None]),
-                    "author_email": "; ".join([e for e in emails if e is not None]),
-                }
-            )
-
 
 def _get_from_h5py(group: h5py.Group, name: str) -> h5py.Group:
     if name in group:
