@@ -15,6 +15,8 @@ from minari.dataset.minari_storage import MinariStorage
 
 
 class ArrowStorage(MinariStorage):
+    FORMAT = "arrow"
+
     def __init__(
         self,
         data_path: pathlib.Path,
@@ -60,7 +62,7 @@ class ArrowStorage(MinariStorage):
         episode_indices = list(episode_indices)
         dataset = pa.dataset.dataset(
             self.data_path,
-            format="parquet",
+            format=self.FORMAT,
             partitioning=["episode_id"],
             ignore_prefixes=["_", ".", "metadata.json"],
         )
@@ -125,7 +127,7 @@ class ArrowStorage(MinariStorage):
             ds.write_dataset(
                 episode_batch,
                 self.data_path,
-                format="parquet",
+                format=self.FORMAT,
                 partitioning=["episode_id"],
                 existing_data_behavior="overwrite_or_ignore",
             )
