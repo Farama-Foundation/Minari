@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from dataclasses import dataclass, field
 from typing import Optional, Union
 
@@ -19,7 +21,7 @@ class EpisodeBuffer:
     truncations: list = field(default_factory=list)
     infos: Optional[dict] = None
 
-    def add_step_data(self, step_data: StepData):
+    def add_step_data(self, step_data: StepData) -> EpisodeBuffer:
         """Add step data dictionary to episode buffer.
 
         Args:
@@ -62,5 +64,5 @@ class EpisodeBuffer:
             infos=infos,
         )
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.rewards)
