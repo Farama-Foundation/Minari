@@ -96,28 +96,33 @@ class DataCollector(gym.Wrapper):
             )
         if not os.path.exists(self.datasets_path):
             os.makedirs(self.datasets_path)
+        self.data_format = data_format
 
         if observation_space is None:
             observation_space = env.observation_space
+        self._observation_space = observation_space
         if action_space is None:
             action_space = env.action_space
+        self._action_space = action_space
 
+        self._record_infos = record_infos
+        self._buffer: Optional[EpisodeBuffer] = None
+        self._episode_id = 0
+        self._reset_storage()
+
+    def _reset_storage(self):
+        self._episode_id = 0
         self._tmp_dir = tempfile.TemporaryDirectory(dir=self.datasets_path)
         data_format_kwarg = (
-            {"data_format": data_format} if data_format is not None else {}
+            {"data_format": self.data_format} if self.data_format is not None else {}
         )
         self._storage = MinariStorage.new(
             self._tmp_dir.name,
-            observation_space=observation_space,
-            action_space=action_space,
+            observation_space=self._observation_space,
+            action_space=self._action_space,
             env_spec=self.env.spec,
             **data_format_kwarg,
         )
-
-        self._record_infos = record_infos
-
-        self._buffer: Optional[EpisodeBuffer] = None
-        self._episode_id = 0
 
     def step(
         self, action: ActType
@@ -185,12 +190,7 @@ class DataCollector(gym.Wrapper):
             observation (ObsType): Observation of the initial state.
             info (dictionary): Auxiliary information complementing ``observation``.
         """
-        if self._buffer is not None and len(self._buffer) > 0:
-            if not self._buffer.terminations[-1]:
-                self._buffer.truncations[-1] = True
-            self._storage.update_episodes([self._buffer])
-            self._episode_id += 1
-        self._buffer = None
+        self._flush_to_storage()
 
         autoseed_enabled = (not options) or options.get("minari_autoseed", True)
         if seed is None and autoseed_enabled:
@@ -217,11 +217,7 @@ class DataCollector(gym.Wrapper):
         Args:
             dataset (MinariDataset): Dataset to add the data
         """
-        if self._buffer is not None and len(self._buffer) > 0:
-            if not self._buffer.terminations[-1]:
-                self._buffer.truncations[-1] = True
-            self._storage.update_episodes([self._buffer])
-        self._buffer = None
+        self._flush_to_storage()
 
         first_id = dataset.storage.total_episodes
         dataset.storage.update_from_storage(self._storage)
@@ -229,14 +225,7 @@ class DataCollector(gym.Wrapper):
             new_ids = first_id + np.arange(self._storage.total_episodes)
             dataset.episode_indices = np.append(dataset.episode_indices, new_ids)
 
-        self._episode_id = 0
-        self._tmp_dir = tempfile.TemporaryDirectory(dir=self.datasets_path)
-        self._storage = MinariStorage.new(
-            self._tmp_dir.name,
-            observation_space=self._storage.observation_space,
-            action_space=self._storage.action_space,
-            env_spec=self.env.spec,
-        )
+        self._reset_storage()
 
     def create_dataset(
         self,
@@ -305,6 +294,14 @@ class DataCollector(gym.Wrapper):
         dataset.storage.update_metadata(metadata)
         return dataset
 
+    def _flush_to_storage(self):
+        if self._buffer is not None and len(self._buffer) > 0:
+            if not self._buffer.terminations[-1]:
+                self._buffer.truncations[-1] = True
+            self._storage.update_episodes([self._buffer])
+            self._episode_id += 1
+        self._buffer = None
+
     def _save_to_disk(
         self, path: str | os.PathLike, dataset_metadata: Dict[str, Any] = {}
     ):
@@ -314,11 +311,7 @@ class DataCollector(gym.Wrapper):
             path (str): path to store the dataset, e.g.: '/home/foo/datasets/data'
             dataset_metadata (Dict, optional): additional metadata to add to the dataset file. Defaults to {}.
         """
-        if self._buffer is not None and len(self._buffer) > 0:
-            if not self._buffer.terminations[-1]:
-                self._buffer.truncations[-1] = True
-            self._storage.update_episodes([self._buffer])
-        self._buffer = None
+        self._flush_to_storage()
 
         assert (
             "observation_space" not in dataset_metadata.keys()
@@ -341,14 +334,7 @@ class DataCollector(gym.Wrapper):
                 os.path.join(path, file),
             )
 
-        self._episode_id = 0
-        self._tmp_dir = tempfile.TemporaryDirectory(dir=self.datasets_path)
-        self._storage = MinariStorage.new(
-            self._tmp_dir.name,
-            observation_space=self._storage.observation_space,
-            action_space=self._storage.action_space,
-            env_spec=self.env.spec,
-        )
+        self._reset_storage()
 
     def close(self):
         """Close the DataCollector.
