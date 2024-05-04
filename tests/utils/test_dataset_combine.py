@@ -63,7 +63,7 @@ def test_combine_datasets():
 
     # generating multiple test datasets
     test_max_episode_steps = [5, 3, 7, 10, None]
-    data_formats = ["hdf5", "arrow", None, "arrow"]
+    data_formats = ["hdf5", "arrow", None, "arrow", None]
 
     test_datasets = []
     for dataset_id, max_episode_steps, data_format in zip(
