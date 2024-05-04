@@ -261,12 +261,13 @@ class MinariStorage(ABC):
         for episode in storage.get_episodes(range(storage.total_episodes)):
             episode_buffer = EpisodeBuffer(
                 id=None,
+                seed=episode.get("seed"),
                 observations=episode["observations"],
                 actions=episode["actions"],
                 rewards=episode["rewards"],
                 terminations=episode["terminations"],
                 truncations=episode["truncations"],
-                infos=episode["infos"],
+                infos=episode.get("infos"),
             )
             self.update_episodes([episode_buffer])
 

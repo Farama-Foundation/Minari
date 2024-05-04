@@ -744,10 +744,6 @@ def check_infos_equal(info_1: Dict, info_2: Dict) -> bool:
     return True
 
 
-def _space_subset_helper(entry: Dict):
-    return {"component_2": {"subcomponent_2": entry["component_2"]["subcomponent_2"]}}
-
-
 def get_sample_buffer_for_dataset_from_env(env: gym.Env, num_episodes: int = 10):
     buffer = []
     seed = 42

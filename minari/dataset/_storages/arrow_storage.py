@@ -109,16 +109,13 @@ class ArrowStorage(MinariStorage):
 
             episode_batch = {
                 "episode_id": np.full(len(observations), episode_id, dtype=np.int32),
+                "seed": pa.array([episode_data.seed] * len(observations), pa.uint64()),
                 "observations": observations,
                 "actions": actions,
                 "rewards": np.pad(rewards, ((0, pad))),
                 "terminations": np.pad(terminations, ((0, pad))),
                 "truncations": np.pad(truncations, ((0, pad))),
             }
-            if episode_data.seed is not None:
-                episode_batch["seed"] = np.full(
-                    len(observations), episode_data.seed, dtype=np.uint64
-                )
             if episode_data.infos:
                 episode_batch["infos"] = _encode_info(episode_data.infos)
             episode_batch = pa.RecordBatch.from_pydict(episode_batch)

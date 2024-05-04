@@ -164,7 +164,7 @@ class DataCollector(gym.Wrapper):
             self._buffer = EpisodeBuffer(
                 id=self._episode_id,
                 observations=step_data["observations"],
-                infos=step_data["infos"] if self._record_infos else None,
+                infos=step_data["infos"],
             )
 
         return obs, rew, terminated, truncated, info

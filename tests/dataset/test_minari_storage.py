@@ -1,4 +1,5 @@
 import os
+from dataclasses import replace
 
 import gymnasium as gym
 import numpy as np
@@ -126,32 +127,6 @@ def test_add_episodes(tmp_dataset_dir, data_format):
         assert np.all(ep.rewards == storage_ep["rewards"])
         assert np.all(ep.terminations == storage_ep["terminations"])
         assert np.all(ep.truncations == storage_ep["truncations"])
-
-
-# def test_append_episode_chunks(tmp_dataset_dir):
-#     action_space = spaces.Discrete(10)
-#     observation_space = spaces.Text(max_length=5)
-#     lens = [10, 7, 15]
-#     chunk1 = _generate_episode_buffer(observation_space, action_space, length=lens[0])
-#     chunk2 = _generate_episode_buffer(observation_space, action_space, length=lens[1])
-#     chunk3 = _generate_episode_buffer(observation_space, action_space, length=lens[2])
-#     chunk1.terminations[-1] = False
-#     chunk1.truncations[-1] = False
-#     chunk2.terminations[-1] = False
-#     chunk2.truncations[-1] = False
-#     chunk2.observations = chunk2.observations[:-1]
-#     chunk3.observations = chunk3.observations[:-1]
-
-#     storage = MinariStorage.new(tmp_dataset_dir, observation_space, action_space)
-#     storage.update_episodes([chunk1])
-#     assert storage.total_episodes == 1
-#     assert storage.total_steps == lens[0]
-
-#     chunk2.id = 0
-#     chunk3.id = 0
-#     storage.update_episodes([chunk2, chunk3])
-#     assert storage.total_episodes == 1
-#     assert storage.total_steps == sum(lens)
 
 
 @pytest.mark.parametrize("data_format", storage_registry.keys())
@@ -332,3 +307,28 @@ def test_minari_get_dataset_size_from_buffer(dataset_id, env_id, data_format):
     env.close()
 
     check_load_and_delete_dataset(dataset_id)
+
+
+@pytest.mark.parametrize("data_format", storage_registry.keys())
+def test_seed_change(tmp_dataset_dir, data_format):
+    action_space = spaces.Box(-1, 1, shape=(10,))
+    observation_space = spaces.Discrete(10)
+    episodes = []
+    seeds = [None, 42]
+    for seed in seeds:
+        ep = _generate_episode_buffer(observation_space, action_space)
+        episodes.append(replace(ep, seed=seed))
+
+    storage = MinariStorage.new(
+        data_path=tmp_dataset_dir,
+        observation_space=observation_space,
+        action_space=action_space,
+        data_format=data_format,
+    )
+    storage.update_episodes(episodes)
+
+    assert storage.total_episodes == len(seeds)
+    episodes = storage.get_episodes(range(len(episodes)))
+    assert len(episodes) == len(seeds)
+    for seed, ep in zip(seeds, episodes):
+        assert ep["seed"] == seed

@@ -25,7 +25,7 @@ class EpisodeBuffer:
         """Add step data dictionary to episode buffer.
 
         Args:
-            step_data (Dict): dictionary with data for a single step
+            step_data (StepData): dictionary with data for a single step
 
         Returns:
             EpisodeBuffer: episode buffer with appended data
