@@ -7,6 +7,6 @@ from .hdf5_storage import HDF5Storage
 
 
 registry: Dict[str, Type[MinariStorage]] = {
-    "hdf5": HDF5Storage,
-    "arrow": ArrowStorage,
+    HDF5Storage.FORMAT: HDF5Storage,
+    ArrowStorage.FORMAT: ArrowStorage,
 }

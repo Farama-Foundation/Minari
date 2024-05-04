@@ -22,6 +22,8 @@ METADATA_FILE_NAME = "metadata.json"
 class MinariStorage(ABC):
     """Class that handles disk access to the data."""
 
+    FORMAT: str
+
     def __init__(
         self,
         data_path: pathlib.Path,

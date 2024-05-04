@@ -259,6 +259,7 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_id: s
         env_spec=combined_dataset_env_spec,
         observation_space=datasets_to_combine[0].observation_space,
         action_space=datasets_to_combine[0].action_space,
+        data_format=datasets_to_combine[0].storage.FORMAT,
     )
 
     new_storage.update_metadata(
