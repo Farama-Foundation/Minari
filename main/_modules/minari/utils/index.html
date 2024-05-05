@@ -10,7 +10,7 @@
     <meta property="og:url" content="https://minari.farama.org/_modules/minari/utils.html" /><meta property="og:image" content="https://minari.farama.org/_static/img/robotics-github.png" /><meta name="twitter:card" content="summary_large_image"><link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" />
         <link rel="canonical" href="https://minari.farama.org/_modules/minari/utils.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.7 and Furo 2023.08.19.dev1 -->
         <title>minari.utils - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -365,7 +365,7 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -377,6 +377,7 @@
 <span class="kn">from</span> <span class="nn">packaging.specifiers</span> <span class="kn">import</span> <span class="n">InvalidSpecifier</span><span class="p">,</span> <span class="n">SpecifierSet</span>
 <span class="kn">from</span> <span class="nn">packaging.version</span> <span class="kn">import</span> <span class="n">Version</span>
 
+<span class="kn">from</span> <span class="nn">minari.data_collector.episode_buffer</span> <span class="kn">import</span> <span class="n">EpisodeBuffer</span>
 <span class="kn">from</span> <span class="nn">minari.dataset.minari_dataset</span> <span class="kn">import</span> <span class="n">MinariDataset</span>
 <span class="kn">from</span> <span class="nn">minari.dataset.minari_storage</span> <span class="kn">import</span> <span class="n">MinariStorage</span>
 <span class="kn">from</span> <span class="nn">minari.serialization</span> <span class="kn">import</span> <span class="n">deserialize_space</span>
@@ -620,6 +621,7 @@
         <span class="n">env_spec</span><span class="o">=</span><span class="n">combined_dataset_env_spec</span><span class="p">,</span>
         <span class="n">observation_space</span><span class="o">=</span><span class="n">datasets_to_combine</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span>
         <span class="n">action_space</span><span class="o">=</span><span class="n">datasets_to_combine</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span>
+        <span class="n">data_format</span><span class="o">=</span><span class="n">datasets_to_combine</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">FORMAT</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">new_storage</span><span class="o">.</span><span class="n">update_metadata</span><span class="p">(</span>
@@ -847,7 +849,7 @@
 <a class="viewcode-back" href="../../../api/minari_functions/#minari.create_dataset_from_buffers">[docs]</a>
 <span class="k">def</span> <span class="nf">create_dataset_from_buffers</span><span class="p">(</span>
     <span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">buffer</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]]],</span>
+    <span class="n">buffer</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">EpisodeBuffer</span><span class="p">],</span>
     <span class="n">env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span> <span class="o">|</span> <span class="n">EnvSpec</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">eval_env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span> <span class="o">|</span> <span class="n">EnvSpec</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">algorithm_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -862,6 +864,7 @@
     <span class="n">expert_policy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">ObsType</span><span class="p">],</span> <span class="n">ActType</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">num_episodes_average_score</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
     <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">data_format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create Minari dataset from a list of episode dictionary buffers.</span>
 
@@ -869,18 +872,9 @@
 <span class="sd">    ``(env_name-)(dataset_name)(-v(version))`` where ``env_name`` identifies the name of the environment used to generate the dataset ``dataset_name``.</span>
 <span class="sd">    This ``dataset_id`` is used to load the Minari datasets with :meth:`minari.load_dataset`.</span>
 
-<span class="sd">    Each episode dictionary buffer must have the following items:</span>
-<span class="sd">        * `observations`: np.ndarray of step observations. shape = (total_episode_steps + 1, (observation_shape)). Should include initial and final observation</span>
-<span class="sd">        * `actions`: np.ndarray of step action. shape = (total_episode_steps, (action_shape)).</span>
-<span class="sd">        * `rewards`: np.ndarray of step rewards. shape = (total_episode_steps, 1).</span>
-<span class="sd">        * `terminations`: np.ndarray of step terminations. shape = (total_episode_steps, 1).</span>
-<span class="sd">        * `truncations`: np.ndarray of step truncations. shape = (total_episode_steps, 1).</span>
-
-<span class="sd">    Other additional items can be added as long as the values are np.ndarray&#39;s or other nested dictionaries.</span>
-
 <span class="sd">    Args:</span>
 <span class="sd">        dataset_id (str): name id to identify Minari dataset.</span>
-<span class="sd">        buffer (list[Dict[str, Union[list, Dict]]]): list of episode dictionaries with data.</span>
+<span class="sd">        buffer (list[EpisodeBuffer]): list of episode buffer with data.</span>
 <span class="sd">        env (Optional[str|gym.Env|EnvSpec]): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) used to collect the buffer data. Defaults to None.</span>
 <span class="sd">        eval_env (Optional[str|gym.Env|EnvSpec]): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) to use for evaluation with the dataset. After loading the dataset, the environment can be recovered as follows: `MinariDataset.recover_environment(eval_env=True).</span>
 <span class="sd">                                                If None, and if the `env` used to collect the buffer data is available, latter will be used for evaluation.</span>
@@ -899,6 +893,7 @@
 <span class="sd">        observation_space (Optional[gym.spaces.Space]): observation space of the environment. If None (default) use the environment observation space.</span>
 <span class="sd">        minari_version (Optional[str], optional): Minari version specifier compatible with the dataset. If None (default) use the installed Minari version.</span>
 <span class="sd">        description (Optional[str], optional): description of the dataset being created. Defaults to None.</span>
+<span class="sd">        data_format (str, optional): Data format to store the data in the Minari dataset. If None (defaults), it will use the default format of MinariStorage.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        MinariDataset</span>
@@ -945,11 +940,13 @@
         <span class="n">description</span><span class="p">,</span>
     <span class="p">)</span>
 
+    <span class="n">data_format_kwarg</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;data_format&quot;</span><span class="p">:</span> <span class="n">data_format</span><span class="p">}</span> <span class="k">if</span> <span class="n">data_format</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{}</span>
     <span class="n">storage</span> <span class="o">=</span> <span class="n">MinariStorage</span><span class="o">.</span><span class="n">new</span><span class="p">(</span>
         <span class="n">dataset_path</span><span class="p">,</span>
         <span class="n">observation_space</span><span class="o">=</span><span class="n">observation_space</span><span class="p">,</span>
         <span class="n">action_space</span><span class="o">=</span><span class="n">action_space</span><span class="p">,</span>
         <span class="n">env_spec</span><span class="o">=</span><span class="n">env_spec</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">data_format_kwarg</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="c1"># adding `update_metadata` before hand too, as for small envs, the absence of metadata is causing a difference of some 10ths of MBs leading to errors in unit tests.</span>
@@ -1060,9 +1057,9 @@
     <span class="n">add_version</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot; (`</span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2">` installed)&quot;</span>
     <span class="n">md_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
         <span class="p">{</span>
-            <span class="s2">&quot;Algorithm&quot;</span><span class="p">:</span> <span class="n">dataset_spec</span><span class="p">[</span><span class="s2">&quot;algorithm_name&quot;</span><span class="p">],</span>
-            <span class="s2">&quot;Author&quot;</span><span class="p">:</span> <span class="n">dataset_spec</span><span class="p">[</span><span class="s2">&quot;author&quot;</span><span class="p">],</span>
-            <span class="s2">&quot;Email&quot;</span><span class="p">:</span> <span class="n">dataset_spec</span><span class="p">[</span><span class="s2">&quot;author_email&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;Algorithm&quot;</span><span class="p">:</span> <span class="n">dataset_spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;algorithm_name&quot;</span><span class="p">,</span> <span class="s2">&quot;Not provided&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;Author&quot;</span><span class="p">:</span> <span class="n">dataset_spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;author&quot;</span><span class="p">,</span> <span class="s2">&quot;Not provided&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;Email&quot;</span><span class="p">:</span> <span class="n">dataset_spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;author_email&quot;</span><span class="p">,</span> <span class="s2">&quot;Not provided&quot;</span><span class="p">),</span>
             <span class="s2">&quot;Code Permalink&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">code_link</span><span class="si">}</span><span class="s2">](</span><span class="si">{</span><span class="n">code_link</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
             <span class="s2">&quot;Minari Version&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">` </span><span class="si">{</span><span class="n">add_version</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">print_version</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
             <span class="s2">&quot;Download&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`minari.download_dataset(</span><span class="se">\&quot;</span><span class="si">{</span><span class="n">dataset_spec</span><span class="p">[</span><span class="s1">&#39;dataset_id&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">)`&quot;</span><span class="p">,</span>

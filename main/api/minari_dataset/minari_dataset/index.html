@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="EpisodeData" href="../episode_data/" /><link rel="prev" title="Minari" href="../../minari_functions/" />
         <link rel="canonical" href="https://minari.farama.org/api/minari_dataset/minari_dataset.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.7 and Furo 2023.08.19.dev1 -->
         <title>MinariDataset - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -452,22 +452,11 @@ i.e filtering for episodes that terminate:</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="minari.MinariDataset.update_dataset_from_buffer">
-<span class="sig-prename descclassname"><span class="pre">minari.MinariDataset.</span></span><span class="sig-name descname"><span class="pre">update_dataset_from_buffer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#minari.MinariDataset.update_dataset_from_buffer" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">minari.MinariDataset.</span></span><span class="sig-name descname"><span class="pre">update_dataset_from_buffer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">EpisodeBuffer</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#minari.MinariDataset.update_dataset_from_buffer" title="Link to this definition">¶</a></dt>
 <dd><p>Additional data can be added to the Minari Dataset from a list of episode dictionary buffers.</p>
-<dl class="simple">
-<dt>Each episode dictionary buffer must have the following items:</dt><dd><ul class="simple">
-<li><p><cite>observations</cite>: np.ndarray of step observations. shape = (total_episode_steps + 1, (observation_shape)). Should include initial and final observation</p></li>
-<li><p><cite>actions</cite>: np.ndarray of step action. shape = (total_episode_steps + 1, (action_shape)).</p></li>
-<li><p><cite>rewards</cite>: np.ndarray of step rewards. shape = (total_episode_steps + 1, 1).</p></li>
-<li><p><cite>terminations</cite>: np.ndarray of step terminations. shape = (total_episode_steps + 1, 1).</p></li>
-<li><p><cite>truncations</cite>: np.ndarray of step truncations. shape = (total_episode_steps + 1, 1).</p></li>
-</ul>
-</dd>
-</dl>
-<p>Other additional items can be added as long as the values are np.ndarray’s or other nested dictionaries.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>buffer</strong> (<em>list</em><em>[</em><em>dict</em><em>]</em>) – list of episode dictionary buffers to add to dataset</p>
+<dd class="field-odd"><p><strong>buffer</strong> (<em>list</em><em>[</em><em>EpisodeBuffer</em><em>]</em>) – list of episode dictionary buffers to add to dataset</p>
 </dd>
 </dl>
 </dd></dl>

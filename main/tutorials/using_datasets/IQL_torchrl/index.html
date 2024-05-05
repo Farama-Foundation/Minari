@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="MiniGrid" href="../../../datasets/minigrid/" /><link rel="prev" title="Behavioral cloning with PyTorch" href="../behavioral_cloning/" />
         <link rel="canonical" href="https://minari.farama.org/tutorials/using_datasets/IQL_torchrl.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.7 and Furo 2023.08.19.dev1 -->
         <title>Implicit Q-Learning with TorchRL - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -370,7 +370,8 @@
             
             <section class="sphx-glr-example-title" id="implicit-q-learning-with-torchrl">
 <span id="sphx-glr-tutorials-using-datasets-iql-torchrl-py"></span><h1>Implicit Q-Learning with TorchRL<a class="headerlink" href="#implicit-q-learning-with-torchrl" title="Link to this heading">¶</a></h1>
-<a class="reference internal image-reference" href="../../../_images/IQL_torchrl_adroit_pen_example_1.gif"><img alt="Example episode 1 for Adroit Pen environment" class="align-right" src="../../../_images/IQL_torchrl_adroit_pen_example_1.gif" style="width: 300px;" /></a>
+<a class="reference internal image-reference" href="../../../_images/IQL_torchrl_adroit_pen_example_1.gif"><img alt="Example episode 1 for Adroit Pen environment" class="align-right" src="../../../_images/IQL_torchrl_adroit_pen_example_1.gif" style="width: 300px;" />
+</a>
 <p>This tutorial demonstrates how to use a Minari dataset in conjunction with TorchRL to train an offline RL agent. We use Implicit Q-Learning to learn how to control a 24-dof hand to manipulate a pen, learning from a dataset of just 25 human demonstrations. We will cover:</p>
 <ul class="simple">
 <li><p>Working with Gymnasium environments in TorchRL.</p></li>
@@ -465,7 +466,8 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">tensordict</span><span class="p">[</span><span class="s2">&quot;pixels&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">());</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="../../../_images/IQL_torchrl_first_frame.png"><img alt="First frame of AdroitHandPen environment" src="../../../_images/IQL_torchrl_first_frame.png" style="width: 350px;" /></a>
+<a class="reference internal image-reference" href="../../../_images/IQL_torchrl_first_frame.png"><img alt="First frame of AdroitHandPen environment" src="../../../_images/IQL_torchrl_first_frame.png" style="width: 350px;" />
+</a>
 <p>The aim of the <a class="reference external" href="https://robotics.farama.org/envs/adroit_hand/adroit_pen/">Adroit Pen task</a> is to control the 24-dof hand to manipulate the blue pen from the initial configuration (shown above) to the goal configuration (green pen). There is a shaped dense reward which quantifies how close the pen is to the target configuration, which is randomised at the start of each episode.</p>
 <p>To use this environment for training, we need to perform some pre-processing transforms on the step data returned. We transform the base environment with <code class="docutils literal notranslate"><span class="pre">DoubleToFloat()</span></code>, which converts all doubles in the observations to floats:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
@@ -506,7 +508,8 @@
 \[L_{\rm TD}(\theta) = \mathbb{E}_{(s, a, s') \sim \mathcal{D}} \left[ \left( r(s, a) + \gamma \max_{a'} Q_{\hat{\theta}}(s', a') - Q_\theta(s, a) \right)^2 \right]\]</div>
 </div>
 <figure class="align-right" id="id2" style="width: 300px">
-<a class="reference internal image-reference" href="../../../_images/IQL_torchrl_expectile_example.png"><img alt="../../../_images/IQL_torchrl_expectile_example.png" src="../../../_images/IQL_torchrl_expectile_example.png" style="width: 250px;" /></a>
+<a class="reference internal image-reference" href="../../../_images/IQL_torchrl_expectile_example.png"><img alt="../../../_images/IQL_torchrl_expectile_example.png" src="../../../_images/IQL_torchrl_expectile_example.png" style="width: 250px;" />
+</a>
 <figcaption>
 <p><span class="caption-text">Expectiles of an example conditional distribution <span class="math notranslate nohighlight">\(y \sim m_\tau(s)\)</span>. For <span class="math notranslate nohighlight">\(\tau = 0.5\)</span> the expectile is the mean while for <span class="math notranslate nohighlight">\(\tau \approx 1\)</span> it approximates the maximum of the distribution <a class="reference external" href="https://arxiv.org/abs/2110.06169">(Kostrikov et al 2021)</a>.</span><a class="headerlink" href="#id2" title="Link to this image">¶</a></p>
 </figcaption>
@@ -726,7 +729,8 @@
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<a class="reference internal image-reference" href="../../../_images/IQL_torchrl_training_graphs.png"><img alt="Loss and eval reward during training" class="align-center" src="../../../_images/IQL_torchrl_training_graphs.png" style="width: 100%;" /></a>
+<a class="reference internal image-reference" href="../../../_images/IQL_torchrl_training_graphs.png"><img alt="Loss and eval reward during training" class="align-center" src="../../../_images/IQL_torchrl_training_graphs.png" style="width: 100%;" />
+</a>
 </section>
 <section id="results">
 <h2>Results<a class="headerlink" href="#results" title="Link to this heading">¶</a></h2>
@@ -767,9 +771,12 @@
 </pre></div>
 </div>
 <p>Here are some examples of our trained agent:</p>
-<a class="reference internal image-reference" href="../../../_images/IQL_torchrl_adroit_pen_example_1.gif"><img alt="Example episode 1 for Adroit Pen environment" src="../../../_images/IQL_torchrl_adroit_pen_example_1.gif" style="width: 32%;" /></a>
-<a class="reference internal image-reference" href="../../../_images/IQL_torchrl_adroit_pen_example_2.gif"><img alt="Example episode 2 for Adroit Pen environment" src="../../../_images/IQL_torchrl_adroit_pen_example_2.gif" style="width: 32%;" /></a>
-<a class="reference internal image-reference" href="../../../_images/IQL_torchrl_adroit_pen_example_3.gif"><img alt="Example episode 3 for Adroit Pen environment" src="../../../_images/IQL_torchrl_adroit_pen_example_3.gif" style="width: 32%;" /></a>
+<a class="reference internal image-reference" href="../../../_images/IQL_torchrl_adroit_pen_example_1.gif"><img alt="Example episode 1 for Adroit Pen environment" src="../../../_images/IQL_torchrl_adroit_pen_example_1.gif" style="width: 32%;" />
+</a>
+<a class="reference internal image-reference" href="../../../_images/IQL_torchrl_adroit_pen_example_2.gif"><img alt="Example episode 2 for Adroit Pen environment" src="../../../_images/IQL_torchrl_adroit_pen_example_2.gif" style="width: 32%;" />
+</a>
+<a class="reference internal image-reference" href="../../../_images/IQL_torchrl_adroit_pen_example_3.gif"><img alt="Example episode 3 for Adroit Pen environment" src="../../../_images/IQL_torchrl_adroit_pen_example_3.gif" style="width: 32%;" />
+</a>
 <p>The performance varies quite a bit from episode to episode, but overall it’s decent considering there are only 25 demonstrations in the original dataset! To improve performance, you could try tuning the hyperparameters, such as the inverse temperature <span class="math notranslate nohighlight">\(\beta\)</span> and the expectile <span class="math notranslate nohighlight">\(\tau\)</span>, or use a larger dataset such as <cite>pen-expert-v1</cite> which has around 5000 episodes.</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-tutorials-using-datasets-iql-torchrl-py">
 <div class="sphx-glr-download sphx-glr-download-python docutils container">

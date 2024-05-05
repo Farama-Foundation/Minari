@@ -10,7 +10,7 @@
     <meta property="og:url" content="https://minari.farama.org/_modules/minari/dataset/minari_dataset.html" /><meta property="og:image" content="https://minari.farama.org/_static/img/robotics-github.png" /><meta name="twitter:card" content="summary_large_image"><link rel="index" title="Index" href="../../../../genindex/" /><link rel="search" title="Search" href="../../../../search/" />
         <link rel="canonical" href="https://minari.farama.org/_modules/minari/dataset/minari_dataset.html" />
 
-    <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.7 and Furo 2023.08.19.dev1 -->
         <title>minari.dataset.minari_dataset - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -373,6 +373,7 @@
 <span class="kn">from</span> <span class="nn">packaging.specifiers</span> <span class="kn">import</span> <span class="n">InvalidSpecifier</span><span class="p">,</span> <span class="n">SpecifierSet</span>
 <span class="kn">from</span> <span class="nn">packaging.version</span> <span class="kn">import</span> <span class="n">Version</span>
 
+<span class="kn">from</span> <span class="nn">minari.data_collector.episode_buffer</span> <span class="kn">import</span> <span class="n">EpisodeBuffer</span>
 <span class="kn">from</span> <span class="nn">minari.dataset.episode_data</span> <span class="kn">import</span> <span class="n">EpisodeData</span>
 <span class="kn">from</span> <span class="nn">minari.dataset.minari_storage</span> <span class="kn">import</span> <span class="n">MinariStorage</span><span class="p">,</span> <span class="n">PathLike</span>
 
@@ -582,20 +583,11 @@
             <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">get_episodes</span><span class="p">([</span><span class="n">episode_index</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
             <span class="k">yield</span> <span class="n">EpisodeData</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">update_dataset_from_buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buffer</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]):</span>
+    <span class="k">def</span> <span class="nf">update_dataset_from_buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buffer</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">EpisodeBuffer</span><span class="p">]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Additional data can be added to the Minari Dataset from a list of episode dictionary buffers.</span>
 
-<span class="sd">        Each episode dictionary buffer must have the following items:</span>
-<span class="sd">            * `observations`: np.ndarray of step observations. shape = (total_episode_steps + 1, (observation_shape)). Should include initial and final observation</span>
-<span class="sd">            * `actions`: np.ndarray of step action. shape = (total_episode_steps + 1, (action_shape)).</span>
-<span class="sd">            * `rewards`: np.ndarray of step rewards. shape = (total_episode_steps + 1, 1).</span>
-<span class="sd">            * `terminations`: np.ndarray of step terminations. shape = (total_episode_steps + 1, 1).</span>
-<span class="sd">            * `truncations`: np.ndarray of step truncations. shape = (total_episode_steps + 1, 1).</span>
-
-<span class="sd">        Other additional items can be added as long as the values are np.ndarray&#39;s or other nested dictionaries.</span>
-
 <span class="sd">        Args:</span>
-<span class="sd">            buffer (list[dict]): list of episode dictionary buffers to add to dataset</span>
+<span class="sd">            buffer (list[EpisodeBuffer]): list of episode dictionary buffers to add to dataset</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">first_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">total_episodes</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">update_episodes</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>

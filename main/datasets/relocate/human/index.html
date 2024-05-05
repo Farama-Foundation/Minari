@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Expert" href="../expert/" /><link rel="prev" title="Relocate" href="../" />
         <link rel="canonical" href="https://minari.farama.org/datasets/relocate/human.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.7 and Furo 2023.08.19.dev1 -->
         <title>Human - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -360,7 +360,7 @@
             
             <section class="tex2jax_ignore mathjax_ignore" id="human">
 <h1>Human<a class="headerlink" href="#human" title="Link to this heading">¶</a></h1>
-<img src="https://storage.googleapis.com/minari-datasets/relocate-human-v1/_docs/_imgs/relocate-human-v1.gif" width="200" style="display: block; margin:0 auto"/>
+<img src="https://storage.googleapis.com/minari-datasets/relocate-human-v2/_docs/_imgs/relocate-human-v2.gif" width="200" style="display: block; margin:0 auto"/>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
 <p>25 human demonstrations provided in the <a class="reference external" href="https://github.com/aravindr93/hand_dapg">DAPG</a> repository. The environment used to collect the dataset is <a class="reference external" href="https://robotics.farama.org/envs/adroit_hand/adroit_relocate/"><code class="docutils literal notranslate"><span class="pre">AdroitHandRelocate-v1</span></code></a>.</p>
@@ -382,7 +382,7 @@
 <td><p>25</p></td>
 </tr>
 <tr class="row-even"><td><p>Algorithm</p></td>
-<td><p>None</p></td>
+<td><p>Not provided</p></td>
 </tr>
 <tr class="row-odd"><td><p>Author</p></td>
 <td><p>Rodrigo de Lazcano</p></td>
@@ -397,7 +397,7 @@
 <td><p><code class="docutils literal notranslate"><span class="pre">~=0.4</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Download</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">minari.download_dataset(&quot;relocate-human-v1&quot;)</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">minari.download_dataset(&quot;relocate-human-v2&quot;)</span></code></p></td>
 </tr>
 </tbody>
 </table>
@@ -412,7 +412,7 @@ To read more about what each parameter means you can have a look at the Gymnasiu
 <p>This environment can be recovered from the Minari dataset as follows:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">minari</span>
 
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;relocate-human-v1&#39;</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;relocate-human-v2&#39;</span><span class="p">)</span>
 <span class="n">env</span>  <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">recover_environment</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -475,7 +475,7 @@ To read more about what each parameter means you can have a look at the Gymnasiu
 <p>This dataset doesn’t contain an <cite>eval_env_spec</cite> attribute which means that the specs of the environment used for evaluation are the same as the specs of the environment used for creating the dataset. The following calls will return the same environment:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">minari</span>
 
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;relocate-human-v1&#39;</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;relocate-human-v2&#39;</span><span class="p">)</span>
 <span class="n">env</span>  <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">recover_environment</span><span class="p">()</span>
 <span class="n">eval_env</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">recover_environment</span><span class="p">(</span><span class="n">eval_env</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
