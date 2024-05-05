@@ -11,6 +11,7 @@ import gymnasium as gym
 import numpy as np
 from gymnasium.envs.registration import EnvSpec
 
+from minari.data_collector.episode_buffer import EpisodeBuffer
 from minari.serialization import deserialize_space, serialize_space
 
 
@@ -20,6 +21,8 @@ METADATA_FILE_NAME = "metadata.json"
 
 class MinariStorage(ABC):
     """Class that handles disk access to the data."""
+
+    FORMAT: str
 
     def __init__(
         self,
@@ -74,10 +77,12 @@ class MinariStorage(ABC):
             if action_space is None:
                 action_space = env.action_space
 
-        from minari.dataset.storages import registry  # avoid circular import
+        from minari.dataset._storages import registry  # avoid circular import
 
         return registry[metadata["data_format"]](
-            data_path, observation_space, action_space
+            data_path,
+            observation_space,
+            action_space,
         )
 
     @classmethod
@@ -109,7 +114,7 @@ class MinariStorage(ABC):
             raise ValueError(
                 "Since env_spec is not specified, you need to specify both action space and observation space"
             )
-        from minari.dataset.storages import registry  # avoid circular import
+        from minari.dataset._storages import registry  # avoid circular import
 
         if data_format not in registry.keys():
             raise ValueError(
@@ -239,24 +244,46 @@ class MinariStorage(ABC):
         ...
 
     @abstractmethod
-    def update_episodes(self, episodes: Iterable[dict]):
+    def update_episodes(self, episodes: Iterable[EpisodeBuffer]):
         """Update episodes in the storage from a list of episode buffer.
 
         Args:
-            episodes (Iterable[dict]): list of episodes buffer.
+            episodes (Iterable[EpisodeBuffer]): list of episodes buffer.
             They must contain the keys specified in EpsiodeData dataclass, except for `id` which is optional.
             If `id` is specified and exists, the new data is appended to the one in the storage.
         """
         ...
 
-    @abstractmethod
     def update_from_storage(self, storage: MinariStorage):
         """Update the dataset using another MinariStorage.
 
         Args:
             storage (MinariStorage): the other MinariStorage from which the data will be taken
         """
-        ...
+        for episode in storage.get_episodes(range(storage.total_episodes)):
+            episode_buffer = EpisodeBuffer(
+                id=None,
+                seed=episode.get("seed"),
+                observations=episode["observations"],
+                actions=episode["actions"],
+                rewards=episode["rewards"],
+                terminations=episode["terminations"],
+                truncations=episode["truncations"],
+                infos=episode.get("infos"),
+            )
+            self.update_episodes([episode_buffer])
+
+        authors = {self.metadata.get("author"), storage.metadata.get("author")}
+        emails = {
+            self.metadata.get("author_email"),
+            storage.metadata.get("author_email"),
+        }
+        self.update_metadata(
+            {
+                "author": "; ".join([aut for aut in authors if aut is not None]),
+                "author_email": "; ".join([e for e in emails if e is not None]),
+            }
+        )
 
     def get_size(self) -> float:
         """Returns the dataset size in MB.

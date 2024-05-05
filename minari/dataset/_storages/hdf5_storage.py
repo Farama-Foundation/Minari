@@ -9,13 +9,16 @@ import gymnasium as gym
 import h5py
 import numpy as np
 
+from minari.data_collector import EpisodeBuffer
 from minari.dataset.minari_storage import MinariStorage
 
 
 _MAIN_FILE_NAME = "main_data.hdf5"
 
 
-class _HDF5Storage(MinariStorage):
+class HDF5Storage(MinariStorage):
+    FORMAT = "hdf5"
+
     def __init__(
         self,
         data_path: pathlib.Path,
@@ -102,7 +105,7 @@ class _HDF5Storage(MinariStorage):
         return result
 
     def get_episodes(self, episode_indices: Iterable[int]) -> List[dict]:
-        out = []
+        outs = []
         with h5py.File(self._file_path, "r") as file:
             for ep_idx in episode_indices:
                 ep_group = file[f"episode_{ep_idx}"]
@@ -134,29 +137,37 @@ class _HDF5Storage(MinariStorage):
                     assert isinstance(group_value, h5py.Dataset)
                     ep_dict[key] = group_value[:]
 
-                out.append(ep_dict)
+                outs.append(ep_dict)
 
-        return out
+        return outs
 
-    def update_episodes(self, episodes: Iterable[dict]):
+    def update_episodes(self, episodes: Iterable[EpisodeBuffer]):
         additional_steps = 0
         with h5py.File(self._file_path, "a", track_order=True) as file:
             for eps_buff in episodes:
                 total_episodes = len(file.keys())
-                episode_id = eps_buff.pop("id", total_episodes)
+                episode_id = eps_buff.id if eps_buff.id is not None else total_episodes
                 assert (
                     episode_id <= total_episodes
                 ), "Invalid episode id; ids must be sequential."
                 episode_group = _get_from_h5py(file, f"episode_{episode_id}")
                 episode_group.attrs["id"] = episode_id
-                if "seed" in eps_buff.keys():
+                if eps_buff.seed is not None:
                     assert "seed" not in episode_group.attrs.keys()
-                    episode_group.attrs["seed"] = eps_buff.pop("seed")
-                episode_steps = len(eps_buff["rewards"])
+                    episode_group.attrs["seed"] = eps_buff.seed
+                episode_steps = len(eps_buff.rewards)
                 episode_group.attrs["total_steps"] = episode_steps
                 additional_steps += episode_steps
 
-                _add_episode_to_group(eps_buff, episode_group)
+                dict_buffer = {
+                    "observations": eps_buff.observations,
+                    "actions": eps_buff.actions,
+                    "rewards": eps_buff.rewards,
+                    "terminations": eps_buff.terminations,
+                    "truncations": eps_buff.truncations,
+                    "infos": eps_buff.infos,
+                }
+                _add_episode_to_group(dict_buffer, episode_group)
 
             total_episodes = len(file.keys())
 
@@ -164,44 +175,6 @@ class _HDF5Storage(MinariStorage):
         self.update_metadata(
             {"total_steps": total_steps, "total_episodes": total_episodes}
         )
-
-    def update_from_storage(self, storage: MinariStorage):
-        if type(storage) is not type(self):
-            # TODO: relax this constraint. In theory one can use MinariStorage API to update
-            raise ValueError(f"{type(self)} cannot update from {type(storage)}")
-
-        with h5py.File(self._file_path, "a", track_order=True) as file:
-            self_total_episodes = self.total_episodes
-            storage_total_episodes = storage.total_episodes
-
-            for id in range(storage.total_episodes):
-                new_id = self_total_episodes + id
-                with h5py.File(
-                    storage._file_path, "r", track_order=True
-                ) as storage_file:
-                    storage_file.copy(
-                        storage_file[f"episode_{id}"],
-                        file,
-                        name=f"episode_{new_id}",
-                    )
-
-                file[f"episode_{new_id}"].attrs.modify("id", new_id)
-
-            storage_metadata = storage.metadata
-            authors = {file.attrs.get("author"), storage_metadata.get("author")}
-            emails = {
-                file.attrs.get("author_email"),
-                storage_metadata.get("author_email"),
-            }
-
-            self.update_metadata(
-                {
-                    "total_episodes": self_total_episodes + storage_total_episodes,
-                    "total_steps": self.total_steps + storage.total_steps,
-                    "author": "; ".join([aut for aut in authors if aut is not None]),
-                    "author_email": "; ".join([e for e in emails if e is not None]),
-                }
-            )
 
 
 def _get_from_h5py(group: h5py.Group, name: str) -> h5py.Group:
@@ -219,11 +192,8 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
         if isinstance(data, dict):
             episode_group_to_clear = _get_from_h5py(episode_group, key)
             _add_episode_to_group(data, episode_group_to_clear)
-        elif all(isinstance(entry, tuple) for entry in data):  # list of tuples
-            dict_data = {
-                f"_index_{str(i)}": [entry[i] for entry in data]
-                for i, _ in enumerate(data[0])
-            }
+        elif isinstance(data, tuple):
+            dict_data = {f"_index_{i}": subdata for i, subdata in enumerate(data)}
             episode_group_to_clear = _get_from_h5py(episode_group, key)
             _add_episode_to_group(dict_data, episode_group_to_clear)
         elif all(

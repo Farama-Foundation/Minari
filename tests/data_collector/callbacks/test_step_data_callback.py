@@ -5,6 +5,7 @@ from gymnasium import spaces
 
 from minari import DataCollector, MinariDataset
 from minari.data_collector.callbacks import StepDataCallback
+from minari.dataset._storages import registry as storage_registry
 from tests.common import (
     check_data_integrity,
     check_env_recovery,
@@ -46,12 +47,11 @@ class CustomSubsetInfoPadStepDataCallback(StepDataCallback):
         return step_data
 
 
-def test_data_collector_step_data_callback():
+@pytest.mark.parametrize("data_format", storage_registry.keys())
+def test_data_collector_step_data_callback(data_format):
     """Test DataCollector wrapper and Minari dataset creation."""
     dataset_id = "dummy-dict-test-v0"
-
     env = gym.make("DummyDictEnv-v0")
-
     action_space_subset = spaces.Dict(
         {
             "component_2": spaces.Dict(
@@ -76,6 +76,7 @@ def test_data_collector_step_data_callback():
         observation_space=observation_space_subset,
         action_space=action_space_subset,
         step_data_callback=CustomSubsetStepDataCallback,
+        data_format=data_format,
     )
     num_episodes = 10
 
@@ -112,7 +113,8 @@ def test_data_collector_step_data_callback():
     check_load_and_delete_dataset(dataset_id)
 
 
-def test_data_collector_step_data_callback_info_correction():
+@pytest.mark.parametrize("data_format", storage_registry.keys())
+def test_data_collector_step_data_callback_info_correction(data_format):
     """Test DataCollector wrapper and Minari dataset creation."""
     dataset_id = "dummy-inconsistent-info-v0"
     env = gym.make("DummyInconsistentInfoEnv-v0")
@@ -121,6 +123,7 @@ def test_data_collector_step_data_callback_info_correction():
         env,
         record_infos=True,
         step_data_callback=CustomSubsetInfoPadStepDataCallback,
+        data_format=data_format,
     )
     num_episodes = 10
 
@@ -161,11 +164,8 @@ def test_data_collector_step_data_callback_info_correction():
         record_infos=True,
     )
     # here we are checking to make sure that if we have an environment changing its info
-    # structure across steps, it is caught by the data_collector
-    with pytest.raises(
-        ValueError,
-        match="Info structure inconsistent with info structure returned by original reset.",
-    ):
+    # structure across steps, it is results in a error
+    with pytest.raises(ValueError):
         num_episodes = 10
         env.reset(seed=42)
         for _ in range(num_episodes):

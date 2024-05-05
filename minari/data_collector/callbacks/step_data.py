@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, TypedDict
+from typing import Any, Dict, Optional, SupportsFloat, TypedDict
 
 import gymnasium as gym
 
@@ -6,7 +6,7 @@ import gymnasium as gym
 class StepData(TypedDict):
     observations: Any
     actions: Optional[Any]
-    rewards: Optional[Any]
+    rewards: Optional[SupportsFloat]
     terminations: Optional[bool]
     truncations: Optional[bool]
     infos: Dict[str, Any]

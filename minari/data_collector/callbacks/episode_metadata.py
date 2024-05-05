@@ -1,7 +1,5 @@
 from typing import Dict
 
-import numpy as np
-
 
 class EpisodeMetadataCallback:
     """Callback to full episode after saving to hdf5 file as a group.
@@ -22,9 +20,9 @@ class EpisodeMetadataCallback:
             episode (dict): the dict that contains an episode's data
         """
         return {
-            "rewards_sum": np.sum(episode["rewards"]),
-            "rewards_mean": np.mean(episode["rewards"]),
-            "rewards_std": np.std(episode["rewards"]),
-            "rewards_max": np.max(episode["rewards"]),
-            "rewards_min": np.min(episode["rewards"]),
+            "rewards_sum": float(episode["rewards"].sum()),
+            "rewards_mean": float(episode["rewards"].mean()),
+            "rewards_std": float(episode["rewards"].std()),
+            "rewards_max": float(episode["rewards"].max()),
+            "rewards_min": float(episode["rewards"].min()),
         }

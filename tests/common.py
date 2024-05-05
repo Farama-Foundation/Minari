@@ -1,7 +1,5 @@
-import copy
 import sys
 import unicodedata
-from collections import OrderedDict
 from typing import Any, Dict, Iterable, List, Optional, Union
 
 import gymnasium as gym
@@ -12,6 +10,7 @@ from gymnasium.utils.env_checker import data_equivalence
 
 import minari
 from minari import DataCollector, MinariDataset
+from minari.data_collector import EpisodeBuffer, StepData
 from minari.dataset.minari_dataset import EpisodeData
 from minari.dataset.minari_storage import MinariStorage
 
@@ -548,9 +547,11 @@ def check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
         data (MinariStorage): a MinariStorage instance
         episode_indices (Iterable[int]): the list of episode indices expected
     """
-    episodes = data.get_episodes(episode_indices)
+    episodes = list(data.get_episodes(episode_indices))
     # verify we have the right number of episodes, available at the right indices
-    assert data.total_episodes == len(episodes)
+    assert data.total_episodes == len(
+        episodes
+    ), f"{data.total_episodes} != {len(episodes)}"
     total_steps = 0
 
     observation_space = data.metadata["observation_space"]
@@ -578,6 +579,7 @@ def check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
         assert episode["total_steps"] == len(episode["rewards"])
         assert episode["total_steps"] == len(episode["terminations"])
         assert episode["total_steps"] == len(episode["truncations"])
+
     assert total_steps == data.total_steps
 
 
@@ -713,6 +715,7 @@ def check_episode_data_integrity(
         for i in range(episode.total_steps + 1):
             obs = _reconstuct_obs_or_action_at_index_recursive(episode.observations, i)
             if info_sample is not None:
+                assert episode.infos is not None
                 assert check_infos_equal(
                     get_info_at_step_index(episode.infos, i), info_sample
                 )
@@ -741,29 +744,12 @@ def check_infos_equal(info_1: Dict, info_2: Dict) -> bool:
     return True
 
 
-def _space_subset_helper(entry: Dict):
-    return OrderedDict(
-        {
-            "component_2": OrderedDict(
-                {"subcomponent_2": entry["component_2"]["subcomponent_2"]}
-            )
-        }
-    )
-
-
 def get_sample_buffer_for_dataset_from_env(env: gym.Env, num_episodes: int = 10):
     buffer = []
-    observations = []
-    actions = []
-    rewards = []
-    terminations = []
-    truncations = []
+    seed = 42
+    observation, _ = env.reset(seed=seed)
+    episode_buffer = EpisodeBuffer(observations=observation, seed=seed)
 
-    observation, info = env.reset(seed=42)
-
-    # Step the environment, DataCollector wrapper will do the data collection job
-    observation, _ = env.reset()
-    observations.append(_space_subset_helper(observation))
     for episode in range(num_episodes):
         terminated = False
         truncated = False
@@ -771,29 +757,19 @@ def get_sample_buffer_for_dataset_from_env(env: gym.Env, num_episodes: int = 10)
         while not terminated and not truncated:
             action = env.action_space.sample()
             observation, reward, terminated, truncated, _ = env.step(action)
-            observations.append(_space_subset_helper(observation))
-            actions.append(_space_subset_helper(action))
-            rewards.append(reward)
-            terminations.append(terminated)
-            truncations.append(truncated)
-
-        episode_buffer = {
-            "observations": copy.deepcopy(observations),
-            "actions": copy.deepcopy(actions),
-            "rewards": np.asarray(rewards),
-            "terminations": np.asarray(terminations),
-            "truncations": np.asarray(truncations),
-        }
+            step_data: StepData = {
+                "observations": observation,
+                "actions": action,
+                "rewards": reward,
+                "terminations": terminated,
+                "truncations": truncated,
+                "infos": {},
+            }
+            episode_buffer = episode_buffer.add_step_data(step_data)
 
         buffer.append(episode_buffer)
 
-        observations.clear()
-        actions.clear()
-        rewards.clear()
-        terminations.clear()
-        truncations.clear()
-
         observation, _ = env.reset()
-        observations.append(_space_subset_helper(observation))
+        episode_buffer = EpisodeBuffer(observations=observation)
 
     return buffer

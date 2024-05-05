@@ -35,7 +35,7 @@ minari list remote
 To download a dataset:
 
 ```bash
-minari download door-human-v1
+minari download door-human-v2
 ```
 
 To check available local datasets:
@@ -46,7 +46,7 @@ minari list local
 To show the details of a dataset:
 
 ```bash
-minari show door-human-v1
+minari show door-human-v2
 ```
 
 For the list of commands:
@@ -61,7 +61,7 @@ minari --help
 ```python
 import minari
 
-dataset = minari.load_dataset("door-human-v1")
+dataset = minari.load_dataset("door-human-v2")
 
 for episode_data in dataset.iterate_episodes():
     observations = episode_data.observations

@@ -5,7 +5,7 @@ import importlib.metadata
 import os
 import re
 import warnings
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional
 
 import gymnasium as gym
 import numpy as np
@@ -17,6 +17,7 @@ from gymnasium.wrappers.record_episode_statistics import RecordEpisodeStatistics
 from packaging.specifiers import InvalidSpecifier, SpecifierSet
 from packaging.version import Version
 
+from minari.data_collector.episode_buffer import EpisodeBuffer
 from minari.dataset.minari_dataset import MinariDataset
 from minari.dataset.minari_storage import MinariStorage
 from minari.serialization import deserialize_space
@@ -258,6 +259,7 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_id: s
         env_spec=combined_dataset_env_spec,
         observation_space=datasets_to_combine[0].observation_space,
         action_space=datasets_to_combine[0].action_space,
+        data_format=datasets_to_combine[0].storage.FORMAT,
     )
 
     new_storage.update_metadata(
@@ -479,7 +481,7 @@ def _generate_dataset_metadata(
 
 def create_dataset_from_buffers(
     dataset_id: str,
-    buffer: List[Dict[str, Union[list, Dict]]],
+    buffer: List[EpisodeBuffer],
     env: Optional[str | gym.Env | EnvSpec] = None,
     eval_env: Optional[str | gym.Env | EnvSpec] = None,
     algorithm_name: Optional[str] = None,
@@ -494,6 +496,7 @@ def create_dataset_from_buffers(
     expert_policy: Optional[Callable[[ObsType], ActType]] = None,
     num_episodes_average_score: int = 100,
     description: Optional[str] = None,
+    data_format: Optional[str] = None,
 ):
     """Create Minari dataset from a list of episode dictionary buffers.
 
@@ -501,18 +504,9 @@ def create_dataset_from_buffers(
     ``(env_name-)(dataset_name)(-v(version))`` where ``env_name`` identifies the name of the environment used to generate the dataset ``dataset_name``.
     This ``dataset_id`` is used to load the Minari datasets with :meth:`minari.load_dataset`.
 
-    Each episode dictionary buffer must have the following items:
-        * `observations`: np.ndarray of step observations. shape = (total_episode_steps + 1, (observation_shape)). Should include initial and final observation
-        * `actions`: np.ndarray of step action. shape = (total_episode_steps, (action_shape)).
-        * `rewards`: np.ndarray of step rewards. shape = (total_episode_steps, 1).
-        * `terminations`: np.ndarray of step terminations. shape = (total_episode_steps, 1).
-        * `truncations`: np.ndarray of step truncations. shape = (total_episode_steps, 1).
-
-    Other additional items can be added as long as the values are np.ndarray's or other nested dictionaries.
-
     Args:
         dataset_id (str): name id to identify Minari dataset.
-        buffer (list[Dict[str, Union[list, Dict]]]): list of episode dictionaries with data.
+        buffer (list[EpisodeBuffer]): list of episode buffer with data.
         env (Optional[str|gym.Env|EnvSpec]): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) used to collect the buffer data. Defaults to None.
         eval_env (Optional[str|gym.Env|EnvSpec]): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) to use for evaluation with the dataset. After loading the dataset, the environment can be recovered as follows: `MinariDataset.recover_environment(eval_env=True).
                                                 If None, and if the `env` used to collect the buffer data is available, latter will be used for evaluation.
@@ -531,6 +525,7 @@ def create_dataset_from_buffers(
         observation_space (Optional[gym.spaces.Space]): observation space of the environment. If None (default) use the environment observation space.
         minari_version (Optional[str], optional): Minari version specifier compatible with the dataset. If None (default) use the installed Minari version.
         description (Optional[str], optional): description of the dataset being created. Defaults to None.
+        data_format (str, optional): Data format to store the data in the Minari dataset. If None (defaults), it will use the default format of MinariStorage.
 
     Returns:
         MinariDataset
@@ -577,11 +572,13 @@ def create_dataset_from_buffers(
         description,
     )
 
+    data_format_kwarg = {"data_format": data_format} if data_format is not None else {}
     storage = MinariStorage.new(
         dataset_path,
         observation_space=observation_space,
         action_space=action_space,
         env_spec=env_spec,
+        **data_format_kwarg,
     )
 
     # adding `update_metadata` before hand too, as for small envs, the absence of metadata is causing a difference of some 10ths of MBs leading to errors in unit tests.
@@ -688,9 +685,9 @@ def get_dataset_spec_dict(
     add_version = f" (`{__version__}` installed)"
     md_dict.update(
         {
-            "Algorithm": dataset_spec["algorithm_name"],
-            "Author": dataset_spec["author"],
-            "Email": dataset_spec["author_email"],
+            "Algorithm": dataset_spec.get("algorithm_name", "Not provided"),
+            "Author": dataset_spec.get("author", "Not provided"),
+            "Email": dataset_spec.get("author_email", "Not provided"),
             "Code Permalink": f"[{code_link}]({code_link})",
             "Minari Version": f"`{version}` {add_version if print_version else ''}",
             "Download": f"`minari.download_dataset(\"{dataset_spec['dataset_id']}\")`",
