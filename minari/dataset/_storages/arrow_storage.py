@@ -59,18 +59,20 @@ class ArrowStorage(MinariStorage):
                 json.dump(metadata, file)
 
     def get_episodes(self, episode_indices: Iterable[int]) -> List[dict]:
-        episode_indices = list(episode_indices)
         dataset = pa.dataset.dataset(
-            self.data_path,
-            format=self.FORMAT,
-            partitioning=["episode_id"],
-            ignore_prefixes=["_", ".", "metadata.json"],
+            [
+                pa.dataset.dataset(
+                    f"{self.data_path}/{ep_id}",
+                    format=self.FORMAT,
+                    ignore_prefixes=["_", ".", "metadata.json"],
+                )
+                for ep_id in episode_indices
+            ]
         )
-        episodes = dataset.filter(pa.compute.field("episode_id").isin(episode_indices))
 
-        def _to_dict(episode):
+        def _to_dict(id, episode):
             return {
-                "id": episode["episode_id"][0].as_py(),
+                "id": id,
                 "seed": episode["seed"][0].as_py()
                 if "seed" in episode.column_names
                 else None,
@@ -87,7 +89,7 @@ class ArrowStorage(MinariStorage):
                 else {},
             }
 
-        episodes = map(_to_dict, episodes.to_batches())
+        episodes = map(_to_dict, episode_indices, dataset.to_batches())
         return list(episodes)
 
     def update_episodes(self, episodes: Iterable[EpisodeBuffer]):
