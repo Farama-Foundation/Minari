@@ -4,19 +4,21 @@
 ```{toctree}
 :hidden:
 minari_dataset/minari_dataset
+minari_dataset/minari_storage
 minari_dataset/episode_data
-```
-
-## Create Minari Dataset
-
-```{eval-rst}
-.. autofunction:: minari.create_dataset_from_buffers
+minari_dataset/step_data
 ```
 
 ## Load Minari Dataset
 
 ```{eval-rst}
 .. autofunction:: minari.load_dataset
+```
+
+## Create Minari Dataset
+
+```{eval-rst}
+.. autofunction:: minari.create_dataset_from_buffers
 ```
 
 ## Split Minari Dataset

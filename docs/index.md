@@ -8,8 +8,8 @@ lastpage:
 :hidden:
 :caption: Introduction
 content/basic_usage
-content/dataset_standards
 content/minari_cli
+content/dataset_standards
 ```
 
 ```{toctree}
@@ -59,13 +59,6 @@ A dataset API for Offline Reinforcement Learning.
 
 **Minari is a Python API that hosts a collection of popular Offline Reinforcement Learning datasets.** The environments from which these datasets are generated follow the [Gymnasium API](https://gymnasium.farama.org/). The datasets are publicly available in a [Farama GCP bucket](https://console.cloud.google.com/storage/browser/minari-datasets;tab=objects?forceOnBucketsSortingFiltering=false&amp;project=mcmes-345620&amp;prefix=&amp;forceOnObjectsSortingFiltering=false) and can be downloaded through the Minari CLI. Minari also provides dataset handling features such as episode sampling, filtering trajectories, as well as dataset generation utilities.
 
-```{eval-rst}
-
-.. note::
-   This library is currently under beta development and minor/major changes are expected to come along in the near future.
-
-```
-
 <div class="termy">
 
 ```console
@@ -81,20 +74,20 @@ $ minari list remote
 │                │     <b>Total</b> │      <b>Total</b> │         │           │
 │ <b>Name</b>           │  <b>Episodes</b> │      <b>Steps</b> │  <b>Author</b> │ <b>Email</b>     │
 ┡────────────────╇───────────╇────────────╇─────────╇───────────┩
-│ <font color="#A1EFE4">door-cloned-v0</font> │      <font color="#03AC13">4356</font> │    <font color="#03AC13">1000000</font> │ <font color="#FF00FF">Farama</font>  │<font color="#FF00FF">@farama.org</font>│
-│ <font color="#A1EFE4">door-expert-v0</font> │      <font color="#03AC13">5000</font> │    <font color="#03AC13">1000000</font> │ <font color="#FF00FF">Farama</font>  │<font color="#FF00FF">@farama.org</font>│
-│ <font color="#A1EFE4">door-human-v0</font>  │        <font color="#03AC13">25</font> │       <font color="#03AC13">6729</font> │ <font color="#FF00FF">Farama</font>  │<font color="#FF00FF">@farama.org</font>│
+│ <font color="#A1EFE4">door-cloned-v2</font> │      <font color="#03AC13">4356</font> │    <font color="#03AC13">1000000</font> │ <font color="#FF00FF">Farama</font>  │<font color="#FF00FF">@farama.org</font>│
+│ <font color="#A1EFE4">door-expert-v2</font> │      <font color="#03AC13">5000</font> │    <font color="#03AC13">1000000</font> │ <font color="#FF00FF">Farama</font>  │<font color="#FF00FF">@farama.org</font>│
+│ <font color="#A1EFE4">door-human-v2</font>  │        <font color="#03AC13">25</font> │       <font color="#03AC13">6729</font> │ <font color="#FF00FF">Farama</font>  │<font color="#FF00FF">@farama.org</font>│
 └────────────────┴───────────┴────────────┴─────────┴───────────┘
 
-// Download dataset door-cloned-v0
-$ minari download door-cloned-v0
-Downloading door-cloned-v0 from Farama servers...
+// Download dataset door-cloned-v2
+$ minari download door-cloned-v2
+Downloading door-cloned-v2 from Farama servers...
 
-   * Downloading data file 'door-cloned-v0/data/main_data.hdf5' ...
+   * Downloading data file 'door-cloned-v2/data/main_data.hdf5' ...
 
 ---> 100%
 
-Dataset door-cloned-v0 downloaded to <path-to-local-datasets>/.minari/datasets/door-cloned-v0
+Dataset door-cloned-v2 downloaded to ~/.minari/datasets/door-cloned-v2
 
 ```
 </div>

@@ -7,17 +7,17 @@ class EpisodeMetadataCallback:
     This callback can be overridden to add extra metadata attributes or statistics to
     each episode in the Minari dataset. The custom callback can then be
     passed to the DataCollector wrapper to the `episode_metadata_callback` argument.
-
-    TODO: add more default statistics to episode datasets
     """
 
-    def __call__(self, episode: Dict):
+    def __call__(self, episode: Dict) -> Dict:
         """Callback method.
 
         Override this method to add custom attribute metadata to the episode group.
 
         Args:
             episode (dict): the dict that contains an episode's data
+        Returns:
+            Dict: episode metadata.
         """
         return {
             "rewards_sum": float(episode["rewards"].sum()),

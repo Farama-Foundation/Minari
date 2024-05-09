@@ -6,10 +6,7 @@ import numpy as np
 
 @dataclass(frozen=True)
 class EpisodeData:
-    """Contains the datasets data for a single episode.
-
-    This is the object returned by :class:`minari.MinariDataset.sample_episodes`.
-    """
+    """Contains the datasets data for a single episode."""
 
     id: int
     seed: Optional[int]

@@ -168,7 +168,7 @@ class MinariDataset:
     ) -> MinariDataset:
         """Filter the dataset episodes with a condition.
 
-        The condition must be a callable which takes an `EpisodeData` instance and retutrns a bool.
+        The condition must be a callable which takes an `EpisodeData` instance and returns a bool.
         The callable must return a `bool` True if the condition is met and False otherwise.
         i.e filtering for episodes that terminate:
 
@@ -246,6 +246,7 @@ class MinariDataset:
 
     @property
     def total_episodes(self) -> int:
+        """Total number of episodes in the Minari dataset."""
         return len(self.episode_indices)
 
     @property
@@ -313,6 +314,7 @@ class MinariDataset:
 
     @property
     def spec(self) -> MinariDatasetSpec:
+        """Minari dataset specifier."""
         return MinariDatasetSpec(
             env_spec=self.env_spec,
             total_episodes=self._episode_indices.size,

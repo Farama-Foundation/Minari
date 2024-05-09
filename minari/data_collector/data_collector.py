@@ -12,11 +12,7 @@ import numpy as np
 from gymnasium.core import ActType, ObsType
 from gymnasium.envs.registration import EnvSpec
 
-from minari.data_collector.callbacks import (
-    STEP_DATA_KEYS,
-    EpisodeMetadataCallback,
-    StepDataCallback,
-)
+from minari.data_collector.callbacks import EpisodeMetadataCallback, StepDataCallback
 from minari.data_collector.episode_buffer import EpisodeBuffer
 from minari.dataset.minari_dataset import MinariDataset
 from minari.dataset.minari_storage import MinariStorage
@@ -140,31 +136,26 @@ class DataCollector(gym.Wrapper):
             truncated=truncated,
         )
 
-        # Force step data dictionary to include keys corresponding to Gymnasium step returns:
-        # actions, observations, rewards, terminations, truncations, and infos
-        assert STEP_DATA_KEYS.issubset(
-            step_data.keys()
-        ), "One or more required keys is missing from 'step-data'."
         # Check that the stored obs/act spaces comply with the dataset spaces
         assert self._storage.observation_space.contains(
-            step_data["observations"]
-        ), "Observations are not in observation space."
+            step_data["observation"]
+        ), "Observation is not in observation space."
         assert self._storage.action_space.contains(
-            step_data["actions"]
-        ), "Actions are not in action space."
+            step_data["action"]
+        ), "Action is not in action space."
 
         assert self._buffer is not None
         if not self._record_infos:
-            step_data["infos"] = {}
+            step_data["info"] = {}
         self._buffer = self._buffer.add_step_data(step_data)
 
-        if step_data["terminations"] or step_data["truncations"]:
+        if step_data["termination"] or step_data["truncation"]:
             self._storage.update_episodes([self._buffer])
             self._episode_id += 1
             self._buffer = EpisodeBuffer(
                 id=self._episode_id,
-                observations=step_data["observations"],
-                infos=step_data["infos"],
+                observations=step_data["observation"],
+                infos=step_data["info"],
             )
 
         return obs, rew, terminated, truncated, info
@@ -199,15 +190,11 @@ class DataCollector(gym.Wrapper):
         obs, info = self.env.reset(seed=seed, options=options)
         step_data = self._step_data_callback(env=self.env, obs=obs, info=info)
 
-        assert STEP_DATA_KEYS.issubset(
-            step_data.keys()
-        ), "One or more required keys is missing from 'step-data'"
-
         self._buffer = EpisodeBuffer(
             id=self._episode_id,
             seed=seed,
-            observations=step_data["observations"],
-            infos=step_data["infos"] if self._record_infos else None,
+            observations=step_data["observation"],
+            infos=step_data["info"] if self._record_infos else None,
         )
         return obs, info
 
