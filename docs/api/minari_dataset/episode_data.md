@@ -42,4 +42,3 @@
 
     The stacked ``infos`` of the episodes. As for the observations, this attribute contains one more element compared to the number of steps.
 ```
-

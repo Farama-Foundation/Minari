@@ -1,6 +1,9 @@
 from typing import Any, Dict, Optional
+
 import gymnasium as gym
+
 from minari.dataset.step_data import StepData
+
 
 class StepDataCallback:
     """Callback to create step data dictionary from the return data of each Gymnasium environment step.

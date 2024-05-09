@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 from typing import Optional, Union
 
 import jax.tree_util as jtu
+
 from minari.dataset.step_data import StepData
 
 

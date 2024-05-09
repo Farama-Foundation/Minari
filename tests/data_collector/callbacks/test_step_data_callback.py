@@ -21,17 +21,17 @@ register_dummy_envs()
 class CustomSubsetStepDataCallback(StepDataCallback):
     def __call__(self, env, **kwargs):
         step_data = super().__call__(env, **kwargs)
-        step_data["observations"] = {
+        step_data["observation"] = {
             "component_2": {
-                "subcomponent_2": step_data["observations"]["component_2"][
+                "subcomponent_2": step_data["observation"]["component_2"][
                     "subcomponent_2"
                 ]
             }
         }
-        if step_data["actions"] is not None:
-            step_data["actions"] = {
+        if step_data["action"] is not None:
+            step_data["action"] = {
                 "component_2": {
-                    "subcomponent_2": step_data["actions"]["component_2"][
+                    "subcomponent_2": step_data["action"]["component_2"][
                         "subcomponent_2"
                     ]
                 }
@@ -42,8 +42,8 @@ class CustomSubsetStepDataCallback(StepDataCallback):
 class CustomSubsetInfoPadStepDataCallback(StepDataCallback):
     def __call__(self, env, **kwargs):
         step_data = super().__call__(env, **kwargs)
-        if step_data["infos"] == {}:
-            step_data["infos"] = {"timestep": np.array([-1])}
+        if step_data["info"] == {}:
+            step_data["info"] = {"timestep": np.array([-1])}
         return step_data
 
 
