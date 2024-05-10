@@ -690,7 +690,7 @@ def get_dataset_spec_dict(
             "Email": dataset_spec.get("author_email", "Not provided"),
             "Code Permalink": f"[{code_link}]({code_link})",
             "Minari Version": f"`{version}` {add_version if print_version else ''}",
-            "Download": f"`minari.download_dataset(\"{dataset_spec['dataset_id']}\")`",
+            "Download": f"`minari download {dataset_spec['dataset_id']}`",
         }
     )
 

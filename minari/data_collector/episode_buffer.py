@@ -5,7 +5,7 @@ from typing import Optional, Union
 
 import jax.tree_util as jtu
 
-from minari.data_collector import StepData
+from minari.dataset.step_data import StepData
 
 
 @dataclass(frozen=True)
@@ -38,20 +38,20 @@ class EpisodeBuffer:
             else:
                 return [buffer, data]
 
-        observations = step_data["observations"]
+        observations = step_data["observation"]
         if self.observations is not None:
             observations = jtu.tree_map(
-                _append, step_data["observations"], self.observations
+                _append, step_data["observation"], self.observations
             )
-        actions = step_data["actions"]
+        actions = step_data["action"]
         if self.actions is not None:
-            actions = jtu.tree_map(_append, step_data["actions"], self.actions)
-        infos = step_data["infos"]
+            actions = jtu.tree_map(_append, step_data["action"], self.actions)
+        infos = step_data["info"]
         if self.infos is not None:
-            infos = jtu.tree_map(_append, step_data["infos"], self.infos)
-        self.rewards.append(step_data["rewards"])
-        self.terminations.append(step_data["terminations"])
-        self.truncations.append(step_data["truncations"])
+            infos = jtu.tree_map(_append, step_data["info"], self.infos)
+        self.rewards.append(step_data["reward"])
+        self.terminations.append(step_data["termination"])
+        self.truncations.append(step_data["truncation"])
 
         return EpisodeBuffer(
             id=self.id,
@@ -65,4 +65,5 @@ class EpisodeBuffer:
         )
 
     def __len__(self) -> int:
+        """Buffer length."""
         return len(self.rewards)

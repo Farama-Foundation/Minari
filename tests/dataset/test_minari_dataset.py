@@ -8,11 +8,9 @@ import numpy as np
 import pytest
 
 import minari
-from minari import DataCollector, MinariDataset
-from minari.data_collector.callbacks.step_data import StepData
+from minari import DataCollector, EpisodeData, MinariDataset, StepData
 from minari.data_collector.episode_buffer import EpisodeBuffer
 from minari.dataset._storages import registry as storage_registry
-from minari.dataset.minari_dataset import EpisodeData
 from minari.dataset.minari_storage import METADATA_FILE_NAME
 from tests.common import (
     check_data_integrity,
@@ -221,12 +219,12 @@ def test_filter_episodes_and_subsequent_updates(dataset_id, env_id, data_format)
             action = env.action_space.sample()
             observation, reward, terminated, truncated, _ = env.step(action)
             step_data: StepData = {
-                "observations": observation,
-                "actions": action,
-                "rewards": reward,
-                "terminations": terminated,
-                "truncations": truncated,
-                "infos": {},
+                "observation": observation,
+                "action": action,
+                "reward": reward,
+                "termination": terminated,
+                "truncation": truncated,
+                "info": {},
             }
             episode_buffer = episode_buffer.add_step_data(step_data)
 
@@ -413,12 +411,12 @@ def test_update_dataset_from_buffer(dataset_id, env_id, data_format):
             action = env.action_space.sample()
             observation, reward, terminated, truncated, _ = env.step(action)
             step_data: StepData = {
-                "observations": observation,
-                "actions": action,
-                "rewards": reward,
-                "terminations": terminated,
-                "truncations": truncated,
-                "infos": {},
+                "observation": observation,
+                "action": action,
+                "reward": reward,
+                "termination": terminated,
+                "truncation": truncated,
+                "info": {},
             }
             episode_buffer = episode_buffer.add_step_data(step_data)
 

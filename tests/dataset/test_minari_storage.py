@@ -8,7 +8,7 @@ from gymnasium import spaces
 
 import minari
 from minari import DataCollector
-from minari.data_collector.callbacks.step_data import StepData
+from minari.data_collector.callbacks.step_callback import StepData
 from minari.data_collector.episode_buffer import EpisodeBuffer
 from minari.dataset._storages import registry as storage_registry
 from minari.dataset.minari_storage import MinariStorage
@@ -40,12 +40,12 @@ def _generate_episode_buffer(
         action = action_space.sample()
         observation = observation_space.sample()
         step_data: StepData = {
-            "observations": observation,
-            "actions": action,
-            "rewards": rewards[i],
-            "terminations": terminations[i],
-            "truncations": truncations[i],
-            "infos": {},
+            "observation": observation,
+            "action": action,
+            "reward": rewards[i],
+            "termination": terminations[i],
+            "truncation": truncations[i],
+            "info": {},
         }
         buffer = buffer.add_step_data(step_data)
 
@@ -274,12 +274,12 @@ def test_minari_get_dataset_size_from_buffer(dataset_id, env_id, data_format):
             action = env.action_space.sample()
             observation, reward, terminated, truncated, _ = env.step(action)
             step_data: StepData = {
-                "observations": observation,
-                "actions": action,
-                "rewards": reward,
-                "terminations": terminated,
-                "truncations": truncated,
-                "infos": {},
+                "observation": observation,
+                "action": action,
+                "reward": reward,
+                "termination": terminated,
+                "truncation": truncated,
+                "info": {},
             }
             episode_buffer = episode_buffer.add_step_data(step_data)
 

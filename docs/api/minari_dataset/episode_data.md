@@ -23,12 +23,12 @@
 
 .. autoattribute:: minari.EpisodeData.observations
 
-    The observations of the environment. The initial and final observations are included meaning that the number
+    Stacked observations of the episode. The initial and final observations are included meaning that the number
     of observations will be increased by one compared to the number of steps.
 
 .. autoattribute:: minari.EpisodeData.actions
 
-    The actions taken in each episode step.
+    Stacked actions taken in each episode step.
 
 .. autoattribute:: minari.EpisodeData.terminations
 
@@ -37,4 +37,8 @@
 .. autoattribute:: minari.EpisodeData.truncations
 
     The ``truncated`` value after each environment step.
+
+.. autoattribute:: minari.EpisodeData.infos
+
+    The stacked ``infos`` of the episodes. As for the observations, this attribute contains one more element compared to the number of steps.
 ```

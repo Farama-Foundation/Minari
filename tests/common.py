@@ -9,9 +9,8 @@ from gymnasium.envs.registration import register
 from gymnasium.utils.env_checker import data_equivalence
 
 import minari
-from minari import DataCollector, MinariDataset
-from minari.data_collector import EpisodeBuffer, StepData
-from minari.dataset.minari_dataset import EpisodeData
+from minari import DataCollector, EpisodeData, MinariDataset, StepData
+from minari.data_collector import EpisodeBuffer
 from minari.dataset.minari_storage import MinariStorage
 
 
@@ -758,12 +757,12 @@ def get_sample_buffer_for_dataset_from_env(env: gym.Env, num_episodes: int = 10)
             action = env.action_space.sample()
             observation, reward, terminated, truncated, _ = env.step(action)
             step_data: StepData = {
-                "observations": observation,
-                "actions": action,
-                "rewards": reward,
-                "terminations": terminated,
-                "truncations": truncated,
-                "infos": {},
+                "observation": observation,
+                "action": action,
+                "reward": reward,
+                "termination": terminated,
+                "truncation": truncated,
+                "info": {},
             }
             episode_buffer = episode_buffer.add_step_data(step_data)
 

@@ -4,8 +4,8 @@ import pytest
 from gymnasium import spaces
 
 import minari
-from minari import DataCollector, MinariDataset
-from minari.data_collector import EpisodeBuffer, StepData
+from minari import DataCollector, MinariDataset, StepData
+from minari.data_collector import EpisodeBuffer
 from minari.dataset._storages import registry as storage_registry
 from tests.common import (
     check_data_integrity,
@@ -194,12 +194,12 @@ def test_generate_dataset_with_external_buffer(dataset_id, env_id, data_format):
             action = env.action_space.sample()
             observation, reward, terminated, truncated, _ = env.step(action)
             step_data: StepData = {
-                "observations": observation,
-                "actions": action,
-                "rewards": reward,
-                "terminations": terminated,
-                "truncations": truncated,
-                "infos": {},
+                "observation": observation,
+                "action": action,
+                "reward": reward,
+                "termination": terminated,
+                "truncation": truncated,
+                "info": {},
             }
             episode_buffer = episode_buffer.add_step_data(step_data)
 

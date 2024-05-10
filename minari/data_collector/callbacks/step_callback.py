@@ -1,25 +1,8 @@
-from typing import Any, Dict, Optional, SupportsFloat, TypedDict
+from typing import Any, Dict, Optional
 
 import gymnasium as gym
 
-
-class StepData(TypedDict):
-    observations: Any
-    actions: Optional[Any]
-    rewards: Optional[SupportsFloat]
-    terminations: Optional[bool]
-    truncations: Optional[bool]
-    infos: Dict[str, Any]
-
-
-STEP_DATA_KEYS = {
-    "actions",
-    "observations",
-    "rewards",
-    "truncations",
-    "terminations",
-    "infos",
-}
+from minari.dataset.step_data import StepData
 
 
 class StepDataCallback:
@@ -75,12 +58,12 @@ class StepDataCallback:
                     'rewards', 'terminations', 'truncations', 'infos'}. Additional key's can be added with nested dictionaries
         """
         step_data: StepData = {
-            "actions": action,
-            "observations": obs,
-            "rewards": rew,
-            "terminations": terminated,
-            "truncations": truncated,
-            "infos": info,
+            "action": action,
+            "observation": obs,
+            "reward": rew,
+            "termination": terminated,
+            "truncation": truncated,
+            "info": info,
         }
 
         return step_data
