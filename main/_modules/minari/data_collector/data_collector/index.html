@@ -219,19 +219,22 @@
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../content/basic_usage/">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../content/dataset_standards/">Dataset Standards</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../content/minari_cli/">Minari CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../content/dataset_standards/">Dataset Standards</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/minari_functions/">Minari</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Minari</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/minari_dataset/minari_dataset/">MinariDataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/minari_dataset/minari_storage/">MinariStorage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/minari_dataset/episode_data/">EpisodeData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/minari_dataset/step_data/">StepData</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/data_collector/">DataCollector</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of DataCollector</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/data_collector_callbacks/step_data_callback/">StepDataCallback</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/data_collector_callbacks/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/data_collector/episode_buffer/">EpisodeBuffer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/data_collector/step_data_callback/">StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/data_collector/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
 </ul>
 </li>
 </ul>
@@ -372,11 +375,7 @@
 <span class="kn">from</span> <span class="nn">gymnasium.core</span> <span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span>
 <span class="kn">from</span> <span class="nn">gymnasium.envs.registration</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
 
-<span class="kn">from</span> <span class="nn">minari.data_collector.callbacks</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">STEP_DATA_KEYS</span><span class="p">,</span>
-    <span class="n">EpisodeMetadataCallback</span><span class="p">,</span>
-    <span class="n">StepDataCallback</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">minari.data_collector.callbacks</span> <span class="kn">import</span> <span class="n">EpisodeMetadataCallback</span><span class="p">,</span> <span class="n">StepDataCallback</span>
 <span class="kn">from</span> <span class="nn">minari.data_collector.episode_buffer</span> <span class="kn">import</span> <span class="n">EpisodeBuffer</span>
 <span class="kn">from</span> <span class="nn">minari.dataset.minari_dataset</span> <span class="kn">import</span> <span class="n">MinariDataset</span>
 <span class="kn">from</span> <span class="nn">minari.dataset.minari_storage</span> <span class="kn">import</span> <span class="n">MinariStorage</span>
@@ -502,31 +501,26 @@
             <span class="n">truncated</span><span class="o">=</span><span class="n">truncated</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="c1"># Force step data dictionary to include keys corresponding to Gymnasium step returns:</span>
-        <span class="c1"># actions, observations, rewards, terminations, truncations, and infos</span>
-        <span class="k">assert</span> <span class="n">STEP_DATA_KEYS</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span>
-            <span class="n">step_data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-        <span class="p">),</span> <span class="s2">&quot;One or more required keys is missing from &#39;step-data&#39;.&quot;</span>
         <span class="c1"># Check that the stored obs/act spaces comply with the dataset spaces</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_storage</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span>
-            <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;observations&quot;</span><span class="p">]</span>
-        <span class="p">),</span> <span class="s2">&quot;Observations are not in observation space.&quot;</span>
+            <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">]</span>
+        <span class="p">),</span> <span class="s2">&quot;Observation is not in observation space.&quot;</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_storage</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span>
-            <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;actions&quot;</span><span class="p">]</span>
-        <span class="p">),</span> <span class="s2">&quot;Actions are not in action space.&quot;</span>
+            <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;action&quot;</span><span class="p">]</span>
+        <span class="p">),</span> <span class="s2">&quot;Action is not in action space.&quot;</span>
 
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_record_infos</span><span class="p">:</span>
-            <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;infos&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;info&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">add_step_data</span><span class="p">(</span><span class="n">step_data</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;terminations&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;truncations&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;termination&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;truncation&quot;</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_storage</span><span class="o">.</span><span class="n">update_episodes</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">])</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_episode_id</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span> <span class="o">=</span> <span class="n">EpisodeBuffer</span><span class="p">(</span>
                 <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_episode_id</span><span class="p">,</span>
-                <span class="n">observations</span><span class="o">=</span><span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;observations&quot;</span><span class="p">],</span>
-                <span class="n">infos</span><span class="o">=</span><span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;infos&quot;</span><span class="p">],</span>
+                <span class="n">observations</span><span class="o">=</span><span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">],</span>
+                <span class="n">infos</span><span class="o">=</span><span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;info&quot;</span><span class="p">],</span>
             <span class="p">)</span>
 
         <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span>
@@ -561,15 +555,11 @@
         <span class="n">obs</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span> <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">)</span>
         <span class="n">step_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_step_data_callback</span><span class="p">(</span><span class="n">env</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">env</span><span class="p">,</span> <span class="n">obs</span><span class="o">=</span><span class="n">obs</span><span class="p">,</span> <span class="n">info</span><span class="o">=</span><span class="n">info</span><span class="p">)</span>
 
-        <span class="k">assert</span> <span class="n">STEP_DATA_KEYS</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span>
-            <span class="n">step_data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-        <span class="p">),</span> <span class="s2">&quot;One or more required keys is missing from &#39;step-data&#39;&quot;</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span> <span class="o">=</span> <span class="n">EpisodeBuffer</span><span class="p">(</span>
             <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_episode_id</span><span class="p">,</span>
             <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
-            <span class="n">observations</span><span class="o">=</span><span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;observations&quot;</span><span class="p">],</span>
-            <span class="n">infos</span><span class="o">=</span><span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;infos&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_record_infos</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">observations</span><span class="o">=</span><span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">],</span>
+            <span class="n">infos</span><span class="o">=</span><span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;info&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_record_infos</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">info</span>
 

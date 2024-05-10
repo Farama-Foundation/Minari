@@ -218,19 +218,22 @@
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../content/basic_usage/">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../content/dataset_standards/">Dataset Standards</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../content/minari_cli/">Minari CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content/dataset_standards/">Dataset Standards</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../api/minari_functions/">Minari</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Minari</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../api/minari_dataset/minari_dataset/">MinariDataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/minari_dataset/minari_storage/">MinariStorage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/minari_dataset/episode_data/">EpisodeData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/minari_dataset/step_data/">StepData</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../api/data_collector/">DataCollector</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of DataCollector</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../api/data_collector_callbacks/step_data_callback/">StepDataCallback</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/data_collector_callbacks/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/data_collector/episode_buffer/">EpisodeBuffer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/data_collector/step_data_callback/">StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/data_collector/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
 </ul>
 </li>
 </ul>
@@ -359,18 +362,22 @@
             
 <section class="genindex-section">
   <h1 id="index">Index</h1>
-  <div class="genindex-jumpbox"><a href="#_"><strong>_</strong></a> | <a href="#A"><strong>A</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#U"><strong>U</strong></a></div>
+  <div class="genindex-jumpbox"><a href="#_"><strong>_</strong></a> | <a href="#A"><strong>A</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#U"><strong>U</strong></a></div>
 </section>
 <section id="_" class="genindex-section">
   <h2>_</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="../api/data_collector_callbacks/episode_metadata_callback/#minari.EpisodeMetadataCallback.__call__">__call__() (in module minari.EpisodeMetadataCallback)</a>
+        <li><a href="../api/data_collector/episode_metadata_callback/#minari.EpisodeMetadataCallback.__call__">__call__() (in module minari.EpisodeMetadataCallback)</a>
 
         <ul>
-          <li><a href="../api/data_collector_callbacks/step_data_callback/#minari.StepDataCallback.__call__">(in module minari.StepDataCallback)</a>
+          <li><a href="../api/data_collector/step_data_callback/#minari.StepDataCallback.__call__">(in module minari.StepDataCallback)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/data_collector/episode_buffer/#minari.data_collector.EpisodeBuffer.__len__">__len__() (in module minari.data_collector.EpisodeBuffer)</a>
+</li>
     </ul></td>
   </tr></table>
 </section>
@@ -379,7 +386,23 @@
   <h2>A</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="../api/minari_dataset/episode_data/#minari.EpisodeData.actions">actions (minari.EpisodeData attribute)</a>
+        <li><a href="../api/minari_dataset/step_data/#minari.StepData.action">action (minari.StepData attribute)</a>
+</li>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage.action_space">action_space (minari.dataset.minari_storage.MinariStorage attribute)</a>
+</li>
+        <li><a href="../api/data_collector/episode_buffer/#minari.data_collector.EpisodeBuffer.actions">actions (minari.data_collector.EpisodeBuffer attribute)</a>
+
+        <ul>
+          <li><a href="../api/minari_dataset/episode_data/#minari.EpisodeData.actions">(minari.EpisodeData attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/data_collector/episode_buffer/#minari.data_collector.EpisodeBuffer.add_step_data">add_step_data() (in module minari.data_collector.EpisodeBuffer)</a>
+</li>
+        <li><a href="../api/data_collector/#minari.DataCollector.add_to_dataset">add_to_dataset() (in module minari.DataCollector)</a>
+</li>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage.apply">apply() (in module minari.dataset.minari_storage.MinariStorage)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -407,6 +430,8 @@
   <h2>D</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage.data_path">data_path (minari.dataset.minari_storage.MinariStorage attribute)</a>
+</li>
         <li><a href="../api/data_collector/#minari.DataCollector">DataCollector (class in minari)</a>
 </li>
     </ul></td>
@@ -425,11 +450,13 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/minari_dataset/minari_dataset/#minari.MinariDataset.episode_indices">episode_indices (minari.MinariDataset attribute)</a>
 </li>
+        <li><a href="../api/data_collector/episode_buffer/#minari.data_collector.EpisodeBuffer">EpisodeBuffer (class in minari.data_collector)</a>
+</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/minari_dataset/episode_data/#minari.EpisodeData">EpisodeData (class in minari)</a>
 </li>
-        <li><a href="../api/data_collector_callbacks/episode_metadata_callback/#minari.EpisodeMetadataCallback">EpisodeMetadataCallback (class in minari)</a>
+        <li><a href="../api/data_collector/episode_metadata_callback/#minari.EpisodeMetadataCallback">EpisodeMetadataCallback (class in minari)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -449,7 +476,13 @@
   <h2>G</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage.get_episodes">get_episodes() (in module minari.dataset.minari_storage.MinariStorage)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/minari_functions/#minari.get_normalized_score">get_normalized_score() (in module minari)</a>
+</li>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage.get_size">get_size() (in module minari.dataset.minari_storage.MinariStorage)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -459,10 +492,22 @@
   <h2>I</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="../api/minari_dataset/episode_data/#minari.EpisodeData.id">id (minari.EpisodeData attribute)</a>
+        <li><a href="../api/data_collector/episode_buffer/#minari.data_collector.EpisodeBuffer.id">id (minari.data_collector.EpisodeBuffer attribute)</a>
+
+        <ul>
+          <li><a href="../api/minari_dataset/episode_data/#minari.EpisodeData.id">(minari.EpisodeData attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="../api/minari_dataset/step_data/#minari.StepData.info">info (minari.StepData attribute)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/data_collector/episode_buffer/#minari.data_collector.EpisodeBuffer.infos">infos (minari.data_collector.EpisodeBuffer attribute)</a>
+
+        <ul>
+          <li><a href="../api/minari_dataset/episode_data/#minari.EpisodeData.infos">(minari.EpisodeData attribute)</a>
+</li>
+        </ul></li>
         <li><a href="../api/minari_dataset/minari_dataset/#minari.MinariDataset.iterate_episodes">iterate_episodes() (in module minari.MinariDataset)</a>
 </li>
     </ul></td>
@@ -489,7 +534,23 @@
   <h2>M</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage.metadata">metadata (minari.dataset.minari_storage.MinariStorage attribute)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/minari_dataset/minari_dataset/#minari.MinariDataset">MinariDataset (class in minari)</a>
+</li>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage">MinariStorage (class in minari.dataset.minari_storage)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="N" class="genindex-section">
+  <h2>N</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage.new">new() (in module minari.dataset.minari_storage.MinariStorage)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -499,8 +560,18 @@
   <h2>O</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="../api/minari_dataset/episode_data/#minari.EpisodeData.observations">observations (minari.EpisodeData attribute)</a>
+        <li><a href="../api/minari_dataset/step_data/#minari.StepData.observation">observation (minari.StepData attribute)</a>
 </li>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage.observation_space">observation_space (minari.dataset.minari_storage.MinariStorage attribute)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/data_collector/episode_buffer/#minari.data_collector.EpisodeBuffer.observations">observations (minari.data_collector.EpisodeBuffer attribute)</a>
+
+        <ul>
+          <li><a href="../api/minari_dataset/episode_data/#minari.EpisodeData.observations">(minari.EpisodeData attribute)</a>
+</li>
+        </ul></li>
     </ul></td>
   </tr></table>
 </section>
@@ -509,11 +580,15 @@
   <h2>R</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage.read">read() (in module minari.dataset.minari_storage.MinariStorage)</a>
+</li>
         <li><a href="../api/minari_dataset/minari_dataset/#minari.MinariDataset.recover_environment">recover_environment() (in module minari.MinariDataset)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/data_collector/#minari.DataCollector.reset">reset() (in module minari.DataCollector)</a>
+</li>
+        <li><a href="../api/data_collector/episode_buffer/#minari.data_collector.EpisodeBuffer.rewards">rewards (minari.data_collector.EpisodeBuffer attribute)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -525,8 +600,12 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/minari_dataset/minari_dataset/#minari.MinariDataset.sample_episodes">sample_episodes() (in module minari.MinariDataset)</a>
 </li>
-        <li><a href="../api/minari_dataset/episode_data/#minari.EpisodeData.seed">seed (minari.EpisodeData attribute)</a>
+        <li><a href="../api/data_collector/episode_buffer/#minari.data_collector.EpisodeBuffer.seed">seed (minari.data_collector.EpisodeBuffer attribute)</a>
+
+        <ul>
+          <li><a href="../api/minari_dataset/episode_data/#minari.EpisodeData.seed">(minari.EpisodeData attribute)</a>
 </li>
+        </ul></li>
         <li><a href="../api/minari_dataset/minari_dataset/#minari.MinariDataset.set_seed">set_seed() (in module minari.MinariDataset)</a>
 </li>
     </ul></td>
@@ -537,7 +616,9 @@
 </li>
         <li><a href="../api/data_collector/#minari.DataCollector.step">step() (in module minari.DataCollector)</a>
 </li>
-        <li><a href="../api/data_collector_callbacks/step_data_callback/#minari.StepDataCallback">StepDataCallback (class in minari)</a>
+        <li><a href="../api/minari_dataset/step_data/#minari.StepData">StepData (class in minari)</a>
+</li>
+        <li><a href="../api/data_collector/step_data_callback/#minari.StepDataCallback">StepDataCallback (class in minari)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -547,20 +628,38 @@
   <h2>T</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="../api/minari_dataset/episode_data/#minari.EpisodeData.terminations">terminations (minari.EpisodeData attribute)</a>
+        <li><a href="../api/minari_dataset/step_data/#minari.StepData.termination">termination (minari.StepData attribute)</a>
 </li>
-        <li><a href="../api/minari_dataset/minari_dataset/#minari.MinariDataset.total_episodes">total_episodes (minari.MinariDataset attribute)</a>
-</li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="../api/minari_dataset/episode_data/#minari.EpisodeData.total_steps">total_steps (minari.EpisodeData attribute)</a>
+        <li><a href="../api/data_collector/episode_buffer/#minari.data_collector.EpisodeBuffer.terminations">terminations (minari.data_collector.EpisodeBuffer attribute)</a>
 
         <ul>
+          <li><a href="../api/minari_dataset/episode_data/#minari.EpisodeData.terminations">(minari.EpisodeData attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage.total_episodes">total_episodes (minari.dataset.minari_storage.MinariStorage attribute)</a>
+
+        <ul>
+          <li><a href="../api/minari_dataset/minari_dataset/#minari.MinariDataset.total_episodes">(minari.MinariDataset attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage.total_steps">total_steps (minari.dataset.minari_storage.MinariStorage attribute)</a>
+
+        <ul>
+          <li><a href="../api/minari_dataset/episode_data/#minari.EpisodeData.total_steps">(minari.EpisodeData attribute)</a>
+</li>
           <li><a href="../api/minari_dataset/minari_dataset/#minari.MinariDataset.total_steps">(minari.MinariDataset attribute)</a>
 </li>
         </ul></li>
-        <li><a href="../api/minari_dataset/episode_data/#minari.EpisodeData.truncations">truncations (minari.EpisodeData attribute)</a>
+        <li><a href="../api/minari_dataset/step_data/#minari.StepData.truncation">truncation (minari.StepData attribute)</a>
 </li>
+        <li><a href="../api/data_collector/episode_buffer/#minari.data_collector.EpisodeBuffer.truncations">truncations (minari.data_collector.EpisodeBuffer attribute)</a>
+
+        <ul>
+          <li><a href="../api/minari_dataset/episode_data/#minari.EpisodeData.truncations">(minari.EpisodeData attribute)</a>
+</li>
+        </ul></li>
     </ul></td>
   </tr></table>
 </section>
@@ -570,6 +669,16 @@
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/minari_dataset/minari_dataset/#minari.MinariDataset.update_dataset_from_buffer">update_dataset_from_buffer() (in module minari.MinariDataset)</a>
+</li>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage.update_episode_metadata">update_episode_metadata() (in module minari.dataset.minari_storage.MinariStorage)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage.update_episodes">update_episodes() (in module minari.dataset.minari_storage.MinariStorage)</a>
+</li>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage.update_from_storage">update_from_storage() (in module minari.dataset.minari_storage.MinariStorage)</a>
+</li>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage.update_metadata">update_metadata() (in module minari.dataset.minari_storage.MinariStorage)</a>
 </li>
     </ul></td>
   </tr></table>

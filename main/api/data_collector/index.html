@@ -8,7 +8,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:description" content="Minari is a Python library for conducting research in offline reinforcement learning." />
     <meta property="og:url" content="https://minari.farama.org/api/data_collector.html" /><meta property="og:image" content="https://minari.farama.org/_static/img/robotics-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="StepDataCallback" href="../data_collector_callbacks/step_data_callback/" /><link rel="prev" title="EpisodeData" href="../minari_dataset/episode_data/" />
+<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="EpisodeBuffer" href="episode_buffer/" /><link rel="prev" title="StepData" href="../minari_dataset/step_data/" />
         <link rel="canonical" href="https://minari.farama.org/api/data_collector.html" />
 
     <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.7 and Furo 2023.08.19.dev1 -->
@@ -220,19 +220,22 @@
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../content/basic_usage/">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../content/dataset_standards/">Dataset Standards</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../content/minari_cli/">Minari CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../content/dataset_standards/">Dataset Standards</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="current">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../minari_functions/">Minari</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Minari</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../minari_dataset/minari_dataset/">MinariDataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../minari_dataset/minari_storage/">MinariStorage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../minari_dataset/episode_data/">EpisodeData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../minari_dataset/step_data/">StepData</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">DataCollector</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of DataCollector</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../data_collector_callbacks/step_data_callback/">StepDataCallback</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_collector_callbacks/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="episode_buffer/">EpisodeBuffer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="step_data_callback/">StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="episode_metadata_callback/">EpisodeMetadataCallback</a></li>
 </ul>
 </li>
 </ul>
@@ -375,7 +378,7 @@
 <h2>minari.DataCollector<a class="headerlink" href="#minari-datacollector" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="minari.DataCollector">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">minari.</span></span><span class="sig-name descname"><span class="pre">DataCollector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_data_callback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../data_collector_callbacks/step_data_callback/#minari.StepDataCallback" title="minari.data_collector.callbacks.step_data.StepDataCallback"><span class="pre">StepDataCallback</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">StepDataCallback</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">episode_metadata_callback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../data_collector_callbacks/episode_metadata_callback/#minari.EpisodeMetadataCallback" title="minari.data_collector.callbacks.episode_metadata.EpisodeMetadataCallback"><span class="pre">EpisodeMetadataCallback</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">EpisodeMetadataCallback</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record_infos</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observation_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Space</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Space</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/minari/data_collector/data_collector/#DataCollector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#minari.DataCollector" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">minari.</span></span><span class="sig-name descname"><span class="pre">DataCollector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_data_callback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="step_data_callback/#minari.StepDataCallback" title="minari.data_collector.callbacks.step_callback.StepDataCallback"><span class="pre">StepDataCallback</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">StepDataCallback</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">episode_metadata_callback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="episode_metadata_callback/#minari.EpisodeMetadataCallback" title="minari.data_collector.callbacks.episode_metadata.EpisodeMetadataCallback"><span class="pre">EpisodeMetadataCallback</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">EpisodeMetadataCallback</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record_infos</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observation_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Space</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Space</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/minari/data_collector/data_collector/#DataCollector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#minari.DataCollector" title="Link to this definition">¶</a></dt>
 <dd><p>Gymnasium environment wrapper that collects step data.</p>
 <p>This wrapper is meant to work as a temporary buffer of the environment data before creating a Minari dataset. The creation of the buffers
 that will be convert to a Minari dataset is agnostic to the user:</p>
@@ -411,8 +414,8 @@ env.reset(). If calling reset and the previous episode was not <cite>truncated</
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env</strong> (<em>gym.Env</em>) – Gymnasium environment</p></li>
-<li><p><strong>step_data_callback</strong> (<em>type</em><em>[</em><a class="reference internal" href="../data_collector_callbacks/step_data_callback/#minari.StepDataCallback" title="minari.StepDataCallback"><em>StepDataCallback</em></a><em>]</em><em>, </em><em>optional</em>) – Callback class to edit/update step databefore storing to buffer. Defaults to StepDataCallback.</p></li>
-<li><p><strong>episode_metadata_callback</strong> (<em>type</em><em>[</em><a class="reference internal" href="../data_collector_callbacks/episode_metadata_callback/#minari.EpisodeMetadataCallback" title="minari.EpisodeMetadataCallback"><em>EpisodeMetadataCallback</em></a><em>]</em><em>, </em><em>optional</em>) – Callback class to add custom metadata to episode group in HDF5 file. Defaults to EpisodeMetadataCallback.</p></li>
+<li><p><strong>step_data_callback</strong> (<em>type</em><em>[</em><a class="reference internal" href="step_data_callback/#minari.StepDataCallback" title="minari.StepDataCallback"><em>StepDataCallback</em></a><em>]</em><em>, </em><em>optional</em>) – Callback class to edit/update step databefore storing to buffer. Defaults to StepDataCallback.</p></li>
+<li><p><strong>episode_metadata_callback</strong> (<em>type</em><em>[</em><a class="reference internal" href="episode_metadata_callback/#minari.EpisodeMetadataCallback" title="minari.EpisodeMetadataCallback"><em>EpisodeMetadataCallback</em></a><em>]</em><em>, </em><em>optional</em>) – Callback class to add custom metadata to episode group in HDF5 file. Defaults to EpisodeMetadataCallback.</p></li>
 <li><p><strong>record_infos</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True record the info return key of each step. Defaults to False.</p></li>
 <li><p><strong>observation_space</strong> (<em>gym.Space</em>) – Observation space of the dataset. The default value is the environment observation space.</p></li>
 <li><p><strong>action_space</strong> (<em>gym.Space</em>) – Action space of the dataset. The default value is the environment action space.</p></li>
@@ -489,6 +492,17 @@ If None the `env</cite> used to collect the buffer data should be used for evalu
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="minari.DataCollector.add_to_dataset">
+<span class="sig-prename descclassname"><span class="pre">minari.DataCollector.</span></span><span class="sig-name descname"><span class="pre">add_to_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../minari_dataset/minari_dataset/#minari.MinariDataset" title="minari.dataset.minari_dataset.MinariDataset"><span class="pre">MinariDataset</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#minari.DataCollector.add_to_dataset" title="Link to this definition">¶</a></dt>
+<dd><p>Add extra data to Minari dataset from collector environment buffers (DataCollector).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dataset</strong> (<a class="reference internal" href="../minari_dataset/minari_dataset/#minari.MinariDataset" title="minari.MinariDataset"><em>MinariDataset</em></a>) – Dataset to add the data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="minari.DataCollector.close">
 <span class="sig-prename descclassname"><span class="pre">minari.DataCollector.</span></span><span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#minari.DataCollector.close" title="Link to this definition">¶</a></dt>
 <dd><p>Close the DataCollector.</p>
@@ -504,18 +518,18 @@ If None the `env</cite> used to collect the buffer data should be used for evalu
         <footer>
           
           <div class="related-pages">
-            <a class="next-page" href="../data_collector_callbacks/step_data_callback/">
+            <a class="next-page" href="episode_buffer/">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">StepDataCallback</div>
+                <div class="title">EpisodeBuffer</div>
               </div>
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
               </svg>
             </a>
-            <a class="prev-page" href="../minari_dataset/episode_data/">
+            <a class="prev-page" href="../minari_dataset/step_data/">
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
               </svg>
@@ -524,7 +538,7 @@ If None the `env</cite> used to collect the buffer data should be used for evalu
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">EpisodeData</div>
+                <div class="title">StepData</div>
                 
               </div>
             </a>
@@ -575,6 +589,7 @@ If None the `env</cite> used to collect the buffer data should be used for evalu
 <li><a class="reference internal" href="#minari.DataCollector.step"><code class="docutils literal notranslate"><span class="pre">step()</span></code></a></li>
 <li><a class="reference internal" href="#minari.DataCollector.reset"><code class="docutils literal notranslate"><span class="pre">reset()</span></code></a></li>
 <li><a class="reference internal" href="#minari.DataCollector.create_dataset"><code class="docutils literal notranslate"><span class="pre">create_dataset()</span></code></a></li>
+<li><a class="reference internal" href="#minari.DataCollector.add_to_dataset"><code class="docutils literal notranslate"><span class="pre">add_to_dataset()</span></code></a></li>
 <li><a class="reference internal" href="#minari.DataCollector.close"><code class="docutils literal notranslate"><span class="pre">close()</span></code></a></li>
 </ul>
 </li>

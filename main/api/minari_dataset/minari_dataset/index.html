@@ -8,7 +8,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:description" content="Minari is a Python library for conducting research in offline reinforcement learning." />
     <meta property="og:url" content="https://minari.farama.org/api/minari_dataset/minari_dataset.html" /><meta property="og:image" content="https://minari.farama.org/_static/img/robotics-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="EpisodeData" href="../episode_data/" /><link rel="prev" title="Minari" href="../../minari_functions/" />
+<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="MinariStorage" href="../minari_storage/" /><link rel="prev" title="Minari" href="../../minari_functions/" />
         <link rel="canonical" href="https://minari.farama.org/api/minari_dataset/minari_dataset.html" />
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.7 and Furo 2023.08.19.dev1 -->
@@ -220,19 +220,22 @@
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../content/basic_usage/">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../content/dataset_standards/">Dataset Standards</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../content/minari_cli/">Minari CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../content/dataset_standards/">Dataset Standards</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="current">
 <li class="toctree-l1 current has-children"><a class="reference internal" href="../../minari_functions/">Minari</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Minari</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
 <li class="toctree-l2 current current-page"><a class="current reference internal" href="#">MinariDataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../minari_storage/">MinariStorage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../episode_data/">EpisodeData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../step_data/">StepData</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../data_collector/">DataCollector</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of DataCollector</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../data_collector_callbacks/step_data_callback/">StepDataCallback</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../data_collector_callbacks/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data_collector/episode_buffer/">EpisodeBuffer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data_collector/step_data_callback/">StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data_collector/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
 </ul>
 </li>
 </ul>
@@ -373,13 +376,13 @@
 <h2>minari.MinariDataset<a class="headerlink" href="#minari-minaridataset" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="minari.MinariDataset">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">minari.</span></span><span class="sig-name descname"><span class="pre">MinariDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MinariStorage</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">episode_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/minari/dataset/minari_dataset/#MinariDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#minari.MinariDataset" title="Link to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">minari.</span></span><span class="sig-name descname"><span class="pre">MinariDataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../minari_storage/#minari.dataset.minari_storage.MinariStorage" title="minari.dataset.minari_storage.MinariStorage"><span class="pre">MinariStorage</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">PathLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">episode_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ndarray</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../../_modules/minari/dataset/minari_dataset/#MinariDataset"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#minari.MinariDataset" title="Link to this definition">¶</a></dt>
 <dd><p>Main Minari dataset class to sample data and get metadata information from a dataset.</p>
 <p>Initialize properties of the Minari Dataset.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> (<em>Union</em><em>[</em><em>MinariStorage</em><em>, </em><em>PathLike</em><em>]</em>) – source of data.</p></li>
+<li><p><strong>data</strong> (<em>Union</em><em>[</em><a class="reference internal" href="../minari_storage/#minari.dataset.minari_storage.MinariStorage" title="minari.dataset.minari_storage.MinariStorage"><em>MinariStorage</em></a><em>, </em><em>PathLike</em><em>]</em>) – source of data.</p></li>
 <li><p><strong>episode_indices</strong> (<em>Optional</em><em>[</em><em>np.ndarray</em><em>]</em>) – slice of episode indices this dataset is pointing to.</p></li>
 </ul>
 </dd>
@@ -414,7 +417,7 @@
 <dt class="sig sig-object py" id="minari.MinariDataset.filter_episodes">
 <span class="sig-prename descclassname"><span class="pre">minari.MinariDataset.</span></span><span class="sig-name descname"><span class="pre">filter_episodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">condition</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../episode_data/#minari.EpisodeData" title="minari.dataset.episode_data.EpisodeData"><span class="pre">EpisodeData</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#minari.MinariDataset" title="minari.dataset.minari_dataset.MinariDataset"><span class="pre">MinariDataset</span></a></span></span><a class="headerlink" href="#minari.MinariDataset.filter_episodes" title="Link to this definition">¶</a></dt>
 <dd><p>Filter the dataset episodes with a condition.</p>
-<p>The condition must be a callable which takes an <cite>EpisodeData</cite> instance and retutrns a bool.
+<p>The condition must be a callable which takes an <cite>EpisodeData</cite> instance and returns a bool.
 The callable must return a <cite>bool</cite> True if the condition is met and False otherwise.
 i.e filtering for episodes that terminate:</p>
 <p><code class="docutils literal notranslate"><span class="pre">`</span>
@@ -452,11 +455,11 @@ i.e filtering for episodes that terminate:</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="minari.MinariDataset.update_dataset_from_buffer">
-<span class="sig-prename descclassname"><span class="pre">minari.MinariDataset.</span></span><span class="sig-name descname"><span class="pre">update_dataset_from_buffer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">EpisodeBuffer</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#minari.MinariDataset.update_dataset_from_buffer" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">minari.MinariDataset.</span></span><span class="sig-name descname"><span class="pre">update_dataset_from_buffer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">buffer</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../../data_collector/episode_buffer/#minari.data_collector.EpisodeBuffer" title="minari.data_collector.episode_buffer.EpisodeBuffer"><span class="pre">EpisodeBuffer</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#minari.MinariDataset.update_dataset_from_buffer" title="Link to this definition">¶</a></dt>
 <dd><p>Additional data can be added to the Minari Dataset from a list of episode dictionary buffers.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>buffer</strong> (<em>list</em><em>[</em><em>EpisodeBuffer</em><em>]</em>) – list of episode dictionary buffers to add to dataset</p>
+<dd class="field-odd"><p><strong>buffer</strong> (<em>list</em><em>[</em><a class="reference internal" href="../../data_collector/episode_buffer/#minari.data_collector.EpisodeBuffer" title="minari.data_collector.EpisodeBuffer"><em>EpisodeBuffer</em></a><em>]</em>) – list of episode dictionary buffers to add to dataset</p>
 </dd>
 </dl>
 </dd></dl>
@@ -467,7 +470,8 @@ i.e filtering for episodes that terminate:</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="minari.MinariDataset.spec">
 <span class="sig-prename descclassname"><span class="pre">MinariDataset.</span></span><span class="sig-name descname"><span class="pre">spec</span></span><a class="headerlink" href="#minari.MinariDataset.spec" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Minari dataset specifier.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="minari.MinariDataset.total_steps">
@@ -478,7 +482,8 @@ i.e filtering for episodes that terminate:</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="minari.MinariDataset.total_episodes">
 <span class="sig-prename descclassname"><span class="pre">MinariDataset.</span></span><span class="sig-name descname"><span class="pre">total_episodes</span></span><a class="headerlink" href="#minari.MinariDataset.total_episodes" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Total number of episodes in the Minari dataset.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="minari.MinariDataset.episode_indices">
@@ -495,12 +500,12 @@ i.e filtering for episodes that terminate:</p>
         <footer>
           
           <div class="related-pages">
-            <a class="next-page" href="../episode_data/">
+            <a class="next-page" href="../minari_storage/">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">EpisodeData</div>
+                <div class="title">MinariStorage</div>
               </div>
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>

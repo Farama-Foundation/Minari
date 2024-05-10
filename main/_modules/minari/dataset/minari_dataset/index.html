@@ -219,19 +219,22 @@
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../content/basic_usage/">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../content/dataset_standards/">Dataset Standards</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../content/minari_cli/">Minari CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../content/dataset_standards/">Dataset Standards</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/minari_functions/">Minari</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Minari</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/minari_dataset/minari_dataset/">MinariDataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/minari_dataset/minari_storage/">MinariStorage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/minari_dataset/episode_data/">EpisodeData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/minari_dataset/step_data/">StepData</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/data_collector/">DataCollector</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of DataCollector</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/data_collector_callbacks/step_data_callback/">StepDataCallback</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../api/data_collector_callbacks/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/data_collector/episode_buffer/">EpisodeBuffer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/data_collector/step_data_callback/">StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/data_collector/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
 </ul>
 </li>
 </ul>
@@ -530,7 +533,7 @@
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MinariDataset</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Filter the dataset episodes with a condition.</span>
 
-<span class="sd">        The condition must be a callable which takes an `EpisodeData` instance and retutrns a bool.</span>
+<span class="sd">        The condition must be a callable which takes an `EpisodeData` instance and returns a bool.</span>
 <span class="sd">        The callable must return a `bool` True if the condition is met and False otherwise.</span>
 <span class="sd">        i.e filtering for episodes that terminate:</span>
 
@@ -608,6 +611,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">total_episodes</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Total number of episodes in the Minari dataset.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">episode_indices</span><span class="p">)</span>
 
     <span class="nd">@property</span>
@@ -675,6 +679,7 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MinariDatasetSpec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Minari dataset specifier.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">MinariDatasetSpec</span><span class="p">(</span>
             <span class="n">env_spec</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">env_spec</span><span class="p">,</span>
             <span class="n">total_episodes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_episode_indices</span><span class="o">.</span><span class="n">size</span><span class="p">,</span>

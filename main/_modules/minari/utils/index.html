@@ -219,19 +219,22 @@
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../content/basic_usage/">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../content/dataset_standards/">Dataset Standards</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../content/minari_cli/">Minari CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../content/dataset_standards/">Dataset Standards</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/minari_functions/">Minari</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Minari</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/minari_dataset/minari_dataset/">MinariDataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/minari_dataset/minari_storage/">MinariStorage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/minari_dataset/episode_data/">EpisodeData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/minari_dataset/step_data/">StepData</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/data_collector/">DataCollector</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of DataCollector</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector_callbacks/step_data_callback/">StepDataCallback</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector_callbacks/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector/episode_buffer/">EpisodeBuffer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector/step_data_callback/">StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
 </ul>
 </li>
 </ul>
@@ -1062,7 +1065,7 @@
             <span class="s2">&quot;Email&quot;</span><span class="p">:</span> <span class="n">dataset_spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;author_email&quot;</span><span class="p">,</span> <span class="s2">&quot;Not provided&quot;</span><span class="p">),</span>
             <span class="s2">&quot;Code Permalink&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">code_link</span><span class="si">}</span><span class="s2">](</span><span class="si">{</span><span class="n">code_link</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
             <span class="s2">&quot;Minari Version&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">` </span><span class="si">{</span><span class="n">add_version</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">print_version</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Download&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`minari.download_dataset(</span><span class="se">\&quot;</span><span class="si">{</span><span class="n">dataset_spec</span><span class="p">[</span><span class="s1">&#39;dataset_id&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">)`&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Download&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`minari download </span><span class="si">{</span><span class="n">dataset_spec</span><span class="p">[</span><span class="s1">&#39;dataset_id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">)</span>
 

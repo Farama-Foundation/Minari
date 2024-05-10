@@ -220,19 +220,22 @@
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../content/basic_usage/">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../content/dataset_standards/">Dataset Standards</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../content/minari_cli/">Minari CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../content/dataset_standards/">Dataset Standards</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/minari_functions/">Minari</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Minari</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/minari_dataset/minari_dataset/">MinariDataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/minari_dataset/minari_storage/">MinariStorage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/minari_dataset/episode_data/">EpisodeData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/minari_dataset/step_data/">StepData</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/data_collector/">DataCollector</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of DataCollector</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector_callbacks/step_data_callback/">StepDataCallback</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector_callbacks/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector/episode_buffer/">EpisodeBuffer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector/step_data_callback/">StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
 </ul>
 </li>
 </ul>
@@ -683,7 +686,7 @@ As previously mentioned, the task is continuing and the environment won’t be <
 Instead a new target will be randomly selected in the map and the agent will continue stepping to this new goal. For this reason, to divide the dataset into episodes,
 we will have to truncate the dataset ourselves when a new goal is reached. This can be done by overriding the <code class="docutils literal notranslate"><span class="pre">'truncations'</span></code> key in the step data return when the
 agent returns <code class="docutils literal notranslate"><span class="pre">success=True</span></code> in the <code class="docutils literal notranslate"><span class="pre">'infos'</span></code> item.</p>
-<p>In the <a class="reference internal" href="../../../api/data_collector_callbacks/step_data_callback/#minari.StepDataCallback" title="minari.StepDataCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.StepDataCallback</span></code></a> we can add new keys to infos that we would also want to save in our Minari dataset. For example in this
+<p>In the <a class="reference internal" href="../../../api/data_collector/step_data_callback/#minari.StepDataCallback" title="minari.StepDataCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.StepDataCallback</span></code></a> we can add new keys to infos that we would also want to save in our Minari dataset. For example in this
 case we will be generating new hdf5 datasets <code class="docutils literal notranslate"><span class="pre">qpos</span></code>, <code class="docutils literal notranslate"><span class="pre">qvel</span></code>, and <code class="docutils literal notranslate"><span class="pre">goal</span></code> in the <code class="docutils literal notranslate"><span class="pre">infos</span></code> subgroup of each episode group.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">PointMazeStepDataCallback</span><span class="p">(</span><span class="n">StepDataCallback</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Add environment state information to &#39;infos&#39;.</span>
@@ -702,11 +705,11 @@ case we will be generating new hdf5 datasets <code class="docutils literal notra
 
         <span class="n">step_data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;infos&quot;</span><span class="p">][</span><span class="s2">&quot;success&quot;</span><span class="p">]:</span>
-            <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;truncations&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;infos&quot;</span><span class="p">][</span><span class="s2">&quot;qpos&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">qpos</span>
-        <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;infos&quot;</span><span class="p">][</span><span class="s2">&quot;qvel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">qvel</span>
-        <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;infos&quot;</span><span class="p">][</span><span class="s2">&quot;goal&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">goal</span>
+        <span class="k">if</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;info&quot;</span><span class="p">][</span><span class="s2">&quot;success&quot;</span><span class="p">]:</span>
+            <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;truncation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;info&quot;</span><span class="p">][</span><span class="s2">&quot;qpos&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">qpos</span>
+        <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;info&quot;</span><span class="p">][</span><span class="s2">&quot;qvel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">qvel</span>
+        <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;info&quot;</span><span class="p">][</span><span class="s2">&quot;goal&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">goal</span>
 
         <span class="k">return</span> <span class="n">step_data</span>
 </pre></div>

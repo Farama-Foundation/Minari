@@ -219,19 +219,22 @@
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../content/basic_usage/">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../content/dataset_standards/">Dataset Standards</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../content/minari_cli/">Minari CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content/dataset_standards/">Dataset Standards</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../api/minari_functions/">Minari</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Minari</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../api/minari_dataset/minari_dataset/">MinariDataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/minari_dataset/minari_storage/">MinariStorage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/minari_dataset/episode_data/">EpisodeData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/minari_dataset/step_data/">StepData</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../api/data_collector/">DataCollector</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of DataCollector</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../api/data_collector_callbacks/step_data_callback/">StepDataCallback</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/data_collector_callbacks/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/data_collector/episode_buffer/">EpisodeBuffer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/data_collector/step_data_callback/">StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/data_collector/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
 </ul>
 </li>
 </ul>
@@ -359,10 +362,13 @@
             
             <h1>All modules for which code is available</h1>
 <ul><li><a href="minari/data_collector/callbacks/episode_metadata/">minari.data_collector.callbacks.episode_metadata</a></li>
-<li><a href="minari/data_collector/callbacks/step_data/">minari.data_collector.callbacks.step_data</a></li>
+<li><a href="minari/data_collector/callbacks/step_callback/">minari.data_collector.callbacks.step_callback</a></li>
 <li><a href="minari/data_collector/data_collector/">minari.data_collector.data_collector</a></li>
+<li><a href="minari/data_collector/episode_buffer/">minari.data_collector.episode_buffer</a></li>
 <li><a href="minari/dataset/episode_data/">minari.dataset.episode_data</a></li>
 <li><a href="minari/dataset/minari_dataset/">minari.dataset.minari_dataset</a></li>
+<li><a href="minari/dataset/minari_storage/">minari.dataset.minari_storage</a></li>
+<li><a href="minari/dataset/step_data/">minari.dataset.step_data</a></li>
 <li><a href="minari/storage/hosting/">minari.storage.hosting</a></li>
 <li><a href="minari/storage/local/">minari.storage.local</a></li>
 <li><a href="minari/utils/">minari.utils</a></li>
