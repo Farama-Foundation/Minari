@@ -346,11 +346,11 @@ class PointMazeStepDataCallback(StepDataCallback):
 
         step_data = super().__call__(env, obs, info, action, rew, terminated, truncated)
 
-        if step_data["infos"]["success"]:
-            step_data["truncations"] = True
-        step_data["infos"]["qpos"] = qpos
-        step_data["infos"]["qvel"] = qvel
-        step_data["infos"]["goal"] = goal
+        if step_data["info"]["success"]:
+            step_data["truncation"] = True
+        step_data["info"]["qpos"] = qpos
+        step_data["info"]["qvel"] = qvel
+        step_data["info"]["goal"] = goal
 
         return step_data
 
