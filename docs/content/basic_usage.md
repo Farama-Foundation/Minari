@@ -36,6 +36,7 @@ Minari has a remote storage which provides access to a variety of datasets. The 
 ```bash
 minari list remote
 ```
+
 ```
                                                 Minari datasets in Farama server
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┓
@@ -59,6 +60,7 @@ minari download door-human-v2
 
 ```{eval-rst}
 Minari will only be able to load datasets that are stored in your `local root directory  </content/dataset_standards>`_ . To list the local datasets, use the list command:
+```
 
 ```bash
 minari list local
@@ -73,6 +75,7 @@ minari list local
 └───────────────┴────────────────┴─────────────┴──────────────┴────────────────────┴──────────────────────────┘
 ```
 
+```{eval-rst}
 In order to use any of the dataset sampling features of Minari we first need to load the dataset as a :class:`minari.MinariDataset` object using the :func:`minari.load_dataset` Python function as follows:
 ```
 
