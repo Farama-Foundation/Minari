@@ -17,6 +17,8 @@ jobs:
         with:
             python-version: '3.9'
 
+      - run: sudo apt-get install xvfb
+
       - name: Install dependencies
         run: pip install -r docs/requirements.txt
 
@@ -24,7 +26,7 @@ jobs:
         run: pip install .
 
       - name: Build Datasets Docs
-        run: python docs/_scripts/gen_dataset_md.py
+        run: xvfb-run --auto-servernum python docs/_scripts/gen_dataset_md.py
 
       - name: Build
         run: sphinx-build -b dirhtml -v docs _build

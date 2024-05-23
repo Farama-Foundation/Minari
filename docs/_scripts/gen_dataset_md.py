@@ -3,14 +3,13 @@ import os
 from collections import defaultdict
 from typing import Dict
 
-from google.cloud import storage  # pyright: ignore [reportGeneralTypeIssues]
+from generate_gif import generate_gif
 from gymnasium.envs.registration import EnvSpec
 
 from minari import list_remote_datasets
 from minari.dataset.minari_dataset import parse_dataset_id
 from minari.storage.hosting import get_remote_dataset_versions
 from minari.utils import get_dataset_spec_dict, get_env_spec_dict
-from generate_gif import generate_gif
 
 
 def _md_table(table_dict: Dict[str, str]) -> str:
@@ -62,11 +61,12 @@ for env_name, datasets in filtered_datasets.items():
         # Generate gif
         try:
             path = generate_gif(dataset_id)
-            img_link_str = f'<img src="{path}" width="200" style="display: block; margin:0 auto"/>'
+            img_link_str = (
+                f'<img src="{path}" width="200" style="display: block; margin:0 auto"/>'
+            )
         except Exception as e:
             logging.warning(f"Failed to generate gif for {dataset_id}: {e}")
             img_link_str = None
-
 
         # Environment Docs
         env_docs = """"""
@@ -167,13 +167,13 @@ title: {dataset_name.title()}
 """
         if description is not None:
             env_page += "## Description"
-            env_page += f"\n\n"
+            env_page += "\n\n"
             env_page += description
-        
+
         env_page += "## Dataset Specs"
-        env_page += f"\n\n"
+        env_page += "\n\n"
         env_page += _md_table(get_dataset_spec_dict(dataset_spec))
-        env_page += f"\n\n"
+        env_page += "\n\n"
         env_page += env_docs
 
         dataset_doc_path = os.path.join(
