@@ -1,8 +1,9 @@
+import logging
 import os
 from collections import defaultdict
 from typing import Dict
 
-from google.cloud import storage  # pyright: ignore [reportGeneralTypeIssues]
+from generate_gif import generate_gif
 from gymnasium.envs.registration import EnvSpec
 
 from minari import list_remote_datasets
@@ -57,19 +58,15 @@ for env_name, datasets in filtered_datasets.items():
         available_datasets += f"""| <a href="../{env_name}/{dataset_name}" title="{dataset_id}">{dataset_id}</a> | {description.split('. ')[0] if description is not None else ""} |
 """
 
-        # Get image gif link if available
-        img_path = f"{dataset_id}/_docs/_imgs/{dataset_id}.gif"
-        storage_client = storage.Client.create_anonymous_client()
-        bucket = storage_client.bucket(bucket_name="minari-datasets")
-
-        img_exists = storage.Blob(bucket=bucket, name=img_path).exists(storage_client)
-
-        img_link_str = None
-        if img_exists:
+        # Generate gif
+        try:
+            path = generate_gif(dataset_id)
             img_link_str = (
-                f'<img src="https://storage.googleapis.com/minari-datasets/{dataset_id}/_docs/_imgs/{dataset_id}.gif" width="200" '
-                'style="display: block; margin:0 auto"/>'
+                f'<img src="{path}" width="200" style="display: block; margin:0 auto"/>'
             )
+        except Exception as e:
+            logging.warning(f"Failed to generate gif for {dataset_id}: {e}")
+            img_link_str = None
 
         # Environment Docs
         env_docs = """"""
@@ -167,17 +164,17 @@ title: {dataset_name.title()}
 # {dataset_name.title()}
 
 {img_link_str if img_link_str is not None else ""}
-
-## Description
-
-{description if description is not None else ""}
-
-## Dataset Specs
-
-{_md_table(get_dataset_spec_dict(dataset_spec))}
-
-{env_docs}
 """
+        if description is not None:
+            env_page += "## Description"
+            env_page += "\n\n"
+            env_page += description
+
+        env_page += "## Dataset Specs"
+        env_page += "\n\n"
+        env_page += _md_table(get_dataset_spec_dict(dataset_spec))
+        env_page += "\n\n"
+        env_page += env_docs
 
         dataset_doc_path = os.path.join(
             os.path.dirname(__file__), "..", "datasets", env_name

@@ -142,42 +142,41 @@ You can check the details of a dataset using the command `minari show DATASET_NA
 // Show dataset details
 $ minari show pen-expert-v2
 
-┌───────────────────────────────────────────┐
-| <center> <b> pen-expert-v2 </b> </center> |
-└───────────────────────────────────────────┘
+┌───────────────────────────────────────────────────────────────┐
+│                           <b> pen-expert-v2 </b>                     │
+└───────────────────────────────────────────────────────────────┘
 
-<center> <b> <u> Description </u> </b> </center>
+<center> <b> <u>Description</u> </b> </center>
 Trajectories have expert data from a fine-tuned RL policy provided in the <a href="https://github.com/aravindr93/hand_dapg">DAPG</a> repository. The environment used to collect the dataset is <a href="https://robotics.farama.org/envs/adroit_hand/adroit_pen/"><code>AdroitHandPen-v1</code></a>.
 
-<center> <b> <u> Dataset Specs </u> </b> </center>
+<center> <b> <u>Dataset Specs</u> </b> </center>
+┌───────────────────┬───────────────────────────────────────────┐
+│ <b>Total Steps</b>       │ 499206                                    │
+│ <b>Total Episodes</b>    │ 4958                                      │
+│ <b>Algorithm</b>         │ Not provided                              │
+│ <b>Author</b>            │ Rodrigo de Lazcano                        │
+│ <b>Email</b>             │ rperezvicente@farama.org                  │
+│ <b>Code Permalink</b>    │ <a href="https://github.com/rodrigodelazcano/d4rl-minari-dataset-generation">https://github.com/rodrigodelazcano/...</a>   │
+│ <b>Minari Version</b>    │ 0.4 (0.5.0 installed)                     │
+│ <b>Download</b>          │ <code>minari download pen-expert-v2</code>             │
+└───────────────────┴───────────────────────────────────────────┘
 
-┌──────────────────────┬────────────────────────┐
-| <b>Total Steps</b>   │ 499206                         │
-│ <b>Total Episodes</b> │ 4958                                             │
-│ <b>Algorithm</b>    │ Not provided                                  │
-│ <b>Author</b>    │ Rodrigo de Lazcano                                 │
-│ <b>Email</b>        │ rperezvicente@farama.org                                    │
-│ <b>Code Permalink</b> │ <a href="https://github.com/rodrigodelazcano/d4rl-minari-dataset-generation">https://github.com/rodrigodelazcano/d4rl-minari-dataset-generation</a>   │
-│ <b>Minari Version</b> │ 0.4  (0.5.0 installed)                        │
-│ <b>Download</b>    │ <code>minari download pen-expert-v2</code>  |
-└────────────────────┴─────────────────────────────┘
-
-<center> <b> <u> Environment Specs </u> </b> </center>
-┌──────────────────────┬────────────────────────┐
-| <b>ID</b>   │ AdroitHandPen-v1    │
-│ <b>Observation Space</b> │ <code> Box(-inf, inf, (45,), float64) </code>           │
-│ <b>Action Space</b>    │ <code> Box(-1.0, 1.0, (24,), float32) </code>                                  │
-│ <b>entry_point</b>    │ <code>gymnasium_robotics.envs.adroit_hand.adroit_pen:AdroitHandPenEnv</code>    │
-│ <b>max_episode_steps</b>        │ 100                              │
-│ <b>reward_threshold </b> │  None  │
-│ <b>nondeterministic</b> │ <code>False</code>    │
-│ <b>order_enforce</b> │  <code>True</code>   │
-│ <b>autoreset</b> │  <code>False</code>   │
-│ <b>disable_env_checker</b> │  <code>False</code>  │
-│ <b>kwargs</b> │  <code>{'reward_type': 'dense'}</code>  │
-│ <b>additional_wrappers</b> │  <code>()</code>  │
-│ <b>vector_entry_point</b> │   <code>None</code> │
-└────────────────────┴─────────────────────────────┘
+<center> <b> <u>Environment Specs</u> </b> </center>
+┌─────────────────────┬─────────────────────────────────────────┐
+│ <b>ID</b>                  │ AdroitHandPen-v1                        │
+│ <b>Observation Space</b>   │ <code>Box(<font color="#f01e2c">-</font><font color="#a256f8">inf</font>, <font color="#a256f8">inf</font>, (<font color="#a256f8">45</font>,), float64) </code>         │
+│ <b>Action Space</b>        │ <code>Box(<font color="#f01e2c">-</font><font color="#a256f8">1.0</font>, <font color="#a256f8">1.0</font>, (<font color="#a256f8">24</font>,), float32) </code>         │
+│ <b>entry_point</b>         │ gymnasium_robotics<font color="#f01e2c">.</font>envs<font color="#f01e2c">.</font>adroit_h...     │
+│ <b>max_episode_steps</b>   │ 100                                     │
+│ <b>reward_threshold </b>   │ <font color="#A1EFE4">None</font>                                    │
+│ <b>nondeterministic</b>    │ <font color="#A1EFE4">False</font>                                   │
+│ <b>order_enforce</b>       │ <font color="#A1EFE4">True</font>                                    │
+│ <b>autoreset</b>           │ <font color="#A1EFE4">False</font>                                   │
+│ <b>disable_env_checker</b> │ <font color="#A1EFE4">False</font>                                   │
+│ <b>kwargs</b>              │ {<font color="#FED000">'reward_type'</font>: <font color="#FED000">'dense'</font>}                │
+│ <b>additional_wrappers</b> │ ()                                      │
+│ <b>vector_entry_point</b>  │ <font color="#A1EFE4">None</font>                                    │
+└─────────────────────┴─────────────────────────────────────────┘
 ```
 </div>
 
