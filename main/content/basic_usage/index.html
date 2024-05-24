@@ -413,8 +413,9 @@
 <section id="load-local-datasets">
 <h3>Load Local Datasets<a class="headerlink" href="#load-local-datasets" title="Link to this heading">¶</a></h3>
 <p>Minari will only be able to load datasets that are stored in your <a class="reference external" href="/content/dataset_standards">local root directory</a> . To list the local datasets, use the list command:</p>
-<p><a href="#id1"><span class="problematic" id="id2">``</span></a><a href="#id3"><span class="problematic" id="id4">`</span></a>bash
-minari list local</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>minari<span class="w"> </span>list<span class="w"> </span><span class="nb">local</span>
+</pre></div>
+</div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                            Local Minari datasets(&#39;/Users/farama/.minari/datasets/&#39;)
 ┏━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃ Name          ┃ Total Episodes ┃ Total Steps ┃ Dataset Size ┃ Author             ┃ Email                    ┃
@@ -423,15 +424,13 @@ minari list local</p>
 └───────────────┴────────────────┴─────────────┴──────────────┴────────────────────┴──────────────────────────┘
 </pre></div>
 </div>
-<p>In order to use any of the dataset sampling features of Minari we first need to load the dataset as a :class:<code class="docutils literal notranslate"><span class="pre">minari.MinariDataset</span></code> object using the :func:<code class="docutils literal notranslate"><span class="pre">minari.load_dataset</span></code> Python function as follows:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>
-```python
-import minari
-dataset = minari.load_dataset(&#39;door-human-v2&#39;)
-print(&quot;Observation space:&quot;, dataset.observation_space)
-print(&quot;Action space:&quot;, dataset.action_space)
-print(&quot;Total episodes:&quot;, dataset.total_episodes)
-print(&quot;Total steps:&quot;, dataset.total_steps)
+<p>In order to use any of the dataset sampling features of Minari we first need to load the dataset as a <a class="reference internal" href="../../api/minari_dataset/minari_dataset/#minari.MinariDataset" title="minari.MinariDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.MinariDataset</span></code></a> object using the <a class="reference internal" href="../../api/minari_functions/#minari.load_dataset" title="minari.load_dataset"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.load_dataset()</span></code></a> Python function as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">minari</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;door-human-v2&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Observation space:&quot;</span><span class="p">,</span> <span class="n">dataset</span><span class="o">.</span><span class="n">observation_space</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Action space:&quot;</span><span class="p">,</span> <span class="n">dataset</span><span class="o">.</span><span class="n">action_space</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total episodes:&quot;</span><span class="p">,</span> <span class="n">dataset</span><span class="o">.</span><span class="n">total_episodes</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total steps:&quot;</span><span class="p">,</span> <span class="n">dataset</span><span class="o">.</span><span class="n">total_steps</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Observation</span> <span class="n">space</span><span class="p">:</span> <span class="n">Box</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">,</span> <span class="p">(</span><span class="mi">39</span><span class="p">,),</span> <span class="n">float64</span><span class="p">)</span>

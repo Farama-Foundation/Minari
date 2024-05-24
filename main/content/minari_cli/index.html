@@ -493,42 +493,41 @@ current content of the local dataset.</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">// Show dataset details</span>
 <span class="gp">$ </span>minari<span class="w"> </span>show<span class="w"> </span>pen-expert-v2
 
-<span class="go">┌───────────────────────────────────────────┐</span>
-<span class="go">| &lt;center&gt; &lt;b&gt; pen-expert-v2 &lt;/b&gt; &lt;/center&gt; |</span>
-<span class="go">└───────────────────────────────────────────┘</span>
+<span class="go">┌───────────────────────────────────────────────────────────────┐</span>
+<span class="go">│                           &lt;b&gt; pen-expert-v2 &lt;/b&gt;                     │</span>
+<span class="go">└───────────────────────────────────────────────────────────────┘</span>
 
-<span class="go">&lt;center&gt; &lt;b&gt; &lt;u&gt; Description &lt;/u&gt; &lt;/b&gt; &lt;/center&gt;</span>
+<span class="go">&lt;center&gt; &lt;b&gt; &lt;u&gt;Description&lt;/u&gt; &lt;/b&gt; &lt;/center&gt;</span>
 <span class="go">Trajectories have expert data from a fine-tuned RL policy provided in the &lt;a href=&quot;https://github.com/aravindr93/hand_dapg&quot;&gt;DAPG&lt;/a&gt; repository. The environment used to collect the dataset is &lt;a href=&quot;https://robotics.farama.org/envs/adroit_hand/adroit_pen/&quot;&gt;&lt;code&gt;AdroitHandPen-v1&lt;/code&gt;&lt;/a&gt;.</span>
 
-<span class="go">&lt;center&gt; &lt;b&gt; &lt;u&gt; Dataset Specs &lt;/u&gt; &lt;/b&gt; &lt;/center&gt;</span>
+<span class="go">&lt;center&gt; &lt;b&gt; &lt;u&gt;Dataset Specs&lt;/u&gt; &lt;/b&gt; &lt;/center&gt;</span>
+<span class="go">┌───────────────────┬───────────────────────────────────────────┐</span>
+<span class="go">│ &lt;b&gt;Total Steps&lt;/b&gt;       │ 499206                                    │</span>
+<span class="go">│ &lt;b&gt;Total Episodes&lt;/b&gt;    │ 4958                                      │</span>
+<span class="go">│ &lt;b&gt;Algorithm&lt;/b&gt;         │ Not provided                              │</span>
+<span class="go">│ &lt;b&gt;Author&lt;/b&gt;            │ Rodrigo de Lazcano                        │</span>
+<span class="go">│ &lt;b&gt;Email&lt;/b&gt;             │ rperezvicente@farama.org                  │</span>
+<span class="go">│ &lt;b&gt;Code Permalink&lt;/b&gt;    │ &lt;a href=&quot;https://github.com/rodrigodelazcano/d4rl-minari-dataset-generation&quot;&gt;https://github.com/rodrigodelazcano/...&lt;/a&gt;   │</span>
+<span class="go">│ &lt;b&gt;Minari Version&lt;/b&gt;    │ 0.4 (0.5.0 installed)                     │</span>
+<span class="go">│ &lt;b&gt;Download&lt;/b&gt;          │ &lt;code&gt;minari download pen-expert-v2&lt;/code&gt;             │</span>
+<span class="go">└───────────────────┴───────────────────────────────────────────┘</span>
 
-<span class="go">┌──────────────────────┬────────────────────────┐</span>
-<span class="go">| &lt;b&gt;Total Steps&lt;/b&gt;   │ 499206                         │</span>
-<span class="go">│ &lt;b&gt;Total Episodes&lt;/b&gt; │ 4958                                             │</span>
-<span class="go">│ &lt;b&gt;Algorithm&lt;/b&gt;    │ Not provided                                  │</span>
-<span class="go">│ &lt;b&gt;Author&lt;/b&gt;    │ Rodrigo de Lazcano                                 │</span>
-<span class="go">│ &lt;b&gt;Email&lt;/b&gt;        │ rperezvicente@farama.org                                    │</span>
-<span class="go">│ &lt;b&gt;Code Permalink&lt;/b&gt; │ &lt;a href=&quot;https://github.com/rodrigodelazcano/d4rl-minari-dataset-generation&quot;&gt;https://github.com/rodrigodelazcano/d4rl-minari-dataset-generation&lt;/a&gt;   │</span>
-<span class="go">│ &lt;b&gt;Minari Version&lt;/b&gt; │ 0.4  (0.5.0 installed)                        │</span>
-<span class="go">│ &lt;b&gt;Download&lt;/b&gt;    │ &lt;code&gt;minari download pen-expert-v2&lt;/code&gt;  |</span>
-<span class="go">└────────────────────┴─────────────────────────────┘</span>
-
-<span class="go">&lt;center&gt; &lt;b&gt; &lt;u&gt; Environment Specs &lt;/u&gt; &lt;/b&gt; &lt;/center&gt;</span>
-<span class="go">┌──────────────────────┬────────────────────────┐</span>
-<span class="go">| &lt;b&gt;ID&lt;/b&gt;   │ AdroitHandPen-v1    │</span>
-<span class="go">│ &lt;b&gt;Observation Space&lt;/b&gt; │ &lt;code&gt; Box(-inf, inf, (45,), float64) &lt;/code&gt;           │</span>
-<span class="go">│ &lt;b&gt;Action Space&lt;/b&gt;    │ &lt;code&gt; Box(-1.0, 1.0, (24,), float32) &lt;/code&gt;                                  │</span>
-<span class="go">│ &lt;b&gt;entry_point&lt;/b&gt;    │ &lt;code&gt;gymnasium_robotics.envs.adroit_hand.adroit_pen:AdroitHandPenEnv&lt;/code&gt;    │</span>
-<span class="go">│ &lt;b&gt;max_episode_steps&lt;/b&gt;        │ 100                              │</span>
-<span class="go">│ &lt;b&gt;reward_threshold &lt;/b&gt; │  None  │</span>
-<span class="go">│ &lt;b&gt;nondeterministic&lt;/b&gt; │ &lt;code&gt;False&lt;/code&gt;    │</span>
-<span class="go">│ &lt;b&gt;order_enforce&lt;/b&gt; │  &lt;code&gt;True&lt;/code&gt;   │</span>
-<span class="go">│ &lt;b&gt;autoreset&lt;/b&gt; │  &lt;code&gt;False&lt;/code&gt;   │</span>
-<span class="go">│ &lt;b&gt;disable_env_checker&lt;/b&gt; │  &lt;code&gt;False&lt;/code&gt;  │</span>
-<span class="go">│ &lt;b&gt;kwargs&lt;/b&gt; │  &lt;code&gt;{&#39;reward_type&#39;: &#39;dense&#39;}&lt;/code&gt;  │</span>
-<span class="go">│ &lt;b&gt;additional_wrappers&lt;/b&gt; │  &lt;code&gt;()&lt;/code&gt;  │</span>
-<span class="go">│ &lt;b&gt;vector_entry_point&lt;/b&gt; │   &lt;code&gt;None&lt;/code&gt; │</span>
-<span class="go">└────────────────────┴─────────────────────────────┘</span>
+<span class="go">&lt;center&gt; &lt;b&gt; &lt;u&gt;Environment Specs&lt;/u&gt; &lt;/b&gt; &lt;/center&gt;</span>
+<span class="go">┌─────────────────────┬─────────────────────────────────────────┐</span>
+<span class="go">│ &lt;b&gt;ID&lt;/b&gt;                  │ AdroitHandPen-v1                        │</span>
+<span class="go">│ &lt;b&gt;Observation Space&lt;/b&gt;   │ &lt;code&gt;Box(&lt;font color=&quot;#f01e2c&quot;&gt;-&lt;/font&gt;&lt;font color=&quot;#a256f8&quot;&gt;inf&lt;/font&gt;, &lt;font color=&quot;#a256f8&quot;&gt;inf&lt;/font&gt;, (&lt;font color=&quot;#a256f8&quot;&gt;45&lt;/font&gt;,), float64) &lt;/code&gt;         │</span>
+<span class="go">│ &lt;b&gt;Action Space&lt;/b&gt;        │ &lt;code&gt;Box(&lt;font color=&quot;#f01e2c&quot;&gt;-&lt;/font&gt;&lt;font color=&quot;#a256f8&quot;&gt;1.0&lt;/font&gt;, &lt;font color=&quot;#a256f8&quot;&gt;1.0&lt;/font&gt;, (&lt;font color=&quot;#a256f8&quot;&gt;24&lt;/font&gt;,), float32) &lt;/code&gt;         │</span>
+<span class="go">│ &lt;b&gt;entry_point&lt;/b&gt;         │ gymnasium_robotics&lt;font color=&quot;#f01e2c&quot;&gt;.&lt;/font&gt;envs&lt;font color=&quot;#f01e2c&quot;&gt;.&lt;/font&gt;adroit_h...     │</span>
+<span class="go">│ &lt;b&gt;max_episode_steps&lt;/b&gt;   │ 100                                     │</span>
+<span class="go">│ &lt;b&gt;reward_threshold &lt;/b&gt;   │ &lt;font color=&quot;#A1EFE4&quot;&gt;None&lt;/font&gt;                                    │</span>
+<span class="go">│ &lt;b&gt;nondeterministic&lt;/b&gt;    │ &lt;font color=&quot;#A1EFE4&quot;&gt;False&lt;/font&gt;                                   │</span>
+<span class="go">│ &lt;b&gt;order_enforce&lt;/b&gt;       │ &lt;font color=&quot;#A1EFE4&quot;&gt;True&lt;/font&gt;                                    │</span>
+<span class="go">│ &lt;b&gt;autoreset&lt;/b&gt;           │ &lt;font color=&quot;#A1EFE4&quot;&gt;False&lt;/font&gt;                                   │</span>
+<span class="go">│ &lt;b&gt;disable_env_checker&lt;/b&gt; │ &lt;font color=&quot;#A1EFE4&quot;&gt;False&lt;/font&gt;                                   │</span>
+<span class="go">│ &lt;b&gt;kwargs&lt;/b&gt;              │ {&lt;font color=&quot;#FED000&quot;&gt;&#39;reward_type&#39;&lt;/font&gt;: &lt;font color=&quot;#FED000&quot;&gt;&#39;dense&#39;&lt;/font&gt;}                │</span>
+<span class="go">│ &lt;b&gt;additional_wrappers&lt;/b&gt; │ ()                                      │</span>
+<span class="go">│ &lt;b&gt;vector_entry_point&lt;/b&gt;  │ &lt;font color=&quot;#A1EFE4&quot;&gt;None&lt;/font&gt;                                    │</span>
+<span class="go">└─────────────────────┴─────────────────────────────────────────┘</span>
 </pre></div>
 </div>
 </div>
