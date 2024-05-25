@@ -127,8 +127,8 @@ sphinx_github_changelog_token = os.environ.get("SPHINX_GITHUB_CHANGELOG_TOKEN")
 
 
 def move_404(app, _):
-    src = app.outdir.joinpath('404/index.html')
-    dst = app.outdir.joinpath('404.html')
+    src = app.outdir.joinpath("404/index.html")
+    dst = app.outdir.joinpath("404.html")
     shutil.move(src, dst)
 
     with open(dst, "r+") as fp:
@@ -140,11 +140,11 @@ def move_404(app, _):
 
 
 def move_dataset_gifs(app, _):
-    src = app.srcdir.joinpath('datasets/gifs')
-    dst = app.outdir.joinpath('datasets/gifs')
+    src = app.srcdir.joinpath("datasets/gifs")
+    dst = app.outdir.joinpath("datasets/gifs")
     shutil.move(src, dst)
 
 
 def setup(app):
-    app.connect('build-finished', move_404)
-    app.connect('build-finished', move_dataset_gifs)
+    app.connect("build-finished", move_404)
+    app.connect("build-finished", move_dataset_gifs)
