@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import logging
 import os
 import secrets
 import shutil
@@ -136,13 +137,16 @@ class DataCollector(gym.Wrapper):
             truncated=truncated,
         )
 
-        # Check that the stored obs/act spaces comply with the dataset spaces
-        assert self._storage.observation_space.contains(
-            step_data["observation"]
-        ), "Observation is not in observation space."
-        assert self._storage.action_space.contains(
-            step_data["action"]
-        ), "Action is not in action space."
+        if not self._storage.observation_space.contains(step_data["observation"]):
+            logging.warning(
+                "Observation is not in observation space.\n"
+                f"Observation: {step_data['observation']}\nSpace: {self._storage.observation_space}"
+            )
+        if not self._storage.action_space.contains(step_data["action"]):
+            logging.warning(
+                "Action is not in action space.\n"
+                f"Action: {step_data['action']}\nSpace: {self._storage.action_space}",
+            )
 
         assert self._buffer is not None
         if not self._record_infos:
@@ -189,6 +193,12 @@ class DataCollector(gym.Wrapper):
 
         obs, info = self.env.reset(seed=seed, options=options)
         step_data = self._step_data_callback(env=self.env, obs=obs, info=info)
+
+        if not self._storage.observation_space.contains(step_data["observation"]):
+            logging.warning(
+                "Observation is not in observation space.\n"
+                f"Observation: {step_data['observation']}\nSpace: {self._storage.observation_space}"
+            )
 
         self._buffer = EpisodeBuffer(
             id=self._episode_id,
