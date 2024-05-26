@@ -152,7 +152,9 @@ def _encode_space(space: gym.Space, values: Any, pad: int = 0):
             arrays.append(_encode_space(space[i], value, pad=pad))
         return pa.StructArray.from_arrays(arrays, names=names)
     elif isinstance(space, gym.spaces.Box):
-        values = np.asarray(values).reshape(-1, np.prod(space.shape))
+        values = np.asarray(values)
+        assert values.shape[1:] == space.shape
+        values = values.reshape(values.shape[0], -1)
         values = np.pad(values, ((0, pad), (0, 0)))
         dtype = pa.list_(pa.from_numpy_dtype(space.dtype), list_size=values.shape[1])
         return pa.FixedSizeListArray.from_arrays(values.reshape(-1), type=dtype)
