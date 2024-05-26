@@ -365,7 +365,10 @@
 <h1>Umaze<a class="headerlink" href="#umaze" title="Link to this heading">¶</a></h1>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
-<p>The data is collected from the <a class="reference external" href="https://robotics.farama.org/envs/maze/point_maze/"><code class="docutils literal notranslate"><span class="pre">PointMaze_UMaze-v3</span></code></a> environment, which contains a U shape maze. The agent uses a PD controller to follow a path of waypoints generated with QIteration until it reaches the goal. The task is continuing which means that when the agent reaches the goal the environment generates a new random goal without resetting the location of the agent. The reward function is sparse, only returning a value of 1 if the goal is reached, otherwise 0. To add variance to the collected paths random noise is added to the actions taken by the agent.## Dataset Specs</p>
+<p>The data is collected from the <a class="reference external" href="https://robotics.farama.org/envs/maze/point_maze/"><code class="docutils literal notranslate"><span class="pre">PointMaze_UMaze-v3</span></code></a> environment, which contains a U shape maze. The agent uses a PD controller to follow a path of waypoints generated with QIteration until it reaches the goal. The task is continuing which means that when the agent reaches the goal the environment generates a new random goal without resetting the location of the agent. The reward function is sparse, only returning a value of 1 if the goal is reached, otherwise 0. To add variance to the collected paths random noise is added to the actions taken by the agent.</p>
+</section>
+<section id="dataset-specs">
+<h2>Dataset Specs<a class="headerlink" href="#dataset-specs" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -599,6 +602,7 @@ To read more about what each parameter means you can have a look at the Gymnasiu
               <ul>
 <li><a class="reference internal" href="#">Umaze</a><ul>
 <li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#dataset-specs">Dataset Specs</a></li>
 <li><a class="reference internal" href="#environment-specs">Environment Specs</a></li>
 <li><a class="reference internal" href="#evaluation-environment-specs">Evaluation Environment Specs</a></li>
 </ul>

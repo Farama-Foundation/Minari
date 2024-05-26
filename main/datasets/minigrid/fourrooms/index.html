@@ -363,9 +363,13 @@
             
             <section class="tex2jax_ignore mathjax_ignore" id="fourrooms">
 <h1>Fourrooms<a class="headerlink" href="#fourrooms" title="Link to this heading">¶</a></h1>
-<img src="/home/runner/work/Minari/Minari/docs/_scripts/../datasets/gifs/minigrid-fourrooms-v0.gif" width="200" style="display: block; margin:0 auto"/>
-## Description
-<p>This dataset was generated using an expert policy with full observability that goes straight to the goal.## Dataset Specs</p>
+<img src="/datasets/gifs/minigrid-fourrooms-v0.gif" width="200" style="display: block; margin:0 auto"/>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
+<p>This dataset was generated using an expert policy with full observability that goes straight to the goal.</p>
+</section>
+<section id="dataset-specs">
+<h2>Dataset Specs<a class="headerlink" href="#dataset-specs" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper colwidths-auto docutils container">
 <table class="docutils align-default">
 <thead>
@@ -401,6 +405,7 @@
 </tbody>
 </table>
 </div>
+</section>
 <section id="environment-specs">
 <h2>Environment Specs<a class="headerlink" href="#environment-specs" title="Link to this heading">¶</a></h2>
 <div class="admonition note">
@@ -427,7 +432,7 @@ To read more about what each parameter means you can have a look at the Gymnasiu
 <td><p>MiniGrid-FourRooms-v0</p></td>
 </tr>
 <tr class="row-odd"><td><p>Observation Space</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">Dict('direction':</span> <span class="pre">Discrete(4),</span> <span class="pre">'image':</span> <span class="pre">Box(0,</span> <span class="pre">255,</span> <span class="pre">(7,</span> <span class="pre">7,</span> <span class="pre">3),</span> <span class="pre">uint8),</span> <span class="pre">'mission':</span> <span class="pre">MissionSpace(&lt;function</span> <span class="pre">FourRoomsEnv._gen_mission</span> <span class="pre">at</span> <span class="pre">0x7f35bc1fd310&gt;,</span> <span class="pre">None))</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Dict('direction':</span> <span class="pre">Discrete(4),</span> <span class="pre">'image':</span> <span class="pre">Box(0,</span> <span class="pre">255,</span> <span class="pre">(7,</span> <span class="pre">7,</span> <span class="pre">3),</span> <span class="pre">uint8),</span> <span class="pre">'mission':</span> <span class="pre">MissionSpace(&lt;function</span> <span class="pre">FourRoomsEnv._gen_mission</span> <span class="pre">at</span> <span class="pre">0x7fd4185a7940&gt;,</span> <span class="pre">None))</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>Action Space</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Discrete(7)</span></code></p></td>
@@ -532,6 +537,8 @@ To read more about what each parameter means you can have a look at the Gymnasiu
             <div class="toc-tree">
               <ul>
 <li><a class="reference internal" href="#">Fourrooms</a><ul>
+<li><a class="reference internal" href="#description">Description</a></li>
+<li><a class="reference internal" href="#dataset-specs">Dataset Specs</a></li>
 <li><a class="reference internal" href="#environment-specs">Environment Specs</a></li>
 <li><a class="reference internal" href="#evaluation-environment-specs">Evaluation Environment Specs</a></li>
 </ul>
