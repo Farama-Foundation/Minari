@@ -14,7 +14,6 @@ from tests.common import (
     check_episode_data_integrity,
     check_load_and_delete_dataset,
     get_sample_buffer_for_dataset_from_env,
-    register_dummy_envs,
 )
 
 
@@ -168,7 +167,9 @@ def test_record_infos_collector_env(info_override, register_dummy_envs):
     ],
 )
 @pytest.mark.parametrize("data_format", storage_registry.keys())
-def test_generate_dataset_with_external_buffer(dataset_id, env_id, data_format, register_dummy_envs):
+def test_generate_dataset_with_external_buffer(
+    dataset_id, env_id, data_format, register_dummy_envs
+):
     """Test create dataset from external buffers without using DataCollector."""
     buffer = []
 
@@ -246,7 +247,9 @@ def test_generate_dataset_with_external_buffer(dataset_id, env_id, data_format, 
 
 @pytest.mark.parametrize("is_env_needed", [True, False])
 @pytest.mark.parametrize("data_format", storage_registry.keys())
-def test_generate_dataset_with_space_subset_external_buffer(is_env_needed, data_format, register_dummy_envs):
+def test_generate_dataset_with_space_subset_external_buffer(
+    is_env_needed, data_format, register_dummy_envs
+):
     """Test create dataset from external buffers without using DataCollector or environment."""
     dataset_id = "dummy-dict-test-v0"
 

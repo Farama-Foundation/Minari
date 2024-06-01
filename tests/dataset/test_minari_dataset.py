@@ -18,7 +18,6 @@ from tests.common import (
     check_episode_data_integrity,
     check_load_and_delete_dataset,
     create_dummy_dataset_with_collecter_env_helper,
-    register_dummy_envs,
     test_spaces,
 )
 

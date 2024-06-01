@@ -12,11 +12,7 @@ from minari.data_collector.callbacks.step_callback import StepData
 from minari.data_collector.episode_buffer import EpisodeBuffer
 from minari.dataset._storages import registry as storage_registry
 from minari.dataset.minari_storage import MinariStorage
-from tests.common import (
-    check_data_integrity,
-    check_load_and_delete_dataset,
-    register_dummy_envs,
-)
+from tests.common import check_data_integrity, check_load_and_delete_dataset
 
 
 file_path = os.path.join(os.path.expanduser("~"), ".minari", "datasets")

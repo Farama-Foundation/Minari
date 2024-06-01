@@ -11,7 +11,6 @@ from tests.common import (
     check_env_recovery,
     check_env_recovery_with_subset_spaces,
     check_load_and_delete_dataset,
-    register_dummy_envs,
 )
 
 

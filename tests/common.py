@@ -4,9 +4,7 @@ from typing import Any, Dict, Iterable, List, Optional, Union
 
 import gymnasium as gym
 import numpy as np
-import pytest
 from gymnasium import spaces
-from gymnasium.envs.registration import register, registry
 from gymnasium.utils.env_checker import data_equivalence
 
 import minari
@@ -284,32 +282,6 @@ class DummyComboEnv(gym.Env):
         self.timestep = 0
         self.observation_space.seed(seed)
         return self.observation_space.sample(), {}
-
-
-@pytest.fixture
-def register_dummy_envs():
-    env_names = [
-        "DummyBoxEnv",
-        "DummyInfoEnv",
-        "DummyInconsistentInfoEnv",
-        "DummyMultiDimensionalBoxEnv",
-        "DummyTupleDiscreteBoxEnv",
-        "DummyDictEnv",
-        "DummyTupleEnv",
-        "DummyTextEnv",
-        "DummyComboEnv",
-    ]
-    for env_name in env_names:
-        register(
-            id=f"{env_name}-v0",
-            entry_point=f"tests.common:{env_name}",
-            max_episode_steps=5,
-        )
-
-    yield
-
-    for env_name in env_names:
-        registry.pop(f"{env_name}-v0")
 
 
 test_spaces = [

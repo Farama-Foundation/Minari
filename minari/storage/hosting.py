@@ -235,7 +235,9 @@ def list_remote_datasets(
     for blob in blobs:
         try:
             if blob.name.endswith(METADATA_FILE_NAME):
-                metadata = json.loads(blob.download_as_bytes(client=None).decode("utf-8"))
+                metadata = json.loads(
+                    blob.download_as_bytes(client=None).decode("utf-8")
+                )
                 if compatible_minari_version and __version__ not in SpecifierSet(
                     metadata["minari_version"]
                 ):

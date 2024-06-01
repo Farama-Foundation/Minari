@@ -8,7 +8,6 @@ from tests.common import (
     check_infos_equal,
     check_load_and_delete_dataset,
     get_info_at_step_index,
-    register_dummy_envs,
 )
 
 
