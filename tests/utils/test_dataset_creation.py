@@ -111,7 +111,7 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id, register_dummy_
         },
     ],
 )
-def test_record_infos_collector_env(info_override):
+def test_record_infos_collector_env(info_override, register_dummy_envs):
     """Test DataCollector wrapper and Minari dataset creation including infos."""
     dataset_id = "dummy-mutable-info-box-test-v0"
     env = gym.make("DummyInfoEnv-v0", info=info_override)
@@ -168,7 +168,7 @@ def test_record_infos_collector_env(info_override):
     ],
 )
 @pytest.mark.parametrize("data_format", storage_registry.keys())
-def test_generate_dataset_with_external_buffer(dataset_id, env_id, data_format):
+def test_generate_dataset_with_external_buffer(dataset_id, env_id, data_format, register_dummy_envs):
     """Test create dataset from external buffers without using DataCollector."""
     buffer = []
 
@@ -246,7 +246,7 @@ def test_generate_dataset_with_external_buffer(dataset_id, env_id, data_format):
 
 @pytest.mark.parametrize("is_env_needed", [True, False])
 @pytest.mark.parametrize("data_format", storage_registry.keys())
-def test_generate_dataset_with_space_subset_external_buffer(is_env_needed, data_format):
+def test_generate_dataset_with_space_subset_external_buffer(is_env_needed, data_format, register_dummy_envs):
     """Test create dataset from external buffers without using DataCollector or environment."""
     dataset_id = "dummy-dict-test-v0"
 
