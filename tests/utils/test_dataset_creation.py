@@ -19,7 +19,6 @@ from tests.common import (
 
 
 CODELINK = "https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/test_dataset_creation.py"
-register_dummy_envs()
 
 
 @pytest.mark.parametrize(
@@ -34,7 +33,7 @@ register_dummy_envs()
         ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
     ],
 )
-def test_generate_dataset_with_collector_env(dataset_id, env_id):
+def test_generate_dataset_with_collector_env(dataset_id, env_id, register_dummy_envs):
     """Test DataCollector wrapper and Minari dataset creation."""
     env = gym.make(env_id)
 

@@ -434,8 +434,8 @@ def _generate_dataset_metadata(
 
     if eval_env is None:
         warnings.warn(
-            f"`eval_env` is set to None. If another environment is intended to be used for evaluation please specify corresponding Gymnasium environment (gym.Env | gym.envs.registration.EnvSpec).\
-              If None the environment used to collect the data (`env={env_spec}`) will be used for this purpose.",
+            f"`eval_env` is set to None. If another environment is intended to be used for evaluation please specify corresponding Gymnasium environment (gym.Env | gym.envs.registration.EnvSpec). "
+            f"If None the environment used to collect the data (`env={env_spec}`) will be used for this purpose.",
             UserWarning,
         )
         eval_env_spec = env_spec

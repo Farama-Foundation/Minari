@@ -15,9 +15,6 @@ from tests.common import (
 )
 
 
-register_dummy_envs()
-
-
 class CustomSubsetStepDataCallback(StepDataCallback):
     def __call__(self, env, **kwargs):
         step_data = super().__call__(env, **kwargs)
@@ -48,7 +45,7 @@ class CustomSubsetInfoPadStepDataCallback(StepDataCallback):
 
 
 @pytest.mark.parametrize("data_format", storage_registry.keys())
-def test_data_collector_step_data_callback(data_format):
+def test_data_collector_step_data_callback(data_format, register_dummy_envs):
     """Test DataCollector wrapper and Minari dataset creation."""
     dataset_id = "dummy-dict-test-v0"
     env = gym.make("DummyDictEnv-v0")
@@ -114,7 +111,9 @@ def test_data_collector_step_data_callback(data_format):
 
 
 @pytest.mark.parametrize("data_format", storage_registry.keys())
-def test_data_collector_step_data_callback_info_correction(data_format):
+def test_data_collector_step_data_callback_info_correction(
+    data_format, register_dummy_envs
+):
     """Test DataCollector wrapper and Minari dataset creation."""
     dataset_id = "dummy-inconsistent-info-v0"
     env = gym.make("DummyInconsistentInfoEnv-v0")

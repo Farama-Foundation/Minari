@@ -19,8 +19,6 @@ from tests.common import (
 )
 
 
-register_dummy_envs()
-
 file_path = os.path.join(os.path.expanduser("~"), ".minari", "datasets")
 
 
@@ -195,7 +193,9 @@ def test_episode_metadata(tmp_dataset_dir, data_format):
     ],
 )
 @pytest.mark.parametrize("data_format", storage_registry.keys())
-def test_minari_get_dataset_size_from_collector_env(dataset_id, env_id, data_format):
+def test_minari_get_dataset_size_from_collector_env(
+    dataset_id, env_id, data_format, register_dummy_envs
+):
     """Test get_dataset_size method for dataset made with DataCollector environment."""
     # delete the test dataset if it already exists
     local_datasets = minari.list_local_datasets()
@@ -250,7 +250,9 @@ def test_minari_get_dataset_size_from_collector_env(dataset_id, env_id, data_for
     ],
 )
 @pytest.mark.parametrize("data_format", storage_registry.keys())
-def test_minari_get_dataset_size_from_buffer(dataset_id, env_id, data_format):
+def test_minari_get_dataset_size_from_buffer(
+    dataset_id, env_id, data_format, register_dummy_envs
+):
     """Test get_dataset_size method for dataset made using create_dataset_from_buffers method."""
     buffer = []
 

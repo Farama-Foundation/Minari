@@ -4,8 +4,9 @@ from typing import Any, Dict, Iterable, List, Optional, Union
 
 import gymnasium as gym
 import numpy as np
+import pytest
 from gymnasium import spaces
-from gymnasium.envs.registration import register
+from gymnasium.envs.registration import register, registry
 from gymnasium.utils.env_checker import data_equivalence
 
 import minari
@@ -285,60 +286,30 @@ class DummyComboEnv(gym.Env):
         return self.observation_space.sample(), {}
 
 
+@pytest.fixture
 def register_dummy_envs():
-    register(
-        id="DummyBoxEnv-v0",
-        entry_point="tests.common:DummyBoxEnv",
-        max_episode_steps=5,
-    )
+    env_names = [
+        "DummyBoxEnv",
+        "DummyInfoEnv",
+        "DummyInconsistentInfoEnv",
+        "DummyMultiDimensionalBoxEnv",
+        "DummyTupleDiscreteBoxEnv",
+        "DummyDictEnv",
+        "DummyTupleEnv",
+        "DummyTextEnv",
+        "DummyComboEnv",
+    ]
+    for env_name in env_names:
+        register(
+            id=f"{env_name}-v0",
+            entry_point=f"tests.common:{env_name}",
+            max_episode_steps=5,
+        )
 
-    register(
-        id="DummyInfoEnv-v0",
-        entry_point="tests.common:DummyInfoEnv",
-        max_episode_steps=5,
-    )
+    yield
 
-    register(
-        id="DummyInconsistentInfoEnv-v0",
-        entry_point="tests.common:DummyInconsistentInfoEnv",
-        max_episode_steps=5,
-    )
-
-    register(
-        id="DummyMultiDimensionalBoxEnv-v0",
-        entry_point="tests.common:DummyMultiDimensionalBoxEnv",
-        max_episode_steps=5,
-    )
-
-    register(
-        id="DummyTupleDiscreteBoxEnv-v0",
-        entry_point="tests.common:DummyTupleDiscreteBoxEnv",
-        max_episode_steps=5,
-    )
-
-    register(
-        id="DummyDictEnv-v0",
-        entry_point="tests.common:DummyDictEnv",
-        max_episode_steps=5,
-    )
-
-    register(
-        id="DummyTupleEnv-v0",
-        entry_point="tests.common:DummyTupleEnv",
-        max_episode_steps=5,
-    )
-
-    register(
-        id="DummyTextEnv-v0",
-        entry_point="tests.common:DummyTextEnv",
-        max_episode_steps=5,
-    )
-
-    register(
-        id="DummyComboEnv-v0",
-        entry_point="tests.common:DummyComboEnv",
-        max_episode_steps=5,
-    )
+    for env_name in env_names:
+        registry.pop(f"{env_name}-v0")
 
 
 test_spaces = [

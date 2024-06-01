@@ -23,9 +23,6 @@ from tests.common import (
 )
 
 
-register_dummy_envs()
-
-
 @pytest.mark.parametrize("space", test_spaces)
 def test_episode_data(space: gym.Space):
     id = np.random.randint(1024)
@@ -73,7 +70,9 @@ def test_episode_data(space: gym.Space):
     ],
 )
 @pytest.mark.parametrize("data_format", storage_registry.keys())
-def test_update_dataset_from_collector_env(dataset_id, env_id, data_format):
+def test_update_dataset_from_collector_env(
+    dataset_id, env_id, data_format, register_dummy_envs
+):
     local_datasets = minari.list_local_datasets()
     if dataset_id in local_datasets:
         minari.delete_dataset(dataset_id)
@@ -126,7 +125,9 @@ def test_update_dataset_from_collector_env(dataset_id, env_id, data_format):
     ],
 )
 @pytest.mark.parametrize("data_format", storage_registry.keys())
-def test_filter_episodes_and_subsequent_updates(dataset_id, env_id, data_format):
+def test_filter_episodes_and_subsequent_updates(
+    dataset_id, env_id, data_format, register_dummy_envs
+):
     """Tests to make sure that episodes are filtered filtered correctly.
 
     Additionally ensures indices are correctly updated when adding more episodes to a filtered dataset.
@@ -289,7 +290,7 @@ def test_filter_episodes_and_subsequent_updates(dataset_id, env_id, data_format)
     ],
 )
 @pytest.mark.parametrize("data_format", storage_registry.keys())
-def test_sample_episodes(dataset_id, env_id, data_format):
+def test_sample_episodes(dataset_id, env_id, data_format, register_dummy_envs):
     local_datasets = minari.list_local_datasets()
     if dataset_id in local_datasets:
         minari.delete_dataset(dataset_id)
@@ -333,7 +334,7 @@ def test_sample_episodes(dataset_id, env_id, data_format):
     ],
 )
 @pytest.mark.parametrize("data_format", storage_registry.keys())
-def test_iterate_episodes(dataset_id, env_id, data_format):
+def test_iterate_episodes(dataset_id, env_id, data_format, register_dummy_envs):
     local_datasets = minari.list_local_datasets()
     if dataset_id in local_datasets:
         minari.delete_dataset(dataset_id)
@@ -382,7 +383,9 @@ def test_iterate_episodes(dataset_id, env_id, data_format):
     ],
 )
 @pytest.mark.parametrize("data_format", storage_registry.keys())
-def test_update_dataset_from_buffer(dataset_id, env_id, data_format):
+def test_update_dataset_from_buffer(
+    dataset_id, env_id, data_format, register_dummy_envs
+):
     local_datasets = minari.list_local_datasets()
     if dataset_id in local_datasets:
         minari.delete_dataset(dataset_id)
