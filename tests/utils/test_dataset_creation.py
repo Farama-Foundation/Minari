@@ -1,3 +1,5 @@
+import dataclasses
+
 import gymnasium as gym
 import numpy as np
 import pytest
@@ -180,6 +182,7 @@ def test_generate_dataset_with_external_buffer(
         minari.delete_dataset(dataset_id)
 
     env = gym.make(env_id)
+    print(f"{env.spec=}")
 
     num_episodes = 10
     seed = 42
@@ -208,12 +211,14 @@ def test_generate_dataset_with_external_buffer(
         episode_buffer = EpisodeBuffer(observations=observation)
 
     # Save a different environment spec for evaluation (different max_episode_steps)
-    eval_env_spec = gym.spec(env_id)
-    eval_env_spec.max_episode_steps = 123
-    eval_env = gym.make(eval_env_spec)
+    gym.registry[f"eval/{env_id}"] = dataclasses.replace(
+        gym.spec(env_id), max_episode_steps=123, id=f"eval/{env_id}"
+    )
+
+    eval_env = gym.make(f"eval/{env_id}")
     # Test for different types of env and eval_env (gym.Env, EnvSpec, and str id)
     for env_dataset_id, eval_env_dataset_id in zip(
-        [env, env.spec, env_id], [eval_env, eval_env.spec, env_id]
+        [env, env.spec, env_id], [eval_env, eval_env.spec, f"eval/{env_id}"]
     ):
         # Create Minari dataset and store locally
         dataset = minari.create_dataset_from_buffers(
