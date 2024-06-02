@@ -182,7 +182,6 @@ def test_generate_dataset_with_external_buffer(
         minari.delete_dataset(dataset_id)
 
     env = gym.make(env_id)
-    print(f"{env.spec=}")
 
     num_episodes = 10
     seed = 42
