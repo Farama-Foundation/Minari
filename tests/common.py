@@ -278,7 +278,7 @@ class DummyComboEnv(gym.Env):
 
         return self.observation_space.sample(), 0, terminated, False, {}
 
-    def reset(self, seed=0, options=None):
+    def reset(self, seed=None, options=None):
         self.timestep = 0
         self.observation_space.seed(seed)
         return self.observation_space.sample(), {}
