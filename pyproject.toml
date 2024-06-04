@@ -11,7 +11,7 @@ readme = "README.md"
 requires-python = ">= 3.8"
 authors = [{ name = "Farama Foundation", email = "contact@farama.org" }]
 license = { text = "MIT License" }
-keywords = ["Reinforcement Learning", "Offline RL", "RL", "AI", "gymnasium", "Farama"]
+keywords = ["Reinforcement Learning", "Offline RL", "RL", "AI", "Gymnasium", "Farama"]
 classifiers = [
     "Development Status :: 4 - Beta",  # change to `5 - Production/Stable` when ready
     "License :: OSI Approved :: MIT License",
@@ -110,7 +110,6 @@ reportUnboundVariable = "warning"
 
 [tool.pytest.ini_options]
 filterwarnings = [
-#    'ignore:.*The environment .* is out of date',
     'ignore:.*`eval_env` is set to None',
     "ignore:.*`minari_version` is set to None",
     "ignore:.*`description` is set to None",
