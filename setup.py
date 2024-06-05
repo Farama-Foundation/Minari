@@ -1,4 +1,3 @@
-
 """Setups the project."""
 
 import pathlib
