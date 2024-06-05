@@ -107,6 +107,9 @@ class MinariDataset:
             env_spec = env_spec.replace('"order_enforce": true,\n        ', "").replace(
                 '"apply_api_compatibility": false,\n        ', ""
             )
+            env_spec = env_spec.replace('"autoreset": false, ', "").replace(
+                '"apply_api_compatibility": false, ', ""
+            )
             env_spec = EnvSpec.from_json(env_spec)
         self._env_spec = env_spec
 

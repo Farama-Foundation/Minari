@@ -42,7 +42,7 @@ dynamic = ["version"]
 [project.optional-dependencies]
 testing = [
     "pytest>=7.1.3",
-    "gymnasium-robotics@git+https://github.com/farama-Foundation/gymnasium-robotics",
+    "gymnasium-robotics@git+https://github.com/farama-Foundation/gymnasium-robotics",  # v1.0.0 release hasn't been made
     "mktestdocs",
     "torchrl",
 #    "agilerl"  # requires updating to gymnasium v1.0
