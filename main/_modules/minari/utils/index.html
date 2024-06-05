@@ -803,8 +803,8 @@
 
     <span class="k">if</span> <span class="n">eval_env</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;`eval_env` is set to None. If another environment is intended to be used for evaluation please specify corresponding Gymnasium environment (gym.Env | gym.envs.registration.EnvSpec).</span><span class="se">\</span>
-<span class="s2">              If None the environment used to collect the data (`env=</span><span class="si">{</span><span class="n">env_spec</span><span class="si">}</span><span class="s2">`) will be used for this purpose.&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;`eval_env` is set to None. If another environment is intended to be used for evaluation please specify corresponding Gymnasium environment (gym.Env | gym.envs.registration.EnvSpec). &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;If None the environment used to collect the data (`env=</span><span class="si">{</span><span class="n">env_spec</span><span class="si">}</span><span class="s2">`) will be used for this purpose.&quot;</span><span class="p">,</span>
             <span class="ne">UserWarning</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">eval_env_spec</span> <span class="o">=</span> <span class="n">env_spec</span>
