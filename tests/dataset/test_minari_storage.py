@@ -12,14 +12,8 @@ from minari.data_collector.callbacks.step_callback import StepData
 from minari.data_collector.episode_buffer import EpisodeBuffer
 from minari.dataset._storages import registry as storage_registry
 from minari.dataset.minari_storage import MinariStorage
-from tests.common import (
-    check_data_integrity,
-    check_load_and_delete_dataset,
-    register_dummy_envs,
-)
+from tests.common import check_data_integrity, check_load_and_delete_dataset
 
-
-register_dummy_envs()
 
 file_path = os.path.join(os.path.expanduser("~"), ".minari", "datasets")
 
@@ -195,7 +189,9 @@ def test_episode_metadata(tmp_dataset_dir, data_format):
     ],
 )
 @pytest.mark.parametrize("data_format", storage_registry.keys())
-def test_minari_get_dataset_size_from_collector_env(dataset_id, env_id, data_format):
+def test_minari_get_dataset_size_from_collector_env(
+    dataset_id, env_id, data_format, register_dummy_envs
+):
     """Test get_dataset_size method for dataset made with DataCollector environment."""
     # delete the test dataset if it already exists
     local_datasets = minari.list_local_datasets()
@@ -250,7 +246,9 @@ def test_minari_get_dataset_size_from_collector_env(dataset_id, env_id, data_for
     ],
 )
 @pytest.mark.parametrize("data_format", storage_registry.keys())
-def test_minari_get_dataset_size_from_buffer(dataset_id, env_id, data_format):
+def test_minari_get_dataset_size_from_buffer(
+    dataset_id, env_id, data_format, register_dummy_envs
+):
     """Test get_dataset_size method for dataset made using create_dataset_from_buffers method."""
     buffer = []
 

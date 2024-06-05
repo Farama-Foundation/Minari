@@ -8,13 +8,10 @@ from tests.common import (
     check_infos_equal,
     check_load_and_delete_dataset,
     get_info_at_step_index,
-    register_dummy_envs,
 )
 
 
 MAX_UINT64 = np.iinfo(np.uint64).max
-
-register_dummy_envs()
 
 
 class ForceTruncateStepDataCallback(StepDataCallback):
@@ -105,7 +102,7 @@ def get_single_step_from_episode(episode: EpisodeData, index: int) -> EpisodeDat
         ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
     ],
 )
-def test_truncation_without_reset(dataset_id, env_id, data_format):
+def test_truncation_without_reset(dataset_id, env_id, data_format, register_dummy_envs):
     """Test new episode creation when environment is truncated and env.reset is not called."""
     num_steps = 50
     num_episodes = int(num_steps / ForceTruncateStepDataCallback.episode_steps)
@@ -159,7 +156,7 @@ def test_truncation_without_reset(dataset_id, env_id, data_format):
 
 @pytest.mark.parametrize("data_format", storage_registry.keys())
 @pytest.mark.parametrize("seed", [None, 0, 42, MAX_UINT64])
-def test_reproducibility(seed, data_format):
+def test_reproducibility(seed, data_format, register_dummy_envs):
     """Test episodes are reproducible, even if an explicit reset seed is not set."""
     dataset_id = "dummy-box-test-v0"
     env_id = "DummyBoxEnv-v0"

@@ -1,3 +1,5 @@
+import dataclasses
+
 import gymnasium as gym
 import numpy as np
 import pytest
@@ -14,12 +16,10 @@ from tests.common import (
     check_episode_data_integrity,
     check_load_and_delete_dataset,
     get_sample_buffer_for_dataset_from_env,
-    register_dummy_envs,
 )
 
 
 CODELINK = "https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/test_dataset_creation.py"
-register_dummy_envs()
 
 
 @pytest.mark.parametrize(
@@ -34,7 +34,7 @@ register_dummy_envs()
         ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
     ],
 )
-def test_generate_dataset_with_collector_env(dataset_id, env_id):
+def test_generate_dataset_with_collector_env(dataset_id, env_id, register_dummy_envs):
     """Test DataCollector wrapper and Minari dataset creation."""
     env = gym.make(env_id)
 
@@ -112,7 +112,7 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id):
         },
     ],
 )
-def test_record_infos_collector_env(info_override):
+def test_record_infos_collector_env(info_override, register_dummy_envs):
     """Test DataCollector wrapper and Minari dataset creation including infos."""
     dataset_id = "dummy-mutable-info-box-test-v0"
     env = gym.make("DummyInfoEnv-v0", info=info_override)
@@ -169,7 +169,9 @@ def test_record_infos_collector_env(info_override):
     ],
 )
 @pytest.mark.parametrize("data_format", storage_registry.keys())
-def test_generate_dataset_with_external_buffer(dataset_id, env_id, data_format):
+def test_generate_dataset_with_external_buffer(
+    dataset_id, env_id, data_format, register_dummy_envs
+):
     """Test create dataset from external buffers without using DataCollector."""
     buffer = []
 
@@ -208,12 +210,14 @@ def test_generate_dataset_with_external_buffer(dataset_id, env_id, data_format):
         episode_buffer = EpisodeBuffer(observations=observation)
 
     # Save a different environment spec for evaluation (different max_episode_steps)
-    eval_env_spec = gym.spec(env_id)
-    eval_env_spec.max_episode_steps = 123
-    eval_env = gym.make(eval_env_spec)
+    gym.registry[f"eval/{env_id}"] = dataclasses.replace(
+        gym.spec(env_id), max_episode_steps=123, id=f"eval/{env_id}"
+    )
+
+    eval_env = gym.make(f"eval/{env_id}")
     # Test for different types of env and eval_env (gym.Env, EnvSpec, and str id)
     for env_dataset_id, eval_env_dataset_id in zip(
-        [env, env.spec, env_id], [eval_env, eval_env.spec, env_id]
+        [env, env.spec, env_id], [eval_env, eval_env.spec, f"eval/{env_id}"]
     ):
         # Create Minari dataset and store locally
         dataset = minari.create_dataset_from_buffers(
@@ -247,7 +251,9 @@ def test_generate_dataset_with_external_buffer(dataset_id, env_id, data_format):
 
 @pytest.mark.parametrize("is_env_needed", [True, False])
 @pytest.mark.parametrize("data_format", storage_registry.keys())
-def test_generate_dataset_with_space_subset_external_buffer(is_env_needed, data_format):
+def test_generate_dataset_with_space_subset_external_buffer(
+    is_env_needed, data_format, register_dummy_envs
+):
     """Test create dataset from external buffers without using DataCollector or environment."""
     dataset_id = "dummy-dict-test-v0"
 

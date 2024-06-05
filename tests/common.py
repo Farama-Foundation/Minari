@@ -5,7 +5,6 @@ from typing import Any, Dict, Iterable, List, Optional, Union
 import gymnasium as gym
 import numpy as np
 from gymnasium import spaces
-from gymnasium.envs.registration import register
 from gymnasium.utils.env_checker import data_equivalence
 
 import minari
@@ -279,66 +278,10 @@ class DummyComboEnv(gym.Env):
 
         return self.observation_space.sample(), 0, terminated, False, {}
 
-    def reset(self, seed=0, options=None):
+    def reset(self, seed=None, options=None):
         self.timestep = 0
         self.observation_space.seed(seed)
         return self.observation_space.sample(), {}
-
-
-def register_dummy_envs():
-    register(
-        id="DummyBoxEnv-v0",
-        entry_point="tests.common:DummyBoxEnv",
-        max_episode_steps=5,
-    )
-
-    register(
-        id="DummyInfoEnv-v0",
-        entry_point="tests.common:DummyInfoEnv",
-        max_episode_steps=5,
-    )
-
-    register(
-        id="DummyInconsistentInfoEnv-v0",
-        entry_point="tests.common:DummyInconsistentInfoEnv",
-        max_episode_steps=5,
-    )
-
-    register(
-        id="DummyMultiDimensionalBoxEnv-v0",
-        entry_point="tests.common:DummyMultiDimensionalBoxEnv",
-        max_episode_steps=5,
-    )
-
-    register(
-        id="DummyTupleDiscreteBoxEnv-v0",
-        entry_point="tests.common:DummyTupleDiscreteBoxEnv",
-        max_episode_steps=5,
-    )
-
-    register(
-        id="DummyDictEnv-v0",
-        entry_point="tests.common:DummyDictEnv",
-        max_episode_steps=5,
-    )
-
-    register(
-        id="DummyTupleEnv-v0",
-        entry_point="tests.common:DummyTupleEnv",
-        max_episode_steps=5,
-    )
-
-    register(
-        id="DummyTextEnv-v0",
-        entry_point="tests.common:DummyTextEnv",
-        max_episode_steps=5,
-    )
-
-    register(
-        id="DummyComboEnv-v0",
-        entry_point="tests.common:DummyComboEnv",
-        max_episode_steps=5,
-    )
 
 
 test_spaces = [
