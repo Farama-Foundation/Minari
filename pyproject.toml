@@ -11,7 +11,7 @@ readme = "README.md"
 requires-python = ">= 3.8"
 authors = [{ name = "Farama Foundation", email = "contact@farama.org" }]
 license = { text = "MIT License" }
-keywords = ["Reinforcement Learning", "Offline RL", "RL", "AI", "gymnasium", "Farama"]
+keywords = ["Reinforcement Learning", "Offline RL", "RL", "AI", "Gymnasium", "Farama"]
 classifiers = [
     "Development Status :: 4 - Beta",  # change to `5 - Production/Stable` when ready
     "License :: OSI Approved :: MIT License",
@@ -25,6 +25,8 @@ classifiers = [
 ]
 dependencies = [
     "numpy>=1.21.0",
+    "jax[cpu]",
+    "pyarrow",
     "h5py>=3.8.0",
     "tqdm>=4.65.0",
     "typing_extensions>=4.4.0",
@@ -34,15 +36,16 @@ dependencies = [
     "portion>=2.4.0",
     "packaging>=23.1",
 ]
+
 dynamic = ["version"]
 
 [project.optional-dependencies]
 testing = [
     "pytest>=7.1.3",
-    "pytest-markdown-docs>=0.4.3",
-    "nbmake",
     "gymnasium-robotics>=1.2.3",
-    "imageio>=2.14.1",
+    "mktestdocs",
+    "torchrl",
+    "agilerl"
 ]
 
 [project.urls]
@@ -65,7 +68,7 @@ include = ["minari", "minari.*"]
 
 [tool.black]
 safe = true
-force-exclude = ["docs/tutorials/using_datasets/behavioral_cloning.py"]
+force-exclude = "docs/tutorials/"
 
 [tool.isort]
 atomic = true
@@ -106,6 +109,11 @@ reportPrivateUsage = "warning"
 reportUnboundVariable = "warning"
 
 [tool.pytest.ini_options]
-filterwarnings = ['ignore:.*The environment .* is out of date.*']
+filterwarnings = [
+    'ignore:.*`eval_env` is set to None',
+    "ignore:.*`minari_version` is set to None",
+    "ignore:.*`description` is set to None",
+    "ignore:.*`code_permalink` is set to None"
+]
 # filterwarnings = ['ignore:.*step API.*:DeprecationWarning']
 addopts = ["--ignore=docs/tutorials"]

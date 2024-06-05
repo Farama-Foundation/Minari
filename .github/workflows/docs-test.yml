@@ -24,14 +24,11 @@ jobs:
       - name: Install Minari
         run: pip install .[testing]
 
-      - name: Build Datasets Docs
-        run: python docs/_scripts/gen_dataset_md.py
-
       - name: Build
         run: sphinx-build -b dirhtml -v docs _build
 
       - name: Run markdown documentation tests
-        run: pytest docs --markdown-docs -m markdown-docs
+        run: pytest tests/test_docs.py
 
       - name: Run tutorial documentation tests
         run:  pytest --nbmake docs/tutorials/**/*.ipynb --nbmake-timeout=600

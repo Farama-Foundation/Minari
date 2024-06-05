@@ -13,6 +13,7 @@ from gymnasium.envs.registration import EnvSpec
 from packaging.specifiers import InvalidSpecifier, SpecifierSet
 from packaging.version import Version
 
+from minari.data_collector.episode_buffer import EpisodeBuffer
 from minari.dataset.episode_data import EpisodeData
 from minari.dataset.minari_storage import MinariStorage, PathLike
 
@@ -51,7 +52,7 @@ def parse_dataset_id(dataset_id: str) -> tuple[str | None, str, int]:
 class MinariDatasetSpec:
     env_spec: Optional[EnvSpec]
     total_episodes: int
-    total_steps: np.int64
+    total_steps: int
     dataset_id: str
     combined_datasets: List[str]
     observation_space: gym.Space
@@ -88,7 +89,7 @@ class MinariDataset:
         if isinstance(data, MinariStorage):
             self._data = data
         elif isinstance(data, (str, os.PathLike)):
-            self._data = MinariStorage(data)
+            self._data = MinariStorage.read(data)
         else:
             raise ValueError(f"Unrecognized type {type(data)} for data")
 
@@ -167,7 +168,7 @@ class MinariDataset:
     ) -> MinariDataset:
         """Filter the dataset episodes with a condition.
 
-        The condition must be a callable which takes an `EpisodeData` instance and retutrns a bool.
+        The condition must be a callable which takes an `EpisodeData` instance and returns a bool.
         The callable must return a `bool` True if the condition is met and False otherwise.
         i.e filtering for episodes that terminate:
 
@@ -220,20 +221,11 @@ class MinariDataset:
             data = self.storage.get_episodes([episode_index])[0]
             yield EpisodeData(**data)
 
-    def update_dataset_from_buffer(self, buffer: List[dict]):
+    def update_dataset_from_buffer(self, buffer: List[EpisodeBuffer]):
         """Additional data can be added to the Minari Dataset from a list of episode dictionary buffers.
 
-        Each episode dictionary buffer must have the following items:
-            * `observations`: np.ndarray of step observations. shape = (total_episode_steps + 1, (observation_shape)). Should include initial and final observation
-            * `actions`: np.ndarray of step action. shape = (total_episode_steps + 1, (action_shape)).
-            * `rewards`: np.ndarray of step rewards. shape = (total_episode_steps + 1, 1).
-            * `terminations`: np.ndarray of step terminations. shape = (total_episode_steps + 1, 1).
-            * `truncations`: np.ndarray of step truncations. shape = (total_episode_steps + 1, 1).
-
-        Other additional items can be added as long as the values are np.ndarray's or other nested dictionaries.
-
         Args:
-            buffer (list[dict]): list of episode dictionary buffers to add to dataset
+            buffer (list[EpisodeBuffer]): list of episode dictionary buffers to add to dataset
         """
         first_id = self.storage.total_episodes
         self.storage.update_episodes(buffer)
@@ -254,10 +246,11 @@ class MinariDataset:
 
     @property
     def total_episodes(self) -> int:
+        """Total number of episodes in the Minari dataset."""
         return len(self.episode_indices)
 
     @property
-    def total_steps(self) -> np.int64:
+    def total_steps(self) -> int:
         """Total episodes steps in the Minari dataset."""
         if self._total_steps is None:
             if self.episode_indices is None:
@@ -265,11 +258,11 @@ class MinariDataset:
             else:
                 self._total_steps = sum(
                     self.storage.apply(
-                        lambda episode: episode["total_timesteps"],
+                        lambda episode: episode["total_steps"],
                         episode_indices=self.episode_indices,
                     )
                 )
-        return np.int64(self._total_steps)
+        return int(self._total_steps)
 
     @property
     def episode_indices(self) -> np.ndarray:
@@ -321,6 +314,7 @@ class MinariDataset:
 
     @property
     def spec(self) -> MinariDatasetSpec:
+        """Minari dataset specifier."""
         return MinariDatasetSpec(
             env_spec=self.env_spec,
             total_episodes=self._episode_indices.size,

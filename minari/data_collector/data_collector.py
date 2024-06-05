@@ -1,44 +1,27 @@
 from __future__ import annotations
 
 import copy
-import inspect
+import logging
 import os
 import secrets
 import shutil
 import tempfile
-import warnings
-from typing import Any, Callable, Dict, List, Optional, SupportsFloat, Type, Union
+from typing import Any, Callable, Dict, Optional, SupportsFloat, Type
 
 import gymnasium as gym
 import numpy as np
 from gymnasium.core import ActType, ObsType
 from gymnasium.envs.registration import EnvSpec
 
-from minari.data_collector.callbacks import (
-    STEP_DATA_KEYS,
-    EpisodeMetadataCallback,
-    StepData,
-    StepDataCallback,
-)
+from minari.data_collector.callbacks import EpisodeMetadataCallback, StepDataCallback
+from minari.data_collector.episode_buffer import EpisodeBuffer
 from minari.dataset.minari_dataset import MinariDataset
 from minari.dataset.minari_storage import MinariStorage
+from minari.utils import _generate_dataset_metadata, _generate_dataset_path
 
 
 # H5Py supports ints up to uint64
 AUTOSEED_BIT_SIZE = 64
-
-EpisodeBuffer = Dict[str, Any]  # TODO: narrow this down
-
-
-def __getattr__(name):
-    if name == "DataCollectorV0":
-        stacklevel = len(inspect.stack(0))
-        warnings.warn("DataCollectorV0 is deprecated and will be removed. Use DataCollector instead.", DeprecationWarning, stacklevel=stacklevel)
-        return DataCollector
-    elif name == "__path__":
-        return False  # see https://stackoverflow.com/a/60803436
-    else:
-        raise ImportError(f"cannot import name '{name}' from '{__name__}' ({__file__})")
 
 
 class DataCollector(gym.Wrapper):
@@ -69,16 +52,11 @@ class DataCollector(gym.Wrapper):
 
         * The step data is stored per episode in dictionaries. This dictionaries are then stored in-memory in a global list buffer. The
           episode dictionaries contain items with list buffers as values for the main episode step datasets `observations`, `actions`,
-          `terminations`, and `truncations`, the `infos` key can be a list or another nested dictionary with extra datasets. Separate data
-          keys can be added by passing a custom `StepDataCallback` to the wrapper. When creating the HDF5 file the list values in the episode
-          dictionary will be stored as datasets and the nested dictionaries will generate a new HDF5 group.
+          `terminations`, and `truncations`, the `infos` key can be a list or another nested dictionary with extra datasets.
 
         * A new episode dictionary buffer is created if the env.step(action) call returns `truncated` or `terminated`, or if the environment calls
           env.reset(). If calling reset and the previous episode was not `truncated` or `terminated`, this will automatically be `truncated`.
 
-        * To perform caching the user can set the `max_buffer_steps` or `max_buffer_episodes` before saving the in-memory buffers to a temporary HDF5
-          file in disk. If non of `max_buffer_steps` or `max_buffer_episodes` are set, the data will move from in-memory to a permanent location only
-          when the Minari dataset is created. To move all the stored data to a permanent location use DataCollector.save_to_disK(path_to_permanent_location).
     """
 
     def __init__(
@@ -89,9 +67,9 @@ class DataCollector(gym.Wrapper):
             EpisodeMetadataCallback
         ] = EpisodeMetadataCallback,
         record_infos: bool = False,
-        max_buffer_steps: Optional[int] = None,
-        observation_space=None,
-        action_space=None,
+        observation_space: Optional[gym.Space] = None,
+        action_space: Optional[gym.Space] = None,
+        data_format: Optional[str] = None,
     ):
         """Initialize the data collector attributes and create the temporary directory for caching.
 
@@ -100,81 +78,48 @@ class DataCollector(gym.Wrapper):
             step_data_callback (type[StepDataCallback], optional): Callback class to edit/update step databefore storing to buffer. Defaults to StepDataCallback.
             episode_metadata_callback (type[EpisodeMetadataCallback], optional): Callback class to add custom metadata to episode group in HDF5 file. Defaults to EpisodeMetadataCallback.
             record_infos (bool, optional): If True record the info return key of each step. Defaults to False.
-            max_buffer_steps (Optional[int], optional): number of steps saved in-memory buffers before dumping to HDF5 file in disk. Defaults to None.
-
-        Raises:
-            ValueError: `max_buffer_steps` and `max_buffer_episodes` can't be passed at the same time
+            observation_space (gym.Space): Observation space of the dataset. The default value is the environment observation space.
+            action_space (gym.Space): Action space of the dataset. The default value is the environment action space.
+            data_format (str, optional): Data format to store the data in the Minari dataset. If None (defaults), it will use the default format of MinariStorage.
         """
         super().__init__(env)
         self._step_data_callback = step_data_callback()
         self._episode_metadata_callback = episode_metadata_callback()
 
-        # get path to minari datasets directory
         self.datasets_path = os.environ.get("MINARI_DATASETS_PATH")
         if self.datasets_path is None:
             self.datasets_path = os.path.join(
                 os.path.expanduser("~"), ".minari", "datasets"
             )
-        # create local directory if it doesn't exist
         if not os.path.exists(self.datasets_path):
             os.makedirs(self.datasets_path)
+        self.data_format = data_format
 
-        self._tmp_dir = tempfile.TemporaryDirectory(dir=self.datasets_path)
-        self._storage = MinariStorage.new(
-            self._tmp_dir.name,
-            observation_space=observation_space,
-            action_space=action_space,
-            env_spec=self.env.spec,
-        )
+        if observation_space is None:
+            observation_space = env.observation_space
+        self._observation_space = observation_space
+        if action_space is None:
+            action_space = env.action_space
+        self._action_space = action_space
 
         self._record_infos = record_infos
-        self.max_buffer_steps = max_buffer_steps
+        self._buffer: Optional[EpisodeBuffer] = None
+        self._episode_id = 0
+        self._reset_storage()
 
-        # Initialzie empty buffer
-        self._buffer: List[EpisodeBuffer] = []
-
-        self._step_id = -1
-        self._episode_id = -1
-
-    def _add_to_episode_buffer(
-        self,
-        episode_buffer: EpisodeBuffer,
-        step_data: Union[StepData, Dict[str, StepData]],
-    ) -> EpisodeBuffer:
-        """Add step data dictionary to episode buffer.
-
-        Args:
-            episode_buffer (Dict): dictionary episode buffer
-            step_data (Dict): dictionary with data for a single step
-
-        Returns:
-            Dict: new dictionary episode buffer with added values from step_data
-        """
-        for key, value in step_data.items():
-            if (not self._record_infos and key == "infos") or (value is None):
-                continue
-
-            if key not in episode_buffer:
-                if isinstance(value, dict):
-                    episode_buffer[key] = self._add_to_episode_buffer({}, value)
-                else:
-                    episode_buffer[key] = [value]
-            else:
-                if isinstance(value, dict):
-                    assert isinstance(
-                        episode_buffer[key], dict
-                    ), f"Element to be inserted is type 'dict', but buffer accepts type {type(episode_buffer[key])}"
-
-                    episode_buffer[key] = self._add_to_episode_buffer(
-                        episode_buffer[key], value
-                    )
-                else:
-                    assert isinstance(
-                        episode_buffer[key], list
-                    ), f"Element to be inserted is type 'list', but buffer accepts type {type(episode_buffer[key])}"
-                    episode_buffer[key].append(value)
-
-        return episode_buffer
+    def _reset_storage(self):
+        self._episode_id = 0
+        self._tmp_dir = tempfile.TemporaryDirectory(dir=self.datasets_path)
+        data_format_kwarg = (
+            {"data_format": self.data_format} if self.data_format is not None else {}
+        )
+        self._storage = MinariStorage.new(
+            self._tmp_dir.name,
+            observation_space=self._observation_space,
+            action_space=self._action_space,
+            env_spec=self.env.spec,
+            **data_format_kwarg,
+        )
 
     def step(
         self, action: ActType
@@ -191,36 +136,31 @@ class DataCollector(gym.Wrapper):
             terminated=terminated,
             truncated=truncated,
         )
-        assert STEP_DATA_KEYS.issubset(
-            step_data.keys()
-        ), "One or more required keys is missing from 'step-data'."
-        # Check that the stored obs/act spaces comply with the dataset spaces
-        assert self._storage.observation_space.contains(
-            step_data["observations"]
-        ), "Observations are not in observation space."
-        assert self._storage.action_space.contains(
-            step_data["actions"]
-        ), "Actions are not in action space."
 
-        self._step_id += 1
-        self._buffer[-1] = self._add_to_episode_buffer(self._buffer[-1], step_data)
+        if not self._storage.observation_space.contains(step_data["observation"]):
+            logging.warning(
+                "Observation is not in observation space.\n"
+                f"Observation: {step_data['observation']}\nSpace: {self._storage.observation_space}"
+            )
+        if not self._storage.action_space.contains(step_data["action"]):
+            logging.warning(
+                "Action is not in action space.\n"
+                f"Action: {step_data['action']}\nSpace: {self._storage.action_space}",
+            )
 
-        if (
-            self.max_buffer_steps is not None
-            and self._step_id != 0
-            and self._step_id % self.max_buffer_steps == 0
-        ):
-            self._storage.update_episodes(self._buffer)
-            self._buffer = [{"id": self._episode_id}]
-        if step_data["terminations"] or step_data["truncations"]:
+        assert self._buffer is not None
+        if not self._record_infos:
+            step_data["info"] = {}
+        self._buffer = self._buffer.add_step_data(step_data)
+
+        if step_data["termination"] or step_data["truncation"]:
+            self._storage.update_episodes([self._buffer])
             self._episode_id += 1
-            eps_buff = {"id": self._episode_id}
-            previous_data = {
-                "observations": step_data["observations"],
-                "infos": step_data["infos"],
-            }
-            eps_buff = self._add_to_episode_buffer(eps_buff, previous_data)
-            self._buffer.append(eps_buff)
+            self._buffer = EpisodeBuffer(
+                id=self._episode_id,
+                observations=step_data["observation"],
+                infos=step_data["info"],
+            )
 
         return obs, rew, terminated, truncated, info
 
@@ -245,34 +185,28 @@ class DataCollector(gym.Wrapper):
             observation (ObsType): Observation of the initial state.
             info (dictionary): Auxiliary information complementing ``observation``.
         """
-        autoseed_enabled = (not options) or options.get("minari_autoseed", False)
+        self._flush_to_storage()
+
+        autoseed_enabled = (not options) or options.get("minari_autoseed", True)
         if seed is None and autoseed_enabled:
             seed = secrets.randbits(AUTOSEED_BIT_SIZE)
 
         obs, info = self.env.reset(seed=seed, options=options)
         step_data = self._step_data_callback(env=self.env, obs=obs, info=info)
-        self._episode_id += 1
 
-        assert STEP_DATA_KEYS.issubset(
-            step_data.keys()
-        ), "One or more required keys is missing from 'step-data'"
+        if not self._storage.observation_space.contains(step_data["observation"]):
+            logging.warning(
+                "Observation is not in observation space.\n"
+                f"Observation: {step_data['observation']}\nSpace: {self._storage.observation_space}"
+            )
 
-        self._validate_buffer()
-        episode_buffer = {
-            "seed": str(None) if seed is None else seed,
-            "id": self._episode_id
-        }
-        episode_buffer = self._add_to_episode_buffer(episode_buffer, step_data)
-        self._buffer.append(episode_buffer)
+        self._buffer = EpisodeBuffer(
+            id=self._episode_id,
+            seed=seed,
+            observations=step_data["observation"],
+            infos=step_data["info"] if self._record_infos else None,
+        )
         return obs, info
-
-    def _validate_buffer(self):
-        if len(self._buffer) > 0:
-            if "actions" not in self._buffer[-1].keys():
-                self._buffer.pop()
-                self._episode_id -= 1
-            elif not self._buffer[-1]["terminations"][-1]:
-                self._buffer[-1]["truncations"][-1] = True
 
     def add_to_dataset(self, dataset: MinariDataset):
         """Add extra data to Minari dataset from collector environment buffers (DataCollector).
@@ -280,9 +214,7 @@ class DataCollector(gym.Wrapper):
         Args:
             dataset (MinariDataset): Dataset to add the data
         """
-        self._validate_buffer()
-        self._storage.update_episodes(self._buffer)
-        self._buffer.clear()
+        self._flush_to_storage()
 
         first_id = dataset.storage.total_episodes
         dataset.storage.update_from_storage(self._storage)
@@ -290,14 +222,7 @@ class DataCollector(gym.Wrapper):
             new_ids = first_id + np.arange(self._storage.total_episodes)
             dataset.episode_indices = np.append(dataset.episode_indices, new_ids)
 
-        self._episode_id = -1
-        self._tmp_dir = tempfile.TemporaryDirectory(dir=self.datasets_path)
-        self._storage = MinariStorage.new(
-            self._tmp_dir.name,
-            observation_space=self._storage.observation_space,
-            action_space=self._storage.action_space,
-            env_spec=self.env.spec,
-        )
+        self._reset_storage()
 
     def create_dataset(
         self,
@@ -312,6 +237,7 @@ class DataCollector(gym.Wrapper):
         expert_policy: Optional[Callable[[ObsType], ActType]] = None,
         num_episodes_average_score: int = 100,
         minari_version: Optional[str] = None,
+        description: Optional[str] = None,
     ):
         """Create a Minari dataset using the data collected from stepping with a Gymnasium environment wrapped with a `DataCollector` Minari wrapper.
 
@@ -334,12 +260,11 @@ class DataCollector(gym.Wrapper):
                                                                             `ref_max_score` and `expert_policy` can't be passed at the same time. Default to None
             num_episodes_average_score (int): number of episodes to average over the returns to compute `ref_min_score` and `ref_max_score`. Default to 100.
             minari_version (Optional[str], optional): Minari version specifier compatible with the dataset. If None (default) use the installed Minari version.
+            description (Optional[str], optional): description of the dataset being created. Defaults to None.
 
         Returns:
             MinariDataset
         """
-        # TODO: move the import to top of the file after removing minari.create_dataset_from_collector_env() in 0.5.0
-        from minari.utils import _generate_dataset_metadata, _generate_dataset_path
         dataset_path = _generate_dataset_path(dataset_id)
         metadata: Dict[str, Any] = _generate_dataset_metadata(
             dataset_id,
@@ -354,18 +279,27 @@ class DataCollector(gym.Wrapper):
             expert_policy,
             num_episodes_average_score,
             minari_version,
+            description,
         )
 
-        self.save_to_disk(dataset_path, metadata)
+        self._save_to_disk(dataset_path, metadata)
 
         # will be able to calculate dataset size only after saving the disk, so updating the dataset metadata post `save_to_disk` method
 
         dataset = MinariDataset(dataset_path)
-        metadata['dataset_size'] = dataset.storage.get_size()
+        metadata["dataset_size"] = dataset.storage.get_size()
         dataset.storage.update_metadata(metadata)
         return dataset
 
-    def save_to_disk(
+    def _flush_to_storage(self):
+        if self._buffer is not None and len(self._buffer) > 0:
+            if not self._buffer.terminations[-1]:
+                self._buffer.truncations[-1] = True
+            self._storage.update_episodes([self._buffer])
+            self._episode_id += 1
+        self._buffer = None
+
+    def _save_to_disk(
         self, path: str | os.PathLike, dataset_metadata: Dict[str, Any] = {}
     ):
         """Save all in-memory buffer data and move temporary files to a permanent location in disk.
@@ -374,10 +308,7 @@ class DataCollector(gym.Wrapper):
             path (str): path to store the dataset, e.g.: '/home/foo/datasets/data'
             dataset_metadata (Dict, optional): additional metadata to add to the dataset file. Defaults to {}.
         """
-        warnings.warn("This method is deprecated and will become private in v0.5.0.", DeprecationWarning, stacklevel=2)
-        self._validate_buffer()
-        self._storage.update_episodes(self._buffer)
-        self._buffer.clear()
+        self._flush_to_storage()
 
         assert (
             "observation_space" not in dataset_metadata.keys()
@@ -400,14 +331,7 @@ class DataCollector(gym.Wrapper):
                 os.path.join(path, file),
             )
 
-        self._episode_id = -1
-        self._tmp_dir = tempfile.TemporaryDirectory(dir=self.datasets_path)
-        self._storage = MinariStorage.new(
-            self._tmp_dir.name,
-            observation_space=self._storage.observation_space,
-            action_space=self._storage.action_space,
-            env_spec=self.env.spec,
-        )
+        self._reset_storage()
 
     def close(self):
         """Close the DataCollector.
@@ -415,6 +339,20 @@ class DataCollector(gym.Wrapper):
         Clear buffer and close temporary directory.
         """
         super().close()
-
-        self._buffer.clear()
+        self._buffer = None
         shutil.rmtree(self._tmp_dir.name)
+
+
+def _check_infos_same_shape(info_1: dict, info_2: dict):
+    if info_1.keys() != info_2.keys():
+        return False
+    for key in info_1.keys():
+        if type(info_1[key]) is not type(info_2[key]):
+            return False
+        if isinstance(info_1[key], dict):
+            return _check_infos_same_shape(info_1[key], info_2[key])
+        elif isinstance(info_1[key], np.ndarray):
+            return (info_1[key].shape == info_2[key].shape) and (
+                info_1[key].dtype == info_2[key].dtype
+            )
+    return True

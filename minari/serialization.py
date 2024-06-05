@@ -130,9 +130,9 @@ def _deserialize_dict(space_dict: Dict) -> spaces.Dict:
 def _deserialize_box(space_dict: Dict) -> spaces.Box:
     assert space_dict["type"] == "Box"
     shape = tuple(space_dict["shape"])
-    low = np.array(space_dict["low"])
-    high = np.array(space_dict["high"])
     dtype = np.dtype(space_dict["dtype"])
+    low = np.array(space_dict["low"], dtype=dtype)
+    high = np.array(space_dict["high"], dtype=dtype)
     return spaces.Box(low=low, high=high, shape=shape, dtype=dtype)  # type: ignore
 
 

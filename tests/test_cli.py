@@ -2,7 +2,7 @@ import pytest
 from typer.testing import CliRunner
 
 from minari.cli import app
-from minari.storage.local import delete_dataset, list_local_datasets
+from minari.storage.hosting import list_remote_datasets
 from tests.dataset.test_dataset_download import get_latest_compatible_dataset_id
 
 
@@ -27,13 +27,9 @@ def test_list_app():
 def test_dataset_download_then_delete(dataset_id: str):
     """Test download dataset invocation from CLI.
 
-    the downloading functionality is already tested in test_dataset_download.py so this is primarily to assert that the CLI is working as expected.
+    The downloading functionality is already tested in test_dataset_download.py so this
+    is primarily to assert that the CLI is working as expected.
     """
-    # might have to clear up the local dataset first.
-    # ideally this seems like it could just be handled by the tests
-    if dataset_id in list_local_datasets():
-        delete_dataset(dataset_id)
-
     result = runner.invoke(app, ["download", dataset_id])
 
     assert result.exit_code == 0
@@ -51,3 +47,20 @@ def test_dataset_download_then_delete(dataset_id: str):
     result = runner.invoke(app, ["delete", dataset_id], input="y")
     assert result.exit_code == 0
     assert f"Dataset {dataset_id} deleted!" in result.stdout
+
+
+@pytest.mark.parametrize(
+    "dataset_id",
+    list_remote_datasets(compatible_minari_version=True),
+)
+def test_minari_show(dataset_id):
+    result = runner.invoke(app, ["show", dataset_id])
+    assert result.exit_code == 0
+
+
+@pytest.mark.parametrize("dataset_id", ["minigrid-fourrooms-random-v0"])
+def test_show_rendering(dataset_id: str):
+    result = runner.invoke(app, ["show", dataset_id])
+    assert result.exit_code == 0
+    # Check that the ">=" sign is rendered correctly
+    assert ">=" in result.stdout

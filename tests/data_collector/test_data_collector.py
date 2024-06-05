@@ -3,12 +3,15 @@ import numpy as np
 import pytest
 
 from minari import DataCollector, EpisodeData, MinariDataset, StepDataCallback
-from tests.common import check_load_and_delete_dataset, register_dummy_envs
+from minari.dataset._storages import registry as storage_registry
+from tests.common import (
+    check_infos_equal,
+    check_load_and_delete_dataset,
+    get_info_at_step_index,
+)
 
 
 MAX_UINT64 = np.iinfo(np.uint64).max
-
-register_dummy_envs()
 
 
 class ForceTruncateStepDataCallback(StepDataCallback):
@@ -20,10 +23,10 @@ class ForceTruncateStepDataCallback(StepDataCallback):
 
     def __call__(self, env, **kwargs):
         step_data = super().__call__(env, **kwargs)
-
-        step_data["terminations"] = False
-        if self.time_steps % self.episode_steps == 0:
-            step_data["truncations"] = True
+        if self.time_steps != 0:
+            step_data["termination"] = False
+            if self.time_steps % self.episode_steps == 0:
+                step_data["truncation"] = True
 
         self.time_steps += 1
         return step_data
@@ -71,20 +74,24 @@ def get_single_step_from_episode(episode: EpisodeData, index: int) -> EpisodeDat
     else:
         action = episode.actions[index]
 
+    infos = get_info_at_step_index(episode.infos, index)
+
     step_data = {
         "id": episode.id,
-        "total_timesteps": 1,
+        "total_steps": 1,
         "seed": None,
         "observations": observation,
         "actions": action,
         "rewards": episode.rewards[index],
         "terminations": episode.terminations[index],
         "truncations": episode.truncations[index],
+        "infos": infos,
     }
 
     return EpisodeData(**step_data)
 
 
+@pytest.mark.parametrize("data_format", storage_registry.keys())
 @pytest.mark.parametrize(
     "dataset_id,env_id",
     [
@@ -95,7 +102,7 @@ def get_single_step_from_episode(episode: EpisodeData, index: int) -> EpisodeDat
         ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
     ],
 )
-def test_truncation_without_reset(dataset_id, env_id):
+def test_truncation_without_reset(dataset_id, env_id, data_format, register_dummy_envs):
     """Test new episode creation when environment is truncated and env.reset is not called."""
     num_steps = 50
     num_episodes = int(num_steps / ForceTruncateStepDataCallback.episode_steps)
@@ -103,10 +110,11 @@ def test_truncation_without_reset(dataset_id, env_id):
     env = DataCollector(
         env,
         step_data_callback=ForceTruncateStepDataCallback,
+        record_infos=True,
+        data_format=data_format,
     )
 
     env.reset()
-
     for _ in range(num_steps):
         env.step(env.action_space.sample())
 
@@ -125,19 +133,20 @@ def test_truncation_without_reset(dataset_id, env_id):
     assert len(dataset.episode_indices) == num_episodes
 
     episodes_generator = dataset.iterate_episodes()
-    last_step = None
+    last_step = get_single_step_from_episode(next(episodes_generator), -1)
     for episode in episodes_generator:
-        assert episode.total_timesteps == ForceTruncateStepDataCallback.episode_steps
-        if last_step is not None:
-            first_step = get_single_step_from_episode(episode, 0)
-            # Check that the last observation of the previous episode is carried over to the next episode
-            # as the reset observation.
-            if isinstance(first_step.observations, dict) or isinstance(
-                first_step.observations, tuple
-            ):
-                assert first_step.observations == last_step.observations
-            else:
-                assert np.array_equal(first_step.observations, last_step.observations)
+        assert episode.total_steps == ForceTruncateStepDataCallback.episode_steps
+        first_step = get_single_step_from_episode(episode, 0)
+        # Check that the last observation of the previous episode is carried over to the next episode
+        # as the reset observation.
+        if isinstance(first_step.observations, dict) or isinstance(
+            first_step.observations, tuple
+        ):
+            assert first_step.observations == last_step.observations
+        else:
+            assert np.array_equal(first_step.observations, last_step.observations)
+
+        check_infos_equal(last_step.infos, first_step.infos)
         last_step = get_single_step_from_episode(episode, -1)
         assert bool(last_step.truncations) is True
 
@@ -145,14 +154,15 @@ def test_truncation_without_reset(dataset_id, env_id):
     check_load_and_delete_dataset(dataset_id)
 
 
+@pytest.mark.parametrize("data_format", storage_registry.keys())
 @pytest.mark.parametrize("seed", [None, 0, 42, MAX_UINT64])
-def test_reproducibility(seed):
+def test_reproducibility(seed, data_format, register_dummy_envs):
     """Test episodes are reproducible, even if an explicit reset seed is not set."""
     dataset_id = "dummy-box-test-v0"
     env_id = "DummyBoxEnv-v0"
     num_episodes = 5
 
-    env = DataCollector(gym.make(env_id))
+    env = DataCollector(gym.make(env_id), data_format=data_format)
 
     for _ in range(num_episodes):
         env.reset(seed=seed)
@@ -185,7 +195,7 @@ def test_reproducibility(seed):
 
         assert np.allclose(obs, episode.observations[0])
 
-        for k in range(episode.total_timesteps):
+        for k in range(episode.total_steps):
             obs, rew, term, trunc, _ = env.step(episode.actions[k])
             assert np.allclose(obs, episode.observations[k + 1])
             assert rew == episode.rewards[k]

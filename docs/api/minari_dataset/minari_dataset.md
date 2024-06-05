@@ -14,7 +14,6 @@
 .. autofunction:: minari.MinariDataset.filter_episodes
 .. autofunction:: minari.MinariDataset.set_seed
 .. autofunction:: minari.MinariDataset.recover_environment
-.. autofunction:: minari.MinariDataset.update_dataset_from_collector_env
 .. autofunction:: minari.MinariDataset.update_dataset_from_buffer
 ```
 

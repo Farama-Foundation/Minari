@@ -17,6 +17,7 @@
 # -- Project information -----------------------------------------------------
 import os
 import re
+import shutil
 
 import sphinx_gallery.gen_rst
 
@@ -123,3 +124,28 @@ sphinx_gallery_conf = {
 # -- Generate Changelog -------------------------------------------------
 
 sphinx_github_changelog_token = os.environ.get("SPHINX_GITHUB_CHANGELOG_TOKEN")
+
+
+def move_404(app, _):
+    src = app.outdir.joinpath("404/index.html")
+    dst = app.outdir.joinpath("404.html")
+    shutil.move(src, dst)
+
+    with open(dst, "r+") as fp:
+        content = fp.read()
+        content = content.replace('href="../', 'href="/').replace('src="../', 'src="/')
+        fp.seek(0)
+        fp.truncate()
+        fp.write(content)
+
+
+def move_dataset_gifs(app, _):
+    src = app.srcdir.joinpath("datasets/gifs")
+    dst = app.outdir.joinpath("datasets/gifs")
+    if src.exists():
+        shutil.move(src, dst)
+
+
+def setup(app):
+    app.connect("build-finished", move_404)
+    app.connect("build-finished", move_dataset_gifs)

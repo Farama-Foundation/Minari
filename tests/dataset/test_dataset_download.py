@@ -79,3 +79,91 @@ def test_load_dataset_with_download(dataset_id: str):
     assert isinstance(dataset, MinariDataset)
 
     minari.delete_dataset(dataset_id)
+
+
+def test_download_error_messages(monkeypatch):
+    # 1. Check if there are any remote versions of the dataset at all
+    with pytest.raises(ValueError, match="Couldn't find any version for dataset"):
+        minari.download_dataset("non-existent-dataset-v0")
+
+    with pytest.raises(ValueError, match="Couldn't find any version for dataset"):
+        minari.download_dataset("non-existent-dataset-v0", force_download=True)
+
+    # 2. Check if there are any remote compatible versions with the local installed Minari version
+    with monkeypatch.context() as mp:
+        mp.setattr("minari.storage.hosting.__version__", "0.0.0")
+
+        with pytest.raises(
+            ValueError, match="Couldn't find any compatible version of dataset"
+        ):
+            minari.download_dataset("door-human-v1")
+
+        with pytest.warns(match="Couldn't find any compatible version of dataset"):
+            minari.download_dataset("door-human-v1", force_download=True)
+        minari.delete_dataset("door-human-v1")
+
+    # 3. Check that the dataset version exists
+    with pytest.raises(ValueError, match="doesn't exist in the remote Farama server."):
+        minari.download_dataset("door-human-v999")
+
+    with pytest.raises(ValueError, match="doesn't exist in the remote Farama server."):
+        minari.download_dataset("door-human-v999", force_download=True)
+
+    # 4. Check that the dataset version is compatible with the local installed Minari version
+    def patch_get_remote_dataset_versions(versions):
+        def patched_get_remote(
+            env_name,
+            dataset_name,
+            latest_version=False,
+            compatible_minari_version=False,
+        ):
+            return versions[int(latest_version)][int(compatible_minari_version)]
+
+        return patched_get_remote
+
+    # Pretend that door-human-v0 is compatible but door-human-v1 is not
+    with monkeypatch.context() as mp:
+        mp.setattr(
+            "minari.storage.hosting.get_remote_dataset_versions",
+            patch_get_remote_dataset_versions([[[0, 1], [0]], [[0], [0]]]),
+        )
+
+        with pytest.raises(
+            ValueError,
+            match="door-human-v1, is not compatible with your local installed version of Minari",
+        ):
+            minari.download_dataset("door-human-v1")
+
+        with pytest.warns(
+            match="will be FORCE download but you can download the latest compatible version of this dataset"
+        ):
+            minari.download_dataset("door-human-v1", force_download=True)
+        minari.delete_dataset("door-human-v1")
+
+    # 5. Warning to recommend downloading the latest compatible version of the dataset
+    # Pretend that door-human-v2 exists and try to download door-human-v1
+    with monkeypatch.context() as mp:
+        mp.setattr(
+            "minari.storage.hosting.get_remote_dataset_versions",
+            patch_get_remote_dataset_versions([[[1, 2], [1, 2]], [[2], [2]]]),
+        )
+
+        with pytest.warns(
+            match="We recommend you install a higher dataset version available and compatible"
+        ):
+            minari.download_dataset("door-human-v1")
+        minari.delete_dataset("door-human-v1")
+
+    # Skip datasets that exist locally
+    latest_door_human_id = get_latest_compatible_dataset_id(
+        env_name="door", dataset_name="human"
+    )
+    minari.download_dataset(latest_door_human_id)
+
+    with pytest.warns(
+        match=f"Skipping Download. Dataset {latest_door_human_id} found locally at"
+    ):
+        minari.download_dataset(latest_door_human_id)
+
+    minari.download_dataset(latest_door_human_id, force_download=True)
+    minari.delete_dataset(latest_door_human_id)
