@@ -103,12 +103,20 @@ class MinariDataset:
         env_spec = metadata.get("env_spec")
         if env_spec is not None:
             assert isinstance(env_spec, str)
+            # for compatibility with pre v1.0 datasets
+            env_spec = env_spec.replace('"autoreset": false, ', "").replace(
+                '"apply_api_compatibility": false, ', ""
+            )
             env_spec = EnvSpec.from_json(env_spec)
         self._env_spec = env_spec
 
         eval_env_spec = metadata.get("eval_env_spec")
         if eval_env_spec is not None:
             assert isinstance(eval_env_spec, str)
+            # for compatibility with pre v1.0 datasets
+            eval_env_spec = eval_env_spec.replace('"autoreset": false, ', "").replace(
+                '"apply_api_compatibility": false, ', ""
+            )
             eval_env_spec = EnvSpec.from_json(eval_env_spec)
         self._eval_env_spec = eval_env_spec
 

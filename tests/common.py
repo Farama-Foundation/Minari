@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import sys
 import unicodedata
 from typing import Any, Dict, Iterable, List, Optional, Union
