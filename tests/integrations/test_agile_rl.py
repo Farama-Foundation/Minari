@@ -1,12 +1,18 @@
 import gymnasium as gym
 import h5py
 import pytest
-from agilerl.components.replay_buffer import ReplayBuffer
-from agilerl.utils.minari_utils import MinariToAgileBuffer, MinariToAgileDataset
 
 import minari
 from minari import DataCollector
 from tests.common import create_dummy_dataset_with_collecter_env_helper
+
+
+pytest.importorskip("agilerl")
+from agilerl.components.replay_buffer import ReplayBuffer  # noqa: E402
+from agilerl.utils.minari_utils import (  # noqa: E402
+    MinariToAgileBuffer,
+    MinariToAgileDataset,
+)
 
 
 @pytest.fixture(name="dataset_id")
@@ -15,7 +21,7 @@ def dataset_id():
 
 
 @pytest.fixture(autouse=True)
-def createAndDestroyMinariDataset(dataset_id):
+def create_and_destroy_minari_dataset(dataset_id):
     env = gym.make("CartPole-v1")
     env = DataCollector(env, record_infos=True)
 
