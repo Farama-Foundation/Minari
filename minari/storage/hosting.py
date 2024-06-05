@@ -1,81 +1,50 @@
 from __future__ import annotations
 
-import glob
 import importlib.metadata
 import json
 import os
 import warnings
 from typing import Dict, List
 
-from google.cloud import storage
 from gymnasium import logger
 from packaging.specifiers import SpecifierSet
-from tqdm.auto import tqdm
 
 from minari.dataset.minari_dataset import parse_dataset_id
 from minari.dataset.minari_storage import METADATA_FILE_NAME
 from minari.storage.datasets_root_dir import get_dataset_path
 from minari.storage.local import load_dataset
+from minari.storage.remotes import get_cloud_storage
 
 
 # Use importlib due to circular import when: "from minari import __version__"
 __version__ = importlib.metadata.version("minari")
 
 
-def upload_dataset(dataset_id: str, path_to_private_key: str):
+def upload_dataset(dataset_id: str, key_path: str):
     """Upload a Minari dataset to the remote Farama server.
 
     If you would like to upload a dataset please first get in touch with the Farama team at contact@farama.org.
 
     Args:
         dataset_id (str): name id of the local Minari dataset
-        path_to_private_key (str): path to the GCP bucket json credentials. Reach out to the Farama team.
+        key_path (str): path to the credentials file.
     """
-
-    def _upload_local_directory_to_gcs(local_path, bucket, gcs_path):
-        assert os.path.isdir(local_path)
-        for local_file in glob.glob(local_path + "/**"):
-            if not os.path.isfile(local_file):
-                _upload_local_directory_to_gcs(
-                    local_file, bucket, gcs_path + "/" + os.path.basename(local_file)
-                )
-            else:
-                remote_path = os.path.join(gcs_path, local_file[1 + len(local_path) :])
-                blob = bucket.blob(remote_path)
-                blob.upload_from_filename(local_file)
-
-    file_path = get_dataset_path(dataset_id)
     remote_datasets = list_remote_datasets()
-    if dataset_id not in remote_datasets.keys():
-        storage_client = storage.Client.from_service_account_json(
-            json_credentials_path=path_to_private_key
-        )
-        bucket = storage.Bucket(storage_client, "minari-datasets")
+    if dataset_id in remote_datasets.keys():
+        print(f"Upload aborted. {dataset_id} is already in remote.")
+        return
 
+    cloud_storage = get_cloud_storage(key_path=key_path)
+
+    datasets_to_upload = [dataset_id]
+    while len(datasets_to_upload):
+        dataset_id = datasets_to_upload.pop()
+        print(f"Uploading dataset {dataset_id}")
+        path = get_dataset_path(dataset_id)
+        cloud_storage.upload_path(path, dataset_id)
         dataset = load_dataset(dataset_id)
-
-        # See https://github.com/googleapis/python-storage/issues/27 for discussion on progress bars
-        _upload_local_directory_to_gcs(str(file_path), bucket, dataset_id)
-
-        print(f"Dataset {dataset_id} uploaded!")
-
         combined_datasets = dataset.spec.combined_datasets
-
-        if len(combined_datasets) > 0:
-            print(
-                f"Dataset {dataset_id} is formed by a combination of the following datasets: "
-            )
-            for name in combined_datasets:
-                print(f"\t{name}")
-            for dataset in combined_datasets:
-                print(f"Uploading dataset {dataset}")
-                upload_dataset(
-                    dataset_id=dataset, path_to_private_key=path_to_private_key
-                )
-    else:
-        print(
-            f"Stopped upload of dataset {dataset_id}. {dataset_id} is already in the Farama servers."
-        )
+        datasets_to_upload.extend(combined_datasets)
 
 
 def download_dataset(dataset_id: str, force_download: bool = False):
@@ -89,39 +58,35 @@ def download_dataset(dataset_id: str, force_download: bool = False):
         dataset_id (str): name id of the Minari dataset
         force_download (bool): boolean flag for force downloading the dataset. Default Value = False
     """
-    download_env_name, download_dataset_name, download_version = parse_dataset_id(
-        dataset_id
-    )
+    env_name, dataset_name, dataset_version = parse_dataset_id(dataset_id)
 
-    all_dataset_versions = get_remote_dataset_versions(
-        download_env_name, download_dataset_name
-    )
+    all_dataset_versions = get_remote_dataset_versions(env_name, dataset_name)
 
     # 1. Check if there are any remote versions of the dataset at all
     if not all_dataset_versions:
         raise ValueError(
-            f"Couldn't find any version for dataset {download_env_name}-{download_dataset_name} in the remote Farama server."
+            f"Couldn't find any version for dataset {env_name}-{dataset_name} in the remote Farama server."
         )
 
     # 2. Check if there are any remote compatible versions with the local installed Minari version
     max_version = get_remote_dataset_versions(
-        download_env_name,
-        download_dataset_name,
+        env_name,
+        dataset_name,
         latest_version=True,
         compatible_minari_version=True,
     )
     if not max_version:
         if not force_download:
             raise ValueError(
-                f"Couldn't find any compatible version of dataset {download_env_name}-{download_dataset_name} with the local installed version of Minari, {__version__}."
+                f"Couldn't find any compatible version of dataset {env_name}-{dataset_name} with the local installed version of Minari, {__version__}."
             )
         else:
             logger.warn(
-                f"Couldn't find any compatible version of dataset {download_env_name}-{download_dataset_name} with the local installed version of Minari, {__version__}."
+                f"Couldn't find any compatible version of dataset {env_name}-{dataset_name} with the local installed version of Minari, {__version__}."
             )
 
     # 3. Check that the dataset version exists
-    if download_version not in all_dataset_versions:
+    if dataset_version not in all_dataset_versions:
         e_msg = f"The dataset version, {dataset_id}, doesn't exist in the remote Farama server."
         if not max_version:
             raise ValueError(
@@ -131,17 +96,17 @@ def download_dataset(dataset_id: str, force_download: bool = False):
         else:
             raise ValueError(
                 e_msg
-                + f" We suggest you download the latest compatible version of this dataset: {download_env_name}-{download_dataset_name}-v{max_version[0]}"
+                + f" We suggest you download the latest compatible version of this dataset: {env_name}-{dataset_name}-v{max_version[0]}"
             )
 
     # 4. Check that the dataset version is compatible with the local installed Minari version
     compatible_dataset_versions = get_remote_dataset_versions(
-        download_env_name,
-        download_dataset_name,
+        env_name,
+        dataset_name,
         latest_version=False,
         compatible_minari_version=True,
     )
-    if download_version not in compatible_dataset_versions:
+    if dataset_version not in compatible_dataset_versions:
         e_msg = (
             f"The version you are trying to download for dataset, {dataset_id}, is not compatible with "
             f"your local installed version of Minari, {__version__}."
@@ -149,19 +114,19 @@ def download_dataset(dataset_id: str, force_download: bool = False):
         if not force_download:
             raise ValueError(
                 e_msg
-                + f" You can download the latest compatible version of this dataset: {download_env_name}-{download_dataset_name}-v{max_version[0]}."
+                + f" You can download the latest compatible version of this dataset: {env_name}-{dataset_name}-v{max_version[0]}."
             )
         # Only a warning and force download incompatible dataset
         else:
             logger.warn(
                 e_msg
-                + f" {dataset_id} will be FORCE download but you can download the latest compatible version of this dataset: {download_env_name}-{download_dataset_name}-v{max_version}."
+                + f" {dataset_id} will be FORCE download but you can download the latest compatible version of this dataset: {env_name}-{dataset_name}-v{max_version}."
             )
 
     # 5. Warning to recommend downloading the latest compatible version of the dataset
-    elif max_version[0] is not None and download_version < max_version[0]:
+    elif max_version[0] is not None and dataset_version < max_version[0]:
         logger.warn(
-            f"We recommend you install a higher dataset version available and compatible with your local installed Minari version: {download_env_name}-{download_dataset_name}-v{max_version}."
+            f"We recommend you install a higher dataset version available and compatible with your local installed Minari version: {env_name}-{dataset_name}-v{max_version}."
         )
 
     file_path = get_dataset_path(dataset_id)
@@ -173,28 +138,20 @@ def download_dataset(dataset_id: str, force_download: bool = False):
             return
 
     print(f"\nDownloading {dataset_id} from Farama servers...")
-    storage_client = storage.Client.create_anonymous_client()
+    cloud_storage = get_cloud_storage()
+    blobs = cloud_storage.list_blobs(prefix=dataset_id)
 
-    bucket = storage_client.bucket(bucket_name="minari-datasets")
-    # Construct a client side representation of a blob.
-    # Note `Bucket.blob` differs from `Bucket.get_blob` as it doesn't retrieve
-    # any content from Google Cloud Storage. As we don't need additional data,
-    # using `Bucket.blob` is preferred here.
-    blobs = bucket.list_blobs(prefix=dataset_id)  # Get list of files
     for blob in blobs:
         print(f"\n * Downloading data file '{blob.name}' ...\n")
         blob_dir, file_name = os.path.split(blob.name)
-        # If the object blob path is a directory continue searching for files
-        if file_name == "":
+        if (
+            file_name == ""
+        ):  # If the object blob path is a directory continue searching for files
             continue
         blob_local_dir = os.path.join(os.path.dirname(file_path), blob_dir)
         if not os.path.exists(blob_local_dir):
             os.makedirs(blob_local_dir)
-        # Download progress bar:
-        # https://stackoverflow.com/questions/62811608/how-to-show-progress-bar-when-we-are-downloading-a-file-from-cloud-bucket-using
-        with open(os.path.join(blob_local_dir, file_name), "wb") as f:
-            with tqdm.wrapattr(f, "write", total=blob.size) as file_obj:
-                storage_client.download_blob_to_file(blob, file_obj)
+        cloud_storage.download_blob(blob, os.path.join(blob_local_dir, file_name))
 
     print(f"\nDataset {dataset_id} downloaded to {file_path}")
 
@@ -227,8 +184,8 @@ def list_remote_datasets(
     Returns:
        Dict[str, Dict[str, str]]: keys the names of the Minari datasets and values the metadata
     """
-    client = storage.Client.create_anonymous_client()
-    blobs = client.list_blobs(bucket_or_name="minari-datasets")
+    cloud_storage = get_cloud_storage()
+    blobs = cloud_storage.list_blobs()
 
     # Generate dict = {'env_name-dataset_name': (version, metadata)}
     remote_datasets = {}

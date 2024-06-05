@@ -141,7 +141,7 @@ def move_404(app, _):
 
 def move_dataset_gifs(app, _):
     src = app.srcdir.joinpath("datasets/gifs")
-    dst = app.outdir.joinpath("datasets/gifs")
+    dst = app.outdir.joinpath("datasets")
     if src.exists():
         shutil.move(src, dst)
 
