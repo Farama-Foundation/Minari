@@ -363,7 +363,7 @@
             
             <section class="tex2jax_ignore mathjax_ignore" id="medium">
 <h1>Medium<a class="headerlink" href="#medium" title="Link to this heading">¶</a></h1>
-<img src="/datasets/gifs/pointmaze-medium-v2.gif" width="200" style="display: block; margin:0 auto"/>
+<img src="../../gifs/pointmaze-medium-v2.gif" width="200" style="display: block; margin:0 auto"/>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
 <p>The data is collected from the <a class="reference external" href="https://robotics.farama.org/envs/maze/point_maze/"><code class="docutils literal notranslate"><span class="pre">PointMaze_Medium-v3</span></code></a> environment. The agent uses a PD controller to follow a path of waypoints generated with QIteration until it reaches the goal. The task is continuing which means that when the agent reaches the goal the environment generates a new random goal without resetting the location of the agent. The reward function is sparse, only returning a value of 1 if the goal is reached, otherwise 0. To add variance to the collected paths random noise is added to the actions taken by the agent.</p>

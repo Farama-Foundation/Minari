@@ -363,7 +363,7 @@
             
             <section class="tex2jax_ignore mathjax_ignore" id="umaze-diverse">
 <h1>Umaze-Diverse<a class="headerlink" href="#umaze-diverse" title="Link to this heading">¶</a></h1>
-<img src="/datasets/gifs/antmaze-umaze-diverse-v1.gif" width="200" style="display: block; margin:0 auto"/>
+<img src="../../gifs/antmaze-umaze-diverse-v1.gif" width="200" style="display: block; margin:0 auto"/>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
 <p>The data is collected from the <a class="reference external" href="https://robotics.farama.org/envs/maze/ant_maze/"><code class="docutils literal notranslate"><span class="pre">AntMaze_UMaze-v4</span></code></a> environment, which contains a U shape maze. At the beginning of each episode random locations for the goal and agent’s reset are selected. The success rate of all the trajectories is more than 90%, failed trajectories occur because the Ant flips and can’t stand up again. Also note that when the Ant reaches the goal the episode doesn’t terminate or generate a new target leading to a reward accumulation. The Ant reaches the goals by following a set of waypoints using a goal-reaching policy trained using SAC.</p>

@@ -405,6 +405,11 @@
 │             ...              │       ...      │     ...     │     ...      │        ...        │           ...          │
 </pre></div>
 </div>
+<p>To use your own server with Minari, set the <code class="docutils literal notranslate"><span class="pre">MINARI_REMOTE</span></code> environment variable in the format <code class="docutils literal notranslate"><span class="pre">remote-type://remote-path</span></code>. For example, to set up a GCP bucket named <code class="docutils literal notranslate"><span class="pre">my-datasets</span></code>, run the following command:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">MINARI_REMOTE</span><span class="o">=</span>gcp://my-datasets
+</pre></div>
+</div>
+<p>Currently, only GCP is supported, but we plan to support other cloud providers in the future.</p>
 <p>To download any of the remote datasets into the local storage use the download command:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>minari<span class="w"> </span>download<span class="w"> </span>door-human-v2
 </pre></div>

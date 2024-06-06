@@ -363,82 +363,51 @@
             <h1>Source code for minari.storage.hosting</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span> <span class="nn">glob</span>
 <span class="kn">import</span> <span class="nn">importlib.metadata</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
 
-<span class="kn">from</span> <span class="nn">google.cloud</span> <span class="kn">import</span> <span class="n">storage</span>
 <span class="kn">from</span> <span class="nn">gymnasium</span> <span class="kn">import</span> <span class="n">logger</span>
 <span class="kn">from</span> <span class="nn">packaging.specifiers</span> <span class="kn">import</span> <span class="n">SpecifierSet</span>
-<span class="kn">from</span> <span class="nn">tqdm.auto</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
 <span class="kn">from</span> <span class="nn">minari.dataset.minari_dataset</span> <span class="kn">import</span> <span class="n">parse_dataset_id</span>
 <span class="kn">from</span> <span class="nn">minari.dataset.minari_storage</span> <span class="kn">import</span> <span class="n">METADATA_FILE_NAME</span>
 <span class="kn">from</span> <span class="nn">minari.storage.datasets_root_dir</span> <span class="kn">import</span> <span class="n">get_dataset_path</span>
 <span class="kn">from</span> <span class="nn">minari.storage.local</span> <span class="kn">import</span> <span class="n">load_dataset</span>
+<span class="kn">from</span> <span class="nn">minari.storage.remotes</span> <span class="kn">import</span> <span class="n">get_cloud_storage</span>
 
 
 <span class="c1"># Use importlib due to circular import when: &quot;from minari import __version__&quot;</span>
 <span class="n">__version__</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">version</span><span class="p">(</span><span class="s2">&quot;minari&quot;</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">upload_dataset</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">path_to_private_key</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">upload_dataset</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Upload a Minari dataset to the remote Farama server.</span>
 
 <span class="sd">    If you would like to upload a dataset please first get in touch with the Farama team at contact@farama.org.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        dataset_id (str): name id of the local Minari dataset</span>
-<span class="sd">        path_to_private_key (str): path to the GCP bucket json credentials. Reach out to the Farama team.</span>
+<span class="sd">        key_path (str): path to the credentials file.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">def</span> <span class="nf">_upload_local_directory_to_gcs</span><span class="p">(</span><span class="n">local_path</span><span class="p">,</span> <span class="n">bucket</span><span class="p">,</span> <span class="n">gcs_path</span><span class="p">):</span>
-        <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">local_path</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">local_file</span> <span class="ow">in</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">local_path</span> <span class="o">+</span> <span class="s2">&quot;/**&quot;</span><span class="p">):</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">local_file</span><span class="p">):</span>
-                <span class="n">_upload_local_directory_to_gcs</span><span class="p">(</span>
-                    <span class="n">local_file</span><span class="p">,</span> <span class="n">bucket</span><span class="p">,</span> <span class="n">gcs_path</span> <span class="o">+</span> <span class="s2">&quot;/&quot;</span> <span class="o">+</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">local_file</span><span class="p">)</span>
-                <span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">remote_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">gcs_path</span><span class="p">,</span> <span class="n">local_file</span><span class="p">[</span><span class="mi">1</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">local_path</span><span class="p">)</span> <span class="p">:])</span>
-                <span class="n">blob</span> <span class="o">=</span> <span class="n">bucket</span><span class="o">.</span><span class="n">blob</span><span class="p">(</span><span class="n">remote_path</span><span class="p">)</span>
-                <span class="n">blob</span><span class="o">.</span><span class="n">upload_from_filename</span><span class="p">(</span><span class="n">local_file</span><span class="p">)</span>
-
-    <span class="n">file_path</span> <span class="o">=</span> <span class="n">get_dataset_path</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
     <span class="n">remote_datasets</span> <span class="o">=</span> <span class="n">list_remote_datasets</span><span class="p">()</span>
-    <span class="k">if</span> <span class="n">dataset_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">remote_datasets</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-        <span class="n">storage_client</span> <span class="o">=</span> <span class="n">storage</span><span class="o">.</span><span class="n">Client</span><span class="o">.</span><span class="n">from_service_account_json</span><span class="p">(</span>
-            <span class="n">json_credentials_path</span><span class="o">=</span><span class="n">path_to_private_key</span>
-        <span class="p">)</span>
-        <span class="n">bucket</span> <span class="o">=</span> <span class="n">storage</span><span class="o">.</span><span class="n">Bucket</span><span class="p">(</span><span class="n">storage_client</span><span class="p">,</span> <span class="s2">&quot;minari-datasets&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">dataset_id</span> <span class="ow">in</span> <span class="n">remote_datasets</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Upload aborted. </span><span class="si">{</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2"> is already in remote.&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
 
+    <span class="n">cloud_storage</span> <span class="o">=</span> <span class="n">get_cloud_storage</span><span class="p">(</span><span class="n">key_path</span><span class="o">=</span><span class="n">key_path</span><span class="p">)</span>
+
+    <span class="n">datasets_to_upload</span> <span class="o">=</span> <span class="p">[</span><span class="n">dataset_id</span><span class="p">]</span>
+    <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">datasets_to_upload</span><span class="p">):</span>
+        <span class="n">dataset_id</span> <span class="o">=</span> <span class="n">datasets_to_upload</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Uploading dataset </span><span class="si">{</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">get_dataset_path</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
+        <span class="n">cloud_storage</span><span class="o">.</span><span class="n">upload_path</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dataset_id</span><span class="p">)</span>
         <span class="n">dataset</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
-
-        <span class="c1"># See https://github.com/googleapis/python-storage/issues/27 for discussion on progress bars</span>
-        <span class="n">_upload_local_directory_to_gcs</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">file_path</span><span class="p">),</span> <span class="n">bucket</span><span class="p">,</span> <span class="n">dataset_id</span><span class="p">)</span>
-
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Dataset </span><span class="si">{</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2"> uploaded!&quot;</span><span class="p">)</span>
-
         <span class="n">combined_datasets</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">combined_datasets</span>
-
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">combined_datasets</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Dataset </span><span class="si">{</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2"> is formed by a combination of the following datasets: &quot;</span>
-            <span class="p">)</span>
-            <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">combined_datasets</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">combined_datasets</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Uploading dataset </span><span class="si">{</span><span class="n">dataset</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="n">upload_dataset</span><span class="p">(</span>
-                    <span class="n">dataset_id</span><span class="o">=</span><span class="n">dataset</span><span class="p">,</span> <span class="n">path_to_private_key</span><span class="o">=</span><span class="n">path_to_private_key</span>
-                <span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Stopped upload of dataset </span><span class="si">{</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2">. </span><span class="si">{</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2"> is already in the Farama servers.&quot;</span>
-        <span class="p">)</span>
+        <span class="n">datasets_to_upload</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">combined_datasets</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="download_dataset">
@@ -454,39 +423,35 @@
 <span class="sd">        dataset_id (str): name id of the Minari dataset</span>
 <span class="sd">        force_download (bool): boolean flag for force downloading the dataset. Default Value = False</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">download_env_name</span><span class="p">,</span> <span class="n">download_dataset_name</span><span class="p">,</span> <span class="n">download_version</span> <span class="o">=</span> <span class="n">parse_dataset_id</span><span class="p">(</span>
-        <span class="n">dataset_id</span>
-    <span class="p">)</span>
+    <span class="n">env_name</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">dataset_version</span> <span class="o">=</span> <span class="n">parse_dataset_id</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
 
-    <span class="n">all_dataset_versions</span> <span class="o">=</span> <span class="n">get_remote_dataset_versions</span><span class="p">(</span>
-        <span class="n">download_env_name</span><span class="p">,</span> <span class="n">download_dataset_name</span>
-    <span class="p">)</span>
+    <span class="n">all_dataset_versions</span> <span class="o">=</span> <span class="n">get_remote_dataset_versions</span><span class="p">(</span><span class="n">env_name</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">)</span>
 
     <span class="c1"># 1. Check if there are any remote versions of the dataset at all</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">all_dataset_versions</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Couldn&#39;t find any version for dataset </span><span class="si">{</span><span class="n">download_env_name</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">download_dataset_name</span><span class="si">}</span><span class="s2"> in the remote Farama server.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Couldn&#39;t find any version for dataset </span><span class="si">{</span><span class="n">env_name</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2"> in the remote Farama server.&quot;</span>
         <span class="p">)</span>
 
     <span class="c1"># 2. Check if there are any remote compatible versions with the local installed Minari version</span>
     <span class="n">max_version</span> <span class="o">=</span> <span class="n">get_remote_dataset_versions</span><span class="p">(</span>
-        <span class="n">download_env_name</span><span class="p">,</span>
-        <span class="n">download_dataset_name</span><span class="p">,</span>
+        <span class="n">env_name</span><span class="p">,</span>
+        <span class="n">dataset_name</span><span class="p">,</span>
         <span class="n">latest_version</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
         <span class="n">compatible_minari_version</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">max_version</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">force_download</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Couldn&#39;t find any compatible version of dataset </span><span class="si">{</span><span class="n">download_env_name</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">download_dataset_name</span><span class="si">}</span><span class="s2"> with the local installed version of Minari, </span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Couldn&#39;t find any compatible version of dataset </span><span class="si">{</span><span class="n">env_name</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2"> with the local installed version of Minari, </span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Couldn&#39;t find any compatible version of dataset </span><span class="si">{</span><span class="n">download_env_name</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">download_dataset_name</span><span class="si">}</span><span class="s2"> with the local installed version of Minari, </span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Couldn&#39;t find any compatible version of dataset </span><span class="si">{</span><span class="n">env_name</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2"> with the local installed version of Minari, </span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="p">)</span>
 
     <span class="c1"># 3. Check that the dataset version exists</span>
-    <span class="k">if</span> <span class="n">download_version</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">all_dataset_versions</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">dataset_version</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">all_dataset_versions</span><span class="p">:</span>
         <span class="n">e_msg</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;The dataset version, </span><span class="si">{</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2">, doesn&#39;t exist in the remote Farama server.&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">max_version</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -496,17 +461,17 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="n">e_msg</span>
-                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; We suggest you download the latest compatible version of this dataset: </span><span class="si">{</span><span class="n">download_env_name</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">download_dataset_name</span><span class="si">}</span><span class="s2">-v</span><span class="si">{</span><span class="n">max_version</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; We suggest you download the latest compatible version of this dataset: </span><span class="si">{</span><span class="n">env_name</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">-v</span><span class="si">{</span><span class="n">max_version</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
 
     <span class="c1"># 4. Check that the dataset version is compatible with the local installed Minari version</span>
     <span class="n">compatible_dataset_versions</span> <span class="o">=</span> <span class="n">get_remote_dataset_versions</span><span class="p">(</span>
-        <span class="n">download_env_name</span><span class="p">,</span>
-        <span class="n">download_dataset_name</span><span class="p">,</span>
+        <span class="n">env_name</span><span class="p">,</span>
+        <span class="n">dataset_name</span><span class="p">,</span>
         <span class="n">latest_version</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">compatible_minari_version</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span>
-    <span class="k">if</span> <span class="n">download_version</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">compatible_dataset_versions</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">dataset_version</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">compatible_dataset_versions</span><span class="p">:</span>
         <span class="n">e_msg</span> <span class="o">=</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;The version you are trying to download for dataset, </span><span class="si">{</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2">, is not compatible with &quot;</span>
             <span class="sa">f</span><span class="s2">&quot;your local installed version of Minari, </span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2">.&quot;</span>
@@ -514,19 +479,19 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">force_download</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="n">e_msg</span>
-                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; You can download the latest compatible version of this dataset: </span><span class="si">{</span><span class="n">download_env_name</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">download_dataset_name</span><span class="si">}</span><span class="s2">-v</span><span class="si">{</span><span class="n">max_version</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; You can download the latest compatible version of this dataset: </span><span class="si">{</span><span class="n">env_name</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">-v</span><span class="si">{</span><span class="n">max_version</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="p">)</span>
         <span class="c1"># Only a warning and force download incompatible dataset</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
                 <span class="n">e_msg</span>
-                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2"> will be FORCE download but you can download the latest compatible version of this dataset: </span><span class="si">{</span><span class="n">download_env_name</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">download_dataset_name</span><span class="si">}</span><span class="s2">-v</span><span class="si">{</span><span class="n">max_version</span><span class="si">}</span><span class="s2">.&quot;</span>
+                <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot; </span><span class="si">{</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2"> will be FORCE download but you can download the latest compatible version of this dataset: </span><span class="si">{</span><span class="n">env_name</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">-v</span><span class="si">{</span><span class="n">max_version</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="p">)</span>
 
     <span class="c1"># 5. Warning to recommend downloading the latest compatible version of the dataset</span>
-    <span class="k">elif</span> <span class="n">max_version</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">download_version</span> <span class="o">&lt;</span> <span class="n">max_version</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+    <span class="k">elif</span> <span class="n">max_version</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">dataset_version</span> <span class="o">&lt;</span> <span class="n">max_version</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;We recommend you install a higher dataset version available and compatible with your local installed Minari version: </span><span class="si">{</span><span class="n">download_env_name</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">download_dataset_name</span><span class="si">}</span><span class="s2">-v</span><span class="si">{</span><span class="n">max_version</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;We recommend you install a higher dataset version available and compatible with your local installed Minari version: </span><span class="si">{</span><span class="n">env_name</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">-v</span><span class="si">{</span><span class="n">max_version</span><span class="si">}</span><span class="s2">.&quot;</span>
         <span class="p">)</span>
 
     <span class="n">file_path</span> <span class="o">=</span> <span class="n">get_dataset_path</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
@@ -538,28 +503,20 @@
             <span class="k">return</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Downloading </span><span class="si">{</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2"> from Farama servers...&quot;</span><span class="p">)</span>
-    <span class="n">storage_client</span> <span class="o">=</span> <span class="n">storage</span><span class="o">.</span><span class="n">Client</span><span class="o">.</span><span class="n">create_anonymous_client</span><span class="p">()</span>
+    <span class="n">cloud_storage</span> <span class="o">=</span> <span class="n">get_cloud_storage</span><span class="p">()</span>
+    <span class="n">blobs</span> <span class="o">=</span> <span class="n">cloud_storage</span><span class="o">.</span><span class="n">list_blobs</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">dataset_id</span><span class="p">)</span>
 
-    <span class="n">bucket</span> <span class="o">=</span> <span class="n">storage_client</span><span class="o">.</span><span class="n">bucket</span><span class="p">(</span><span class="n">bucket_name</span><span class="o">=</span><span class="s2">&quot;minari-datasets&quot;</span><span class="p">)</span>
-    <span class="c1"># Construct a client side representation of a blob.</span>
-    <span class="c1"># Note `Bucket.blob` differs from `Bucket.get_blob` as it doesn&#39;t retrieve</span>
-    <span class="c1"># any content from Google Cloud Storage. As we don&#39;t need additional data,</span>
-    <span class="c1"># using `Bucket.blob` is preferred here.</span>
-    <span class="n">blobs</span> <span class="o">=</span> <span class="n">bucket</span><span class="o">.</span><span class="n">list_blobs</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">dataset_id</span><span class="p">)</span>  <span class="c1"># Get list of files</span>
     <span class="k">for</span> <span class="n">blob</span> <span class="ow">in</span> <span class="n">blobs</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> * Downloading data file &#39;</span><span class="si">{</span><span class="n">blob</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; ...</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="n">blob_dir</span><span class="p">,</span> <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">blob</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-        <span class="c1"># If the object blob path is a directory continue searching for files</span>
-        <span class="k">if</span> <span class="n">file_name</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">file_name</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span>
+        <span class="p">):</span>  <span class="c1"># If the object blob path is a directory continue searching for files</span>
             <span class="k">continue</span>
         <span class="n">blob_local_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">file_path</span><span class="p">),</span> <span class="n">blob_dir</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">blob_local_dir</span><span class="p">):</span>
             <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">blob_local_dir</span><span class="p">)</span>
-        <span class="c1"># Download progress bar:</span>
-        <span class="c1"># https://stackoverflow.com/questions/62811608/how-to-show-progress-bar-when-we-are-downloading-a-file-from-cloud-bucket-using</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">blob_local_dir</span><span class="p">,</span> <span class="n">file_name</span><span class="p">),</span> <span class="s2">&quot;wb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="k">with</span> <span class="n">tqdm</span><span class="o">.</span><span class="n">wrapattr</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="s2">&quot;write&quot;</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="n">blob</span><span class="o">.</span><span class="n">size</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_obj</span><span class="p">:</span>
-                <span class="n">storage_client</span><span class="o">.</span><span class="n">download_blob_to_file</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span> <span class="n">file_obj</span><span class="p">)</span>
+        <span class="n">cloud_storage</span><span class="o">.</span><span class="n">download_blob</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">blob_local_dir</span><span class="p">,</span> <span class="n">file_name</span><span class="p">))</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Dataset </span><span class="si">{</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2"> downloaded to </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -595,8 +552,8 @@
 <span class="sd">    Returns:</span>
 <span class="sd">       Dict[str, Dict[str, str]]: keys the names of the Minari datasets and values the metadata</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">client</span> <span class="o">=</span> <span class="n">storage</span><span class="o">.</span><span class="n">Client</span><span class="o">.</span><span class="n">create_anonymous_client</span><span class="p">()</span>
-    <span class="n">blobs</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">list_blobs</span><span class="p">(</span><span class="n">bucket_or_name</span><span class="o">=</span><span class="s2">&quot;minari-datasets&quot;</span><span class="p">)</span>
+    <span class="n">cloud_storage</span> <span class="o">=</span> <span class="n">get_cloud_storage</span><span class="p">()</span>
+    <span class="n">blobs</span> <span class="o">=</span> <span class="n">cloud_storage</span><span class="o">.</span><span class="n">list_blobs</span><span class="p">()</span>
 
     <span class="c1"># Generate dict = {&#39;env_name-dataset_name&#39;: (version, metadata)}</span>
     <span class="n">remote_datasets</span> <span class="o">=</span> <span class="p">{}</span>
