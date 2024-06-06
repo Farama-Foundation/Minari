@@ -8,9 +8,7 @@ from .gcp import GCPStorage
 
 DEFAULT_REMOTE = "gcp://minari-datasets"
 
-registry: Dict[str, Type[CloudStorage]] = {
-    "gcp": GCPStorage
-}
+registry: Dict[str, Type[CloudStorage]] = {"gcp": GCPStorage}
 
 
 def get_cloud_storage(key_path=None) -> CloudStorage:
