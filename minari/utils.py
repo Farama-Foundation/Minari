@@ -5,7 +5,7 @@ import importlib.metadata
 import os
 import re
 import warnings
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable
 
 import gymnasium as gym
 import numpy as np
@@ -154,7 +154,7 @@ def combine_minari_version_specifiers(specifier_set: SpecifierSet) -> SpecifierS
 
 
 def validate_datasets_to_combine(
-    datasets_to_combine: List[MinariDataset],
+    datasets_to_combine: list[MinariDataset],
 ) -> EnvSpec | None:
     """Check if the given datasets can be combined.
 
@@ -228,7 +228,7 @@ class RandomPolicy:
         return self.action_space.sample()
 
 
-def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_id: str):
+def combine_datasets(datasets_to_combine: list[MinariDataset], new_dataset_id: str):
     """Combine a group of MinariDataset in to a single dataset with its own name id.
 
     The new dataset will contain a metadata attribute `combined_datasets` containing a list
@@ -279,8 +279,8 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_id: s
 
 
 def split_dataset(
-    dataset: MinariDataset, sizes: List[int], seed: Optional[int] = None
-) -> List[MinariDataset]:
+    dataset: MinariDataset, sizes: list[int], seed: int | None = None
+) -> list[MinariDataset]:
     """Split a MinariDataset in multiple datasets.
 
     Args:
@@ -350,21 +350,21 @@ def _generate_dataset_path(dataset_id: str) -> str | os.PathLike:
 
 def _generate_dataset_metadata(
     dataset_id: str,
-    env_spec: Optional[EnvSpec],
-    eval_env: Optional[str | gym.Env | EnvSpec],
-    algorithm_name: Optional[str],
-    author: Optional[str],
-    author_email: Optional[str],
-    code_permalink: Optional[str],
-    ref_min_score: Optional[float],
-    ref_max_score: Optional[float],
-    expert_policy: Optional[Callable[[ObsType], ActType]],
+    env_spec: EnvSpec | None,
+    eval_env: str | gym.Env | EnvSpec | None,
+    algorithm_name: str | None,
+    author: str | None,
+    author_email: str | None,
+    code_permalink: str | None,
+    ref_min_score: float | None,
+    ref_max_score: float | None,
+    expert_policy: Callable[[ObsType], ActType] | None,
     num_episodes_average_score: int,
-    minari_version: Optional[str],
-    description: Optional[str],
-) -> Dict[str, Any]:
+    minari_version: str | None,
+    description: str | None,
+) -> dict[str, Any]:
     """Return the metadata dictionary of the dataset."""
-    dataset_metadata: Dict[str, Any] = {
+    dataset_metadata: dict[str, Any] = {
         "dataset_id": dataset_id,
     }
     # NoneType warnings
@@ -481,22 +481,22 @@ def _generate_dataset_metadata(
 
 def create_dataset_from_buffers(
     dataset_id: str,
-    buffer: List[EpisodeBuffer],
-    env: Optional[str | gym.Env | EnvSpec] = None,
-    eval_env: Optional[str | gym.Env | EnvSpec] = None,
-    algorithm_name: Optional[str] = None,
-    author: Optional[str] = None,
-    author_email: Optional[str] = None,
-    code_permalink: Optional[str] = None,
-    minari_version: Optional[str] = None,
-    action_space: Optional[gym.spaces.Space] = None,
-    observation_space: Optional[gym.spaces.Space] = None,
-    ref_min_score: Optional[float] = None,
-    ref_max_score: Optional[float] = None,
-    expert_policy: Optional[Callable[[ObsType], ActType]] = None,
+    buffer: list[EpisodeBuffer],
+    env: str | gym.Env | EnvSpec | None = None,
+    eval_env: str | gym.Env | EnvSpec | None = None,
+    algorithm_name: str | None = None,
+    author: str | None = None,
+    author_email: str | None = None,
+    code_permalink: str | None = None,
+    minari_version: str | None = None,
+    action_space: gym.spaces.Space | None = None,
+    observation_space: gym.spaces.Space | None = None,
+    ref_min_score: float | None = None,
+    ref_max_score: float | None = None,
+    expert_policy: Callable[[ObsType], ActType] | None = None,
     num_episodes_average_score: int = 100,
-    description: Optional[str] = None,
-    data_format: Optional[str] = None,
+    description: str | None = None,
+    data_format: str | None = None,
 ):
     """Create Minari dataset from a list of episode dictionary buffers.
 
@@ -623,7 +623,7 @@ def get_normalized_score(dataset: MinariDataset, returns: np.ndarray) -> np.ndar
     return (returns - ref_min_score) / (ref_max_score - ref_min_score)
 
 
-def get_env_spec_dict(env_spec: EnvSpec) -> Dict[str, str]:
+def get_env_spec_dict(env_spec: EnvSpec) -> dict[str, str]:
     """Create dict of the environment specs, including observation and action space."""
     try:
         env = gym.make(env_spec.id)
@@ -657,8 +657,8 @@ def get_env_spec_dict(env_spec: EnvSpec) -> Dict[str, str]:
 
 
 def get_dataset_spec_dict(
-    dataset_spec: Dict, print_version: bool = False
-) -> Dict[str, str]:
+    dataset_spec: dict, print_version: bool = False
+) -> dict[str, str]:
     """Create dict of the dataset specs, including observation and action space."""
     code_link = dataset_spec["code_permalink"]
     action_space = dataset_spec.get("action_space")

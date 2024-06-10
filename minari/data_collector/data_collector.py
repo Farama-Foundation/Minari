@@ -6,7 +6,7 @@ import os
 import secrets
 import shutil
 import tempfile
-from typing import Any, Callable, Dict, Optional, SupportsFloat, Type
+from typing import Any, Callable, SupportsFloat
 
 import gymnasium as gym
 import numpy as np
@@ -62,14 +62,14 @@ class DataCollector(gym.Wrapper):
     def __init__(
         self,
         env: gym.Env,
-        step_data_callback: Type[StepDataCallback] = StepDataCallback,
-        episode_metadata_callback: Type[
+        step_data_callback: type[StepDataCallback] = StepDataCallback,
+        episode_metadata_callback: type[
             EpisodeMetadataCallback
         ] = EpisodeMetadataCallback,
         record_infos: bool = False,
-        observation_space: Optional[gym.Space] = None,
-        action_space: Optional[gym.Space] = None,
-        data_format: Optional[str] = None,
+        observation_space: gym.Space | None = None,
+        action_space: gym.Space | None = None,
+        data_format: str | None = None,
     ):
         """Initialize the data collector attributes and create the temporary directory for caching.
 
@@ -103,7 +103,7 @@ class DataCollector(gym.Wrapper):
         self._action_space = action_space
 
         self._record_infos = record_infos
-        self._buffer: Optional[EpisodeBuffer] = None
+        self._buffer: EpisodeBuffer | None = None
         self._episode_id = 0
         self._reset_storage()
 
@@ -227,17 +227,17 @@ class DataCollector(gym.Wrapper):
     def create_dataset(
         self,
         dataset_id: str,
-        eval_env: Optional[str | gym.Env | EnvSpec] = None,
-        algorithm_name: Optional[str] = None,
-        author: Optional[str] = None,
-        author_email: Optional[str] = None,
-        code_permalink: Optional[str] = None,
-        ref_min_score: Optional[float] = None,
-        ref_max_score: Optional[float] = None,
-        expert_policy: Optional[Callable[[ObsType], ActType]] = None,
+        eval_env: str | gym.Env | EnvSpec | None = None,
+        algorithm_name: str | None = None,
+        author: str | None = None,
+        author_email: str | None = None,
+        code_permalink: str | None = None,
+        ref_min_score: float | None = None,
+        ref_max_score: float | None = None,
+        expert_policy: Callable[[ObsType], ActType] | None = None,
         num_episodes_average_score: int = 100,
-        minari_version: Optional[str] = None,
-        description: Optional[str] = None,
+        minari_version: str | None = None,
+        description: str | None = None,
     ):
         """Create a Minari dataset using the data collected from stepping with a Gymnasium environment wrapped with a `DataCollector` Minari wrapper.
 
@@ -266,7 +266,7 @@ class DataCollector(gym.Wrapper):
             MinariDataset
         """
         dataset_path = _generate_dataset_path(dataset_id)
-        metadata: Dict[str, Any] = _generate_dataset_metadata(
+        metadata: dict[str, Any] = _generate_dataset_metadata(
             dataset_id,
             copy.deepcopy(self.env.spec),
             eval_env,
@@ -300,7 +300,7 @@ class DataCollector(gym.Wrapper):
         self._buffer = None
 
     def _save_to_disk(
-        self, path: str | os.PathLike, dataset_metadata: Dict[str, Any] = {}
+        self, path: str | os.PathLike, dataset_metadata: dict[str, Any] = {}
     ):
         """Save all in-memory buffer data and move temporary files to a permanent location in disk.
 

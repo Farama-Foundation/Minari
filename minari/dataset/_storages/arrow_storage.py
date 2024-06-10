@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import pathlib
 from itertools import zip_longest
-from typing import Any, Dict, Iterable, List, Optional, Sequence
+from typing import Any, Iterable, Sequence
 
 import gymnasium as gym
 import numpy as np
@@ -35,7 +35,7 @@ class ArrowStorage(MinariStorage):
         return cls(data_path, observation_space, action_space)
 
     def update_episode_metadata(
-        self, metadatas: Iterable[Dict], episode_indices: Optional[Iterable] = None
+        self, metadatas: Iterable[dict], episode_indices: Iterable | None = None
     ):
         if episode_indices is None:
             episode_indices = range(self.total_episodes)
@@ -58,7 +58,7 @@ class ArrowStorage(MinariStorage):
             with open(metadata_path, "w") as file:
                 json.dump(metadata, file)
 
-    def get_episodes(self, episode_indices: Iterable[int]) -> List[dict]:
+    def get_episodes(self, episode_indices: Iterable[int]) -> list[dict]:
         dataset = pa.dataset.dataset(
             [
                 pa.dataset.dataset(
@@ -73,9 +73,11 @@ class ArrowStorage(MinariStorage):
         def _to_dict(id, episode):
             return {
                 "id": id,
-                "seed": episode["seed"][0].as_py()
-                if "seed" in episode.column_names
-                else None,
+                "seed": (
+                    episode["seed"][0].as_py()
+                    if "seed" in episode.column_names
+                    else None
+                ),
                 "total_steps": len(episode) - 1,
                 "observations": _decode_space(
                     self.observation_space, episode["observations"]
@@ -84,9 +86,11 @@ class ArrowStorage(MinariStorage):
                 "rewards": np.asarray(episode["rewards"])[:-1],
                 "terminations": np.asarray(episode["terminations"])[:-1],
                 "truncations": np.asarray(episode["truncations"])[:-1],
-                "infos": _decode_info(episode["infos"])
-                if "infos" in episode.column_names
-                else {},
+                "infos": (
+                    _decode_info(episode["infos"])
+                    if "infos" in episode.column_names
+                    else {}
+                ),
             }
 
         episodes = map(_to_dict, episode_indices, dataset.to_batches())

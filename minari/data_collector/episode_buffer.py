@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Optional, Union
 
 import jax.tree_util as jtu
 
@@ -12,14 +11,14 @@ from minari.dataset.step_data import StepData
 class EpisodeBuffer:
     """Contains the data of a single episode."""
 
-    id: Optional[int] = None
-    seed: Optional[int] = None
-    observations: Union[None, list, dict, tuple] = None
-    actions: Union[None, list, dict, tuple] = None
+    id: int | None = None
+    seed: int | None = None
+    observations: None | list | dict | tuple = None
+    actions: None | list | dict | tuple = None
     rewards: list = field(default_factory=list)
     terminations: list = field(default_factory=list)
     truncations: list = field(default_factory=list)
-    infos: Optional[dict] = None
+    infos: dict | None = None
 
     def add_step_data(self, step_data: StepData) -> EpisodeBuffer:
         """Add step data dictionary to episode buffer.

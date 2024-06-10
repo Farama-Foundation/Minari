@@ -5,7 +5,6 @@ import importlib.metadata
 import json
 import os
 import warnings
-from typing import Dict, List
 
 from google.cloud import storage
 from gymnasium import logger
@@ -217,7 +216,7 @@ def download_dataset(dataset_id: str, force_download: bool = False):
 def list_remote_datasets(
     latest_version: bool = False,
     compatible_minari_version: bool = False,
-) -> Dict[str, Dict[str, str]]:
+) -> dict[str, dict[str, str]]:
     """Get the names and metadata of all the Minari datasets in the remote Farama server.
 
     Args:
@@ -268,7 +267,7 @@ def get_remote_dataset_versions(
     dataset_name: str,
     latest_version: bool = False,
     compatible_minari_version: bool = False,
-) -> List[int]:
+) -> list[int]:
     """Finds all registered versions in the remote Farama server of the dataset given.
 
     Args:

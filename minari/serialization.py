@@ -3,19 +3,19 @@ from __future__ import annotations
 import json
 from collections import defaultdict
 from functools import singledispatch
-from typing import Dict, Union
+from typing import Dict
 
 import numpy as np
 from gymnasium import spaces
 
 
 @singledispatch
-def serialize_space(space: spaces.Space, to_string=True) -> Union[Dict, str]:
+def serialize_space(space: spaces.Space, to_string=True) -> dict | str:
     raise NotImplementedError(f"No serialization method available for {space}")
 
 
 @serialize_space.register(spaces.Box)
-def _serialize_box(space: spaces.Box, to_string=True) -> Union[Dict, str]:
+def _serialize_box(space: spaces.Box, to_string=True) -> dict | str:
     result = {}
     result["type"] = "Box"
     result["dtype"] = str(space.dtype)
@@ -30,7 +30,7 @@ def _serialize_box(space: spaces.Box, to_string=True) -> Union[Dict, str]:
 
 
 @serialize_space.register(spaces.Discrete)
-def _serialize_discrete(space: spaces.Discrete, to_string=True) -> Union[Dict, str]:
+def _serialize_discrete(space: spaces.Discrete, to_string=True) -> dict | str:
     result = {}
     result["type"] = "Discrete"
     result["dtype"] = "int64"  # this seems to be hardcoded in Gymnasium
@@ -44,7 +44,7 @@ def _serialize_discrete(space: spaces.Discrete, to_string=True) -> Union[Dict, s
 
 
 @serialize_space.register(spaces.Dict)
-def _serialize_dict(space: spaces.Dict, to_string=True) -> Union[Dict, str]:
+def _serialize_dict(space: spaces.Dict, to_string=True) -> dict | str:
     result = {"type": "Dict", "subspaces": {}}
     for key in space.spaces.keys():
         result["subspaces"][key] = serialize_space(space.spaces[key], to_string=False)
@@ -55,7 +55,7 @@ def _serialize_dict(space: spaces.Dict, to_string=True) -> Union[Dict, str]:
 
 
 @serialize_space.register(spaces.Tuple)
-def _serialize_tuple(space: spaces.Tuple, to_string=True) -> Union[Dict, str]:
+def _serialize_tuple(space: spaces.Tuple, to_string=True) -> dict | str:
     result = {"type": "Tuple", "subspaces": []}
     for subspace in space.spaces:
         result["subspaces"].append(serialize_space(subspace, to_string=False))
@@ -67,7 +67,7 @@ def _serialize_tuple(space: spaces.Tuple, to_string=True) -> Union[Dict, str]:
 
 
 @serialize_space.register(spaces.Text)
-def _serialize_text(space: spaces.Text, to_string=True) -> Union[Dict, str]:
+def _serialize_text(space: spaces.Text, to_string=True) -> dict | str:
     result = {
         "type": "Text",
         "max_length": space.max_length,
@@ -92,7 +92,7 @@ class type_value_dispatch:
 
         return decorator
 
-    def __call__(self, space_dict: Union[Dict, str]) -> spaces.Space:
+    def __call__(self, space_dict: dict | str) -> spaces.Space:
         if not isinstance(space_dict, Dict):
             space_dict = json.loads(space_dict)
 
@@ -101,14 +101,14 @@ class type_value_dispatch:
 
 
 @type_value_dispatch
-def deserialize_space(space_dict: Dict) -> spaces.Space:
+def deserialize_space(space_dict: dict) -> spaces.Space:
     raise NotImplementedError(
         f"No deserialization method available for {space_dict['type']}"
     )
 
 
 @deserialize_space.register("Tuple")
-def _deserialize_tuple(space_dict: Dict) -> spaces.Tuple:
+def _deserialize_tuple(space_dict: dict) -> spaces.Tuple:
     assert space_dict["type"] == "Tuple"
     subspaces = tuple(
         deserialize_space(subspace) for subspace in space_dict["subspaces"]
@@ -117,7 +117,7 @@ def _deserialize_tuple(space_dict: Dict) -> spaces.Tuple:
 
 
 @deserialize_space.register("Dict")
-def _deserialize_dict(space_dict: Dict) -> spaces.Dict:
+def _deserialize_dict(space_dict: dict) -> spaces.Dict:
     assert space_dict["type"] == "Dict"
     subspaces = {
         key: deserialize_space(space_dict["subspaces"][key])
@@ -127,7 +127,7 @@ def _deserialize_dict(space_dict: Dict) -> spaces.Dict:
 
 
 @deserialize_space.register("Box")
-def _deserialize_box(space_dict: Dict) -> spaces.Box:
+def _deserialize_box(space_dict: dict) -> spaces.Box:
     assert space_dict["type"] == "Box"
     shape = tuple(space_dict["shape"])
     dtype = np.dtype(space_dict["dtype"])
@@ -137,7 +137,7 @@ def _deserialize_box(space_dict: Dict) -> spaces.Box:
 
 
 @deserialize_space.register("Discrete")
-def _deserialize_discrete(space_dict: Dict) -> spaces.Discrete:
+def _deserialize_discrete(space_dict: dict) -> spaces.Discrete:
     assert space_dict["type"] == "Discrete"
     n = space_dict["n"]
     start = space_dict["start"]
@@ -145,7 +145,7 @@ def _deserialize_discrete(space_dict: Dict) -> spaces.Discrete:
 
 
 @deserialize_space.register("Text")
-def _deserialize_text(space_dict: Dict) -> spaces.Text:
+def _deserialize_text(space_dict: dict) -> spaces.Text:
     assert space_dict["type"] == "Text"
     return spaces.Text(
         max_length=space_dict["max_length"],
