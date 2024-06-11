@@ -1,4 +1,6 @@
 """Minari CLI commands."""
+from __future__ import annotations
+
 import os
 from collections import defaultdict
 from typing import Any, Dict, List, Optional
@@ -204,6 +206,10 @@ def show(dataset: Annotated[str, typer.Argument()]):
 
         if env_spec_json is not None:
             assert isinstance(env_spec_json, str)
+            # for compatibility with pre v1.0 datasets
+            env_spec_json = env_spec_json.replace('"autoreset": false, ', "").replace(
+                '"apply_api_compatibility": false, ', ""
+            )
             env_spec = EnvSpec.from_json(env_spec_json)
             env_spec_table = Table(show_header=False, highlight=True)
             env_spec_table.add_column(style="bold")

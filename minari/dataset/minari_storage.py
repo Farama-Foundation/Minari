@@ -70,6 +70,10 @@ class MinariStorage(ABC):
         if action_space is None or observation_space is None:
             env_spec_str = metadata.get("env_spec")
             assert isinstance(env_spec_str, str)
+            # for compatibility with pre v1.0 datasets
+            env_spec_str = env_spec_str.replace('"autoreset": false, ', "").replace(
+                '"apply_api_compatibility": false, ', ""
+            )
             env_spec = EnvSpec.from_json(env_spec_str)
             env = gym.make(env_spec)
             if observation_space is None:

@@ -13,7 +13,7 @@ import portion as P
 from gymnasium.core import ActType, ObsType
 from gymnasium.envs.registration import EnvSpec
 from gymnasium.error import NameNotFound
-from gymnasium.wrappers.record_episode_statistics import RecordEpisodeStatistics
+from gymnasium.wrappers import RecordEpisodeStatistics
 from packaging.specifiers import InvalidSpecifier, SpecifierSet
 from packaging.version import Version
 
@@ -645,7 +645,6 @@ def get_env_spec_dict(env_spec: EnvSpec) -> Dict[str, str]:
             "reward_threshold": str(env_spec.reward_threshold),
             "nondeterministic": f"`{env_spec.nondeterministic}`",
             "order_enforce": f"`{env_spec.order_enforce}`",
-            "autoreset": f"`{env_spec.autoreset}`",
             "disable_env_checker": f"`{env_spec.disable_env_checker}`",
             "kwargs": f"`{env_spec.kwargs}`",
             "additional_wrappers": f"`{env_spec.additional_wrappers}`",
