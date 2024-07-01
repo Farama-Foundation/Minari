@@ -184,6 +184,7 @@ def list_remote_datasets(
        Dict[str, Dict[str, str]]: keys the names of the Minari datasets and values the metadata
     """
     from minari import supported_dataset_versions
+
     cloud_storage = get_cloud_storage()
     blobs = cloud_storage.list_blobs()
 
