@@ -2,7 +2,7 @@ import gymnasium as gym
 import h5py
 import pytest
 from agilerl.components.replay_buffer import ReplayBuffer
-from agilerl.utils.minari_utils import MinariToAgileBuffer, MinariToAgileDataset
+from agilerl.utils.minari_utils import minari_to_agile_buffer, minari_to_agile_dataset
 
 import minari
 from minari import DataCollector
@@ -31,14 +31,24 @@ def test_agile_create_dataset(dataset_id):
     Tests that the AgileRL MinariToAgileDataset method works as expected.
     """
 
-    dataset = MinariToAgileDataset(dataset_id)
+    dataset = minari_to_agile_dataset(dataset_id)
 
     assert isinstance(dataset, h5py.File)
-    assert dataset["observations"].size > 0
-    assert dataset["next_observations"].size > 0
-    assert dataset["actions"].size > 0
-    assert dataset["rewards"].size > 0
-    assert dataset["terminals"].size > 0
+    observations = dataset["observations"]
+    next_observations = dataset["next_observations"]
+    actions = dataset["actions"]
+    rewards = dataset["rewards"]
+    terminals = dataset["terminals"]
+    assert isinstance(observations, h5py.Dataset)
+    assert isinstance(next_observations, h5py.Dataset)
+    assert isinstance(actions, h5py.Dataset)
+    assert isinstance(rewards, h5py.Dataset)
+    assert isinstance(terminals, h5py.Dataset)
+    assert observations.size is not None and observations.size > 0
+    assert next_observations.size is not None and next_observations.size > 0
+    assert actions.size is not None and actions.size > 0
+    assert rewards.size is not None and rewards.size > 0
+    assert terminals.size is not None and terminals.size > 0
 
 
 def test_agile_create_buffer(dataset_id):
@@ -47,13 +57,11 @@ def test_agile_create_buffer(dataset_id):
     """
 
     field_names = ["state", "action", "reward", "next_state", "done"]
-    memory = ReplayBuffer(
-        action_dim=2, memory_size=10000, field_names=field_names, device="cpu"
-    )
+    memory = ReplayBuffer(memory_size=10000, field_names=field_names, device="cpu")
 
     assert memory.counter == 0
 
-    memory = MinariToAgileBuffer(dataset_id, memory)
+    memory = minari_to_agile_buffer(dataset_id, memory)
 
     assert isinstance(memory, ReplayBuffer)
     assert memory.counter > 0

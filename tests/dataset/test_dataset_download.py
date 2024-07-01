@@ -91,7 +91,7 @@ def test_download_error_messages(monkeypatch):
 
     # 2. Check if there are any remote compatible versions with the local installed Minari version
     with monkeypatch.context() as mp:
-        mp.setattr("minari.storage.hosting.__version__", "0.0.0")
+        mp.setattr("minari.supported_dataset_versions", set())
 
         with pytest.raises(
             ValueError, match="Couldn't find any compatible version of dataset"
