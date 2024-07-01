@@ -56,11 +56,3 @@ def test_dataset_download_then_delete(dataset_id: str):
 def test_minari_show(dataset_id):
     result = runner.invoke(app, ["show", dataset_id])
     assert result.exit_code == 0
-
-
-@pytest.mark.parametrize("dataset_id", ["minigrid-fourrooms-random-v0"])
-def test_show_rendering(dataset_id: str):
-    result = runner.invoke(app, ["show", dataset_id])
-    assert result.exit_code == 0
-    # Check that the ">=" sign is rendered correctly
-    assert ">=" in result.stdout

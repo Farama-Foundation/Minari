@@ -40,7 +40,7 @@ When creating a Minari dataset the default global metadata will be the following
 | `author`                | `str`      | Author's name that created the dataset. |
 | `author_email`          | `str`      | Email of the author that created the dataset.|
 | `algorithm_name`        | `str`      | Name of the expert policy used to create the dataset. |
-| `minari_version`        | `str`      | Version specifier of Minari versions compatible with the dataset. |
+| `minari_version`        | `str`      | Version of Minari that generated the dataset. |
 
 
 where only `dataset_id`, `total_episodes`, and `total_steps` are mandatory (with the latter two computed automatically).

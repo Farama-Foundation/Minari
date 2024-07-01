@@ -40,3 +40,4 @@ __all__ = [
 ]
 
 __version__ = "0.4.3"
+supported_dataset_versions = {"0.4.0", "0.4.1", "0.4.2", "0.4.3"}

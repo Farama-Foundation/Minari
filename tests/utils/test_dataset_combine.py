@@ -1,11 +1,9 @@
 import gymnasium as gym
-import pytest
 from gymnasium.utils.env_checker import data_equivalence
-from packaging.specifiers import SpecifierSet
 
 import minari
 from minari import DataCollector, MinariDataset
-from minari.utils import combine_datasets, combine_minari_version_specifiers
+from minari.utils import combine_datasets
 from tests.common import create_dummy_dataset_with_collecter_env_helper
 
 
@@ -114,28 +112,3 @@ def test_combine_datasets():
         combined_dataset,
     )
     _check_load_and_delete_dataset("cartpole-combined-test-v0")
-
-
-@pytest.mark.parametrize(
-    "specifier_intersection,version_specifiers",
-    [
-        (
-            SpecifierSet(">3.0.0, <=3.9.1"),
-            SpecifierSet(">3.0.0") & SpecifierSet("<=3.9.1"),
-        ),
-        (
-            SpecifierSet(">3.2, <=3.2.5"),
-            SpecifierSet(">=3.0.0, <3.3.0") & SpecifierSet(">3.2, <=3.2.5"),
-        ),
-        (SpecifierSet(">=1.3.0, !=1.4.0"), SpecifierSet(">=1.3.0, !=1.4.0")),
-        (SpecifierSet(">=1.3.0"), SpecifierSet(">=1.3.0, !=1.2.0")),
-        (
-            SpecifierSet(">=3.0.0, <=3.9.1"),
-            SpecifierSet("~=3.0") & SpecifierSet("<=3.9.1"),
-        ),
-    ],
-)
-def test_combine_minari_version_specifiers(specifier_intersection, version_specifiers):
-    intersection = combine_minari_version_specifiers(version_specifiers)
-
-    assert specifier_intersection == intersection
