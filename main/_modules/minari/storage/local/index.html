@@ -367,8 +367,6 @@
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">from</span> <span class="nn">packaging.specifiers</span> <span class="kn">import</span> <span class="n">SpecifierSet</span>
-
 <span class="kn">from</span> <span class="nn">minari.dataset.minari_dataset</span> <span class="kn">import</span> <span class="n">MinariDataset</span><span class="p">,</span> <span class="n">parse_dataset_id</span>
 <span class="kn">from</span> <span class="nn">minari.dataset.minari_storage</span> <span class="kn">import</span> <span class="n">MinariStorage</span>
 <span class="kn">from</span> <span class="nn">minari.storage</span> <span class="kn">import</span> <span class="n">hosting</span>
@@ -421,6 +419,8 @@
 <span class="sd">    Returns:</span>
 <span class="sd">       Dict[str, Dict[str, str]]: keys the names of the Minari datasets and values the metadata</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">minari</span> <span class="kn">import</span> <span class="n">supported_dataset_versions</span>
+
     <span class="n">datasets_path</span> <span class="o">=</span> <span class="n">get_dataset_path</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
     <span class="n">dataset_ids</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
         <span class="p">[</span>
@@ -443,11 +443,12 @@
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Misconfigured dataset named </span><span class="si">{</span><span class="n">dst_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">continue</span>
 
-        <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;minari_version&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">metadata</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+        <span class="k">if</span> <span class="p">(</span>
             <span class="n">compatible_minari_version</span>
-            <span class="ow">and</span> <span class="n">__version__</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SpecifierSet</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;minari_version&quot;</span><span class="p">])</span>
+            <span class="ow">and</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;minari_version&quot;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">supported_dataset_versions</span>
         <span class="p">):</span>
             <span class="k">continue</span>
+
         <span class="n">env_name</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">parse_dataset_id</span><span class="p">(</span><span class="n">dst_id</span><span class="p">)</span>
         <span class="n">dataset</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">env_name</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="n">latest_version</span><span class="p">:</span>

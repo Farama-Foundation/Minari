@@ -372,13 +372,10 @@
 
 <span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">portion</span> <span class="k">as</span> <span class="nn">P</span>
 <span class="kn">from</span> <span class="nn">gymnasium.core</span> <span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span>
 <span class="kn">from</span> <span class="nn">gymnasium.envs.registration</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
 <span class="kn">from</span> <span class="nn">gymnasium.error</span> <span class="kn">import</span> <span class="n">NameNotFound</span>
 <span class="kn">from</span> <span class="nn">gymnasium.wrappers.record_episode_statistics</span> <span class="kn">import</span> <span class="n">RecordEpisodeStatistics</span>
-<span class="kn">from</span> <span class="nn">packaging.specifiers</span> <span class="kn">import</span> <span class="n">InvalidSpecifier</span><span class="p">,</span> <span class="n">SpecifierSet</span>
-<span class="kn">from</span> <span class="nn">packaging.version</span> <span class="kn">import</span> <span class="n">Version</span>
 
 <span class="kn">from</span> <span class="nn">minari.data_collector.episode_buffer</span> <span class="kn">import</span> <span class="n">EpisodeBuffer</span>
 <span class="kn">from</span> <span class="nn">minari.dataset.minari_dataset</span> <span class="kn">import</span> <span class="n">MinariDataset</span>
@@ -389,131 +386,6 @@
 
 <span class="c1"># Use importlib due to circular import when: &quot;from minari import __version__&quot;</span>
 <span class="n">__version__</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">version</span><span class="p">(</span><span class="s2">&quot;minari&quot;</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">combine_minari_version_specifiers</span><span class="p">(</span><span class="n">specifier_set</span><span class="p">:</span> <span class="n">SpecifierSet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SpecifierSet</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates the Minari version specifier by intersecting a group of Minari version specifiers.</span>
-
-<span class="sd">    Used to calculate the `minari_version` metadata attribute when combining multiple datasets. The function</span>
-<span class="sd">    assumes that all the given version specifiers at least contain the current minari version thus the version</span>
-<span class="sd">    specifier sets will always intersect. Also, it doesn&#39;t take into account any pre-releases since Farama projects</span>
-<span class="sd">    don&#39;t use them for versioning.</span>
-
-<span class="sd">    The supported version specifier operators are those in PEP 440(https://peps.python.org/pep-0440/#version-specifiers),</span>
-<span class="sd">    except for &#39;===&#39;.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        specifier_set (SpecifierSet): set of all version specifiers to intersect</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        version_specifier (SpecifierSet): resulting version specifier</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">specifiers</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">specifier_set</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
-
-    <span class="n">exclusion_specifiers</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">spec</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">operator</span> <span class="o">==</span> <span class="s2">&quot;!=&quot;</span><span class="p">,</span> <span class="n">specifiers</span><span class="p">)</span>
-    <span class="n">inclusion_specifiers</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">spec</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">operator</span> <span class="o">!=</span> <span class="s2">&quot;!=&quot;</span><span class="p">,</span> <span class="n">specifiers</span><span class="p">)</span>
-
-    <span class="n">inclusion_interval</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">closed</span><span class="p">(</span><span class="o">-</span><span class="n">P</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">P</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
-
-    <span class="c1"># Intersect the version intervals compatible with the datasets</span>
-    <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">inclusion_specifiers</span><span class="p">:</span>
-        <span class="n">operator</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">operator</span>
-        <span class="n">version</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">version</span>
-        <span class="k">if</span> <span class="n">operator</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;&gt;&quot;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">operator</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;=&quot;</span><span class="p">:</span>
-                <span class="n">inclusion_interval</span> <span class="o">&amp;=</span> <span class="n">P</span><span class="o">.</span><span class="n">closedopen</span><span class="p">(</span><span class="n">Version</span><span class="p">(</span><span class="n">version</span><span class="p">),</span> <span class="n">P</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">inclusion_interval</span> <span class="o">&amp;=</span> <span class="n">P</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">Version</span><span class="p">(</span><span class="n">version</span><span class="p">),</span> <span class="n">P</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">operator</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;&lt;&quot;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">operator</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;=&quot;</span><span class="p">:</span>
-                <span class="n">inclusion_interval</span> <span class="o">&amp;=</span> <span class="n">P</span><span class="o">.</span><span class="n">openclosed</span><span class="p">(</span><span class="o">-</span><span class="n">P</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">Version</span><span class="p">(</span><span class="n">version</span><span class="p">))</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">inclusion_interval</span> <span class="o">&amp;=</span> <span class="n">P</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="o">-</span><span class="n">P</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">Version</span><span class="p">(</span><span class="n">version</span><span class="p">))</span>
-        <span class="k">elif</span> <span class="n">operator</span> <span class="o">==</span> <span class="s2">&quot;==&quot;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">version</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;*&quot;</span><span class="p">:</span>
-                <span class="n">version</span> <span class="o">=</span> <span class="n">Version</span><span class="p">(</span><span class="n">version</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
-                <span class="n">release</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">version</span><span class="o">.</span><span class="n">release</span><span class="p">)</span>
-                <span class="n">release</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-                <span class="n">release</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="n">max_release</span> <span class="o">=</span> <span class="n">Version</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">release</span><span class="p">))</span>
-                <span class="n">inclusion_interval</span> <span class="o">&amp;=</span> <span class="n">P</span><span class="o">.</span><span class="n">closedopen</span><span class="p">(</span><span class="n">version</span><span class="p">,</span> <span class="n">max_release</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">inclusion_interval</span> <span class="o">&amp;=</span> <span class="n">P</span><span class="o">.</span><span class="n">singleton</span><span class="p">(</span><span class="n">Version</span><span class="p">(</span><span class="n">version</span><span class="p">))</span>
-        <span class="k">elif</span> <span class="n">operator</span> <span class="o">==</span> <span class="s2">&quot;~=&quot;</span><span class="p">:</span>
-            <span class="n">release</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">Version</span><span class="p">(</span><span class="n">version</span><span class="p">)</span><span class="o">.</span><span class="n">release</span><span class="p">)</span>
-            <span class="n">release</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="n">release</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="n">max_release</span> <span class="o">=</span> <span class="n">Version</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">release</span><span class="p">))</span>
-            <span class="n">inclusion_interval</span> <span class="o">&amp;=</span> <span class="n">P</span><span class="o">.</span><span class="n">closedopen</span><span class="p">(</span><span class="n">Version</span><span class="p">(</span><span class="n">version</span><span class="p">),</span> <span class="n">max_release</span><span class="p">)</span>
-
-    <span class="c1"># Convert the intersection of version intervals to a version specifier</span>
-    <span class="n">final_version_specifier</span> <span class="o">=</span> <span class="n">SpecifierSet</span><span class="p">()</span>
-
-    <span class="k">if</span> <span class="n">inclusion_interval</span><span class="o">.</span><span class="n">lower</span> <span class="o">==</span> <span class="n">inclusion_interval</span><span class="o">.</span><span class="n">upper</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="n">inclusion_interval</span><span class="o">.</span><span class="n">lower</span> <span class="o">==</span> <span class="n">Version</span><span class="p">(</span>
-            <span class="n">__version__</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;The local installed version of Minari, </span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2">, must comply with the equality version specifier: ==</span><span class="si">{</span><span class="n">inclusion_interval</span><span class="o">.</span><span class="n">lower</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="n">final_version_specifier</span> <span class="o">&amp;=</span> <span class="sa">f</span><span class="s2">&quot;==</span><span class="si">{</span><span class="n">inclusion_interval</span><span class="o">.</span><span class="n">lower</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="c1"># There is just one compatible version of Minari</span>
-        <span class="k">return</span> <span class="n">final_version_specifier</span>
-
-    <span class="k">if</span> <span class="n">inclusion_interval</span><span class="o">.</span><span class="n">lower</span> <span class="o">!=</span> <span class="o">-</span><span class="n">P</span><span class="o">.</span><span class="n">inf</span> <span class="ow">and</span> <span class="n">inclusion_interval</span><span class="o">.</span><span class="n">upper</span> <span class="o">!=</span> <span class="n">P</span><span class="o">.</span><span class="n">inf</span><span class="p">:</span>
-        <span class="n">lower_version</span> <span class="o">=</span> <span class="n">Version</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">inclusion_interval</span><span class="o">.</span><span class="n">lower</span><span class="p">))</span>
-        <span class="n">next_release</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">lower_version</span><span class="o">.</span><span class="n">release</span><span class="p">)</span>
-        <span class="n">next_release</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">next_release</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="n">next_release</span> <span class="o">=</span> <span class="n">Version</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">next_release</span><span class="p">))</span>
-        <span class="n">upper_version</span> <span class="o">=</span> <span class="n">Version</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">inclusion_interval</span><span class="o">.</span><span class="n">upper</span><span class="p">))</span>
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="n">inclusion_interval</span><span class="o">.</span><span class="n">left</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">CLOSED</span>
-            <span class="ow">and</span> <span class="n">inclusion_interval</span><span class="o">.</span><span class="n">left</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">CLOSED</span>
-            <span class="ow">and</span> <span class="n">upper_version</span> <span class="o">==</span> <span class="n">next_release</span>
-        <span class="p">):</span>
-            <span class="n">final_version_specifier</span> <span class="o">&amp;=</span> <span class="sa">f</span><span class="s2">&quot;~=</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">lower_version</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">inclusion_interval</span><span class="o">.</span><span class="n">left</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">CLOSED</span><span class="p">:</span>
-                <span class="n">operator</span> <span class="o">=</span> <span class="s2">&quot;&gt;=&quot;</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">operator</span> <span class="o">=</span> <span class="s2">&quot;&gt;&quot;</span>
-            <span class="n">final_version_specifier</span> <span class="o">&amp;=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">operator</span><span class="si">}{</span><span class="nb">str</span><span class="p">(</span><span class="n">inclusion_interval</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-
-            <span class="k">if</span> <span class="n">inclusion_interval</span><span class="o">.</span><span class="n">right</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">CLOSED</span><span class="p">:</span>
-                <span class="n">operator</span> <span class="o">=</span> <span class="s2">&quot;&lt;=&quot;</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">operator</span> <span class="o">=</span> <span class="s2">&quot;&lt;&quot;</span>
-            <span class="n">final_version_specifier</span> <span class="o">&amp;=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">operator</span><span class="si">}{</span><span class="nb">str</span><span class="p">(</span><span class="n">inclusion_interval</span><span class="o">.</span><span class="n">upper</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">inclusion_interval</span><span class="o">.</span><span class="n">lower</span> <span class="o">!=</span> <span class="o">-</span><span class="n">P</span><span class="o">.</span><span class="n">inf</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">inclusion_interval</span><span class="o">.</span><span class="n">left</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">CLOSED</span><span class="p">:</span>
-                <span class="n">operator</span> <span class="o">=</span> <span class="s2">&quot;&gt;=&quot;</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">operator</span> <span class="o">=</span> <span class="s2">&quot;&gt;&quot;</span>
-            <span class="n">final_version_specifier</span> <span class="o">&amp;=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">operator</span><span class="si">}{</span><span class="nb">str</span><span class="p">(</span><span class="n">inclusion_interval</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">if</span> <span class="n">inclusion_interval</span><span class="o">.</span><span class="n">upper</span> <span class="o">!=</span> <span class="n">P</span><span class="o">.</span><span class="n">inf</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">inclusion_interval</span><span class="o">.</span><span class="n">right</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">CLOSED</span><span class="p">:</span>
-                <span class="n">operator</span> <span class="o">=</span> <span class="s2">&quot;&lt;=&quot;</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">operator</span> <span class="o">=</span> <span class="s2">&quot;&lt;&quot;</span>
-            <span class="n">final_version_specifier</span> <span class="o">&amp;=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">operator</span><span class="si">}{</span><span class="nb">str</span><span class="p">(</span><span class="n">inclusion_interval</span><span class="o">.</span><span class="n">upper</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-
-    <span class="c1"># If the versions to be excluded fall inside the previous calculated version specifier</span>
-    <span class="c1"># add them to the specifier as `!=`</span>
-    <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">exclusion_specifiers</span><span class="p">:</span>
-        <span class="n">version</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">version</span>
-        <span class="k">if</span> <span class="n">version</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;*&quot;</span><span class="p">:</span>
-            <span class="n">version</span> <span class="o">=</span> <span class="n">Version</span><span class="p">(</span><span class="n">version</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
-            <span class="n">release</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">version</span><span class="o">.</span><span class="n">release</span><span class="p">)</span>
-            <span class="n">release</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="n">release</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="n">max_release</span> <span class="o">=</span> <span class="n">Version</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">release</span><span class="p">))</span>
-            <span class="n">exclusion_interval</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">closedopen</span><span class="p">(</span><span class="n">version</span><span class="p">,</span> <span class="n">max_release</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">inclusion_interval</span><span class="o">.</span><span class="n">overlaps</span><span class="p">(</span><span class="n">exclusion_interval</span><span class="p">):</span>
-                <span class="n">final_version_specifier</span> <span class="o">&amp;=</span> <span class="nb">str</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">version</span> <span class="ow">in</span> <span class="n">final_version_specifier</span><span class="p">:</span>
-            <span class="n">final_version_specifier</span> <span class="o">&amp;=</span> <span class="nb">str</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">final_version_specifier</span>
 
 
 <span class="k">def</span> <span class="nf">validate_datasets_to_combine</span><span class="p">(</span>
@@ -608,15 +480,6 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">combined_dataset_env_spec</span> <span class="o">=</span> <span class="n">validate_datasets_to_combine</span><span class="p">(</span><span class="n">datasets_to_combine</span><span class="p">)</span>
 
-    <span class="c1"># Compute intersection of Minari version specifiers</span>
-    <span class="n">datasets_minari_version_specifiers</span> <span class="o">=</span> <span class="n">SpecifierSet</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">datasets_to_combine</span><span class="p">:</span>
-        <span class="n">datasets_minari_version_specifiers</span> <span class="o">&amp;=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">minari_version</span>
-
-    <span class="n">minari_version_specifier</span> <span class="o">=</span> <span class="n">combine_minari_version_specifiers</span><span class="p">(</span>
-        <span class="n">datasets_minari_version_specifiers</span>
-    <span class="p">)</span>
-
     <span class="n">new_dataset_path</span> <span class="o">=</span> <span class="n">get_dataset_path</span><span class="p">(</span><span class="n">new_dataset_id</span><span class="p">)</span>
     <span class="n">new_dataset_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">()</span>
     <span class="n">new_storage</span> <span class="o">=</span> <span class="n">MinariStorage</span><span class="o">.</span><span class="n">new</span><span class="p">(</span>
@@ -633,7 +496,7 @@
             <span class="s2">&quot;combined_datasets&quot;</span><span class="p">:</span> <span class="p">[</span>
                 <span class="n">dataset</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">dataset_id</span> <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">datasets_to_combine</span>
             <span class="p">],</span>
-            <span class="s2">&quot;minari_version&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">minari_version_specifier</span><span class="p">),</span>
+            <span class="s2">&quot;minari_version&quot;</span><span class="p">:</span> <span class="n">__version__</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">)</span>
 
@@ -729,7 +592,6 @@
     <span class="n">ref_max_score</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
     <span class="n">expert_policy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">ObsType</span><span class="p">],</span> <span class="n">ActType</span><span class="p">]],</span>
     <span class="n">num_episodes_average_score</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">minari_version</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the metadata dictionary of the dataset.&quot;&quot;&quot;</span>
@@ -777,24 +639,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">dataset_metadata</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">description</span>
 
-    <span class="k">if</span> <span class="n">minari_version</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">version</span> <span class="o">=</span> <span class="n">Version</span><span class="p">(</span><span class="n">__version__</span><span class="p">)</span>
-        <span class="n">release</span> <span class="o">=</span> <span class="n">version</span><span class="o">.</span><span class="n">release</span>
-        <span class="c1"># For __version__ = X.Y.Z, by default compatibility with version X.Y or later, but not (X+1).0 or later.</span>
-        <span class="n">minari_version</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;~=</span><span class="si">{</span><span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">release</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;`minari_version` is set to None. The compatible dataset version specifier for Minari will be set to </span><span class="si">{</span><span class="n">minari_version</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
-            <span class="ne">UserWarning</span><span class="p">,</span>
-        <span class="p">)</span>
-    <span class="c1"># Check if the installed Minari version falls inside the minari_version specifier</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="n">Version</span><span class="p">(</span><span class="n">__version__</span><span class="p">)</span> <span class="ow">in</span> <span class="n">SpecifierSet</span><span class="p">(</span>
-            <span class="n">minari_version</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;The installed Minari version </span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2"> is not contained in the dataset version specifier </span><span class="si">{</span><span class="n">minari_version</span><span class="si">}</span><span class="s2">.&quot;</span>
-    <span class="k">except</span> <span class="n">InvalidSpecifier</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">minari_version</span><span class="si">}</span><span class="s2"> is not a version specifier.&quot;</span><span class="p">)</span>
-
-    <span class="n">dataset_metadata</span><span class="p">[</span><span class="s2">&quot;minari_version&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">minari_version</span>
+    <span class="n">dataset_metadata</span><span class="p">[</span><span class="s2">&quot;minari_version&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">__version__</span>
 
     <span class="k">if</span> <span class="n">expert_policy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">ref_max_score</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -859,7 +704,6 @@
     <span class="n">author</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">author_email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">code_permalink</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">minari_version</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">action_space</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Space</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">observation_space</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Space</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">ref_min_score</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -894,7 +738,6 @@
 <span class="sd">                observation_space:</span>
 <span class="sd">        action_space (Optional[gym.spaces.Space]): action space of the environment. If None (default) use the environment action space.</span>
 <span class="sd">        observation_space (Optional[gym.spaces.Space]): observation space of the environment. If None (default) use the environment observation space.</span>
-<span class="sd">        minari_version (Optional[str], optional): Minari version specifier compatible with the dataset. If None (default) use the installed Minari version.</span>
 <span class="sd">        description (Optional[str], optional): description of the dataset being created. Defaults to None.</span>
 <span class="sd">        data_format (str, optional): Data format to store the data in the Minari dataset. If None (defaults), it will use the default format of MinariStorage.</span>
 
@@ -939,7 +782,6 @@
         <span class="n">ref_max_score</span><span class="p">,</span>
         <span class="n">expert_policy</span><span class="p">,</span>
         <span class="n">num_episodes_average_score</span><span class="p">,</span>
-        <span class="n">minari_version</span><span class="p">,</span>
         <span class="n">description</span><span class="p">,</span>
     <span class="p">)</span>
 
@@ -1031,14 +873,11 @@
     <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">md_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 
 
-<span class="k">def</span> <span class="nf">get_dataset_spec_dict</span><span class="p">(</span>
-    <span class="n">dataset_spec</span><span class="p">:</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">print_version</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="k">def</span> <span class="nf">get_dataset_spec_dict</span><span class="p">(</span><span class="n">dataset_spec</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create dict of the dataset specs, including observation and action space.&quot;&quot;&quot;</span>
     <span class="n">code_link</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="p">[</span><span class="s2">&quot;code_permalink&quot;</span><span class="p">]</span>
     <span class="n">action_space</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;action_space&quot;</span><span class="p">)</span>
     <span class="n">obs_space</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;observation_space&quot;</span><span class="p">)</span>
-    <span class="n">version</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="p">[</span><span class="s2">&quot;minari_version&quot;</span><span class="p">]</span>
 
     <span class="n">md_dict</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;Total Steps&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">dataset_spec</span><span class="p">[</span><span class="s2">&quot;total_steps&quot;</span><span class="p">]),</span>
@@ -1057,14 +896,19 @@
         <span class="n">dataset_action_space</span> <span class="o">=</span> <span class="n">action_space</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="n">md_dict</span><span class="p">[</span><span class="s2">&quot;Dataset Action Space&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">dataset_action_space</span><span class="si">}</span><span class="s2">`&quot;</span>
 
-    <span class="n">add_version</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot; (`</span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2">` installed)&quot;</span>
+    <span class="kn">from</span> <span class="nn">minari</span> <span class="kn">import</span> <span class="n">supported_dataset_versions</span>
+
+    <span class="n">version</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="p">[</span><span class="s2">&quot;minari_version&quot;</span><span class="p">]</span>
+    <span class="n">supported</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;supported&quot;</span> <span class="k">if</span> <span class="n">version</span> <span class="ow">in</span> <span class="n">supported_dataset_versions</span> <span class="k">else</span> <span class="s2">&quot;not supported&quot;</span>
+    <span class="p">)</span>
     <span class="n">md_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
         <span class="p">{</span>
             <span class="s2">&quot;Algorithm&quot;</span><span class="p">:</span> <span class="n">dataset_spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;algorithm_name&quot;</span><span class="p">,</span> <span class="s2">&quot;Not provided&quot;</span><span class="p">),</span>
             <span class="s2">&quot;Author&quot;</span><span class="p">:</span> <span class="n">dataset_spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;author&quot;</span><span class="p">,</span> <span class="s2">&quot;Not provided&quot;</span><span class="p">),</span>
             <span class="s2">&quot;Email&quot;</span><span class="p">:</span> <span class="n">dataset_spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;author_email&quot;</span><span class="p">,</span> <span class="s2">&quot;Not provided&quot;</span><span class="p">),</span>
             <span class="s2">&quot;Code Permalink&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">code_link</span><span class="si">}</span><span class="s2">](</span><span class="si">{</span><span class="n">code_link</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;Minari Version&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">` </span><span class="si">{</span><span class="n">add_version</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">print_version</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Minari Version&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">` (</span><span class="si">{</span><span class="n">supported</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
             <span class="s2">&quot;Download&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`minari download </span><span class="si">{</span><span class="n">dataset_spec</span><span class="p">[</span><span class="s1">&#39;dataset_id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">)</span>

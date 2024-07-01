@@ -370,7 +370,6 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
 
 <span class="kn">from</span> <span class="nn">gymnasium</span> <span class="kn">import</span> <span class="n">logger</span>
-<span class="kn">from</span> <span class="nn">packaging.specifiers</span> <span class="kn">import</span> <span class="n">SpecifierSet</span>
 
 <span class="kn">from</span> <span class="nn">minari.dataset.minari_dataset</span> <span class="kn">import</span> <span class="n">parse_dataset_id</span>
 <span class="kn">from</span> <span class="nn">minari.dataset.minari_storage</span> <span class="kn">import</span> <span class="n">METADATA_FILE_NAME</span>
@@ -552,6 +551,8 @@
 <span class="sd">    Returns:</span>
 <span class="sd">       Dict[str, Dict[str, str]]: keys the names of the Minari datasets and values the metadata</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">minari</span> <span class="kn">import</span> <span class="n">supported_dataset_versions</span>
+
     <span class="n">cloud_storage</span> <span class="o">=</span> <span class="n">get_cloud_storage</span><span class="p">()</span>
     <span class="n">blobs</span> <span class="o">=</span> <span class="n">cloud_storage</span><span class="o">.</span><span class="n">list_blobs</span><span class="p">()</span>
 
@@ -561,8 +562,9 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">blob</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">METADATA_FILE_NAME</span><span class="p">):</span>
                 <span class="n">metadata</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">blob</span><span class="o">.</span><span class="n">download_as_bytes</span><span class="p">(</span><span class="n">client</span><span class="o">=</span><span class="kc">None</span><span class="p">))</span>
-                <span class="k">if</span> <span class="n">compatible_minari_version</span> <span class="ow">and</span> <span class="n">__version__</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SpecifierSet</span><span class="p">(</span>
-                    <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;minari_version&quot;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">compatible_minari_version</span>
+                    <span class="ow">and</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;minari_version&quot;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">supported_dataset_versions</span>
                 <span class="p">):</span>
                     <span class="k">continue</span>
                 <span class="n">dataset_id</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;dataset_id&quot;</span><span class="p">]</span>

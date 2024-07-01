@@ -601,7 +601,6 @@
         <span class="n">ref_max_score</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">expert_policy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">ObsType</span><span class="p">],</span> <span class="n">ActType</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">num_episodes_average_score</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
-        <span class="n">minari_version</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a Minari dataset using the data collected from stepping with a Gymnasium environment wrapped with a `DataCollector` Minari wrapper.</span>
@@ -624,7 +623,6 @@
 <span class="sd">            expert_policy (Optional[Callable[[ObsType], ActType], optional): policy to compute `ref_max_score` by averaging the returns over a number of episodes equal to  `num_episodes_average_score`.</span>
 <span class="sd">                                                                            `ref_max_score` and `expert_policy` can&#39;t be passed at the same time. Default to None</span>
 <span class="sd">            num_episodes_average_score (int): number of episodes to average over the returns to compute `ref_min_score` and `ref_max_score`. Default to 100.</span>
-<span class="sd">            minari_version (Optional[str], optional): Minari version specifier compatible with the dataset. If None (default) use the installed Minari version.</span>
 <span class="sd">            description (Optional[str], optional): description of the dataset being created. Defaults to None.</span>
 
 <span class="sd">        Returns:</span>
@@ -643,7 +641,6 @@
             <span class="n">ref_max_score</span><span class="p">,</span>
             <span class="n">expert_policy</span><span class="p">,</span>
             <span class="n">num_episodes_average_score</span><span class="p">,</span>
-            <span class="n">minari_version</span><span class="p">,</span>
             <span class="n">description</span><span class="p">,</span>
         <span class="p">)</span>
 
