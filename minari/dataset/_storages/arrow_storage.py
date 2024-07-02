@@ -59,9 +59,9 @@ class ArrowStorage(MinariStorage):
                 json.dump(metadata, file)
 
     def get_episodes(self, episode_indices: Iterable[int]) -> list[dict]:
-        dataset = pa.dataset.dataset(
+        dataset = ds.dataset(
             [
-                pa.dataset.dataset(
+                ds.dataset(
                     f"{self.data_path}/{ep_id}",
                     format=self.FORMAT,
                     ignore_prefixes=["_", ".", "metadata.json"],
