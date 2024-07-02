@@ -3,7 +3,7 @@ from __future__ import annotations
 import pathlib
 from collections import OrderedDict
 from itertools import zip_longest
-from typing import Dict, Iterable, List, Optional, Tuple, Union
+from typing import Iterable
 
 import gymnasium as gym
 import h5py
@@ -43,7 +43,7 @@ class HDF5Storage(MinariStorage):
         return obj
 
     def update_episode_metadata(
-        self, metadatas: Iterable[Dict], episode_indices: Optional[Iterable] = None
+        self, metadatas: Iterable[dict], episode_indices: Iterable | None = None
     ):
         if episode_indices is None:
             episode_indices = range(self.total_episodes)
@@ -64,9 +64,9 @@ class HDF5Storage(MinariStorage):
 
     def _decode_space(
         self,
-        hdf_ref: Union[h5py.Group, h5py.Dataset, h5py.Datatype],
+        hdf_ref: h5py.Group | h5py.Dataset | h5py.Datatype,
         space: gym.spaces.Space,
-    ) -> Union[Dict, Tuple, List, np.ndarray]:
+    ) -> dict | tuple | list | np.ndarray:
         assert not isinstance(hdf_ref, h5py.Datatype)
 
         if isinstance(space, gym.spaces.Tuple):
@@ -104,7 +104,7 @@ class HDF5Storage(MinariStorage):
                 )
         return result
 
-    def get_episodes(self, episode_indices: Iterable[int]) -> List[dict]:
+    def get_episodes(self, episode_indices: Iterable[int]) -> list[dict]:
         outs = []
         with h5py.File(self._file_path, "r") as file:
             for ep_idx in episode_indices:
@@ -187,7 +187,7 @@ def _get_from_h5py(group: h5py.Group, name: str) -> h5py.Group:
     return subgroup
 
 
-def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
+def _add_episode_to_group(episode_buffer: dict, episode_group: h5py.Group):
     for key, data in episode_buffer.items():
         if isinstance(data, dict):
             episode_group_to_clear = _get_from_h5py(episode_group, key)

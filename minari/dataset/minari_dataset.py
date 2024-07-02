@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 import re
 from dataclasses import dataclass, field
-from typing import Callable, Iterable, Iterator, List, Optional, Union
+from typing import Callable, Iterable, Iterator
 
 import gymnasium as gym
 import numpy as np
@@ -44,11 +44,11 @@ def parse_dataset_id(dataset_id: str) -> tuple[str | None, str, int]:
 
 @dataclass
 class MinariDatasetSpec:
-    env_spec: Optional[EnvSpec]
+    env_spec: EnvSpec | None
     total_episodes: int
     total_steps: int
     dataset_id: str
-    combined_datasets: List[str]
+    combined_datasets: list[str]
     observation_space: gym.Space
     action_space: gym.Space
     data_path: str
@@ -71,8 +71,8 @@ class MinariDataset:
 
     def __init__(
         self,
-        data: Union[MinariStorage, PathLike],
-        episode_indices: Optional[np.ndarray] = None,
+        data: MinariStorage | PathLike,
+        episode_indices: np.ndarray | None = None,
     ):
         """Initialize properties of the Minari Dataset.
 
@@ -196,7 +196,7 @@ class MinariDataset:
         return list(map(lambda data: EpisodeData(**data), episodes))
 
     def iterate_episodes(
-        self, episode_indices: Optional[List[int]] = None
+        self, episode_indices: list[int] | None = None
     ) -> Iterator[EpisodeData]:
         """Iterate over episodes from the dataset.
 
@@ -214,7 +214,7 @@ class MinariDataset:
             data = self.storage.get_episodes([episode_index])[0]
             yield EpisodeData(**data)
 
-    def update_dataset_from_buffer(self, buffer: List[EpisodeBuffer]):
+    def update_dataset_from_buffer(self, buffer: list[EpisodeBuffer]):
         """Additional data can be added to the Minari Dataset from a list of episode dictionary buffers.
 
         Args:
@@ -283,7 +283,7 @@ class MinariDataset:
         return self._env_spec
 
     @property
-    def combined_datasets(self) -> List[str]:
+    def combined_datasets(self) -> list[str]:
         """If this Minari dataset is a combination of other subdatasets, return a list with the subdataset names."""
         if self._combined_datasets is None:
             return []

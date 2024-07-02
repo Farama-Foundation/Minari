@@ -5,7 +5,7 @@ import os
 import pathlib
 import warnings
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Dict, Iterable, List, Optional, Union
+from typing import Any, Callable, Iterable, Union
 
 import gymnasium as gym
 import numpy as np
@@ -89,9 +89,9 @@ class MinariStorage(ABC):
     def new(
         cls,
         data_path: PathLike,
-        observation_space: Optional[gym.Space] = None,
-        action_space: Optional[gym.Space] = None,
-        env_spec: Optional[EnvSpec] = None,
+        observation_space: gym.Space | None = None,
+        action_space: gym.Space | None = None,
+        env_spec: EnvSpec | None = None,
         data_format: str = "hdf5",
     ) -> MinariStorage:
         """Class method to create a new data storage.
@@ -136,7 +136,7 @@ class MinariStorage(ABC):
             if action_space is None:
                 action_space = env.action_space
 
-        metadata: Dict[str, Any] = {
+        metadata: dict[str, Any] = {
             "total_episodes": 0,
             "total_steps": 0,
             "data_format": data_format,
@@ -164,11 +164,10 @@ class MinariStorage(ABC):
         data_path: pathlib.Path,
         observation_space: gym.Space,
         action_space: gym.Space,
-    ) -> MinariStorage:
-        ...
+    ) -> MinariStorage: ...
 
     @property
-    def metadata(self) -> Dict[str, Any]:
+    def metadata(self) -> dict[str, Any]:
         """Metadata of the dataset."""
         with open(self.data_path.joinpath(METADATA_FILE_NAME)) as file:
             metadata = json.load(file)
@@ -177,7 +176,7 @@ class MinariStorage(ABC):
         metadata["action_space"] = self.action_space
         return metadata
 
-    def update_metadata(self, metadata: Dict):
+    def update_metadata(self, metadata: dict):
         """Update the metadata adding/modifying some keys.
 
         Args:
@@ -200,7 +199,7 @@ class MinariStorage(ABC):
 
     @abstractmethod
     def update_episode_metadata(
-        self, metadatas: Iterable[Dict], episode_indices: Optional[Iterable] = None
+        self, metadatas: Iterable[dict], episode_indices: Iterable | None = None
     ):
         """Update the metadata of episodes.
 
@@ -214,7 +213,7 @@ class MinariStorage(ABC):
     def apply(
         self,
         function: Callable[[dict], Any],
-        episode_indices: Optional[Iterable] = None,
+        episode_indices: Iterable | None = None,
     ) -> Iterable[Any]:
         """Apply a function to a slice of the data.
 
@@ -232,7 +231,7 @@ class MinariStorage(ABC):
         return map(function, ep_dicts)
 
     @abstractmethod
-    def get_episodes(self, episode_indices: Iterable[int]) -> List[dict]:
+    def get_episodes(self, episode_indices: Iterable[int]) -> list[dict]:
         """Get a list of episodes.
 
         Args:
