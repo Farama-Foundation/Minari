@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from typing import Any, Optional
 
-from google.cloud import storage
+import google.cloud.storage as gcp_storage
 from tqdm.auto import tqdm
 
 from minari.storage.remotes.cloud_storage import CloudStorage
@@ -11,12 +11,12 @@ from minari.storage.remotes.cloud_storage import CloudStorage
 class GCPStorage(CloudStorage):
     def __init__(self, name: str, key_path: Optional[str] = None) -> None:
         if key_path is None:
-            self.storage_client = storage.Client.create_anonymous_client()
+            self.storage_client = gcp_storage.Client.create_anonymous_client()
         else:
-            self.storage_client = storage.Client.from_service_account_json(
+            self.storage_client = gcp_storage.Client.from_service_account_json(
                 json_credentials_path=key_path
             )
-        self.bucket = storage.Bucket(self.storage_client, name)
+        self.bucket = gcp_storage.Bucket(self.storage_client, name)
 
     def upload_path(self, path: Path, dataset_id: str) -> None:
         # See https://github.com/googleapis/python-storage/issues/27 for discussion on progress bars
