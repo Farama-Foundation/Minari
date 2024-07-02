@@ -9,13 +9,10 @@ from typing import Any, Callable
 
 import gymnasium as gym
 import numpy as np
-import portion as P
 from gymnasium.core import ActType, ObsType
 from gymnasium.envs.registration import EnvSpec
 from gymnasium.error import NameNotFound
 from gymnasium.wrappers.record_episode_statistics import RecordEpisodeStatistics
-from packaging.specifiers import InvalidSpecifier, SpecifierSet
-from packaging.version import Version
 
 from minari.data_collector.episode_buffer import EpisodeBuffer
 from minari.dataset.minari_dataset import MinariDataset
@@ -26,131 +23,6 @@ from minari.storage.datasets_root_dir import get_dataset_path
 
 # Use importlib due to circular import when: "from minari import __version__"
 __version__ = importlib.metadata.version("minari")
-
-
-def combine_minari_version_specifiers(specifier_set: SpecifierSet) -> SpecifierSet:
-    """Calculates the Minari version specifier by intersecting a group of Minari version specifiers.
-
-    Used to calculate the `minari_version` metadata attribute when combining multiple datasets. The function
-    assumes that all the given version specifiers at least contain the current minari version thus the version
-    specifier sets will always intersect. Also, it doesn't take into account any pre-releases since Farama projects
-    don't use them for versioning.
-
-    The supported version specifier operators are those in PEP 440(https://peps.python.org/pep-0440/#version-specifiers),
-    except for '==='.
-
-    Args:
-        specifier_set (SpecifierSet): set of all version specifiers to intersect
-
-    Returns:
-        version_specifier (SpecifierSet): resulting version specifier
-
-    """
-    specifiers = sorted(specifier_set, key=str)
-
-    exclusion_specifiers = filter(lambda spec: spec.operator == "!=", specifiers)
-    inclusion_specifiers = filter(lambda spec: spec.operator != "!=", specifiers)
-
-    inclusion_interval = P.closed(-P.inf, P.inf)
-
-    # Intersect the version intervals compatible with the datasets
-    for spec in inclusion_specifiers:
-        operator = spec.operator
-        version = spec.version
-        if operator[0] == ">":
-            if operator[-1] == "=":
-                inclusion_interval &= P.closedopen(Version(version), P.inf)
-            else:
-                inclusion_interval &= P.open(Version(version), P.inf)
-        elif operator[0] == "<":
-            if operator[-1] == "=":
-                inclusion_interval &= P.openclosed(-P.inf, Version(version))
-            else:
-                inclusion_interval &= P.open(-P.inf, Version(version))
-        elif operator == "==":
-            if version[-1] == "*":
-                version = Version(version[:-2])
-                release = list(version.release)
-                release[-1] = 0
-                release[-2] += 1
-                max_release = Version(".".join(str(r) for r in release))
-                inclusion_interval &= P.closedopen(version, max_release)
-            else:
-                inclusion_interval &= P.singleton(Version(version))
-        elif operator == "~=":
-            release = list(Version(version).release)
-            release[-1] = 0
-            release[-2] += 1
-            max_release = Version(".".join(str(r) for r in release))
-            inclusion_interval &= P.closedopen(Version(version), max_release)
-
-    # Convert the intersection of version intervals to a version specifier
-    final_version_specifier = SpecifierSet()
-
-    if inclusion_interval.lower == inclusion_interval.upper:
-        assert inclusion_interval.lower == Version(
-            __version__
-        ), f"The local installed version of Minari, {__version__}, must comply with the equality version specifier: =={inclusion_interval.lower}"
-        final_version_specifier &= f"=={inclusion_interval.lower}"
-        # There is just one compatible version of Minari
-        return final_version_specifier
-
-    if inclusion_interval.lower != -P.inf and inclusion_interval.upper != P.inf:
-        lower_version = Version(str(inclusion_interval.lower))
-        next_release = list(lower_version.release)
-        next_release[-1] = 0
-        next_release[-2] += 1
-        next_release = Version(".".join(str(r) for r in next_release))
-        upper_version = Version(str(inclusion_interval.upper))
-        if (
-            inclusion_interval.left == P.CLOSED
-            and inclusion_interval.left == P.CLOSED
-            and upper_version == next_release
-        ):
-            final_version_specifier &= f"~={str(lower_version)}"
-        else:
-            if inclusion_interval.left == P.CLOSED:
-                operator = ">="
-            else:
-                operator = ">"
-            final_version_specifier &= f"{operator}{str(inclusion_interval.lower)}"
-
-            if inclusion_interval.right == P.CLOSED:
-                operator = "<="
-            else:
-                operator = "<"
-            final_version_specifier &= f"{operator}{str(inclusion_interval.upper)}"
-    else:
-        if inclusion_interval.lower != -P.inf:
-            if inclusion_interval.left == P.CLOSED:
-                operator = ">="
-            else:
-                operator = ">"
-            final_version_specifier &= f"{operator}{str(inclusion_interval.lower)}"
-        if inclusion_interval.upper != P.inf:
-            if inclusion_interval.right == P.CLOSED:
-                operator = "<="
-            else:
-                operator = "<"
-            final_version_specifier &= f"{operator}{str(inclusion_interval.upper)}"
-
-    # If the versions to be excluded fall inside the previous calculated version specifier
-    # add them to the specifier as `!=`
-    for spec in exclusion_specifiers:
-        version = spec.version
-        if version[-1] == "*":
-            version = Version(version[:-2])
-            release = list(version.release)
-            release[-1] = 0
-            release[-2] += 1
-            max_release = Version(".".join(str(r) for r in release))
-            exclusion_interval = P.closedopen(version, max_release)
-            if inclusion_interval.overlaps(exclusion_interval):
-                final_version_specifier &= str(spec)
-        elif version in final_version_specifier:
-            final_version_specifier &= str(spec)
-
-    return final_version_specifier
 
 
 def validate_datasets_to_combine(
@@ -243,15 +115,6 @@ def combine_datasets(datasets_to_combine: list[MinariDataset], new_dataset_id: s
     """
     combined_dataset_env_spec = validate_datasets_to_combine(datasets_to_combine)
 
-    # Compute intersection of Minari version specifiers
-    datasets_minari_version_specifiers = SpecifierSet()
-    for dataset in datasets_to_combine:
-        datasets_minari_version_specifiers &= dataset.spec.minari_version
-
-    minari_version_specifier = combine_minari_version_specifiers(
-        datasets_minari_version_specifiers
-    )
-
     new_dataset_path = get_dataset_path(new_dataset_id)
     new_dataset_path.mkdir()
     new_storage = MinariStorage.new(
@@ -268,7 +131,7 @@ def combine_datasets(datasets_to_combine: list[MinariDataset], new_dataset_id: s
             "combined_datasets": [
                 dataset.spec.dataset_id for dataset in datasets_to_combine
             ],
-            "minari_version": str(minari_version_specifier),
+            "minari_version": __version__,
         }
     )
 
@@ -360,7 +223,6 @@ def _generate_dataset_metadata(
     ref_max_score: float | None,
     expert_policy: Callable[[ObsType], ActType] | None,
     num_episodes_average_score: int,
-    minari_version: str | None,
     description: str | None,
 ) -> dict[str, Any]:
     """Return the metadata dictionary of the dataset."""
@@ -408,24 +270,7 @@ def _generate_dataset_metadata(
     else:
         dataset_metadata["description"] = description
 
-    if minari_version is None:
-        version = Version(__version__)
-        release = version.release
-        # For __version__ = X.Y.Z, by default compatibility with version X.Y or later, but not (X+1).0 or later.
-        minari_version = f"~={'.'.join(str(x) for x in release[:2])}"
-        warnings.warn(
-            f"`minari_version` is set to None. The compatible dataset version specifier for Minari will be set to {minari_version}.",
-            UserWarning,
-        )
-    # Check if the installed Minari version falls inside the minari_version specifier
-    try:
-        assert Version(__version__) in SpecifierSet(
-            minari_version
-        ), f"The installed Minari version {__version__} is not contained in the dataset version specifier {minari_version}."
-    except InvalidSpecifier:
-        print(f"{minari_version} is not a version specifier.")
-
-    dataset_metadata["minari_version"] = minari_version
+    dataset_metadata["minari_version"] = __version__
 
     if expert_policy is not None and ref_max_score is not None:
         raise ValueError(
@@ -488,7 +333,6 @@ def create_dataset_from_buffers(
     author: str | None = None,
     author_email: str | None = None,
     code_permalink: str | None = None,
-    minari_version: str | None = None,
     action_space: gym.spaces.Space | None = None,
     observation_space: gym.spaces.Space | None = None,
     ref_min_score: float | None = None,
@@ -523,7 +367,6 @@ def create_dataset_from_buffers(
                 observation_space:
         action_space (Optional[gym.spaces.Space]): action space of the environment. If None (default) use the environment action space.
         observation_space (Optional[gym.spaces.Space]): observation space of the environment. If None (default) use the environment observation space.
-        minari_version (Optional[str], optional): Minari version specifier compatible with the dataset. If None (default) use the installed Minari version.
         description (Optional[str], optional): description of the dataset being created. Defaults to None.
         data_format (str, optional): Data format to store the data in the Minari dataset. If None (defaults), it will use the default format of MinariStorage.
 
@@ -568,7 +411,6 @@ def create_dataset_from_buffers(
         ref_max_score,
         expert_policy,
         num_episodes_average_score,
-        minari_version,
         description,
     )
 
@@ -656,14 +498,11 @@ def get_env_spec_dict(env_spec: EnvSpec) -> dict[str, str]:
     return {k: str(v) for k, v in md_dict.items()}
 
 
-def get_dataset_spec_dict(
-    dataset_spec: dict, print_version: bool = False
-) -> dict[str, str]:
+def get_dataset_spec_dict(dataset_spec: dict) -> dict[str, str]:
     """Create dict of the dataset specs, including observation and action space."""
     code_link = dataset_spec["code_permalink"]
     action_space = dataset_spec.get("action_space")
     obs_space = dataset_spec.get("observation_space")
-    version = dataset_spec["minari_version"]
 
     md_dict = {
         "Total Steps": str(dataset_spec["total_steps"]),
@@ -682,14 +521,19 @@ def get_dataset_spec_dict(
         dataset_action_space = action_space.__repr__().replace("\n", "")
         md_dict["Dataset Action Space"] = f"`{dataset_action_space}`"
 
-    add_version = f" (`{__version__}` installed)"
+    from minari import supported_dataset_versions
+
+    version = dataset_spec["minari_version"]
+    supported = (
+        "supported" if version in supported_dataset_versions else "not supported"
+    )
     md_dict.update(
         {
             "Algorithm": dataset_spec.get("algorithm_name", "Not provided"),
             "Author": dataset_spec.get("author", "Not provided"),
             "Email": dataset_spec.get("author_email", "Not provided"),
             "Code Permalink": f"[{code_link}]({code_link})",
-            "Minari Version": f"`{version}` {add_version if print_version else ''}",
+            "Minari Version": f"`{version}` ({supported})",
             "Download": f"`minari download {dataset_spec['dataset_id']}`",
         }
     )

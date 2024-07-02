@@ -61,7 +61,7 @@ for env_name, datasets in filtered_datasets.items():
         # Generate gif
         try:
             generate_gif(dataset_id)
-            path = f"/datasets/gifs/{dataset_id}.gif"
+            path = f"../../gifs/{dataset_id}.gif"
             img_link_str = (
                 f'<img src="{path}" width="200" style="display: block; margin:0 auto"/>'
             )

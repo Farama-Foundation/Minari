@@ -4,8 +4,6 @@ import shutil
 import warnings
 from typing import Dict, Union
 
-from packaging.specifiers import SpecifierSet
-
 from minari.dataset.minari_dataset import MinariDataset, parse_dataset_id
 from minari.dataset.minari_storage import MinariStorage
 from minari.storage import hosting
@@ -53,6 +51,8 @@ def list_local_datasets(
     Returns:
        Dict[str, Dict[str, str]]: keys the names of the Minari datasets and values the metadata
     """
+    from minari import supported_dataset_versions
+
     datasets_path = get_dataset_path("")
     dataset_ids = sorted(
         [
@@ -75,11 +75,12 @@ def list_local_datasets(
             warnings.warn(f"Misconfigured dataset named {dst_id}: {e}")
             continue
 
-        if ("minari_version" not in metadata) or (
+        if (
             compatible_minari_version
-            and __version__ not in SpecifierSet(metadata["minari_version"])
+            and metadata["minari_version"] not in supported_dataset_versions
         ):
             continue
+
         env_name, dataset_name, version = parse_dataset_id(dst_id)
         dataset = f"{env_name}-{dataset_name}"
         if latest_version:

@@ -48,6 +48,15 @@ minari list remote
 │             ...              │       ...      │     ...     │     ...      │        ...        │           ...          │
 ```
 
+To use your own server with Minari, set the `MINARI_REMOTE` environment variable in the format `remote-type://remote-path`. For example, to set up a GCP bucket named `my-datasets`, run the following command:
+
+```bash
+export MINARI_REMOTE=gcp://my-datasets
+```
+
+Currently, only GCP is supported, but we plan to support other cloud providers in the future.
+
+
 ```{eval-rst}
 To download any of the remote datasets into the local storage use the download command:
 ```

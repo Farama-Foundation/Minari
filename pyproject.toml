@@ -111,7 +111,6 @@ reportUnboundVariable = "warning"
 [tool.pytest.ini_options]
 filterwarnings = [
     'ignore:.*`eval_env` is set to None',
-    "ignore:.*`minari_version` is set to None",
     "ignore:.*`description` is set to None",
     "ignore:.*`code_permalink` is set to None"
 ]
