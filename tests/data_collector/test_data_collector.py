@@ -7,6 +7,7 @@ from minari.dataset._storages import registry as storage_registry
 from tests.common import (
     check_infos_equal,
     check_load_and_delete_dataset,
+    dummy_test_datasets,
     get_info_at_step_index,
 )
 
@@ -92,16 +93,7 @@ def get_single_step_from_episode(episode: EpisodeData, index: int) -> EpisodeDat
 
 
 @pytest.mark.parametrize("data_format", storage_registry.keys())
-@pytest.mark.parametrize(
-    "dataset_id,env_id",
-    [
-        ("dummy-dict-test-v0", "DummyDictEnv-v0"),
-        ("dummy-box-test-v0", "DummyBoxEnv-v0"),
-        ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
-        ("dummy-combo-test-v0", "DummyComboEnv-v0"),
-        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
-    ],
-)
+@pytest.mark.parametrize("dataset_id,env_id", dummy_test_datasets)
 def test_truncation_without_reset(dataset_id, env_id, data_format, register_dummy_envs):
     """Test new episode creation when environment is truncated and env.reset is not called."""
     num_steps = 50

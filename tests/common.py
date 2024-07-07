@@ -17,6 +17,18 @@ unicode_charset = "".join(
     [chr(i) for i in range(sys.maxunicode) if unicodedata.category(chr(i)) != "Cs"]
 )
 
+cartpole_test_dataset = [("cartpole-test-v0", "CartPole-v1")]
+dummy_box_dataset = [("dummy-box-test-v0", "DummyBoxEnv-v0")]
+dummy_text_dataset = [("dummy-text-test-v0", "DummyTextEnv-v0")]
+
+# Note: Doesn't include the text dataset, since this is often handled separately
+dummy_test_datasets = [
+    ("dummy-dict-test-v0", "DummyDictEnv-v0"),
+    ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
+    ("dummy-combo-test-v0", "DummyComboEnv-v0"),
+    ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
+] + dummy_box_dataset
+
 
 class DummyBoxEnv(gym.Env):
     def __init__(self):
@@ -600,10 +612,6 @@ def check_load_and_delete_dataset(dataset_id: str):
 def create_dummy_dataset_with_collecter_env_helper(
     dataset_id: str, env: DataCollector, num_episodes: int = 10, **kwargs
 ):
-    local_datasets = minari.list_local_datasets()
-    if dataset_id in local_datasets:
-        minari.delete_dataset(dataset_id)
-
     # Step the environment, DataCollector wrapper will do the data collection job
     env.reset(seed=42)
 

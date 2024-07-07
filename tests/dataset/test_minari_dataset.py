@@ -13,11 +13,13 @@ from minari.data_collector.episode_buffer import EpisodeBuffer
 from minari.dataset._storages import registry as storage_registry
 from minari.dataset.minari_storage import METADATA_FILE_NAME
 from tests.common import (
+    cartpole_test_dataset,
     check_data_integrity,
     check_env_recovery,
     check_episode_data_integrity,
     check_load_and_delete_dataset,
     create_dummy_dataset_with_collecter_env_helper,
+    dummy_test_datasets,
     test_spaces,
 )
 
@@ -58,15 +60,7 @@ def test_episode_data(space: gym.Space):
 
 
 @pytest.mark.parametrize(
-    "dataset_id,env_id",
-    [
-        ("cartpole-test-v0", "CartPole-v1"),
-        ("dummy-dict-test-v0", "DummyDictEnv-v0"),
-        ("dummy-box-test-v0", "DummyBoxEnv-v0"),
-        ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
-        ("dummy-combo-test-v0", "DummyComboEnv-v0"),
-        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
-    ],
+    "dataset_id,env_id", cartpole_test_dataset + dummy_test_datasets
 )
 @pytest.mark.parametrize("data_format", storage_registry.keys())
 def test_update_dataset_from_collector_env(
@@ -113,16 +107,7 @@ def test_update_dataset_from_collector_env(
     check_load_and_delete_dataset(dataset_id)
 
 
-@pytest.mark.parametrize(
-    "dataset_id,env_id",
-    [
-        ("dummy-dict-test-v0", "DummyDictEnv-v0"),
-        ("dummy-box-test-v0", "DummyBoxEnv-v0"),
-        ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
-        ("dummy-combo-test-v0", "DummyComboEnv-v0"),
-        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
-    ],
-)
+@pytest.mark.parametrize("dataset_id,env_id", dummy_test_datasets)
 @pytest.mark.parametrize("data_format", storage_registry.keys())
 def test_filter_episodes_and_subsequent_updates(
     dataset_id, env_id, data_format, register_dummy_envs
@@ -278,15 +263,7 @@ def test_filter_episodes_and_subsequent_updates(
 
 
 @pytest.mark.parametrize(
-    "dataset_id,env_id",
-    [
-        ("cartpole-test-v0", "CartPole-v1"),
-        ("dummy-dict-test-v0", "DummyDictEnv-v0"),
-        ("dummy-box-test-v0", "DummyBoxEnv-v0"),
-        ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
-        ("dummy-combo-test-v0", "DummyComboEnv-v0"),
-        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
-    ],
+    "dataset_id,env_id", cartpole_test_dataset + dummy_test_datasets
 )
 @pytest.mark.parametrize("data_format", storage_registry.keys())
 def test_sample_episodes(dataset_id, env_id, data_format, register_dummy_envs):
@@ -322,15 +299,7 @@ def test_sample_episodes(dataset_id, env_id, data_format, register_dummy_envs):
 
 
 @pytest.mark.parametrize(
-    "dataset_id, env_id",
-    [
-        ("cartpole-test-v0", "CartPole-v1"),
-        ("dummy-dict-test-v0", "DummyDictEnv-v0"),
-        ("dummy-box-test-v0", "DummyBoxEnv-v0"),
-        ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
-        ("dummy-combo-test-v0", "DummyComboEnv-v0"),
-        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
-    ],
+    "dataset_id,env_id", cartpole_test_dataset + dummy_test_datasets
 )
 @pytest.mark.parametrize("data_format", storage_registry.keys())
 def test_iterate_episodes(dataset_id, env_id, data_format, register_dummy_envs):
@@ -371,15 +340,7 @@ def test_iterate_episodes(dataset_id, env_id, data_format, register_dummy_envs):
 
 
 @pytest.mark.parametrize(
-    "dataset_id,env_id",
-    [
-        ("cartpole-test-v0", "CartPole-v1"),
-        ("dummy-dict-test-v0", "DummyDictEnv-v0"),
-        ("dummy-box-test-v0", "DummyBoxEnv-v0"),
-        ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
-        ("dummy-combo-test-v0", "DummyComboEnv-v0"),
-        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
-    ],
+    "dataset_id,env_id", cartpole_test_dataset + dummy_test_datasets
 )
 @pytest.mark.parametrize("data_format", storage_registry.keys())
 def test_update_dataset_from_buffer(
