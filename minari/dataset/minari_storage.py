@@ -175,6 +175,10 @@ class MinariStorage(ABC):
 
         metadata["observation_space"] = self.observation_space
         metadata["action_space"] = self.action_space
+        if "author" in metadata:
+            metadata["author"] = set(metadata["author"])
+        if "author_email" in metadata:
+            metadata["author_email"] = set(metadata["author_email"])
         return metadata
 
     def update_metadata(self, metadata: Dict):
@@ -183,20 +187,38 @@ class MinariStorage(ABC):
         Args:
             metadata (dict): dictionary of keys-values to add to the metadata.
         """
-        forbidden_keys = {"observation_space", "action_space", "env_spec"}.intersection(
-            metadata.keys()
-        )
+        not_updatable_keys = {
+            "dataset_id",
+            "observation_space",
+            "action_space",
+            "env_spec",
+            "data_format",
+            "minari_version",
+        }
+
+        assert isinstance(metadata.get("dataset_id", ""), str)
+        assert isinstance(metadata.get("total_episodes", 0), int)
+        assert isinstance(metadata.get("total_steps", 0), int)
+        assert isinstance(metadata.get("code_permalink", ""), str)
+        assert isinstance(metadata.get("algorithm_name", ""), str)
+        assert isinstance(metadata.get("author", set()), set)
+        assert isinstance(metadata.get("author_email", set()), set)
+        assert isinstance(metadata.get("minari_version", ""), str)
+
+        with open(self.data_path.joinpath(METADATA_FILE_NAME)) as file:
+            saved_metadata = json.load(file)
+
+        forbidden_keys = not_updatable_keys.intersection(metadata.keys())
+        forbidden_keys = forbidden_keys.intersection(saved_metadata.keys())
+
         if forbidden_keys:
             raise ValueError(
                 f"You are not allowed to update values for {', '.join(forbidden_keys)}"
             )
 
-        with open(self.data_path.joinpath(METADATA_FILE_NAME)) as file:
-            saved_metadata = json.load(file)
-
         saved_metadata.update(metadata)
         with open(self.data_path.joinpath(METADATA_FILE_NAME), "w") as file:
-            json.dump(saved_metadata, file)
+            json.dump(saved_metadata, file, default=_json_converter)
 
     @abstractmethod
     def update_episode_metadata(
@@ -273,15 +295,15 @@ class MinariStorage(ABC):
             )
             self.update_episodes([episode_buffer])
 
-        authors = {self.metadata.get("author"), storage.metadata.get("author")}
-        emails = {
-            self.metadata.get("author_email"),
-            storage.metadata.get("author_email"),
-        }
+        author1 = self.metadata.get("author", set())
+        author2 = storage.metadata.get("author", set())
+        email1 = self.metadata.get("author_email", set())
+        email2 = storage.metadata.get("author_email", set())
+
         self.update_metadata(
             {
-                "author": "; ".join([aut for aut in authors if aut is not None]),
-                "author_email": "; ".join([e for e in emails if e is not None]),
+                "author": author1.union(author2),
+                "author_email": email1.union(email2),
             }
         )
 
@@ -323,3 +345,9 @@ class MinariStorage(ABC):
     def action_space(self) -> gym.Space:
         """Action space of the dataset."""
         return self._action_space
+
+
+def _json_converter(obj: Any):
+    if isinstance(obj, set):
+        return list(obj)
+    raise TypeError(f"Object of type {type(obj)} is not JSON serializable")

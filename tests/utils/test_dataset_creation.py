@@ -68,15 +68,16 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id, register_dummy_
         eval_env=eval_env,
         algorithm_name="random_policy",
         code_permalink=CODELINK,
-        author="WillDudley",
-        author_email="wdudley@farama.org",
+        author="Farama",
+        author_email="farama@farama.org",
+        description="Test dataset",
     )
 
     metadata = dataset.storage.metadata
     assert metadata["algorithm_name"] == "random_policy"
     assert metadata["code_permalink"] == CODELINK
-    assert metadata["author"] == "WillDudley"
-    assert metadata["author_email"] == "wdudley@farama.org"
+    assert metadata["author"] == {"Farama"}
+    assert metadata["author_email"] == {"farama@farama.org"}
 
     assert isinstance(dataset, MinariDataset)
     assert dataset.total_episodes == num_episodes
@@ -135,8 +136,9 @@ def test_record_infos_collector_env(info_override, register_dummy_envs):
         dataset_id=dataset_id,
         algorithm_name="random_policy",
         code_permalink=CODELINK,
-        author="WillDudley",
-        author_email="wdudley@farama.org",
+        author={"Farama", "Contributors"},
+        author_email={"farama@farama.org"},
+        description="Test dataset",
     )
 
     assert isinstance(dataset, MinariDataset)
@@ -227,8 +229,9 @@ def test_generate_dataset_with_external_buffer(
             eval_env=eval_env_dataset_id,
             algorithm_name="random_policy",
             code_permalink=CODELINK,
-            author="WillDudley",
-            author_email="wdudley@farama.org",
+            author="Farama",
+            author_email="farama@farama.org",
+            description="Test dataset",
             data_format=data_format,
         )
 
@@ -320,8 +323,9 @@ def test_generate_dataset_with_space_subset_external_buffer(
         env=env_to_pass,
         algorithm_name="random_policy",
         code_permalink=CODELINK,
-        author="WillDudley",
-        author_email="wdudley@farama.org",
+        author={"Farama", "Contributors"},
+        author_email={"farama@farama.org", "contributors@farama.org"},
+        description="Test dataset",
         action_space=action_space_subset,
         observation_space=observation_space_subset,
         data_format=data_format,
@@ -330,8 +334,8 @@ def test_generate_dataset_with_space_subset_external_buffer(
     metadata = dataset.storage.metadata
     assert metadata["algorithm_name"] == "random_policy"
     assert metadata["code_permalink"] == CODELINK
-    assert metadata["author"] == "WillDudley"
-    assert metadata["author_email"] == "wdudley@farama.org"
+    assert metadata["author"] == {"Farama", "Contributors"}
+    assert metadata["author_email"] == {"farama@farama.org", "contributors@farama.org"}
 
     assert isinstance(dataset, MinariDataset)
     assert dataset.total_episodes == num_episodes

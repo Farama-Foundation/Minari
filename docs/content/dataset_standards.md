@@ -37,8 +37,8 @@ When creating a Minari dataset the default global metadata will be the following
 | `observation_space`     | `gymnasium.Space`      | Gymnasium observation space describing observations in dataset. |
 | `env_spec`              | `str`      | JSON string of the Gymnasium environment spec.|
 | `code_permalink`        | `str`      | Link to a repository with the code used to generate the dataset.|
-| `author`                | `str`      | Author's name that created the dataset. |
-| `author_email`          | `str`      | Email of the author that created the dataset.|
+| `author`                | `set of str`      | Name of the authors that created the dataset. |
+| `author_email`          | `set of str`      | Email of the authors that created the dataset.|
 | `algorithm_name`        | `str`      | Name of the expert policy used to create the dataset. |
 | `minari_version`        | `str`      | Version of Minari that generated the dataset. |
 
