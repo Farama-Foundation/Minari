@@ -594,8 +594,8 @@
         <span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">eval_env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span> <span class="o">|</span> <span class="n">EnvSpec</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">algorithm_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">author</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">author_email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">author</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">set</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">author_email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">set</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">code_permalink</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">ref_min_score</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">ref_max_score</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -611,19 +611,18 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            dataset_id (str): name id to identify Minari dataset</span>
-<span class="sd">            buffer (list[Dict[str, Union[list, Dict]]]): list of episode dictionaries with data</span>
-<span class="sd">            eval_env (Optional[str|gym.Env|EnvSpec]): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) to use for evaluation with the dataset. After loading the dataset, the environment can be recovered as follows: `MinariDataset.recover_environment(eval_env=True).</span>
+<span class="sd">            eval_env (str | gym.Env | EnvSpec, optional): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) to use for evaluation with the dataset. After loading the dataset, the environment can be recovered as follows: `MinariDataset.recover_environment(eval_env=True).</span>
 <span class="sd">                                                    If None the `env` used to collect the buffer data should be used for evaluation.</span>
-<span class="sd">            algorithm_name (Optional[str], optional): name of the algorithm used to collect the data. Defaults to None.</span>
-<span class="sd">            author (Optional[str], optional): author that generated the dataset. Defaults to None.</span>
-<span class="sd">            author_email (Optional[str], optional): email of the author that generated the dataset. Defaults to None.</span>
-<span class="sd">            code_permalink (Optional[str], optional): link to relevant code used to generate the dataset. Defaults to None.</span>
-<span class="sd">            ref_min_score( Optional[float], optional): minimum reference score from the average returns of a random policy. This value is later used to normalize a score with :meth:`minari.get_normalized_score`. If default None the value will be estimated with a default random policy.</span>
-<span class="sd">            ref_max_score (Optional[float], optional: maximum reference score from the average returns of a hypothetical expert policy. This value is used in :meth:`minari.get_normalized_score`. Default None.</span>
-<span class="sd">            expert_policy (Optional[Callable[[ObsType], ActType], optional): policy to compute `ref_max_score` by averaging the returns over a number of episodes equal to  `num_episodes_average_score`.</span>
+<span class="sd">            algorithm_name (str, optional): name of the algorithm used to collect the data. Defaults to None.</span>
+<span class="sd">            author (str | set, optional): name of the author(s) that generated the dataset. Defaults to None.</span>
+<span class="sd">            author_email (str | set, optional): email(s) of the author(s) that generated the dataset. Defaults to None.</span>
+<span class="sd">            code_permalink (str, optional): link to relevant code used to generate the dataset. Defaults to None.</span>
+<span class="sd">            ref_min_score(float, optional): minimum reference score from the average returns of a random policy. This value is later used to normalize a score with :meth:`minari.get_normalized_score`. If default None the value will be estimated with a default random policy.</span>
+<span class="sd">            ref_max_score (float, optional): maximum reference score from the average returns of a hypothetical expert policy. This value is used in :meth:`minari.get_normalized_score`. Default None.</span>
+<span class="sd">            expert_policy (Callable[[ObsType], ActType], optional): policy to compute `ref_max_score` by averaging the returns over a number of episodes equal to  `num_episodes_average_score`.</span>
 <span class="sd">                                                                            `ref_max_score` and `expert_policy` can&#39;t be passed at the same time. Default to None</span>
 <span class="sd">            num_episodes_average_score (int): number of episodes to average over the returns to compute `ref_min_score` and `ref_max_score`. Default to 100.</span>
-<span class="sd">            description (Optional[str], optional): description of the dataset being created. Defaults to None.</span>
+<span class="sd">            description (str, optional): description of the dataset being created. Defaults to None.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            MinariDataset</span>
@@ -646,11 +645,8 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_save_to_disk</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
 
-        <span class="c1"># will be able to calculate dataset size only after saving the disk, so updating the dataset metadata post `save_to_disk` method</span>
-
         <span class="n">dataset</span> <span class="o">=</span> <span class="n">MinariDataset</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">)</span>
-        <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;dataset_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">get_size</span><span class="p">()</span>
-        <span class="n">dataset</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">update_metadata</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">update_metadata</span><span class="p">({</span><span class="s2">&quot;dataset_size&quot;</span><span class="p">:</span> <span class="n">dataset</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">get_size</span><span class="p">()})</span>
         <span class="k">return</span> <span class="n">dataset</span>
 
     <span class="k">def</span> <span class="nf">_flush_to_storage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

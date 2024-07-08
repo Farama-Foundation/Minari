@@ -540,6 +540,10 @@
 
         <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;observation_space&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span>
         <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;action_space&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span>
+        <span class="k">if</span> <span class="s2">&quot;author&quot;</span> <span class="ow">in</span> <span class="n">metadata</span><span class="p">:</span>
+            <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;author&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;author&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="s2">&quot;author_email&quot;</span> <span class="ow">in</span> <span class="n">metadata</span><span class="p">:</span>
+            <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;author_email&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;author_email&quot;</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">metadata</span>
 
     <span class="k">def</span> <span class="nf">update_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
@@ -548,20 +552,38 @@
 <span class="sd">        Args:</span>
 <span class="sd">            metadata (dict): dictionary of keys-values to add to the metadata.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">forbidden_keys</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;observation_space&quot;</span><span class="p">,</span> <span class="s2">&quot;action_space&quot;</span><span class="p">,</span> <span class="s2">&quot;env_spec&quot;</span><span class="p">}</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span>
-            <span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-        <span class="p">)</span>
+        <span class="n">not_updatable_keys</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;dataset_id&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;observation_space&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;action_space&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;env_spec&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;data_format&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;minari_version&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dataset_id&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;total_episodes&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;total_steps&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="nb">int</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;code_permalink&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;algorithm_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;author&quot;</span><span class="p">,</span> <span class="nb">set</span><span class="p">()),</span> <span class="nb">set</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;author_email&quot;</span><span class="p">,</span> <span class="nb">set</span><span class="p">()),</span> <span class="nb">set</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;minari_version&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span> <span class="nb">str</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">METADATA_FILE_NAME</span><span class="p">))</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+            <span class="n">saved_metadata</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+
+        <span class="n">forbidden_keys</span> <span class="o">=</span> <span class="n">not_updatable_keys</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">forbidden_keys</span> <span class="o">=</span> <span class="n">forbidden_keys</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">saved_metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
         <span class="k">if</span> <span class="n">forbidden_keys</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;You are not allowed to update values for </span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">forbidden_keys</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">METADATA_FILE_NAME</span><span class="p">))</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-            <span class="n">saved_metadata</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-
         <span class="n">saved_metadata</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">METADATA_FILE_NAME</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">saved_metadata</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">saved_metadata</span><span class="p">,</span> <span class="n">file</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">_json_converter</span><span class="p">)</span>
 
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span> <span class="nf">update_episode_metadata</span><span class="p">(</span>
@@ -638,15 +660,15 @@
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">update_episodes</span><span class="p">([</span><span class="n">episode_buffer</span><span class="p">])</span>
 
-        <span class="n">authors</span> <span class="o">=</span> <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;author&quot;</span><span class="p">),</span> <span class="n">storage</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;author&quot;</span><span class="p">)}</span>
-        <span class="n">emails</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;author_email&quot;</span><span class="p">),</span>
-            <span class="n">storage</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;author_email&quot;</span><span class="p">),</span>
-        <span class="p">}</span>
+        <span class="n">author1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;author&quot;</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span>
+        <span class="n">author2</span> <span class="o">=</span> <span class="n">storage</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;author&quot;</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span>
+        <span class="n">email1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;author_email&quot;</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span>
+        <span class="n">email2</span> <span class="o">=</span> <span class="n">storage</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;author_email&quot;</span><span class="p">,</span> <span class="nb">set</span><span class="p">())</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">update_metadata</span><span class="p">(</span>
             <span class="p">{</span>
-                <span class="s2">&quot;author&quot;</span><span class="p">:</span> <span class="s2">&quot;; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">aut</span> <span class="k">for</span> <span class="n">aut</span> <span class="ow">in</span> <span class="n">authors</span> <span class="k">if</span> <span class="n">aut</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]),</span>
-                <span class="s2">&quot;author_email&quot;</span><span class="p">:</span> <span class="s2">&quot;; &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">e</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">emails</span> <span class="k">if</span> <span class="n">e</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">]),</span>
+                <span class="s2">&quot;author&quot;</span><span class="p">:</span> <span class="n">author1</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">author2</span><span class="p">),</span>
+                <span class="s2">&quot;author_email&quot;</span><span class="p">:</span> <span class="n">email1</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="n">email2</span><span class="p">),</span>
             <span class="p">}</span>
         <span class="p">)</span>
 
@@ -689,6 +711,12 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Action space of the dataset.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_action_space</span></div>
 
+
+
+<span class="k">def</span> <span class="nf">_json_converter</span><span class="p">(</span><span class="n">obj</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="nb">set</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Object of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="si">}</span><span class="s2"> is not JSON serializable&quot;</span><span class="p">)</span>
 </pre></div>
           </article>
         </div>
