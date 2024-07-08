@@ -5,7 +5,7 @@ import importlib.metadata
 import os
 import re
 import warnings
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, Iterable, List, Optional
 
 import gymnasium as gym
 import numpy as np
@@ -527,10 +527,10 @@ def get_dataset_spec_dict(dataset_spec: Dict) -> Dict[str, str]:
         "supported" if version in supported_dataset_versions else "not supported"
     )
     author = dataset_spec.get("author", "Not provided")
-    if isinstance(author, set):
+    if isinstance(author, Iterable):
         author = ", ".join(author)
     email = dataset_spec.get("author_email", "Not provided")
-    if isinstance(email, set):
+    if isinstance(email, Iterable):
         email = ", ".join(email)
     assert isinstance(author, str)
     assert isinstance(email, str)
