@@ -5,7 +5,7 @@ import importlib.metadata
 import os
 import re
 import warnings
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, Iterable, List, Optional
 
 import gymnasium as gym
 import numpy as np
@@ -216,8 +216,8 @@ def _generate_dataset_metadata(
     env_spec: Optional[EnvSpec],
     eval_env: Optional[str | gym.Env | EnvSpec],
     algorithm_name: Optional[str],
-    author: Optional[str],
-    author_email: Optional[str],
+    author: Optional[str | set[str]],
+    author_email: Optional[str | set[str]],
     code_permalink: Optional[str],
     ref_min_score: Optional[float],
     ref_max_score: Optional[float],
@@ -244,7 +244,7 @@ def _generate_dataset_metadata(
             UserWarning,
         )
     else:
-        dataset_metadata["author"] = author
+        dataset_metadata["author"] = {author} if isinstance(author, str) else author
 
     if author_email is None:
         warnings.warn(
@@ -252,7 +252,9 @@ def _generate_dataset_metadata(
             UserWarning,
         )
     else:
-        dataset_metadata["author_email"] = author_email
+        dataset_metadata["author_email"] = (
+            {author_email} if isinstance(author_email, str) else author_email
+        )
 
     if algorithm_name is None:
         warnings.warn(
@@ -330,8 +332,8 @@ def create_dataset_from_buffers(
     env: Optional[str | gym.Env | EnvSpec] = None,
     eval_env: Optional[str | gym.Env | EnvSpec] = None,
     algorithm_name: Optional[str] = None,
-    author: Optional[str] = None,
-    author_email: Optional[str] = None,
+    author: Optional[str | set[str]] = None,
+    author_email: Optional[str | set[str]] = None,
     code_permalink: Optional[str] = None,
     action_space: Optional[gym.spaces.Space] = None,
     observation_space: Optional[gym.spaces.Space] = None,
@@ -351,23 +353,23 @@ def create_dataset_from_buffers(
     Args:
         dataset_id (str): name id to identify Minari dataset.
         buffer (list[EpisodeBuffer]): list of episode buffer with data.
-        env (Optional[str|gym.Env|EnvSpec]): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) used to collect the buffer data. Defaults to None.
-        eval_env (Optional[str|gym.Env|EnvSpec]): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) to use for evaluation with the dataset. After loading the dataset, the environment can be recovered as follows: `MinariDataset.recover_environment(eval_env=True).
+        env (str | gym.Env | EnvSpec, optional): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) used to collect the buffer data. Defaults to None.
+        eval_env (str | gym.Env | EnvSpec, optional): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) to use for evaluation with the dataset. After loading the dataset, the environment can be recovered as follows: `MinariDataset.recover_environment(eval_env=True).
                                                 If None, and if the `env` used to collect the buffer data is available, latter will be used for evaluation.
-        algorithm_name (Optional[str], optional): name of the algorithm used to collect the data. Defaults to None.
-        author (Optional[str], optional): author that generated the dataset. Defaults to None.
-        author_email (Optional[str], optional): email of the author that generated the dataset. Defaults to None.
-        code_permalink (Optional[str], optional): link to relevant code used to generate the dataset. Defaults to None.
-        ref_min_score (Optional[float], optional): minimum reference score from the average returns of a random policy. This value is later used to normalize a score with :meth:`minari.get_normalized_score`. If default None the value will be estimated with a default random policy.
+        algorithm_name (str, optional): name of the algorithm used to collect the data. Defaults to None.
+        author (str | set, optional): name of the author(s) that generated the dataset. Defaults to None.
+        author_email (str | set, optional): email(s) of the author(s) that generated the dataset. Defaults to None.
+        code_permalink (str, optional): link to relevant code used to generate the dataset. Defaults to None.
+        ref_min_score (float, optional): minimum reference score from the average returns of a random policy. This value is later used to normalize a score with :meth:`minari.get_normalized_score`. If default None the value will be estimated with a default random policy.
                                                     Also note that this attribute will be added to the Minari dataset only if `ref_max_score` or `expert_policy` are assigned a valid value other than None.
-        ref_max_score (Optional[float], optional: maximum reference score from the average returns of a hypothetical expert policy. This value is used in `MinariDataset.get_normalized_score()`. Default None.
-        expert_policy (Optional[Callable[[ObsType], ActType], optional): policy to compute `ref_max_score` by averaging the returns over a number of episodes equal to  `num_episodes_average_score`.
+        ref_max_score (float, optional): maximum reference score from the average returns of a hypothetical expert policy. This value is used in `MinariDataset.get_normalized_score()`. Default None.
+        expert_policy (Callable[[ObsType], ActType], optional): policy to compute `ref_max_score` by averaging the returns over a number of episodes equal to  `num_episodes_average_score`.
                                                                         `ref_max_score` and `expert_policy` can't be passed at the same time. Default to None
         num_episodes_average_score (int): number of episodes to average over the returns to compute `ref_min_score` and `ref_max_score`. Default to 100.
                 observation_space:
-        action_space (Optional[gym.spaces.Space]): action space of the environment. If None (default) use the environment action space.
-        observation_space (Optional[gym.spaces.Space]): observation space of the environment. If None (default) use the environment observation space.
-        description (Optional[str], optional): description of the dataset being created. Defaults to None.
+        action_space (gym.spaces.Space, optional): action space of the environment. If None (default) use the environment action space.
+        observation_space (gym.spaces.Space, optional): observation space of the environment. If None (default) use the environment observation space.
+        description (str, optional): description of the dataset being created. Defaults to None.
         data_format (str, optional): Data format to store the data in the Minari dataset. If None (defaults), it will use the default format of MinariStorage.
 
     Returns:
@@ -423,12 +425,9 @@ def create_dataset_from_buffers(
         **data_format_kwarg,
     )
 
-    # adding `update_metadata` before hand too, as for small envs, the absence of metadata is causing a difference of some 10ths of MBs leading to errors in unit tests.
     storage.update_metadata(metadata)
     storage.update_episodes(buffer)
-
-    metadata["dataset_size"] = storage.get_size()
-    storage.update_metadata(metadata)
+    storage.update_metadata({"dataset_size": storage.get_size()})
 
     return MinariDataset(storage)
 
@@ -527,11 +526,19 @@ def get_dataset_spec_dict(dataset_spec: Dict) -> Dict[str, str]:
     supported = (
         "supported" if version in supported_dataset_versions else "not supported"
     )
+    author = dataset_spec.get("author", "Not provided")
+    if isinstance(author, Iterable):
+        author = ", ".join(author)
+    email = dataset_spec.get("author_email", "Not provided")
+    if isinstance(email, Iterable):
+        email = ", ".join(email)
+    assert isinstance(author, str)
+    assert isinstance(email, str)
     md_dict.update(
         {
             "Algorithm": dataset_spec.get("algorithm_name", "Not provided"),
-            "Author": dataset_spec.get("author", "Not provided"),
-            "Email": dataset_spec.get("author_email", "Not provided"),
+            "Author": author,
+            "Email": email,
             "Code Permalink": f"[{code_link}]({code_link})",
             "Minari Version": f"`{version}` ({supported})",
             "Download": f"`minari download {dataset_spec['dataset_id']}`",

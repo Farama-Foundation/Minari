@@ -90,8 +90,9 @@ def test_data_collector_step_data_callback(data_format, register_dummy_envs):
         dataset_id=dataset_id,
         algorithm_name="random_policy",
         code_permalink=str(__file__),
-        author="WillDudley",
-        author_email="wdudley@farama.org",
+        author="Farama",
+        author_email="farama@farama.org",
+        description="Test dataset",
     )
 
     assert isinstance(dataset, MinariDataset)
@@ -139,8 +140,9 @@ def test_data_collector_step_data_callback_info_correction(
         dataset_id=dataset_id,
         algorithm_name="random_policy",
         code_permalink=str(__file__),
-        author="WillDudley",
-        author_email="wdudley@farama.org",
+        author="Farama",
+        author_email="farama@farama.org",
+        description="Test dataset",
     )
 
     assert isinstance(dataset, MinariDataset)

@@ -219,9 +219,10 @@ def test_minari_get_dataset_size_from_collector_env(
     dataset = env.create_dataset(
         dataset_id=dataset_id,
         algorithm_name="random_policy",
-        code_permalink="https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
-        author="WillDudley",
-        author_email="wdudley@farama.org",
+        code_permalink=str(__file__),
+        author="Farama",
+        author_email="farama@farama.org",
+        description="Test dataset",
     )
 
     assert dataset.storage.metadata["dataset_size"] == dataset.storage.get_size()
@@ -292,10 +293,11 @@ def test_minari_get_dataset_size_from_buffer(
         env=env,
         buffer=buffer,
         algorithm_name="random_policy",
-        code_permalink="https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
-        author="WillDudley",
-        author_email="wdudley@farama.org",
+        code_permalink=str(__file__),
+        author="Farama",
+        author_email="farama@farama.org",
         data_format=data_format,
+        description="Test dataset",
     )
 
     assert dataset.storage.metadata["dataset_size"] == dataset.storage.get_size()

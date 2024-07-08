@@ -621,8 +621,9 @@ def create_dummy_dataset_with_collecter_env_helper(
         dataset_id=dataset_id,
         algorithm_name="random_policy",
         code_permalink="https://github.com/Farama-Foundation/Minari/blob/main/tests/common.py",
-        author="WillDudley",
-        author_email="wdudley@farama.org",
+        author="Farama",
+        author_email="farama@farama.org",
+        description="Test dataset for Minari",
         **kwargs,
     )
 

@@ -123,6 +123,8 @@ def test_truncation_without_reset(dataset_id, env_id, data_format, register_dumm
         algorithm_name="random_policy",
         author="Farama",
         author_email="farama@farama.org",
+        code_permalink=str(__file__),
+        description="Test truncation without reset.",
     )
 
     env.close()
@@ -178,6 +180,8 @@ def test_reproducibility(seed, data_format, register_dummy_envs):
         algorithm_name="random_policy",
         author="Farama",
         author_email="farama@farama.org",
+        code_permalink=str(__file__),
+        description="Test reproducibility",
     )
     env.close()
 
