@@ -109,10 +109,6 @@ reportPrivateUsage = "warning"
 reportUnboundVariable = "warning"
 
 [tool.pytest.ini_options]
-filterwarnings = [
-    'ignore:.*`eval_env` is set to None',
-    "ignore:.*`description` is set to None",
-    "ignore:.*`code_permalink` is set to None"
-]
+filterwarnings = ['ignore:.*`eval_env` is set to None']
 # filterwarnings = ['ignore:.*step API.*:DeprecationWarning']
 addopts = ["--ignore=docs/tutorials"]
