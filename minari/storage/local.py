@@ -93,6 +93,12 @@ def list_local_datasets(
         data_path = os.path.join(datasets_path, dst_id, "data")
         try:
             metadata = MinariStorage.read(data_path).metadata
+            metadata_id = metadata["dataset_id"]
+
+            if dst_id != metadata_id:
+                raise ValueError(
+                    f"Namespace location '{dst_id}' does not match id '{metadata_id}'."
+                )
         except Exception as e:
             warnings.warn(f"Misconfigured dataset named {dst_id}: {e}")
             continue

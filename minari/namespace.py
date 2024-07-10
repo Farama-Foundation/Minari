@@ -250,7 +250,7 @@ def upload_namespace(namespace: str, key_path: str) -> None:
     namespace_metadata_path = os.path.join(namespace, NAMESPACE_METADATA_FILE_NAME)
     local_file_path = Path(get_dataset_path(""), namespace_metadata_path)
 
-    cloud_storage.upload_path(local_file_path, namespace_metadata_path)
+    cloud_storage.upload_file(local_file_path, namespace_metadata_path)
 
 
 def validate_namespace(namespace: str) -> None:

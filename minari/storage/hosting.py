@@ -28,6 +28,9 @@ def upload_dataset(dataset_id: str, key_path: str):
         dataset_id (str): name id of the local Minari dataset
         key_path (str): path to the credentials file.
     """
+    # Avoid circular import
+    from minari.namespace import list_remote_namespaces, upload_namespace
+
     remote_datasets = list_remote_datasets()
     if dataset_id in remote_datasets.keys():
         print(f"Upload aborted. {dataset_id} is already in remote.")
@@ -38,9 +41,15 @@ def upload_dataset(dataset_id: str, key_path: str):
     datasets_to_upload = [dataset_id]
     while len(datasets_to_upload):
         dataset_id = datasets_to_upload.pop()
+        namespace, _, _, _ = parse_dataset_id(dataset_id)
+
+        if namespace is not None and namespace not in list_remote_namespaces():
+            upload_namespace(namespace, key_path)
+
         print(f"Uploading dataset {dataset_id}")
         path = get_dataset_path(dataset_id)
         cloud_storage.upload_directory(path, dataset_id)
+
         dataset = load_dataset(dataset_id)
         combined_datasets = dataset.spec.combined_datasets
         datasets_to_upload.extend(combined_datasets)
@@ -212,10 +221,18 @@ def list_remote_datasets(
                 ):
                     continue
                 dataset_id = metadata["dataset_id"]
+                dataset_location = os.path.dirname(os.path.dirname(blob.name))
+
+                if dataset_id != dataset_location:
+                    raise ValueError(
+                        f"Namespace location '{dataset_location}' does not match id '{dataset_id}'."
+                    )
+
                 namespace, env_name, dataset_name, version = parse_dataset_id(
                     dataset_id
                 )
                 dataset = gen_dataset_id(namespace, env_name, dataset_name)
+
                 if latest_version:
                     if (
                         dataset not in remote_datasets

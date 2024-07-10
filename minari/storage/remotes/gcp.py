@@ -27,10 +27,10 @@ class GCPStorage(CloudStorage):
                 )
             else:
                 remote_path = os.path.join(remote_dir_path, local_file.name)
-                self.upload_path(local_file, remote_path)
+                self.upload_file(local_file, remote_path)
                 print("Uploaded", local_file, "to", remote_path)
 
-    def upload_path(self, local_path: Path, remote_path: str) -> None:
+    def upload_file(self, local_path: Path, remote_path: str) -> None:
         blob = self.bucket.blob(remote_path)
         blob.upload_from_filename(local_path)
 
