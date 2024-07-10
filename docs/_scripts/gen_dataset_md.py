@@ -7,7 +7,7 @@ from generate_gif import generate_gif
 from gymnasium.envs.registration import EnvSpec
 
 from minari import list_remote_datasets
-from minari.dataset.minari_dataset import parse_dataset_id
+from minari.dataset.minari_dataset import gen_dataset_id, parse_dataset_id
 from minari.storage.hosting import get_remote_dataset_versions
 from minari.utils import get_dataset_spec_dict, get_env_spec_dict
 
@@ -23,12 +23,16 @@ filtered_datasets = defaultdict(defaultdict)
 all_remote_datasets = list_remote_datasets()
 
 for dataset_id in all_remote_datasets.keys():
-    env_name, dataset_name, version = parse_dataset_id(dataset_id)
+    namespace, env_name, dataset_name, version = parse_dataset_id(dataset_id)
     assert env_name is not None
 
     if dataset_name not in filtered_datasets[env_name]:
-        max_version = get_remote_dataset_versions(env_name, dataset_name, True)[0]
-        max_version_dataset_id = "-".join([env_name, dataset_name, f"v{max_version}"])
+        max_version = get_remote_dataset_versions(
+            namespace, env_name, dataset_name, latest_version=True
+        )[0]
+        max_version_dataset_id = gen_dataset_id(
+            namespace, env_name, dataset_name, max_version
+        )
         filtered_datasets[env_name][dataset_name] = all_remote_datasets[
             max_version_dataset_id
         ]

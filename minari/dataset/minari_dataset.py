@@ -16,30 +16,59 @@ from minari.dataset.minari_storage import MinariStorage, PathLike
 
 
 DATASET_ID_RE = re.compile(
-    r"(?:(?P<environment>[\w]+?))?(?:-(?P<dataset>[\w:.-]+?))(?:-v(?P<version>\d+))?$"
+    r"^(?:(?P<namespace>[-_\w][-_\w/]*[-_\w]+)\/)?(?:(?P<environment>[\w]+?))?(?:-(?P<dataset>[\w:.-]+?))(?:-v(?P<version>\d+))?$"
 )
 
 
-def parse_dataset_id(dataset_id: str) -> tuple[str | None, str, int]:
-    """Parse dataset ID string format - ``(env_name-)(dataset_name)(-v(version))``.
+def parse_dataset_id(dataset_id: str) -> tuple[str | None, str | None, str, int]:
+    """Parse dataset ID string format - ``(namespace/)(env_name-)(dataset_name)(-v(version))``.
 
     Args:
-        dataset_id: The dataset id to parse
+        dataset_id (str): The dataset id to parse
     Returns:
-        A tuple of environment name, dataset name and version number
+        A tuple of namespace, environment name, dataset name and version number
     Raises:
         Error: If the dataset id is not valid dataset regex
     """
     match = DATASET_ID_RE.fullmatch(dataset_id)
     if not match:
         raise error.Error(
-            f"Malformed dataset ID: {dataset_id}. (Currently all IDs must be of the form (env_name-)(dataset_name)-v(version). (namespace is optional))"
+            f"Malformed dataset ID: {dataset_id}. (IDs must be of the form (namespace/)(env_name-)(dataset_name)-v(version). The namespace is optional.)"
         )
-    env_name, dataset_name, version = match.group("environment", "dataset", "version")
+    namespace, env_name, dataset_name, version = match.group(
+        "namespace", "environment", "dataset", "version"
+    )
 
     version = int(version)
 
-    return env_name, dataset_name, version
+    if namespace == "":
+        namespace = None
+
+    return namespace, env_name, dataset_name, version
+
+
+def gen_dataset_id(
+    namespace: str | None,
+    env_name: str | None,
+    dataset_name: str,
+    version: int | None = None,
+) -> str:
+    """Generate a dataset ID from dataset attributes. Inverse of parse_dataset_id().
+
+    Args:
+        namespace (str | None): name of dataset subdir. Defaults to None.
+        env_name (str | None): name to identify the environment of the dataset
+        dataset_name (str): name of the dataset within the ``env_name``
+        version (int | None, optional): Dataset version. Defaults to None, in which case
+            the version tag will be suppressed.
+
+    Returns:
+        str: A dataset id string of the form ``(namespace/)(env_name-)(dataset_name)(-v(version))``.
+            The ``namespace`` and ``-v(version)`` are optional.
+    """
+    namespace_str = f"{namespace}/" if namespace is not None else ""
+    version_str = f"-v{version}" if version is not None else ""
+    return f"{namespace_str}{env_name}-{dataset_name}{version_str}"
 
 
 @dataclass
@@ -55,15 +84,19 @@ class MinariDatasetSpec:
     minari_version: str
 
     # post-init attributes
+    namespace: str | None = field(init=False)
     env_name: str | None = field(init=False)
     dataset_name: str = field(init=False)
     version: int | None = field(init=False)
 
     def __post_init__(self):
         """Calls after the spec is created to extract the environment name, dataset name and version from the dataset id."""
-        self.env_name, self.dataset_name, self.version = parse_dataset_id(
-            self.dataset_id
-        )
+        (
+            self.namespace,
+            self.env_name,
+            self.dataset_name,
+            self.version,
+        ) = parse_dataset_id(self.dataset_id)
 
 
 class MinariDataset:

@@ -7,6 +7,7 @@ minari_dataset/minari_dataset
 minari_dataset/minari_storage
 minari_dataset/episode_data
 minari_dataset/step_data
+namespace/namespace
 ```
 
 ## Load Minari Dataset

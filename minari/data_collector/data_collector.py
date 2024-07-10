@@ -15,8 +15,9 @@ from gymnasium.envs.registration import EnvSpec
 
 from minari.data_collector.callbacks import EpisodeMetadataCallback, StepDataCallback
 from minari.data_collector.episode_buffer import EpisodeBuffer
-from minari.dataset.minari_dataset import MinariDataset
+from minari.dataset.minari_dataset import MinariDataset, parse_dataset_id
 from minari.dataset.minari_storage import MinariStorage
+from minari.namespace import create_namespace, list_local_namespaces
 from minari.utils import _generate_dataset_metadata, _generate_dataset_path
 
 
@@ -46,7 +47,7 @@ class DataCollector(gym.Wrapper):
             if terminated or truncated:
                 env.reset()
 
-        dataset = env.create_dataset(dataset_id="env_name-dataset_name-v(version)", **kwargs)
+        dataset = env.create_dataset(dataset_id="optional_namespace/env_name-dataset_name-v(version)", **kwargs)
 
     Some of the characteristics of this wrapper:
 
@@ -241,7 +242,7 @@ class DataCollector(gym.Wrapper):
         """Create a Minari dataset using the data collected from stepping with a Gymnasium environment wrapped with a `DataCollector` Minari wrapper.
 
         The ``dataset_id`` parameter corresponds to the name of the dataset, with the syntax as follows:
-        ``(env_name-)(dataset_name)(-v(version))`` where ``env_name`` identifies the name of the environment used to generate the dataset ``dataset_name``.
+        ``(namespace/)(env_name-)(dataset_name)(-v(version))`` where ``env_name`` identifies the name of the environment used to generate the dataset ``dataset_name``. The `namespace` (and leading forward slash) is optional.
         This ``dataset_id`` is used to load the Minari datasets with :meth:`minari.load_dataset`.
 
         Args:
@@ -262,6 +263,11 @@ class DataCollector(gym.Wrapper):
         Returns:
             MinariDataset
         """
+        namespace = parse_dataset_id(dataset_id)[0]
+
+        if namespace is not None and namespace not in list_local_namespaces():
+            create_namespace(namespace)
+
         dataset_path = _generate_dataset_path(dataset_id)
         metadata: Dict[str, Any] = _generate_dataset_metadata(
             dataset_id,

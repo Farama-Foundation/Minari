@@ -385,10 +385,10 @@ env = gym.make('CartPole-v1')
 env = DataCollector(env, record_infos=True)
 
 total_episodes = 100
-dataset_name = "cartpole-test-v0"
+dataset_id = "cartpole-test-v0"
 dataset = None
-if dataset_name in minari.list_local_datasets():
-    dataset = minari.load_dataset(dataset_name)
+if dataset_id in minari.list_local_datasets():
+    dataset = minari.load_dataset(dataset_id)
 
 for episode_id in range(total_episodes):
     env.reset()
@@ -405,7 +405,7 @@ for episode_id in range(total_episodes):
         # This works as a checkpoint to not lose the already collected data
         if dataset is None:
             dataset = env.create_dataset(
-                dataset_id=dataset_name,
+                dataset_id=dataset_id,
                 algorithm_name="Random-Policy",
                 code_permalink="https://github.com/Farama-Foundation/Minari",
                 author="Farama",
@@ -413,4 +413,13 @@ for episode_id in range(total_episodes):
             )
         else:
             env.add_to_dataset(dataset)
+```
+
+
+## Using Namespaces
+
+```{eval-rst}
+Namespaces can be used to group together common datasets and provide them with a hierarchical structure. For example, suppose we want to create a series of `Classic Control <https://gymnasium.farama.org/environments/classic_control/>`_ datasets (`cartpole`, `acrobot`, e.t.c.) using the dataset creation code above. Instead of specifying ``dataset_id=cartpole-test-v0``, we can use e.g. ``classic_control/cartpole-test-v0`` when creating the dataset. This, and all other datasets with a ``dataset_id`` that starts with ``classic_control/`` will now be stored together in the ``classic_control`` namespace.
+
+For more flexibility, namespaces can be created and modified directly using the :doc:`Namespace API <../api/namespace/namespace>`.
 ```

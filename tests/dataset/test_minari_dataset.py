@@ -11,6 +11,7 @@ import minari
 from minari import DataCollector, EpisodeData, MinariDataset, StepData
 from minari.data_collector.episode_buffer import EpisodeBuffer
 from minari.dataset._storages import registry as storage_registry
+from minari.dataset.minari_dataset import gen_dataset_id, parse_dataset_id
 from minari.dataset.minari_storage import METADATA_FILE_NAME
 from tests.common import (
     cartpole_test_dataset,
@@ -438,3 +439,30 @@ def test_missing_env_module(data_format):
         dataset.recover_environment()
 
     minari.delete_dataset(dataset_id)
+
+
+@pytest.mark.parametrize(
+    "dataset_id",
+    [x[0] for x in dummy_test_datasets]
+    + ["name_123/space/" + x[0] for x in dummy_test_datasets],
+)
+def test_parse_gen_dataset_id_inverse_forward(dataset_id):
+    """Check parse_dataset_id() and gen_dataset_id() are inverses. Forward direction."""
+    namespace, env_name, dataset_name, version = parse_dataset_id(dataset_id)
+    new_dataset_id = gen_dataset_id(namespace, env_name, dataset_name, version)
+    assert new_dataset_id == dataset_id
+
+
+@pytest.mark.parametrize(
+    "namespace, env_name, dataset_name, version",
+    [
+        (None, "door", "human", 0),
+        ("aB1-_", "cD2", "eF3:.-_", 456),
+    ],
+)
+def test_parse_gen_dataset_id_inverse_backward(
+    namespace, env_name, dataset_name, version
+):
+    """Check parse_dataset_id() and gen_dataset_id() are inverses. Backward direction."""
+    attrs = (namespace, env_name, dataset_name, version)
+    assert attrs == parse_dataset_id(gen_dataset_id(*attrs))
