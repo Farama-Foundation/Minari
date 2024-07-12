@@ -45,8 +45,7 @@ testing = [
     "gymnasium-robotics>=1.2.3",
     "mktestdocs",
     "torchrl",
-    "agilerl",
-    "h5py>=3.8.0",
+    "agilerl"
 ]
 
 [project.urls]
