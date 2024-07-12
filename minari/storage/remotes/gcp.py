@@ -2,10 +2,16 @@ import os
 from pathlib import Path
 from typing import Any, Optional
 
-from google.cloud import storage
-from tqdm.auto import tqdm
-
 from minari.storage.remotes.cloud_storage import CloudStorage
+
+
+try:
+    from google.cloud import storage
+    from tqdm import tqdm
+except ImportError:
+    raise ImportError(
+        'google-cloud-storage or tqdm are not installed. Please install it using `pip install "minari[gcs]"`'
+    )
 
 
 class GCPStorage(CloudStorage):

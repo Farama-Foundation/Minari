@@ -16,3 +16,4 @@ git+https://github.com/Farama-Foundation/Celshast#egg=furo
 torchrl-nightly>=2023.12.30
 pyvirtualdisplay
 moviepy
+tqdm

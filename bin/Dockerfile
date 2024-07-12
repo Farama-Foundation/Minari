@@ -26,6 +26,6 @@ ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/root/.mujoco/mujoco210/bin"
 COPY . /usr/local/minari/
 WORKDIR /usr/local/minari/
 
-RUN pip install .[testing] --no-cache-dir
+RUN pip install .[all,testing] --no-cache-dir
 
 ENTRYPOINT ["/usr/local/minari/bin/docker_entrypoint"]
