@@ -8,7 +8,7 @@ from minari.namespace import (
     delete_namespace,
     get_namespace_metadata,
     list_local_namespaces,
-    update_namespace,
+    update_namespace_metadata,
 )
 from tests.common import (
     check_load_and_delete_dataset,
@@ -45,22 +45,14 @@ def test_create_namespace(namespace, description, metadata, combined_metadata):
 
 
 @pytest.mark.parametrize("namespace", ["test_namespace"])
-def test_namespace_description_conflict(namespace):
-    # Re-creating the namespace does not raise a conflict unless the metadata conflicts
+def test_namespace_update(namespace):
     create_namespace(namespace)
-    create_namespace(namespace, description="my description", metadata={"key": [1]})
-    create_namespace(namespace, description="my description", metadata={"key": [1]})
 
-    with pytest.raises(
-        ValueError, match="Metadata for namespace 'test_namespace' already exists"
-    ):
-        create_namespace(namespace, description="a conflicting definition")
+    with pytest.raises(ValueError, match="Namespace 'test_namespace' already exists"):
+        create_namespace(namespace)
 
-    create_namespace(namespace, description="a new definition", overwrite=True)
+    update_namespace_metadata(namespace, description="a new definition")
     assert get_namespace_metadata(namespace) == {"description": "a new definition"}
-
-    update_namespace(namespace, description="a third definition")
-    assert get_namespace_metadata(namespace) == {"description": "a third definition"}
 
 
 @pytest.mark.parametrize("namespace", ["test_namespace"])
@@ -77,10 +69,7 @@ def test_create_nested_namespaces(namespace):
 
 def test_nonexistent_namespaces():
     with pytest.raises(ValueError, match="does not exist"):
-        delete_namespace("does_not/exist")
-
-    with pytest.raises(ValueError, match="does not exist"):
-        update_namespace("does_not/exist")
+        update_namespace_metadata("does_not/exist")
 
     with pytest.raises(ValueError, match="does not exist"):
         get_namespace_metadata("does_not/exist")
@@ -102,7 +91,7 @@ def test_create_namespaced_datasets(namespace):
     assert list_local_namespaces() == [namespace]
     assert get_namespace_metadata(namespace) is None
 
-    update_namespace(namespace, description="new description")
+    update_namespace_metadata(namespace, description="new description")
     assert get_namespace_metadata(namespace) == {"description": "new description"}
 
     # Creating a new dataset in the same namespace doesn't change the namespace metadata

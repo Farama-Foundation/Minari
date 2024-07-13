@@ -33,7 +33,9 @@ def upload_dataset(dataset_id: str, key_path: str):
 
     remote_datasets = list_remote_datasets()
     if dataset_id in remote_datasets.keys():
-        print(f"Upload aborted. {dataset_id} is already in remote.")
+        warnings.warn(
+            f"Upload aborted. {dataset_id} is already in remote.", UserWarning
+        )
         return
 
     cloud_storage = get_cloud_storage(key_path=key_path)
@@ -66,6 +68,9 @@ def download_dataset(dataset_id: str, force_download: bool = False):
         dataset_id (str): name id of the Minari dataset
         force_download (bool): boolean flag for force downloading the dataset. Default Value = False
     """
+    # Avoid circular import
+    from minari.namespace import create_namespace, list_local_namespaces
+
     (
         namespace,
         env_name,
@@ -155,6 +160,9 @@ def download_dataset(dataset_id: str, force_download: bool = False):
                 f"Skipping Download. Dataset {dataset_id} found locally at {file_path}, Use force_download=True to download the dataset again.\n"
             )
             return
+
+    if namespace is not None and namespace not in list_local_namespaces():
+        create_namespace(namespace)
 
     print(f"\nDownloading {dataset_id} from Farama servers...")
     datasets_path = get_dataset_path("")

@@ -2,7 +2,12 @@ import pytest
 from pytest import MonkeyPatch
 
 import minari
-from minari import MinariDataset
+from minari import (
+    MinariDataset,
+    download_dataset,
+    list_local_datasets,
+    list_remote_datasets,
+)
 from minari.namespace import (
     create_namespace,
     delete_namespace,
@@ -11,7 +16,6 @@ from minari.namespace import (
     list_local_namespaces,
     list_remote_namespaces,
 )
-from minari.storage.datasets_root_dir import get_dataset_path
 from tests.common import check_data_integrity, get_latest_compatible_dataset_id
 
 
@@ -26,33 +30,37 @@ def use_test_server():
 
 
 def test_download_namespace_dataset(use_test_server):
-    dataset_id = get_latest_compatible_dataset_id("test_namespace", "door", "human")
-    remote_datasets = minari.list_remote_datasets()
-    assert dataset_id in remote_datasets
+    namespace = "test_namespace"
+    door_id = get_latest_compatible_dataset_id(namespace, "door", "human")
+    pen_id = get_latest_compatible_dataset_id(namespace, "pen", "human")
 
-    minari.download_dataset(dataset_id, force_download=True)
-    local_datasets = minari.list_local_datasets()
-    assert dataset_id in local_datasets
+    remote_datasets = list_remote_datasets()
+    assert door_id in remote_datasets
 
-    file_path = get_dataset_path(dataset_id)
+    download_dataset(door_id)
+    assert list(list_local_datasets().keys()) == [door_id]
+    assert list_local_namespaces() == [namespace]
+    assert get_namespace_metadata(namespace) is None
 
-    with pytest.warns(
-        UserWarning,
-        match=f"Skipping Download. Dataset {dataset_id} found locally at {file_path}, Use force_download=True to download the dataset again.\n",
-    ):
-        assert minari.download_dataset(dataset_id) is None
+    download_dataset(pen_id)
+    assert list(list_local_datasets().keys()) == [door_id, pen_id]
+    assert list_local_namespaces() == [namespace]
+    assert get_namespace_metadata(namespace) is None
 
-    dataset = minari.load_dataset(dataset_id)
+    with pytest.warns(UserWarning, match="Skipping Download."):
+        download_dataset(door_id)
+
+    # Check door dataset downloaded correctly
+    dataset = minari.load_dataset(door_id)
     assert isinstance(dataset, MinariDataset)
 
     check_data_integrity(dataset.storage, dataset.episode_indices)
 
-    minari.delete_dataset(dataset_id)
-    local_datasets = minari.list_local_datasets()
-    assert dataset_id not in local_datasets
+    minari.delete_dataset(door_id)
+    assert list(list_local_datasets().keys()) == [pen_id]
 
 
-def test_pull_namespace_metadata(use_test_server):
+def test_download_namespace_metadata(use_test_server):
     test_namespaces = {
         "test_namespace",
         "test_namespace/nested",

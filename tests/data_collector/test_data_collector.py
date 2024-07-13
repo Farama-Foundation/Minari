@@ -95,10 +95,7 @@ def get_single_step_from_episode(episode: EpisodeData, index: int) -> EpisodeDat
 
 
 @pytest.mark.parametrize("data_format", storage_registry.keys())
-@pytest.mark.parametrize(
-    "dataset_id,env_id",
-    dummy_test_datasets + [("nested_123/name-space/cartpole-test-v0", "CartPole-v1")],
-)
+@pytest.mark.parametrize("dataset_id,env_id", dummy_test_datasets)
 def test_truncation_without_reset(dataset_id, env_id, data_format, register_dummy_envs):
     """Test new episode creation when environment is truncated and env.reset is not called."""
     num_steps = 50

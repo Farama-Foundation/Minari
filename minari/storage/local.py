@@ -2,7 +2,7 @@ import importlib.metadata
 import os
 import shutil
 import warnings
-from typing import Dict, List, Tuple, Union
+from typing import Dict, Iterable, Tuple, Union
 
 from minari.dataset.minari_dataset import (
     MinariDataset,
@@ -18,11 +18,11 @@ from minari.storage.datasets_root_dir import get_dataset_path
 __version__ = importlib.metadata.version("minari")
 
 
-def list_non_hidden_dirs(path: str) -> List[str]:
+def list_non_hidden_dirs(path: str) -> Iterable[str]:
     """List all non-hidden subdirectories."""
-    return [
-        d.name for d in os.scandir(path) if d.is_dir() and (not d.name.startswith("."))
-    ]
+    for d in os.scandir(path):
+        if d.is_dir() and (not d.name.startswith(".")):
+            yield d.name
 
 
 def dataset_id_sort_key(dataset_id: str) -> Tuple[str, Union[str, None], str, int]:

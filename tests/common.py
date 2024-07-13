@@ -29,6 +29,7 @@ dummy_test_datasets = [
     ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
     ("dummy-combo-test-v0", "DummyComboEnv-v0"),
     ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
+    ("nested/namespace/dummy-dict-test-v0", "DummyDictEnv-v0"),
 ] + dummy_box_dataset
 
 

@@ -36,9 +36,8 @@ def _show_dataset_table(datasets: Dict[str, Dict[str, Any]], table_title: str):
 
     for dataset_id in datasets.keys():
         namespace, env_name, dataset_name, version = parse_dataset_id(dataset_id)
-        dataset_versions[gen_dataset_id(namespace, env_name, dataset_name)].append(
-            version
-        )
+        dataset_id_versionless = gen_dataset_id(namespace, env_name, dataset_name)
+        dataset_versions[dataset_id_versionless].append(version)
 
     # "Versions" column is only displayed if there are multiple versions
     display_versions = any([len(x) > 1 for x in dataset_versions.values()])
