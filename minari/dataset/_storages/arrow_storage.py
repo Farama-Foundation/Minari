@@ -14,7 +14,7 @@ try:
     import pyarrow.dataset as ds
 except ImportError:
     raise ImportError(
-        'pyarrow is not installed. Please install it using `pip install "minari[pyarrow]"`'
+        'pyarrow is not installed. Please install it using `pip install "minari[arrow]"`'
     )
 
 from minari.data_collector.episode_buffer import EpisodeBuffer

@@ -34,11 +34,11 @@ dependencies = [
 dynamic = ["version"]
 
 [project.optional-dependencies]
-pyarrow = ["pyarrow"]
-h5py = ["h5py>=3.8.0"]
+arrow = ["pyarrow"]
+hdf5 = ["h5py>=3.8.0"]
 gcs = ["google-cloud-storage>=2.5.0", "tqdm>=4.65.0"]
 
-all = ["minari[pyarrow,h5py,gcs]"]
+all = ["minari[arrow,hdf5,gcs]"]
 
 testing = [
     "pytest>=7.1.3",

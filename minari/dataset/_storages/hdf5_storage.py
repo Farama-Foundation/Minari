@@ -16,7 +16,7 @@ try:
     import h5py
 except ImportError:
     raise ImportError(
-        'h5py is not installed. Please install it using `pip install "minari[h5py]"`'
+        'h5py is not installed. Please install it using `pip install "minari[hdf5]"`'
     )
 
 
