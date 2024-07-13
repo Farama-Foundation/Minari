@@ -6,7 +6,7 @@ from minari.storage.remotes.cloud_storage import CloudStorage
 
 
 try:
-    from google.cloud import storage as gcp_storage
+    import google.cloud.storage as gcp_storage
     from tqdm import tqdm
 except ImportError:
     raise ImportError(
