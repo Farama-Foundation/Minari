@@ -19,13 +19,10 @@ except ImportError:
         'h5py is not installed. Please install it using `pip install "minari[hdf5]"`'
     )
 
-
 _MAIN_FILE_NAME = "main_data.hdf5"
 
 
 class HDF5Storage(MinariStorage):
-    FORMAT = "hdf5"
-
     def __init__(
         self,
         data_path: pathlib.Path,

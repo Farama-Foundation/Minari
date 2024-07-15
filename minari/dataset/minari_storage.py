@@ -79,7 +79,7 @@ class MinariStorage(ABC):
 
         from minari.dataset._storages import registry  # avoid circular import
 
-        return registry[metadata["data_format"]](
+        return registry[metadata["data_format"]]()(
             data_path,
             observation_space,
             action_space,
@@ -154,7 +154,9 @@ class MinariStorage(ABC):
         with open(data_path.joinpath(METADATA_FILE_NAME), "w") as f:
             json.dump(metadata, f)
 
-        obj = registry[data_format]._create(data_path, observation_space, action_space)
+        obj = registry[data_format]()._create(
+            data_path, observation_space, action_space
+        )
         return obj
 
     @classmethod
