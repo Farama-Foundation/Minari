@@ -27,8 +27,10 @@ def list_non_hidden_dirs(path: str) -> Iterable[str]:
 
 def dataset_id_sort_key(dataset_id: str) -> Tuple[str, Union[str, None], str, int]:
     """Key for sorting dataset ids first by namespace, and then alphabetically."""
-    attrs = parse_dataset_id(dataset_id)
-    return ("" if attrs[0] is None else attrs[0],) + attrs[1:]
+    namespace, env_name, dataset_name, version = parse_dataset_id(dataset_id)
+    namespace = "" if namespace is None else namespace
+    env_name = "" if env_name is None else env_name
+    return (namespace, env_name, dataset_name, version)
 
 
 def load_dataset(dataset_id: str, download: bool = False):

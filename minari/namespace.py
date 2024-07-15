@@ -17,7 +17,7 @@ NAMESPACE_METADATA_FILENAME = "namespace_metadata.json"
 def create_namespace(
     namespace: str,
     description: Optional[str] = None,
-    metadata: Optional[Dict[str, Any]] = None,
+    **kwargs,
 ) -> None:
     """Create a local namespace.
 
@@ -31,23 +31,15 @@ def create_namespace(
     Args:
         namespace (str): identifier for namespace created/updated.
         description (str | None): string metadata describing the namespace. Defaults to None.
-        metadata (Dict[str, Any] | None): extra metadata in addition to the description. Defaults to None.
+        **kwargs: any other metadata in addition to the description.
     """
     validate_namespace(namespace)
-    metadata = {} if metadata is None else copy.deepcopy(metadata)
-
-    if description is not None:
-        if "description" not in metadata:
-            metadata["description"] = description
-
-        if description != metadata["description"]:
-            raise ValueError(
-                "Namespace description conflicts with metadata['description']."
-            )
 
     if namespace in list_local_namespaces():
         raise ValueError(f"Namespace '{namespace}' already exists.")
 
+    metadata = copy.deepcopy(kwargs)
+    metadata["description"] = description
     directory = get_dataset_path(namespace)
     os.makedirs(directory, exist_ok=True)
 
@@ -58,7 +50,7 @@ def create_namespace(
 def update_namespace_metadata(
     namespace: str,
     description: Optional[str] = None,
-    metadata: Optional[Dict[str, Any]] = None,
+    **kwargs,
 ) -> None:
     """Update an existing local namespace, overwriting existing namespace metadata.
 
@@ -67,24 +59,15 @@ def update_namespace_metadata(
     Args:
         namespace (str): identifier for namespace created/updated.
         description (str | None): string metadata describing the namespace. Defaults to None.
-        metadata (Dict[str, Any] | None): extra metadata in addition to the description. Defaults to None.
+        **kwargs: any other metadata in addition to the description.
     """
     validate_namespace(namespace)
 
     if namespace not in list_local_namespaces():
         raise ValueError(f"Namespace {namespace} does not exist locally.")
 
-    metadata = {} if metadata is None else copy.deepcopy(metadata)
-
-    if description is not None:
-        if "description" not in metadata:
-            metadata["description"] = description
-
-        if description != metadata["description"]:
-            raise ValueError(
-                "Namespace description conflicts with metadata['description']."
-            )
-
+    metadata = copy.deepcopy(kwargs)
+    metadata["description"] = description
     metadata_filepath = get_dataset_path(namespace) / NAMESPACE_METADATA_FILENAME
 
     with open(metadata_filepath, "w") as file:
@@ -112,7 +95,7 @@ def get_namespace_metadata(namespace: str) -> Optional[Dict[str, Any]]:
     with open(metadata_filepath) as file:
         metadata = json.load(file)
 
-    return metadata if metadata != {} else None
+    return metadata if metadata != {"description": None} else None
 
 
 def delete_namespace(namespace: str) -> None:

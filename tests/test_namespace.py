@@ -26,19 +26,14 @@ from tests.common import (
 @pytest.mark.parametrize(
     "description, metadata, combined_metadata",
     [
-        (None, None, None),
-        ("my_desc", None, {"description": "my_desc"}),
-        (None, {"key": [1]}, {"key": [1]}),
-        (
-            None,
-            {"key": [1], "description": "my_desc"},
-            {"description": "my_desc", "key": [1]},
-        ),
+        (None, {}, None),
+        ("my_desc", {}, {"description": "my_desc"}),
+        (None, {"key": [1]}, {"description": None, "key": [1]}),
         ("my_desc", {"key": [1]}, {"description": "my_desc", "key": [1]}),
     ],
 )
 def test_create_namespace(namespace, description, metadata, combined_metadata):
-    create_namespace(namespace, description, metadata)
+    create_namespace(namespace, description, **metadata)
     assert namespace in list_local_namespaces()
     assert get_namespace_metadata(namespace) == combined_metadata
     delete_namespace(namespace)

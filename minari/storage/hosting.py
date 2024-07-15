@@ -229,13 +229,6 @@ def list_remote_datasets(
                 ):
                     continue
                 dataset_id = metadata["dataset_id"]
-                dataset_location = os.path.dirname(os.path.dirname(blob.name))
-
-                if dataset_id != dataset_location:
-                    raise ValueError(
-                        f"Namespace location '{dataset_location}' does not match id '{dataset_id}'."
-                    )
-
                 namespace, env_name, dataset_name, version = parse_dataset_id(
                     dataset_id
                 )
