@@ -10,7 +10,7 @@
     <meta property="og:url" content="https://minari.farama.org/_modules/minari/dataset/minari_dataset.html" /><meta property="og:image" content="https://minari.farama.org/_static/img/robotics-github.png" /><meta name="twitter:card" content="summary_large_image"><link rel="index" title="Index" href="../../../../genindex/" /><link rel="search" title="Search" href="../../../../search/" />
         <link rel="canonical" href="https://minari.farama.org/_modules/minari/dataset/minari_dataset.html" />
 
-    <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.7 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.5 and Furo 2023.08.19.dev1 -->
         <title>minari.dataset.minari_dataset - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -229,6 +229,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/minari_dataset/minari_storage/">MinariStorage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/minari_dataset/episode_data/">EpisodeData</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../api/minari_dataset/step_data/">StepData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../api/namespace/namespace/">Namespace</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../api/data_collector/">DataCollector</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of DataCollector</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -379,30 +380,59 @@
 
 
 <span class="n">DATASET_ID_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
-    <span class="sa">r</span><span class="s2">&quot;(?:(?P&lt;environment&gt;[\w]+?))?(?:-(?P&lt;dataset&gt;[\w:.-]+?))(?:-v(?P&lt;version&gt;\d+))?$&quot;</span>
+    <span class="sa">r</span><span class="s2">&quot;^(?:(?P&lt;namespace&gt;[-_\w][-_\w/]*[-_\w]+)\/)?(?:(?P&lt;environment&gt;[\w]+?))?(?:-(?P&lt;dataset&gt;[\w:.-]+?))(?:-v(?P&lt;version&gt;\d+))?$&quot;</span>
 <span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">parse_dataset_id</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse dataset ID string format - ``(env_name-)(dataset_name)(-v(version))``.</span>
+<span class="k">def</span> <span class="nf">parse_dataset_id</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse dataset ID string format - ``(namespace/)(env_name-)(dataset_name)(-v(version))``.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        dataset_id: The dataset id to parse</span>
+<span class="sd">        dataset_id (str): The dataset id to parse</span>
 <span class="sd">    Returns:</span>
-<span class="sd">        A tuple of environment name, dataset name and version number</span>
+<span class="sd">        A tuple of namespace, environment name, dataset name and version number</span>
 <span class="sd">    Raises:</span>
 <span class="sd">        Error: If the dataset id is not valid dataset regex</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">match</span> <span class="o">=</span> <span class="n">DATASET_ID_RE</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">match</span><span class="p">:</span>
         <span class="k">raise</span> <span class="n">error</span><span class="o">.</span><span class="n">Error</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Malformed dataset ID: </span><span class="si">{</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2">. (Currently all IDs must be of the form (env_name-)(dataset_name)-v(version). (namespace is optional))&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;Malformed dataset ID: </span><span class="si">{</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2">. (IDs must be of the form (namespace/)(env_name-)(dataset_name)-v(version). The namespace is optional.)&quot;</span>
         <span class="p">)</span>
-    <span class="n">env_name</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="s2">&quot;environment&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span><span class="p">)</span>
+    <span class="n">namespace</span><span class="p">,</span> <span class="n">env_name</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span>
+        <span class="s2">&quot;namespace&quot;</span><span class="p">,</span> <span class="s2">&quot;environment&quot;</span><span class="p">,</span> <span class="s2">&quot;dataset&quot;</span><span class="p">,</span> <span class="s2">&quot;version&quot;</span>
+    <span class="p">)</span>
 
     <span class="n">version</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">version</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">env_name</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">version</span>
+    <span class="k">if</span> <span class="n">namespace</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+        <span class="n">namespace</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="n">namespace</span><span class="p">,</span> <span class="n">env_name</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">version</span>
+
+
+<span class="k">def</span> <span class="nf">gen_dataset_id</span><span class="p">(</span>
+    <span class="n">namespace</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">env_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">dataset_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">version</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a dataset ID from dataset attributes. Inverse of parse_dataset_id().</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        namespace (str | None): name of dataset subdir. Defaults to None.</span>
+<span class="sd">        env_name (str | None): name to identify the environment of the dataset</span>
+<span class="sd">        dataset_name (str): name of the dataset within the ``env_name``</span>
+<span class="sd">        version (int | None, optional): Dataset version. Defaults to None, in which case</span>
+<span class="sd">            the version tag will be suppressed.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: A dataset id string of the form ``(namespace/)(env_name-)(dataset_name)(-v(version))``.</span>
+<span class="sd">            The ``namespace`` and ``-v(version)`` are optional.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">namespace_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">namespace</span><span class="si">}</span><span class="s2">/&quot;</span> <span class="k">if</span> <span class="n">namespace</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">version_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;-v</span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">version</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">namespace_str</span><span class="si">}{</span><span class="n">env_name</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">dataset_name</span><span class="si">}{</span><span class="n">version_str</span><span class="si">}</span><span class="s2">&quot;</span>
 
 
 <span class="nd">@dataclass</span>
@@ -418,15 +448,19 @@
     <span class="n">minari_version</span><span class="p">:</span> <span class="nb">str</span>
 
     <span class="c1"># post-init attributes</span>
+    <span class="n">namespace</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">env_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">dataset_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">version</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">init</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calls after the spec is created to extract the environment name, dataset name and version from the dataset id.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">env_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dataset_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">version</span> <span class="o">=</span> <span class="n">parse_dataset_id</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">dataset_id</span>
-        <span class="p">)</span>
+        <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">namespace</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">env_name</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dataset_name</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">version</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="n">parse_dataset_id</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dataset_id</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="MinariDataset">

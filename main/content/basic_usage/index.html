@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Minari CLI" href="../minari_cli/" /><link rel="prev" title="&lt;no title&gt;" href="../../" />
         <link rel="canonical" href="https://minari.farama.org/content/basic_usage.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.3.7 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.5 and Furo 2023.08.19.dev1 -->
         <title>Basic Usage - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=3e7f4c72" />
@@ -230,6 +230,7 @@
 <li class="toctree-l2"><a class="reference internal" href="../../api/minari_dataset/minari_storage/">MinariStorage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/minari_dataset/episode_data/">EpisodeData</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/minari_dataset/step_data/">StepData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/namespace/namespace/">Namespace</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../api/data_collector/">DataCollector</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of DataCollector</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -660,10 +661,10 @@ minari<span class="w"> </span>list<span class="w"> </span><span class="nb">local
 <span class="n">env</span> <span class="o">=</span> <span class="n">DataCollector</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">record_infos</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="n">total_episodes</span> <span class="o">=</span> <span class="mi">100</span>
-<span class="n">dataset_name</span> <span class="o">=</span> <span class="s2">&quot;cartpole-test-v0&quot;</span>
+<span class="n">dataset_id</span> <span class="o">=</span> <span class="s2">&quot;cartpole-test-v0&quot;</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="k">if</span> <span class="n">dataset_name</span> <span class="ow">in</span> <span class="n">minari</span><span class="o">.</span><span class="n">list_local_datasets</span><span class="p">():</span>
-    <span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="n">dataset_name</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">dataset_id</span> <span class="ow">in</span> <span class="n">minari</span><span class="o">.</span><span class="n">list_local_datasets</span><span class="p">():</span>
+    <span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">episode_id</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">total_episodes</span><span class="p">):</span>
     <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
@@ -680,7 +681,7 @@ minari<span class="w"> </span>list<span class="w"> </span><span class="nb">local
         <span class="c1"># This works as a checkpoint to not lose the already collected data</span>
         <span class="k">if</span> <span class="n">dataset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">dataset</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span>
-                <span class="n">dataset_id</span><span class="o">=</span><span class="n">dataset_name</span><span class="p">,</span>
+                <span class="n">dataset_id</span><span class="o">=</span><span class="n">dataset_id</span><span class="p">,</span>
                 <span class="n">algorithm_name</span><span class="o">=</span><span class="s2">&quot;Random-Policy&quot;</span><span class="p">,</span>
                 <span class="n">code_permalink</span><span class="o">=</span><span class="s2">&quot;https://github.com/Farama-Foundation/Minari&quot;</span><span class="p">,</span>
                 <span class="n">author</span><span class="o">=</span><span class="s2">&quot;Farama&quot;</span><span class="p">,</span>
@@ -691,6 +692,11 @@ minari<span class="w"> </span>list<span class="w"> </span><span class="nb">local
 </pre></div>
 </div>
 </section>
+</section>
+<section id="using-namespaces">
+<h2>Using Namespaces<a class="headerlink" href="#using-namespaces" title="Link to this heading">¶</a></h2>
+<p>Namespaces can be used to group together common datasets and provide them with a hierarchical structure. For example, suppose we want to create a series of <a class="reference external" href="https://gymnasium.farama.org/environments/classic_control/">Classic Control</a> datasets (<cite>cartpole</cite>, <cite>acrobot</cite>, e.t.c.) using the dataset creation code above. Instead of specifying <code class="docutils literal notranslate"><span class="pre">dataset_id=cartpole-test-v0</span></code>, we can use e.g. <code class="docutils literal notranslate"><span class="pre">classic_control/cartpole-test-v0</span></code> when creating the dataset. This, and all other datasets with a <code class="docutils literal notranslate"><span class="pre">dataset_id</span></code> that starts with <code class="docutils literal notranslate"><span class="pre">classic_control/</span></code> will now be stored together in the <code class="docutils literal notranslate"><span class="pre">classic_control</span></code> namespace.</p>
+<p>For more flexibility, namespaces can be created and modified directly using the <a class="reference internal" href="../../api/namespace/namespace/"><span class="doc">Namespace API</span></a>.</p>
 </section>
 </section>
 
@@ -783,6 +789,7 @@ minari<span class="w"> </span>list<span class="w"> </span><span class="nb">local
 <li><a class="reference internal" href="#checkpoint-minari-dataset">Checkpoint Minari Dataset</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#using-namespaces">Using Namespaces</a></li>
 </ul>
 </li>
 </ul>
