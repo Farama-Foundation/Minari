@@ -22,7 +22,11 @@ def test_list_app():
 
 @pytest.mark.parametrize(
     "dataset_id",
-    [get_latest_compatible_dataset_id(env_name="pen", dataset_name="human")],
+    [
+        get_latest_compatible_dataset_id(
+            namespace=None, env_name="pen", dataset_name="human"
+        )
+    ],
 )
 def test_dataset_download_then_delete(dataset_id: str):
     """Test download dataset invocation from CLI.

@@ -8,10 +8,10 @@ from typing import Dict, List
 
 from gymnasium import logger
 
-from minari.dataset.minari_dataset import parse_dataset_id
+from minari.dataset.minari_dataset import gen_dataset_id, parse_dataset_id
 from minari.dataset.minari_storage import METADATA_FILE_NAME
 from minari.storage.datasets_root_dir import get_dataset_path
-from minari.storage.local import load_dataset
+from minari.storage.local import dataset_id_sort_key, load_dataset
 from minari.storage.remotes import get_cloud_storage
 
 
@@ -28,9 +28,14 @@ def upload_dataset(dataset_id: str, key_path: str):
         dataset_id (str): name id of the local Minari dataset
         key_path (str): path to the credentials file.
     """
+    # Avoid circular import
+    from minari.namespace import list_remote_namespaces, upload_namespace
+
     remote_datasets = list_remote_datasets()
     if dataset_id in remote_datasets.keys():
-        print(f"Upload aborted. {dataset_id} is already in remote.")
+        warnings.warn(
+            f"Upload aborted. {dataset_id} is already in remote.", UserWarning
+        )
         return
 
     cloud_storage = get_cloud_storage(key_path=key_path)
@@ -38,9 +43,15 @@ def upload_dataset(dataset_id: str, key_path: str):
     datasets_to_upload = [dataset_id]
     while len(datasets_to_upload):
         dataset_id = datasets_to_upload.pop()
+        namespace, _, _, _ = parse_dataset_id(dataset_id)
+
+        if namespace is not None and namespace not in list_remote_namespaces():
+            upload_namespace(namespace, key_path)
+
         print(f"Uploading dataset {dataset_id}")
         path = get_dataset_path(dataset_id)
-        cloud_storage.upload_path(path, dataset_id)
+        cloud_storage.upload_directory(path, dataset_id)
+
         dataset = load_dataset(dataset_id)
         combined_datasets = dataset.spec.combined_datasets
         datasets_to_upload.extend(combined_datasets)
@@ -57,18 +68,31 @@ def download_dataset(dataset_id: str, force_download: bool = False):
         dataset_id (str): name id of the Minari dataset
         force_download (bool): boolean flag for force downloading the dataset. Default Value = False
     """
-    env_name, dataset_name, dataset_version = parse_dataset_id(dataset_id)
+    # Avoid circular import
+    from minari.namespace import create_namespace, list_local_namespaces
 
-    all_dataset_versions = get_remote_dataset_versions(env_name, dataset_name)
+    (
+        namespace,
+        env_name,
+        dataset_name,
+        dataset_version,
+    ) = parse_dataset_id(dataset_id)
+
+    all_dataset_versions = get_remote_dataset_versions(
+        namespace, env_name, dataset_name
+    )
+
+    dataset_versionless = gen_dataset_id(namespace, env_name, dataset_name)
 
     # 1. Check if there are any remote versions of the dataset at all
     if not all_dataset_versions:
         raise ValueError(
-            f"Couldn't find any version for dataset {env_name}-{dataset_name} in the remote Farama server."
+            f"Couldn't find any version for dataset {dataset_versionless} in the remote Farama server."
         )
 
     # 2. Check if there are any remote compatible versions with the local installed Minari version
     max_version = get_remote_dataset_versions(
+        namespace,
         env_name,
         dataset_name,
         latest_version=True,
@@ -77,11 +101,11 @@ def download_dataset(dataset_id: str, force_download: bool = False):
     if not max_version:
         if not force_download:
             raise ValueError(
-                f"Couldn't find any compatible version of dataset {env_name}-{dataset_name} with the local installed version of Minari, {__version__}."
+                f"Couldn't find any compatible version of dataset {dataset_versionless} with the local installed version of Minari, {__version__}."
             )
         else:
             logger.warn(
-                f"Couldn't find any compatible version of dataset {env_name}-{dataset_name} with the local installed version of Minari, {__version__}."
+                f"Couldn't find any compatible version of dataset {dataset_versionless} with the local installed version of Minari, {__version__}."
             )
 
     # 3. Check that the dataset version exists
@@ -95,11 +119,12 @@ def download_dataset(dataset_id: str, force_download: bool = False):
         else:
             raise ValueError(
                 e_msg
-                + f" We suggest you download the latest compatible version of this dataset: {env_name}-{dataset_name}-v{max_version[0]}"
+                + f" We suggest you download the latest compatible version of this dataset: {dataset_versionless}-v{max_version[0]}"
             )
 
     # 4. Check that the dataset version is compatible with the local installed Minari version
     compatible_dataset_versions = get_remote_dataset_versions(
+        namespace,
         env_name,
         dataset_name,
         latest_version=False,
@@ -113,19 +138,19 @@ def download_dataset(dataset_id: str, force_download: bool = False):
         if not force_download:
             raise ValueError(
                 e_msg
-                + f" You can download the latest compatible version of this dataset: {env_name}-{dataset_name}-v{max_version[0]}."
+                + f" You can download the latest compatible version of this dataset: {dataset_versionless}-v{max_version[0]}."
             )
         # Only a warning and force download incompatible dataset
         else:
             logger.warn(
                 e_msg
-                + f" {dataset_id} will be FORCE download but you can download the latest compatible version of this dataset: {env_name}-{dataset_name}-v{max_version}."
+                + f" {dataset_id} will be FORCE download but you can download the latest compatible version of this dataset: {dataset_versionless}-v{max_version}."
             )
 
     # 5. Warning to recommend downloading the latest compatible version of the dataset
     elif max_version[0] is not None and dataset_version < max_version[0]:
         logger.warn(
-            f"We recommend you install a higher dataset version available and compatible with your local installed Minari version: {env_name}-{dataset_name}-v{max_version}."
+            f"We recommend you install a higher dataset version available and compatible with your local installed Minari version: {dataset_versionless}-v{max_version}."
         )
 
     file_path = get_dataset_path(dataset_id)
@@ -136,7 +161,11 @@ def download_dataset(dataset_id: str, force_download: bool = False):
             )
             return
 
+    if namespace is not None and namespace not in list_local_namespaces():
+        create_namespace(namespace)
+
     print(f"\nDownloading {dataset_id} from Farama servers...")
+    datasets_path = get_dataset_path("")
     cloud_storage = get_cloud_storage()
     blobs = cloud_storage.list_blobs(prefix=dataset_id)
 
@@ -147,7 +176,7 @@ def download_dataset(dataset_id: str, force_download: bool = False):
             file_name == ""
         ):  # If the object blob path is a directory continue searching for files
             continue
-        blob_local_dir = os.path.join(os.path.dirname(file_path), blob_dir)
+        blob_local_dir = os.path.join(datasets_path, blob_dir)
         if not os.path.exists(blob_local_dir):
             os.makedirs(blob_local_dir)
         cloud_storage.download_blob(blob, os.path.join(blob_local_dir, file_name))
@@ -188,11 +217,11 @@ def list_remote_datasets(
     cloud_storage = get_cloud_storage()
     blobs = cloud_storage.list_blobs()
 
-    # Generate dict = {'env_name-dataset_name': (version, metadata)}
+    # Generate dict = {'namespace/env_name-dataset_name': (version, metadata)}
     remote_datasets = {}
     for blob in blobs:
         try:
-            if blob.name.endswith(METADATA_FILE_NAME):
+            if os.path.basename(blob.name) == METADATA_FILE_NAME:
                 metadata = json.loads(blob.download_as_bytes(client=None))
                 if (
                     compatible_minari_version
@@ -200,8 +229,11 @@ def list_remote_datasets(
                 ):
                     continue
                 dataset_id = metadata["dataset_id"]
-                env_name, dataset_name, version = parse_dataset_id(dataset_id)
-                dataset = f"{env_name}-{dataset_name}"
+                namespace, env_name, dataset_name, version = parse_dataset_id(
+                    dataset_id
+                )
+                dataset = gen_dataset_id(namespace, env_name, dataset_name)
+
                 if latest_version:
                     if (
                         dataset not in remote_datasets
@@ -214,15 +246,18 @@ def list_remote_datasets(
             warnings.warn(f"Misconfigured dataset named {blob.name} on remote")
 
     if latest_version:
-        # Return dict = {'dataset_id': metadata}
-        return dict(
+        # Convert to dict = {'dataset_id': metadata}
+        remote_datasets = dict(
             map(lambda x: (f"{x[0]}-v{x[1][0]}", x[1][1]), remote_datasets.items())
         )
-    else:
-        return remote_datasets
+
+    return {
+        k: remote_datasets[k] for k in sorted(remote_datasets, key=dataset_id_sort_key)
+    }
 
 
 def get_remote_dataset_versions(
+    namespace: str | None,
     env_name: str | None,
     dataset_name: str,
     latest_version: bool = False,
@@ -231,7 +266,8 @@ def get_remote_dataset_versions(
     """Finds all registered versions in the remote Farama server of the dataset given.
 
     Args:
-        env_name (str): name to identigy the environment of the dataset
+        namespace (str | None): identifier for remote namespace. Defaults to None.
+        env_name (str | None): name to identify the environment of the dataset
         dataset_name (str): name of the dataset within the ``env_name``
         latest_version (bool): if `True` only the latest version of the datasets is returned. Default to `False`.
         compatible_minari_version: only return highest version among the datasets compatible with the local installed version of Minari. Default to `False`
@@ -243,11 +279,18 @@ def get_remote_dataset_versions(
     for dataset_id in list_remote_datasets(
         latest_version, compatible_minari_version
     ).keys():
-        remote_env_name, remote_dataset_name, remote_version = parse_dataset_id(
-            dataset_id
-        )
+        (
+            remote_namespace,
+            remote_env_name,
+            remote_dataset_name,
+            remote_version,
+        ) = parse_dataset_id(dataset_id)
 
-        if remote_env_name == env_name and remote_dataset_name == dataset_name:
+        if (
+            remote_namespace == namespace
+            and remote_env_name == env_name
+            and remote_dataset_name == dataset_name
+        ):
             versions.append(remote_version)
 
     return versions

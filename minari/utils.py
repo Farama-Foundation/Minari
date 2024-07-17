@@ -347,7 +347,7 @@ def create_dataset_from_buffers(
     """Create Minari dataset from a list of episode dictionary buffers.
 
     The ``dataset_id`` parameter corresponds to the name of the dataset, with the syntax as follows:
-    ``(env_name-)(dataset_name)(-v(version))`` where ``env_name`` identifies the name of the environment used to generate the dataset ``dataset_name``.
+    ``(namespace/)(env_name-)(dataset_name)(-v(version))`` where ``env_name`` identifies the name of the environment used to generate the dataset ``dataset_name`` and ``namespace`` optionally groups datasets together.
     This ``dataset_id`` is used to load the Minari datasets with :meth:`minari.load_dataset`.
 
     Args:

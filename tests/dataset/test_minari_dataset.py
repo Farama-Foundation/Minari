@@ -11,13 +11,16 @@ import minari
 from minari import DataCollector, EpisodeData, MinariDataset, StepData
 from minari.data_collector.episode_buffer import EpisodeBuffer
 from minari.dataset._storages import registry as storage_registry
+from minari.dataset.minari_dataset import gen_dataset_id, parse_dataset_id
 from minari.dataset.minari_storage import METADATA_FILE_NAME
 from tests.common import (
+    cartpole_test_dataset,
     check_data_integrity,
     check_env_recovery,
     check_episode_data_integrity,
     check_load_and_delete_dataset,
     create_dummy_dataset_with_collecter_env_helper,
+    dummy_test_datasets,
     test_spaces,
 )
 
@@ -58,15 +61,7 @@ def test_episode_data(space: gym.Space):
 
 
 @pytest.mark.parametrize(
-    "dataset_id,env_id",
-    [
-        ("cartpole-test-v0", "CartPole-v1"),
-        ("dummy-dict-test-v0", "DummyDictEnv-v0"),
-        ("dummy-box-test-v0", "DummyBoxEnv-v0"),
-        ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
-        ("dummy-combo-test-v0", "DummyComboEnv-v0"),
-        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
-    ],
+    "dataset_id,env_id", cartpole_test_dataset + dummy_test_datasets
 )
 @pytest.mark.parametrize("data_format", storage_registry.keys())
 def test_update_dataset_from_collector_env(
@@ -113,16 +108,7 @@ def test_update_dataset_from_collector_env(
     check_load_and_delete_dataset(dataset_id)
 
 
-@pytest.mark.parametrize(
-    "dataset_id,env_id",
-    [
-        ("dummy-dict-test-v0", "DummyDictEnv-v0"),
-        ("dummy-box-test-v0", "DummyBoxEnv-v0"),
-        ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
-        ("dummy-combo-test-v0", "DummyComboEnv-v0"),
-        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
-    ],
-)
+@pytest.mark.parametrize("dataset_id,env_id", dummy_test_datasets)
 @pytest.mark.parametrize("data_format", storage_registry.keys())
 def test_filter_episodes_and_subsequent_updates(
     dataset_id, env_id, data_format, register_dummy_envs
@@ -278,15 +264,7 @@ def test_filter_episodes_and_subsequent_updates(
 
 
 @pytest.mark.parametrize(
-    "dataset_id,env_id",
-    [
-        ("cartpole-test-v0", "CartPole-v1"),
-        ("dummy-dict-test-v0", "DummyDictEnv-v0"),
-        ("dummy-box-test-v0", "DummyBoxEnv-v0"),
-        ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
-        ("dummy-combo-test-v0", "DummyComboEnv-v0"),
-        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
-    ],
+    "dataset_id,env_id", cartpole_test_dataset + dummy_test_datasets
 )
 @pytest.mark.parametrize("data_format", storage_registry.keys())
 def test_sample_episodes(dataset_id, env_id, data_format, register_dummy_envs):
@@ -322,15 +300,7 @@ def test_sample_episodes(dataset_id, env_id, data_format, register_dummy_envs):
 
 
 @pytest.mark.parametrize(
-    "dataset_id, env_id",
-    [
-        ("cartpole-test-v0", "CartPole-v1"),
-        ("dummy-dict-test-v0", "DummyDictEnv-v0"),
-        ("dummy-box-test-v0", "DummyBoxEnv-v0"),
-        ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
-        ("dummy-combo-test-v0", "DummyComboEnv-v0"),
-        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
-    ],
+    "dataset_id,env_id", cartpole_test_dataset + dummy_test_datasets
 )
 @pytest.mark.parametrize("data_format", storage_registry.keys())
 def test_iterate_episodes(dataset_id, env_id, data_format, register_dummy_envs):
@@ -371,15 +341,7 @@ def test_iterate_episodes(dataset_id, env_id, data_format, register_dummy_envs):
 
 
 @pytest.mark.parametrize(
-    "dataset_id,env_id",
-    [
-        ("cartpole-test-v0", "CartPole-v1"),
-        ("dummy-dict-test-v0", "DummyDictEnv-v0"),
-        ("dummy-box-test-v0", "DummyBoxEnv-v0"),
-        ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
-        ("dummy-combo-test-v0", "DummyComboEnv-v0"),
-        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
-    ],
+    "dataset_id,env_id", cartpole_test_dataset + dummy_test_datasets
 )
 @pytest.mark.parametrize("data_format", storage_registry.keys())
 def test_update_dataset_from_buffer(
@@ -477,3 +439,30 @@ def test_missing_env_module(data_format):
         dataset.recover_environment()
 
     minari.delete_dataset(dataset_id)
+
+
+@pytest.mark.parametrize(
+    "dataset_id",
+    [x[0] for x in dummy_test_datasets]
+    + ["name_123/space/" + x[0] for x in dummy_test_datasets],
+)
+def test_parse_gen_dataset_id_inverse_forward(dataset_id):
+    """Check parse_dataset_id() and gen_dataset_id() are inverses. Forward direction."""
+    namespace, env_name, dataset_name, version = parse_dataset_id(dataset_id)
+    new_dataset_id = gen_dataset_id(namespace, env_name, dataset_name, version)
+    assert new_dataset_id == dataset_id
+
+
+@pytest.mark.parametrize(
+    "namespace, env_name, dataset_name, version",
+    [
+        (None, "door", "human", 0),
+        ("aB1-_", "cD2", "eF3:.-_", 456),
+    ],
+)
+def test_parse_gen_dataset_id_inverse_backward(
+    namespace, env_name, dataset_name, version
+):
+    """Check parse_dataset_id() and gen_dataset_id() are inverses. Backward direction."""
+    attrs = (namespace, env_name, dataset_name, version)
+    assert attrs == parse_dataset_id(gen_dataset_id(*attrs))

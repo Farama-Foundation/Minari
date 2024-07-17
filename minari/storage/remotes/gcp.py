@@ -18,17 +18,20 @@ class GCPStorage(CloudStorage):
             )
         self.bucket = storage.Bucket(self.storage_client, name)
 
-    def upload_path(self, path: Path, dataset_id: str) -> None:
+    def upload_directory(self, path: Path, remote_dir_path: str) -> None:
         # See https://github.com/googleapis/python-storage/issues/27 for discussion on progress bars
-        for local_file in path.glob("**"):
-            if not os.path.isfile(local_file):
-                self.upload_path(
-                    local_file, dataset_id + "/" + os.path.basename(local_file)
+        for local_file in path.glob("*"):
+            if local_file.is_dir():
+                self.upload_directory(
+                    local_file, remote_dir_path + "/" + os.path.basename(local_file)
                 )
             else:
-                remote_path = os.path.join(dataset_id, local_file.name)
-                blob = self.bucket.blob(remote_path)
-                blob.upload_from_filename(local_file)
+                remote_path = os.path.join(remote_dir_path, local_file.name)
+                self.upload_file(local_file, remote_path)
+
+    def upload_file(self, local_path: Path, remote_path: str) -> None:
+        blob = self.bucket.blob(remote_path)
+        blob.upload_from_filename(local_path)
 
     def list_blobs(self, prefix: Optional[str] = None) -> list:
         return self.bucket.list_blobs(prefix=prefix)

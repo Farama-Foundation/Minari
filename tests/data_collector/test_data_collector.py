@@ -4,9 +4,12 @@ import pytest
 
 from minari import DataCollector, EpisodeData, MinariDataset, StepDataCallback
 from minari.dataset._storages import registry as storage_registry
+from minari.dataset.minari_dataset import parse_dataset_id
+from minari.namespace import get_namespace_metadata, list_local_namespaces
 from tests.common import (
     check_infos_equal,
     check_load_and_delete_dataset,
+    dummy_test_datasets,
     get_info_at_step_index,
 )
 
@@ -92,16 +95,7 @@ def get_single_step_from_episode(episode: EpisodeData, index: int) -> EpisodeDat
 
 
 @pytest.mark.parametrize("data_format", storage_registry.keys())
-@pytest.mark.parametrize(
-    "dataset_id,env_id",
-    [
-        ("dummy-dict-test-v0", "DummyDictEnv-v0"),
-        ("dummy-box-test-v0", "DummyBoxEnv-v0"),
-        ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
-        ("dummy-combo-test-v0", "DummyComboEnv-v0"),
-        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
-    ],
-)
+@pytest.mark.parametrize("dataset_id,env_id", dummy_test_datasets)
 def test_truncation_without_reset(dataset_id, env_id, data_format, register_dummy_envs):
     """Test new episode creation when environment is truncated and env.reset is not called."""
     num_steps = 50
@@ -134,6 +128,8 @@ def test_truncation_without_reset(dataset_id, env_id, data_format, register_dumm
     assert dataset.spec.total_episodes == num_episodes
     assert len(dataset.episode_indices) == num_episodes
 
+    assert dataset.spec.namespace == parse_dataset_id(dataset_id)[0]
+
     episodes_generator = dataset.iterate_episodes()
     last_step = get_single_step_from_episode(next(episodes_generator), -1)
     for episode in episodes_generator:
@@ -151,6 +147,11 @@ def test_truncation_without_reset(dataset_id, env_id, data_format, register_dumm
         check_infos_equal(last_step.infos, first_step.infos)
         last_step = get_single_step_from_episode(episode, -1)
         assert bool(last_step.truncations) is True
+
+    if "/" in dataset_id:
+        namespace, _, _, _ = parse_dataset_id(dataset_id)
+        assert namespace in list_local_namespaces()
+        assert get_namespace_metadata(namespace) is None
 
     # check load and delete local dataset
     check_load_and_delete_dataset(dataset_id)
