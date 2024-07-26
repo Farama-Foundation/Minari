@@ -74,20 +74,20 @@ $ minari list remote
 │                │     <b>Total</b> │      <b>Total</b> │         │           │
 │ <b>Name</b>           │  <b>Episodes</b> │      <b>Steps</b> │  <b>Author</b> │ <b>Email</b>     │
 ┡────────────────╇───────────╇────────────╇─────────╇───────────┩
-│ <font color="#A1EFE4">door-cloned-v2</font> │      <font color="#03AC13">4356</font> │    <font color="#03AC13">1000000</font> │ <font color="#FF00FF">Farama</font>  │<font color="#FF00FF">@farama.org</font>│
-│ <font color="#A1EFE4">door-expert-v2</font> │      <font color="#03AC13">5000</font> │    <font color="#03AC13">1000000</font> │ <font color="#FF00FF">Farama</font>  │<font color="#FF00FF">@farama.org</font>│
-│ <font color="#A1EFE4">door-human-v2</font>  │        <font color="#03AC13">25</font> │       <font color="#03AC13">6729</font> │ <font color="#FF00FF">Farama</font>  │<font color="#FF00FF">@farama.org</font>│
+│ <font color="#A1EFE4">door/cloned-v2</font> │      <font color="#03AC13">4356</font> │    <font color="#03AC13">1000000</font> │ <font color="#FF00FF">Farama</font>  │<font color="#FF00FF">@farama.org</font>│
+│ <font color="#A1EFE4">door/expert-v2</font> │      <font color="#03AC13">5000</font> │    <font color="#03AC13">1000000</font> │ <font color="#FF00FF">Farama</font>  │<font color="#FF00FF">@farama.org</font>│
+│ <font color="#A1EFE4">door/human-v2</font>  │        <font color="#03AC13">25</font> │       <font color="#03AC13">6729</font> │ <font color="#FF00FF">Farama</font>  │<font color="#FF00FF">@farama.org</font>│
 └────────────────┴───────────┴────────────┴─────────┴───────────┘
 
-// Download dataset door-cloned-v2
-$ minari download door-cloned-v2
-Downloading door-cloned-v2 from Farama servers...
+// Download dataset door/cloned-v2
+$ minari download door/cloned-v2
+Downloading door/cloned-v2 from Farama servers...
 
-   * Downloading data file 'door-cloned-v2/data/main_data.hdf5' ...
+   * Downloading data file 'door/cloned-v2/data/main_data.hdf5' ...
 
 ---> 100%
 
-Dataset door-cloned-v2 downloaded to ~/.minari/datasets/door-cloned-v2
+Dataset door/cloned-v2 downloaded to ~/.minari/datasets/door/cloned-v2
 
 ```
 </div>

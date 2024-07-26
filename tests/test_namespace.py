@@ -81,7 +81,7 @@ def test_create_namespaced_datasets(namespace):
     env = gym.make("CartPole-v1")
     env = DataCollector(env)
 
-    dataset_id_1 = f"{namespace}/cartpole-test-v1"
+    dataset_id_1 = f"{namespace}/cartpole/test-v1"
     create_dummy_dataset_with_collecter_env_helper(dataset_id_1, env)
     assert list_local_namespaces() == [namespace]
     assert get_namespace_metadata(namespace) is None
@@ -90,7 +90,7 @@ def test_create_namespaced_datasets(namespace):
     assert get_namespace_metadata(namespace) == {"description": "new description"}
 
     # Creating a new dataset in the same namespace doesn't change the namespace metadata
-    dataset_id_2 = f"{namespace}/cartpole-test-v2"
+    dataset_id_2 = f"{namespace}/cartpole/test-v2"
     create_dummy_dataset_with_collecter_env_helper(dataset_id_2, env)
     assert list_local_namespaces() == [namespace]
     assert get_namespace_metadata(namespace) == {"description": "new description"}

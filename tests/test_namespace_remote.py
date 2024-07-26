@@ -31,8 +31,8 @@ def use_test_server():
 
 def test_download_namespace_dataset(use_test_server):
     namespace = "test_namespace"
-    door_id = get_latest_compatible_dataset_id(namespace, "door", "human")
-    pen_id = get_latest_compatible_dataset_id(namespace, "pen", "human")
+    door_id = get_latest_compatible_dataset_id(f"{namespace}/door", "human")
+    pen_id = get_latest_compatible_dataset_id(f"{namespace}/pen", "human")
 
     remote_datasets = list_remote_datasets()
     assert door_id in remote_datasets

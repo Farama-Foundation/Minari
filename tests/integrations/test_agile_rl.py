@@ -11,7 +11,7 @@ from tests.common import create_dummy_dataset_with_collecter_env_helper
 
 @pytest.fixture(name="dataset_id")
 def dataset_id():
-    return "cartpole-test-v0"
+    return "cartpole/test-v0"
 
 
 @pytest.fixture(autouse=True)

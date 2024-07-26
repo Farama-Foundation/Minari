@@ -13,7 +13,7 @@ PointMaze D4RL dataset
 #   2. Then we also need to generate the actions so that the agent can follow the waypoints of the trajectory. For this purpose D4RL implements a PD controller.
 #   3. Finally, to create the Minari dataset, we will wrap the environment with a :class:`minari.DataCollector` and step through it by generating actions with the path planner and waypoint controller.
 #
-# For this tutorial we will be using the ``pointmaze-medium-v3`` environment to collect transition data. However, any map implementation in the PointMaze environment group can be used.
+# For this tutorial we will be using the ``PointMaze_Medium-v3`` environment to collect transition data. However, any map implementation in the PointMaze environment group can be used.
 # Another important factor to take into account is that the environment is continuing, which means that it won't be ``terminated`` when reaching a goal. Instead a new goal target will be randomly selected and the agent
 # will start from the location it's currently at (no ``env.reset()`` required).
 #
@@ -365,7 +365,7 @@ class PointMazeStepDataCallback(StepDataCallback):
 #
 
 
-dataset_name = "pointmaze-umaze-v0"
+dataset_name = "pointmaze/umaze-v0"
 total_steps = 10_000
 
 # continuing task => the episode doesn't terminate or truncate when reaching a goal

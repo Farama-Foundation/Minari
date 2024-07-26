@@ -13,7 +13,7 @@ def test_ref_score():
 
     ref_min_score, ref_max_score = -1, 100
     dataset = create_dummy_dataset_with_collecter_env_helper(
-        "cartpole-test-v0",
+        "cartpole/test-v0",
         env,
         num_episodes=num_episodes,
         ref_min_score=ref_min_score,
