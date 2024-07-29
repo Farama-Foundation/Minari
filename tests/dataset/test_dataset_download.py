@@ -101,7 +101,6 @@ def test_download_error_messages(monkeypatch):
     def patch_get_remote_dataset_versions(versions):
         def patched_get_remote(
             namespace,
-            env_name,
             dataset_name,
             latest_version=False,
             compatible_minari_version=False,

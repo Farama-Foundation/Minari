@@ -9,7 +9,7 @@ title: Dataset Standards
 
 Minari stores the offline datasets under a common root directory. The root directory path for the local datasets is set by default to `~/.minari/datasets/`. However, this path can be modified by setting the environment variable `MINARI_DATASETS_PATH`.
 
-The remote datasets are kept in the public Google Cloud Platform (GCP) bucket [`minari-datasets`](https://console.cloud.google.com/storage/browser/minari-datasets;tab=objects?forceOnBucketsSortingFiltering=false&project=mcmes-345620&prefix=&forceOnObjectsSortingFiltering=false).
+The remote datasets are kept in the public Google Cloud Platform (GCP) bucket [`minari-remote`](https://console.cloud.google.com/storage/browser/minari-remote).
 
 Minari dataset directories are named after the datasets `id`. The datasets `id` must follow the syntax `(namespace/)(env_name/)dataset_name(-v(version))`, where:
 

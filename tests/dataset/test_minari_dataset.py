@@ -457,7 +457,7 @@ def test_parse_gen_dataset_id_inverse_forward(dataset_id):
     "namespace, dataset_name, version",
     [
         (None, "human", 0),
-        ("aB1-_/env-name", "eF3:.-_", 456),
+        ("aB1-_/env-name", "eF3-_", 456),
     ],
 )
 def test_parse_gen_dataset_id_inverse_backward(namespace, dataset_name, version):
