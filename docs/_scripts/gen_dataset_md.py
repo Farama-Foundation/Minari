@@ -30,9 +30,7 @@ for dataset_id in all_remote_datasets.keys():
         max_version = get_remote_dataset_versions(
             namespace, dataset_name, latest_version=True
         )[0]
-        max_version_dataset_id = gen_dataset_id(
-            namespace, dataset_name, max_version
-        )
+        max_version_dataset_id = gen_dataset_id(namespace, dataset_name, max_version)
         filtered_datasets[namespace][dataset_name] = all_remote_datasets[
             max_version_dataset_id
         ]
