@@ -142,7 +142,7 @@ def test_download_namespace_dataset():
     assert list_local_namespaces() == [namespace]
 
 
-@pytest.mark.parametrize("namespace", ["door", "pen"])
+@pytest.mark.parametrize("namespace", ["D4RL/door", "D4RL/pen"])
 def test_download_namespace_metadata(namespace):
     assert len(list_local_namespaces()) == 0
     assert namespace in list_remote_namespaces()

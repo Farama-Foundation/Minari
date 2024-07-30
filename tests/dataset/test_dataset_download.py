@@ -56,7 +56,9 @@ def test_download_dataset_from_farama_server(dataset_id: str):
 @pytest.mark.parametrize(
     "dataset_id",
     [
-        get_latest_compatible_dataset_id(namespace=env_name, dataset_name="human")
+        get_latest_compatible_dataset_id(
+            namespace=f"D4RL/{env_name}", dataset_name="human"
+        )
         for env_name in env_names
     ],
 )
