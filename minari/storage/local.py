@@ -63,7 +63,7 @@ def list_local_datasets(
     """Get the ids and metadata of all the Minari datasets in the local database.
 
     Args:
-        latest_version (bool): if `True` only the latest version of the datasets are returned i.e. from ['door/human-v0', 'door/human-v1`], only the metadata for v1 is returned. Default to `False`.
+        latest_version (bool): if `True` only the latest version of the datasets are returned i.e. from ['D4RL/door/human-v0', 'D4RL/door/human-v1`], only the metadata for v1 is returned. Default to `False`.
         compatible_minari_version (bool): if `True` only the datasets compatible with the current Minari version are returned. Default to `False`.
 
     Returns:

@@ -81,11 +81,11 @@ Spaces are serialized to a JSON format when saving to disk. This serialization s
 
 ## EpisodeData Structure
 
-A Minari dataset is encapsulated in the `MinariDataset` class which allows for iterating and sampling through episodes which are defined as `EpisodeData` data class. Take the following example where we load the `door/human-v2` dataset and randomly sample 10 episodes:
+A Minari dataset is encapsulated in the `MinariDataset` class which allows for iterating and sampling through episodes which are defined as `EpisodeData` data class. Take the following example where we load the `D4RL/door/human-v2` dataset and randomly sample 10 episodes:
 
 ```python
 import minari
-dataset = minari.load_dataset("door/human-v2", download=True)
+dataset = minari.load_dataset("D4RL/door/human-v2", download=True)
 sampled_episodes = dataset.sample_episodes(10)
 ```
 

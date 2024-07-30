@@ -112,7 +112,7 @@ def test_create_namespaced_datasets(namespace):
 
 
 def test_download_namespace_dataset():
-    namespace = "kitchen"
+    namespace = "D4RL/kitchen"
     kitchen_complete = get_latest_compatible_dataset_id(namespace, "complete")
     kitchen_mix = get_latest_compatible_dataset_id(namespace, "mixed")
 
@@ -132,7 +132,6 @@ def test_download_namespace_dataset():
     with pytest.warns(UserWarning, match="Skipping Download."):
         minari.download_dataset(kitchen_complete)
 
-    # Check door dataset downloaded correctly
     dataset = minari.load_dataset(kitchen_complete)
     assert isinstance(dataset, MinariDataset)
 
