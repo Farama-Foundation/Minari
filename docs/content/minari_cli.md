@@ -156,7 +156,7 @@ Trajectories have expert data from a fine-tuned RL policy provided in the <a hre
 │ <b>Algorithm</b>         │ Not provided                              │
 │ <b>Author</b>            │ Rodrigo de Lazcano                        │
 │ <b>Email</b>             │ rperezvicente@farama.org                  │
-│ <b>Code Permalink</b>    │ <a href="https://github.com/rodrigodelazcano/d4rl-minari-dataset-generation">https://github.com/rodrigodelazcano/...</a>   │
+│ <b>Code Permalink</b>    │ <a href="https://github.com/Farama-Foundation/minari-dataset-generation-scripts">https://github.com/Farama-Foundation/...</a>   │
 │ <b>Minari Version</b>    │ 0.4 (0.5.0 installed)                     │
 │ <b>Download</b>          │ <code>minari download pen/expert-v2</code>             │
 └───────────────────┴───────────────────────────────────────────┘

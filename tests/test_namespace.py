@@ -113,33 +113,33 @@ def test_create_namespaced_datasets(namespace):
 
 def test_download_namespace_dataset():
     namespace = "kitchen"
-    door_human = get_latest_compatible_dataset_id(namespace, "complete")
-    door_cloned = get_latest_compatible_dataset_id(namespace, "mixed")
+    kitchen_complete = get_latest_compatible_dataset_id(namespace, "complete")
+    kitchen_mix = get_latest_compatible_dataset_id(namespace, "mixed")
 
     remote_datasets = minari.list_remote_datasets()
-    assert door_human in remote_datasets
+    assert kitchen_complete in remote_datasets
 
-    minari.download_dataset(door_human)
-    assert set(minari.list_local_datasets().keys()) == {door_human}
+    minari.download_dataset(kitchen_complete)
+    assert set(minari.list_local_datasets().keys()) == {kitchen_complete}
     assert list_local_namespaces() == [namespace]
     assert get_namespace_metadata(namespace) is None
 
-    minari.download_dataset(door_cloned)
-    assert set(minari.list_local_datasets().keys()) == {door_human, door_cloned}
+    minari.download_dataset(kitchen_mix)
+    assert set(minari.list_local_datasets().keys()) == {kitchen_complete, kitchen_mix}
     assert list_local_namespaces() == [namespace]
     assert get_namespace_metadata(namespace) is None
 
     with pytest.warns(UserWarning, match="Skipping Download."):
-        minari.download_dataset(door_human)
+        minari.download_dataset(kitchen_complete)
 
     # Check door dataset downloaded correctly
-    dataset = minari.load_dataset(door_human)
+    dataset = minari.load_dataset(kitchen_complete)
     assert isinstance(dataset, MinariDataset)
 
     check_data_integrity(dataset.storage, dataset.episode_indices)
 
-    minari.delete_dataset(door_human)
-    assert set(minari.list_local_datasets().keys()) == {door_cloned}
+    minari.delete_dataset(kitchen_complete)
+    assert set(minari.list_local_datasets().keys()) == {kitchen_mix}
     assert list_local_namespaces() == [namespace]
 
 

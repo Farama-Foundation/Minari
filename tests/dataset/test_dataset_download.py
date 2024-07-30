@@ -109,7 +109,7 @@ def test_download_error_messages(monkeypatch):
 
         return patched_get_remote
 
-    # Pretend that door-human-v0 is compatible but door/human-v1 is not
+    # Pretend that door/human-v0 is compatible but door/human-v1 is not
     with monkeypatch.context() as mp:
         mp.setattr(
             "minari.storage.hosting.get_remote_dataset_versions",

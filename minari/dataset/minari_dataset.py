@@ -22,7 +22,7 @@ DATASET_ID_RE = re.compile(rf"^{NAMESPACE_RE}?{DATASET_NAME_RE}{VERSION_RE}?$")
 
 
 def parse_dataset_id(dataset_id: str) -> tuple[str | None, str, int]:
-    """Parse dataset ID string format - ``(namespace/)(env_name-)(dataset_name)(-v(version))``.
+    """Parse dataset ID string format - ``(namespace/)dataset_name(-v[version])``.
 
     Args:
         dataset_id (str): The dataset id to parse
@@ -55,7 +55,7 @@ def gen_dataset_id(
 
     Args:
         namespace (str | None): name of dataset subdir. Defaults to None.
-        dataset_name (str): name of the dataset within the ``env_name``
+        dataset_name (str): name of the dataset.
         version (int | None, optional): Dataset version. Defaults to None, in which case
             the version tag will be suppressed.
 

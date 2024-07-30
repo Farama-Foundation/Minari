@@ -275,7 +275,7 @@ minari list local
 ┏━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃ Name           ┃ Total Episodes ┃ Total Steps ┃ Dataset Size ┃ Author             ┃ Email                    ┃
 ┡━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━┩
-│ door-all-v0    │           5025 │     1006729 │ 1103.5 MB    │ Rodrigo de Lazcano │ rperezvicente@farama.org │
+│ door/all-v0    │           5025 │     1006729 │ 1103.5 MB    │ Rodrigo de Lazcano │ rperezvicente@farama.org │
 │ door/expert-v2 │           5000 │     1000000 │ 1096.4 MB    │ Rodrigo de Lazcano │ rperezvicente@farama.org │
 │ door/human-v2  │             25 │        6729 │ 7.1 MB       │ Rodrigo de Lazcano │ rperezvicente@farama.org │
 └────────────────┴────────────────┴─────────────┴──────────────┴────────────────────┴──────────────────────────┘

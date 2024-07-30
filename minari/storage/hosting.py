@@ -211,7 +211,7 @@ def list_remote_datasets(
     cloud_storage = get_cloud_storage()
     blobs = cloud_storage.list_blobs()
 
-    # Generate dict = {'namespace/env_name-dataset_name': (version, metadata)}
+    # Generate dict = {'dataset_id': (version, metadata)}
     remote_datasets = {}
     for blob in blobs:
         try:
@@ -234,7 +234,7 @@ def list_remote_datasets(
                         remote_datasets[dataset] = (version, metadata)
                 else:
                     remote_datasets[dataset_id] = metadata
-        except Exception as e:
+        except Exception:
             warnings.warn(f"Misconfigured dataset named {blob.name} on remote")
 
     if latest_version:
@@ -258,7 +258,7 @@ def get_remote_dataset_versions(
 
     Args:
         namespace (str | None): identifier for remote namespace. Defaults to None.
-        dataset_name (str): name of the dataset within the ``env_name``
+        dataset_name (str): name of the dataset.
         latest_version (bool): if `True` only the latest version of the datasets is returned. Default to `False`.
         compatible_minari_version: only return highest version among the datasets compatible with the local installed version of Minari. Default to `False`
     Returns:
