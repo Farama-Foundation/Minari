@@ -235,7 +235,6 @@ def list_remote_datasets(
                 else:
                     remote_datasets[dataset_id] = metadata
         except Exception as e:
-            raise e
             warnings.warn(f"Misconfigured dataset named {blob.name} on remote")
 
     if latest_version:
