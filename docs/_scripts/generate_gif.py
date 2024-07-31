@@ -14,8 +14,8 @@ def _space_at(values, index):
         return values[index]
 
 
-def generate_gif(dataset_name, num_frames=256, fps=16):
-    dataset = minari.load_dataset(dataset_name, download=True)
+def generate_gif(dataset_id, num_frames=256, fps=16):
+    dataset = minari.load_dataset(dataset_id, download=True)
     env = dataset.recover_environment(render_mode="rgb_array")
     images = []
     ep_id = 0
@@ -34,10 +34,7 @@ def generate_gif(dataset_name, num_frames=256, fps=16):
 
         ep_id += 1
 
-    gif_dir = os.path.join(os.path.dirname(__file__), "..", "datasets", "gifs")
-    if not os.path.exists(gif_dir):
-        os.makedirs(gif_dir)
-
-    gif_path = os.path.join(gif_dir, f"{dataset_name}.gif")
+    dataset_path = os.path.join(os.path.dirname(__file__), "..", "datasets")
+    gif_path = os.path.join(dataset_path, f"{dataset_id}.gif")
     imageio.mimsave(gif_path, images, fps=fps)
     return gif_path

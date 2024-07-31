@@ -15,6 +15,7 @@
 # sys.path.insert(0, os.path.abspath('.'))
 
 # -- Project information -----------------------------------------------------
+import glob
 import os
 import re
 import shutil
@@ -140,10 +141,10 @@ def move_404(app, _):
 
 
 def move_dataset_gifs(app, _):
-    src = app.srcdir.joinpath("datasets/gifs")
-    dst = app.outdir.joinpath("datasets")
-    if src.exists():
-        shutil.move(src, dst)
+    gif_pathname = app.srcdir.joinpath("datasets", "**", "*.gif")
+    for file in list(glob.glob(str(gif_pathname), recursive=True)):
+        dest_path = app.outdir + file[len(app.srcdir) :]
+        shutil.copy(file, dest_path)
 
 
 def setup(app):

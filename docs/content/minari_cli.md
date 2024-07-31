@@ -67,31 +67,31 @@ This command comes with other two required sub-commands:
 // Show local datasets.
 $ minari list local
 
-               <i>Local Minari datasets('.minari/')</i>
-┌───────────────┬───────────┬───────────┬─────────┬───────────┐
-│               │     <b>Total</b> │     <b>Total</b> │         │           │
-│ <b>Name</b>          │  <b>Episodes</b> │     <b>Steps</b> │  <b>Author</b> │ <b>Email</b>     │
-┡───────────────╇───────────╇───────────╇─────────╇───────────┩
-│ <font color="#A1EFE4">D4RL/pen/cloned-v2</font> │      <font color="#03AC13">3736</font> │    <font color="#03AC13">500000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
-│ <font color="#A1EFE4">D4RL/pen/expert-v2</font> │      <font color="#03AC13">4958</font> │    <font color="#03AC13">499206</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
-│ <font color="#A1EFE4">D4RL/pen/human-v2</font>  │        <font color="#03AC13">25</font> │      <font color="#03AC13">5000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
-└───────────────┴───────────┴───────────┴─────────┴───────────┘
+                  <i>Local Minari datasets('.minari/')</i>
+┌────────────────────┬───────────┬───────────┬────────────┬─────────┐
+│                    │     <b>Total</b> │     <b>Total</b> │    <b>Dataset</b> │         │
+│ <b>Name</b>               │  <b>Episodes</b> │     <b>Steps</b> │       <b>Size</b> │  <b>Author</b> │
+┡────────────────────╇───────────╇───────────╇────────────╇─────────┩
+│ <font color="#A1EFE4">D4RL/pen/cloned-v2</font> │      <font color="#03AC13">3736</font> │    <font color="#03AC13">500000</font> │   <font color="#03AC13">604.0 MB</font> │ <font color="#FF00FF">Rodrigo</font> │
+│ <font color="#A1EFE4">D4RL/pen/expert-v2</font> │      <font color="#03AC13">4958</font> │    <font color="#03AC13">499206</font> │   <font color="#03AC13">638.1 MB</font> │ <font color="#FF00FF">Rodrigo</font> │
+│ <font color="#A1EFE4">D4RL/pen/human-v2</font>  │        <font color="#03AC13">25</font> │      <font color="#03AC13">5000</font> │     <font color="#03AC13">5.7 MB</font> │ <font color="#FF00FF">Rodrigo</font> │
+└────────────────────┴───────────┴───────────┴────────────┴─────────┘
 
 // Show remote datasets.
 $ minari list remote
 
-                 <i>Minari datasets in Farama server</i>
-┌────────────────┬───────────┬────────────┬─────────┬───────────┐
-│                │     <b>Total</b> │      <b>Total</b> │         │           │
-│ <b>Name</b>           │  <b>Episodes</b> │      <b>Steps</b> │  <b>Author</b> │ <b>Email</b>     │
-┡────────────────╇───────────╇────────────╇─────────╇───────────┩
-│ <font color="#A1EFE4">D4RL/door/cloned-v2</font> │      <font color="#03AC13">4356</font> │    <font color="#03AC13">1000000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
-│ <font color="#A1EFE4">D4RL/door/expert-v2</font> │      <font color="#03AC13">5000</font> │    <font color="#03AC13">1000000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
-│ <font color="#A1EFE4">D4RL/door/human-v2</font>  │        <font color="#03AC13">25</font> │       <font color="#03AC13">6729</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
-│ <font color="#A1EFE4">D4RL/pen/cloned-v2</font>  │      <font color="#03AC13">3736</font> │     <font color="#03AC13">500000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
-│ <font color="#A1EFE4">D4RL/pen/expert-v2</font>  │      <font color="#03AC13">4958</font> │     <font color="#03AC13">499206</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
-│ <font color="#A1EFE4">D4RL/pen/human-v2</font>   │        <font color="#03AC13">25</font> │       <font color="#03AC13">5000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
-└────────────────┴───────────┴────────────┴─────────┴───────────┘
+                  <i>Minari datasets in Farama server</i>
+┌─────────────────────┬───────────┬────────────┬───────────┬─────────┐
+│                     │     <b>Total</b> │      <b>Total</b> │   <b>Dataset</b> │         │
+│ <b>Name</b>                │  <b>Episodes</b> │      <b>Steps</b> │      <b>Size</b> │  <b>Author</b> │
+┡─────────────────────╇───────────╇────────────╇───────────╇─────────┩
+│ <font color="#A1EFE4">D4RL/door/cloned-v2</font> │      <font color="#03AC13">4356</font> │    <font color="#03AC13">1000000</font> │ <font color="#03AC13">1077.7 MB</font> │ <font color="#FF00FF">Rodrigo</font> │
+│ <font color="#A1EFE4">D4RL/door/expert-v2</font> │      <font color="#03AC13">5000</font> │    <font color="#03AC13">1000000</font> │ <font color="#03AC13">1096.4 MB</font> │ <font color="#FF00FF">Rodrigo</font> │
+│ <font color="#A1EFE4">D4RL/door/human-v2</font>  │        <font color="#03AC13">25</font> │       <font color="#03AC13">6729</font> │    <font color="#03AC13">7.1 MB</font> │ <font color="#FF00FF">Rodrigo</font> │
+│ <font color="#A1EFE4">D4RL/pen/cloned-v2</font>  │      <font color="#03AC13">3736</font> │     <font color="#03AC13">500000</font> │  <font color="#03AC13">604.0 MB</font> │ <font color="#FF00FF">Rodrigo</font> │
+│ <font color="#A1EFE4">D4RL/pen/expert-v2</font>  │      <font color="#03AC13">4958</font> │     <font color="#03AC13">499206</font> │  <font color="#03AC13">638.1 MB</font> │ <font color="#FF00FF">Rodrigo</font> │
+│ <font color="#A1EFE4">D4RL/pen/human-v2</font>   │        <font color="#03AC13">25</font> │       <font color="#03AC13">5000</font> │    <font color="#03AC13">5.7 MB</font> │ <font color="#FF00FF">Rodrigo</font> │
+└─────────────────────┴───────────┴────────────┴───────────┴─────────┘
 ```
 </div>
 
@@ -156,8 +156,8 @@ Trajectories have expert data from a fine-tuned RL policy provided in the <a hre
 │ <b>Algorithm</b>         │ Not provided                              │
 │ <b>Author</b>            │ Rodrigo de Lazcano                        │
 │ <b>Email</b>             │ rperezvicente@farama.org                  │
-│ <b>Code Permalink</b>    │ <a href="https://github.com/Farama-Foundation/minari-dataset-generation-scripts">https://github.com/Farama-Foundation/...</a>   │
-│ <b>Minari Version</b>    │ 0.4 (0.5.0 installed)                     │
+│ <b>Code Permalink</b>    │ <a href="https://github.com/Farama-Foundation/minari-dataset-generation-scripts">https://github.com/Farama-Foundation/...</a>  │
+│ <b>Minari Version</b>    │ 0.4.3 (supported)                         │
 │ <b>Download</b>          │ <code>minari download D4RL/pen/expert-v2</code>        │
 └───────────────────┴───────────────────────────────────────────┘
 
@@ -190,14 +190,14 @@ Local Minari datasets can be deleted by instantiating the following command, `mi
 // Delete datasets D4RL/pen/cloned-v2 and D4RL/door/human-v2
 $ minari delete D4RL/pen/cloned-v2 D4RL/door/human-v2
 
-                   <i>Delete local Minari datasets</i>
-┌────────────────┬───────────┬────────────┬─────────┬───────────┐
-│                │     <b>Total</b> │      <b>Total</b> │         │           │
-│ <b>Name</b>           │  <b>Episodes</b> │      <b>Steps</b> │  <b>Author</b> │ <b>Email</b>     │
-┡────────────────╇───────────╇────────────╇─────────╇───────────┩
-│ <font color="#A1EFE4">D4RL/door/human-v2</font>  │        <font color="#03AC13">25</font> │       <font color="#03AC13">6729</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
-│ <font color="#A1EFE4">D4RL/pen/cloned-v2</font> │      <font color="#03AC13">3736</font> │     <font color="#03AC13">500000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
-└────────────────┴───────────┴────────────┴─────────┴───────────┘
+                  <i>Delete local Minari datasets</i>
+┌─────────────────────┬───────────┬────────────┬───────────┬─────────┐
+│                     │     <b>Total</b> │      <b>Total</b> │   <b>Dataset</b> │         │
+│ <b>Name</b>                │  <b>Episodes</b> │      <b>Steps</b> │      <b>Size</b> │  <b>Author</b> │
+┡─────────────────────╇───────────╇────────────╇───────────╇─────────┩
+│ <font color="#A1EFE4">D4RL/door/human-v2</font>  │        <font color="#03AC13">25</font> │       <font color="#03AC13">6729</font> │    <font color="#03AC13">5.7 MB</font> │ <font color="#FF00FF">Rodrigo</font> │
+│ <font color="#A1EFE4">D4RL/pen/cloned-v2</font>  │      <font color="#03AC13">3736</font> │     <font color="#03AC13">500000</font> │  <font color="#03AC13">604.0 MB</font> │ <font color="#FF00FF">Rodrigo</font> │
+└─────────────────────┴───────────┴────────────┴───────────┴─────────┘
 
 # Are you sure you want to delete these local datasets? [y/N]:$ y
 

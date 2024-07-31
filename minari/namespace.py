@@ -74,7 +74,7 @@ def update_namespace_metadata(
         json.dump(metadata, file)
 
 
-def get_namespace_metadata(namespace: str) -> Optional[Dict[str, Any]]:
+def get_namespace_metadata(namespace: str) -> Dict[str, Any]:
     """Load local namespace metadata.
 
     Note: The namespace API is an experimental feature and may change in future releases.
@@ -83,7 +83,7 @@ def get_namespace_metadata(namespace: str) -> Optional[Dict[str, Any]]:
         namespace (str): identifier for local namespace.
 
     Returns:
-        Optional[Dict[str, Any]]: metadata dict, or None if metadata is empty.
+        Dict[str, Any]: metadata dict.
     """
     validate_namespace(namespace)
 
@@ -95,7 +95,7 @@ def get_namespace_metadata(namespace: str) -> Optional[Dict[str, Any]]:
     with open(metadata_filepath) as file:
         metadata = json.load(file)
 
-    return metadata if metadata != {"description": None} else None
+    return metadata
 
 
 def delete_namespace(namespace: str) -> None:
@@ -203,12 +203,8 @@ def download_namespace_metadata(namespace: str, overwrite: bool = False) -> None
         return
 
     assert len(blobs) == 1
-    local_metadata = None
 
-    if namespace in list_local_namespaces():
-        local_metadata = get_namespace_metadata(namespace)
-
-    if overwrite or local_metadata is None:
+    if overwrite or namespace not in list_local_namespaces():
         directory = get_dataset_path(namespace)
         os.makedirs(directory, exist_ok=True)
         blobs[0].download_to_filename(directory / NAMESPACE_METADATA_FILENAME)

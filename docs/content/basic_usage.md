@@ -38,14 +38,14 @@ minari list remote
 ```
 
 ```
-                                                Minari datasets in Farama server
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃ Name                         ┃ Total Episodes ┃ Total Steps ┃ Dataset Size ┃ Author            ┃ Email                  ┃
-┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━┩
-│ D4RL/antmaze/large-diverse-v0  │           1000 │     1000000 │ 700.5 MB     │ Alex Davey        │ amd1g13@soton.ac.uk    │
-│ D4RL/antmaze/large-play-v0    │           1000 │     1000000 │ 700.5 MB     │ Alex Davey        │ amd1g13@soton.ac.uk     │
-│ D4RL/antmaze/medium-diverse-v0 │           1000 │     1000000 │ 700.5 MB     │ Alex Davey        │ amd1g13@soton.ac.uk    │
-│             ...              │       ...      │     ...     │     ...      │        ...        │           ...          │
+                                Minari datasets in Farama server
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
+┃ Name                           ┃ Total Episodes ┃ Total Steps ┃ Dataset Size ┃ Author          ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
+│ D4RL/antmaze/large-diverse-v1  │           1000 │     1000000 │ 605.2 MB     │ Alex Davey      │
+│ D4RL/antmaze/large-play-v1     │           1000 │     1000000 │ 605.2 MB     │ Alex Davey      │
+│ D4RL/antmaze/medium-diverse-v1 │           1000 │     1000000 │ 605.2 MB     │ Alex Davey      │
+│             ...                │       ...      │     ...     │     ...      │       ...       │
 ```
 
 To use your own server with Minari, set the `MINARI_REMOTE` environment variable in the format `remote-type://remote-path`. For example, to set up a GCP bucket named `my-datasets`, run the following command:
@@ -76,12 +76,12 @@ minari list local
 ```
 
 ```
-                            Local Minari datasets('/Users/farama/.minari/datasets/')
-┏━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃ Name          ┃ Total Episodes ┃ Total Steps ┃ Dataset Size ┃ Author             ┃ Email                    ┃
-┡━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━┩
-│ D4RL/door/human-v2 │             25 │        6729 │ 7.1 MB       │ Rodrigo de Lazcano │ rperezvicente@farama.org │
-└───────────────┴────────────────┴─────────────┴──────────────┴────────────────────┴──────────────────────────┘
+                 Local Minari datasets('/Users/farama/.minari/datasets/')
+┏━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┓
+┃ Name               ┃ Total Episodes ┃ Total Steps ┃ Dataset Size ┃ Author             ┃
+┡━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━┩
+│ D4RL/door/human-v2 │             25 │        6729 │ 7.1 MB       │ Rodrigo de Lazcano │
+└────────────────────┴────────────────┴─────────────┴──────────────┴────────────────────┘
 ```
 
 ```{eval-rst}
@@ -271,14 +271,14 @@ minari combine D4RL/door/human-v2 D4RL/door/expert-v2 --dataset-id=D4RL/door/all
 minari list local
 ```
 ```
-                             Local Minari datasets('/Users/farama/.minari/datasets/')
-┏━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃ Name           ┃ Total Episodes ┃ Total Steps ┃ Dataset Size ┃ Author             ┃ Email                    ┃
-┡━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━┩
-│ D4RL/door/all-v0    │           5025 │     1006729 │ 1103.5 MB    │ Rodrigo de Lazcano │ rperezvicente@farama.org │
-│ D4RL/door/expert-v2 │           5000 │     1000000 │ 1096.4 MB    │ Rodrigo de Lazcano │ rperezvicente@farama.org │
-│ D4RL/door/human-v2  │             25 │        6729 │ 7.1 MB       │ Rodrigo de Lazcano │ rperezvicente@farama.org │
-└────────────────┴────────────────┴─────────────┴──────────────┴────────────────────┴──────────────────────────┘
+                    Local Minari datasets('/Users/farama/.minari/datasets/')
+┏━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┓
+┃ Name                ┃ Total Episodes ┃ Total Steps ┃ Dataset Size ┃ Author             ┃
+┡━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━┩
+│ D4RL/door/all-v0    │           5025 │     1006729 │ 1103.5 MB    │ Rodrigo de Lazcano │
+│ D4RL/door/expert-v2 │           5000 │     1000000 │ 1096.4 MB    │ Rodrigo de Lazcano │
+│ D4RL/door/human-v2  │             25 │        6729 │ 7.1 MB       │ Rodrigo de Lazcano │
+└─────────────────────┴────────────────┴─────────────┴──────────────┴────────────────────┘
 ```
 
 ## Create Minari Dataset
@@ -354,12 +354,12 @@ Once the dataset has been created we can check if the Minari dataset id appears 
 minari list local
 ```
 ```
-                     Local Minari datasets('/Users/farama/.minari/datasets/')
-┏━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┓
-┃ Name             ┃ Total Episodes ┃ Total Steps ┃ Dataset Size ┃ Author ┃ Email              ┃
-┡━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━┩
-│ cartpole-test-v0 │            100 │        2059 │ 1.6 MB       │ Farama │ contact@farama.org │
-└──────────────────┴────────────────┴─────────────┴──────────────┴────────┴────────────────────┘
+        Local Minari datasets('/Users/farama/.minari/datasets/')
+┏━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━┓
+┃ Name             ┃ Total Episodes ┃ Total Steps ┃ Dataset Size ┃  Author  ┃
+┡━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━┩
+│ cartpole-test-v0 │            100 │        2059 │ 1.6 MB       │  Farama  │
+└──────────────────┴────────────────┴─────────────┴──────────────┴──────────┘
 ```
 
 ```{eval-rst}
