@@ -164,13 +164,13 @@ env.set_seed(seed)
 # ~~~~~~~~~~~~~~~~~~~~~~~~
 
 # %%
-# The Minari dataset we will be using is `pen-human-v1 <https://minari.farama.org/main/datasets/pen/human/>`_, which consists of 25 human demonstrations. We can create a replay buffer using ``MinariExperienceReplay()``:
+# The Minari dataset we will be using is `D4RL/pen/human-v1 <https://minari.farama.org/main/datasets/pen/human/>`_, which consists of 25 human demonstrations. We can create a replay buffer using ``MinariExperienceReplay()``:
 
 # %%
 from torchrl.data.datasets.minari_data import MinariExperienceReplay
 from torchrl.data.replay_buffers import SamplerWithoutReplacement
 
-dataset_id = "pen-human-v1"
+dataset_id = "D4RL/pen/human-v1"
 batch_size = 256
 
 replay_buffer = MinariExperienceReplay(
@@ -524,4 +524,4 @@ HTML("""
 #    :width: 32%
 #    :alt: Example episode 3 for Adroit Pen environment
 #
-# The performance varies quite a bit from episode to episode, but overall it's decent considering there are only 25 demonstrations in the original dataset! To improve performance, you could try tuning the hyperparameters, such as the inverse temperature :math:`\beta` and the expectile :math:`\tau`, or use a larger dataset such as `pen-expert-v1` which has around 5000 episodes.
+# The performance varies quite a bit from episode to episode, but overall it's decent considering there are only 25 demonstrations in the original dataset! To improve performance, you could try tuning the hyperparameters, such as the inverse temperature :math:`\beta` and the expectile :math:`\tau`, or use a larger dataset such as `D4RL/pen/expert-v1` which has around 5000 episodes.

@@ -19,17 +19,17 @@ unicode_charset = "".join(
     [chr(i) for i in range(sys.maxunicode) if unicodedata.category(chr(i)) != "Cs"]
 )
 
-cartpole_test_dataset = [("cartpole-test-v0", "CartPole-v1")]
-dummy_box_dataset = [("dummy-box-test-v0", "DummyBoxEnv-v0")]
-dummy_text_dataset = [("dummy-text-test-v0", "DummyTextEnv-v0")]
+cartpole_test_dataset = [("cartpole/test-v0", "CartPole-v1")]
+dummy_box_dataset = [("dummy-box/test-v0", "DummyBoxEnv-v0")]
+dummy_text_dataset = [("dummy-text/test-v0", "DummyTextEnv-v0")]
 
 # Note: Doesn't include the text dataset, since this is often handled separately
 dummy_test_datasets = [
-    ("dummy-dict-test-v0", "DummyDictEnv-v0"),
-    ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
-    ("dummy-combo-test-v0", "DummyComboEnv-v0"),
-    ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
-    ("nested/namespace/dummy-dict-test-v0", "DummyDictEnv-v0"),
+    ("dummy-dict/test-v0", "DummyDictEnv-v0"),
+    ("dummy-tuple/test-v0", "DummyTupleEnv-v0"),
+    ("dummy-combo/test-v0", "DummyComboEnv-v0"),
+    ("dummy-tuple-discrete-box/test-v0", "DummyTupleDiscreteBoxEnv-v0"),
+    ("nested/namespace/dummy-dict/test-v0", "DummyDictEnv-v0"),
 ] + dummy_box_dataset
 
 
@@ -729,10 +729,9 @@ def get_sample_buffer_for_dataset_from_env(env: gym.Env, num_episodes: int = 10)
     return buffer
 
 
-def get_latest_compatible_dataset_id(namespace, env_name, dataset_name):
+def get_latest_compatible_dataset_id(namespace, dataset_name):
     latest_compatible_versions = get_remote_dataset_versions(
         namespace=namespace,
-        env_name=env_name,
         dataset_name=dataset_name,
         latest_version=True,
         compatible_minari_version=True,
@@ -740,10 +739,8 @@ def get_latest_compatible_dataset_id(namespace, env_name, dataset_name):
 
     if len(latest_compatible_versions) == 0:
         raise ValueError(
-            f"No datasets of the form '{gen_dataset_id(namespace, env_name, dataset_name)}' exist in the remote Farama server."
+            f"No datasets of the form '{gen_dataset_id(namespace, dataset_name)}' exist in the remote Farama server."
         )
 
     assert len(latest_compatible_versions) == 1
-    return gen_dataset_id(
-        namespace, env_name, dataset_name, latest_compatible_versions[0]
-    )
+    return gen_dataset_id(namespace, dataset_name, latest_compatible_versions[0])

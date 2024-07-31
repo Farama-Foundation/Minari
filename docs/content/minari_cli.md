@@ -72,9 +72,9 @@ $ minari list local
 │               │     <b>Total</b> │     <b>Total</b> │         │           │
 │ <b>Name</b>          │  <b>Episodes</b> │     <b>Steps</b> │  <b>Author</b> │ <b>Email</b>     │
 ┡───────────────╇───────────╇───────────╇─────────╇───────────┩
-│ <font color="#A1EFE4">pen-cloned-v2</font> │      <font color="#03AC13">3736</font> │    <font color="#03AC13">500000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
-│ <font color="#A1EFE4">pen-expert-v2</font> │      <font color="#03AC13">4958</font> │    <font color="#03AC13">499206</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
-│ <font color="#A1EFE4">pen-human-v2</font>  │        <font color="#03AC13">25</font> │      <font color="#03AC13">5000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
+│ <font color="#A1EFE4">D4RL/pen/cloned-v2</font> │      <font color="#03AC13">3736</font> │    <font color="#03AC13">500000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
+│ <font color="#A1EFE4">D4RL/pen/expert-v2</font> │      <font color="#03AC13">4958</font> │    <font color="#03AC13">499206</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
+│ <font color="#A1EFE4">D4RL/pen/human-v2</font>  │        <font color="#03AC13">25</font> │      <font color="#03AC13">5000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
 └───────────────┴───────────┴───────────┴─────────┴───────────┘
 
 // Show remote datasets.
@@ -85,12 +85,12 @@ $ minari list remote
 │                │     <b>Total</b> │      <b>Total</b> │         │           │
 │ <b>Name</b>           │  <b>Episodes</b> │      <b>Steps</b> │  <b>Author</b> │ <b>Email</b>     │
 ┡────────────────╇───────────╇────────────╇─────────╇───────────┩
-│ <font color="#A1EFE4">door-cloned-v2</font> │      <font color="#03AC13">4356</font> │    <font color="#03AC13">1000000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
-│ <font color="#A1EFE4">door-expert-v2</font> │      <font color="#03AC13">5000</font> │    <font color="#03AC13">1000000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
-│ <font color="#A1EFE4">door-human-v2</font>  │        <font color="#03AC13">25</font> │       <font color="#03AC13">6729</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
-│ <font color="#A1EFE4">pen-cloned-v2</font>  │      <font color="#03AC13">3736</font> │     <font color="#03AC13">500000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
-│ <font color="#A1EFE4">pen-expert-v2</font>  │      <font color="#03AC13">4958</font> │     <font color="#03AC13">499206</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
-│ <font color="#A1EFE4">pen-human-v2</font>   │        <font color="#03AC13">25</font> │       <font color="#03AC13">5000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
+│ <font color="#A1EFE4">D4RL/door/cloned-v2</font> │      <font color="#03AC13">4356</font> │    <font color="#03AC13">1000000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
+│ <font color="#A1EFE4">D4RL/door/expert-v2</font> │      <font color="#03AC13">5000</font> │    <font color="#03AC13">1000000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
+│ <font color="#A1EFE4">D4RL/door/human-v2</font>  │        <font color="#03AC13">25</font> │       <font color="#03AC13">6729</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
+│ <font color="#A1EFE4">D4RL/pen/cloned-v2</font>  │      <font color="#03AC13">3736</font> │     <font color="#03AC13">500000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
+│ <font color="#A1EFE4">D4RL/pen/expert-v2</font>  │      <font color="#03AC13">4958</font> │     <font color="#03AC13">499206</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
+│ <font color="#A1EFE4">D4RL/pen/human-v2</font>   │        <font color="#03AC13">25</font> │       <font color="#03AC13">5000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
 └────────────────┴───────────┴────────────┴─────────┴───────────┘
 ```
 </div>
@@ -110,24 +110,24 @@ current content of the local dataset.
 <div class="termy">
 
 ```console
-// Download datasets pen-cloned-v2 and door-human-v2
-$ minari download pen-cloned-v2 door-human-v2
+// Download datasets D4RL/pen/cloned-v2 and D4RL/door/human-v2
+$ minari download D4RL/pen/cloned-v2 D4RL/door/human-v2
 
-Downloading pen-expert-v2 from Farama servers...
+Downloading D4RL/pen/expert-v2 from Farama servers...
 
-   * Downloading data file 'pen-expert-v2/data/main_data.hdf5' ...
-
----> 100%
-
-Dataset pen-expert-v2 downloaded to <path-to-local-datasets>/.minari/datasets/pen-expert-v2
-
-Downloading door-human-v2 from Farama servers...
-
-   * Downloading data file 'door-human-v2/data/main_data.hdf5' ...
+   * Downloading data file 'D4RL/pen/expert-v2/data/main_data.hdf5' ...
 
 ---> 100%
 
-Dataset door-human-v2 downloaded to <path-to-local-datasets>/.minari/datasets/pen-expert-v2
+Dataset D4RL/pen/expert-v2 downloaded to <path-to-local-datasets>/.minari/datasets/D4RL/pen/expert-v2
+
+Downloading D4RL/door/human-v2 from Farama servers...
+
+   * Downloading data file 'D4RL/door/human-v2/data/main_data.hdf5' ...
+
+---> 100%
+
+Dataset D4RL/door/human-v2 downloaded to <path-to-local-datasets>/.minari/datasets/D4RL/pen/expert-v2
 
 ```
 </div>
@@ -140,10 +140,10 @@ You can check the details of a dataset using the command `minari show DATASET_NA
 
 ```console
 // Show dataset details
-$ minari show pen-expert-v2
+$ minari show D4RL/pen/expert-v2
 
 ┌───────────────────────────────────────────────────────────────┐
-│                           <b> pen-expert-v2 </b>                     │
+│                         <b> D4RL/pen/expert-v2 </b>                  │
 └───────────────────────────────────────────────────────────────┘
 
 <center> <b> <u>Description</u> </b> </center>
@@ -156,9 +156,9 @@ Trajectories have expert data from a fine-tuned RL policy provided in the <a hre
 │ <b>Algorithm</b>         │ Not provided                              │
 │ <b>Author</b>            │ Rodrigo de Lazcano                        │
 │ <b>Email</b>             │ rperezvicente@farama.org                  │
-│ <b>Code Permalink</b>    │ <a href="https://github.com/rodrigodelazcano/d4rl-minari-dataset-generation">https://github.com/rodrigodelazcano/...</a>   │
+│ <b>Code Permalink</b>    │ <a href="https://github.com/Farama-Foundation/minari-dataset-generation-scripts">https://github.com/Farama-Foundation/...</a>   │
 │ <b>Minari Version</b>    │ 0.4 (0.5.0 installed)                     │
-│ <b>Download</b>          │ <code>minari download pen-expert-v2</code>             │
+│ <b>Download</b>          │ <code>minari download D4RL/pen/expert-v2</code>        │
 └───────────────────┴───────────────────────────────────────────┘
 
 <center> <b> <u>Environment Specs</u> </b> </center>
@@ -187,22 +187,22 @@ Local Minari datasets can be deleted by instantiating the following command, `mi
 <div class="termy">
 
 ```console
-// Delete datasets pen-cloned-v2 and door-human-v2
-$ minari delete pen-cloned-v2 door-human-v2
+// Delete datasets D4RL/pen/cloned-v2 and D4RL/door/human-v2
+$ minari delete D4RL/pen/cloned-v2 D4RL/door/human-v2
 
                    <i>Delete local Minari datasets</i>
 ┌────────────────┬───────────┬────────────┬─────────┬───────────┐
 │                │     <b>Total</b> │      <b>Total</b> │         │           │
 │ <b>Name</b>           │  <b>Episodes</b> │      <b>Steps</b> │  <b>Author</b> │ <b>Email</b>     │
 ┡────────────────╇───────────╇────────────╇─────────╇───────────┩
-│ <font color="#A1EFE4">door-human-v2</font>  │        <font color="#03AC13">25</font> │       <font color="#03AC13">6729</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
-│ <font color="#A1EFE4">pen-cloned-v2</font>  │      <font color="#03AC13">3736</font> │     <font color="#03AC13">500000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
+│ <font color="#A1EFE4">D4RL/door/human-v2</font>  │        <font color="#03AC13">25</font> │       <font color="#03AC13">6729</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
+│ <font color="#A1EFE4">D4RL/pen/cloned-v2</font> │      <font color="#03AC13">3736</font> │     <font color="#03AC13">500000</font> │ <font color="#FF00FF">Rodrigo</font> │ <font color="#FF00FF">rperezvic…</font>│
 └────────────────┴───────────┴────────────┴─────────┴───────────┘
 
 # Are you sure you want to delete these local datasets? [y/N]:$ y
 
-Dataset door-human-v2 deleted!
-Dataset pen-cloned-v2 deleted!
+Dataset D4RL/door/human-v2 deleted!
+Dataset D4RL/pen/cloned-v2 deleted!
 ```
 
 </div>
@@ -214,10 +214,10 @@ Minari datasets can also be merged together into a single dataset with the follo
 <div class="termy">
 
 ```console
-// Combine datasets pen-cloned-v2, pen-expert-v2 and pen-human-v2 into pen-all-v2.
-$ minari combine pen-cloned-v2 pen-expert-v2 pen-human-v2 --dataset-name pen-all-v2
+// Combine datasets D4RL/pen/cloned-v2, D4RL/pen/expert-v2 and D4RL/pen/human-v2 into D4RL/pen/all-v2.
+$ minari combine D4RL/pen/cloned-v2 D4RL/pen/expert-v2 D4RL/pen/human-v2 --dataset-name D4RL/pen/all-v2
 
-The datasets <font color="#03AC13">['pen-cloned-v2', 'pen-expert-v2', 'pen-human-v2']</font> were successfully combined into <font color="#A1EFE4">pen-all-v2</font>!
+The datasets <font color="#03AC13">['D4RL/pen/cloned-v2', 'D4RL/pen/expert-v2', 'D4RL/pen/human-v2']</font> were successfully combined into <font color="#A1EFE4">D4RL/pen/all-v2</font>!
 ```
 </div>
 
@@ -233,13 +233,13 @@ If you would like to upload your Minari dataset to a remote server, you can use 
 <div class="termy">
 
 ```console
-// Upload datasets pen-cloned-v2 and door-human-v2 to remote server.
-$ minari upload pen-cloned-v2 door-human-v2 --key-path /path-to-key/file-name.json
+// Upload datasets D4RL/pen/cloned-v2 and D4RL/door/human-v2 to remote server.
+$ minari upload D4RL/pen/cloned-v2 D4RL/door/human-v2 --key-path /path-to-key/file-name.json
 
 ---> 100%
-Dataset door-human-v2 uploaded!
+Dataset D4RL/door/human-v2 uploaded!
 
 ---> 100%
-Dataset pen-cloned-v2 uploaded!
+Dataset D4RL/pen/cloned-v2 uploaded!
 ```
 </div>

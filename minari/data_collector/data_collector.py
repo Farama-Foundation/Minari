@@ -47,7 +47,7 @@ class DataCollector(gym.Wrapper):
             if terminated or truncated:
                 env.reset()
 
-        dataset = env.create_dataset(dataset_id="optional_namespace/env_name-dataset_name-v(version)", **kwargs)
+        dataset = env.create_dataset(dataset_id="env_name/dataset_name-v(version)", **kwargs)
 
     Some of the characteristics of this wrapper:
 
@@ -242,7 +242,7 @@ class DataCollector(gym.Wrapper):
         """Create a Minari dataset using the data collected from stepping with a Gymnasium environment wrapped with a `DataCollector` Minari wrapper.
 
         The ``dataset_id`` parameter corresponds to the name of the dataset, with the syntax as follows:
-        ``(namespace/)(env_name-)(dataset_name)(-v(version))`` where ``env_name`` identifies the name of the environment used to generate the dataset ``dataset_name``. The `namespace` (and leading forward slash) is optional.
+        ``(namespace/)(env_name/)dataset_name(-v[version])`` where ``env_name`` identifies the name of the environment used to generate the dataset. The `namespace` is optional.
         This ``dataset_id`` is used to load the Minari datasets with :meth:`minari.load_dataset`.
 
         Args:

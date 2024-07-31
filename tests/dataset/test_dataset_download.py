@@ -13,7 +13,7 @@ env_names = ["pen", "door", "hammer", "relocate"]
     "dataset_id",
     [
         get_latest_compatible_dataset_id(
-            namespace=None, env_name=env_name, dataset_name="human"
+            namespace=f"D4RL/{env_name}", dataset_name="human"
         )
         for env_name in env_names
     ],
@@ -57,7 +57,7 @@ def test_download_dataset_from_farama_server(dataset_id: str):
     "dataset_id",
     [
         get_latest_compatible_dataset_id(
-            namespace=None, env_name=env_name, dataset_name="human"
+            namespace=f"D4RL/{env_name}", dataset_name="human"
         )
         for env_name in env_names
     ],
@@ -88,24 +88,23 @@ def test_download_error_messages(monkeypatch):
         with pytest.raises(
             ValueError, match="Couldn't find any compatible version of dataset"
         ):
-            minari.download_dataset("door-human-v1")
+            minari.download_dataset("D4RL/door/human-v1")
 
         with pytest.warns(match="Couldn't find any compatible version of dataset"):
-            minari.download_dataset("door-human-v1", force_download=True)
-        minari.delete_dataset("door-human-v1")
+            minari.download_dataset("D4RL/door/human-v1", force_download=True)
+        minari.delete_dataset("D4RL/door/human-v1")
 
     # 3. Check that the dataset version exists
     with pytest.raises(ValueError, match="doesn't exist in the remote Farama server."):
-        minari.download_dataset("door-human-v999")
+        minari.download_dataset("D4RL/door/human-v999")
 
     with pytest.raises(ValueError, match="doesn't exist in the remote Farama server."):
-        minari.download_dataset("door-human-v999", force_download=True)
+        minari.download_dataset("D4RL/door/human-v999", force_download=True)
 
     # 4. Check that the dataset version is compatible with the local installed Minari version
     def patch_get_remote_dataset_versions(versions):
         def patched_get_remote(
             namespace,
-            env_name,
             dataset_name,
             latest_version=False,
             compatible_minari_version=False,
@@ -114,7 +113,7 @@ def test_download_error_messages(monkeypatch):
 
         return patched_get_remote
 
-    # Pretend that door-human-v0 is compatible but door-human-v1 is not
+    # Pretend that D4RL/door/human-v0 is compatible but D4RL/door/human-v1 is not
     with monkeypatch.context() as mp:
         mp.setattr(
             "minari.storage.hosting.get_remote_dataset_versions",
@@ -123,18 +122,18 @@ def test_download_error_messages(monkeypatch):
 
         with pytest.raises(
             ValueError,
-            match="door-human-v1, is not compatible with your local installed version of Minari",
+            match="D4RL/door/human-v1, is not compatible with your local installed version of Minari",
         ):
-            minari.download_dataset("door-human-v1")
+            minari.download_dataset("D4RL/door/human-v1")
 
         with pytest.warns(
             match="will be FORCE download but you can download the latest compatible version of this dataset"
         ):
-            minari.download_dataset("door-human-v1", force_download=True)
-        minari.delete_dataset("door-human-v1")
+            minari.download_dataset("D4RL/door/human-v1", force_download=True)
+        minari.delete_dataset("D4RL/door/human-v1")
 
     # 5. Warning to recommend downloading the latest compatible version of the dataset
-    # Pretend that door-human-v2 exists and try to download door-human-v1
+    # Pretend that D4RL/door/human-v2 exists and try to download D4RL/door/human-v1
     with monkeypatch.context() as mp:
         mp.setattr(
             "minari.storage.hosting.get_remote_dataset_versions",
@@ -144,12 +143,12 @@ def test_download_error_messages(monkeypatch):
         with pytest.warns(
             match="We recommend you install a higher dataset version available and compatible"
         ):
-            minari.download_dataset("door-human-v1")
-        minari.delete_dataset("door-human-v1")
+            minari.download_dataset("D4RL/door/human-v1")
+        minari.delete_dataset("D4RL/door/human-v1")
 
     # Skip datasets that exist locally
     latest_door_human_id = get_latest_compatible_dataset_id(
-        namespace=None, env_name="door", dataset_name="human"
+        namespace="D4RL/door", dataset_name="human"
     )
     minari.download_dataset(latest_door_human_id)
 

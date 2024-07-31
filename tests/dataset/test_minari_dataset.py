@@ -448,21 +448,19 @@ def test_missing_env_module(data_format):
 )
 def test_parse_gen_dataset_id_inverse_forward(dataset_id):
     """Check parse_dataset_id() and gen_dataset_id() are inverses. Forward direction."""
-    namespace, env_name, dataset_name, version = parse_dataset_id(dataset_id)
-    new_dataset_id = gen_dataset_id(namespace, env_name, dataset_name, version)
+    namespace, dataset_name, version = parse_dataset_id(dataset_id)
+    new_dataset_id = gen_dataset_id(namespace, dataset_name, version)
     assert new_dataset_id == dataset_id
 
 
 @pytest.mark.parametrize(
-    "namespace, env_name, dataset_name, version",
+    "namespace, dataset_name, version",
     [
-        (None, "door", "human", 0),
-        ("aB1-_", "cD2", "eF3:.-_", 456),
+        (None, "human", 0),
+        ("aB1-_/env-name", "eF3-_", 456),
     ],
 )
-def test_parse_gen_dataset_id_inverse_backward(
-    namespace, env_name, dataset_name, version
-):
+def test_parse_gen_dataset_id_inverse_backward(namespace, dataset_name, version):
     """Check parse_dataset_id() and gen_dataset_id() are inverses. Backward direction."""
-    attrs = (namespace, env_name, dataset_name, version)
+    attrs = (namespace, dataset_name, version)
     assert attrs == parse_dataset_id(gen_dataset_id(*attrs))

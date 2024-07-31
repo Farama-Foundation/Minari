@@ -23,21 +23,19 @@ filtered_datasets = defaultdict(defaultdict)
 all_remote_datasets = list_remote_datasets()
 
 for dataset_id in all_remote_datasets.keys():
-    namespace, env_name, dataset_name, version = parse_dataset_id(dataset_id)
-    assert env_name is not None
+    namespace, dataset_name, version = parse_dataset_id(dataset_id)
+    assert namespace is not None
 
-    if dataset_name not in filtered_datasets[env_name]:
+    if dataset_name not in filtered_datasets[namespace]:
         max_version = get_remote_dataset_versions(
-            namespace, env_name, dataset_name, latest_version=True
+            namespace, dataset_name, latest_version=True
         )[0]
-        max_version_dataset_id = gen_dataset_id(
-            namespace, env_name, dataset_name, max_version
-        )
-        filtered_datasets[env_name][dataset_name] = all_remote_datasets[
+        max_version_dataset_id = gen_dataset_id(namespace, dataset_name, max_version)
+        filtered_datasets[namespace][dataset_name] = all_remote_datasets[
             max_version_dataset_id
         ]
 
-for env_name, datasets in filtered_datasets.items():
+for namespace, datasets in filtered_datasets.items():
     available_datasets = """
 ## Available Datasets
 | Dataset ID | Description |
@@ -59,7 +57,7 @@ for env_name, datasets in filtered_datasets.items():
             description = dataset_spec["description"]
 
         # Add dataset id and description to main env page
-        available_datasets += f"""| <a href="../{env_name}/{dataset_name}" title="{dataset_id}">{dataset_id}</a> | {description.split('. ')[0] if description is not None else ""} |
+        available_datasets += f"""| <a href="../{namespace}/{dataset_name}" title="{dataset_id}">{dataset_id}</a> | {description.split('. ')[0] if description is not None else ""} |
 """
 
         # Generate gif
@@ -185,7 +183,7 @@ title: {dataset_name.title()}
         env_page += env_docs
 
         dataset_doc_path = os.path.join(
-            os.path.dirname(__file__), "..", "datasets", env_name
+            os.path.dirname(__file__), "..", "datasets", namespace
         )
 
         if not os.path.exists(dataset_doc_path):
@@ -201,7 +199,7 @@ title: {dataset_name.title()}
         file.close()
 
     env_page_path = os.path.join(
-        os.path.dirname(__file__), "..", "datasets", f"{env_name}.md"
+        os.path.dirname(__file__), "..", "datasets", f"{namespace}.md"
     )
     file = open(env_page_path, "a", encoding="utf-8")
     file.write(available_datasets)

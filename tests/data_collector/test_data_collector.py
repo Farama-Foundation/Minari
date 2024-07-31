@@ -149,7 +149,7 @@ def test_truncation_without_reset(dataset_id, env_id, data_format, register_dumm
         assert bool(last_step.truncations) is True
 
     if "/" in dataset_id:
-        namespace, _, _, _ = parse_dataset_id(dataset_id)
+        namespace, _, _ = parse_dataset_id(dataset_id)
         assert namespace in list_local_namespaces()
         assert get_namespace_metadata(namespace) is None
 
@@ -161,7 +161,7 @@ def test_truncation_without_reset(dataset_id, env_id, data_format, register_dumm
 @pytest.mark.parametrize("seed", [None, 0, 42, MAX_UINT64])
 def test_reproducibility(seed, data_format, register_dummy_envs):
     """Test episodes are reproducible, even if an explicit reset seed is not set."""
-    dataset_id = "dummy-box-test-v0"
+    dataset_id = "dummy-box/test-v0"
     env_id = "DummyBoxEnv-v0"
     num_episodes = 5
 

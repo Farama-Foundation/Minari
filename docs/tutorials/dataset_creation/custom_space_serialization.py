@@ -108,7 +108,7 @@ def deserialize_custom_space(space_dict: Dict) -> MissionSpace:
 # %%
 
 
-dataset_id = "minigrid-custom-space-v0"
+dataset_id = "minigrid/custom-space-v0"
 
 env = DataCollector(env)
 num_episodes = 10

@@ -23,8 +23,8 @@ def create_namespace(
 
     Namespaces are a directory-like structure that can contain multiple datasets, or
     other namespaces. Namespaces are prepended onto a ``dataset_id`` with a forward
-    slash. For example a dataset with id ``my_namespace/cartpole-test-v0`` resides in
-    the ``my_namespace`` namespace. Namespaces can be nested.
+    slash. For example a dataset with id ``cartpole/test-v0`` resides in
+    the ``cartpole`` namespace. Namespaces can be nested.
 
     Note: The namespace API is an experimental feature and may change in future releases.
 

@@ -25,12 +25,11 @@ def list_non_hidden_dirs(path: str) -> Iterable[str]:
             yield d.name
 
 
-def dataset_id_sort_key(dataset_id: str) -> Tuple[str, Union[str, None], str, int]:
+def dataset_id_sort_key(dataset_id: str) -> Tuple[str, str, int]:
     """Key for sorting dataset ids first by namespace, and then alphabetically."""
-    namespace, env_name, dataset_name, version = parse_dataset_id(dataset_id)
+    namespace, dataset_name, version = parse_dataset_id(dataset_id)
     namespace = "" if namespace is None else namespace
-    env_name = "" if env_name is None else env_name
-    return (namespace, env_name, dataset_name, version)
+    return (namespace, dataset_name, version)
 
 
 def load_dataset(dataset_id: str, download: bool = False):
@@ -64,7 +63,7 @@ def list_local_datasets(
     """Get the ids and metadata of all the Minari datasets in the local database.
 
     Args:
-        latest_version (bool): if `True` only the latest version of the datasets are returned i.e. from ['door-human-v0', 'door-human-v1`], only the metadata for v1 is returned. Default to `False`.
+        latest_version (bool): if `True` only the latest version of the datasets are returned i.e. from ['D4RL/door/human-v0', 'D4RL/door/human-v1`], only the metadata for v1 is returned. Default to `False`.
         compatible_minari_version (bool): if `True` only the datasets compatible with the current Minari version are returned. Default to `False`.
 
     Returns:
@@ -111,8 +110,8 @@ def list_local_datasets(
         ):
             continue
 
-        namespace, env_name, dataset_name, version = parse_dataset_id(dst_id)
-        dataset = gen_dataset_id(namespace, env_name, dataset_name)
+        namespace, dataset_name, version = parse_dataset_id(dst_id)
+        dataset = gen_dataset_id(namespace, dataset_name)
 
         if latest_version:
             if dataset not in local_datasets or version > local_datasets[dataset][0]:

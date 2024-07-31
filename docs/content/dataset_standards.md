@@ -9,16 +9,16 @@ title: Dataset Standards
 
 Minari stores the offline datasets under a common root directory. The root directory path for the local datasets is set by default to `~/.minari/datasets/`. However, this path can be modified by setting the environment variable `MINARI_DATASETS_PATH`.
 
-The remote datasets are kept in the public Google Cloud Platform (GCP) bucket [`minari-datasets`](https://console.cloud.google.com/storage/browser/minari-datasets;tab=objects?forceOnBucketsSortingFiltering=false&project=mcmes-345620&prefix=&forceOnObjectsSortingFiltering=false).
+The remote datasets are kept in the public Google Cloud Platform (GCP) bucket [`minari-remote`](https://console.cloud.google.com/storage/browser/minari-remote).
 
-Minari dataset directories are named after the datasets `id`. The datasets `id` must follow the syntax `(namespace/)(env_name-)(dataset_name)(-v(version))`, where:
+Minari dataset directories are named after the datasets `id`. The datasets `id` must follow the syntax `(namespace/)(env_name/)dataset_name(-v(version))`, where:
 
-- `namespace`: an optional string that allows grouping of several datasets under a common subdirectory. If no namespace is specified (i.e. `namespace=None`), the dataset is stored in the top level directory and the dataset `id` takes the form `(env_name-)(dataset_name)(-v(version))`, with no leading forward slash. Namespaces can be arbitrarily nested.
-- `env_name`: a string that describes the environment from which the dataset was created. For example, if a dataset comes from the [`AdroitHandDoor`](https://robotics.farama.org/envs/adroit_hand/adroit_door/) environment `env_name` can be equal to `door`.
+- `namespace`: an optional string that allows grouping of several datasets under a common subdirectory. If no namespace is specified, the dataset is stored in the top level directory and the dataset `id` takes the form `(env_name/)dataset_name(-v(version))`, with no leading forward slash. Namespaces can be arbitrarily nested.
+- `env_name`: an optional string that describes the environment from which the dataset was created. For example, if a dataset comes from the [`AdroitHandDoor`](https://robotics.farama.org/envs/adroit_hand/adroit_door/) environment `env_name` can be equal to `door`. The `env_name` is a namespace group we encourage to use when the dataset is generated from an environment.
 - `dataset_name`: a string describing the content of the dataset. For example, if the dataset for the `AdroitHandDoor` environment was generated from human input we can give the value `human` to `dataset_name`.
 - `version`: integer value that represent the number of versions for `door-human-v(version)` dataset, starting from `0`.
 
-In the end, the `id` of the dataset for the initial version of the `AdroitHandDoor` environment example, with no namespace, will be `door-human-v0`. If the dataset was created with a namespace, for example `D4RL`, the dataset `id` would instead be `D4RL/door-human-v0`.
+In the end, the `id` of the dataset for the initial version of the `AdroitHandDoor` environment example, with no namespace, will be `door/human-v0`. If the dataset was created with a namespace, for example `D4RL`, the dataset `id` would instead be `D4RL/door/human-v0`.
 
 Minari dataset directories are stored in the root directory (`~/.minari/datasets/` by default) or in a subdirectory corresponding to the namespace of the dataset if a namespace is specified.
 
@@ -81,11 +81,11 @@ Spaces are serialized to a JSON format when saving to disk. This serialization s
 
 ## EpisodeData Structure
 
-A Minari dataset is encapsulated in the `MinariDataset` class which allows for iterating and sampling through episodes which are defined as `EpisodeData` data class. Take the following example where we load the `door-human-v2` dataset and randomly sample 10 episodes:
+A Minari dataset is encapsulated in the `MinariDataset` class which allows for iterating and sampling through episodes which are defined as `EpisodeData` data class. Take the following example where we load the `D4RL/door/human-v2` dataset and randomly sample 10 episodes:
 
 ```python
 import minari
-dataset = minari.load_dataset("door-human-v2", download=True)
+dataset = minari.load_dataset("D4RL/door/human-v2", download=True)
 sampled_episodes = dataset.sample_episodes(10)
 ```
 
