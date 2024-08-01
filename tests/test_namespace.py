@@ -31,9 +31,9 @@ from tests.common import (
 @pytest.mark.parametrize(
     "description, metadata, combined_metadata",
     [
-        (None, {}, None),
+        (None, {}, {}),
         ("my_desc", {}, {"description": "my_desc"}),
-        (None, {"key": [1]}, {"description": None, "key": [1]}),
+        (None, {"key": [1]}, {"key": [1]}),
         ("my_desc", {"key": [1]}, {"description": "my_desc", "key": [1]}),
     ],
 )
@@ -89,7 +89,7 @@ def test_create_namespaced_datasets(namespace):
     dataset_id_1 = f"{namespace}/test-v1"
     create_dummy_dataset_with_collecter_env_helper(dataset_id_1, env)
     assert list_local_namespaces() == [namespace]
-    assert get_namespace_metadata(namespace) is None
+    assert get_namespace_metadata(namespace) == {}
 
     update_namespace_metadata(namespace, description="new description")
     assert get_namespace_metadata(namespace) == {"description": "new description"}
@@ -122,12 +122,12 @@ def test_download_namespace_dataset():
     minari.download_dataset(kitchen_complete)
     assert set(minari.list_local_datasets().keys()) == {kitchen_complete}
     assert list_local_namespaces() == [namespace]
-    assert get_namespace_metadata(namespace) is None
+    assert get_namespace_metadata(namespace) == {}
 
     minari.download_dataset(kitchen_mix)
     assert set(minari.list_local_datasets().keys()) == {kitchen_complete, kitchen_mix}
     assert list_local_namespaces() == [namespace]
-    assert get_namespace_metadata(namespace) is None
+    assert get_namespace_metadata(namespace) == {}
 
     with pytest.warns(UserWarning, match="Skipping Download."):
         minari.download_dataset(kitchen_complete)
