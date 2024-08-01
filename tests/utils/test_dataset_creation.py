@@ -10,11 +10,15 @@ from minari import DataCollector, MinariDataset, StepData
 from minari.data_collector import EpisodeBuffer
 from minari.dataset._storages import registry as storage_registry
 from tests.common import (
+    cartpole_test_dataset,
     check_data_integrity,
     check_env_recovery,
     check_env_recovery_with_subset_spaces,
     check_episode_data_integrity,
     check_load_and_delete_dataset,
+    dummy_box_dataset,
+    dummy_test_datasets,
+    dummy_text_dataset,
     get_sample_buffer_for_dataset_from_env,
 )
 
@@ -24,45 +28,31 @@ CODELINK = "https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/te
 
 @pytest.mark.parametrize(
     "dataset_id,env_id",
-    [
-        ("cartpole-test-v0", "CartPole-v1"),
-        ("dummy-dict-test-v0", "DummyDictEnv-v0"),
-        ("dummy-box-test-v0", "DummyBoxEnv-v0"),
-        ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
-        ("dummy-text-test-v0", "DummyTextEnv-v0"),
-        ("dummy-combo-test-v0", "DummyComboEnv-v0"),
-        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
-    ],
+    cartpole_test_dataset + dummy_test_datasets + dummy_text_dataset,
 )
 def test_generate_dataset_with_collector_env(dataset_id, env_id, register_dummy_envs):
     """Test DataCollector wrapper and Minari dataset creation."""
     env = gym.make(env_id)
-
     env = DataCollector(env, record_infos=True)
     num_episodes = 10
-
-    # Step the environment, DataCollector wrapper will do the data collection job
     env.reset(seed=42)
-
     for episode in range(num_episodes):
         done = False
         while not done:
-            action = env.action_space.sample()  # User-defined policy function
+            action = env.action_space.sample()
             _, _, terminated, truncated, _ = env.step(action)
             done = terminated or truncated
 
         env.reset()
 
-    # Save a different environment spec for evaluation (different max_episode_steps)
     eval_env_spec = gym.spec(env_id)
     eval_env_spec.max_episode_steps = 123
     eval_env = gym.make(eval_env_spec)
-    # dataset_id = "cartpole-test-v0"
-    # delete the test dataset if it already exists
+
     local_datasets = minari.list_local_datasets()
     if dataset_id in local_datasets:
         minari.delete_dataset(dataset_id)
-    # Create Minari dataset and store locally
+
     dataset = env.create_dataset(
         dataset_id=dataset_id,
         eval_env=eval_env,
@@ -89,12 +79,10 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id, register_dummy_
         dataset, dataset.spec.observation_space, dataset.spec.action_space
     )
 
-    # check that the environment can be recovered from the dataset
     check_env_recovery(env.env, dataset, eval_env)
 
     env.close()
     eval_env.close()
-    # check load and delete local dataset
     check_load_and_delete_dataset(dataset_id)
 
 
@@ -115,7 +103,7 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id, register_dummy_
 )
 def test_record_infos_collector_env(info_override, register_dummy_envs):
     """Test DataCollector wrapper and Minari dataset creation including infos."""
-    dataset_id = "dummy-mutable-info-box-test-v0"
+    dataset_id = "dummy-mutable-info-box/test-v0"
     env = gym.make("DummyInfoEnv-v0", info=info_override)
 
     env = DataCollector(env, record_infos=True)
@@ -159,26 +147,19 @@ def test_record_infos_collector_env(info_override, register_dummy_envs):
     check_load_and_delete_dataset(dataset_id)
 
 
+@pytest.mark.parametrize("data_format", storage_registry.keys())
 @pytest.mark.parametrize(
     "dataset_id,env_id",
-    [
-        ("cartpole-test-v0", "CartPole-v1"),
-        ("dummy-dict-test-v0", "DummyDictEnv-v0"),
-        ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
-        ("dummy-text-test-v0", "DummyTextEnv-v0"),
-        ("dummy-combo-test-v0", "DummyComboEnv-v0"),
-        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
-    ],
+    cartpole_test_dataset
+    + [x for x in dummy_test_datasets if x not in dummy_box_dataset]
+    + dummy_text_dataset,
 )
-@pytest.mark.parametrize("data_format", storage_registry.keys())
 def test_generate_dataset_with_external_buffer(
     dataset_id, env_id, data_format, register_dummy_envs
 ):
     """Test create dataset from external buffers without using DataCollector."""
     buffer = []
 
-    # dataset_id = "cartpole-test-v0"
-    # delete the test dataset if it already exists
     local_datasets = minari.list_local_datasets()
     if dataset_id in local_datasets:
         minari.delete_dataset(dataset_id)
@@ -211,13 +192,11 @@ def test_generate_dataset_with_external_buffer(
         observation, _ = env.reset()
         episode_buffer = EpisodeBuffer(observations=observation)
 
-    # Save a different environment spec for evaluation (different max_episode_steps)
     gym.registry[f"eval/{env_id}"] = dataclasses.replace(
         gym.spec(env_id), max_episode_steps=123, id=f"eval/{env_id}"
     )
 
     eval_env = gym.make(f"eval/{env_id}")
-    # Test for different types of env and eval_env (gym.Env, EnvSpec, and str id)
     for env_dataset_id, eval_env_dataset_id in zip(
         [env, env.spec, env_id], [eval_env, eval_env.spec, f"eval/{env_id}"]
     ):
@@ -258,7 +237,7 @@ def test_generate_dataset_with_space_subset_external_buffer(
     is_env_needed, data_format, register_dummy_envs
 ):
     """Test create dataset from external buffers without using DataCollector or environment."""
-    dataset_id = "dummy-dict-test-v0"
+    dataset_id = "dummy-dict/test-v0"
 
     # delete the test dataset if it already exists
 

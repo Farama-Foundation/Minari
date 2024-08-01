@@ -35,7 +35,7 @@ minari list remote
 To download a dataset:
 
 ```bash
-minari download door-human-v2
+minari download D4RL/door/human-v2
 ```
 
 To check available local datasets:
@@ -46,7 +46,7 @@ minari list local
 To show the details of a dataset:
 
 ```bash
-minari show door-human-v2
+minari show D4RL/door/human-v2
 ```
 
 For the list of commands:
@@ -61,7 +61,7 @@ minari --help
 ```python
 import minari
 
-dataset = minari.load_dataset("door-human-v2")
+dataset = minari.load_dataset("D4RL/door/human-v2")
 
 for episode_data in dataset.iterate_episodes():
     observations = episode_data.observations
@@ -92,7 +92,7 @@ for _ in range(100):
         obs, rew, terminated, truncated, info = env.step(action)
         done = terminated or truncated
 
-dataset = env.create_dataset("frozenlake-test-v0")
+dataset = env.create_dataset("frozenlake/test-v0")
 ```
 
 For other examples, see [Basic Usage](https://minari.farama.org/main/content/basic_usage/). For a complete tutorial on how to create new datasets using Minari, see our [Pointmaze D4RL Dataset](https://minari.farama.org/main/tutorials/dataset_creation/point_maze_dataset/) tutorial, which re-creates the Maze2D datasets from [D4RL](https://github.com/Farama-Foundation/D4RL).

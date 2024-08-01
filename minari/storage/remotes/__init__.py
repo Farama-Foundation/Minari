@@ -4,7 +4,7 @@ from typing import Dict, Type
 from minari.storage.remotes.cloud_storage import CloudStorage
 
 
-DEFAULT_REMOTE = "gcp://minari-datasets"
+DEFAULT_REMOTE = "gcp://minari-remote"
 
 
 def get_cloud_storage(key_path=None) -> CloudStorage:

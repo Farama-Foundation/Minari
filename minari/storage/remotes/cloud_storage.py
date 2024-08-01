@@ -9,7 +9,11 @@ class CloudStorage(ABC):
         ...
 
     @abstractmethod
-    def upload_path(self, path: Path, dataset_id: str) -> None:
+    def upload_directory(self, path: Path, remote_dir_path: str) -> None:
+        ...
+
+    @abstractmethod
+    def upload_file(self, local_path: Path, remote_path: str) -> None:
         ...
 
     @abstractmethod
