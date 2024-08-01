@@ -151,7 +151,7 @@ def test_truncation_without_reset(dataset_id, env_id, data_format, register_dumm
     if "/" in dataset_id:
         namespace, _, _ = parse_dataset_id(dataset_id)
         assert namespace in list_local_namespaces()
-        assert get_namespace_metadata(namespace) is None
+        assert get_namespace_metadata(namespace) == {}
 
     # check load and delete local dataset
     check_load_and_delete_dataset(dataset_id)

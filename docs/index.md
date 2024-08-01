@@ -30,14 +30,7 @@ tutorials/**/index
 ```{toctree}
 :hidden:
 :caption: Datasets
-datasets/minigrid
-datasets/door
-datasets/hammer
-datasets/relocate
-datasets/pen
-datasets/pointmaze
-datasets/antmaze
-datasets/kitchen
+datasets/D4RL/index
 ```
 
 ```{toctree}
@@ -69,15 +62,15 @@ $ pip install minari
 // Show remote datasets.
 $ minari list remote
 
-                 <i>Minari datasets in Farama server</i>
-┌────────────────┬───────────┬────────────┬─────────┬───────────┐
-│                │     <b>Total</b> │      <b>Total</b> │         │           │
-│ <b>Name</b>           │  <b>Episodes</b> │      <b>Steps</b> │  <b>Author</b> │ <b>Email</b>     │
-┡────────────────╇───────────╇────────────╇─────────╇───────────┩
-│ <font color="#A1EFE4">D4RL/door/cloned-v2</font> │      <font color="#03AC13">4356</font> │    <font color="#03AC13">1000000</font> │ <font color="#FF00FF">Farama</font>  │<font color="#FF00FF">@farama.org</font>│
-│ <font color="#A1EFE4">D4RL/door/expert-v2</font> │      <font color="#03AC13">5000</font> │    <font color="#03AC13">1000000</font> │ <font color="#FF00FF">Farama</font>  │<font color="#FF00FF">@farama.org</font>│
-│ <font color="#A1EFE4">D4RL/door/human-v2</font>  │        <font color="#03AC13">25</font> │       <font color="#03AC13">6729</font> │ <font color="#FF00FF">Farama</font>  │<font color="#FF00FF">@farama.org</font>│
-└────────────────┴───────────┴────────────┴─────────┴───────────┘
+                  <i>Minari datasets in Farama server</i>
+┌─────────────────────┬───────────┬────────────┬───────────┬─────────┐
+│                     │     <b>Total</b> │      <b>Total</b> │   <b>Dataset</b> │         │
+│ <b>Name</b>                │  <b>Episodes</b> │      <b>Steps</b> │      <b>Size</b> │  <b>Author</b> │
+┡─────────────────────╇───────────╇────────────╇───────────╇─────────┩
+│ <font color="#A1EFE4">D4RL/door/cloned-v2</font> │      <font color="#03AC13">4356</font> │    <font color="#03AC13">1000000</font> │ <font color="#03AC13">1077.7 MB</font> │  <font color="#FF00FF">Farama</font> │
+│ <font color="#A1EFE4">D4RL/door/expert-v2</font> │      <font color="#03AC13">5000</font> │    <font color="#03AC13">1000000</font> │ <font color="#03AC13">1096.4 MB</font> │  <font color="#FF00FF">Farama</font> │
+│ <font color="#A1EFE4">D4RL/door/human-v2</font>  │        <font color="#03AC13">25</font> │       <font color="#03AC13">6729</font> │ <font color="#03AC13">7.1 MB</font>    │  <font color="#FF00FF">Farama</font> │
+└─────────────────────┴───────────┴────────────┴───────────┴─────────┘
 
 // Download dataset D4RL/door/cloned-v2
 $ minari download D4RL/door/cloned-v2
