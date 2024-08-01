@@ -25,7 +25,6 @@ classifiers = [
 ]
 dependencies = [
     "numpy>=1.21.0",
-    "jax[cpu]",
     "typing_extensions>=4.4.0",
     "typer[all]>=0.9.0",
     "gymnasium>=0.28.1",
@@ -37,8 +36,9 @@ dynamic = ["version"]
 arrow = ["pyarrow"]
 hdf5 = ["h5py>=3.8.0"]
 gcs = ["google-cloud-storage>=2.5.0", "tqdm>=4.65.0"]
+jax = ["jax[cpu]"]
 
-all = ["minari[arrow,hdf5,gcs]"]
+all = ["minari[arrow,hdf5,gcs,jax]"]
 
 testing = [
     "pytest>=7.1.3",
