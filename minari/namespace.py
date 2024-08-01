@@ -39,7 +39,8 @@ def create_namespace(
         raise ValueError(f"Namespace '{namespace}' already exists.")
 
     metadata = copy.deepcopy(kwargs)
-    metadata["description"] = description
+    if description is not None:
+        metadata["description"] = description
     directory = get_dataset_path(namespace)
     os.makedirs(directory, exist_ok=True)
 
