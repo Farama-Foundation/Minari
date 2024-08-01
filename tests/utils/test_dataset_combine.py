@@ -57,7 +57,7 @@ def _check_load_and_delete_dataset(dataset_id: str):
 
 def test_combine_datasets():
     num_datasets, num_episodes = 5, 10
-    test_datasets_ids = [f"cartpole-test-{i}-v0" for i in range(num_datasets)]
+    test_datasets_ids = [f"cartpole/test-{i}-v0" for i in range(num_datasets)]
 
     # generating multiple test datasets
     test_max_episode_steps = [5, 3, 7, 10, None]
@@ -79,7 +79,7 @@ def test_combine_datasets():
         test_datasets.append(dataset)
 
     combined_dataset = combine_datasets(
-        test_datasets, new_dataset_id="cartpole-combined-test-v0"
+        test_datasets, new_dataset_id="cartpole/combined-test-v0"
     )
 
     assert test_datasets[1][0].id == 0
@@ -95,13 +95,13 @@ def test_combine_datasets():
     assert combined_dataset.spec.env_spec is not None
     assert combined_dataset.spec.env_spec.max_episode_steps is None
 
-    _check_load_and_delete_dataset("cartpole-combined-test-v0")
+    _check_load_and_delete_dataset("cartpole/combined-test-v0")
 
     # Check that we get max(max_episode_steps) when there is no max_episode_steps=None
     test_datasets.pop()
     test_max_episode_steps.pop()
     combined_dataset = combine_datasets(
-        test_datasets, new_dataset_id="cartpole-combined-test-v0"
+        test_datasets, new_dataset_id="cartpole/combined-test-v0"
     )
     assert combined_dataset.spec.env_spec is not None
     assert combined_dataset.spec.env_spec.max_episode_steps == max(
@@ -111,4 +111,4 @@ def test_combine_datasets():
         gym.make("CartPole-v1", max_episode_steps=max(test_max_episode_steps)),
         combined_dataset,
     )
-    _check_load_and_delete_dataset("cartpole-combined-test-v0")
+    _check_load_and_delete_dataset("cartpole/combined-test-v0")

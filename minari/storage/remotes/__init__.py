@@ -6,7 +6,7 @@ from minari.storage.remotes.cloud_storage import CloudStorage
 from .gcp import GCPStorage
 
 
-DEFAULT_REMOTE = "gcp://minari-datasets"
+DEFAULT_REMOTE = "gcp://minari-remote"
 
 registry: Dict[str, Type[CloudStorage]] = {"gcp": GCPStorage}
 

@@ -12,7 +12,13 @@ from minari.data_collector.callbacks.step_callback import StepData
 from minari.data_collector.episode_buffer import EpisodeBuffer
 from minari.dataset._storages import registry as storage_registry
 from minari.dataset.minari_storage import MinariStorage
-from tests.common import check_data_integrity, check_load_and_delete_dataset
+from tests.common import (
+    cartpole_test_dataset,
+    check_data_integrity,
+    check_load_and_delete_dataset,
+    dummy_test_datasets,
+    dummy_text_dataset,
+)
 
 
 file_path = os.path.join(os.path.expanduser("~"), ".minari", "datasets")
@@ -177,18 +183,10 @@ def test_episode_metadata(tmp_dataset_dir, data_format):
     storage.update_episode_metadata(ep_metadatas, episode_indices=ep_indices)
 
 
-@pytest.mark.parametrize(
-    "dataset_id,env_id",
-    [
-        ("cartpole-test-v0", "CartPole-v1"),
-        ("dummy-dict-test-v0", "DummyDictEnv-v0"),
-        ("dummy-box-test-v0", "DummyBoxEnv-v0"),
-        ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
-        ("dummy-combo-test-v0", "DummyComboEnv-v0"),
-        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
-    ],
-)
 @pytest.mark.parametrize("data_format", storage_registry.keys())
+@pytest.mark.parametrize(
+    "dataset_id,env_id", cartpole_test_dataset + dummy_test_datasets
+)
 def test_minari_get_dataset_size_from_collector_env(
     dataset_id, env_id, data_format, register_dummy_envs
 ):
@@ -234,19 +232,11 @@ def test_minari_get_dataset_size_from_collector_env(
     check_load_and_delete_dataset(dataset_id)
 
 
+@pytest.mark.parametrize("data_format", storage_registry.keys())
 @pytest.mark.parametrize(
     "dataset_id,env_id",
-    [
-        ("cartpole-test-v0", "CartPole-v1"),
-        ("dummy-dict-test-v0", "DummyDictEnv-v0"),
-        ("dummy-box-test-v0", "DummyBoxEnv-v0"),
-        ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
-        ("dummy-text-test-v0", "DummyTextEnv-v0"),
-        ("dummy-combo-test-v0", "DummyComboEnv-v0"),
-        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
-    ],
+    cartpole_test_dataset + dummy_test_datasets + dummy_text_dataset,
 )
-@pytest.mark.parametrize("data_format", storage_registry.keys())
 def test_minari_get_dataset_size_from_buffer(
     dataset_id, env_id, data_format, register_dummy_envs
 ):

@@ -46,7 +46,7 @@ class CustomSubsetInfoPadStepDataCallback(StepDataCallback):
 @pytest.mark.parametrize("data_format", storage_registry.keys())
 def test_data_collector_step_data_callback(data_format, register_dummy_envs):
     """Test DataCollector wrapper and Minari dataset creation."""
-    dataset_id = "dummy-dict-test-v0"
+    dataset_id = "dummy-dict/test-v0"
     env = gym.make("DummyDictEnv-v0")
     action_space_subset = spaces.Dict(
         {

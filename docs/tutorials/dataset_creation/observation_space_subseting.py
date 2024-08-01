@@ -74,7 +74,7 @@ class CustomSubsetStepDataCallback(StepDataCallback):
 # Finally we'll record 10 episodes with our observation space subset and
 # callback passed to :class:`minari.DataCollector`.
 
-dataset_id = "point-maze-subseted-v3"
+dataset_id = "pointmaze/subseted-v0"
 
 # delete the test dataset if it already exists
 local_datasets = minari.list_local_datasets()
