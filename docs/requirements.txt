@@ -5,7 +5,6 @@ sphinx-autobuild
 sphinx_github_changelog
 myst-parser
 matplotlib
-google-cloud-storage==2.5.0
 gymnasium-robotics>=1.2.1
 minigrid>=2.2.0
 rl_zoo3>=2.0.0

@@ -7,8 +7,15 @@ from typing import Any, Dict, Iterable, List, Optional, Sequence
 
 import gymnasium as gym
 import numpy as np
-import pyarrow as pa
-import pyarrow.dataset as ds
+
+
+try:
+    import pyarrow as pa
+    import pyarrow.dataset as ds
+except ImportError:
+    raise ImportError(
+        'pyarrow is not installed. Please install it using `pip install "minari[arrow]"`'
+    )
 
 from minari.data_collector.episode_buffer import EpisodeBuffer
 from minari.dataset.minari_storage import MinariStorage

@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 
 from minari import DataCollector, EpisodeData, MinariDataset, StepDataCallback
-from minari.dataset._storages import registry as storage_registry
+from minari.dataset._storages import get_storage_keys
 from minari.dataset.minari_dataset import parse_dataset_id
 from minari.namespace import get_namespace_metadata, list_local_namespaces
 from tests.common import (
@@ -94,7 +94,7 @@ def get_single_step_from_episode(episode: EpisodeData, index: int) -> EpisodeDat
     return EpisodeData(**step_data)
 
 
-@pytest.mark.parametrize("data_format", storage_registry.keys())
+@pytest.mark.parametrize("data_format", get_storage_keys())
 @pytest.mark.parametrize("dataset_id,env_id", dummy_test_datasets)
 def test_truncation_without_reset(dataset_id, env_id, data_format, register_dummy_envs):
     """Test new episode creation when environment is truncated and env.reset is not called."""
@@ -157,7 +157,7 @@ def test_truncation_without_reset(dataset_id, env_id, data_format, register_dumm
     check_load_and_delete_dataset(dataset_id)
 
 
-@pytest.mark.parametrize("data_format", storage_registry.keys())
+@pytest.mark.parametrize("data_format", get_storage_keys())
 @pytest.mark.parametrize("seed", [None, 0, 42, MAX_UINT64])
 def test_reproducibility(seed, data_format, register_dummy_envs):
     """Test episodes are reproducible, even if an explicit reset seed is not set."""
