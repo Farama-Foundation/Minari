@@ -56,7 +56,7 @@ A dataset API for Offline Reinforcement Learning.
 
 ```console
 // Install Minari
-$ pip install minari
+$ pip install "minari[all]"
 ---> 100%
 
 // Show remote datasets.
