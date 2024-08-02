@@ -32,7 +32,7 @@ class EpisodeBuffer:
             import jax.tree_util as jtu
         except ImportError:
             raise ImportError(
-                'jax is not installed. Please install it using `pip install "minari[jax]"`'
+                'jax is not installed. Please install it using `pip install "minari[create]"`'
             )
 
         def _append(data, buffer):
