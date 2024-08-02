@@ -1,5 +1,5 @@
 import os
-from typing import Dict, Type
+from typing import Callable, Dict, Type
 
 from minari.storage.remotes.cloud_storage import CloudStorage
 
@@ -7,10 +7,16 @@ from minari.storage.remotes.cloud_storage import CloudStorage
 DEFAULT_REMOTE = "gcp://minari-remote"
 
 
-def get_cloud_storage(key_path=None) -> CloudStorage:
+def get_gcps() -> Type[CloudStorage]:
     from .gcp import GCPStorage
 
-    registry: Dict[str, Type[CloudStorage]] = {"gcp": GCPStorage}
+    return GCPStorage
+
+
+_registry: Dict[str, Callable[[], Type[CloudStorage]]] = {"gcp": get_gcps}
+
+
+def get_cloud_storage(key_path=None) -> CloudStorage:
     remote_spec = os.getenv("MINARI_REMOTE", DEFAULT_REMOTE)
     cloud_type, name = remote_spec.split("://", maxsplit=1)
-    return registry[cloud_type](name, key_path)
+    return _registry[cloud_type]()(name, key_path)
