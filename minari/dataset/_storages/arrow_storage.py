@@ -22,6 +22,8 @@ from minari.dataset.minari_storage import MinariStorage
 
 
 class ArrowStorage(MinariStorage):
+    FORMAT = "arrow"
+
     def __init__(
         self,
         data_path: pathlib.Path,

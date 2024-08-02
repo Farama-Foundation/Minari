@@ -10,7 +10,7 @@ import minari
 from minari import DataCollector
 from minari.data_collector.callbacks.step_callback import StepData
 from minari.data_collector.episode_buffer import EpisodeBuffer
-from minari.dataset._storages import registry as storage_registry
+from minari.dataset._storages import get_storage_keys
 from minari.dataset.minari_storage import MinariStorage
 from tests.common import (
     cartpole_test_dataset,
@@ -60,7 +60,7 @@ def test_non_existing_data(tmp_dataset_dir):
         MinariStorage.read(tmp_dataset_dir)
 
 
-@pytest.mark.parametrize("data_format", storage_registry.keys())
+@pytest.mark.parametrize("data_format", get_storage_keys())
 def test_metadata(tmp_dataset_dir, data_format):
     action_space = spaces.Box(-1, 1)
     observation_space = spaces.Box(-1, 1)
@@ -95,7 +95,7 @@ def test_metadata(tmp_dataset_dir, data_format):
     assert storage_metadata == storage2.metadata
 
 
-@pytest.mark.parametrize("data_format", storage_registry.keys())
+@pytest.mark.parametrize("data_format", get_storage_keys())
 def test_add_episodes(tmp_dataset_dir, data_format):
     action_space = spaces.Box(-1, 1, shape=(10,))
     observation_space = spaces.Text(max_length=5)
@@ -129,7 +129,7 @@ def test_add_episodes(tmp_dataset_dir, data_format):
         assert np.all(ep.truncations == storage_ep["truncations"])
 
 
-@pytest.mark.parametrize("data_format", storage_registry.keys())
+@pytest.mark.parametrize("data_format", get_storage_keys())
 def test_apply(tmp_dataset_dir, data_format):
     action_space = spaces.Box(-1, 1, shape=(10,))
     observation_space = spaces.Text(max_length=5)
@@ -156,7 +156,7 @@ def test_apply(tmp_dataset_dir, data_format):
         assert np.array(episodes[i].actions).sum() == result
 
 
-@pytest.mark.parametrize("data_format", storage_registry.keys())
+@pytest.mark.parametrize("data_format", get_storage_keys())
 def test_episode_metadata(tmp_dataset_dir, data_format):
     action_space = spaces.Box(-1, 1, shape=(10,))
     observation_space = spaces.Text(max_length=5)
@@ -183,7 +183,7 @@ def test_episode_metadata(tmp_dataset_dir, data_format):
     storage.update_episode_metadata(ep_metadatas, episode_indices=ep_indices)
 
 
-@pytest.mark.parametrize("data_format", storage_registry.keys())
+@pytest.mark.parametrize("data_format", get_storage_keys())
 @pytest.mark.parametrize(
     "dataset_id,env_id", cartpole_test_dataset + dummy_test_datasets
 )
@@ -232,7 +232,7 @@ def test_minari_get_dataset_size_from_collector_env(
     check_load_and_delete_dataset(dataset_id)
 
 
-@pytest.mark.parametrize("data_format", storage_registry.keys())
+@pytest.mark.parametrize("data_format", get_storage_keys())
 @pytest.mark.parametrize(
     "dataset_id,env_id",
     cartpole_test_dataset + dummy_test_datasets + dummy_text_dataset,
@@ -299,7 +299,7 @@ def test_minari_get_dataset_size_from_buffer(
     check_load_and_delete_dataset(dataset_id)
 
 
-@pytest.mark.parametrize("data_format", storage_registry.keys())
+@pytest.mark.parametrize("data_format", get_storage_keys())
 def test_seed_change(tmp_dataset_dir, data_format):
     action_space = spaces.Box(-1, 1, shape=(10,))
     observation_space = spaces.Discrete(10)

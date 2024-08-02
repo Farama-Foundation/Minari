@@ -10,7 +10,7 @@ import pytest
 import minari
 from minari import DataCollector, EpisodeData, MinariDataset, StepData
 from minari.data_collector.episode_buffer import EpisodeBuffer
-from minari.dataset._storages import registry as storage_registry
+from minari.dataset._storages import get_storage_keys
 from minari.dataset.minari_dataset import gen_dataset_id, parse_dataset_id
 from minari.dataset.minari_storage import METADATA_FILE_NAME
 from tests.common import (
@@ -63,7 +63,7 @@ def test_episode_data(space: gym.Space):
 @pytest.mark.parametrize(
     "dataset_id,env_id", cartpole_test_dataset + dummy_test_datasets
 )
-@pytest.mark.parametrize("data_format", storage_registry.keys())
+@pytest.mark.parametrize("data_format", get_storage_keys())
 def test_update_dataset_from_collector_env(
     dataset_id, env_id, data_format, register_dummy_envs
 ):
@@ -109,11 +109,11 @@ def test_update_dataset_from_collector_env(
 
 
 @pytest.mark.parametrize("dataset_id,env_id", dummy_test_datasets)
-@pytest.mark.parametrize("data_format", storage_registry.keys())
+@pytest.mark.parametrize("data_format", get_storage_keys())
 def test_filter_episodes_and_subsequent_updates(
     dataset_id, env_id, data_format, register_dummy_envs
 ):
-    """Tests to make sure that episodes are filtered filtered correctly.
+    """Tests to make sure that episodes are filtered correctly.
 
     Additionally ensures indices are correctly updated when adding more episodes to a filtered dataset.
     """
@@ -266,7 +266,7 @@ def test_filter_episodes_and_subsequent_updates(
 @pytest.mark.parametrize(
     "dataset_id,env_id", cartpole_test_dataset + dummy_test_datasets
 )
-@pytest.mark.parametrize("data_format", storage_registry.keys())
+@pytest.mark.parametrize("data_format", get_storage_keys())
 def test_sample_episodes(dataset_id, env_id, data_format, register_dummy_envs):
     local_datasets = minari.list_local_datasets()
     if dataset_id in local_datasets:
@@ -302,7 +302,7 @@ def test_sample_episodes(dataset_id, env_id, data_format, register_dummy_envs):
 @pytest.mark.parametrize(
     "dataset_id,env_id", cartpole_test_dataset + dummy_test_datasets
 )
-@pytest.mark.parametrize("data_format", storage_registry.keys())
+@pytest.mark.parametrize("data_format", get_storage_keys())
 def test_iterate_episodes(dataset_id, env_id, data_format, register_dummy_envs):
     local_datasets = minari.list_local_datasets()
     if dataset_id in local_datasets:
@@ -343,7 +343,7 @@ def test_iterate_episodes(dataset_id, env_id, data_format, register_dummy_envs):
 @pytest.mark.parametrize(
     "dataset_id,env_id", cartpole_test_dataset + dummy_test_datasets
 )
-@pytest.mark.parametrize("data_format", storage_registry.keys())
+@pytest.mark.parametrize("data_format", get_storage_keys())
 def test_update_dataset_from_buffer(
     dataset_id, env_id, data_format, register_dummy_envs
 ):
@@ -403,7 +403,7 @@ def test_update_dataset_from_buffer(
     check_load_and_delete_dataset(dataset_id)
 
 
-@pytest.mark.parametrize("data_format", storage_registry.keys())
+@pytest.mark.parametrize("data_format", get_storage_keys())
 def test_missing_env_module(data_format):
     dataset_id = "dummy-test-v0"
 
