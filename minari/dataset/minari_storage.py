@@ -77,9 +77,9 @@ class MinariStorage(ABC):
             if action_space is None:
                 action_space = env.action_space
 
-        from minari.dataset._storages import registry  # avoid circular import
+        from minari.dataset._storages import get_minari_storage  # avoid circular import
 
-        return registry[metadata["data_format"]](
+        return get_minari_storage(metadata["data_format"])(
             data_path,
             observation_space,
             action_space,
@@ -114,11 +114,14 @@ class MinariStorage(ABC):
             raise ValueError(
                 "Since env_spec is not specified, you need to specify both action space and observation space"
             )
-        from minari.dataset._storages import registry  # avoid circular import
+        from minari.dataset._storages import (  # avoid circular import
+            get_minari_storage,
+            get_storage_keys,
+        )
 
-        if data_format not in registry.keys():
+        if data_format not in get_storage_keys():
             raise ValueError(
-                f"No storage implemented for {data_format}. Available formats: {registry.keys()}"
+                f"No storage implemented for {data_format}. Available formats: {get_storage_keys()}"
             )
 
         data_path = pathlib.Path(data_path)
@@ -154,7 +157,9 @@ class MinariStorage(ABC):
         with open(data_path.joinpath(METADATA_FILE_NAME), "w") as f:
             json.dump(metadata, f)
 
-        obj = registry[data_format]._create(data_path, observation_space, action_space)
+        obj = get_minari_storage(data_format)._create(
+            data_path, observation_space, action_space
+        )
         return obj
 
     @classmethod

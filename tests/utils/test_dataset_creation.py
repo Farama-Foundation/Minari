@@ -8,7 +8,7 @@ from gymnasium import spaces
 import minari
 from minari import DataCollector, MinariDataset, StepData
 from minari.data_collector import EpisodeBuffer
-from minari.dataset._storages import registry as storage_registry
+from minari.dataset._storages import get_storage_keys
 from tests.common import (
     cartpole_test_dataset,
     check_data_integrity,
@@ -147,7 +147,7 @@ def test_record_infos_collector_env(info_override, register_dummy_envs):
     check_load_and_delete_dataset(dataset_id)
 
 
-@pytest.mark.parametrize("data_format", storage_registry.keys())
+@pytest.mark.parametrize("data_format", get_storage_keys())
 @pytest.mark.parametrize(
     "dataset_id,env_id",
     cartpole_test_dataset
@@ -232,7 +232,7 @@ def test_generate_dataset_with_external_buffer(
 
 
 @pytest.mark.parametrize("is_env_needed", [True, False])
-@pytest.mark.parametrize("data_format", storage_registry.keys())
+@pytest.mark.parametrize("data_format", get_storage_keys())
 def test_generate_dataset_with_space_subset_external_buffer(
     is_env_needed, data_format, register_dummy_envs
 ):

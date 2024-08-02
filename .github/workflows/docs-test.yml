@@ -22,7 +22,7 @@ jobs:
         run: pip install -r docs/requirements.txt
 
       - name: Install Minari
-        run: pip install .[testing]
+        run: pip install .[all,testing]
 
       - name: Build
         run: sphinx-build -b dirhtml -v docs _build

@@ -6,12 +6,18 @@ from itertools import zip_longest
 from typing import Dict, Iterable, List, Optional, Tuple, Union
 
 import gymnasium as gym
-import h5py
 import numpy as np
 
 from minari.data_collector import EpisodeBuffer
 from minari.dataset.minari_storage import MinariStorage
 
+
+try:
+    import h5py
+except ImportError:
+    raise ImportError(
+        'h5py is not installed. Please install it using `pip install "minari[hdf5]"`'
+    )
 
 _MAIN_FILE_NAME = "main_data.hdf5"
 

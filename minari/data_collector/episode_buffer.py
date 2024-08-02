@@ -3,8 +3,6 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Optional, Union
 
-import jax.tree_util as jtu
-
 from minari.dataset.step_data import StepData
 
 
@@ -30,6 +28,12 @@ class EpisodeBuffer:
         Returns:
             EpisodeBuffer: episode buffer with appended data
         """
+        try:
+            import jax.tree_util as jtu
+        except ImportError:
+            raise ImportError(
+                'jax is not installed. Please install it using `pip install "minari[create]"`'
+            )
 
         def _append(data, buffer):
             if isinstance(buffer, list):

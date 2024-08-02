@@ -5,7 +5,7 @@ from gymnasium import spaces
 
 from minari import DataCollector, MinariDataset
 from minari.data_collector.callbacks import StepDataCallback
-from minari.dataset._storages import registry as storage_registry
+from minari.dataset._storages import get_storage_keys
 from tests.common import (
     check_data_integrity,
     check_env_recovery,
@@ -43,7 +43,7 @@ class CustomSubsetInfoPadStepDataCallback(StepDataCallback):
         return step_data
 
 
-@pytest.mark.parametrize("data_format", storage_registry.keys())
+@pytest.mark.parametrize("data_format", get_storage_keys())
 def test_data_collector_step_data_callback(data_format, register_dummy_envs):
     """Test DataCollector wrapper and Minari dataset creation."""
     dataset_id = "dummy-dict/test-v0"
@@ -110,7 +110,7 @@ def test_data_collector_step_data_callback(data_format, register_dummy_envs):
     check_load_and_delete_dataset(dataset_id)
 
 
-@pytest.mark.parametrize("data_format", storage_registry.keys())
+@pytest.mark.parametrize("data_format", get_storage_keys())
 def test_data_collector_step_data_callback_info_correction(
     data_format, register_dummy_envs
 ):
