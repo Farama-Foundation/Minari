@@ -15,12 +15,17 @@ To install the most recent version of the Minari library run this command:
 pip install minari
 ```
 
+This will install the minimum required dependencies. Additional dependencies will be prompted for installation based on your use case. To install all dependencies at once, use:
+```bash
+pip install "minari[all]"
+```
+
 If you'd like to start testing or contribute to Minari then please install this project from source with:
 
 ```
 git clone https://github.com/Farama-Foundation/Minari.git
 cd Minari
-pip install -e .
+pip install -e ".[all]"
 ```
 
 We support Python with minimum version 3.8 on Linux and macOS.

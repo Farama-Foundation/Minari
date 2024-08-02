@@ -5,7 +5,7 @@
     <img src="minari-text.png" width="500px"/>
 </p>
 
-Minari is a Python library for conducting research in offline reinforcement learning, akin to an offline version of Gymnasium or an offline RL version of HuggingFace's datasets library. This library is currently in beta.
+Minari is a Python library for conducting research in offline reinforcement learning, akin to an offline version of Gymnasium or an offline RL version of HuggingFace's datasets library.
 
 The documentation website is at [minari.farama.org](https://minari.farama.org/main/). We also have a public discord server (which we use for Q&A and to coordinate development work) that you can join here: https://discord.gg/bnJ6kubTg6.
 
@@ -16,12 +16,17 @@ To install Minari from [PyPI](https://pypi.org/project/minari/):
 pip install minari
 ```
 
-Note that currently Minari is under a beta release. If you'd like to start testing or contribute to Minari please install this project from source with:
+This will install the minimum required dependencies. Additional dependencies will be prompted for installation based on your use case. To install all dependencies at once, use:
+```bash
+pip install "minari[all]"
+```
+
+If you'd like to start testing or contribute to Minari please install this project from source with:
 
 ```
 git clone https://github.com/Farama-Foundation/Minari.git
 cd Minari
-pip install -e .
+pip install -e ".[all]"
 ```
 
 ## Command Line API
