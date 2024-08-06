@@ -2,6 +2,7 @@ import json
 import os
 import re
 from typing import Any
+import warnings
 
 import gymnasium as gym
 import numpy as np
@@ -488,5 +489,7 @@ def test_requirements():
     ):
         dataset.recover_environment()
 
-    dataset.storage.update_metadata({"requirements": [f"minari=={minari.__version__}"]})
-    dataset.recover_environment()
+    dataset.storage.update_metadata({"requirements": [f"minari>=0.0.1,<={minari.__version__}"]})
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        dataset.recover_environment()
