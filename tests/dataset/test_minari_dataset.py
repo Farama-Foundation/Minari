@@ -466,7 +466,7 @@ def test_parse_gen_dataset_id_inverse_backward(namespace, dataset_name, version)
     assert attrs == parse_dataset_id(gen_dataset_id(*attrs))
 
 
-def test_missing_requirements():
+def test_requirements():
     dataset_id = "dummy-test-v0"
     env = DataCollector(gym.make("CartPole-v1"))
     dataset = create_dummy_dataset_with_collecter_env_helper(
