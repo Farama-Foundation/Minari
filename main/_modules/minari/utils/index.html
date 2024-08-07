@@ -599,6 +599,7 @@
     <span class="n">expert_policy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">ObsType</span><span class="p">],</span> <span class="n">ActType</span><span class="p">]],</span>
     <span class="n">num_episodes_average_score</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
     <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">requirements</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the metadata dictionary of the dataset.&quot;&quot;&quot;</span>
     <span class="n">dataset_metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
@@ -698,6 +699,8 @@
         <span class="n">dataset_metadata</span><span class="p">[</span><span class="s2">&quot;ref_min_score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ref_min_score</span>
         <span class="n">dataset_metadata</span><span class="p">[</span><span class="s2">&quot;num_episodes_average_score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">num_episodes_average_score</span>
 
+    <span class="k">if</span> <span class="n">requirements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dataset_metadata</span><span class="p">[</span><span class="s2">&quot;requirements&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">requirements</span>
     <span class="k">return</span> <span class="n">dataset_metadata</span>
 
 
@@ -720,6 +723,7 @@
     <span class="n">num_episodes_average_score</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
     <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">data_format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">requirements</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create Minari dataset from a list of episode dictionary buffers.</span>
 
@@ -748,6 +752,7 @@
 <span class="sd">        observation_space (gym.spaces.Space, optional): observation space of the environment. If None (default) use the environment observation space.</span>
 <span class="sd">        description (str, optional): description of the dataset being created. Defaults to None.</span>
 <span class="sd">        data_format (str, optional): Data format to store the data in the Minari dataset. If None (defaults), it will use the default format of MinariStorage.</span>
+<span class="sd">        requirements (list of str, optional): list of requirements in pip-style to load the environment and reproduce the dataset. For example, `mujoco&gt;=3.1.0,&lt;3.2.0`, which indicate the supported version range for mujoco package. Defaults to None.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        MinariDataset</span>
@@ -791,6 +796,7 @@
         <span class="n">expert_policy</span><span class="p">,</span>
         <span class="n">num_episodes_average_score</span><span class="p">,</span>
         <span class="n">description</span><span class="p">,</span>
+        <span class="n">requirements</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">data_format_kwarg</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;data_format&quot;</span><span class="p">:</span> <span class="n">data_format</span><span class="p">}</span> <span class="k">if</span> <span class="n">data_format</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{}</span>

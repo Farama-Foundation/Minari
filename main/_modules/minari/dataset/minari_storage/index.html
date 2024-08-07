@@ -448,9 +448,9 @@
             <span class="k">if</span> <span class="n">action_space</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">action_space</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span>
 
-        <span class="kn">from</span> <span class="nn">minari.dataset._storages</span> <span class="kn">import</span> <span class="n">registry</span>  <span class="c1"># avoid circular import</span>
+        <span class="kn">from</span> <span class="nn">minari.dataset._storages</span> <span class="kn">import</span> <span class="n">get_minari_storage</span>  <span class="c1"># avoid circular import</span>
 
-        <span class="k">return</span> <span class="n">registry</span><span class="p">[</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;data_format&quot;</span><span class="p">]](</span>
+        <span class="k">return</span> <span class="n">get_minari_storage</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;data_format&quot;</span><span class="p">])(</span>
             <span class="n">data_path</span><span class="p">,</span>
             <span class="n">observation_space</span><span class="p">,</span>
             <span class="n">action_space</span><span class="p">,</span>
@@ -485,11 +485,14 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;Since env_spec is not specified, you need to specify both action space and observation space&quot;</span>
             <span class="p">)</span>
-        <span class="kn">from</span> <span class="nn">minari.dataset._storages</span> <span class="kn">import</span> <span class="n">registry</span>  <span class="c1"># avoid circular import</span>
+        <span class="kn">from</span> <span class="nn">minari.dataset._storages</span> <span class="kn">import</span> <span class="p">(</span>  <span class="c1"># avoid circular import</span>
+            <span class="n">get_minari_storage</span><span class="p">,</span>
+            <span class="n">get_storage_keys</span><span class="p">,</span>
+        <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">data_format</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">registry</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">data_format</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">get_storage_keys</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;No storage implemented for </span><span class="si">{</span><span class="n">data_format</span><span class="si">}</span><span class="s2">. Available formats: </span><span class="si">{</span><span class="n">registry</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;No storage implemented for </span><span class="si">{</span><span class="n">data_format</span><span class="si">}</span><span class="s2">. Available formats: </span><span class="si">{</span><span class="n">get_storage_keys</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
 
         <span class="n">data_path</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span>
@@ -525,7 +528,9 @@
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">data_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">METADATA_FILE_NAME</span><span class="p">),</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
 
-        <span class="n">obj</span> <span class="o">=</span> <span class="n">registry</span><span class="p">[</span><span class="n">data_format</span><span class="p">]</span><span class="o">.</span><span class="n">_create</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="n">observation_space</span><span class="p">,</span> <span class="n">action_space</span><span class="p">)</span>
+        <span class="n">obj</span> <span class="o">=</span> <span class="n">get_minari_storage</span><span class="p">(</span><span class="n">data_format</span><span class="p">)</span><span class="o">.</span><span class="n">_create</span><span class="p">(</span>
+            <span class="n">data_path</span><span class="p">,</span> <span class="n">observation_space</span><span class="p">,</span> <span class="n">action_space</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">obj</span>
 
     <span class="nd">@classmethod</span>
