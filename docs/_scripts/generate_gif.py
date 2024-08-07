@@ -36,7 +36,7 @@ def generate_gif(dataset_id, num_frames=256, fps=16):
             act = _space_at(episode.actions, step_id)
             env.step(act)
             images.append(env.render())
-        
+
         episode_id += 1
 
     env.close()
