@@ -31,20 +31,26 @@ jobs:
         with:
             python-version: '3.9'
 
+      - run: sudo apt-get install xvfb
+
+      - name: Install legacy mujoco bindings
+        run: |
+            sudo mkdir /root/.mujoco
+            wget https://mujoco.org/download/mujoco210-linux-x86_64.tar.gz -O mujoco.tar.gz
+            sudo tar -xf mujoco.tar.gz -C /root/.mujoco
+            export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/root/.mujoco/mujoco210/bin"
+
       - name: Install dependencies
         run: pip install -r docs/requirements.txt
 
       - name: Install Minari
-        run: pip install .
+        run: pip install .[all]
+
+      - name: Build Datasets Docs
+        run: xvfb-run --auto-servernum python docs/_scripts/gen_dataset_md.py
 
       - name: Build
         run: sphinx-build -b dirhtml -v docs _build
-
-      - name: Move 404
-        run: mv _build/404/index.html _build/404.html
-
-      - name: Update 404 links
-        run: python docs/_scripts/move_404.py _build/404.html
 
       - name: Remove .doctrees
         run: rm -r _build/.doctrees

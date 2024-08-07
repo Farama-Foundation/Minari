@@ -22,9 +22,9 @@ jobs:
 
       - name: Install legacy mujoco bindings
         run: |
-            sudo mkdir /root/.mujoco 
+            sudo mkdir /root/.mujoco
             wget https://mujoco.org/download/mujoco210-linux-x86_64.tar.gz -O mujoco.tar.gz
-            sudo tar -xf mujoco.tar.gz -C /root/.mujoco 
+            sudo tar -xf mujoco.tar.gz -C /root/.mujoco
             export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/root/.mujoco/mujoco210/bin"
 
       - name: Install dependencies
