@@ -20,7 +20,7 @@ def generate_gif(dataset_id, path, num_frames=256, fps=16):
     dataset = minari.load_dataset(dataset_id)
     requirements = dataset.storage.metadata.get("requirements", [])
     for req in requirements:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", f'"{req}"'])
+        subprocess.check_call([sys.executable, "-m", "pip", "install", req])
 
     env = dataset.recover_environment(render_mode="rgb_array")
     images = []
