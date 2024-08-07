@@ -224,6 +224,7 @@ def _generate_dataset_metadata(
     expert_policy: Optional[Callable[[ObsType], ActType]],
     num_episodes_average_score: int,
     description: Optional[str],
+    requirements: Optional[list],
 ) -> Dict[str, Any]:
     """Return the metadata dictionary of the dataset."""
     dataset_metadata: Dict[str, Any] = {
@@ -323,6 +324,8 @@ def _generate_dataset_metadata(
         dataset_metadata["ref_min_score"] = ref_min_score
         dataset_metadata["num_episodes_average_score"] = num_episodes_average_score
 
+    if requirements is not None:
+        dataset_metadata["requirements"] = requirements
     return dataset_metadata
 
 
@@ -343,6 +346,7 @@ def create_dataset_from_buffers(
     num_episodes_average_score: int = 100,
     description: Optional[str] = None,
     data_format: Optional[str] = None,
+    requirements: Optional[list] = None,
 ):
     """Create Minari dataset from a list of episode dictionary buffers.
 
@@ -371,6 +375,7 @@ def create_dataset_from_buffers(
         observation_space (gym.spaces.Space, optional): observation space of the environment. If None (default) use the environment observation space.
         description (str, optional): description of the dataset being created. Defaults to None.
         data_format (str, optional): Data format to store the data in the Minari dataset. If None (defaults), it will use the default format of MinariStorage.
+        requirements (list of str, optional): list of requirements in pip-style to load the environment and reproduce the dataset. For example, `mujoco>=3.1.0,<3.2.0`, which indicate the supported version range for mujoco package. Defaults to None.
 
     Returns:
         MinariDataset
@@ -414,6 +419,7 @@ def create_dataset_from_buffers(
         expert_policy,
         num_episodes_average_score,
         description,
+        requirements,
     )
 
     data_format_kwarg = {"data_format": data_format} if data_format is not None else {}

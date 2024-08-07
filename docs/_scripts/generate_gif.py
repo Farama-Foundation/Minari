@@ -1,4 +1,6 @@
 import os
+import subprocess
+import sys
 
 import imageio
 
@@ -14,17 +16,20 @@ def _space_at(values, index):
         return values[index]
 
 
-def generate_gif(dataset_id, num_frames=256, fps=16):
-    dataset = minari.load_dataset(dataset_id, download=True)
+def generate_gif(dataset_id, path, num_frames=256, fps=16):
+    dataset = minari.load_dataset(dataset_id)
+    requirements = dataset.storage.metadata.get("requirements", [])
+    for req in requirements:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", f'"{req}"'])
+
     env = dataset.recover_environment(render_mode="rgb_array")
     images = []
-    ep_id = 0
+    if dataset[0].seed is None:
+        raise ValueError("Cannot reproduce episodes with unknown seed.")
 
+    episode_id = 0
     while len(images) < num_frames:
-        episode = dataset[ep_id]
-        if episode.seed is None:
-            raise ValueError("Cannot reproduce episodes with unknown seed.")
-
+        episode = dataset[episode_id]
         env.reset(seed=episode.seed)
         images.append(env.render())
         for step_id in range(episode.total_steps):
@@ -32,9 +37,10 @@ def generate_gif(dataset_id, num_frames=256, fps=16):
             env.step(act)
             images.append(env.render())
 
-        ep_id += 1
+        episode_id += 1
 
-    dataset_path = os.path.join(os.path.dirname(__file__), "..", "datasets")
-    gif_path = os.path.join(dataset_path, f"{dataset_id}.gif")
-    imageio.mimsave(gif_path, images, fps=fps)
-    return gif_path
+    env.close()
+
+    gif_file = os.path.join(path, f"{dataset_id}.gif")
+    imageio.mimsave(gif_file, images, fps=fps)
+    return gif_file

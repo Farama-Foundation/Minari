@@ -238,6 +238,7 @@ class DataCollector(gym.Wrapper):
         expert_policy: Optional[Callable[[ObsType], ActType]] = None,
         num_episodes_average_score: int = 100,
         description: Optional[str] = None,
+        requirements: Optional[list] = None,
     ):
         """Create a Minari dataset using the data collected from stepping with a Gymnasium environment wrapped with a `DataCollector` Minari wrapper.
 
@@ -259,6 +260,7 @@ class DataCollector(gym.Wrapper):
                                                                             `ref_max_score` and `expert_policy` can't be passed at the same time. Default to None
             num_episodes_average_score (int): number of episodes to average over the returns to compute `ref_min_score` and `ref_max_score`. Default to 100.
             description (str, optional): description of the dataset being created. Defaults to None.
+            requirements (list of str, optional): list of requirements in pip-style to load the environment and reproduce the dataset. For example, `mujoco>=3.1.0,<3.2.0`, which indicate the supported version range for mujoco package. Defaults to None.
 
         Returns:
             MinariDataset
@@ -282,6 +284,7 @@ class DataCollector(gym.Wrapper):
             expert_policy,
             num_episodes_average_score,
             description,
+            requirements,
         )
 
         self._save_to_disk(dataset_path, metadata)

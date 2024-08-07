@@ -1,6 +1,7 @@
 import json
 import os
 import re
+import warnings
 from typing import Any
 
 import gymnasium as gym
@@ -464,3 +465,33 @@ def test_parse_gen_dataset_id_inverse_backward(namespace, dataset_name, version)
     """Check parse_dataset_id() and gen_dataset_id() are inverses. Backward direction."""
     attrs = (namespace, dataset_name, version)
     assert attrs == parse_dataset_id(gen_dataset_id(*attrs))
+
+
+def test_requirements():
+    dataset_id = "dummy-test-v0"
+    env = DataCollector(gym.make("CartPole-v1"))
+    dataset = create_dummy_dataset_with_collecter_env_helper(
+        dataset_id, env, requirements=["mal<formed@@3.2"]
+    )
+
+    with pytest.warns(UserWarning, match="Ignoring malformed requirement"):
+        dataset.recover_environment()
+
+    dataset.storage.update_metadata({"requirements": ["non-existent-package"]})
+    with pytest.warns(
+        UserWarning, match="is not installed. Install it with `pip install"
+    ):
+        dataset.recover_environment()
+
+    dataset.storage.update_metadata({"requirements": [f"minari<{minari.__version__}"]})
+    with pytest.warns(
+        UserWarning, match="We recommend to install the required version"
+    ):
+        dataset.recover_environment()
+
+    dataset.storage.update_metadata(
+        {"requirements": [f"minari>=0.0.1,<={minari.__version__}"]}
+    )
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        dataset.recover_environment()

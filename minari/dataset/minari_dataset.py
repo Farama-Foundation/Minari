@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib.metadata
 import os
 import re
 from dataclasses import dataclass, field
@@ -9,6 +10,8 @@ import gymnasium as gym
 import numpy as np
 from gymnasium import error, logger
 from gymnasium.envs.registration import EnvSpec
+from packaging.requirements import InvalidRequirement, Requirement
+from packaging.version import Version
 
 from minari.data_collector.episode_buffer import EpisodeBuffer
 from minari.dataset.episode_data import EpisodeData
@@ -162,12 +165,33 @@ class MinariDataset:
         """Recover the Gymnasium environment used to create the dataset.
 
         Args:
-            eval_env (bool): if True the returned Gymnasium environment will be that intended to be used for evaluation. If no eval_env was specified when creating the dataset, the returned environment will be the same as the one used for creating the dataset. Default False.
+            eval_env (bool): if True, the returned Gymnasium environment will be that intended to be used for evaluation. If no eval_env was specified when creating the dataset, the returned environment will be the same as the one used for creating the dataset. Default False.
             **kwargs: any other parameter that you want to pass to the `gym.make` function.
 
         Returns:
             environment: Gymnasium environment
         """
+        requirements = self._data.metadata.get("requirements", [])
+        for req_str in requirements:
+            try:
+                req = Requirement(req_str)
+            except InvalidRequirement:
+                logger.warn(f"Ignoring malformed requirement `{req_str}`")
+                continue
+
+            try:
+                installed_version = Version(importlib.metadata.version(req.name))
+            except importlib.metadata.PackageNotFoundError:
+                logger.warn(
+                    f'Package {req.name} is not installed. Install it with `pip install "{req_str}"`'
+                )
+            else:
+                if not req.specifier.contains(installed_version):
+                    logger.warn(
+                        f"Installed {req.name} version {installed_version} does not meet the requirement {req.specifier}.\n"
+                        f'We recommend to install the required version with `pip install "{req_str}"`'
+                    )
+
         if eval_env:
             if self._eval_env_spec is not None:
                 return gym.make(self._eval_env_spec, **kwargs)
