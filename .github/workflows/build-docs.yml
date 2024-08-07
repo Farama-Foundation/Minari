@@ -1,5 +1,6 @@
 name: Build Documentation website
 on:
+  pull_request:
   push:
     branches: [main]
 permissions:
@@ -18,6 +19,13 @@ jobs:
             python-version: '3.9'
 
       - run: sudo apt-get install xvfb
+
+      - name: Install legacy mujoco bindings
+        run: |
+            mkdir /root/.mujoco 
+            cd /root/.mujoco
+            wget -qO- 'https://github.com/deepmind/mujoco/releases/download/2.1.0/mujoco210-linux-x86_64.tar.gz' | tar -xzvf -
+            export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/root/.mujoco/mujoco210/bin"
 
       - name: Install dependencies
         run: pip install -r docs/requirements.txt
