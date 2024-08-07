@@ -375,7 +375,7 @@ def create_dataset_from_buffers(
         observation_space (gym.spaces.Space, optional): observation space of the environment. If None (default) use the environment observation space.
         description (str, optional): description of the dataset being created. Defaults to None.
         data_format (str, optional): Data format to store the data in the Minari dataset. If None (defaults), it will use the default format of MinariStorage.
-        requirements (list of str, optional): list of requirements to load the environment and reproduce the dataset. Defaults to None.
+        requirements (list of str, optional): list of requirements in pip-style to load the environment and reproduce the dataset. For example, `mujoco>=3.1.0,<3.2.0`, which indicate the supported version range for mujoco package. Defaults to None.
 
     Returns:
         MinariDataset

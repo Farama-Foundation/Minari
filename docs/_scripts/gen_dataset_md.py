@@ -8,7 +8,7 @@ from typing import Dict, OrderedDict
 from generate_gif import generate_gif
 from gymnasium.envs.registration import EnvSpec
 
-from minari import list_remote_datasets
+import minari
 from minari.dataset.minari_dataset import gen_dataset_id, parse_dataset_id
 from minari.namespace import download_namespace_metadata, get_namespace_metadata
 from minari.utils import get_dataset_spec_dict, get_env_spec_dict
@@ -26,7 +26,7 @@ def _md_table(table_dict: Dict[str, str]) -> str:
 
 
 def main():
-    remote_datasets = list_remote_datasets(latest_version=True)
+    remote_datasets = minari.list_remote_datasets(latest_version=True)
     for i, (dataset_id, metadata) in enumerate(remote_datasets.items()):
         namespace, dataset_name, version = parse_dataset_id(dataset_id)
         if namespace is not None:
@@ -68,7 +68,9 @@ def _generate_dataset_page(dataset_id, metadata):
 
     description = metadata.get("description")
     try:
-        generate_gif(dataset_id)
+        minari.download_dataset(dataset_id)
+        generate_gif(dataset_id, path=DATASET_FOLDER)
+        minari.delete_dataset(dataset_id)
         img_link_str = f'<img src="../{versioned_name}.gif" width="200" style="display: block; margin:0 auto"/>'
     except Exception as e:
         logging.warning(f"Failed to generate gif for {dataset_id}: {e}")

@@ -16,8 +16,8 @@ def _space_at(values, index):
         return values[index]
 
 
-def generate_gif(dataset_id, num_frames=256, fps=16):
-    dataset = minari.load_dataset(dataset_id, download=True)
+def generate_gif(dataset_id, path, num_frames=256, fps=16):
+    dataset = minari.load_dataset(dataset_id)
     requirements = dataset.storage.metadata.get("requirements", [])
     for req in requirements:
         subprocess.check_call([sys.executable, "-m", "pip", "install", f'"{req}"'])
@@ -40,9 +40,7 @@ def generate_gif(dataset_id, num_frames=256, fps=16):
         episode_id += 1
 
     env.close()
-    minari.delete_dataset(dataset_id)
 
-    dataset_path = os.path.join(os.path.dirname(__file__), "..", "datasets")
-    gif_path = os.path.join(dataset_path, f"{dataset_id}.gif")
-    imageio.mimsave(gif_path, images, fps=fps)
-    return gif_path
+    gif_file = os.path.join(path, f"{dataset_id}.gif")
+    imageio.mimsave(gif_file, images, fps=fps)
+    return gif_file
