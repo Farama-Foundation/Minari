@@ -20,6 +20,7 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     'Intended Audience :: Science/Research',
     'Topic :: Scientific/Engineering :: Artificial Intelligence',
 ]
@@ -46,7 +47,7 @@ testing = [
     "gymnasium-robotics>=1.2.3",
     "mktestdocs",
     "torchrl",
-    "agilerl"
+    "agilerl>=0.1.8"
 ]
 
 [project.urls]
