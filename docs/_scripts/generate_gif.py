@@ -1,10 +1,16 @@
 import os
-import subprocess
-import sys
 
 import imageio
+from absl import app, flags
 
 import minari
+
+
+FLAGS = flags.FLAGS
+flags.DEFINE_string("dataset_id", None, "Dataset ID")
+flags.DEFINE_string("path", None, "Path to save the gif")
+flags.DEFINE_integer("num_frames", 256, "Number of frames in the gif")
+flags.DEFINE_integer("fps", 16, "Frames per second in the gif")
 
 
 def _space_at(values, index):
@@ -18,10 +24,6 @@ def _space_at(values, index):
 
 def generate_gif(dataset_id, path, num_frames=256, fps=16):
     dataset = minari.load_dataset(dataset_id)
-    requirements = dataset.storage.metadata.get("requirements", [])
-    for req in requirements:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", req])
-
     env = dataset.recover_environment(render_mode="rgb_array")
     images = []
     if dataset[0].seed is None:
@@ -44,3 +46,12 @@ def generate_gif(dataset_id, path, num_frames=256, fps=16):
     gif_file = os.path.join(path, f"{dataset_id}.gif")
     imageio.mimsave(gif_file, images, fps=fps)
     return gif_file
+
+
+def main(argv):
+    del argv
+    generate_gif(FLAGS.dataset_id, FLAGS.path, FLAGS.num_frames, FLAGS.fps)
+
+
+if __name__ == "__main__":
+    app.run(main)

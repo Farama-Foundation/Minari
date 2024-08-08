@@ -2,10 +2,12 @@ from __future__ import annotations
 
 import logging
 import pathlib
+import subprocess
+import sys
 from collections import defaultdict
 from typing import Dict, OrderedDict
 
-from generate_gif import generate_gif
+import generate_gif
 from gymnasium.envs.registration import EnvSpec
 
 import minari
@@ -68,8 +70,18 @@ def _generate_dataset_page(dataset_id, metadata):
 
     description = metadata.get("description")
     try:
+        requirements = metadata.get("requirements", [])
+        for req in requirements:
+            subprocess.check_call([sys.executable, "-m", "pip", "install", req])
         minari.download_dataset(dataset_id)
-        generate_gif(dataset_id, path=DATASET_FOLDER)
+        subprocess.check_call(
+            [
+                sys.executable,
+                generate_gif.__file__,
+                f"--dataset_id={dataset_id}",
+                f"--path={DATASET_FOLDER}",
+            ]
+        )
         minari.delete_dataset(dataset_id)
         img_link_str = f'<img src="../{versioned_name}.gif" width="200" style="display: block; margin:0 auto"/>'
     except Exception as e:
