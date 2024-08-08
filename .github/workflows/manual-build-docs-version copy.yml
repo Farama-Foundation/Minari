@@ -31,20 +31,19 @@ jobs:
         with:
             python-version: '3.9'
 
+      - run: sudo apt-get install xvfb
+
       - name: Install dependencies
         run: pip install -r docs/requirements.txt
 
       - name: Install Minari
-        run: pip install .
+        run: pip install .[all]
+
+      - name: Build Datasets Docs
+        run: xvfb-run --auto-servernum python docs/_scripts/gen_dataset_md.py
 
       - name: Build
         run: sphinx-build -b dirhtml -v docs _build
-
-      - name: Move 404
-        run: mv _build/404/index.html _build/404.html
-
-      - name: Update 404 links
-        run: python docs/_scripts/move_404.py _build/404.html
 
       - name: Remove .doctrees
         run: rm -r _build/.doctrees
