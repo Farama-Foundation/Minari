@@ -135,7 +135,7 @@ def test_download_namespace_dataset():
     dataset = minari.load_dataset(kitchen_complete)
     assert isinstance(dataset, MinariDataset)
 
-    check_data_integrity(dataset.storage, dataset.episode_indices)
+    check_data_integrity(dataset, list(dataset.episode_indices))
 
     minari.delete_dataset(kitchen_complete)
     assert set(minari.list_local_datasets().keys()) == {kitchen_mix}

@@ -74,7 +74,7 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id, register_dummy_
     assert dataset.spec.total_episodes == num_episodes
     assert len(dataset.episode_indices) == num_episodes
 
-    check_data_integrity(dataset.storage, dataset.episode_indices)
+    check_data_integrity(dataset, list(dataset.episode_indices))
     check_episode_data_integrity(
         dataset, dataset.spec.observation_space, dataset.spec.action_space
     )
@@ -134,7 +134,7 @@ def test_record_infos_collector_env(info_override, register_dummy_envs):
     assert dataset.spec.total_episodes == num_episodes
     assert len(dataset.episode_indices) == num_episodes
 
-    check_data_integrity(dataset.storage, dataset.episode_indices)
+    check_data_integrity(dataset, list(dataset.episode_indices))
     check_episode_data_integrity(
         dataset,
         dataset.spec.observation_space,
@@ -219,7 +219,7 @@ def test_generate_dataset_with_external_buffer(
         assert dataset.spec.total_episodes == num_episodes
         assert len(dataset.episode_indices) == num_episodes
 
-        check_data_integrity(dataset.storage, dataset.episode_indices)
+        check_data_integrity(dataset, list(dataset.episode_indices))
         check_episode_data_integrity(
             dataset, dataset.spec.observation_space, dataset.spec.action_space
         )
@@ -321,7 +321,7 @@ def test_generate_dataset_with_space_subset_external_buffer(
     assert dataset.spec.total_episodes == num_episodes
     assert len(dataset.episode_indices) == num_episodes
 
-    check_data_integrity(dataset.storage, dataset.episode_indices)
+    check_data_integrity(dataset, list(dataset.episode_indices))
     check_episode_data_integrity(
         dataset, dataset.spec.observation_space, dataset.spec.action_space
     )

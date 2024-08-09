@@ -65,6 +65,15 @@ class ArrowStorage(MinariStorage):
             with open(metadata_path, "w") as file:
                 json.dump(metadata, file)
 
+    def get_episode_metadata(self, episode_indices: Iterable[int]) -> List[Dict]:
+        ep_metadata = []
+        for episode_id in episode_indices:
+            metadata_path = self.data_path.joinpath(str(episode_id), "metadata.json")
+            with open(metadata_path) as file:
+                ep_metadata.append(json.load(file))
+
+        return ep_metadata
+
     def get_episodes(self, episode_indices: Iterable[int]) -> List[dict]:
         dataset = pa.dataset.dataset(
             [
@@ -80,10 +89,6 @@ class ArrowStorage(MinariStorage):
         def _to_dict(id, episode):
             return {
                 "id": id,
-                "seed": episode["seed"][0].as_py()
-                if "seed" in episode.column_names
-                else None,
-                "total_steps": len(episode) - 1,
                 "observations": _decode_space(
                     self.observation_space, episode["observations"]
                 ),
@@ -118,7 +123,6 @@ class ArrowStorage(MinariStorage):
 
             episode_batch = {
                 "episode_id": np.full(len(observations), episode_id, dtype=np.int32),
-                "seed": pa.array([episode_data.seed] * len(observations), pa.uint64()),
                 "observations": observations,
                 "actions": actions,
                 "rewards": np.pad(rewards, ((0, pad))),
@@ -137,6 +141,13 @@ class ArrowStorage(MinariStorage):
                 partitioning=["episode_id"],
                 existing_data_behavior="overwrite_or_ignore",
             )
+
+            episode_metadata: dict = {"id": episode_id, "total_steps": len(rewards)}
+            if episode_data.seed is not None:
+                episode_metadata["seed"] = episode_data.seed
+            if episode_data.options is not None:
+                episode_metadata["options"] = episode_data.options
+            self.update_episode_metadata([episode_metadata], [episode_id])
 
         self.update_metadata(
             {"total_steps": total_steps, "total_episodes": total_episodes}

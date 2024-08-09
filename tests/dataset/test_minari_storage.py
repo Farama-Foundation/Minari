@@ -225,7 +225,7 @@ def test_minari_get_dataset_size_from_collector_env(
 
     assert dataset.storage.metadata["dataset_size"] == dataset.storage.get_size()
 
-    check_data_integrity(dataset.storage, dataset.episode_indices)
+    check_data_integrity(dataset, list(dataset.episode_indices))
 
     env.close()
 
@@ -292,7 +292,7 @@ def test_minari_get_dataset_size_from_buffer(
 
     assert dataset.storage.metadata["dataset_size"] == dataset.storage.get_size()
 
-    check_data_integrity(dataset.storage, dataset.episode_indices)
+    check_data_integrity(dataset, list(dataset.episode_indices))
 
     env.close()
 
@@ -318,7 +318,7 @@ def test_seed_change(tmp_dataset_dir, data_format):
     storage.update_episodes(episodes)
 
     assert storage.total_episodes == len(seeds)
-    episodes = storage.get_episodes(range(len(episodes)))
-    assert len(episodes) == len(seeds)
-    for seed, ep in zip(seeds, episodes):
-        assert ep["seed"] == seed
+    episodes_metadata = storage.get_episode_metadata(range(len(episodes)))
+    assert len(episodes_metadata) == len(seeds)
+    for seed, ep_metadata in zip(seeds, episodes_metadata):
+        assert ep_metadata.get("seed") == seed

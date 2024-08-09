@@ -15,6 +15,7 @@
 .. autofunction:: minari.dataset.minari_storage.MinariStorage.update_episodes
 .. autofunction:: minari.dataset.minari_storage.MinariStorage.update_metadata
 .. autofunction:: minari.dataset.minari_storage.MinariStorage.update_episode_metadata
+.. autofunction:: minari.dataset.minari_storage.MinariStorage.get_episode_metadata
 .. autofunction:: minari.dataset.minari_storage.MinariStorage.apply
 .. autofunction:: minari.dataset.minari_storage.MinariStorage.update_from_storage
 .. autofunction:: minari.dataset.minari_storage.MinariStorage.get_size

@@ -238,6 +238,18 @@ class MinariStorage(ABC):
         """
         ...
 
+    @abstractmethod
+    def get_episode_metadata(self, episode_indices: Iterable[int]) -> List[Dict]:
+        """Get the metadata of episodes.
+
+        Args:
+            episode_indices (Iterable[int]): episodes id to return
+
+        Returns:
+            metadatas (List[Dict]): list of episodes metadata
+        """
+        ...
+
     def apply(
         self,
         function: Callable[[dict], Any],

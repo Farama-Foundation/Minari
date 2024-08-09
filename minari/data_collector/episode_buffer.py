@@ -12,6 +12,7 @@ class EpisodeBuffer:
 
     id: Optional[int] = None
     seed: Optional[int] = None
+    options: Optional[dict] = None
     observations: Union[None, list, dict, tuple] = None
     actions: Union[None, list, dict, tuple] = None
     rewards: list = field(default_factory=list)
@@ -60,6 +61,7 @@ class EpisodeBuffer:
         return EpisodeBuffer(
             id=self.id,
             seed=self.seed,
+            options=self.options,
             observations=observations,
             actions=actions,
             rewards=self.rewards,
