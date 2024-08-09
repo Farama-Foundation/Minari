@@ -29,7 +29,6 @@ from tests.common import (
 @pytest.mark.parametrize("space", test_spaces)
 def test_episode_data(space: gym.Space):
     id = np.random.randint(1024)
-    seed = np.random.randint(1024)
     total_step = 100
     rewards = np.random.randn(total_step)
     choices = np.array([True, False])
@@ -37,8 +36,6 @@ def test_episode_data(space: gym.Space):
     truncations = np.random.choice(choices, size=(total_step,))
     episode_data = EpisodeData(
         id=id,
-        seed=seed,
-        total_steps=total_step,
         observations=space.sample(),
         actions=space.sample(),
         rewards=rewards,
@@ -49,7 +46,6 @@ def test_episode_data(space: gym.Space):
 
     pattern = r"EpisodeData\("
     pattern += r"id=\d+, "
-    pattern += r"seed=\d+, "
     pattern += r"total_steps=100, "
     pattern += r"observations=.+, "
     pattern += r"actions=.+, "
@@ -101,7 +97,7 @@ def test_update_dataset_from_collector_env(
     assert dataset.spec.total_episodes == num_episodes * 2
     assert len(dataset.episode_indices) == num_episodes * 2
 
-    check_data_integrity(dataset.storage, dataset.episode_indices)
+    check_data_integrity(dataset, list(dataset.episode_indices))
     check_env_recovery(env.env, dataset)
 
     env.close()
@@ -141,19 +137,15 @@ def test_filter_episodes_and_subsequent_updates(
     assert filtered_dataset.spec.total_episodes == 7
     assert len(filtered_dataset.episode_indices) == 7
 
-    check_data_integrity(
-        filtered_dataset.storage, dataset.episode_indices
-    )  # checks that the underlying episodes are still present in the `MinariStorage` object
+    check_data_integrity(filtered_dataset, list(filtered_dataset.episode_indices))
     check_env_recovery(env.env, filtered_dataset)
 
-    # Step the environment, DataCollector wrapper will do the data collection job
     env.reset(seed=42)
-
     for episode in range(num_episodes):
         terminated = False
         truncated = False
         while not terminated and not truncated:
-            action = env.action_space.sample()  # User-defined policy function
+            action = env.action_space.sample()
             _, _, terminated, truncated, _ = env.step(action)
 
         env.reset()
@@ -397,7 +389,7 @@ def test_update_dataset_from_buffer(
     assert dataset.spec.total_episodes == num_episodes * 2
     assert len(dataset.episode_indices) == num_episodes * 2
 
-    check_data_integrity(dataset.storage, dataset.episode_indices)
+    check_data_integrity(dataset, list(dataset.episode_indices))
     check_env_recovery(env, dataset)
 
     collector_env.close()

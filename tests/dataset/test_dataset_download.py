@@ -46,7 +46,7 @@ def test_download_dataset_from_farama_server(dataset_id: str):
     dataset = minari.load_dataset(dataset_id)
     assert isinstance(dataset, MinariDataset)
 
-    check_data_integrity(dataset.storage, dataset.episode_indices)
+    check_data_integrity(dataset, list(dataset.episode_indices))
 
     minari.delete_dataset(dataset_id)
     local_datasets = minari.list_local_datasets()

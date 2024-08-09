@@ -204,6 +204,7 @@ class DataCollector(gym.Wrapper):
         self._buffer = EpisodeBuffer(
             id=self._episode_id,
             seed=seed,
+            options=options,
             observations=step_data["observation"],
             infos=step_data["info"] if self._record_infos else None,
         )

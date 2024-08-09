@@ -100,7 +100,7 @@ def test_data_collector_step_data_callback(data_format, register_dummy_envs):
     assert dataset.spec.total_episodes == num_episodes
     assert len(dataset.episode_indices) == num_episodes
 
-    check_data_integrity(dataset.storage, dataset.episode_indices)
+    check_data_integrity(dataset, list(dataset.episode_indices))
 
     check_env_recovery_with_subset_spaces(
         env.env, dataset, action_space_subset, observation_space_subset
@@ -150,7 +150,7 @@ def test_data_collector_step_data_callback_info_correction(
     assert dataset.spec.total_episodes == num_episodes
     assert len(dataset.episode_indices) == num_episodes
 
-    check_data_integrity(dataset.storage, dataset.episode_indices)
+    check_data_integrity(dataset, list(dataset.episode_indices))
 
     check_env_recovery(env.env, dataset)
 

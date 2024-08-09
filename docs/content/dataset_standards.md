@@ -95,8 +95,6 @@ The `sampled_episodes` variable will be a list of 10 `EpisodeData` elements, eac
 | Field             | Type                                 | Description                                                   |
 | ----------------- | ------------------------------------ | ------------------------------------------------------------- |
 | `id`              | `int`                           | ID of the episode.                                            |
-| `seed`            | `int`                           | Seed used to reset the episode.                               |
-| `total_steps`     | `int`                           | Number of steps in the episode.                               |
 | `observations`    | `np.ndarray`, `list`, `tuple`, `dict` | Stacked observations for each step including initial observation.    |
 | `actions`         | `np.ndarray`, `list`, `tuple`, `dict` | Stacked actions for each step.                                       |
 | `rewards`         | `np.ndarray`                         | Rewards for each step.                                        |
@@ -107,3 +105,5 @@ The `sampled_episodes` variable will be a list of 10 `EpisodeData` elements, eac
 As mentioned in the `Supported Spaces` section, many different observation and action spaces are supported so the data type for these fields are dependent on the environment being used.
 
 Moreover, when creating a dataset with `DataCollector`, if the `DataCollector` is initialized with `record_infos=True`, an info dict must be provided from every call to the environment's `step` and `reset` function. The structure of the info dictionary must be the same across steps. Given that it is not guaranteed that all Gymnasium environments provide infos at every step, we provide the `StepDataCallback` which can modify the infos from a non-compliant environment so they have the same structure at every step.
+
+Other optional attributes of the episode, such as reset `seed` and `options`, can be found in the episode metadata using `MinariStorage.get_episode_metadata`.

@@ -68,6 +68,10 @@ class HDF5Storage(MinariStorage):
                 ep_group = file[f"episode_{episode_id}"]
                 ep_group.attrs.update(metadata)
 
+    def get_episode_metadata(self, episode_indices: Iterable[int]) -> List[Dict]:
+        with h5py.File(self._file_path, "r") as file:
+            return [dict(file[f"episode_{ep_idx}"].attrs) for ep_idx in episode_indices]
+
     def _decode_space(
         self,
         hdf_ref: Union[h5py.Group, h5py.Dataset, h5py.Datatype],
@@ -116,10 +120,6 @@ class HDF5Storage(MinariStorage):
             for ep_idx in episode_indices:
                 ep_group = file[f"episode_{ep_idx}"]
                 assert isinstance(ep_group, h5py.Group)
-
-                seed = ep_group.attrs.get("seed")
-                if isinstance(seed, np.integer):
-                    seed = int(seed)
                 infos = None
                 if "infos" in ep_group:
                     info_group = ep_group["infos"]
@@ -127,9 +127,7 @@ class HDF5Storage(MinariStorage):
                     infos = self._decode_infos(info_group)
 
                 ep_dict = {
-                    "id": ep_group.attrs.get("id"),
-                    "total_steps": ep_group.attrs.get("total_steps"),
-                    "seed": seed,
+                    "id": ep_idx,
                     "observations": self._decode_space(
                         ep_group["observations"], self.observation_space
                     ),
@@ -161,6 +159,9 @@ class HDF5Storage(MinariStorage):
                 if eps_buff.seed is not None:
                     assert "seed" not in episode_group.attrs.keys()
                     episode_group.attrs["seed"] = eps_buff.seed
+                if eps_buff.options is not None:
+                    assert "options" not in episode_group.attrs.keys()
+                    episode_group.attrs["options"] = eps_buff.options
                 episode_steps = len(eps_buff.rewards)
                 episode_group.attrs["total_steps"] = episode_steps
                 additional_steps += episode_steps
