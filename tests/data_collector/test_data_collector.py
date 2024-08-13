@@ -157,7 +157,8 @@ def test_truncation_without_reset(dataset_id, env_id, data_format, register_dumm
 
 @pytest.mark.parametrize("data_format", get_storage_keys())
 @pytest.mark.parametrize("seed", [None, 0, 42, MAX_UINT64])
-def test_reproducibility(seed, data_format, register_dummy_envs):
+@pytest.mark.parametrize("options", [None, {"max_timesteps": 3}])
+def test_reproducibility(seed, data_format, options, register_dummy_envs):
     """Test episodes are reproducible, even if an explicit reset seed is not set."""
     dataset_id = "dummy-box/test-v0"
     env_id = "DummyBoxEnv-v0"
@@ -166,7 +167,7 @@ def test_reproducibility(seed, data_format, register_dummy_envs):
     env = DataCollector(gym.make(env_id), data_format=data_format)
 
     for _ in range(num_episodes):
-        env.reset(seed=seed)
+        env.reset(seed=seed, options=options)
 
         trunc = False
         term = False

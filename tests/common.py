@@ -38,12 +38,13 @@ class DummyBoxEnv(gym.Env):
         self.observation_space = spaces.Box(
             low=-1, high=4, shape=(3,), dtype=np.float32
         )
+        self._max_timesteps = 5
 
     def _get_info(self):
         return {"timestep": np.array([self.timestep])}
 
     def step(self, action):
-        terminated = self.timestep > 5
+        terminated = self.timestep > self._max_timesteps
         self.timestep += 1
 
         return (
@@ -56,6 +57,8 @@ class DummyBoxEnv(gym.Env):
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
+        if options:
+            self._max_timesteps = options.get("max_timesteps", self._max_timesteps)
         self.observation_space.seed(seed)
         return self.observation_space.sample(), self._get_info()
 

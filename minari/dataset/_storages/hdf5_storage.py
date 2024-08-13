@@ -69,8 +69,19 @@ class HDF5Storage(MinariStorage):
                 ep_group.attrs.update(metadata)
 
     def get_episode_metadata(self, episode_indices: Iterable[int]) -> List[Dict]:
+        out = []
         with h5py.File(self._file_path, "r") as file:
-            return [dict(file[f"episode_{ep_idx}"].attrs) for ep_idx in episode_indices]
+            for ep_idx in episode_indices:
+                ep_group = file[f"episode_{ep_idx}"]
+                assert isinstance(ep_group, h5py.Group)
+                metadata: dict = dict(ep_group.attrs)
+                if "options" in ep_group:
+                    options_group = ep_group["options"]
+                    assert isinstance(options_group, h5py.Group)
+                    metadata["options"] = self._decode_dict(options_group)
+                out.append(metadata)
+    
+        return out
 
     def _decode_space(
         self,
@@ -101,11 +112,11 @@ class HDF5Storage(MinariStorage):
             assert isinstance(hdf_ref, h5py.Dataset)
             return hdf_ref[()]
 
-    def _decode_infos(self, infos: h5py.Group):
+    def _decode_dict(self, dict_group: h5py.Group) -> Dict:
         result = {}
-        for key, value in infos.items():
+        for key, value in dict_group.items():
             if isinstance(value, h5py.Group):
-                result[key] = self._decode_infos(value)
+                result[key] = self._decode_dict(value)
             elif isinstance(value, h5py.Dataset):
                 result[key] = value[()]
             else:
@@ -124,7 +135,7 @@ class HDF5Storage(MinariStorage):
                 if "infos" in ep_group:
                     info_group = ep_group["infos"]
                     assert isinstance(info_group, h5py.Group)
-                    infos = self._decode_infos(info_group)
+                    infos = self._decode_dict(info_group)
 
                 ep_dict = {
                     "id": ep_idx,
@@ -159,9 +170,6 @@ class HDF5Storage(MinariStorage):
                 if eps_buff.seed is not None:
                     assert "seed" not in episode_group.attrs.keys()
                     episode_group.attrs["seed"] = eps_buff.seed
-                if eps_buff.options is not None:
-                    assert "options" not in episode_group.attrs.keys()
-                    episode_group.attrs["options"] = eps_buff.options
                 episode_steps = len(eps_buff.rewards)
                 episode_group.attrs["total_steps"] = episode_steps
                 additional_steps += episode_steps
@@ -173,6 +181,7 @@ class HDF5Storage(MinariStorage):
                     "terminations": eps_buff.terminations,
                     "truncations": eps_buff.truncations,
                     "infos": eps_buff.infos,
+                    "options": eps_buff.options,
                 }
                 _add_episode_to_group(dict_buffer, episode_group)
 
@@ -203,7 +212,7 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
             dict_data = {f"_index_{i}": subdata for i, subdata in enumerate(data)}
             episode_group_to_clear = _get_from_h5py(episode_group, key)
             _add_episode_to_group(dict_data, episode_group_to_clear)
-        elif all(
+        elif isinstance(data, List) and all(
             isinstance(entry, OrderedDict) for entry in data
         ):  # list of OrderedDict
             dict_data = {key: [entry[key] for entry in data] for key in data[0].keys()}
@@ -216,6 +225,9 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
             assert isinstance(dataset, h5py.Dataset)
             dataset.resize((dataset.shape[0] + len(data), *dataset.shape[1:]))
             dataset[-len(data) :] = data
+        elif not isinstance(data, Iterable):
+            if data is not None:
+                episode_group.create_dataset(key, data=data)
         else:
             dtype = None
             if all(map(lambda elem: isinstance(elem, str), data)):
