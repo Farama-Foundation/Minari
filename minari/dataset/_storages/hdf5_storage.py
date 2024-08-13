@@ -80,7 +80,7 @@ class HDF5Storage(MinariStorage):
                     assert isinstance(options_group, h5py.Group)
                     metadata["options"] = self._decode_dict(options_group)
                 out.append(metadata)
-    
+
         return out
 
     def _decode_space(
