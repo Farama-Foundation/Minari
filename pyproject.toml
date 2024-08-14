@@ -46,7 +46,7 @@ testing = [
     "gymnasium-robotics>=1.2.3",
     "mktestdocs",
     "torchrl",
-    "agilerl>=0.1.8"
+    "agilerl"
 ]
 
 [project.urls]
