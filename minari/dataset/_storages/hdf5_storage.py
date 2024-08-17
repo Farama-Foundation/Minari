@@ -79,6 +79,8 @@ class HDF5Storage(MinariStorage):
                     options_group = ep_group["options"]
                     assert isinstance(options_group, h5py.Group)
                     metadata["options"] = self._decode_dict(options_group)
+                if "seed" in metadata:
+                    metadata["seed"] = int(metadata["seed"])
                 out.append(metadata)
 
         return out
