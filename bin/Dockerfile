@@ -21,6 +21,7 @@ RUN apt-get -y update \
     && cd /root/.mujoco \
     && wget -qO- 'https://github.com/deepmind/mujoco/releases/download/2.1.0/mujoco210-linux-x86_64.tar.gz' | tar -xzvf -
 
+ENV LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/root/.mujoco/mujoco210/bin"
 
 COPY . /usr/local/minari/
 WORKDIR /usr/local/minari/

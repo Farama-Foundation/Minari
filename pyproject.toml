@@ -46,7 +46,7 @@ testing = [
     "gymnasium-robotics@git+https://github.com/Farama-Foundation/Gymnasium-Robotics.git",
     "mktestdocs",
     "torchrl",
-    "agilerl"
+    "agilerl>=1.0.6"
 ]
 
 [project.urls]
