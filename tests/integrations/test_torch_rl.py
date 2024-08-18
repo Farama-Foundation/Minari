@@ -13,7 +13,7 @@ def test_torch_minari_experience_replay():
 
     batch_size = 32
 
-    dataset = MinariExperienceReplay("D4RL/door/human-v1", batch_size=batch_size)
+    dataset = MinariExperienceReplay("D4RL/door/human-v2", batch_size=batch_size)
     env = gym.make("AdroitHandDoor-v1")
 
     sample = dataset.sample()
