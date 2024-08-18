@@ -552,14 +552,6 @@
 <td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
 <td><p>ID of the episode.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">seed</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
-<td><p>Seed used to reset the episode.</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">total_steps</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">int</span></code></p></td>
-<td><p>Number of steps in the episode.</p></td>
-</tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">observations</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">np.ndarray</span></code>, <code class="docutils literal notranslate"><span class="pre">list</span></code>, <code class="docutils literal notranslate"><span class="pre">tuple</span></code>, <code class="docutils literal notranslate"><span class="pre">dict</span></code></p></td>
 <td><p>Stacked observations for each step including initial observation.</p></td>
@@ -589,6 +581,7 @@
 </div>
 <p>As mentioned in the <code class="docutils literal notranslate"><span class="pre">Supported</span> <span class="pre">Spaces</span></code> section, many different observation and action spaces are supported so the data type for these fields are dependent on the environment being used.</p>
 <p>Moreover, when creating a dataset with <code class="docutils literal notranslate"><span class="pre">DataCollector</span></code>, if the <code class="docutils literal notranslate"><span class="pre">DataCollector</span></code> is initialized with <code class="docutils literal notranslate"><span class="pre">record_infos=True</span></code>, an info dict must be provided from every call to the environment’s <code class="docutils literal notranslate"><span class="pre">step</span></code> and <code class="docutils literal notranslate"><span class="pre">reset</span></code> function. The structure of the info dictionary must be the same across steps. Given that it is not guaranteed that all Gymnasium environments provide infos at every step, we provide the <code class="docutils literal notranslate"><span class="pre">StepDataCallback</span></code> which can modify the infos from a non-compliant environment so they have the same structure at every step.</p>
+<p>Other optional attributes of the episode, such as reset <code class="docutils literal notranslate"><span class="pre">seed</span></code> and <code class="docutils literal notranslate"><span class="pre">options</span></code>, can be found in the episode metadata using <code class="docutils literal notranslate"><span class="pre">MinariStorage.get_episode_metadata</span></code>.</p>
 </section>
 </section>
 

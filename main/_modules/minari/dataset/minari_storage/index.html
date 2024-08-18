@@ -609,6 +609,18 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span>
 
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">get_episode_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">episode_indices</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the metadata of episodes.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            episode_indices (Iterable[int]): episodes id to return</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            metadatas (List[Dict]): list of episodes metadata</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
     <span class="k">def</span> <span class="nf">apply</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">dict</span><span class="p">],</span> <span class="n">Any</span><span class="p">],</span>

@@ -489,11 +489,11 @@
 </section>
 <section id="building-a-replay-buffer">
 <h2>Building a replay buffer<a class="headerlink" href="#building-a-replay-buffer" title="Link to this heading">¶</a></h2>
-<p>The Minari dataset we will be using is <a class="reference external" href="https://minari.farama.org/main/datasets/pen/human/">D4RL/pen/human-v1</a>, which consists of 25 human demonstrations. We can create a replay buffer using <code class="docutils literal notranslate"><span class="pre">MinariExperienceReplay()</span></code>:</p>
+<p>The Minari dataset we will be using is <a class="reference external" href="https://minari.farama.org/main/datasets/pen/human/">D4RL/pen/human-v2</a>, which consists of 25 human demonstrations. We can create a replay buffer using <code class="docutils literal notranslate"><span class="pre">MinariExperienceReplay()</span></code>:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torchrl.data.datasets.minari_data</span> <span class="kn">import</span> <span class="n">MinariExperienceReplay</span>
 <span class="kn">from</span> <span class="nn">torchrl.data.replay_buffers</span> <span class="kn">import</span> <span class="n">SamplerWithoutReplacement</span>
 
-<span class="n">dataset_id</span> <span class="o">=</span> <span class="s2">&quot;D4RL/pen/human-v1&quot;</span>
+<span class="n">dataset_id</span> <span class="o">=</span> <span class="s2">&quot;D4RL/pen/human-v2&quot;</span>
 <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">256</span>
 
 <span class="n">replay_buffer</span> <span class="o">=</span> <span class="n">MinariExperienceReplay</span><span class="p">(</span>

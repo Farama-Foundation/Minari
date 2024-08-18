@@ -575,6 +575,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span> <span class="o">=</span> <span class="n">EpisodeBuffer</span><span class="p">(</span>
             <span class="nb">id</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_episode_id</span><span class="p">,</span>
             <span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">,</span>
+            <span class="n">options</span><span class="o">=</span><span class="n">options</span><span class="p">,</span>
             <span class="n">observations</span><span class="o">=</span><span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">],</span>
             <span class="n">infos</span><span class="o">=</span><span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;info&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_record_infos</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
         <span class="p">)</span>
