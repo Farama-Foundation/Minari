@@ -26,15 +26,18 @@ def generate_gif(dataset_id, path, num_frames=256, fps=16):
     dataset = minari.load_dataset(dataset_id)
     env = dataset.recover_environment(render_mode="rgb_array")
     images = []
-    if dataset[0].seed is None:
+    if "seed" not in dataset.storage.get_episode_metadata([0])[0]:
         raise ValueError("Cannot reproduce episodes with unknown seed.")
 
     episode_id = 0
     while len(images) < num_frames:
         episode = dataset[episode_id]
-        env.reset(seed=episode.seed)
+        episode_metadata = dataset.storage.get_episode_metadata([episode_id])[0]
+        env.reset(
+            seed=episode_metadata.get("seed"), options=episode_metadata.get("options")
+        )
         images.append(env.render())
-        for step_id in range(episode.total_steps):
+        for step_id in range(len(episode)):
             act = _space_at(episode.actions, step_id)
             env.step(act)
             images.append(env.render())

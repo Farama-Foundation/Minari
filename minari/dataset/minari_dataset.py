@@ -301,12 +301,10 @@ class MinariDataset:
             if self.episode_indices is None:
                 self._total_steps = self.storage.total_steps
             else:
-                self._total_steps = sum(
-                    self.storage.apply(
-                        lambda episode: episode["total_steps"],
-                        episode_indices=self.episode_indices,
-                    )
-                )
+                self._total_steps = 0
+                metadatas = self.storage.get_episode_metadata(self.episode_indices)
+                for m in metadatas:
+                    self._total_steps += m["total_steps"]
         return int(self._total_steps)
 
     @property

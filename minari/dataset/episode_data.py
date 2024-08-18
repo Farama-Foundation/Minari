@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any
 
 import numpy as np
 
@@ -9,8 +9,6 @@ class EpisodeData:
     """Contains the datasets data for a single episode."""
 
     id: int
-    seed: Optional[int]
-    total_steps: int
     observations: Any
     actions: Any
     rewards: np.ndarray
@@ -18,12 +16,14 @@ class EpisodeData:
     truncations: np.ndarray
     infos: dict
 
+    def __len__(self) -> int:
+        return len(self.rewards)
+
     def __repr__(self) -> str:
         return (
             "EpisodeData("
-            f"id={repr(self.id)}, "
-            f"seed={repr(self.seed)}, "
-            f"total_steps={self.total_steps}, "
+            f"id={self.id}, "
+            f"total_steps={len(self)}, "
             f"observations={EpisodeData._repr_space_values(self.observations)}, "
             f"actions={EpisodeData._repr_space_values(self.actions)}, "
             f"rewards=ndarray of {len(self.rewards)} floats, "

@@ -164,13 +164,13 @@ env.set_seed(seed)
 # ~~~~~~~~~~~~~~~~~~~~~~~~
 
 # %%
-# The Minari dataset we will be using is `D4RL/pen/human-v1 <https://minari.farama.org/main/datasets/pen/human/>`_, which consists of 25 human demonstrations. We can create a replay buffer using ``MinariExperienceReplay()``:
+# The Minari dataset we will be using is `D4RL/pen/human-v2 <https://minari.farama.org/main/datasets/pen/human/>`_, which consists of 25 human demonstrations. We can create a replay buffer using ``MinariExperienceReplay()``:
 
 # %%
 from torchrl.data.datasets.minari_data import MinariExperienceReplay
 from torchrl.data.replay_buffers import SamplerWithoutReplacement
 
-dataset_id = "D4RL/pen/human-v1"
+dataset_id = "D4RL/pen/human-v2"
 batch_size = 256
 
 replay_buffer = MinariExperienceReplay(

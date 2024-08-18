@@ -68,6 +68,23 @@ class HDF5Storage(MinariStorage):
                 ep_group = file[f"episode_{episode_id}"]
                 ep_group.attrs.update(metadata)
 
+    def get_episode_metadata(self, episode_indices: Iterable[int]) -> List[Dict]:
+        out = []
+        with h5py.File(self._file_path, "r") as file:
+            for ep_idx in episode_indices:
+                ep_group = file[f"episode_{ep_idx}"]
+                assert isinstance(ep_group, h5py.Group)
+                metadata: dict = dict(ep_group.attrs)
+                if "options" in ep_group:
+                    options_group = ep_group["options"]
+                    assert isinstance(options_group, h5py.Group)
+                    metadata["options"] = self._decode_dict(options_group)
+                if metadata.get("seed") is not None:
+                    metadata["seed"] = int(metadata["seed"])
+                out.append(metadata)
+
+        return out
+
     def _decode_space(
         self,
         hdf_ref: Union[h5py.Group, h5py.Dataset, h5py.Datatype],
@@ -97,11 +114,11 @@ class HDF5Storage(MinariStorage):
             assert isinstance(hdf_ref, h5py.Dataset)
             return hdf_ref[()]
 
-    def _decode_infos(self, infos: h5py.Group):
+    def _decode_dict(self, dict_group: h5py.Group) -> Dict:
         result = {}
-        for key, value in infos.items():
+        for key, value in dict_group.items():
             if isinstance(value, h5py.Group):
-                result[key] = self._decode_infos(value)
+                result[key] = self._decode_dict(value)
             elif isinstance(value, h5py.Dataset):
                 result[key] = value[()]
             else:
@@ -116,20 +133,14 @@ class HDF5Storage(MinariStorage):
             for ep_idx in episode_indices:
                 ep_group = file[f"episode_{ep_idx}"]
                 assert isinstance(ep_group, h5py.Group)
-
-                seed = ep_group.attrs.get("seed")
-                if isinstance(seed, np.integer):
-                    seed = int(seed)
                 infos = None
                 if "infos" in ep_group:
                     info_group = ep_group["infos"]
                     assert isinstance(info_group, h5py.Group)
-                    infos = self._decode_infos(info_group)
+                    infos = self._decode_dict(info_group)
 
                 ep_dict = {
-                    "id": ep_group.attrs.get("id"),
-                    "total_steps": ep_group.attrs.get("total_steps"),
-                    "seed": seed,
+                    "id": ep_idx,
                     "observations": self._decode_space(
                         ep_group["observations"], self.observation_space
                     ),
@@ -172,6 +183,7 @@ class HDF5Storage(MinariStorage):
                     "terminations": eps_buff.terminations,
                     "truncations": eps_buff.truncations,
                     "infos": eps_buff.infos,
+                    "options": eps_buff.options,
                 }
                 _add_episode_to_group(dict_buffer, episode_group)
 
@@ -202,7 +214,7 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
             dict_data = {f"_index_{i}": subdata for i, subdata in enumerate(data)}
             episode_group_to_clear = _get_from_h5py(episode_group, key)
             _add_episode_to_group(dict_data, episode_group_to_clear)
-        elif all(
+        elif isinstance(data, List) and all(
             isinstance(entry, OrderedDict) for entry in data
         ):  # list of OrderedDict
             dict_data = {key: [entry[key] for entry in data] for key in data[0].keys()}
@@ -215,6 +227,9 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
             assert isinstance(dataset, h5py.Dataset)
             dataset.resize((dataset.shape[0] + len(data), *dataset.shape[1:]))
             dataset[-len(data) :] = data
+        elif not isinstance(data, Iterable):
+            if data is not None:
+                episode_group.create_dataset(key, data=data)
         else:
             dtype = None
             if all(map(lambda elem: isinstance(elem, str), data)):

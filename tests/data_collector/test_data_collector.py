@@ -81,8 +81,6 @@ def get_single_step_from_episode(episode: EpisodeData, index: int) -> EpisodeDat
 
     step_data = {
         "id": episode.id,
-        "total_steps": 1,
-        "seed": None,
         "observations": observation,
         "actions": action,
         "rewards": episode.rewards[index],
@@ -133,7 +131,7 @@ def test_truncation_without_reset(dataset_id, env_id, data_format, register_dumm
     episodes_generator = dataset.iterate_episodes()
     last_step = get_single_step_from_episode(next(episodes_generator), -1)
     for episode in episodes_generator:
-        assert episode.total_steps == ForceTruncateStepDataCallback.episode_steps
+        assert len(episode) == ForceTruncateStepDataCallback.episode_steps
         first_step = get_single_step_from_episode(episode, 0)
         # Check that the last observation of the previous episode is carried over to the next episode
         # as the reset observation.
@@ -159,7 +157,8 @@ def test_truncation_without_reset(dataset_id, env_id, data_format, register_dumm
 
 @pytest.mark.parametrize("data_format", get_storage_keys())
 @pytest.mark.parametrize("seed", [None, 0, 42, MAX_UINT64])
-def test_reproducibility(seed, data_format, register_dummy_envs):
+@pytest.mark.parametrize("options", [None, {"max_timesteps": 3}])
+def test_reproducibility(seed, data_format, options, register_dummy_envs):
     """Test episodes are reproducible, even if an explicit reset seed is not set."""
     dataset_id = "dummy-box/test-v0"
     env_id = "DummyBoxEnv-v0"
@@ -168,7 +167,7 @@ def test_reproducibility(seed, data_format, register_dummy_envs):
     env = DataCollector(gym.make(env_id), data_format=data_format)
 
     for _ in range(num_episodes):
-        env.reset(seed=seed)
+        env.reset(seed=seed, options=options)
 
         trunc = False
         term = False
@@ -190,17 +189,19 @@ def test_reproducibility(seed, data_format, register_dummy_envs):
     env = dataset.recover_environment()
 
     for episode in dataset.iterate_episodes():
-        if seed is None:
-            assert isinstance(episode.seed, int)
-            assert episode.seed >= 0
-        else:
-            assert seed == episode.seed
+        episode_metadata = dataset.storage.get_episode_metadata([episode.id])[0]
+        episode_seed = episode_metadata["seed"]
+        assert episode_seed >= 0
+        if seed is not None:
+            assert seed == episode_seed
 
-        obs, _ = env.reset(seed=episode.seed)
+        obs, _ = env.reset(
+            seed=int(episode_seed), options=episode_metadata.get("options")
+        )
 
         assert np.allclose(obs, episode.observations[0])
 
-        for k in range(episode.total_steps):
+        for k in range(len(episode)):
             obs, rew, term, trunc, _ = env.step(episode.actions[k])
             assert np.allclose(obs, episode.observations[k + 1])
             assert rew == episode.rewards[k]

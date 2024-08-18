@@ -1,6 +1,6 @@
 import sys
 import unicodedata
-from typing import Any, Dict, Iterable, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import gymnasium as gym
 import numpy as np
@@ -11,7 +11,6 @@ import minari
 from minari import DataCollector, EpisodeData, MinariDataset, StepData
 from minari.data_collector import EpisodeBuffer
 from minari.dataset.minari_dataset import gen_dataset_id
-from minari.dataset.minari_storage import MinariStorage
 from minari.storage.hosting import get_remote_dataset_versions
 
 
@@ -39,12 +38,13 @@ class DummyBoxEnv(gym.Env):
         self.observation_space = spaces.Box(
             low=-1, high=4, shape=(3,), dtype=np.float32
         )
+        self._max_timesteps = 5
 
     def _get_info(self):
         return {"timestep": np.array([self.timestep])}
 
     def step(self, action):
-        terminated = self.timestep > 5
+        terminated = self.timestep > self._max_timesteps
         self.timestep += 1
 
         return (
@@ -57,6 +57,8 @@ class DummyBoxEnv(gym.Env):
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
+        if options:
+            self._max_timesteps = options.get("max_timesteps", self._max_timesteps)
         self.observation_space.seed(seed)
         return self.observation_space.sample(), self._get_info()
 
@@ -497,47 +499,45 @@ def check_env_recovery(
         ), f"recovered_eval_env spec: {recovered_eval_env.spec}\noriginal spec: {evaluation_environment}"
 
 
-def check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
-    """Checks to see if a MinariStorage episode has consistent data and has episodes at the expected indices.
+def check_data_integrity(dataset: MinariDataset, episode_indices: List[int]):
+    """Checks to see if MinariDataset episodes have consistent data and has episodes at the expected indices.
 
     Args:
-        data (MinariStorage): a MinariStorage instance
+        dataset (MinariDataset): a MinariDataset instance
         episode_indices (Iterable[int]): the list of episode indices expected
     """
-    episodes = list(data.get_episodes(episode_indices))
+    episodes = list(dataset.iterate_episodes(episode_indices))
     # verify we have the right number of episodes, available at the right indices
-    assert data.total_episodes == len(
+    assert dataset.total_episodes == len(
         episodes
-    ), f"{data.total_episodes} != {len(episodes)}"
+    ), f"{dataset.total_episodes} != {len(episodes)}"
     total_steps = 0
 
-    observation_space = data.metadata["observation_space"]
-    action_space = data.metadata["action_space"]
+    observation_space = dataset.observation_space
+    action_space = dataset.action_space
 
     # verify the actions and observations are in the appropriate action space and observation space, and that the episode lengths are correct
     for episode in episodes:
-        total_steps += episode["total_steps"]
+        total_steps += len(episode)
         _check_space_elem(
-            episode["observations"],
+            episode.observations,
             observation_space,
-            episode["total_steps"] + 1,
+            len(episode) + 1,
         )
-        _check_space_elem(episode["actions"], action_space, episode["total_steps"])
+        _check_space_elem(episode.actions, action_space, len(episode))
 
-        for i in range(episode["total_steps"] + 1):
-            obs = _reconstuct_obs_or_action_at_index_recursive(
-                episode["observations"], i
-            )
+        for i in range(len(episode) + 1):
+            obs = _reconstuct_obs_or_action_at_index_recursive(episode.observations, i)
             assert observation_space.contains(obs)
-        for i in range(episode["total_steps"]):
-            action = _reconstuct_obs_or_action_at_index_recursive(episode["actions"], i)
+        for i in range(len(episode)):
+            action = _reconstuct_obs_or_action_at_index_recursive(episode.actions, i)
             assert action_space.contains(action)
 
-        assert episode["total_steps"] == len(episode["rewards"])
-        assert episode["total_steps"] == len(episode["terminations"])
-        assert episode["total_steps"] == len(episode["truncations"])
+        assert len(episode) == len(episode.rewards)
+        assert len(episode) == len(episode.terminations)
+        assert len(episode) == len(episode.truncations)
 
-    assert total_steps == data.total_steps
+    assert total_steps == dataset.total_steps
 
 
 def get_info_at_step_index(infos: Dict, step_index: int) -> Dict:
@@ -662,11 +662,11 @@ def check_episode_data_integrity(
         _check_space_elem(
             episode.observations,
             observation_space,
-            episode.total_steps + 1,
+            len(episode) + 1,
         )
-        _check_space_elem(episode.actions, action_space, episode.total_steps)
+        _check_space_elem(episode.actions, action_space, len(episode))
 
-        for i in range(episode.total_steps + 1):
+        for i in range(len(episode) + 1):
             obs = _reconstuct_obs_or_action_at_index_recursive(episode.observations, i)
             if info_sample is not None:
                 assert episode.infos is not None
@@ -676,13 +676,13 @@ def check_episode_data_integrity(
 
             assert observation_space.contains(obs)
 
-        for i in range(episode.total_steps):
+        for i in range(len(episode)):
             action = _reconstuct_obs_or_action_at_index_recursive(episode.actions, i)
             assert action_space.contains(action)
 
-        assert episode.total_steps == len(episode.rewards)
-        assert episode.total_steps == len(episode.terminations)
-        assert episode.total_steps == len(episode.truncations)
+        assert len(episode) == len(episode.rewards)
+        assert len(episode) == len(episode.terminations)
+        assert len(episode) == len(episode.truncations)
 
 
 def check_infos_equal(info_1: Dict, info_2: Dict) -> bool:
