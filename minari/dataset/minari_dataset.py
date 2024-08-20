@@ -4,10 +4,11 @@ import importlib.metadata
 import os
 import re
 from dataclasses import dataclass, field
-from typing import Callable, Iterable, Iterator, List, Optional, Union
+from typing import Callable, Iterable, Iterator, List
 
 import gymnasium as gym
 import numpy as np
+import numpy.typing as npt
 from gymnasium import error, logger
 from gymnasium.envs.registration import EnvSpec
 from packaging.requirements import InvalidRequirement, Requirement
@@ -102,8 +103,8 @@ class MinariDataset:
 
     def __init__(
         self,
-        data: Union[MinariStorage, PathLike],
-        episode_indices: Optional[np.ndarray] = None,
+        data: MinariStorage | PathLike,
+        episode_indices: npt.NDArray[np.int_] | None = None,
     ):
         """Initialize properties of the Minari Dataset.
 
@@ -248,7 +249,7 @@ class MinariDataset:
         return list(map(lambda data: EpisodeData(**data), episodes))
 
     def iterate_episodes(
-        self, episode_indices: Optional[Iterable[int]] = None
+        self, episode_indices: Iterable[int] | None = None
     ) -> Iterator[EpisodeData]:
         """Iterate over episodes from the dataset.
 
