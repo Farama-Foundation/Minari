@@ -4,10 +4,11 @@ import importlib.metadata
 import os
 import re
 from dataclasses import dataclass, field
-from typing import Callable, Iterable, Iterator, List, Optional, Union
+from typing import Callable, Iterable, Iterator, List
 
 import gymnasium as gym
 import numpy as np
+import numpy.typing as npt
 from gymnasium import error, logger
 from gymnasium.envs.registration import EnvSpec
 from packaging.requirements import InvalidRequirement, Requirement
@@ -73,7 +74,7 @@ def gen_dataset_id(
 
 @dataclass
 class MinariDatasetSpec:
-    env_spec: Optional[EnvSpec]
+    env_spec: EnvSpec | None
     total_episodes: int
     total_steps: int
     dataset_id: str
@@ -102,8 +103,8 @@ class MinariDataset:
 
     def __init__(
         self,
-        data: Union[MinariStorage, PathLike],
-        episode_indices: Optional[np.ndarray] = None,
+        data: MinariStorage | PathLike,
+        episode_indices: npt.NDArray[np.int_] | None = None,
     ):
         """Initialize properties of the Minari Dataset.
 
@@ -120,7 +121,8 @@ class MinariDataset:
 
         if episode_indices is None:
             episode_indices = np.arange(self._data.total_episodes)
-        self._episode_indices: np.ndarray = episode_indices
+        assert episode_indices is not None
+        self._episode_indices: npt.NDArray[np.int_] = episode_indices
         self._total_steps = None
 
         metadata = self._data.metadata
@@ -248,23 +250,21 @@ class MinariDataset:
         return list(map(lambda data: EpisodeData(**data), episodes))
 
     def iterate_episodes(
-        self, episode_indices: Optional[List[int]] = None
+        self, episode_indices: Iterable[int] | None = None
     ) -> Iterator[EpisodeData]:
         """Iterate over episodes from the dataset.
 
         Args:
-            episode_indices (Optional[List[int]], optional): episode indices to iterate over.
+            episode_indices (Optional[Iterable[int]], optional): episode indices to iterate over.
         """
         if episode_indices is None:
             assert self.episode_indices is not None
             assert self.episode_indices.ndim == 1
-            episode_indices = self.episode_indices.tolist()
+            episode_indices = self.episode_indices
 
         assert episode_indices is not None
-
-        for episode_index in episode_indices:
-            data = self.storage.get_episodes([episode_index])[0]
-            yield EpisodeData(**data)
+        episodes_data = self.storage.get_episodes(episode_indices)
+        return map(lambda data: EpisodeData(**data), episodes_data)
 
     def update_dataset_from_buffer(self, buffer: List[EpisodeBuffer]):
         """Additional data can be added to the Minari Dataset from a list of episode dictionary buffers.
@@ -282,9 +282,8 @@ class MinariDataset:
         return self.iterate_episodes()
 
     def __getitem__(self, idx: int) -> EpisodeData:
-        episodes_data = self.storage.get_episodes([self.episode_indices[idx]])
-        assert len(episodes_data) == 1
-        return EpisodeData(**episodes_data[0])
+        episode = self.iterate_episodes([self.episode_indices[idx]])
+        return next(episode)
 
     def __len__(self) -> int:
         return self.total_episodes
@@ -308,12 +307,12 @@ class MinariDataset:
         return int(self._total_steps)
 
     @property
-    def episode_indices(self) -> np.ndarray:
+    def episode_indices(self) -> npt.NDArray[np.int_]:
         """Indices of the available episodes to sample within the Minari dataset."""
         return self._episode_indices
 
     @episode_indices.setter
-    def episode_indices(self, new_value: np.ndarray):
+    def episode_indices(self, new_value: npt.NDArray[np.int_]):
         self._total_steps = None  # invalidate cache
         self._episode_indices = new_value
 

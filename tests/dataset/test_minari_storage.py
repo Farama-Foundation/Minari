@@ -120,8 +120,8 @@ def test_add_episodes(tmp_dataset_dir, data_format):
     assert storage.total_episodes == n_episodes
     assert storage.total_steps == n_episodes * steps_per_episode
 
-    for i, ep in enumerate(episodes):
-        storage_ep = storage.get_episodes([i])[0]
+    storage_episodes = storage.get_episodes(range(n_episodes))
+    for ep, storage_ep in zip(episodes, storage_episodes):
         assert np.all(ep.observations == storage_ep["observations"])
         assert np.all(ep.actions == storage_ep["actions"])
         assert np.all(ep.rewards == storage_ep["rewards"])
@@ -319,6 +319,6 @@ def test_seed_change(tmp_dataset_dir, data_format):
 
     assert storage.total_episodes == len(seeds)
     episodes_metadata = storage.get_episode_metadata(range(len(episodes)))
-    assert len(episodes_metadata) == len(seeds)
+    assert len(list(episodes_metadata)) == len(seeds)
     for seed, ep_metadata in zip(seeds, episodes_metadata):
         assert ep_metadata.get("seed") == seed

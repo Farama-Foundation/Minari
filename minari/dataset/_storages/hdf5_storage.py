@@ -68,8 +68,7 @@ class HDF5Storage(MinariStorage):
                 ep_group = file[f"episode_{episode_id}"]
                 ep_group.attrs.update(metadata)
 
-    def get_episode_metadata(self, episode_indices: Iterable[int]) -> List[Dict]:
-        out = []
+    def get_episode_metadata(self, episode_indices: Iterable[int]) -> Iterable[Dict]:
         with h5py.File(self._file_path, "r") as file:
             for ep_idx in episode_indices:
                 ep_group = file[f"episode_{ep_idx}"]
@@ -81,9 +80,8 @@ class HDF5Storage(MinariStorage):
                     metadata["options"] = self._decode_dict(options_group)
                 if metadata.get("seed") is not None:
                     metadata["seed"] = int(metadata["seed"])
-                out.append(metadata)
 
-        return out
+                yield metadata
 
     def _decode_space(
         self,
@@ -127,8 +125,7 @@ class HDF5Storage(MinariStorage):
                 )
         return result
 
-    def get_episodes(self, episode_indices: Iterable[int]) -> List[dict]:
-        outs = []
+    def get_episodes(self, episode_indices: Iterable[int]) -> Iterable[dict]:
         with h5py.File(self._file_path, "r") as file:
             for ep_idx in episode_indices:
                 ep_group = file[f"episode_{ep_idx}"]
@@ -154,9 +151,7 @@ class HDF5Storage(MinariStorage):
                     assert isinstance(group_value, h5py.Dataset)
                     ep_dict[key] = group_value[:]
 
-                outs.append(ep_dict)
-
-        return outs
+                yield ep_dict
 
     def update_episodes(self, episodes: Iterable[EpisodeBuffer]):
         additional_steps = 0
