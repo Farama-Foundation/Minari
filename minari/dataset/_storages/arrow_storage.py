@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import pathlib
 from itertools import zip_longest
-from typing import Any, Dict, Iterable, List, Optional, Sequence
+from typing import Any, Dict, Iterable, Optional, Sequence
 
 import gymnasium as gym
 import numpy as np
@@ -65,16 +65,13 @@ class ArrowStorage(MinariStorage):
             with open(metadata_path, "w") as file:
                 json.dump(metadata, file)
 
-    def get_episode_metadata(self, episode_indices: Iterable[int]) -> List[Dict]:
-        ep_metadata = []
+    def get_episode_metadata(self, episode_indices: Iterable[int]) -> Iterable[Dict]:
         for episode_id in episode_indices:
             metadata_path = self.data_path.joinpath(str(episode_id), "metadata.json")
             with open(metadata_path) as file:
-                ep_metadata.append(json.load(file))
+                yield json.load(file)
 
-        return ep_metadata
-
-    def get_episodes(self, episode_indices: Iterable[int]) -> List[dict]:
+    def get_episodes(self, episode_indices: Iterable[int]) -> Iterable[dict]:
         dataset = pa.dataset.dataset(
             [
                 pa.dataset.dataset(
@@ -101,8 +98,7 @@ class ArrowStorage(MinariStorage):
                 else {},
             }
 
-        episodes = map(_to_dict, episode_indices, dataset.to_batches())
-        return list(episodes)
+        return map(_to_dict, episode_indices, dataset.to_batches())
 
     def update_episodes(self, episodes: Iterable[EpisodeBuffer]):
         total_steps = self.total_steps

@@ -188,8 +188,10 @@ def test_reproducibility(seed, data_format, options, register_dummy_envs):
     # Step through the env again using the stored seed and check it matches
     env = dataset.recover_environment()
 
-    for episode in dataset.iterate_episodes():
-        episode_metadata = dataset.storage.get_episode_metadata([episode.id])[0]
+    assert len(dataset) == num_episodes
+    episodes = dataset.iterate_episodes()
+    metadatas = dataset.storage.get_episode_metadata(range(num_episodes))
+    for episode, episode_metadata in zip(episodes, metadatas):
         episode_seed = episode_metadata["seed"]
         assert episode_seed >= 0
         if seed is not None:

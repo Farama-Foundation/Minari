@@ -5,7 +5,7 @@ import os
 import pathlib
 import warnings
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Dict, Iterable, List, Optional, Union
+from typing import Any, Callable, Dict, Iterable, Optional, Union
 
 import gymnasium as gym
 import numpy as np
@@ -239,14 +239,14 @@ class MinariStorage(ABC):
         ...
 
     @abstractmethod
-    def get_episode_metadata(self, episode_indices: Iterable[int]) -> List[Dict]:
+    def get_episode_metadata(self, episode_indices: Iterable[int]) -> Iterable[Dict]:
         """Get the metadata of episodes.
 
         Args:
             episode_indices (Iterable[int]): episodes id to return
 
         Returns:
-            metadatas (List[Dict]): list of episodes metadata
+            metadatas (Iterable[Dict]): episodes metadata
         """
         ...
 
@@ -271,14 +271,14 @@ class MinariStorage(ABC):
         return map(function, ep_dicts)
 
     @abstractmethod
-    def get_episodes(self, episode_indices: Iterable[int]) -> List[dict]:
+    def get_episodes(self, episode_indices: Iterable[int]) -> Iterable[dict]:
         """Get a list of episodes.
 
         Args:
             episode_indices (Iterable[int]): episodes id to return
 
         Returns:
-            episodes (List[dict]): list of episodes data
+            episodes (Iterable[dict]): episodes data
         """
         ...
 

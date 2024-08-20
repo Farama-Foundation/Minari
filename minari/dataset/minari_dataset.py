@@ -248,23 +248,21 @@ class MinariDataset:
         return list(map(lambda data: EpisodeData(**data), episodes))
 
     def iterate_episodes(
-        self, episode_indices: Optional[List[int]] = None
+        self, episode_indices: Optional[Iterable[int]] = None
     ) -> Iterator[EpisodeData]:
         """Iterate over episodes from the dataset.
 
         Args:
-            episode_indices (Optional[List[int]], optional): episode indices to iterate over.
+            episode_indices (Optional[Iterable[int]], optional): episode indices to iterate over.
         """
         if episode_indices is None:
             assert self.episode_indices is not None
             assert self.episode_indices.ndim == 1
-            episode_indices = self.episode_indices.tolist()
+            episode_indices = self.episode_indices
 
         assert episode_indices is not None
-
-        for episode_index in episode_indices:
-            data = self.storage.get_episodes([episode_index])[0]
-            yield EpisodeData(**data)
+        episodes_data = self.storage.get_episodes(episode_indices)
+        return map(lambda data: EpisodeData(**data), episodes_data)
 
     def update_dataset_from_buffer(self, buffer: List[EpisodeBuffer]):
         """Additional data can be added to the Minari Dataset from a list of episode dictionary buffers.
@@ -282,9 +280,8 @@ class MinariDataset:
         return self.iterate_episodes()
 
     def __getitem__(self, idx: int) -> EpisodeData:
-        episodes_data = self.storage.get_episodes([self.episode_indices[idx]])
-        assert len(episodes_data) == 1
-        return EpisodeData(**episodes_data[0])
+        episode = self.iterate_episodes([self.episode_indices[idx]])
+        return next(episode)
 
     def __len__(self) -> int:
         return self.total_episodes
