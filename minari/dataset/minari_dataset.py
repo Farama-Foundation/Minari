@@ -74,7 +74,7 @@ def gen_dataset_id(
 
 @dataclass
 class MinariDatasetSpec:
-    env_spec: Optional[EnvSpec]
+    env_spec: EnvSpec | None
     total_episodes: int
     total_steps: int
     dataset_id: str
@@ -121,7 +121,8 @@ class MinariDataset:
 
         if episode_indices is None:
             episode_indices = np.arange(self._data.total_episodes)
-        self._episode_indices: np.ndarray = episode_indices
+        assert episode_indices is not None
+        self._episode_indices: npt.NDArray[np.int_] = episode_indices
         self._total_steps = None
 
         metadata = self._data.metadata
@@ -306,12 +307,12 @@ class MinariDataset:
         return int(self._total_steps)
 
     @property
-    def episode_indices(self) -> np.ndarray:
+    def episode_indices(self) -> npt.NDArray[np.int_]:
         """Indices of the available episodes to sample within the Minari dataset."""
         return self._episode_indices
 
     @episode_indices.setter
-    def episode_indices(self, new_value: np.ndarray):
+    def episode_indices(self, new_value: npt.NDArray[np.int_]):
         self._total_steps = None  # invalidate cache
         self._episode_indices = new_value
 
