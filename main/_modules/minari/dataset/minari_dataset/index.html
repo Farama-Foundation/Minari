@@ -373,10 +373,11 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Iterator</span><span class="p">,</span> <span class="n">List</span>
 
 <span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy.typing</span> <span class="k">as</span> <span class="nn">npt</span>
 <span class="kn">from</span> <span class="nn">gymnasium</span> <span class="kn">import</span> <span class="n">error</span><span class="p">,</span> <span class="n">logger</span>
 <span class="kn">from</span> <span class="nn">gymnasium.envs.registration</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
 <span class="kn">from</span> <span class="nn">packaging.requirements</span> <span class="kn">import</span> <span class="n">InvalidRequirement</span><span class="p">,</span> <span class="n">Requirement</span>
@@ -442,7 +443,7 @@
 
 <span class="nd">@dataclass</span>
 <span class="k">class</span> <span class="nc">MinariDatasetSpec</span><span class="p">:</span>
-    <span class="n">env_spec</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">EnvSpec</span><span class="p">]</span>
+    <span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span> <span class="o">|</span> <span class="kc">None</span>
     <span class="n">total_episodes</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">total_steps</span><span class="p">:</span> <span class="nb">int</span>
     <span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span>
@@ -473,8 +474,8 @@
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">data</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">MinariStorage</span><span class="p">,</span> <span class="n">PathLike</span><span class="p">],</span>
-        <span class="n">episode_indices</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">data</span><span class="p">:</span> <span class="n">MinariStorage</span> <span class="o">|</span> <span class="n">PathLike</span><span class="p">,</span>
+        <span class="n">episode_indices</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize properties of the Minari Dataset.</span>
 
@@ -491,7 +492,8 @@
 
         <span class="k">if</span> <span class="n">episode_indices</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">episode_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">total_episodes</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_episode_indices</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">episode_indices</span>
+        <span class="k">assert</span> <span class="n">episode_indices</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_episode_indices</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">]</span> <span class="o">=</span> <span class="n">episode_indices</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_total_steps</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="n">metadata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">metadata</span>
@@ -619,23 +621,21 @@
         <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">data</span><span class="p">:</span> <span class="n">EpisodeData</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">),</span> <span class="n">episodes</span><span class="p">))</span>
 
     <span class="k">def</span> <span class="nf">iterate_episodes</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">episode_indices</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">episode_indices</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">EpisodeData</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over episodes from the dataset.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            episode_indices (Optional[List[int]], optional): episode indices to iterate over.</span>
+<span class="sd">            episode_indices (Optional[Iterable[int]], optional): episode indices to iterate over.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">episode_indices</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">episode_indices</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">episode_indices</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span>
-            <span class="n">episode_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">episode_indices</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">episode_indices</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">episode_indices</span>
 
         <span class="k">assert</span> <span class="n">episode_indices</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-
-        <span class="k">for</span> <span class="n">episode_index</span> <span class="ow">in</span> <span class="n">episode_indices</span><span class="p">:</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">get_episodes</span><span class="p">([</span><span class="n">episode_index</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">yield</span> <span class="n">EpisodeData</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">episodes_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">get_episodes</span><span class="p">(</span><span class="n">episode_indices</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">data</span><span class="p">:</span> <span class="n">EpisodeData</span><span class="p">(</span><span class="o">**</span><span class="n">data</span><span class="p">),</span> <span class="n">episodes_data</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">update_dataset_from_buffer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">buffer</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">EpisodeBuffer</span><span class="p">]):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Additional data can be added to the Minari Dataset from a list of episode dictionary buffers.</span>
@@ -653,9 +653,8 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">iterate_episodes</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EpisodeData</span><span class="p">:</span>
-        <span class="n">episodes_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">get_episodes</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">episode_indices</span><span class="p">[</span><span class="n">idx</span><span class="p">]])</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">episodes_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
-        <span class="k">return</span> <span class="n">EpisodeData</span><span class="p">(</span><span class="o">**</span><span class="n">episodes_data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">episode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">iterate_episodes</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">episode_indices</span><span class="p">[</span><span class="n">idx</span><span class="p">]])</span>
+        <span class="k">return</span> <span class="nb">next</span><span class="p">(</span><span class="n">episode</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_episodes</span>
@@ -679,12 +678,12 @@
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_total_steps</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">episode_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">episode_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Indices of the available episodes to sample within the Minari dataset.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_episode_indices</span>
 
     <span class="nd">@episode_indices</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">episode_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_value</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">episode_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_value</span><span class="p">:</span> <span class="n">npt</span><span class="o">.</span><span class="n">NDArray</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">int_</span><span class="p">]):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_total_steps</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># invalidate cache</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_episode_indices</span> <span class="o">=</span> <span class="n">new_value</span>
 
