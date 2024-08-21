@@ -74,10 +74,12 @@ class HDF5Storage(MinariStorage):
                 ep_group = file[f"episode_{ep_idx}"]
                 assert isinstance(ep_group, h5py.Group)
                 metadata: dict = dict(ep_group.attrs)
-                if "options" in ep_group:
-                    options_group = ep_group["options"]
-                    assert isinstance(options_group, h5py.Group)
-                    metadata["options"] = self._decode_dict(options_group)
+                if "option_names" in metadata:
+                    metadata["options"] = {}
+                    for name in metadata["option_names"]:
+                        metadata["options"][name] = metadata[f"options/{name}"]
+                        del metadata[f"options/{name}"]
+                    del metadata["option_names"]
                 if metadata.get("seed") is not None:
                     metadata["seed"] = int(metadata["seed"])
 
@@ -167,6 +169,12 @@ class HDF5Storage(MinariStorage):
                 if eps_buff.seed is not None:
                     assert "seed" not in episode_group.attrs.keys()
                     episode_group.attrs["seed"] = eps_buff.seed
+                if eps_buff.options is not None:
+                    assert "options" not in episode_group.attrs.keys()
+                    for name, option in eps_buff.options.items():
+                        episode_group.attrs[f"options/{name}"] = option
+                    episode_group.attrs["option_names"] = list(eps_buff.options.keys())
+
                 episode_steps = len(eps_buff.rewards)
                 episode_group.attrs["total_steps"] = episode_steps
                 additional_steps += episode_steps
@@ -178,7 +186,6 @@ class HDF5Storage(MinariStorage):
                     "terminations": eps_buff.terminations,
                     "truncations": eps_buff.truncations,
                     "infos": eps_buff.infos,
-                    "options": eps_buff.options,
                 }
                 _add_episode_to_group(dict_buffer, episode_group)
 

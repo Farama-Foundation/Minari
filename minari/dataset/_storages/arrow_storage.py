@@ -63,7 +63,7 @@ class ArrowStorage(MinariStorage):
                     metadata = json.load(file)
             metadata.update(new_metadata)
             with open(metadata_path, "w") as file:
-                json.dump(metadata, file)
+                json.dump(metadata, file, cls=NumpyEncoder)
 
     def get_episode_metadata(self, episode_indices: Iterable[int]) -> Iterable[Dict]:
         for episode_id in episode_indices:
@@ -253,3 +253,10 @@ def _decode_info(values: pa.Array):
                 value = value.reshape(len(value), *data_shape)
             nested_dict[field.name] = value
     return nested_dict
+
+
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return super().default(obj)

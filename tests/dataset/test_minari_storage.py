@@ -252,8 +252,9 @@ def test_minari_get_dataset_size_from_buffer(
 
     num_episodes = 10
     seed = 42
-    observation, _ = env.reset(seed=seed)
-    episode_buffer = EpisodeBuffer(observations=observation, seed=seed)
+    options = {"int": 3, "array": np.array([1, 2, 3])}
+    observation, _ = env.reset(seed=seed, options=options)
+    episode_buffer = EpisodeBuffer(observations=observation, seed=seed, options=options)
 
     for episode in range(num_episodes):
         terminated = False
@@ -291,6 +292,10 @@ def test_minari_get_dataset_size_from_buffer(
     )
 
     assert dataset.storage.metadata["dataset_size"] == dataset.storage.get_size()
+    ep_metadata_0 = next(iter(dataset.storage.get_episode_metadata([0])))
+    assert ep_metadata_0["seed"] == seed
+    assert ep_metadata_0["options"]["int"] == options["int"]
+    assert np.all(ep_metadata_0["options"]["array"] == options["array"])
 
     check_data_integrity(dataset, list(dataset.episode_indices))
 
