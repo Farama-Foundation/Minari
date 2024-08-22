@@ -15,7 +15,7 @@ def dataset_id():
 
 
 @pytest.fixture(autouse=True)
-def createAndDestroyMinariDataset(dataset_id):
+def create_and_destroy_minari_dataset(dataset_id):
     env = gym.make("CartPole-v1")
     env = DataCollector(env, record_infos=True)
 

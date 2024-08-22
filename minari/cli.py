@@ -216,6 +216,11 @@ def show(dataset: Annotated[str, typer.Argument()]):
 
         if env_spec_json is not None:
             assert isinstance(env_spec_json, str)
+            env_spec_json = (  # for gymnasium 1.0.0 compatibility
+                env_spec_json.replace('"order_enforce": true,', "")
+                .replace('"apply_api_compatibility": false,', "")
+                .replace('"autoreset": false, ', "")
+            )
             env_spec = EnvSpec.from_json(env_spec_json)
             env_spec_table = Table(show_header=False, highlight=True)
             env_spec_table.add_column(style="bold")
