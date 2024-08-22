@@ -130,12 +130,22 @@ class MinariDataset:
         env_spec = metadata.get("env_spec")
         if env_spec is not None:
             assert isinstance(env_spec, str)
+            env_spec = (  # for gymnasium 1.0.0 compatibility
+                env_spec.replace('"order_enforce": true,', "")
+                .replace('"apply_api_compatibility": false,', "")
+                .replace('"autoreset": false, ', "")
+            )
             env_spec = EnvSpec.from_json(env_spec)
         self._env_spec = env_spec
 
         eval_env_spec = metadata.get("eval_env_spec")
         if eval_env_spec is not None:
             assert isinstance(eval_env_spec, str)
+            eval_env_spec = (  # for gymnasium 1.0.0 compatibility
+                eval_env_spec.replace('"order_enforce": true,', "")
+                .replace('"apply_api_compatibility": false,', "")
+                .replace('"autoreset": false, ', "")
+            )
             eval_env_spec = EnvSpec.from_json(eval_env_spec)
         self._eval_env_spec = eval_env_spec
 

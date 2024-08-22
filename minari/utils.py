@@ -492,7 +492,6 @@ def get_env_spec_dict(env_spec: EnvSpec) -> Dict[str, str]:
             "reward_threshold": str(env_spec.reward_threshold),
             "nondeterministic": f"`{env_spec.nondeterministic}`",
             "order_enforce": f"`{env_spec.order_enforce}`",
-            "autoreset": f"`{env_spec.autoreset}`",
             "disable_env_checker": f"`{env_spec.disable_env_checker}`",
             "kwargs": f"`{env_spec.kwargs}`",
             "additional_wrappers": f"`{env_spec.additional_wrappers}`",
