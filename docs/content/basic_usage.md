@@ -15,12 +15,17 @@ To install the most recent version of the Minari library run this command:
 pip install minari
 ```
 
+This will install the minimum required dependencies. Additional dependencies will be prompted for installation based on your use case. To install all dependencies at once, use:
+```bash
+pip install "minari[all]"
+```
+
 If you'd like to start testing or contribute to Minari then please install this project from source with:
 
 ```
 git clone https://github.com/Farama-Foundation/Minari.git
 cd Minari
-pip install -e .
+pip install -e ".[all]"
 ```
 
 We support Python with minimum version 3.8 on Linux and macOS.
@@ -38,22 +43,31 @@ minari list remote
 ```
 
 ```
-                                                Minari datasets in Farama server
-┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃ Name                         ┃ Total Episodes ┃ Total Steps ┃ Dataset Size ┃ Author            ┃ Email                  ┃
-┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━┩
-│ antmaze-large-diverse-v0     │           1000 │     1000000 │ 700.5 MB     │ Alex Davey        │ amd1g13@soton.ac.uk    │
-│ antmaze-large-play-v0        │           1000 │     1000000 │ 700.5 MB     │ Alex Davey        │ amd1g13@soton.ac.uk    │
-│ antmaze-medium-diverse-v0    │           1000 │     1000000 │ 700.5 MB     │ Alex Davey        │ amd1g13@soton.ac.uk    │
-│             ...              │       ...      │     ...     │     ...      │        ...        │           ...          │
+                                Minari datasets in Farama server
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓
+┃ Name                           ┃ Total Episodes ┃ Total Steps ┃ Dataset Size ┃ Author          ┃
+┡━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩
+│ D4RL/antmaze/large-diverse-v1  │           1000 │     1000000 │ 605.2 MB     │ Alex Davey      │
+│ D4RL/antmaze/large-play-v1     │           1000 │     1000000 │ 605.2 MB     │ Alex Davey      │
+│ D4RL/antmaze/medium-diverse-v1 │           1000 │     1000000 │ 605.2 MB     │ Alex Davey      │
+│             ...                │       ...      │     ...     │     ...      │       ...       │
 ```
+
+To use your own server with Minari, set the `MINARI_REMOTE` environment variable in the format `remote-type://remote-path`. For example, to set up a GCP bucket named `my-datasets`, run the following command:
+
+```bash
+export MINARI_REMOTE=gcp://my-datasets
+```
+
+Currently, only GCP is supported, but we plan to support other cloud providers in the future.
+
 
 ```{eval-rst}
 To download any of the remote datasets into the local storage use the download command:
 ```
 
 ```bash
-minari download door-human-v2
+minari download D4RL/door/human-v2
 ```
 
 ### Load Local Datasets
@@ -67,12 +81,12 @@ minari list local
 ```
 
 ```
-                            Local Minari datasets('/Users/farama/.minari/datasets/')
-┏━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃ Name          ┃ Total Episodes ┃ Total Steps ┃ Dataset Size ┃ Author             ┃ Email                    ┃
-┡━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━┩
-│ door-human-v2 │             25 │        6729 │ 7.1 MB       │ Rodrigo de Lazcano │ rperezvicente@farama.org │
-└───────────────┴────────────────┴─────────────┴──────────────┴────────────────────┴──────────────────────────┘
+                 Local Minari datasets('/Users/farama/.minari/datasets/')
+┏━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┓
+┃ Name               ┃ Total Episodes ┃ Total Steps ┃ Dataset Size ┃ Author             ┃
+┡━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━┩
+│ D4RL/door/human-v2 │             25 │        6729 │ 7.1 MB       │ Rodrigo de Lazcano │
+└────────────────────┴────────────────┴─────────────┴──────────────┴────────────────────┘
 ```
 
 ```{eval-rst}
@@ -81,7 +95,7 @@ In order to use any of the dataset sampling features of Minari we first need to 
 
 ```python
 import minari
-dataset = minari.load_dataset('door-human-v2')
+dataset = minari.load_dataset('D4RL/door/human-v2')
 print("Observation space:", dataset.observation_space)
 print("Action space:", dataset.action_space)
 print("Total episodes:", dataset.total_episodes)
@@ -103,7 +117,7 @@ Minari can retrieve a certain amount of episode shards from the dataset files as
 ```python
 import minari
 
-dataset = minari.load_dataset("door-human-v2")
+dataset = minari.load_dataset("D4RL/door/human-v2")
 dataset.set_seed(seed=123)
 
 for i in range(5):
@@ -136,7 +150,7 @@ To create your own buffers and dataloaders, you may need the ability to iterate 
 ```python
 import minari
 
-dataset = minari.load_dataset("door-human-v2")
+dataset = minari.load_dataset("D4RL/door/human-v2")
 episodes_generator = dataset.iterate_episodes(episode_indices=[1, 2, 0])
 
 for episode in episodes_generator:
@@ -160,7 +174,7 @@ In addition, the :class:`minari.MinariDataset` dataset itself is iterable:.
 ```python
 import minari
 
-dataset = minari.load_dataset("door-human-v2")
+dataset = minari.load_dataset("D4RL/door/human-v2")
 
 for episode in dataset:
     print(f"EPISODE ID {episode.id}")
@@ -176,7 +190,7 @@ The episodes in the dataset can be filtered before sampling. This is done with a
 ```python
 import minari
 
-dataset = minari.load_dataset("door-human-v2")
+dataset = minari.load_dataset("D4RL/door/human-v2")
 
 print(f'TOTAL EPISODES ORIGINAL DATASET: {dataset.total_episodes}')
 
@@ -202,7 +216,7 @@ Minari provides another utility function to divide a dataset into multiple datas
 ```python
 import minari
 
-dataset = minari.load_dataset("door-human-v2", download=True)
+dataset = minari.load_dataset("D4RL/door/human-v2", download=True)
 
 split_datasets = minari.split_dataset(dataset, sizes=[20, 5], seed=123)
 
@@ -224,7 +238,7 @@ From a :class:`minari.MinariDataset` object we can also recover the Gymnasium en
 ```python
 import minari
 
-dataset = minari.load_dataset('door-human-v2')
+dataset = minari.load_dataset('D4RL/door/human-v2')
 env = dataset.recover_environment()
 
 env.reset()
@@ -244,7 +258,7 @@ for _ in range(100):
 
         import minari
 
-        dataset = minari.load_dataset('door-human-v2')
+        dataset = minari.load_dataset('D4RL/door/human-v2')
         eval_env = dataset.recover_environment(eval_env=True)
 
    If the dataset doesn't have an `eval_env_spec` attribute, the environment used for collecting the data will be retrieved by default.
@@ -253,23 +267,23 @@ for _ in range(100):
 ### Combine Minari Datasets
 
 ```{eval-rst}
-In the case of having two or more Minari datasets created with the same environment we can combine these datasets into a single one by using the Minari function :func:`minari.combine_datasets`, i.e. the ``'AdroitHandDoor-v1'`` environment has two datasets available in the remote Farama servers, ``door-human-v1`` and ``door-expert-v1``, we can combine the episodes in these two datasets into a new Minari dataset ``door-all-v1``:
+In the case of having two or more Minari datasets created with the same environment we can combine these datasets into a single one by using the Minari function :func:`minari.combine_datasets`, i.e. the ``'AdroitHandDoor-v1'`` environment has two datasets available in the remote Farama servers, ``D4RL/door/human-v2`` and ``D4RL/door/expert-v2``, we can combine the episodes in these two datasets into a new Minari dataset ``D4RL/door/all-v0``:
 ```
 
 ```bash
-minari download door-expert-v2
-minari combine door-human-v2 door-expert-v2 --dataset-id=door-all-v0
+minari download D4RL/door/expert-v2
+minari combine D4RL/door/human-v2 D4RL/door/expert-v2 --dataset-id=D4RL/door/all-v0
 minari list local
 ```
 ```
-                             Local Minari datasets('/Users/farama/.minari/datasets/')
-┏━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━━━━━━━┓
-┃ Name           ┃ Total Episodes ┃ Total Steps ┃ Dataset Size ┃ Author             ┃ Email                    ┃
-┡━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━━━━━━━┩
-│ door-all-v0    │           5025 │     1006729 │ 1103.5 MB    │ Rodrigo de Lazcano │ rperezvicente@farama.org │
-│ door-expert-v2 │           5000 │     1000000 │ 1096.4 MB    │ Rodrigo de Lazcano │ rperezvicente@farama.org │
-│ door-human-v2  │             25 │        6729 │ 7.1 MB       │ Rodrigo de Lazcano │ rperezvicente@farama.org │
-└────────────────┴────────────────┴─────────────┴──────────────┴────────────────────┴──────────────────────────┘
+                    Local Minari datasets('/Users/farama/.minari/datasets/')
+┏━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┓
+┃ Name                ┃ Total Episodes ┃ Total Steps ┃ Dataset Size ┃ Author             ┃
+┡━━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━┩
+│ D4RL/door/all-v0    │           5025 │     1006729 │ 1103.5 MB    │ Rodrigo de Lazcano │
+│ D4RL/door/expert-v2 │           5000 │     1000000 │ 1096.4 MB    │ Rodrigo de Lazcano │
+│ D4RL/door/human-v2  │             25 │        6729 │ 7.1 MB       │ Rodrigo de Lazcano │
+└─────────────────────┴────────────────┴─────────────┴──────────────┴────────────────────┘
 ```
 
 ## Create Minari Dataset
@@ -325,7 +339,7 @@ for _ in range(total_episodes):
             break
 
 dataset = env.create_dataset(
-    dataset_id="cartpole-test-v0",
+    dataset_id="cartpole/test-v0",
     algorithm_name="Random-Policy",
     code_permalink="https://github.com/Farama-Foundation/Minari",
     author="Farama",
@@ -345,12 +359,12 @@ Once the dataset has been created we can check if the Minari dataset id appears 
 minari list local
 ```
 ```
-                     Local Minari datasets('/Users/farama/.minari/datasets/')
-┏━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┓
-┃ Name             ┃ Total Episodes ┃ Total Steps ┃ Dataset Size ┃ Author ┃ Email              ┃
-┡━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━┩
-│ cartpole-test-v0 │            100 │        2059 │ 1.6 MB       │ Farama │ contact@farama.org │
-└──────────────────┴────────────────┴─────────────┴──────────────┴────────┴────────────────────┘
+        Local Minari datasets('/Users/farama/.minari/datasets/')
+┏━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━┓
+┃ Name             ┃ Total Episodes ┃ Total Steps ┃ Dataset Size ┃  Author  ┃
+┡━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━━━┩
+│ cartpole-test-v0 │            100 │        2059 │ 1.6 MB       │  Farama  │
+└──────────────────┴────────────────┴─────────────┴──────────────┴──────────┘
 ```
 
 ```{eval-rst}
@@ -376,10 +390,10 @@ env = gym.make('CartPole-v1')
 env = DataCollector(env, record_infos=True)
 
 total_episodes = 100
-dataset_name = "cartpole-test-v0"
+dataset_id = "cartpole/test-v0"
 dataset = None
-if dataset_name in minari.list_local_datasets():
-    dataset = minari.load_dataset(dataset_name)
+if dataset_id in minari.list_local_datasets():
+    dataset = minari.load_dataset(dataset_id)
 
 for episode_id in range(total_episodes):
     env.reset()
@@ -396,7 +410,7 @@ for episode_id in range(total_episodes):
         # This works as a checkpoint to not lose the already collected data
         if dataset is None:
             dataset = env.create_dataset(
-                dataset_id=dataset_name,
+                dataset_id=dataset_id,
                 algorithm_name="Random-Policy",
                 code_permalink="https://github.com/Farama-Foundation/Minari",
                 author="Farama",
@@ -404,4 +418,13 @@ for episode_id in range(total_episodes):
             )
         else:
             env.add_to_dataset(dataset)
+```
+
+
+## Using Namespaces
+
+```{eval-rst}
+Namespaces can be used to group together common datasets and provide them with a hierarchical structure. For example, suppose we want to create a series of `Classic Control <https://gymnasium.farama.org/environments/classic_control/>`_ datasets (`cartpole`, `acrobot`, e.t.c.) using the dataset creation code above. Instead of specifying ``dataset_id=cartpole-test-v0``, we can use e.g. ``classic_control/cartpole-test-v0`` when creating the dataset. This, and all other datasets with a ``dataset_id`` that starts with ``classic_control/`` will now be stored together in the ``classic_control`` namespace.
+
+For more flexibility, namespaces can be created and modified directly using the :doc:`Namespace API <../api/namespace/namespace>`.
 ```

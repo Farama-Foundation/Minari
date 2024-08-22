@@ -1,4 +1,4 @@
-name: Test Documentation
+name: test documentation
 on:
   pull_request:
   push:
@@ -7,7 +7,7 @@ permissions:
   contents: read
 jobs:
   docs:
-    name: Test documentation
+    name: test documentation
     runs-on: ubuntu-latest
     env:
       SPHINX_GITHUB_CHANGELOG_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -22,7 +22,7 @@ jobs:
         run: pip install -r docs/requirements.txt
 
       - name: Install Minari
-        run: pip install .[testing]
+        run: pip install .[all,testing]
 
       - name: Build
         run: sphinx-build -b dirhtml -v docs _build

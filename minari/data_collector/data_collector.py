@@ -15,8 +15,9 @@ from gymnasium.envs.registration import EnvSpec
 
 from minari.data_collector.callbacks import EpisodeMetadataCallback, StepDataCallback
 from minari.data_collector.episode_buffer import EpisodeBuffer
-from minari.dataset.minari_dataset import MinariDataset
+from minari.dataset.minari_dataset import MinariDataset, parse_dataset_id
 from minari.dataset.minari_storage import MinariStorage
+from minari.namespace import create_namespace, list_local_namespaces
 from minari.utils import _generate_dataset_metadata, _generate_dataset_path
 
 
@@ -46,7 +47,7 @@ class DataCollector(gym.Wrapper):
             if terminated or truncated:
                 env.reset()
 
-        dataset = env.create_dataset(dataset_id="env_name-dataset_name-v(version)", **kwargs)
+        dataset = env.create_dataset(dataset_id="env_name/dataset_name-v(version)", **kwargs)
 
     Some of the characteristics of this wrapper:
 
@@ -203,6 +204,7 @@ class DataCollector(gym.Wrapper):
         self._buffer = EpisodeBuffer(
             id=self._episode_id,
             seed=seed,
+            options=options,
             observations=step_data["observation"],
             infos=step_data["info"] if self._record_infos else None,
         )
@@ -229,42 +231,46 @@ class DataCollector(gym.Wrapper):
         dataset_id: str,
         eval_env: Optional[str | gym.Env | EnvSpec] = None,
         algorithm_name: Optional[str] = None,
-        author: Optional[str] = None,
-        author_email: Optional[str] = None,
+        author: Optional[str | set] = None,
+        author_email: Optional[str | set] = None,
         code_permalink: Optional[str] = None,
         ref_min_score: Optional[float] = None,
         ref_max_score: Optional[float] = None,
         expert_policy: Optional[Callable[[ObsType], ActType]] = None,
         num_episodes_average_score: int = 100,
-        minari_version: Optional[str] = None,
         description: Optional[str] = None,
+        requirements: Optional[list] = None,
     ):
         """Create a Minari dataset using the data collected from stepping with a Gymnasium environment wrapped with a `DataCollector` Minari wrapper.
 
         The ``dataset_id`` parameter corresponds to the name of the dataset, with the syntax as follows:
-        ``(env_name-)(dataset_name)(-v(version))`` where ``env_name`` identifies the name of the environment used to generate the dataset ``dataset_name``.
+        ``(namespace/)(env_name/)dataset_name(-v[version])`` where ``env_name`` identifies the name of the environment used to generate the dataset. The `namespace` is optional.
         This ``dataset_id`` is used to load the Minari datasets with :meth:`minari.load_dataset`.
 
         Args:
             dataset_id (str): name id to identify Minari dataset
-            buffer (list[Dict[str, Union[list, Dict]]]): list of episode dictionaries with data
-            eval_env (Optional[str|gym.Env|EnvSpec]): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) to use for evaluation with the dataset. After loading the dataset, the environment can be recovered as follows: `MinariDataset.recover_environment(eval_env=True).
+            eval_env (str | gym.Env | EnvSpec, optional): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) to use for evaluation with the dataset. After loading the dataset, the environment can be recovered as follows: `MinariDataset.recover_environment(eval_env=True).
                                                     If None the `env` used to collect the buffer data should be used for evaluation.
-            algorithm_name (Optional[str], optional): name of the algorithm used to collect the data. Defaults to None.
-            author (Optional[str], optional): author that generated the dataset. Defaults to None.
-            author_email (Optional[str], optional): email of the author that generated the dataset. Defaults to None.
-            code_permalink (Optional[str], optional): link to relevant code used to generate the dataset. Defaults to None.
-            ref_min_score( Optional[float], optional): minimum reference score from the average returns of a random policy. This value is later used to normalize a score with :meth:`minari.get_normalized_score`. If default None the value will be estimated with a default random policy.
-            ref_max_score (Optional[float], optional: maximum reference score from the average returns of a hypothetical expert policy. This value is used in :meth:`minari.get_normalized_score`. Default None.
-            expert_policy (Optional[Callable[[ObsType], ActType], optional): policy to compute `ref_max_score` by averaging the returns over a number of episodes equal to  `num_episodes_average_score`.
+            algorithm_name (str, optional): name of the algorithm used to collect the data. Defaults to None.
+            author (str | set, optional): name of the author(s) that generated the dataset. Defaults to None.
+            author_email (str | set, optional): email(s) of the author(s) that generated the dataset. Defaults to None.
+            code_permalink (str, optional): link to relevant code used to generate the dataset. Defaults to None.
+            ref_min_score(float, optional): minimum reference score from the average returns of a random policy. This value is later used to normalize a score with :meth:`minari.get_normalized_score`. If default None the value will be estimated with a default random policy.
+            ref_max_score (float, optional): maximum reference score from the average returns of a hypothetical expert policy. This value is used in :meth:`minari.get_normalized_score`. Default None.
+            expert_policy (Callable[[ObsType], ActType], optional): policy to compute `ref_max_score` by averaging the returns over a number of episodes equal to  `num_episodes_average_score`.
                                                                             `ref_max_score` and `expert_policy` can't be passed at the same time. Default to None
             num_episodes_average_score (int): number of episodes to average over the returns to compute `ref_min_score` and `ref_max_score`. Default to 100.
-            minari_version (Optional[str], optional): Minari version specifier compatible with the dataset. If None (default) use the installed Minari version.
-            description (Optional[str], optional): description of the dataset being created. Defaults to None.
+            description (str, optional): description of the dataset being created. Defaults to None.
+            requirements (list of str, optional): list of requirements in pip-style to load the environment and reproduce the dataset. For example, `mujoco>=3.1.0,<3.2.0`, which indicate the supported version range for mujoco package. Defaults to None.
 
         Returns:
             MinariDataset
         """
+        namespace = parse_dataset_id(dataset_id)[0]
+
+        if namespace is not None and namespace not in list_local_namespaces():
+            create_namespace(namespace)
+
         dataset_path = _generate_dataset_path(dataset_id)
         metadata: Dict[str, Any] = _generate_dataset_metadata(
             dataset_id,
@@ -278,17 +284,14 @@ class DataCollector(gym.Wrapper):
             ref_max_score,
             expert_policy,
             num_episodes_average_score,
-            minari_version,
             description,
+            requirements,
         )
 
         self._save_to_disk(dataset_path, metadata)
 
-        # will be able to calculate dataset size only after saving the disk, so updating the dataset metadata post `save_to_disk` method
-
         dataset = MinariDataset(dataset_path)
-        metadata["dataset_size"] = dataset.storage.get_size()
-        dataset.storage.update_metadata(metadata)
+        dataset.storage.update_metadata({"dataset_size": dataset.storage.get_size()})
         return dataset
 
     def _flush_to_storage(self):

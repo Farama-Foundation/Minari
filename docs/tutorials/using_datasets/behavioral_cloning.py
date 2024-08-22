@@ -67,7 +67,7 @@ for i in tqdm(range(total_episodes)):
             break
 
 dataset = env.create_dataset(
-    dataset_id="cartpole-expert-v0",
+    dataset_id="cartpole/expert-v0",
     algorithm_name="ExpertPolicy",
     code_permalink="https://minari.farama.org/tutorials/behavioral_cloning",
     author="Farama",
@@ -107,8 +107,6 @@ class PolicyNetwork(nn.Module):
 def collate_fn(batch):
     return {
         "id": torch.Tensor([x.id for x in batch]),
-        "seed": torch.Tensor([x.seed for x in batch]),
-        "total_steps": torch.Tensor([x.total_steps for x in batch]),
         "observations": torch.nn.utils.rnn.pad_sequence(
             [torch.as_tensor(x.observations) for x in batch],
             batch_first=True
@@ -136,7 +134,7 @@ def collate_fn(batch):
 # To begin, let's initialize the DataLoader, neural network, optimizer, and loss.
 
 
-minari_dataset = minari.load_dataset("cartpole-expert-v0")
+minari_dataset = minari.load_dataset("cartpole/expert-v0")
 dataloader = DataLoader(minari_dataset, batch_size=256, shuffle=True, collate_fn=collate_fn)
 
 env = minari_dataset.recover_environment()

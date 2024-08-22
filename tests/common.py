@@ -1,6 +1,6 @@
 import sys
 import unicodedata
-from typing import Any, Dict, Iterable, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 import gymnasium as gym
 import numpy as np
@@ -10,12 +10,26 @@ from gymnasium.utils.env_checker import data_equivalence
 import minari
 from minari import DataCollector, EpisodeData, MinariDataset, StepData
 from minari.data_collector import EpisodeBuffer
-from minari.dataset.minari_storage import MinariStorage
+from minari.dataset.minari_dataset import gen_dataset_id
+from minari.storage.hosting import get_remote_dataset_versions
 
 
 unicode_charset = "".join(
     [chr(i) for i in range(sys.maxunicode) if unicodedata.category(chr(i)) != "Cs"]
 )
+
+cartpole_test_dataset = [("cartpole/test-v0", "CartPole-v1")]
+dummy_box_dataset = [("dummy-box/test-v0", "DummyBoxEnv-v0")]
+dummy_text_dataset = [("dummy-text/test-v0", "DummyTextEnv-v0")]
+
+# Note: Doesn't include the text dataset, since this is often handled separately
+dummy_test_datasets = [
+    ("dummy-dict/test-v0", "DummyDictEnv-v0"),
+    ("dummy-tuple/test-v0", "DummyTupleEnv-v0"),
+    ("dummy-combo/test-v0", "DummyComboEnv-v0"),
+    ("dummy-tuple-discrete-box/test-v0", "DummyTupleDiscreteBoxEnv-v0"),
+    ("nested/namespace/dummy-dict/test-v0", "DummyDictEnv-v0"),
+] + dummy_box_dataset
 
 
 class DummyBoxEnv(gym.Env):
@@ -24,12 +38,13 @@ class DummyBoxEnv(gym.Env):
         self.observation_space = spaces.Box(
             low=-1, high=4, shape=(3,), dtype=np.float32
         )
+        self._max_timesteps = 5
 
     def _get_info(self):
         return {"timestep": np.array([self.timestep])}
 
     def step(self, action):
-        terminated = self.timestep > 5
+        terminated = self.timestep > self._max_timesteps
         self.timestep += 1
 
         return (
@@ -42,6 +57,8 @@ class DummyBoxEnv(gym.Env):
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
+        if options:
+            self._max_timesteps = options.get("max_timesteps", self._max_timesteps)
         self.observation_space.seed(seed)
         return self.observation_space.sample(), self._get_info()
 
@@ -482,47 +499,45 @@ def check_env_recovery(
         ), f"recovered_eval_env spec: {recovered_eval_env.spec}\noriginal spec: {evaluation_environment}"
 
 
-def check_data_integrity(data: MinariStorage, episode_indices: Iterable[int]):
-    """Checks to see if a MinariStorage episode has consistent data and has episodes at the expected indices.
+def check_data_integrity(dataset: MinariDataset, episode_indices: List[int]):
+    """Checks to see if MinariDataset episodes have consistent data and has episodes at the expected indices.
 
     Args:
-        data (MinariStorage): a MinariStorage instance
+        dataset (MinariDataset): a MinariDataset instance
         episode_indices (Iterable[int]): the list of episode indices expected
     """
-    episodes = list(data.get_episodes(episode_indices))
+    episodes = list(dataset.iterate_episodes(episode_indices))
     # verify we have the right number of episodes, available at the right indices
-    assert data.total_episodes == len(
+    assert dataset.total_episodes == len(
         episodes
-    ), f"{data.total_episodes} != {len(episodes)}"
+    ), f"{dataset.total_episodes} != {len(episodes)}"
     total_steps = 0
 
-    observation_space = data.metadata["observation_space"]
-    action_space = data.metadata["action_space"]
+    observation_space = dataset.observation_space
+    action_space = dataset.action_space
 
     # verify the actions and observations are in the appropriate action space and observation space, and that the episode lengths are correct
     for episode in episodes:
-        total_steps += episode["total_steps"]
+        total_steps += len(episode)
         _check_space_elem(
-            episode["observations"],
+            episode.observations,
             observation_space,
-            episode["total_steps"] + 1,
+            len(episode) + 1,
         )
-        _check_space_elem(episode["actions"], action_space, episode["total_steps"])
+        _check_space_elem(episode.actions, action_space, len(episode))
 
-        for i in range(episode["total_steps"] + 1):
-            obs = _reconstuct_obs_or_action_at_index_recursive(
-                episode["observations"], i
-            )
+        for i in range(len(episode) + 1):
+            obs = _reconstuct_obs_or_action_at_index_recursive(episode.observations, i)
             assert observation_space.contains(obs)
-        for i in range(episode["total_steps"]):
-            action = _reconstuct_obs_or_action_at_index_recursive(episode["actions"], i)
+        for i in range(len(episode)):
+            action = _reconstuct_obs_or_action_at_index_recursive(episode.actions, i)
             assert action_space.contains(action)
 
-        assert episode["total_steps"] == len(episode["rewards"])
-        assert episode["total_steps"] == len(episode["terminations"])
-        assert episode["total_steps"] == len(episode["truncations"])
+        assert len(episode) == len(episode.rewards)
+        assert len(episode) == len(episode.terminations)
+        assert len(episode) == len(episode.truncations)
 
-    assert total_steps == data.total_steps
+    assert total_steps == dataset.total_steps
 
 
 def get_info_at_step_index(infos: Dict, step_index: int) -> Dict:
@@ -600,10 +615,6 @@ def check_load_and_delete_dataset(dataset_id: str):
 def create_dummy_dataset_with_collecter_env_helper(
     dataset_id: str, env: DataCollector, num_episodes: int = 10, **kwargs
 ):
-    local_datasets = minari.list_local_datasets()
-    if dataset_id in local_datasets:
-        minari.delete_dataset(dataset_id)
-
     # Step the environment, DataCollector wrapper will do the data collection job
     env.reset(seed=42)
 
@@ -621,8 +632,9 @@ def create_dummy_dataset_with_collecter_env_helper(
         dataset_id=dataset_id,
         algorithm_name="random_policy",
         code_permalink="https://github.com/Farama-Foundation/Minari/blob/main/tests/common.py",
-        author="WillDudley",
-        author_email="wdudley@farama.org",
+        author="Farama",
+        author_email="farama@farama.org",
+        description="Test dataset for Minari",
         **kwargs,
     )
 
@@ -650,11 +662,11 @@ def check_episode_data_integrity(
         _check_space_elem(
             episode.observations,
             observation_space,
-            episode.total_steps + 1,
+            len(episode) + 1,
         )
-        _check_space_elem(episode.actions, action_space, episode.total_steps)
+        _check_space_elem(episode.actions, action_space, len(episode))
 
-        for i in range(episode.total_steps + 1):
+        for i in range(len(episode) + 1):
             obs = _reconstuct_obs_or_action_at_index_recursive(episode.observations, i)
             if info_sample is not None:
                 assert episode.infos is not None
@@ -664,13 +676,13 @@ def check_episode_data_integrity(
 
             assert observation_space.contains(obs)
 
-        for i in range(episode.total_steps):
+        for i in range(len(episode)):
             action = _reconstuct_obs_or_action_at_index_recursive(episode.actions, i)
             assert action_space.contains(action)
 
-        assert episode.total_steps == len(episode.rewards)
-        assert episode.total_steps == len(episode.terminations)
-        assert episode.total_steps == len(episode.truncations)
+        assert len(episode) == len(episode.rewards)
+        assert len(episode) == len(episode.terminations)
+        assert len(episode) == len(episode.truncations)
 
 
 def check_infos_equal(info_1: Dict, info_2: Dict) -> bool:
@@ -715,3 +727,20 @@ def get_sample_buffer_for_dataset_from_env(env: gym.Env, num_episodes: int = 10)
         episode_buffer = EpisodeBuffer(observations=observation)
 
     return buffer
+
+
+def get_latest_compatible_dataset_id(namespace, dataset_name):
+    latest_compatible_versions = get_remote_dataset_versions(
+        namespace=namespace,
+        dataset_name=dataset_name,
+        latest_version=True,
+        compatible_minari_version=True,
+    )
+
+    if len(latest_compatible_versions) == 0:
+        raise ValueError(
+            f"No datasets of the form '{gen_dataset_id(namespace, dataset_name)}' exist in the remote Farama server."
+        )
+
+    assert len(latest_compatible_versions) == 1
+    return gen_dataset_id(namespace, dataset_name, latest_compatible_versions[0])

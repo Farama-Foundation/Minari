@@ -2,11 +2,13 @@ import importlib.metadata
 import os
 import shutil
 import warnings
-from typing import Dict, Union
+from typing import Dict, Iterable, Tuple, Union
 
-from packaging.specifiers import SpecifierSet
-
-from minari.dataset.minari_dataset import MinariDataset, parse_dataset_id
+from minari.dataset.minari_dataset import (
+    MinariDataset,
+    gen_dataset_id,
+    parse_dataset_id,
+)
 from minari.dataset.minari_storage import MinariStorage
 from minari.storage import hosting
 from minari.storage.datasets_root_dir import get_dataset_path
@@ -14,6 +16,20 @@ from minari.storage.datasets_root_dir import get_dataset_path
 
 # Use importlib due to circular import when: "from minari import __version__"
 __version__ = importlib.metadata.version("minari")
+
+
+def list_non_hidden_dirs(path: str) -> Iterable[str]:
+    """List all non-hidden subdirectories."""
+    for d in os.scandir(path):
+        if d.is_dir() and (not d.name.startswith(".")):
+            yield d.name
+
+
+def dataset_id_sort_key(dataset_id: str) -> Tuple[str, str, int]:
+    """Key for sorting dataset ids first by namespace, and then alphabetically."""
+    namespace, dataset_name, version = parse_dataset_id(dataset_id)
+    namespace = "" if namespace is None else namespace
+    return (namespace, dataset_name, version)
 
 
 def load_dataset(dataset_id: str, download: bool = False):
@@ -47,41 +63,56 @@ def list_local_datasets(
     """Get the ids and metadata of all the Minari datasets in the local database.
 
     Args:
-        latest_version (bool): if `True` only the latest version of the datasets are returned i.e. from ['door-human-v0', 'door-human-v1`], only the metadata for v1 is returned. Default to `False`.
+        latest_version (bool): if `True` only the latest version of the datasets are returned i.e. from ['D4RL/door/human-v0', 'D4RL/door/human-v1`], only the metadata for v1 is returned. Default to `False`.
         compatible_minari_version (bool): if `True` only the datasets compatible with the current Minari version are returned. Default to `False`.
 
     Returns:
        Dict[str, Dict[str, str]]: keys the names of the Minari datasets and values the metadata
     """
+    from minari import supported_dataset_versions
+
     datasets_path = get_dataset_path("")
-    dataset_ids = sorted(
-        [
-            dir_name
-            for dir_name in os.listdir(datasets_path)
-            if not dir_name.startswith(".")
-        ]
-    )
+    dataset_ids = []
+
+    def recurse_directories(base_path, namespace):
+        parent_dir = os.path.join(base_path, namespace)
+        for dir_name in list_non_hidden_dirs(parent_dir):
+            dir_path = os.path.join(parent_dir, dir_name)
+            namespaced_dir_name = os.path.join(namespace, dir_name)
+            # Minari datasets must contain the data directory.
+            if "data" in os.listdir(dir_path):
+                dataset_ids.append(namespaced_dir_name)
+            else:
+                recurse_directories(base_path, namespaced_dir_name)
+
+    recurse_directories(datasets_path, "")
+
+    dataset_ids = sorted(dataset_ids, key=dataset_id_sort_key)
 
     local_datasets = {}
     for dst_id in dataset_ids:
-        if "data" not in os.listdir(os.path.join(datasets_path, dst_id)):
-            # Minari datasets must contain the data directory.
-            continue
-
         data_path = os.path.join(datasets_path, dst_id, "data")
         try:
             metadata = MinariStorage.read(data_path).metadata
+            metadata_id = metadata["dataset_id"]
+
+            if dst_id != metadata_id:
+                raise ValueError(
+                    f"Namespace location '{dst_id}' does not match id '{metadata_id}'."
+                )
         except Exception as e:
             warnings.warn(f"Misconfigured dataset named {dst_id}: {e}")
             continue
 
-        if ("minari_version" not in metadata) or (
+        if (
             compatible_minari_version
-            and __version__ not in SpecifierSet(metadata["minari_version"])
+            and metadata["minari_version"] not in supported_dataset_versions
         ):
             continue
-        env_name, dataset_name, version = parse_dataset_id(dst_id)
-        dataset = f"{env_name}-{dataset_name}"
+
+        namespace, dataset_name, version = parse_dataset_id(dst_id)
+        dataset = gen_dataset_id(namespace, dataset_name)
+
         if latest_version:
             if dataset not in local_datasets or version > local_datasets[dataset][0]:
                 local_datasets[dataset] = (version, metadata)

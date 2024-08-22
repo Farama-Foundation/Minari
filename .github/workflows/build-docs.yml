@@ -23,7 +23,7 @@ jobs:
         run: pip install -r docs/requirements.txt
 
       - name: Install Minari
-        run: pip install .
+        run: pip install .[all]
 
       - name: Build Datasets Docs
         run: xvfb-run --auto-servernum python docs/_scripts/gen_dataset_md.py

@@ -5,7 +5,7 @@ import os
 import pathlib
 import warnings
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Dict, Iterable, List, Optional, Union
+from typing import Any, Callable, Dict, Iterable, Optional, Union
 
 import gymnasium as gym
 import numpy as np
@@ -77,9 +77,9 @@ class MinariStorage(ABC):
             if action_space is None:
                 action_space = env.action_space
 
-        from minari.dataset._storages import registry  # avoid circular import
+        from minari.dataset._storages import get_minari_storage  # avoid circular import
 
-        return registry[metadata["data_format"]](
+        return get_minari_storage(metadata["data_format"])(
             data_path,
             observation_space,
             action_space,
@@ -114,11 +114,14 @@ class MinariStorage(ABC):
             raise ValueError(
                 "Since env_spec is not specified, you need to specify both action space and observation space"
             )
-        from minari.dataset._storages import registry  # avoid circular import
+        from minari.dataset._storages import (  # avoid circular import
+            get_minari_storage,
+            get_storage_keys,
+        )
 
-        if data_format not in registry.keys():
+        if data_format not in get_storage_keys():
             raise ValueError(
-                f"No storage implemented for {data_format}. Available formats: {registry.keys()}"
+                f"No storage implemented for {data_format}. Available formats: {get_storage_keys()}"
             )
 
         data_path = pathlib.Path(data_path)
@@ -154,7 +157,9 @@ class MinariStorage(ABC):
         with open(data_path.joinpath(METADATA_FILE_NAME), "w") as f:
             json.dump(metadata, f)
 
-        obj = registry[data_format]._create(data_path, observation_space, action_space)
+        obj = get_minari_storage(data_format)._create(
+            data_path, observation_space, action_space
+        )
         return obj
 
     @classmethod
@@ -175,6 +180,10 @@ class MinariStorage(ABC):
 
         metadata["observation_space"] = self.observation_space
         metadata["action_space"] = self.action_space
+        if "author" in metadata:
+            metadata["author"] = set(metadata["author"])
+        if "author_email" in metadata:
+            metadata["author_email"] = set(metadata["author_email"])
         return metadata
 
     def update_metadata(self, metadata: Dict):
@@ -183,20 +192,38 @@ class MinariStorage(ABC):
         Args:
             metadata (dict): dictionary of keys-values to add to the metadata.
         """
-        forbidden_keys = {"observation_space", "action_space", "env_spec"}.intersection(
-            metadata.keys()
-        )
+        not_updatable_keys = {
+            "dataset_id",
+            "observation_space",
+            "action_space",
+            "env_spec",
+            "data_format",
+            "minari_version",
+        }
+
+        assert isinstance(metadata.get("dataset_id", ""), str)
+        assert isinstance(metadata.get("total_episodes", 0), int)
+        assert isinstance(metadata.get("total_steps", 0), int)
+        assert isinstance(metadata.get("code_permalink", ""), str)
+        assert isinstance(metadata.get("algorithm_name", ""), str)
+        assert isinstance(metadata.get("author", set()), set)
+        assert isinstance(metadata.get("author_email", set()), set)
+        assert isinstance(metadata.get("minari_version", ""), str)
+
+        with open(self.data_path.joinpath(METADATA_FILE_NAME)) as file:
+            saved_metadata = json.load(file)
+
+        forbidden_keys = not_updatable_keys.intersection(metadata.keys())
+        forbidden_keys = forbidden_keys.intersection(saved_metadata.keys())
+
         if forbidden_keys:
             raise ValueError(
                 f"You are not allowed to update values for {', '.join(forbidden_keys)}"
             )
 
-        with open(self.data_path.joinpath(METADATA_FILE_NAME)) as file:
-            saved_metadata = json.load(file)
-
         saved_metadata.update(metadata)
         with open(self.data_path.joinpath(METADATA_FILE_NAME), "w") as file:
-            json.dump(saved_metadata, file)
+            json.dump(saved_metadata, file, default=_json_converter)
 
     @abstractmethod
     def update_episode_metadata(
@@ -208,6 +235,18 @@ class MinariStorage(ABC):
             metadatas (Iterable[Dict]): metadatas, one for each episode.
             episode_indices (Iterable, optional): episode indices to update.
             If not specified, all the episodes are considered.
+        """
+        ...
+
+    @abstractmethod
+    def get_episode_metadata(self, episode_indices: Iterable[int]) -> Iterable[Dict]:
+        """Get the metadata of episodes.
+
+        Args:
+            episode_indices (Iterable[int]): episodes id to return
+
+        Returns:
+            metadatas (Iterable[Dict]): episodes metadata
         """
         ...
 
@@ -232,14 +271,14 @@ class MinariStorage(ABC):
         return map(function, ep_dicts)
 
     @abstractmethod
-    def get_episodes(self, episode_indices: Iterable[int]) -> List[dict]:
+    def get_episodes(self, episode_indices: Iterable[int]) -> Iterable[dict]:
         """Get a list of episodes.
 
         Args:
             episode_indices (Iterable[int]): episodes id to return
 
         Returns:
-            episodes (List[dict]): list of episodes data
+            episodes (Iterable[dict]): episodes data
         """
         ...
 
@@ -273,15 +312,15 @@ class MinariStorage(ABC):
             )
             self.update_episodes([episode_buffer])
 
-        authors = {self.metadata.get("author"), storage.metadata.get("author")}
-        emails = {
-            self.metadata.get("author_email"),
-            storage.metadata.get("author_email"),
-        }
+        author1 = self.metadata.get("author", set())
+        author2 = storage.metadata.get("author", set())
+        email1 = self.metadata.get("author_email", set())
+        email2 = storage.metadata.get("author_email", set())
+
         self.update_metadata(
             {
-                "author": "; ".join([aut for aut in authors if aut is not None]),
-                "author_email": "; ".join([e for e in emails if e is not None]),
+                "author": author1.union(author2),
+                "author_email": email1.union(email2),
             }
         )
 
@@ -323,3 +362,9 @@ class MinariStorage(ABC):
     def action_space(self) -> gym.Space:
         """Action space of the dataset."""
         return self._action_space
+
+
+def _json_converter(obj: Any):
+    if isinstance(obj, set):
+        return list(obj)
+    raise TypeError(f"Object of type {type(obj)} is not JSON serializable")

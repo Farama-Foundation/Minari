@@ -10,9 +10,15 @@ import minari
 from minari import DataCollector
 from minari.data_collector.callbacks.step_callback import StepData
 from minari.data_collector.episode_buffer import EpisodeBuffer
-from minari.dataset._storages import registry as storage_registry
+from minari.dataset._storages import get_storage_keys
 from minari.dataset.minari_storage import MinariStorage
-from tests.common import check_data_integrity, check_load_and_delete_dataset
+from tests.common import (
+    cartpole_test_dataset,
+    check_data_integrity,
+    check_load_and_delete_dataset,
+    dummy_test_datasets,
+    dummy_text_dataset,
+)
 
 
 file_path = os.path.join(os.path.expanduser("~"), ".minari", "datasets")
@@ -54,7 +60,7 @@ def test_non_existing_data(tmp_dataset_dir):
         MinariStorage.read(tmp_dataset_dir)
 
 
-@pytest.mark.parametrize("data_format", storage_registry.keys())
+@pytest.mark.parametrize("data_format", get_storage_keys())
 def test_metadata(tmp_dataset_dir, data_format):
     action_space = spaces.Box(-1, 1)
     observation_space = spaces.Box(-1, 1)
@@ -89,7 +95,7 @@ def test_metadata(tmp_dataset_dir, data_format):
     assert storage_metadata == storage2.metadata
 
 
-@pytest.mark.parametrize("data_format", storage_registry.keys())
+@pytest.mark.parametrize("data_format", get_storage_keys())
 def test_add_episodes(tmp_dataset_dir, data_format):
     action_space = spaces.Box(-1, 1, shape=(10,))
     observation_space = spaces.Text(max_length=5)
@@ -114,8 +120,8 @@ def test_add_episodes(tmp_dataset_dir, data_format):
     assert storage.total_episodes == n_episodes
     assert storage.total_steps == n_episodes * steps_per_episode
 
-    for i, ep in enumerate(episodes):
-        storage_ep = storage.get_episodes([i])[0]
+    storage_episodes = storage.get_episodes(range(n_episodes))
+    for ep, storage_ep in zip(episodes, storage_episodes):
         assert np.all(ep.observations == storage_ep["observations"])
         assert np.all(ep.actions == storage_ep["actions"])
         assert np.all(ep.rewards == storage_ep["rewards"])
@@ -123,7 +129,7 @@ def test_add_episodes(tmp_dataset_dir, data_format):
         assert np.all(ep.truncations == storage_ep["truncations"])
 
 
-@pytest.mark.parametrize("data_format", storage_registry.keys())
+@pytest.mark.parametrize("data_format", get_storage_keys())
 def test_apply(tmp_dataset_dir, data_format):
     action_space = spaces.Box(-1, 1, shape=(10,))
     observation_space = spaces.Text(max_length=5)
@@ -150,7 +156,7 @@ def test_apply(tmp_dataset_dir, data_format):
         assert np.array(episodes[i].actions).sum() == result
 
 
-@pytest.mark.parametrize("data_format", storage_registry.keys())
+@pytest.mark.parametrize("data_format", get_storage_keys())
 def test_episode_metadata(tmp_dataset_dir, data_format):
     action_space = spaces.Box(-1, 1, shape=(10,))
     observation_space = spaces.Text(max_length=5)
@@ -177,18 +183,10 @@ def test_episode_metadata(tmp_dataset_dir, data_format):
     storage.update_episode_metadata(ep_metadatas, episode_indices=ep_indices)
 
 
+@pytest.mark.parametrize("data_format", get_storage_keys())
 @pytest.mark.parametrize(
-    "dataset_id,env_id",
-    [
-        ("cartpole-test-v0", "CartPole-v1"),
-        ("dummy-dict-test-v0", "DummyDictEnv-v0"),
-        ("dummy-box-test-v0", "DummyBoxEnv-v0"),
-        ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
-        ("dummy-combo-test-v0", "DummyComboEnv-v0"),
-        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
-    ],
+    "dataset_id,env_id", cartpole_test_dataset + dummy_test_datasets
 )
-@pytest.mark.parametrize("data_format", storage_registry.keys())
 def test_minari_get_dataset_size_from_collector_env(
     dataset_id, env_id, data_format, register_dummy_envs
 ):
@@ -219,33 +217,26 @@ def test_minari_get_dataset_size_from_collector_env(
     dataset = env.create_dataset(
         dataset_id=dataset_id,
         algorithm_name="random_policy",
-        code_permalink="https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
-        author="WillDudley",
-        author_email="wdudley@farama.org",
+        code_permalink=str(__file__),
+        author="Farama",
+        author_email="farama@farama.org",
+        description="Test dataset",
     )
 
     assert dataset.storage.metadata["dataset_size"] == dataset.storage.get_size()
 
-    check_data_integrity(dataset.storage, dataset.episode_indices)
+    check_data_integrity(dataset, list(dataset.episode_indices))
 
     env.close()
 
     check_load_and_delete_dataset(dataset_id)
 
 
+@pytest.mark.parametrize("data_format", get_storage_keys())
 @pytest.mark.parametrize(
     "dataset_id,env_id",
-    [
-        ("cartpole-test-v0", "CartPole-v1"),
-        ("dummy-dict-test-v0", "DummyDictEnv-v0"),
-        ("dummy-box-test-v0", "DummyBoxEnv-v0"),
-        ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
-        ("dummy-text-test-v0", "DummyTextEnv-v0"),
-        ("dummy-combo-test-v0", "DummyComboEnv-v0"),
-        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
-    ],
+    cartpole_test_dataset + dummy_test_datasets + dummy_text_dataset,
 )
-@pytest.mark.parametrize("data_format", storage_registry.keys())
 def test_minari_get_dataset_size_from_buffer(
     dataset_id, env_id, data_format, register_dummy_envs
 ):
@@ -261,8 +252,9 @@ def test_minari_get_dataset_size_from_buffer(
 
     num_episodes = 10
     seed = 42
-    observation, _ = env.reset(seed=seed)
-    episode_buffer = EpisodeBuffer(observations=observation, seed=seed)
+    options = {"int": 3, "array": np.array([1, 2, 3])}
+    observation, _ = env.reset(seed=seed, options=options)
+    episode_buffer = EpisodeBuffer(observations=observation, seed=seed, options=options)
 
     for episode in range(num_episodes):
         terminated = False
@@ -292,22 +284,27 @@ def test_minari_get_dataset_size_from_buffer(
         env=env,
         buffer=buffer,
         algorithm_name="random_policy",
-        code_permalink="https://github.com/Farama-Foundation/Minari/blob/f095bfe07f8dc6642082599e07779ec1dd9b2667/tutorials/LocalStorage/local_storage.py",
-        author="WillDudley",
-        author_email="wdudley@farama.org",
+        code_permalink=str(__file__),
+        author="Farama",
+        author_email="farama@farama.org",
         data_format=data_format,
+        description="Test dataset",
     )
 
     assert dataset.storage.metadata["dataset_size"] == dataset.storage.get_size()
+    ep_metadata_0 = next(iter(dataset.storage.get_episode_metadata([0])))
+    assert ep_metadata_0["seed"] == seed
+    assert ep_metadata_0["options"]["int"] == options["int"]
+    assert np.all(ep_metadata_0["options"]["array"] == options["array"])
 
-    check_data_integrity(dataset.storage, dataset.episode_indices)
+    check_data_integrity(dataset, list(dataset.episode_indices))
 
     env.close()
 
     check_load_and_delete_dataset(dataset_id)
 
 
-@pytest.mark.parametrize("data_format", storage_registry.keys())
+@pytest.mark.parametrize("data_format", get_storage_keys())
 def test_seed_change(tmp_dataset_dir, data_format):
     action_space = spaces.Box(-1, 1, shape=(10,))
     observation_space = spaces.Discrete(10)
@@ -326,7 +323,7 @@ def test_seed_change(tmp_dataset_dir, data_format):
     storage.update_episodes(episodes)
 
     assert storage.total_episodes == len(seeds)
-    episodes = storage.get_episodes(range(len(episodes)))
-    assert len(episodes) == len(seeds)
-    for seed, ep in zip(seeds, episodes):
-        assert ep["seed"] == seed
+    episodes_metadata = storage.get_episode_metadata(range(len(episodes)))
+    assert len(list(episodes_metadata)) == len(seeds)
+    for seed, ep_metadata in zip(seeds, episodes_metadata):
+        assert ep_metadata.get("seed") == seed

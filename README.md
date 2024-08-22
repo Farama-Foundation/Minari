@@ -5,7 +5,7 @@
     <img src="minari-text.png" width="500px"/>
 </p>
 
-Minari is a Python library for conducting research in offline reinforcement learning, akin to an offline version of Gymnasium or an offline RL version of HuggingFace's datasets library. This library is currently in beta.
+Minari is a Python library for conducting research in offline reinforcement learning, akin to an offline version of Gymnasium or an offline RL version of HuggingFace's datasets library.
 
 The documentation website is at [minari.farama.org](https://minari.farama.org/main/). We also have a public discord server (which we use for Q&A and to coordinate development work) that you can join here: https://discord.gg/bnJ6kubTg6.
 
@@ -16,12 +16,17 @@ To install Minari from [PyPI](https://pypi.org/project/minari/):
 pip install minari
 ```
 
-Note that currently Minari is under a beta release. If you'd like to start testing or contribute to Minari please install this project from source with:
+This will install the minimum required dependencies. Additional dependencies will be prompted for installation based on your use case. To install all dependencies at once, use:
+```bash
+pip install "minari[all]"
+```
+
+If you'd like to start testing or contribute to Minari please install this project from source with:
 
 ```
 git clone https://github.com/Farama-Foundation/Minari.git
 cd Minari
-pip install -e .
+pip install -e ".[all]"
 ```
 
 ## Command Line API
@@ -35,7 +40,7 @@ minari list remote
 To download a dataset:
 
 ```bash
-minari download door-human-v2
+minari download D4RL/door/human-v2
 ```
 
 To check available local datasets:
@@ -46,7 +51,7 @@ minari list local
 To show the details of a dataset:
 
 ```bash
-minari show door-human-v2
+minari show D4RL/door/human-v2
 ```
 
 For the list of commands:
@@ -61,7 +66,7 @@ minari --help
 ```python
 import minari
 
-dataset = minari.load_dataset("door-human-v2")
+dataset = minari.load_dataset("D4RL/door/human-v2")
 
 for episode_data in dataset.iterate_episodes():
     observations = episode_data.observations
@@ -92,7 +97,7 @@ for _ in range(100):
         obs, rew, terminated, truncated, info = env.step(action)
         done = terminated or truncated
 
-dataset = env.create_dataset("frozenlake-test-v0")
+dataset = env.create_dataset("frozenlake/test-v0")
 ```
 
 For other examples, see [Basic Usage](https://minari.farama.org/main/content/basic_usage/). For a complete tutorial on how to create new datasets using Minari, see our [Pointmaze D4RL Dataset](https://minari.farama.org/main/tutorials/dataset_creation/point_maze_dataset/) tutorial, which re-creates the Maze2D datasets from [D4RL](https://github.com/Farama-Foundation/D4RL).

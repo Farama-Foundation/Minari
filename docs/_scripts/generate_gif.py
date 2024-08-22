@@ -1,8 +1,16 @@
 import os
 
 import imageio
+from absl import app, flags
 
 import minari
+
+
+FLAGS = flags.FLAGS
+flags.DEFINE_string("dataset_id", None, "Dataset ID")
+flags.DEFINE_string("path", None, "Path to save the gif")
+flags.DEFINE_integer("num_frames", 256, "Number of frames in the gif")
+flags.DEFINE_integer("fps", 16, "Frames per second in the gif")
 
 
 def _space_at(values, index):
@@ -14,30 +22,39 @@ def _space_at(values, index):
         return values[index]
 
 
-def generate_gif(dataset_name, num_frames=256, fps=16):
-    dataset = minari.load_dataset(dataset_name, download=True)
+def generate_gif(dataset_id, path, num_frames=256, fps=16):
+    dataset = minari.load_dataset(dataset_id)
     env = dataset.recover_environment(render_mode="rgb_array")
     images = []
-    ep_id = 0
+    if "seed" not in dataset.storage.get_episode_metadata([0])[0]:
+        raise ValueError("Cannot reproduce episodes with unknown seed.")
 
+    episode_id = 0
     while len(images) < num_frames:
-        episode = dataset[ep_id]
-        if episode.seed is None:
-            raise ValueError("Cannot reproduce episodes with unknown seed.")
-
-        env.reset(seed=episode.seed)
+        episode = dataset[episode_id]
+        episode_metadata = dataset.storage.get_episode_metadata([episode_id])[0]
+        env.reset(
+            seed=episode_metadata.get("seed"), options=episode_metadata.get("options")
+        )
         images.append(env.render())
-        for step_id in range(episode.total_steps):
+        for step_id in range(len(episode)):
             act = _space_at(episode.actions, step_id)
             env.step(act)
             images.append(env.render())
 
-        ep_id += 1
+        episode_id += 1
 
-    gif_dir = os.path.join(os.path.dirname(__file__), "..", "datasets", "gifs")
-    if not os.path.exists(gif_dir):
-        os.makedirs(gif_dir)
+    env.close()
 
-    gif_path = os.path.join(gif_dir, f"{dataset_name}.gif")
-    imageio.mimsave(gif_path, images, fps=fps)
-    return gif_path
+    gif_file = os.path.join(path, f"{dataset_id}.gif")
+    imageio.mimsave(gif_file, images, fps=fps)
+    return gif_file
+
+
+def main(argv):
+    del argv
+    generate_gif(FLAGS.dataset_id, FLAGS.path, FLAGS.num_frames, FLAGS.fps)
+
+
+if __name__ == "__main__":
+    app.run(main)

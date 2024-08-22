@@ -1,6 +1,7 @@
 import json
 import os
 import re
+import warnings
 from typing import Any
 
 import gymnasium as gym
@@ -10,14 +11,17 @@ import pytest
 import minari
 from minari import DataCollector, EpisodeData, MinariDataset, StepData
 from minari.data_collector.episode_buffer import EpisodeBuffer
-from minari.dataset._storages import registry as storage_registry
+from minari.dataset._storages import get_storage_keys
+from minari.dataset.minari_dataset import gen_dataset_id, parse_dataset_id
 from minari.dataset.minari_storage import METADATA_FILE_NAME
 from tests.common import (
+    cartpole_test_dataset,
     check_data_integrity,
     check_env_recovery,
     check_episode_data_integrity,
     check_load_and_delete_dataset,
     create_dummy_dataset_with_collecter_env_helper,
+    dummy_test_datasets,
     test_spaces,
 )
 
@@ -25,7 +29,6 @@ from tests.common import (
 @pytest.mark.parametrize("space", test_spaces)
 def test_episode_data(space: gym.Space):
     id = np.random.randint(1024)
-    seed = np.random.randint(1024)
     total_step = 100
     rewards = np.random.randn(total_step)
     choices = np.array([True, False])
@@ -33,8 +36,6 @@ def test_episode_data(space: gym.Space):
     truncations = np.random.choice(choices, size=(total_step,))
     episode_data = EpisodeData(
         id=id,
-        seed=seed,
-        total_steps=total_step,
         observations=space.sample(),
         actions=space.sample(),
         rewards=rewards,
@@ -45,7 +46,6 @@ def test_episode_data(space: gym.Space):
 
     pattern = r"EpisodeData\("
     pattern += r"id=\d+, "
-    pattern += r"seed=\d+, "
     pattern += r"total_steps=100, "
     pattern += r"observations=.+, "
     pattern += r"actions=.+, "
@@ -58,17 +58,9 @@ def test_episode_data(space: gym.Space):
 
 
 @pytest.mark.parametrize(
-    "dataset_id,env_id",
-    [
-        ("cartpole-test-v0", "CartPole-v1"),
-        ("dummy-dict-test-v0", "DummyDictEnv-v0"),
-        ("dummy-box-test-v0", "DummyBoxEnv-v0"),
-        ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
-        ("dummy-combo-test-v0", "DummyComboEnv-v0"),
-        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
-    ],
+    "dataset_id,env_id", cartpole_test_dataset + dummy_test_datasets
 )
-@pytest.mark.parametrize("data_format", storage_registry.keys())
+@pytest.mark.parametrize("data_format", get_storage_keys())
 def test_update_dataset_from_collector_env(
     dataset_id, env_id, data_format, register_dummy_envs
 ):
@@ -105,7 +97,7 @@ def test_update_dataset_from_collector_env(
     assert dataset.spec.total_episodes == num_episodes * 2
     assert len(dataset.episode_indices) == num_episodes * 2
 
-    check_data_integrity(dataset.storage, dataset.episode_indices)
+    check_data_integrity(dataset, list(dataset.episode_indices))
     check_env_recovery(env.env, dataset)
 
     env.close()
@@ -113,21 +105,12 @@ def test_update_dataset_from_collector_env(
     check_load_and_delete_dataset(dataset_id)
 
 
-@pytest.mark.parametrize(
-    "dataset_id,env_id",
-    [
-        ("dummy-dict-test-v0", "DummyDictEnv-v0"),
-        ("dummy-box-test-v0", "DummyBoxEnv-v0"),
-        ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
-        ("dummy-combo-test-v0", "DummyComboEnv-v0"),
-        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
-    ],
-)
-@pytest.mark.parametrize("data_format", storage_registry.keys())
+@pytest.mark.parametrize("dataset_id,env_id", dummy_test_datasets)
+@pytest.mark.parametrize("data_format", get_storage_keys())
 def test_filter_episodes_and_subsequent_updates(
     dataset_id, env_id, data_format, register_dummy_envs
 ):
-    """Tests to make sure that episodes are filtered filtered correctly.
+    """Tests to make sure that episodes are filtered correctly.
 
     Additionally ensures indices are correctly updated when adding more episodes to a filtered dataset.
     """
@@ -154,19 +137,15 @@ def test_filter_episodes_and_subsequent_updates(
     assert filtered_dataset.spec.total_episodes == 7
     assert len(filtered_dataset.episode_indices) == 7
 
-    check_data_integrity(
-        filtered_dataset.storage, dataset.episode_indices
-    )  # checks that the underlying episodes are still present in the `MinariStorage` object
+    check_data_integrity(filtered_dataset, list(filtered_dataset.episode_indices))
     check_env_recovery(env.env, filtered_dataset)
 
-    # Step the environment, DataCollector wrapper will do the data collection job
     env.reset(seed=42)
-
     for episode in range(num_episodes):
         terminated = False
         truncated = False
         while not terminated and not truncated:
-            action = env.action_space.sample()  # User-defined policy function
+            action = env.action_space.sample()
             _, _, terminated, truncated, _ = env.step(action)
 
         env.reset()
@@ -278,17 +257,9 @@ def test_filter_episodes_and_subsequent_updates(
 
 
 @pytest.mark.parametrize(
-    "dataset_id,env_id",
-    [
-        ("cartpole-test-v0", "CartPole-v1"),
-        ("dummy-dict-test-v0", "DummyDictEnv-v0"),
-        ("dummy-box-test-v0", "DummyBoxEnv-v0"),
-        ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
-        ("dummy-combo-test-v0", "DummyComboEnv-v0"),
-        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
-    ],
+    "dataset_id,env_id", cartpole_test_dataset + dummy_test_datasets
 )
-@pytest.mark.parametrize("data_format", storage_registry.keys())
+@pytest.mark.parametrize("data_format", get_storage_keys())
 def test_sample_episodes(dataset_id, env_id, data_format, register_dummy_envs):
     local_datasets = minari.list_local_datasets()
     if dataset_id in local_datasets:
@@ -322,17 +293,9 @@ def test_sample_episodes(dataset_id, env_id, data_format, register_dummy_envs):
 
 
 @pytest.mark.parametrize(
-    "dataset_id, env_id",
-    [
-        ("cartpole-test-v0", "CartPole-v1"),
-        ("dummy-dict-test-v0", "DummyDictEnv-v0"),
-        ("dummy-box-test-v0", "DummyBoxEnv-v0"),
-        ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
-        ("dummy-combo-test-v0", "DummyComboEnv-v0"),
-        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
-    ],
+    "dataset_id,env_id", cartpole_test_dataset + dummy_test_datasets
 )
-@pytest.mark.parametrize("data_format", storage_registry.keys())
+@pytest.mark.parametrize("data_format", get_storage_keys())
 def test_iterate_episodes(dataset_id, env_id, data_format, register_dummy_envs):
     local_datasets = minari.list_local_datasets()
     if dataset_id in local_datasets:
@@ -371,17 +334,9 @@ def test_iterate_episodes(dataset_id, env_id, data_format, register_dummy_envs):
 
 
 @pytest.mark.parametrize(
-    "dataset_id,env_id",
-    [
-        ("cartpole-test-v0", "CartPole-v1"),
-        ("dummy-dict-test-v0", "DummyDictEnv-v0"),
-        ("dummy-box-test-v0", "DummyBoxEnv-v0"),
-        ("dummy-tuple-test-v0", "DummyTupleEnv-v0"),
-        ("dummy-combo-test-v0", "DummyComboEnv-v0"),
-        ("dummy-tuple-discrete-box-test-v0", "DummyTupleDiscreteBoxEnv-v0"),
-    ],
+    "dataset_id,env_id", cartpole_test_dataset + dummy_test_datasets
 )
-@pytest.mark.parametrize("data_format", storage_registry.keys())
+@pytest.mark.parametrize("data_format", get_storage_keys())
 def test_update_dataset_from_buffer(
     dataset_id, env_id, data_format, register_dummy_envs
 ):
@@ -434,14 +389,14 @@ def test_update_dataset_from_buffer(
     assert dataset.spec.total_episodes == num_episodes * 2
     assert len(dataset.episode_indices) == num_episodes * 2
 
-    check_data_integrity(dataset.storage, dataset.episode_indices)
+    check_data_integrity(dataset, list(dataset.episode_indices))
     check_env_recovery(env, dataset)
 
     collector_env.close()
     check_load_and_delete_dataset(dataset_id)
 
 
-@pytest.mark.parametrize("data_format", storage_registry.keys())
+@pytest.mark.parametrize("data_format", get_storage_keys())
 def test_missing_env_module(data_format):
     dataset_id = "dummy-test-v0"
 
@@ -477,3 +432,58 @@ def test_missing_env_module(data_format):
         dataset.recover_environment()
 
     minari.delete_dataset(dataset_id)
+
+
+@pytest.mark.parametrize(
+    "dataset_id",
+    [x[0] for x in dummy_test_datasets]
+    + ["name_123/space/" + x[0] for x in dummy_test_datasets],
+)
+def test_parse_gen_dataset_id_inverse_forward(dataset_id):
+    """Check parse_dataset_id() and gen_dataset_id() are inverses. Forward direction."""
+    namespace, dataset_name, version = parse_dataset_id(dataset_id)
+    new_dataset_id = gen_dataset_id(namespace, dataset_name, version)
+    assert new_dataset_id == dataset_id
+
+
+@pytest.mark.parametrize(
+    "namespace, dataset_name, version",
+    [
+        (None, "human", 0),
+        ("aB1-_/env-name", "eF3-_", 456),
+    ],
+)
+def test_parse_gen_dataset_id_inverse_backward(namespace, dataset_name, version):
+    """Check parse_dataset_id() and gen_dataset_id() are inverses. Backward direction."""
+    attrs = (namespace, dataset_name, version)
+    assert attrs == parse_dataset_id(gen_dataset_id(*attrs))
+
+
+def test_requirements():
+    dataset_id = "dummy-test-v0"
+    env = DataCollector(gym.make("CartPole-v1"))
+    dataset = create_dummy_dataset_with_collecter_env_helper(
+        dataset_id, env, requirements=["mal<formed@@3.2"]
+    )
+
+    with pytest.warns(UserWarning, match="Ignoring malformed requirement"):
+        dataset.recover_environment()
+
+    dataset.storage.update_metadata({"requirements": ["non-existent-package"]})
+    with pytest.warns(
+        UserWarning, match="is not installed. Install it with `pip install"
+    ):
+        dataset.recover_environment()
+
+    dataset.storage.update_metadata({"requirements": [f"minari<{minari.__version__}"]})
+    with pytest.warns(
+        UserWarning, match="We recommend to install the required version"
+    ):
+        dataset.recover_environment()
+
+    dataset.storage.update_metadata(
+        {"requirements": [f"minari>=0.0.1,<={minari.__version__}"]}
+    )
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        dataset.recover_environment()

@@ -4,13 +4,14 @@ import importlib.metadata
 import os
 import re
 from dataclasses import dataclass, field
-from typing import Callable, Iterable, Iterator, List, Optional, Union
+from typing import Callable, Iterable, Iterator, List
 
 import gymnasium as gym
 import numpy as np
+import numpy.typing as npt
 from gymnasium import error, logger
 from gymnasium.envs.registration import EnvSpec
-from packaging.specifiers import InvalidSpecifier, SpecifierSet
+from packaging.requirements import InvalidRequirement, Requirement
 from packaging.version import Version
 
 from minari.data_collector.episode_buffer import EpisodeBuffer
@@ -18,39 +19,62 @@ from minari.dataset.episode_data import EpisodeData
 from minari.dataset.minari_storage import MinariStorage, PathLike
 
 
-# Use importlib due to circular import when: "from minari import __version__"
-__version__ = importlib.metadata.version("minari")
-
-DATASET_ID_RE = re.compile(
-    r"(?:(?P<environment>[\w]+?))?(?:-(?P<dataset>[\w:.-]+?))(?:-v(?P<version>\d+))?$"
-)
+VERSION_RE = r"(?:-v(?P<version>\d+))"
+DATASET_NAME_RE = r"(?:(?P<dataset>[-_\w]+?))"
+NAMESPACE_RE = r"(?:(?P<namespace>[-_\w][-_\w/]*[-_\w]+)\/)"
+DATASET_ID_RE = re.compile(rf"^{NAMESPACE_RE}?{DATASET_NAME_RE}{VERSION_RE}?$")
 
 
 def parse_dataset_id(dataset_id: str) -> tuple[str | None, str, int]:
-    """Parse dataset ID string format - ``(env_name-)(dataset_name)(-v(version))``.
+    """Parse dataset ID string format - ``(namespace/)dataset_name(-v[version])``.
 
     Args:
-        dataset_id: The dataset id to parse
+        dataset_id (str): The dataset id to parse
     Returns:
-        A tuple of environment name, dataset name and version number
+        A tuple of namespace, dataset name and version number
     Raises:
         Error: If the dataset id is not valid dataset regex
     """
     match = DATASET_ID_RE.fullmatch(dataset_id)
     if not match:
         raise error.Error(
-            f"Malformed dataset ID: {dataset_id}. (Currently all IDs must be of the form (env_name-)(dataset_name)-v(version). (namespace is optional))"
+            f"Malformed dataset ID: {dataset_id}. (IDs must be of the form (namespace/)(dataset_name)-v(version). The namespace is optional.)"
         )
-    env_name, dataset_name, version = match.group("environment", "dataset", "version")
+    namespace, dataset_name, version = match.group("namespace", "dataset", "version")
 
     version = int(version)
 
-    return env_name, dataset_name, version
+    if namespace == "":
+        namespace = None
+
+    return namespace, dataset_name, version
+
+
+def gen_dataset_id(
+    namespace: str | None,
+    dataset_name: str,
+    version: int | None = None,
+) -> str:
+    """Generate a dataset ID from dataset attributes. Inverse of parse_dataset_id().
+
+    Args:
+        namespace (str | None): name of dataset subdir. Defaults to None.
+        dataset_name (str): name of the dataset.
+        version (int | None, optional): Dataset version. Defaults to None, in which case
+            the version tag will be suppressed.
+
+    Returns:
+        str: A dataset id string of the form ``(namespace/)(dataset_name)(-v(version))``.
+            The ``namespace`` and ``-v(version)`` are optional.
+    """
+    namespace_str = f"{namespace}/" if namespace is not None else ""
+    version_str = f"-v{version}" if version is not None else ""
+    return f"{namespace_str}{dataset_name}{version_str}"
 
 
 @dataclass
 class MinariDatasetSpec:
-    env_spec: Optional[EnvSpec]
+    env_spec: EnvSpec | None
     total_episodes: int
     total_steps: int
     dataset_id: str
@@ -61,15 +85,17 @@ class MinariDatasetSpec:
     minari_version: str
 
     # post-init attributes
-    env_name: str | None = field(init=False)
+    namespace: str | None = field(init=False)
     dataset_name: str = field(init=False)
     version: int | None = field(init=False)
 
     def __post_init__(self):
         """Calls after the spec is created to extract the environment name, dataset name and version from the dataset id."""
-        self.env_name, self.dataset_name, self.version = parse_dataset_id(
-            self.dataset_id
-        )
+        (
+            self.namespace,
+            self.dataset_name,
+            self.version,
+        ) = parse_dataset_id(self.dataset_id)
 
 
 class MinariDataset:
@@ -77,8 +103,8 @@ class MinariDataset:
 
     def __init__(
         self,
-        data: Union[MinariStorage, PathLike],
-        episode_indices: Optional[np.ndarray] = None,
+        data: MinariStorage | PathLike,
+        episode_indices: npt.NDArray[np.int_] | None = None,
     ):
         """Initialize properties of the Minari Dataset.
 
@@ -95,7 +121,8 @@ class MinariDataset:
 
         if episode_indices is None:
             episode_indices = np.arange(self._data.total_episodes)
-        self._episode_indices: np.ndarray = episode_indices
+        assert episode_indices is not None
+        self._episode_indices: npt.NDArray[np.int_] = episode_indices
         self._total_steps = None
 
         metadata = self._data.metadata
@@ -118,15 +145,14 @@ class MinariDataset:
 
         minari_version = metadata["minari_version"]
         assert isinstance(minari_version, str)
+        from minari import __version__, supported_dataset_versions
 
-        # Check that the dataset is compatible with the current version of Minari
-        try:
-            assert Version(__version__) in SpecifierSet(
-                minari_version
-            ), f"The installed Minari version {__version__} is not contained in the dataset version specifier {minari_version}."
-            self._minari_version = minari_version
-        except InvalidSpecifier:
-            print(f"{minari_version} is not a version specifier.")
+        if minari_version not in supported_dataset_versions:
+            raise ValueError(
+                f"The installed Minari version {__version__} does not support the dataset generated by Minari {minari_version}."
+                f"Supported versions: {supported_dataset_versions}"
+            )
+        self._minari_version = minari_version
 
         self._combined_datasets = metadata.get("combined_datasets", [])
 
@@ -141,12 +167,33 @@ class MinariDataset:
         """Recover the Gymnasium environment used to create the dataset.
 
         Args:
-            eval_env (bool): if True the returned Gymnasium environment will be that intended to be used for evaluation. If no eval_env was specified when creating the dataset, the returned environment will be the same as the one used for creating the dataset. Default False.
+            eval_env (bool): if True, the returned Gymnasium environment will be that intended to be used for evaluation. If no eval_env was specified when creating the dataset, the returned environment will be the same as the one used for creating the dataset. Default False.
             **kwargs: any other parameter that you want to pass to the `gym.make` function.
 
         Returns:
             environment: Gymnasium environment
         """
+        requirements = self._data.metadata.get("requirements", [])
+        for req_str in requirements:
+            try:
+                req = Requirement(req_str)
+            except InvalidRequirement:
+                logger.warn(f"Ignoring malformed requirement `{req_str}`")
+                continue
+
+            try:
+                installed_version = Version(importlib.metadata.version(req.name))
+            except importlib.metadata.PackageNotFoundError:
+                logger.warn(
+                    f'Package {req.name} is not installed. Install it with `pip install "{req_str}"`'
+                )
+            else:
+                if not req.specifier.contains(installed_version):
+                    logger.warn(
+                        f"Installed {req.name} version {installed_version} does not meet the requirement {req.specifier}.\n"
+                        f'We recommend to install the required version with `pip install "{req_str}"`'
+                    )
+
         if eval_env:
             if self._eval_env_spec is not None:
                 return gym.make(self._eval_env_spec, **kwargs)
@@ -203,23 +250,21 @@ class MinariDataset:
         return list(map(lambda data: EpisodeData(**data), episodes))
 
     def iterate_episodes(
-        self, episode_indices: Optional[List[int]] = None
+        self, episode_indices: Iterable[int] | None = None
     ) -> Iterator[EpisodeData]:
         """Iterate over episodes from the dataset.
 
         Args:
-            episode_indices (Optional[List[int]], optional): episode indices to iterate over.
+            episode_indices (Optional[Iterable[int]], optional): episode indices to iterate over.
         """
         if episode_indices is None:
             assert self.episode_indices is not None
             assert self.episode_indices.ndim == 1
-            episode_indices = self.episode_indices.tolist()
+            episode_indices = self.episode_indices
 
         assert episode_indices is not None
-
-        for episode_index in episode_indices:
-            data = self.storage.get_episodes([episode_index])[0]
-            yield EpisodeData(**data)
+        episodes_data = self.storage.get_episodes(episode_indices)
+        return map(lambda data: EpisodeData(**data), episodes_data)
 
     def update_dataset_from_buffer(self, buffer: List[EpisodeBuffer]):
         """Additional data can be added to the Minari Dataset from a list of episode dictionary buffers.
@@ -237,9 +282,8 @@ class MinariDataset:
         return self.iterate_episodes()
 
     def __getitem__(self, idx: int) -> EpisodeData:
-        episodes_data = self.storage.get_episodes([self.episode_indices[idx]])
-        assert len(episodes_data) == 1
-        return EpisodeData(**episodes_data[0])
+        episode = self.iterate_episodes([self.episode_indices[idx]])
+        return next(episode)
 
     def __len__(self) -> int:
         return self.total_episodes
@@ -256,21 +300,19 @@ class MinariDataset:
             if self.episode_indices is None:
                 self._total_steps = self.storage.total_steps
             else:
-                self._total_steps = sum(
-                    self.storage.apply(
-                        lambda episode: episode["total_steps"],
-                        episode_indices=self.episode_indices,
-                    )
-                )
+                self._total_steps = 0
+                metadatas = self.storage.get_episode_metadata(self.episode_indices)
+                for m in metadatas:
+                    self._total_steps += m["total_steps"]
         return int(self._total_steps)
 
     @property
-    def episode_indices(self) -> np.ndarray:
+    def episode_indices(self) -> npt.NDArray[np.int_]:
         """Indices of the available episodes to sample within the Minari dataset."""
         return self._episode_indices
 
     @episode_indices.setter
-    def episode_indices(self, new_value: np.ndarray):
+    def episode_indices(self, new_value: npt.NDArray[np.int_]):
         self._total_steps = None  # invalidate cache
         self._episode_indices = new_value
 

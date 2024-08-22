@@ -5,17 +5,14 @@ import importlib.metadata
 import os
 import re
 import warnings
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, Iterable, List, Optional
 
 import gymnasium as gym
 import numpy as np
-import portion as P
 from gymnasium.core import ActType, ObsType
 from gymnasium.envs.registration import EnvSpec
 from gymnasium.error import NameNotFound
-from gymnasium.wrappers import RecordEpisodeStatistics
-from packaging.specifiers import InvalidSpecifier, SpecifierSet
-from packaging.version import Version
+from gymnasium.wrappers.record_episode_statistics import RecordEpisodeStatistics
 
 from minari.data_collector.episode_buffer import EpisodeBuffer
 from minari.dataset.minari_dataset import MinariDataset
@@ -26,131 +23,6 @@ from minari.storage.datasets_root_dir import get_dataset_path
 
 # Use importlib due to circular import when: "from minari import __version__"
 __version__ = importlib.metadata.version("minari")
-
-
-def combine_minari_version_specifiers(specifier_set: SpecifierSet) -> SpecifierSet:
-    """Calculates the Minari version specifier by intersecting a group of Minari version specifiers.
-
-    Used to calculate the `minari_version` metadata attribute when combining multiple datasets. The function
-    assumes that all the given version specifiers at least contain the current minari version thus the version
-    specifier sets will always intersect. Also, it doesn't take into account any pre-releases since Farama projects
-    don't use them for versioning.
-
-    The supported version specifier operators are those in PEP 440(https://peps.python.org/pep-0440/#version-specifiers),
-    except for '==='.
-
-    Args:
-        specifier_set (SpecifierSet): set of all version specifiers to intersect
-
-    Returns:
-        version_specifier (SpecifierSet): resulting version specifier
-
-    """
-    specifiers = sorted(specifier_set, key=str)
-
-    exclusion_specifiers = filter(lambda spec: spec.operator == "!=", specifiers)
-    inclusion_specifiers = filter(lambda spec: spec.operator != "!=", specifiers)
-
-    inclusion_interval = P.closed(-P.inf, P.inf)
-
-    # Intersect the version intervals compatible with the datasets
-    for spec in inclusion_specifiers:
-        operator = spec.operator
-        version = spec.version
-        if operator[0] == ">":
-            if operator[-1] == "=":
-                inclusion_interval &= P.closedopen(Version(version), P.inf)
-            else:
-                inclusion_interval &= P.open(Version(version), P.inf)
-        elif operator[0] == "<":
-            if operator[-1] == "=":
-                inclusion_interval &= P.openclosed(-P.inf, Version(version))
-            else:
-                inclusion_interval &= P.open(-P.inf, Version(version))
-        elif operator == "==":
-            if version[-1] == "*":
-                version = Version(version[:-2])
-                release = list(version.release)
-                release[-1] = 0
-                release[-2] += 1
-                max_release = Version(".".join(str(r) for r in release))
-                inclusion_interval &= P.closedopen(version, max_release)
-            else:
-                inclusion_interval &= P.singleton(Version(version))
-        elif operator == "~=":
-            release = list(Version(version).release)
-            release[-1] = 0
-            release[-2] += 1
-            max_release = Version(".".join(str(r) for r in release))
-            inclusion_interval &= P.closedopen(Version(version), max_release)
-
-    # Convert the intersection of version intervals to a version specifier
-    final_version_specifier = SpecifierSet()
-
-    if inclusion_interval.lower == inclusion_interval.upper:
-        assert inclusion_interval.lower == Version(
-            __version__
-        ), f"The local installed version of Minari, {__version__}, must comply with the equality version specifier: =={inclusion_interval.lower}"
-        final_version_specifier &= f"=={inclusion_interval.lower}"
-        # There is just one compatible version of Minari
-        return final_version_specifier
-
-    if inclusion_interval.lower != -P.inf and inclusion_interval.upper != P.inf:
-        lower_version = Version(str(inclusion_interval.lower))
-        next_release = list(lower_version.release)
-        next_release[-1] = 0
-        next_release[-2] += 1
-        next_release = Version(".".join(str(r) for r in next_release))
-        upper_version = Version(str(inclusion_interval.upper))
-        if (
-            inclusion_interval.left == P.CLOSED
-            and inclusion_interval.left == P.CLOSED
-            and upper_version == next_release
-        ):
-            final_version_specifier &= f"~={str(lower_version)}"
-        else:
-            if inclusion_interval.left == P.CLOSED:
-                operator = ">="
-            else:
-                operator = ">"
-            final_version_specifier &= f"{operator}{str(inclusion_interval.lower)}"
-
-            if inclusion_interval.right == P.CLOSED:
-                operator = "<="
-            else:
-                operator = "<"
-            final_version_specifier &= f"{operator}{str(inclusion_interval.upper)}"
-    else:
-        if inclusion_interval.lower != -P.inf:
-            if inclusion_interval.left == P.CLOSED:
-                operator = ">="
-            else:
-                operator = ">"
-            final_version_specifier &= f"{operator}{str(inclusion_interval.lower)}"
-        if inclusion_interval.upper != P.inf:
-            if inclusion_interval.right == P.CLOSED:
-                operator = "<="
-            else:
-                operator = "<"
-            final_version_specifier &= f"{operator}{str(inclusion_interval.upper)}"
-
-    # If the versions to be excluded fall inside the previous calculated version specifier
-    # add them to the specifier as `!=`
-    for spec in exclusion_specifiers:
-        version = spec.version
-        if version[-1] == "*":
-            version = Version(version[:-2])
-            release = list(version.release)
-            release[-1] = 0
-            release[-2] += 1
-            max_release = Version(".".join(str(r) for r in release))
-            exclusion_interval = P.closedopen(version, max_release)
-            if inclusion_interval.overlaps(exclusion_interval):
-                final_version_specifier &= str(spec)
-        elif version in final_version_specifier:
-            final_version_specifier &= str(spec)
-
-    return final_version_specifier
 
 
 def validate_datasets_to_combine(
@@ -243,15 +115,6 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_id: s
     """
     combined_dataset_env_spec = validate_datasets_to_combine(datasets_to_combine)
 
-    # Compute intersection of Minari version specifiers
-    datasets_minari_version_specifiers = SpecifierSet()
-    for dataset in datasets_to_combine:
-        datasets_minari_version_specifiers &= dataset.spec.minari_version
-
-    minari_version_specifier = combine_minari_version_specifiers(
-        datasets_minari_version_specifiers
-    )
-
     new_dataset_path = get_dataset_path(new_dataset_id)
     new_dataset_path.mkdir()
     new_storage = MinariStorage.new(
@@ -268,7 +131,7 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_id: s
             "combined_datasets": [
                 dataset.spec.dataset_id for dataset in datasets_to_combine
             ],
-            "minari_version": str(minari_version_specifier),
+            "minari_version": __version__,
         }
     )
 
@@ -353,15 +216,15 @@ def _generate_dataset_metadata(
     env_spec: Optional[EnvSpec],
     eval_env: Optional[str | gym.Env | EnvSpec],
     algorithm_name: Optional[str],
-    author: Optional[str],
-    author_email: Optional[str],
+    author: Optional[str | set[str]],
+    author_email: Optional[str | set[str]],
     code_permalink: Optional[str],
     ref_min_score: Optional[float],
     ref_max_score: Optional[float],
     expert_policy: Optional[Callable[[ObsType], ActType]],
     num_episodes_average_score: int,
-    minari_version: Optional[str],
     description: Optional[str],
+    requirements: Optional[list],
 ) -> Dict[str, Any]:
     """Return the metadata dictionary of the dataset."""
     dataset_metadata: Dict[str, Any] = {
@@ -382,7 +245,7 @@ def _generate_dataset_metadata(
             UserWarning,
         )
     else:
-        dataset_metadata["author"] = author
+        dataset_metadata["author"] = {author} if isinstance(author, str) else author
 
     if author_email is None:
         warnings.warn(
@@ -390,7 +253,9 @@ def _generate_dataset_metadata(
             UserWarning,
         )
     else:
-        dataset_metadata["author_email"] = author_email
+        dataset_metadata["author_email"] = (
+            {author_email} if isinstance(author_email, str) else author_email
+        )
 
     if algorithm_name is None:
         warnings.warn(
@@ -408,24 +273,7 @@ def _generate_dataset_metadata(
     else:
         dataset_metadata["description"] = description
 
-    if minari_version is None:
-        version = Version(__version__)
-        release = version.release
-        # For __version__ = X.Y.Z, by default compatibility with version X.Y or later, but not (X+1).0 or later.
-        minari_version = f"~={'.'.join(str(x) for x in release[:2])}"
-        warnings.warn(
-            f"`minari_version` is set to None. The compatible dataset version specifier for Minari will be set to {minari_version}.",
-            UserWarning,
-        )
-    # Check if the installed Minari version falls inside the minari_version specifier
-    try:
-        assert Version(__version__) in SpecifierSet(
-            minari_version
-        ), f"The installed Minari version {__version__} is not contained in the dataset version specifier {minari_version}."
-    except InvalidSpecifier:
-        print(f"{minari_version} is not a version specifier.")
-
-    dataset_metadata["minari_version"] = minari_version
+    dataset_metadata["minari_version"] = __version__
 
     if expert_policy is not None and ref_max_score is not None:
         raise ValueError(
@@ -476,6 +324,8 @@ def _generate_dataset_metadata(
         dataset_metadata["ref_min_score"] = ref_min_score
         dataset_metadata["num_episodes_average_score"] = num_episodes_average_score
 
+    if requirements is not None:
+        dataset_metadata["requirements"] = requirements
     return dataset_metadata
 
 
@@ -485,10 +335,9 @@ def create_dataset_from_buffers(
     env: Optional[str | gym.Env | EnvSpec] = None,
     eval_env: Optional[str | gym.Env | EnvSpec] = None,
     algorithm_name: Optional[str] = None,
-    author: Optional[str] = None,
-    author_email: Optional[str] = None,
+    author: Optional[str | set[str]] = None,
+    author_email: Optional[str | set[str]] = None,
     code_permalink: Optional[str] = None,
-    minari_version: Optional[str] = None,
     action_space: Optional[gym.spaces.Space] = None,
     observation_space: Optional[gym.spaces.Space] = None,
     ref_min_score: Optional[float] = None,
@@ -497,35 +346,36 @@ def create_dataset_from_buffers(
     num_episodes_average_score: int = 100,
     description: Optional[str] = None,
     data_format: Optional[str] = None,
+    requirements: Optional[list] = None,
 ):
     """Create Minari dataset from a list of episode dictionary buffers.
 
     The ``dataset_id`` parameter corresponds to the name of the dataset, with the syntax as follows:
-    ``(env_name-)(dataset_name)(-v(version))`` where ``env_name`` identifies the name of the environment used to generate the dataset ``dataset_name``.
+    ``(namespace/)(env_name/)dataset_name(-v[version])`` where ``env_name`` identifies, if present, the name of the environment used to generate the dataset ``dataset_name`` and ``namespace`` optionally groups datasets together.
     This ``dataset_id`` is used to load the Minari datasets with :meth:`minari.load_dataset`.
 
     Args:
         dataset_id (str): name id to identify Minari dataset.
         buffer (list[EpisodeBuffer]): list of episode buffer with data.
-        env (Optional[str|gym.Env|EnvSpec]): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) used to collect the buffer data. Defaults to None.
-        eval_env (Optional[str|gym.Env|EnvSpec]): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) to use for evaluation with the dataset. After loading the dataset, the environment can be recovered as follows: `MinariDataset.recover_environment(eval_env=True).
+        env (str | gym.Env | EnvSpec, optional): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) used to collect the buffer data. Defaults to None.
+        eval_env (str | gym.Env | EnvSpec, optional): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) to use for evaluation with the dataset. After loading the dataset, the environment can be recovered as follows: `MinariDataset.recover_environment(eval_env=True).
                                                 If None, and if the `env` used to collect the buffer data is available, latter will be used for evaluation.
-        algorithm_name (Optional[str], optional): name of the algorithm used to collect the data. Defaults to None.
-        author (Optional[str], optional): author that generated the dataset. Defaults to None.
-        author_email (Optional[str], optional): email of the author that generated the dataset. Defaults to None.
-        code_permalink (Optional[str], optional): link to relevant code used to generate the dataset. Defaults to None.
-        ref_min_score (Optional[float], optional): minimum reference score from the average returns of a random policy. This value is later used to normalize a score with :meth:`minari.get_normalized_score`. If default None the value will be estimated with a default random policy.
+        algorithm_name (str, optional): name of the algorithm used to collect the data. Defaults to None.
+        author (str | set, optional): name of the author(s) that generated the dataset. Defaults to None.
+        author_email (str | set, optional): email(s) of the author(s) that generated the dataset. Defaults to None.
+        code_permalink (str, optional): link to relevant code used to generate the dataset. Defaults to None.
+        ref_min_score (float, optional): minimum reference score from the average returns of a random policy. This value is later used to normalize a score with :meth:`minari.get_normalized_score`. If default None the value will be estimated with a default random policy.
                                                     Also note that this attribute will be added to the Minari dataset only if `ref_max_score` or `expert_policy` are assigned a valid value other than None.
-        ref_max_score (Optional[float], optional: maximum reference score from the average returns of a hypothetical expert policy. This value is used in `MinariDataset.get_normalized_score()`. Default None.
-        expert_policy (Optional[Callable[[ObsType], ActType], optional): policy to compute `ref_max_score` by averaging the returns over a number of episodes equal to  `num_episodes_average_score`.
+        ref_max_score (float, optional): maximum reference score from the average returns of a hypothetical expert policy. This value is used in `MinariDataset.get_normalized_score()`. Default None.
+        expert_policy (Callable[[ObsType], ActType], optional): policy to compute `ref_max_score` by averaging the returns over a number of episodes equal to  `num_episodes_average_score`.
                                                                         `ref_max_score` and `expert_policy` can't be passed at the same time. Default to None
         num_episodes_average_score (int): number of episodes to average over the returns to compute `ref_min_score` and `ref_max_score`. Default to 100.
                 observation_space:
-        action_space (Optional[gym.spaces.Space]): action space of the environment. If None (default) use the environment action space.
-        observation_space (Optional[gym.spaces.Space]): observation space of the environment. If None (default) use the environment observation space.
-        minari_version (Optional[str], optional): Minari version specifier compatible with the dataset. If None (default) use the installed Minari version.
-        description (Optional[str], optional): description of the dataset being created. Defaults to None.
+        action_space (gym.spaces.Space, optional): action space of the environment. If None (default) use the environment action space.
+        observation_space (gym.spaces.Space, optional): observation space of the environment. If None (default) use the environment observation space.
+        description (str, optional): description of the dataset being created. Defaults to None.
         data_format (str, optional): Data format to store the data in the Minari dataset. If None (defaults), it will use the default format of MinariStorage.
+        requirements (list of str, optional): list of requirements in pip-style to load the environment and reproduce the dataset. For example, `mujoco>=3.1.0,<3.2.0`, which indicate the supported version range for mujoco package. Defaults to None.
 
     Returns:
         MinariDataset
@@ -568,8 +418,8 @@ def create_dataset_from_buffers(
         ref_max_score,
         expert_policy,
         num_episodes_average_score,
-        minari_version,
         description,
+        requirements,
     )
 
     data_format_kwarg = {"data_format": data_format} if data_format is not None else {}
@@ -581,12 +431,9 @@ def create_dataset_from_buffers(
         **data_format_kwarg,
     )
 
-    # adding `update_metadata` before hand too, as for small envs, the absence of metadata is causing a difference of some 10ths of MBs leading to errors in unit tests.
     storage.update_metadata(metadata)
     storage.update_episodes(buffer)
-
-    metadata["dataset_size"] = storage.get_size()
-    storage.update_metadata(metadata)
+    storage.update_metadata({"dataset_size": storage.get_size()})
 
     return MinariDataset(storage)
 
@@ -656,14 +503,11 @@ def get_env_spec_dict(env_spec: EnvSpec) -> Dict[str, str]:
     return {k: str(v) for k, v in md_dict.items()}
 
 
-def get_dataset_spec_dict(
-    dataset_spec: Dict, print_version: bool = False
-) -> Dict[str, str]:
+def get_dataset_spec_dict(dataset_spec: Dict) -> Dict[str, str]:
     """Create dict of the dataset specs, including observation and action space."""
     code_link = dataset_spec["code_permalink"]
     action_space = dataset_spec.get("action_space")
     obs_space = dataset_spec.get("observation_space")
-    version = dataset_spec["minari_version"]
 
     md_dict = {
         "Total Steps": str(dataset_spec["total_steps"]),
@@ -682,14 +526,27 @@ def get_dataset_spec_dict(
         dataset_action_space = action_space.__repr__().replace("\n", "")
         md_dict["Dataset Action Space"] = f"`{dataset_action_space}`"
 
-    add_version = f" (`{__version__}` installed)"
+    from minari import supported_dataset_versions
+
+    version = dataset_spec["minari_version"]
+    supported = (
+        "supported" if version in supported_dataset_versions else "not supported"
+    )
+    author = dataset_spec.get("author", "Not provided")
+    if isinstance(author, Iterable):
+        author = ", ".join(author)
+    email = dataset_spec.get("author_email", "Not provided")
+    if isinstance(email, Iterable):
+        email = ", ".join(email)
+    assert isinstance(author, str)
+    assert isinstance(email, str)
     md_dict.update(
         {
             "Algorithm": dataset_spec.get("algorithm_name", "Not provided"),
-            "Author": dataset_spec.get("author", "Not provided"),
-            "Email": dataset_spec.get("author_email", "Not provided"),
+            "Author": author,
+            "Email": email,
             "Code Permalink": f"[{code_link}]({code_link})",
-            "Minari Version": f"`{version}` {add_version if print_version else ''}",
+            "Minari Version": f"`{version}` ({supported})",
             "Download": f"`minari download {dataset_spec['dataset_id']}`",
         }
     )
