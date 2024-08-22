@@ -441,6 +441,11 @@
         <span class="k">if</span> <span class="n">action_space</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">observation_space</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">env_spec_str</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;env_spec&quot;</span><span class="p">)</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env_spec_str</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+            <span class="n">env_spec_str</span> <span class="o">=</span> <span class="p">(</span>  <span class="c1"># for gymnasium 1.0.0 compatibility</span>
+                <span class="n">env_spec_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&quot;order_enforce&quot;: true,&#39;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&quot;apply_api_compatibility&quot;: false,&#39;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;&quot;autoreset&quot;: false, &#39;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
             <span class="n">env_spec</span> <span class="o">=</span> <span class="n">EnvSpec</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">env_spec_str</span><span class="p">)</span>
             <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="n">env_spec</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">observation_space</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
