@@ -74,12 +74,7 @@ class HDF5Storage(MinariStorage):
                 ep_group = file[f"episode_{ep_idx}"]
                 assert isinstance(ep_group, h5py.Group)
                 metadata: dict = dict(ep_group.attrs)
-                if "option_names" in metadata:
-                    metadata["options"] = {}
-                    for name in metadata["option_names"]:
-                        metadata["options"][name] = metadata[f"options/{name}"]
-                        del metadata[f"options/{name}"]
-                    del metadata["option_names"]
+                metadata = unflatten_dict(metadata)
                 if metadata.get("seed") is not None:
                     metadata["seed"] = int(metadata["seed"])
 
@@ -114,19 +109,6 @@ class HDF5Storage(MinariStorage):
             assert isinstance(hdf_ref, h5py.Dataset)
             return hdf_ref[()]
 
-    def _decode_dict(self, dict_group: h5py.Group) -> Dict:
-        result = {}
-        for key, value in dict_group.items():
-            if isinstance(value, h5py.Group):
-                result[key] = self._decode_dict(value)
-            elif isinstance(value, h5py.Dataset):
-                result[key] = value[()]
-            else:
-                raise ValueError(
-                    "Infos are in an unsupported format; see Minari documentation for supported formats."
-                )
-        return result
-
     def get_episodes(self, episode_indices: Iterable[int]) -> Iterable[dict]:
         with h5py.File(self._file_path, "r") as file:
             for ep_idx in episode_indices:
@@ -136,7 +118,7 @@ class HDF5Storage(MinariStorage):
                 if "infos" in ep_group:
                     info_group = ep_group["infos"]
                     assert isinstance(info_group, h5py.Group)
-                    infos = self._decode_dict(info_group)
+                    infos = _decode_info(info_group)
 
                 ep_dict = {
                     "id": ep_idx,
@@ -171,9 +153,8 @@ class HDF5Storage(MinariStorage):
                     episode_group.attrs["seed"] = eps_buff.seed
                 if eps_buff.options is not None:
                     assert "options" not in episode_group.attrs.keys()
-                    for name, option in eps_buff.options.items():
-                        episode_group.attrs[f"options/{name}"] = option
-                    episode_group.attrs["option_names"] = list(eps_buff.options.keys())
+                    flatten_option = flatten_dict(eps_buff.options, "options")
+                    episode_group.attrs.update(flatten_option)
 
                 episode_steps = len(eps_buff.rewards)
                 episode_group.attrs["total_steps"] = episode_steps
@@ -243,3 +224,41 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
             episode_group.create_dataset(
                 key, data=data, dtype=dtype, chunks=True, maxshape=(None, *dshape)
             )
+
+
+def _decode_info(info_group: h5py.Group) -> Dict:
+    result = {}
+    for key, value in info_group.items():
+        if isinstance(value, h5py.Group):
+            result[key] = _decode_info(value)
+        elif isinstance(value, h5py.Dataset):
+            result[key] = value[()]
+        else:
+            raise ValueError(
+                "Infos are in an unsupported format; see Minari documentation for supported formats."
+            )
+    return result
+
+
+def flatten_dict(d: Dict, parent_key: str) -> Dict:
+    flatten_d = {}
+    for k, v in d.items():
+        new_key = f"{parent_key}/{k}"
+        if isinstance(v, dict):
+            flatten_d.update(flatten_dict(v, new_key))
+        else:
+            flatten_d[new_key] = v
+    return flatten_d
+
+
+def unflatten_dict(d: Dict) -> Dict:
+    result = {}
+    for k, v in d.items():
+        keys = k.split("/")
+        current = result
+        for key in keys[:-1]:
+            if key not in current:
+                current[key] = {}
+            current = current[key]
+        current[keys[-1]] = v
+    return result
