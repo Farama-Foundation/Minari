@@ -45,6 +45,9 @@ testing = [
     "pytest>=7.1.3",
     "gymnasium-robotics>=1.2.3",
     "mktestdocs",
+]
+
+integrations = [
     "torchrl",
     "agilerl"
 ]
