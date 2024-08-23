@@ -225,6 +225,7 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
                 key, data=data, dtype=dtype, chunks=True, maxshape=(None, *dshape)
             )
 
+
 def _decode_info(info_group: h5py.Group) -> Dict:
     result = {}
     for key, value in info_group.items():
@@ -249,10 +250,11 @@ def flatten_dict(d: Dict, parent_key: str) -> Dict:
             flatten_d[new_key] = v
     return flatten_d
 
+
 def unflatten_dict(d: Dict) -> Dict:
     result = {}
     for k, v in d.items():
-        keys = k.split('/')
+        keys = k.split("/")
         current = result
         for key in keys[:-1]:
             if key not in current:

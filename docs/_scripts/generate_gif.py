@@ -25,7 +25,7 @@ def _space_at(values, index):
 def generate_gif(dataset_id, path, num_frames=512, fps=32):
     dataset = minari.load_dataset(dataset_id)
     env = dataset.recover_environment(render_mode="rgb_array")
-    images = []        
+    images = []
 
     metadatas = dataset.storage.get_episode_metadata(dataset.episode_indices)
     for episode, episode_metadata in zip(dataset.iterate_episodes(), metadatas):
@@ -46,6 +46,7 @@ def generate_gif(dataset_id, path, num_frames=512, fps=32):
                 return gif_file
 
     raise ValueError("There are not enough steps in the dataset.")
+
 
 def main(argv):
     del argv
