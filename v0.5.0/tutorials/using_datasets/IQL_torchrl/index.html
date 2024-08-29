@@ -1,0 +1,1166 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../../">
+  <head><meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="color-scheme" content="light dark">
+    <meta name="description" content="Minari is a Python library for conducting research in offline reinforcement learning.">
+    <meta property="og:title" content="Minari Documentation" />
+    <meta property="og:type" content="website" />
+    <meta property="og:description" content="Minari is a Python library for conducting research in offline reinforcement learning." />
+    <meta property="og:url" content="https://minari.farama.org/tutorials/using_datasets/IQL_torchrl.html" /><meta property="og:image" content="https://minari.farama.org/_static/img/robotics-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="D4RL" href="../../../datasets/D4RL/" /><link rel="prev" title="Behavioral cloning with PyTorch" href="../behavioral_cloning/" />
+        <link rel="canonical" href="https://minari.farama.org/tutorials/using_datasets/IQL_torchrl.html" />
+
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
+        <title>Implicit Q-Learning with TorchRL - Minari Documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=ca3c1c84" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=e5fbc548" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=49cbaffd" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/termynal.css?v=d6ad0c61" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=16dd5f1b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/directory_tree.css?v=083c6588" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f8f8f8;
+  --color-code-foreground: black;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    <header class="farama-header" aria-label="Farama header">
+      <div class="farama-header__container">
+        <div class="farama-header__left--mobile">
+          <label class="nav-overlay-icon" for="__navigation">
+            <div class="visually-hidden">Toggle site navigation sidebar</div>
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <defs></defs>
+              <line x1="0.5" y1="4" x2="23.5" y2="4"></line>
+              <line x1="0.232" y1="12" x2="23.5" y2="12"></line>
+              <line x1="0.232" y1="20" x2="23.5" y2="20"></line>
+            </svg>
+          </label>
+        </div>
+        <div class="farama-header__left farama-header__center--mobile">
+          <a href="../../../">
+              <img class="farama-header__logo only-light" src="../../../_static/img/Minari.svg" alt="Light Logo"/>
+              <img class="farama-header__logo only-dark" src="../../../_static/img/Minari_White.svg" alt="Dark Logo"/>
+            <span class="farama-header__title">Minari Documentation</span>
+          </a>
+        </div>
+        <div class="farama-header__right">
+          <div class="farama-header-menu">
+            <button class="farama-header-menu__btn" aria-label="Open Farama Menu" aria-expanded="false" aria-haspopup="true" aria-controls="farama-menu">
+              <img class="farama-black-logo-invert" src="../../../_static/img/farama-logo-header.svg">
+              <svg viewBox="0 0 24 24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <polyline style="stroke-linecap: round; stroke-linejoin: round; fill: none; stroke-width: 2px;" points="1 7 12 18 23 7"></polyline>
+              </svg>
+            </button>
+            <div class="farama-header-menu-container farama-hidden" aria-hidden="true" id="farama-menu">
+              <div class="farama-header-menu__header">
+                <a href="https://farama.org">
+                  <img class="farama-header-menu__logo farama-white-logo-invert" src="../../../_static/img/farama_solid_white.svg" alt="Farama Foundation logo">
+                  <span>Farama Foundation</span>
+                </a>
+                <div class="farama-header-menu-header__right">
+                  <button id="farama-close-menu">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
+                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon-close">
+                      <line x1="3" y1="21" x2="21" y2="3"></line>
+                      <line x1="3" y1="3" x2="21" y2="21"></line>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="farama-header-menu__body">
+                <!-- Response from farama.org/api/projects.json -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-half" viewBox="0 0 24 24">
+    <title>Auto light/dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-shadow">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M13 12h5" />
+      <path d="M13 15h4" />
+      <path d="M13 18h1" />
+      <path d="M13 9h4" />
+      <path d="M13 6h1" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc">
+<label class="overlay sidebar-overlay" for="__navigation">
+  <div class="visually-hidden">Hide navigation sidebar</div>
+</label>
+<label class="overlay toc-overlay" for="__toc">
+  <div class="visually-hidden">Hide table of contents sidebar</div>
+</label>
+
+<div class="page">
+  <!--<header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <div class="visually-hidden">Toggle site navigation sidebar</div>
+        <i class="icon"><svg><use href="#svg-menu"></use></svg></i>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../../"><div class="brand">Minari Documentation</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle">
+          <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+          <svg class="theme-icon-when-auto"><use href="#svg-sun-half"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <div class="visually-hidden">Toggle table of contents sidebar</div>
+        <i class="icon"><svg><use href="#svg-toc"></use></svg></i>
+      </label>
+    </div>
+  </header>-->
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="farama-sidebar__title" href="../../../">
+      <img class="farama-header__logo only-light" src="../../../_static/img/Minari.svg" alt="Light Logo"/>
+      <img class="farama-header__logo only-dark" src="../../../_static/img/Minari_White.svg" alt="Dark Logo"/>
+    <span class="farama-header__title">Minari Documentation</span>
+  </a><form class="sidebar-search-container" method="get" action="../../../search/" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../content/basic_usage/">Basic Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../content/minari_cli/">Minari CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../content/dataset_standards/">Dataset Standards</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/minari_functions/">Minari</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Minari</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/minari_dataset/minari_dataset/">MinariDataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/minari_dataset/minari_storage/">MinariStorage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/minari_dataset/episode_data/">EpisodeData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/minari_dataset/step_data/">StepData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/namespace/namespace/">Namespace</a></li>
+</ul>
+</li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/data_collector/">DataCollector</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of DataCollector</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector/episode_buffer/">EpisodeBuffer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector/step_data_callback/">StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../dataset_creation/">Dataset Creation</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Dataset Creation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../dataset_creation/observation_space_subseting/">Collecting a subset of a dictionary space with StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dataset_creation/custom_space_serialization/">Serializing a custom space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dataset_creation/point_maze_dataset/">PointMaze D4RL dataset</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current has-children"><a class="reference internal" href="../">Using Datasets</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Using Datasets</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../behavioral_cloning/">Behavioral cloning with PyTorch</a></li>
+<li class="toctree-l2 current current-page"><a class="current reference internal" href="#">Implicit Q-Learning with TorchRL</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
+<ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/D4RL/">D4RL</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of D4RL</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/antmaze/">Ant Maze</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Ant Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/large-diverse-v1/">Large-Diverse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/large-play-v1/">Large-Play</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/medium-diverse-v1/">Medium-Diverse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/medium-play-v1/">Medium-Play</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/umaze-v1/">Umaze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/umaze-diverse-v1/">Umaze-Diverse</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/door/">Door</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Door</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/door/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/door/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/door/human-v2/">Human</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/hammer/">Hammer</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Hammer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/hammer/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/hammer/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/hammer/human-v2/">Human</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/complete-v1/">Complete</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/mixed-v1/">Mixed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/partial-v1/">Partial</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/minigrid/">MiniGrid</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of MiniGrid</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/minigrid/fourrooms-v0/">Fourrooms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/minigrid/fourrooms-random-v0/">Fourrooms-Random</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/pen/">Pen</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Pen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pen/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pen/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pen/human-v2/">Human</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/">Point Maze</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of Point Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/large-v2/">Large</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/large-dense-v2/">Large-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/medium-v2/">Medium</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/medium-dense-v2/">Medium-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/open-v2/">Open</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/open-dense-v2/">Open-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/umaze-v2/">Umaze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/umaze-dense-v2/">Umaze-Dense</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/relocate/">Relocate</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of Relocate</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/relocate/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/relocate/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/relocate/human-v2/">Human</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Development</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/Minari">Github</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../release_notes/">Release Notes</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/Farama-Foundation/Minari/tree/main/docs">Contribute to the Docs</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main-container">
+
+    
+
+    
+
+    <div class="main">
+      <div class="content">
+        <div class="article-container">
+          <a href="#" class="back-to-top muted-link">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+            </svg>
+            <span>Back to top</span>
+          </a>
+          <div class="content-icon-container">
+      <div class="edit-this-page">
+  <a class="muted-link" href="https://github.com/Farama-Foundation/Minari/edit/main/docs/tutorials/using_datasets/IQL_torchrl.py" title="Edit this page">
+    <svg aria-hidden="true" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+      <path d="M4 20h4l10.5 -10.5a1.5 1.5 0 0 0 -4 -4l-10.5 10.5v4" />
+      <line x1="13.5" y1="6.5" x2="17.5" y2="10.5" />
+    </svg>
+    <span class="visually-hidden">Edit this page</span>
+  </a>
+</div><div class="theme-toggle-container theme-toggle-content">
+              <button class="theme-toggle" title="Toggle color theme">
+                <div class="visually-hidden">Toggle Light / Dark / Auto color theme</div>
+                <svg class="theme-icon-when-auto">
+                  <use href="#svg-sun-half"></use>
+                </svg>
+                <svg class="theme-icon-when-dark">
+                  <use href="#svg-moon"></use>
+                </svg>
+                <svg class="theme-icon-when-light">
+                  <use href="#svg-sun"></use>
+                </svg>
+              </button>
+            </div>
+            <label class="toc-overlay-icon toc-content-icon" for="__toc">
+              <div class="visually-hidden">Toggle table of contents sidebar</div>
+              <i class="icon"><svg>
+                  <use href="#svg-toc"></use>
+                </svg></i>
+            </label>
+          </div>
+          <article role="main">
+            
+            <section class="sphx-glr-example-title" id="implicit-q-learning-with-torchrl">
+<span id="sphx-glr-tutorials-using-datasets-iql-torchrl-py"></span><h1>Implicit Q-Learning with TorchRL<a class="headerlink" href="#implicit-q-learning-with-torchrl" title="Link to this heading">¶</a></h1>
+<a class="reference internal image-reference" href="../../../_images/IQL_torchrl_adroit_pen_example_1.gif"><img alt="Example episode 1 for Adroit Pen environment" class="align-right" src="../../../_images/IQL_torchrl_adroit_pen_example_1.gif" style="width: 300px;" />
+</a>
+<p>This tutorial demonstrates how to use a Minari dataset in conjunction with TorchRL to train an offline RL agent. We use Implicit Q-Learning to learn how to control a 24-dof hand to manipulate a pen, learning from a dataset of just 25 human demonstrations. We will cover:</p>
+<ul class="simple">
+<li><p>Working with Gymnasium environments in TorchRL.</p></li>
+<li><p>Creating a replay buffer from a Minari dataset.</p></li>
+<li><p>The basics of Implicit Q-Learning (IQL).</p></li>
+<li><p>Setting up an IQL training loop and training an agent.</p></li>
+</ul>
+<p>The IQL implementation here is based in part on the <a class="reference external" href="https://github.com/pytorch/rl/blob/main/examples/iql/iql_offline.py">offline IQL example script</a> in TorchRL. Other offline RL algorithms are available there as well.</p>
+<section id="pre-requisites">
+<h2>Pre-requisites<a class="headerlink" href="#pre-requisites" title="Link to this heading">¶</a></h2>
+<p>This tutorial currently requires a recent nightly build of TorchRL:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>!<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;torchrl-nightly&gt;=2023.12.30&quot;</span>
+!<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>matplotlib<span class="w"> </span>minari<span class="w"> </span>gymnasium-robotics
+</pre></div>
+</div>
+<p><strong>Note:</strong> If you run into conflicts with PyTorch when installing it, you may have to first install <a class="reference external" href="https://pytorch.org/get-started/locally/">PyTorch nightly</a>. Remember to add the “-U” flag to upgrade torch if it’s already installed.</p>
+<p>To confirm that everything is installed properly we import the required modules:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">gymnasium</span>
+<span class="kn">import</span> <span class="nn">torch</span>
+<span class="kn">import</span> <span class="nn">torchrl</span>
+
+<span class="n">seed</span> <span class="o">=</span> <span class="mi">42</span>
+<span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="for-headless-environments">
+<h2>For headless environments<a class="headerlink" href="#for-headless-environments" title="Link to this heading">¶</a></h2>
+<p>If you are in a headless environment (e.g. a Google Colab notebook), you will also need to install a virtual display. First, install the prerequisites:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>!<span class="w"> </span>sudo<span class="w"> </span>apt-get<span class="w"> </span>update
+!<span class="w"> </span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>-y<span class="w"> </span>python3-opengl
+!<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>ffmpeg
+!<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>xvfb
+!<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>pyvirtualdisplay
+</pre></div>
+</div>
+<p>Then restart the notebook kernel. Once the pre-requisites are installed you can start a virtual display:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyvirtualdisplay</span> <span class="kn">import</span> <span class="n">Display</span>
+
+<span class="n">virtual_display</span> <span class="o">=</span> <span class="n">Display</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1400</span><span class="p">,</span> <span class="mi">900</span><span class="p">))</span>
+<span class="n">virtual_display</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="the-adroit-pen-environment">
+<h2>The Adroit Pen environment<a class="headerlink" href="#the-adroit-pen-environment" title="Link to this heading">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torchrl.envs.libs.gym</span> <span class="kn">import</span> <span class="n">GymEnv</span>
+<span class="kn">from</span> <span class="nn">torchrl.envs</span> <span class="kn">import</span> <span class="n">DoubleToFloat</span><span class="p">,</span> <span class="n">TransformedEnv</span>
+</pre></div>
+</div>
+<p>We will be using the <code class="docutils literal notranslate"><span class="pre">AdroitHandPen</span></code> environment from <a class="reference external" href="https://robotics.farama.org/envs/adroit_hand/adroit_pen/">Gymnasium-Robotics</a>. TorchRL is designed to be agnostic to different frameworks, so instead of working with a Gymnasium environment directly we load it using the <code class="docutils literal notranslate"><span class="pre">GymEnv</span></code> wrapper:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">env_id</span> <span class="o">=</span> <span class="s2">&quot;AdroitHandPen-v1&quot;</span>
+<span class="n">example_env</span> <span class="o">=</span> <span class="n">GymEnv</span><span class="p">(</span><span class="n">env_id</span><span class="p">,</span> <span class="n">from_pixels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pixels_only</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">example_env</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">GymEnv</span></code> provides the usual methods such as <code class="docutils literal notranslate"><span class="pre">env.step()</span></code> and <code class="docutils literal notranslate"><span class="pre">env.reset()</span></code>. However, instead of returning a tuple of step/reset data, they return a <code class="docutils literal notranslate"><span class="pre">TensorDict</span></code>. A tensordict is essentially a dictionary of tensors whose first axis (the batch dimension) has the same size, and share some other properties like the device they are on. The tensordict returned has fields for each type of step data (e.g. <code class="docutils literal notranslate"><span class="pre">observations</span></code>, <code class="docutils literal notranslate"><span class="pre">actions</span></code>, <code class="docutils literal notranslate"><span class="pre">rewards</span></code>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tensordict</span> <span class="o">=</span> <span class="n">example_env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tensordict</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>TensorDict(
+    fields={
+        done: Tensor(shape=torch.Size([1]), device=cpu, dtype=torch.bool, is_shared=False),
+        observation: Tensor(shape=torch.Size([45]), device=cpu, dtype=torch.float64, is_shared=False),
+        pixels: Tensor(shape=torch.Size([480, 480, 3]), device=cpu, dtype=torch.uint8, is_shared=False),
+        terminated: Tensor(shape=torch.Size([1]), device=cpu, dtype=torch.bool, is_shared=False),
+        truncated: Tensor(shape=torch.Size([1]), device=cpu, dtype=torch.bool, is_shared=False)},
+    batch_size=torch.Size([]),
+    device=cpu,
+    is_shared=False)
+</pre></div>
+</div>
+<p>TorchRL also provides <code class="docutils literal notranslate"><span class="pre">env.rollout()</span></code> to step through a full episode and save the step data in a tensordict:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">max_episode_steps</span> <span class="o">=</span> <span class="mi">1000</span>
+<span class="n">tensordict</span> <span class="o">=</span> <span class="n">example_env</span><span class="o">.</span><span class="n">rollout</span><span class="p">(</span><span class="n">max_steps</span><span class="o">=</span><span class="n">max_episode_steps</span><span class="p">,</span> <span class="n">auto_cast_to_device</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We can compute the cumulative reward by summing <code class="docutils literal notranslate"><span class="pre">tensordict['next',</span> <span class="pre">'reward']</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cumulative reward: </span><span class="si">{</span><span class="n">tensordict</span><span class="p">[</span><span class="s1">&#39;next&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;reward&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Cumulative reward: 884.10
+</pre></div>
+</div>
+<p>Because we specified <code class="docutils literal notranslate"><span class="pre">from_pixels=True</span></code> when initialising the environment, the <code class="docutils literal notranslate"><span class="pre">pixels</span></code> field of the tensordict is populated with image data. Here’s the first frame of that episode:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">tensordict</span><span class="p">[</span><span class="s2">&quot;pixels&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">());</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../../../_images/IQL_torchrl_first_frame.png"><img alt="First frame of AdroitHandPen environment" src="../../../_images/IQL_torchrl_first_frame.png" style="width: 350px;" />
+</a>
+<p>The aim of the <a class="reference external" href="https://robotics.farama.org/envs/adroit_hand/adroit_pen/">Adroit Pen task</a> is to control the 24-dof hand to manipulate the blue pen from the initial configuration (shown above) to the goal configuration (green pen). There is a shaped dense reward which quantifies how close the pen is to the target configuration, which is randomised at the start of each episode.</p>
+<p>To use this environment for training, we need to perform some pre-processing transforms on the step data returned. We transform the base environment with <code class="docutils literal notranslate"><span class="pre">DoubleToFloat()</span></code>, which converts all doubles in the observations to floats:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+
+<span class="n">base_env</span> <span class="o">=</span> <span class="n">GymEnv</span><span class="p">(</span><span class="n">env_id</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
+<span class="n">env</span> <span class="o">=</span> <span class="n">TransformedEnv</span><span class="p">(</span><span class="n">base_env</span><span class="p">,</span> <span class="n">DoubleToFloat</span><span class="p">())</span>
+<span class="n">env</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="building-a-replay-buffer">
+<h2>Building a replay buffer<a class="headerlink" href="#building-a-replay-buffer" title="Link to this heading">¶</a></h2>
+<p>The Minari dataset we will be using is <a class="reference external" href="https://minari.farama.org/main/datasets/pen/human/">D4RL/pen/human-v2</a>, which consists of 25 human demonstrations. We can create a replay buffer using <code class="docutils literal notranslate"><span class="pre">MinariExperienceReplay()</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torchrl.data.datasets.minari_data</span> <span class="kn">import</span> <span class="n">MinariExperienceReplay</span>
+<span class="kn">from</span> <span class="nn">torchrl.data.replay_buffers</span> <span class="kn">import</span> <span class="n">SamplerWithoutReplacement</span>
+
+<span class="n">dataset_id</span> <span class="o">=</span> <span class="s2">&quot;D4RL/pen/human-v2&quot;</span>
+<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">256</span>
+
+<span class="n">replay_buffer</span> <span class="o">=</span> <span class="n">MinariExperienceReplay</span><span class="p">(</span>
+    <span class="n">dataset_id</span><span class="p">,</span>
+    <span class="n">split_trajs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
+    <span class="n">sampler</span><span class="o">=</span><span class="n">SamplerWithoutReplacement</span><span class="p">(),</span>
+    <span class="n">transform</span><span class="o">=</span><span class="n">DoubleToFloat</span><span class="p">(),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Note:</strong> We add the transform <code class="docutils literal notranslate"><span class="pre">DoubleToFloat()</span></code> so that the step data is consistent with our environment.</p>
+<p>On the first run, the dataset will be downloaded from Farama servers and stored in the local cache directory (e.g. <code class="docutils literal notranslate"><span class="pre">~/.cache/torchrl/minari/</span></code>). Once the dataset is loaded we can iterate over the replay buffer or use <code class="docutils literal notranslate"><span class="pre">replay_buffer.sample()</span></code> to load batches of transitions.</p>
+</section>
+<section id="implicit-q-learning">
+<h2>Implicit Q-Learning<a class="headerlink" href="#implicit-q-learning" title="Link to this heading">¶</a></h2>
+<p>For completeness, we give a quick overview of <a class="reference external" href="https://arxiv.org/abs/2110.06169">Implicit Q-Learning (IQL)</a> and how it tries to tackle some of the challenges of offline RL. Those who are familiar with IQL or are only interested in the practical implementation can skip to the next section: <a class="reference internal" href="#label-defining-the-model"><span class="std std-ref">Defining the model</span></a>.</p>
+<p>The main challenge in offline RL is <strong>distribution shift</strong>: Function approximators (e.g. for the Q-function) are trained on one distribution of data, the offline dataset, but are evaluated on another distribution, that of the newly trained policy. When evaluating state-action pairs well outside of the original distribution, they may extrapolate poorly, resulting in a policy that performs well on the dataset but poorly in practice. To make this more precise, consider an offline dataset <span class="math notranslate nohighlight">\(\mathcal{D} = \{(s_t, a_t, r_t, s_{t+1}), \dots\}\)</span>. A standard starting point for offline RL algorithms is minimising the temporal difference error, by optimizing the objective</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[L_{\rm TD}(\theta) = \mathbb{E}_{(s, a, s') \sim \mathcal{D}} \left[ \left( r(s, a) + \gamma \max_{a'} Q_{\hat{\theta}}(s', a') - Q_\theta(s, a) \right)^2 \right]\]</div>
+</div>
+<figure class="align-right" id="id2" style="width: 300px">
+<a class="reference internal image-reference" href="../../../_images/IQL_torchrl_expectile_example.png"><img alt="../../../_images/IQL_torchrl_expectile_example.png" src="../../../_images/IQL_torchrl_expectile_example.png" style="width: 250px;" />
+</a>
+<figcaption>
+<p><span class="caption-text">Expectiles of an example conditional distribution <span class="math notranslate nohighlight">\(y \sim m_\tau(s)\)</span>. For <span class="math notranslate nohighlight">\(\tau = 0.5\)</span> the expectile is the mean while for <span class="math notranslate nohighlight">\(\tau \approx 1\)</span> it approximates the maximum of the distribution <a class="reference external" href="https://arxiv.org/abs/2110.06169">(Kostrikov et al 2021)</a>.</span><a class="headerlink" href="#id2" title="Link to this image">¶</a></p>
+</figcaption>
+</figure>
+<p>where <span class="math notranslate nohighlight">\(Q_{\hat{\theta}}\)</span> is a target network, a lagged copy of <span class="math notranslate nohighlight">\(Q_{\theta}\)</span>. Using the Q-function, one can then define a policy by <span class="math notranslate nohighlight">\(\pi(s) \equiv \arg\max_a Q_\theta(s, a)\)</span>. However, this objective <span class="math notranslate nohighlight">\(L_{\rm TD}\)</span> requires evaluating the value of next actions <span class="math notranslate nohighlight">\(a'\)</span> that may not be in the dataset. If <span class="math notranslate nohighlight">\(Q_{\hat{\theta}}(s', a')\)</span> overestimates the value of the state-action <span class="math notranslate nohighlight">\((s', a')\)</span>, the resulting arg-max policy may be overconfident. It is therefore important to limit overestimation of the values of out-of-distribution actions.</p>
+<p><a class="reference external" href="https://arxiv.org/abs/2110.06169">Implicit Q-Learning</a> attempts to avoid this issue by never querying out-of-distribution state-action values <span class="math notranslate nohighlight">\(Q(s', a')\)</span>. Instead of arg-maxing over <span class="math notranslate nohighlight">\(Q(s', a')\)</span>, IQL introduces a value function <span class="math notranslate nohighlight">\(V_\psi(s)\)</span> which estimates the <strong>expectile</strong> of the state value function, an estimate of the maximum Q-value over actions that are in the support of the dataset distribution. We can fit <span class="math notranslate nohighlight">\(V_\psi(s)\)</span> using the objective</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[L_V(\psi) = \mathbb{E}_{(s, a) \sim \mathcal{D}} \left[ L_2^\tau (Q_{\hat{\theta}}(s, a) - V_\psi(s)) \right]\]</div>
+</div>
+<p>where <span class="math notranslate nohighlight">\(L_2^\tau(u) \equiv \left| \tau - \mathbb{1}(u &lt; 0) \right| u^2\)</span>. This specific choice of objective fits <span class="math notranslate nohighlight">\(V_\psi(s)\)</span> to the expectile of the state-action value function with respect to the dataset action distribution. See the figure to the right for an example of some expectiles for different values of <span class="math notranslate nohighlight">\(\tau\)</span>.</p>
+<p>We then use <span class="math notranslate nohighlight">\(V_\psi(s)\)</span> to update the Q-function:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[L_Q(\theta) = \mathbb{E}_{(s, a, s') \sim \mathcal{D}} \left[ \left( r(s, a) + \gamma V_\psi(s') - Q_\theta(s, a) \right)^2 \right].\]</div>
+</div>
+<p>This is the same as the original TD error objective <span class="math notranslate nohighlight">\(L_{\rm TD}(\theta)\)</span>, except we use <span class="math notranslate nohighlight">\(V_\psi(s')\)</span> instead of trying to maximise <span class="math notranslate nohighlight">\(Q(s', a')\)</span>. Once trained, this provides us with a Q-function which implicitly defines the policy. To extract the explicit policy, IQL uses advantage-weighted behavioural cloning:</p>
+<div class="math-wrapper docutils container">
+<div class="math notranslate nohighlight">
+\[L_\pi(\phi) = \mathbb{E}_{(s, a) \sim \mathcal{D}} \left[ e^{\beta(Q_{\hat{\theta}}(s, a) - V_\psi(s))} \log \pi_\phi(a | s) \right].\]</div>
+</div>
+<p>The hyperparameter <span class="math notranslate nohighlight">\(\beta\)</span> controls the influence of the advantage <span class="math notranslate nohighlight">\(A(s, a) \equiv Q_{\hat{\theta}}(s, a) - V_\psi(s)\)</span>. For small values of <span class="math notranslate nohighlight">\(\beta\)</span>, the objective <span class="math notranslate nohighlight">\(L_\pi(\phi)\)</span> behaves similarly to standard behavioral cloning, while for larger values, it attempts to recover the maximum of the Q-function.</p>
+<p>In summary, IQL defines the following networks:</p>
+<ul class="simple">
+<li><p>A state value function <span class="math notranslate nohighlight">\(V_\psi(s)\)</span> that quantifies the value of the best action within the support of the dataset.</p></li>
+<li><p>A state-action value function <span class="math notranslate nohighlight">\(Q_\theta(s, a)\)</span> (and a target network <span class="math notranslate nohighlight">\(Q_{\hat{\theta}}(s, a)\)</span>).</p></li>
+<li><p>A policy <span class="math notranslate nohighlight">\(\pi_\phi(a | s)\)</span>.</p></li>
+</ul>
+<p>We can update all of these networks together by optimizing the total objective <span class="math notranslate nohighlight">\(\ell = L_V(\psi) + L_Q(\theta) + L_\pi(\phi)\)</span> using gradient descent.</p>
+<p><strong>Note:</strong> The IQL implementation here is designed to be simple, rather than a benchmarkable implementation. For an implementation that accurately reproduces benchmark scores, see e.g. <a class="reference external" href="https://github.com/corl-team/CORL">CORL</a>.</p>
+</section>
+<section id="defining-the-model">
+<span id="label-defining-the-model"></span><h2>Defining the model<a class="headerlink" href="#defining-the-model" title="Link to this heading">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tensordict.nn</span> <span class="kn">import</span> <span class="n">TensorDictModule</span>
+<span class="kn">from</span> <span class="nn">tensordict.nn.distributions</span> <span class="kn">import</span> <span class="n">NormalParamExtractor</span>
+<span class="kn">from</span> <span class="nn">torchrl.envs.utils</span> <span class="kn">import</span> <span class="n">ExplorationType</span><span class="p">,</span> <span class="n">set_exploration_type</span>
+<span class="kn">from</span> <span class="nn">torchrl.modules</span> <span class="kn">import</span> <span class="n">MLP</span><span class="p">,</span> <span class="n">ProbabilisticActor</span><span class="p">,</span> <span class="n">TanhNormal</span><span class="p">,</span> <span class="n">ValueOperator</span>
+<span class="kn">from</span> <span class="nn">torchrl.objectives</span> <span class="kn">import</span> <span class="n">IQLLoss</span><span class="p">,</span> <span class="n">SoftUpdate</span>
+<span class="kn">from</span> <span class="nn">torchrl.trainers.helpers.models</span> <span class="kn">import</span> <span class="n">ACTIVATIONS</span>
+</pre></div>
+</div>
+<p>We first initialise the value network <span class="math notranslate nohighlight">\(V_\psi(s)\)</span> which estimates the expectile of the value of a state <span class="math notranslate nohighlight">\(s\)</span> with respect to the distribution of actions in the dataset. TorchRL provides a <code class="docutils literal notranslate"><span class="pre">MLP</span></code> convenience class which we use to build a two layer Multi-Layer Perceptron. To plug this MLP into the rest of the network, we specify that the inputs are read from the <code class="docutils literal notranslate"><span class="pre">&quot;observation&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;action&quot;</span></code> keys of the input tensordict (and concatenated, by default), and the output of the MLP is written to the <code class="docutils literal notranslate"><span class="pre">&quot;state_value&quot;</span></code> key:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hidden_sizes</span> <span class="o">=</span> <span class="p">[</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">]</span>
+<span class="n">activation_fn</span> <span class="o">=</span> <span class="n">ACTIVATIONS</span><span class="p">[</span><span class="s2">&quot;relu&quot;</span><span class="p">]</span>
+
+<span class="c1"># MLP network</span>
+<span class="n">value_net</span> <span class="o">=</span> <span class="n">MLP</span><span class="p">(</span>
+    <span class="n">num_cells</span><span class="o">=</span><span class="n">hidden_sizes</span><span class="p">,</span>
+    <span class="n">out_features</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">activation_class</span><span class="o">=</span><span class="n">activation_fn</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Specify the keys to read/write from the tensordict</span>
+<span class="n">value_net</span> <span class="o">=</span> <span class="n">ValueOperator</span><span class="p">(</span>
+    <span class="n">in_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">],</span>
+    <span class="n">out_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;state_value&quot;</span><span class="p">],</span>
+    <span class="n">module</span><span class="o">=</span><span class="n">value_net</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>We similarly initialise the action-value network <span class="math notranslate nohighlight">\(Q_{\theta}(s, a)\)</span>,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">q_net</span> <span class="o">=</span> <span class="n">MLP</span><span class="p">(</span>
+    <span class="n">num_cells</span><span class="o">=</span><span class="n">hidden_sizes</span><span class="p">,</span>
+    <span class="n">out_features</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">activation_class</span><span class="o">=</span><span class="n">activation_fn</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">qvalue</span> <span class="o">=</span> <span class="n">ValueOperator</span><span class="p">(</span>
+    <span class="n">in_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">,</span> <span class="s2">&quot;action&quot;</span><span class="p">],</span>
+    <span class="n">out_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;state_action_value&quot;</span><span class="p">],</span>
+    <span class="n">module</span><span class="o">=</span><span class="n">q_net</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Finally, we initialise the policy/actor <span class="math notranslate nohighlight">\(\pi_\phi(a | s)\)</span>, representing the policy as a tanh-Normal distribution parameterised by location and scale. There are three steps in setting up the actor:</p>
+<ul class="simple">
+<li><p>Create an MLP network (as before).</p></li>
+<li><p>Map the MLP outputs to “location” and “scale” parameters, in particular so that the “scale” output is strictly positive.</p></li>
+<li><p>Wrap it with the <code class="docutils literal notranslate"><span class="pre">ProbabilisticActor</span></code> class, specifying the distribution type.</p></li>
+</ul>
+<p>The <code class="docutils literal notranslate"><span class="pre">ProbabilisticActor</span></code> class provides a convenient way to work with RL policies. By passing it the <code class="docutils literal notranslate"><span class="pre">action_spec</span></code> of the environment, it will also ensure that the outputs respect the bounds of the action space – that every policy output is a valid action.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">action_spec</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_spec</span>
+
+<span class="c1"># Actor/policy MLP</span>
+<span class="n">actor_mlp</span> <span class="o">=</span> <span class="n">MLP</span><span class="p">(</span>
+    <span class="n">num_cells</span><span class="o">=</span><span class="n">hidden_sizes</span><span class="p">,</span>
+    <span class="n">out_features</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">action_spec</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">activation_class</span><span class="o">=</span><span class="n">activation_fn</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Map MLP output to location and scale parameters (the latter must be positive)</span>
+<span class="n">actor_extractor</span> <span class="o">=</span> <span class="n">NormalParamExtractor</span><span class="p">(</span><span class="n">scale_lb</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="n">actor_net</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">actor_mlp</span><span class="p">,</span> <span class="n">actor_extractor</span><span class="p">)</span>
+
+<span class="c1"># Specify tensordict inputs and outputs</span>
+<span class="n">actor_module</span> <span class="o">=</span> <span class="n">TensorDictModule</span><span class="p">(</span>
+    <span class="n">actor_net</span><span class="p">,</span>
+    <span class="n">in_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">],</span>
+    <span class="n">out_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;loc&quot;</span><span class="p">,</span> <span class="s2">&quot;scale&quot;</span><span class="p">]</span>
+<span class="p">)</span>
+
+<span class="c1"># Use ProbabilisticActor to map it to the correct action space</span>
+<span class="n">actor</span> <span class="o">=</span> <span class="n">ProbabilisticActor</span><span class="p">(</span>
+    <span class="n">module</span><span class="o">=</span><span class="n">actor_module</span><span class="p">,</span>
+    <span class="n">in_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;loc&quot;</span><span class="p">,</span> <span class="s2">&quot;scale&quot;</span><span class="p">],</span>
+    <span class="n">spec</span><span class="o">=</span><span class="n">action_spec</span><span class="p">,</span>
+    <span class="n">distribution_class</span><span class="o">=</span><span class="n">TanhNormal</span><span class="p">,</span>
+    <span class="n">distribution_kwargs</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;min&quot;</span><span class="p">:</span> <span class="n">action_spec</span><span class="o">.</span><span class="n">space</span><span class="o">.</span><span class="n">low</span><span class="p">,</span>
+        <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="n">action_spec</span><span class="o">.</span><span class="n">space</span><span class="o">.</span><span class="n">high</span><span class="p">,</span>
+        <span class="s2">&quot;tanh_loc&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="n">default_interaction_type</span><span class="o">=</span><span class="n">ExplorationType</span><span class="o">.</span><span class="n">MODE</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>For convenience, we gather the actor and value functions into a single “model”:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">([</span><span class="n">actor</span><span class="p">,</span> <span class="n">qvalue</span><span class="p">,</span> <span class="n">value_net</span><span class="p">])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Under the hood, <code class="docutils literal notranslate"><span class="pre">MLP()</span></code> uses <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.LazyLinear.html">LazyLinear</a> layers, whose shape is inferred during the first pass. Later methods need a fixed shape, so we forward some random data through the network to initialise the Lazy modules:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">(),</span> <span class="n">set_exploration_type</span><span class="p">(</span><span class="n">ExplorationType</span><span class="o">.</span><span class="n">RANDOM</span><span class="p">):</span>
+    <span class="n">tensordict</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">net</span> <span class="ow">in</span> <span class="n">model</span><span class="p">:</span>
+        <span class="n">net</span><span class="p">(</span><span class="n">tensordict</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="loss-and-optimizer">
+<h2>Loss and optimizer<a class="headerlink" href="#loss-and-optimizer" title="Link to this heading">¶</a></h2>
+<p>The explicit details of the Implicit Q-Learning losses are captured by TorchRL’s <code class="docutils literal notranslate"><span class="pre">IQLLoss</span></code> module:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">loss_module</span> <span class="o">=</span> <span class="n">IQLLoss</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+    <span class="n">model</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+    <span class="n">value_network</span><span class="o">=</span><span class="n">model</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
+    <span class="n">loss_function</span><span class="o">=</span><span class="s2">&quot;l2&quot;</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">expectile</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">loss_module</span><span class="o">.</span><span class="n">make_value_estimator</span><span class="p">(</span><span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>IQL uses “soft updates” for the target network <span class="math notranslate nohighlight">\(Q_{\hat{\theta}}(s, a)\)</span>. The target network parameters are slowly updated in the direction of <span class="math notranslate nohighlight">\(Q_{\theta}(s, a)\)</span> at each iteration via Polyak averaging <span class="math notranslate nohighlight">\(\hat{\theta} \leftarrow \tau \,\theta + (1 - \tau) \, \hat{\theta}\)</span>,</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">target_net_updater</span> <span class="o">=</span> <span class="n">SoftUpdate</span><span class="p">(</span><span class="n">loss_module</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mf">0.005</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>We optimize all of the networks using Adam:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">loss_module</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.0003</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="training">
+<h2>Training<a class="headerlink" href="#training" title="Link to this heading">¶</a></h2>
+<p>To demonstrate training, we run IQL for 50,000 iterations. During training, we will evaluate the policy every 1000 iterations. But note that this is for evaluation purposes only. Unlike online RL, we do not collect new data during training.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">evaluate_policy</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">num_eval_episodes</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the mean cumulative reward over multiple episodes.&quot;&quot;&quot;</span>
+    <span class="n">episode_rewards</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_eval_episodes</span><span class="p">):</span>
+        <span class="n">eval_td</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">rollout</span><span class="p">(</span><span class="n">max_steps</span><span class="o">=</span><span class="n">max_episode_steps</span><span class="p">,</span> <span class="n">policy</span><span class="o">=</span><span class="n">policy</span><span class="p">,</span> <span class="n">auto_cast_to_device</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">episode_rewards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">eval_td</span><span class="p">[</span><span class="s2">&quot;next&quot;</span><span class="p">,</span> <span class="s2">&quot;reward&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">episode_rewards</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The training loop is essentially the standard PyTorch gradient descent loop:</p>
+<ol class="arabic simple">
+<li><p>Sample a batch of transitions from the dataset <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>.</p></li>
+<li><p>Compute the loss <span class="math notranslate nohighlight">\(\ell = L_V(\psi) + L_Q(\theta) + L_\pi(\phi)\)</span>.</p></li>
+<li><p>Backpropagate the gradients and update the networks, including the target Q-network.</p></li>
+</ol>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tqdm.auto</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="n">iterations</span> <span class="o">=</span> <span class="mi">10_000</span>  <span class="c1"># Set to 50_000 to reproduce the results below</span>
+<span class="n">eval_interval</span> <span class="o">=</span> <span class="mi">1_000</span>
+
+<span class="n">loss_logs</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">eval_reward_logs</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">pbar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">iterations</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span>
+    <span class="c1"># 1) Sample data from the dataset</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">replay_buffer</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
+
+    <span class="c1"># 2) Compute loss l = L_V + L_Q + L_pi</span>
+    <span class="n">loss_dict</span> <span class="o">=</span> <span class="n">loss_module</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">))</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_dict</span><span class="p">[</span><span class="s2">&quot;loss_value&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">loss_dict</span><span class="p">[</span><span class="s2">&quot;loss_qvalue&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">loss_dict</span><span class="p">[</span><span class="s2">&quot;loss_actor&quot;</span><span class="p">]</span>
+    <span class="n">loss_logs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+
+    <span class="c1"># 3) Backpropagate the gradients</span>
+    <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
+    <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>  <span class="c1"># Update V(s), Q(a, s), pi(a|s)</span>
+    <span class="n">target_net_updater</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>  <span class="c1"># Update the target Q-network</span>
+
+    <span class="c1"># Evaluate the policy</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="n">eval_interval</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">eval_reward_logs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">evaluate_policy</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">model</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Loss: </span><span class="si">{</span><span class="n">loss_logs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">, Avg return: </span><span class="si">{</span><span class="n">eval_reward_logs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+<span class="n">pbar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>We can plot the loss and episodic return:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">loss_logs</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Loss&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;iterations&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">eval_interval</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">eval_reward_logs</span><span class="p">)),</span> <span class="n">eval_reward_logs</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Cumulative reward&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;iterations&quot;</span><span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<a class="reference internal image-reference" href="../../../_images/IQL_torchrl_training_graphs.png"><img alt="Loss and eval reward during training" class="align-center" src="../../../_images/IQL_torchrl_training_graphs.png" style="width: 100%;" />
+</a>
+</section>
+<section id="results">
+<h2>Results<a class="headerlink" href="#results" title="Link to this heading">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">HTML</span>
+<span class="kn">from</span> <span class="nn">gymnasium.utils.save_video</span> <span class="kn">import</span> <span class="n">save_video</span>
+<span class="kn">from</span> <span class="nn">base64</span> <span class="kn">import</span> <span class="n">b64encode</span>
+</pre></div>
+</div>
+<p>Evaluated over 100 episodes, the final performance is:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">final_score</span> <span class="o">=</span> <span class="n">evaluate_policy</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">model</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">num_eval_episodes</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cumulative reward (averaged over 100 episodes): </span><span class="si">{</span><span class="n">final_score</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Cumulative reward (averaged over 100 episodes): 1872.69
+</pre></div>
+</div>
+<p>To visualise its performance, we can roll out a single episode and render the result as a video:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">viewer_env</span> <span class="o">=</span> <span class="n">TransformedEnv</span><span class="p">(</span>
+    <span class="n">GymEnv</span><span class="p">(</span><span class="n">env_id</span><span class="p">,</span> <span class="n">from_pixels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pixels_only</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
+    <span class="n">DoubleToFloat</span><span class="p">()</span>
+<span class="p">)</span>
+<span class="n">viewer_env</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+
+<span class="n">tensordict</span> <span class="o">=</span> <span class="n">viewer_env</span><span class="o">.</span><span class="n">rollout</span><span class="p">(</span><span class="n">max_steps</span><span class="o">=</span><span class="n">max_episode_steps</span><span class="p">,</span> <span class="n">policy</span><span class="o">=</span><span class="n">model</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">auto_cast_to_device</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cumulative reward: </span><span class="si">{</span><span class="n">tensordict</span><span class="p">[</span><span class="s1">&#39;next&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;reward&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="n">frames</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tensordict</span><span class="p">[</span><span class="s2">&quot;pixels&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+<span class="n">save_video</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">video_folder</span><span class="o">=</span><span class="s2">&quot;results_video&quot;</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+
+<span class="c1"># Display the video. Embedding is necessary for Google Colab etc</span>
+<span class="n">mp4</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;results_video/rl-video-episode-0.mp4&quot;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">data_url</span> <span class="o">=</span> <span class="s2">&quot;data:video/mp4;base64,&quot;</span> <span class="o">+</span> <span class="n">b64encode</span><span class="p">(</span><span class="n">mp4</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+<span class="n">HTML</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">&lt;video controls style=&#39;margin: auto; display: block&#39;&gt;</span>
+<span class="s2">    &lt;source src=&#39;</span><span class="si">%s</span><span class="s2">&#39; type=&#39;video/mp4&#39;&gt;</span>
+<span class="s2">&lt;/video&gt;</span>
+<span class="s2">&quot;&quot;&quot;</span> <span class="o">%</span> <span class="n">data_url</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Here are some examples of our trained agent:</p>
+<a class="reference internal image-reference" href="../../../_images/IQL_torchrl_adroit_pen_example_1.gif"><img alt="Example episode 1 for Adroit Pen environment" src="../../../_images/IQL_torchrl_adroit_pen_example_1.gif" style="width: 32%;" />
+</a>
+<a class="reference internal image-reference" href="../../../_images/IQL_torchrl_adroit_pen_example_2.gif"><img alt="Example episode 2 for Adroit Pen environment" src="../../../_images/IQL_torchrl_adroit_pen_example_2.gif" style="width: 32%;" />
+</a>
+<a class="reference internal image-reference" href="../../../_images/IQL_torchrl_adroit_pen_example_3.gif"><img alt="Example episode 3 for Adroit Pen environment" src="../../../_images/IQL_torchrl_adroit_pen_example_3.gif" style="width: 32%;" />
+</a>
+<p>The performance varies quite a bit from episode to episode, but overall it’s decent considering there are only 25 demonstrations in the original dataset! To improve performance, you could try tuning the hyperparameters, such as the inverse temperature <span class="math notranslate nohighlight">\(\beta\)</span> and the expectile <span class="math notranslate nohighlight">\(\tau\)</span>, or use a larger dataset such as <cite>D4RL/pen/expert-v1</cite> which has around 5000 episodes.</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-tutorials-using-datasets-iql-torchrl-py">
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/221b3a2007d099dba1e44346a4856376/IQL_torchrl.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">IQL_torchrl.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/33c142a2af8efe60072d187060d148e2/IQL_torchrl.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">IQL_torchrl.ipynb</span></code></a></p>
+</div>
+</div>
+</section>
+</section>
+
+          </article>
+        </div>
+        <footer>
+          
+          <div class="related-pages">
+            <a class="next-page" href="../../../datasets/D4RL/">
+              <div class="page-info">
+                <div class="context">
+                  <span>Next</span>
+                </div>
+                <div class="title">D4RL</div>
+              </div>
+              <svg class="furo-related-icon">
+                <use href="#svg-arrow-right"></use>
+              </svg>
+            </a>
+            <a class="prev-page" href="../behavioral_cloning/">
+              <svg class="furo-related-icon">
+                <use href="#svg-arrow-right"></use>
+              </svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Behavioral cloning with PyTorch</div>
+                
+              </div>
+            </a>
+          </div>
+          <div class="bottom-of-page">
+            <div class="left-details">
+              <div class="copyright">
+                Copyright &#169; 2022
+              </div>
+              <!--
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            -->
+            </div>
+            <div class="right-details">
+              <div class="icons">
+                <a class="muted-link" href="https://github.com/Farama-Foundation/Minari/"
+                  aria-label="On GitHub">
+                  <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                      d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z">
+                    </path>
+                  </svg>
+                </a>
+              </div>
+            </div>
+          </div>
+          
+        </footer>
+      </div>
+      <aside class="toc-drawer">
+        
+        
+        <div class="toc-sticky toc-scroll">
+          <div class="toc-title-container">
+            <span class="toc-title">
+              On this page
+            </span>
+          </div>
+          <div class="toc-tree-container">
+            <div class="toc-tree">
+              <ul>
+<li><a class="reference internal" href="#">Implicit Q-Learning with TorchRL</a><ul>
+<li><a class="reference internal" href="#pre-requisites">Pre-requisites</a></li>
+<li><a class="reference internal" href="#for-headless-environments">For headless environments</a></li>
+<li><a class="reference internal" href="#the-adroit-pen-environment">The Adroit Pen environment</a></li>
+<li><a class="reference internal" href="#building-a-replay-buffer">Building a replay buffer</a></li>
+<li><a class="reference internal" href="#implicit-q-learning">Implicit Q-Learning</a></li>
+<li><a class="reference internal" href="#defining-the-model">Defining the model</a></li>
+<li><a class="reference internal" href="#loss-and-optimizer">Loss and optimizer</a></li>
+<li><a class="reference internal" href="#training">Training</a></li>
+<li><a class="reference internal" href="#results">Results</a></li>
+</ul>
+</li>
+</ul>
+
+            </div>
+          </div>
+        </div>
+        
+        
+      </aside>
+    </div>
+  </div>
+</div>
+    <script>
+      const toggleMenu = () => {
+        const menuBtn = document.querySelector(".farama-header-menu__btn");
+        const menuContainer = document.querySelector(".farama-header-menu-container");
+        if (document.querySelector(".farama-header-menu").classList.contains("active")) {
+          menuBtn.setAttribute("aria-expanded", "false");
+          menuContainer.setAttribute("aria-hidden", "true");
+        } else {
+          menuBtn.setAttribute("aria-expanded", "true");
+          menuContainer.setAttribute("aria-hidden", "false");
+        }
+        document.querySelector(".farama-header-menu").classList.toggle("active");
+      }
+
+      document.querySelector(".farama-header-menu__btn").addEventListener("click", toggleMenu);
+      document.getElementById("farama-close-menu").addEventListener("click", toggleMenu);
+    </script>
+
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-R5TRTT6R78"></script>
+      <script>
+        const enableGtag = () => {
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-R5TRTT6R78');
+        }
+        (() => {
+            if (!localStorage.getItem("acceptedCookieAlert")) {
+                const boxElem = document.createElement("div");
+                boxElem.classList.add("cookie-alert");
+                const containerElem = document.createElement("div");
+                containerElem.classList.add("cookie-alert__container");
+                const textElem = document.createElement("p");
+                textElem.innerHTML = `This page uses <a href="https://analytics.google.com/">
+                                    Google Analytics</a> to collect statistics.`;
+                                    containerElem.appendChild(textElem);
+
+                const declineBtn = Object.assign(document.createElement("button"),
+                  {
+                    innerText: "Deny",
+                    className: "farama-btn cookie-alert__button",
+                    id: "cookie-alert__decline",
+                  }
+                );
+                declineBtn.addEventListener("click", () => {
+                  localStorage.setItem("acceptedCookieAlert", false);
+                  boxElem.remove();
+                });
+
+                const acceptBtn = Object.assign(document.createElement("button"),
+                  {
+                    innerText: "Allow",
+                    className: "farama-btn cookie-alert__button",
+                    id: "cookie-alert__accept",
+                  }
+                );
+                acceptBtn.addEventListener("click", () => {
+                  localStorage.setItem("acceptedCookieAlert", true);
+                  boxElem.remove();
+                  enableGtag();
+                });
+
+                containerElem.appendChild(declineBtn);
+                containerElem.appendChild(acceptBtn);
+                boxElem.appendChild(containerElem);
+                document.body.appendChild(boxElem);
+            } else if (localStorage.getItem("acceptedCookieAlert") === "true") {
+              enableGtag();
+            }
+        })()
+      </script>
+
+    <script src="../../../_static/documentation_options.js?v=19bc2c4c"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../../_static/js/termynal.js?v=ff4c6923"></script>
+    <script src="../../../_static/js/custom.js?v=a0ed09ce"></script>
+    
+    <script>
+
+      const createProjectsList = (projects, displayImages) => {
+        const ulElem = Object.assign(document.createElement('ul'),
+          {
+            className:'farama-header-menu-list',
+          }
+        )
+        for (let project of projects) {
+          const liElem = document.createElement("li");
+          const aElem = Object.assign(document.createElement("a"),
+            {
+              href: project.link
+            }
+          );
+          liElem.appendChild(aElem);
+          if (displayImages) {
+            const imgElem = Object.assign(document.createElement("img"),
+              {
+                src: project.image ? imagesBasepath + project.image : imagesBasepath + "/farama_black.svg",
+                alt: `${project.name} logo`,
+                className: "farama-black-logo-invert"
+              }
+            );
+            aElem.appendChild(imgElem);
+          }
+          aElem.appendChild(document.createTextNode(project.name));
+          ulElem.appendChild(liElem);
+        }
+        return ulElem;
+      }
+
+      // Create menu with Farama projects by using the API at farama.org/api/projects.json
+      const createCORSRequest = (method, url) => {
+        let xhr = new XMLHttpRequest();
+        xhr.responseType = 'json';
+
+        if ("withCredentials" in xhr) {
+          xhr.open(method, url, true);
+        } else if (typeof XDomainRequest != "undefined") {
+          // IE8 & IE9
+          xhr = new XDomainRequest();
+          xhr.open(method, url);
+        } else {
+          // CORS not supported.
+          xhr = null;
+        }
+        return xhr;
+      };
+
+      const url = 'https://farama.org/api/projects.json';
+      const imagesBasepath = "https://farama.org/assets/images"
+      const method = 'GET';
+      let xhr = createCORSRequest(method, url);
+
+      xhr.onload = () => {
+        const jsonResponse = xhr.response;
+        const sections = {
+          "Core Projects": [],
+          "Mature Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          },
+          "Incubating Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          },
+          "Foundation": [
+            {
+              name: "About",
+              link: "https://farama.org/about"
+            },
+            {
+              name: "Standards",
+              link: "https://farama.org/project_standards",
+            },
+            {
+              name: "Donate",
+              link: "https://farama.org/donations"
+            }
+          ]
+        }
+
+        // Categorize projects
+        Object.keys(jsonResponse).forEach(key => {
+          projectJson = jsonResponse[key];
+          if (projectJson.website !== null) {
+            projectJson.link = projectJson.website;
+          } else {
+            projectJson.link = projectJson.github;
+          }
+          if (projectJson.type === "core") {
+            sections["Core Projects"].push(projectJson)
+          } else if (projectJson.type == "mature") {
+            if (projectJson.website !== null) {
+              sections["Mature Projects"]["Documentation"].push(projectJson)
+            } else {
+              sections["Mature Projects"]["Repositories"].push(projectJson)
+            }
+          } else {
+            if (projectJson.website !== null) {
+              sections["Incubating Projects"]["Documentation"].push(projectJson)
+            } else {
+              sections["Incubating Projects"]["Repositories"].push(projectJson)
+            }
+          }
+        })
+
+        const menuContainer = document.querySelector(".farama-header-menu__body");
+
+        Object.keys(sections).forEach((key, i) => {
+          const sectionElem = Object.assign(
+            document.createElement('div'), {
+              className:'farama-header-menu__section',
+            }
+          )
+          sectionElem.appendChild(Object.assign(document.createElement('span'),
+            {
+              className:'farama-header-menu__section-title' ,
+              innerText: key
+            }
+          ))
+          // is not a list
+          if (sections[key].constructor !== Array) {
+            const subSections = sections[key];
+            const subSectionContainerElem = Object.assign(
+                document.createElement('div'), {
+                  className:'farama-header-menu__subsections-container',
+                  style: 'display: flex'
+                }
+            )
+            Object.keys(subSections).forEach((subKey, i) => {
+              const subSectionElem = Object.assign(
+                document.createElement('div'), {
+                  className:'farama-header-menu__subsection',
+                }
+              )
+              subSectionElem.appendChild(Object.assign(document.createElement('span'),
+                {
+                  className:'farama-header-menu__subsection-title' ,
+                  innerText: subKey
+                }
+              ))
+              const ulElem = createProjectsList(subSections[subKey], key !== 'Foundation');
+              subSectionElem.appendChild(ulElem);
+              subSectionContainerElem.appendChild(subSectionElem);
+            })
+            sectionElem.appendChild(subSectionContainerElem);
+          } else {
+            const projects = sections[key];
+            const ulElem = createProjectsList(projects, true);
+            sectionElem.appendChild(ulElem);
+          }
+          menuContainer.appendChild(sectionElem)
+        });
+      }
+
+      xhr.onerror = function() {
+        console.error("Unable to load projects");
+      };
+
+      xhr.send();
+    </script>
+
+    
+    <script>
+      const versioningConfig = {
+        githubUser: 'Farama-Foundation',
+        githubRepo: 'Minari',
+      };
+      fetch('/main/_static/versioning/versioning_menu.html').then(response => {
+        if (response.status === 200) {
+            response.text().then(text => {
+                const container = document.createElement("div");
+                container.innerHTML = text;
+                document.querySelector("body").appendChild(container);
+                // innerHtml doenst evaluate scripts, we need to add them dynamically
+                Array.from(container.querySelectorAll("script")).forEach(oldScript => {
+                    const newScript = document.createElement("script");
+                    Array.from(oldScript.attributes).forEach(attr => newScript.setAttribute(attr.name, attr.value));
+                    newScript.appendChild(document.createTextNode(oldScript.innerHTML));
+                    oldScript.parentNode.replaceChild(newScript, oldScript);
+                });
+            });
+        } else {
+            console.warn("Unable to load versioning menu", response);
+        }
+      });
+    </script>
+
+    </body>
+</html>
