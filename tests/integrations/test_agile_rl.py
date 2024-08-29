@@ -1,12 +1,18 @@
 import gymnasium as gym
 import h5py
 import pytest
-from agilerl.components.replay_buffer import ReplayBuffer
-from agilerl.utils.minari_utils import minari_to_agile_buffer, minari_to_agile_dataset
 
 import minari
 from minari import DataCollector
 from tests.common import create_dummy_dataset_with_collecter_env_helper
+
+
+pytest.importorskip("agile_rl")
+from agilerl.components.replay_buffer import ReplayBuffer  # noqa: E402
+from agilerl.utils.minari_utils import (  # noqa: E402
+    minari_to_agile_buffer,
+    minari_to_agile_dataset,
+)
 
 
 @pytest.fixture(name="dataset_id")
