@@ -10,7 +10,7 @@
     <meta property="og:url" content="https://minari.farama.org/_modules/minari/data_collector/callbacks/episode_metadata.html" /><meta property="og:image" content="https://minari.farama.org/_static/img/robotics-github.png" /><meta name="twitter:card" content="summary_large_image"><link rel="index" title="Index" href="../../../../../genindex/" /><link rel="search" title="Search" href="../../../../../search/" />
         <link rel="canonical" href="https://minari.farama.org/_modules/minari/data_collector/callbacks/episode_metadata.html" />
 
-    <link rel="shortcut icon" href="../../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>minari.data_collector.callbacks.episode_metadata - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -219,19 +219,23 @@
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../content/basic_usage/">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../../../content/dataset_standards/">Dataset Standards</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../../../content/minari_cli/">Minari CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../content/dataset_standards/">Dataset Standards</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../api/minari_functions/">Minari</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Minari</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../../api/minari_dataset/minari_dataset/">MinariDataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../api/minari_dataset/minari_storage/">MinariStorage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../../../api/minari_dataset/episode_data/">EpisodeData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../api/minari_dataset/step_data/">StepData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../api/namespace/namespace/">Namespace</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../api/data_collector/">DataCollector</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of DataCollector</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../api/data_collector_callbacks/step_data_callback/">StepDataCallback</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../api/data_collector_callbacks/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../api/data_collector/episode_buffer/">EpisodeBuffer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../api/data_collector/step_data_callback/">StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../api/data_collector/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
 </ul>
 </li>
 </ul>
@@ -245,62 +249,68 @@
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../tutorials/using_datasets/">Using Datasets</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Using Datasets</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../../../tutorials/using_datasets/behavioral_cloning/">Behavioral cloning with PyTorch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../../../tutorials/using_datasets/IQL_torchrl/">Implicit Q-Learning with TorchRL</a></li>
 </ul>
 </li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
 <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../datasets/minigrid/">MiniGrid</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of MiniGrid</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../datasets/D4RL/">D4RL</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of D4RL</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../datasets/D4RL/antmaze/">Ant Maze</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Ant Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../datasets/D4RL/antmaze/large-diverse-v1/">Large-Diverse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../datasets/D4RL/antmaze/large-play-v1/">Large-Play</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../datasets/D4RL/antmaze/medium-diverse-v1/">Medium-Diverse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../datasets/D4RL/antmaze/medium-play-v1/">Medium-Play</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../datasets/D4RL/antmaze/umaze-v1/">Umaze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../datasets/D4RL/antmaze/umaze-diverse-v1/">Umaze-Diverse</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../datasets/door/">Door</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Door</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/door/human/">Human</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/door/expert/">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/door/cloned/">Cloned</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../datasets/D4RL/door/">Door</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Door</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../datasets/D4RL/door/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../datasets/D4RL/door/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../datasets/D4RL/door/human-v2/">Human</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../datasets/hammer/">Hammer</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Hammer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/hammer/human/">Human</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/hammer/expert/">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/hammer/cloned/">Cloned</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../datasets/D4RL/hammer/">Hammer</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Hammer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../datasets/D4RL/hammer/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../datasets/D4RL/hammer/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../datasets/D4RL/hammer/human-v2/">Human</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../datasets/relocate/">Relocate</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Relocate</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/relocate/human/">Human</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/relocate/expert/">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/relocate/cloned/">Cloned</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../datasets/D4RL/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../datasets/D4RL/kitchen/complete-v1/">Complete</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../datasets/D4RL/kitchen/mixed-v1/">Mixed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../datasets/D4RL/kitchen/partial-v1/">Partial</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../datasets/pen/">Pen</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Pen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/pen/human/">Human</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/pen/expert/">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/pen/cloned/">Cloned</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../datasets/D4RL/minigrid/">MiniGrid</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of MiniGrid</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../datasets/D4RL/minigrid/fourrooms-v0/">Fourrooms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../datasets/D4RL/minigrid/fourrooms-random-v0/">Fourrooms-Random</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../datasets/pointmaze/">Point Maze</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Point Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/pointmaze/open/">Open</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/pointmaze/umaze/">Umaze</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/pointmaze/medium/">Medium</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/pointmaze/large/">Large</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/pointmaze/open-dense/">Open-Dense</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/pointmaze/umaze-dense/">Umaze-Dense</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/pointmaze/medium-dense/">Medium-Dense</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/pointmaze/large-dense/">Large-Dense</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../datasets/D4RL/pen/">Pen</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Pen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../datasets/D4RL/pen/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../datasets/D4RL/pen/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../datasets/D4RL/pen/human-v2/">Human</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../datasets/antmaze/">Ant Maze</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Ant Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/antmaze/umaze/">Umaze</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/antmaze/umaze-diverse/">Umaze-Diverse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/antmaze/medium-diverse/">Medium-Diverse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/antmaze/medium-play/">Medium-Play</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/antmaze/large-diverse/">Large-Diverse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/antmaze/large-play/">Large-Play</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../datasets/D4RL/pointmaze/">Point Maze</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of Point Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../datasets/D4RL/pointmaze/large-v2/">Large</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../datasets/D4RL/pointmaze/large-dense-v2/">Large-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../datasets/D4RL/pointmaze/medium-v2/">Medium</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../datasets/D4RL/pointmaze/medium-dense-v2/">Medium-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../datasets/D4RL/pointmaze/open-v2/">Open</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../datasets/D4RL/pointmaze/open-dense-v2/">Open-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../datasets/D4RL/pointmaze/umaze-v2/">Umaze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../datasets/D4RL/pointmaze/umaze-dense-v2/">Umaze-Dense</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../../../datasets/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/kitchen/partial/">Partial</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/kitchen/complete/">Complete</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../../../datasets/kitchen/mixed/">Mixed</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../../datasets/D4RL/relocate/">Relocate</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of Relocate</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../datasets/D4RL/relocate/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../datasets/D4RL/relocate/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../../datasets/D4RL/relocate/human-v2/">Human</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -359,35 +369,33 @@
             <h1>Source code for minari.data_collector.callbacks.episode_metadata</h1><div class="highlight"><pre>
 <span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-
 
 <div class="viewcode-block" id="EpisodeMetadataCallback">
-<a class="viewcode-back" href="../../../../../api/data_collector_callbacks/episode_metadata_callback/#minari.EpisodeMetadataCallback">[docs]</a>
+<a class="viewcode-back" href="../../../../../api/data_collector/episode_metadata_callback/#minari.EpisodeMetadataCallback">[docs]</a>
 <span class="k">class</span> <span class="nc">EpisodeMetadataCallback</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Callback to full episode after saving to hdf5 file as a group.</span>
 
 <span class="sd">    This callback can be overridden to add extra metadata attributes or statistics to</span>
 <span class="sd">    each episode in the Minari dataset. The custom callback can then be</span>
 <span class="sd">    passed to the DataCollector wrapper to the `episode_metadata_callback` argument.</span>
-
-<span class="sd">    TODO: add more default statistics to episode datasets</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">episode</span><span class="p">:</span> <span class="n">Dict</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">episode</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Callback method.</span>
 
 <span class="sd">        Override this method to add custom attribute metadata to the episode group.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            episode (dict): the dict that contains an episode&#39;s data</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Dict: episode metadata.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;rewards_sum&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">episode</span><span class="p">[</span><span class="s2">&quot;rewards&quot;</span><span class="p">]),</span>
-            <span class="s2">&quot;rewards_mean&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">episode</span><span class="p">[</span><span class="s2">&quot;rewards&quot;</span><span class="p">]),</span>
-            <span class="s2">&quot;rewards_std&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">episode</span><span class="p">[</span><span class="s2">&quot;rewards&quot;</span><span class="p">]),</span>
-            <span class="s2">&quot;rewards_max&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">episode</span><span class="p">[</span><span class="s2">&quot;rewards&quot;</span><span class="p">]),</span>
-            <span class="s2">&quot;rewards_min&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">episode</span><span class="p">[</span><span class="s2">&quot;rewards&quot;</span><span class="p">]),</span>
+            <span class="s2">&quot;rewards_sum&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">episode</span><span class="p">[</span><span class="s2">&quot;rewards&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()),</span>
+            <span class="s2">&quot;rewards_mean&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">episode</span><span class="p">[</span><span class="s2">&quot;rewards&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()),</span>
+            <span class="s2">&quot;rewards_std&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">episode</span><span class="p">[</span><span class="s2">&quot;rewards&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">std</span><span class="p">()),</span>
+            <span class="s2">&quot;rewards_max&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">episode</span><span class="p">[</span><span class="s2">&quot;rewards&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()),</span>
+            <span class="s2">&quot;rewards_min&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">episode</span><span class="p">[</span><span class="s2">&quot;rewards&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()),</span>
         <span class="p">}</span></div>
 
 </pre></div>
@@ -507,8 +515,8 @@
         })()
       </script>
 
-    <script src="../../../../../_static/documentation_options.js?v=d5185309"></script>
-    <script src="../../../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../../../_static/documentation_options.js?v=19bc2c4c"></script>
+    <script src="../../../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../../_static/scripts/furo.js?v=7660844c"></script>
     <script src="../../../../../_static/js/termynal.js?v=ff4c6923"></script>

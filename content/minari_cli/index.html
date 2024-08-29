@@ -8,10 +8,10 @@
     <meta property="og:type" content="website" />
     <meta property="og:description" content="Minari is a Python library for conducting research in offline reinforcement learning." />
     <meta property="og:url" content="https://minari.farama.org/content/minari_cli.html" /><meta property="og:image" content="https://minari.farama.org/_static/img/robotics-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Minari" href="../../api/minari_functions/" /><link rel="prev" title="Dataset Standards" href="../dataset_standards/" />
+<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="Dataset Standards" href="../dataset_standards/" /><link rel="prev" title="Basic Usage" href="../basic_usage/" />
         <link rel="canonical" href="https://minari.farama.org/content/minari_cli.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>Minari CLI - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=3e7f4c72" />
@@ -220,19 +220,23 @@
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../basic_usage/">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../dataset_standards/">Dataset Standards</a></li>
 <li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Minari CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../dataset_standards/">Dataset Standards</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../api/minari_functions/">Minari</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Minari</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../api/minari_dataset/minari_dataset/">MinariDataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/minari_dataset/minari_storage/">MinariStorage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../api/minari_dataset/episode_data/">EpisodeData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/minari_dataset/step_data/">StepData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/namespace/namespace/">Namespace</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../api/data_collector/">DataCollector</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of DataCollector</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../api/data_collector_callbacks/step_data_callback/">StepDataCallback</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../api/data_collector_callbacks/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/data_collector/episode_buffer/">EpisodeBuffer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/data_collector/step_data_callback/">StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../api/data_collector/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
 </ul>
 </li>
 </ul>
@@ -246,62 +250,68 @@
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/using_datasets/">Using Datasets</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Using Datasets</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/using_datasets/behavioral_cloning/">Behavioral cloning with PyTorch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/using_datasets/IQL_torchrl/">Implicit Q-Learning with TorchRL</a></li>
 </ul>
 </li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
 <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/minigrid/">MiniGrid</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of MiniGrid</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/D4RL/">D4RL</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of D4RL</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../datasets/D4RL/antmaze/">Ant Maze</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Ant Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/antmaze/large-diverse-v1/">Large-Diverse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/antmaze/large-play-v1/">Large-Play</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/antmaze/medium-diverse-v1/">Medium-Diverse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/antmaze/medium-play-v1/">Medium-Play</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/antmaze/umaze-v1/">Umaze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/antmaze/umaze-diverse-v1/">Umaze-Diverse</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/door/">Door</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Door</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/door/human/">Human</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/door/expert/">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/door/cloned/">Cloned</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../datasets/D4RL/door/">Door</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Door</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/door/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/door/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/door/human-v2/">Human</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/hammer/">Hammer</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Hammer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/hammer/human/">Human</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/hammer/expert/">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/hammer/cloned/">Cloned</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../datasets/D4RL/hammer/">Hammer</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Hammer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/hammer/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/hammer/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/hammer/human-v2/">Human</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/relocate/">Relocate</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Relocate</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/relocate/human/">Human</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/relocate/expert/">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/relocate/cloned/">Cloned</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../datasets/D4RL/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/kitchen/complete-v1/">Complete</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/kitchen/mixed-v1/">Mixed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/kitchen/partial-v1/">Partial</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/pen/">Pen</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Pen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/pen/human/">Human</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/pen/expert/">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/pen/cloned/">Cloned</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../datasets/D4RL/minigrid/">MiniGrid</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of MiniGrid</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/minigrid/fourrooms-v0/">Fourrooms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/minigrid/fourrooms-random-v0/">Fourrooms-Random</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/pointmaze/">Point Maze</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Point Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/open/">Open</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/umaze/">Umaze</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/medium/">Medium</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/large/">Large</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/open-dense/">Open-Dense</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/umaze-dense/">Umaze-Dense</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/medium-dense/">Medium-Dense</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/large-dense/">Large-Dense</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../datasets/D4RL/pen/">Pen</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Pen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/pen/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/pen/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/pen/human-v2/">Human</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/antmaze/">Ant Maze</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Ant Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/antmaze/umaze/">Umaze</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/antmaze/umaze-diverse/">Umaze-Diverse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/antmaze/medium-diverse/">Medium-Diverse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/antmaze/medium-play/">Medium-Play</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/antmaze/large-diverse/">Large-Diverse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/antmaze/large-play/">Large-Play</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../datasets/D4RL/pointmaze/">Point Maze</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of Point Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/pointmaze/large-v2/">Large</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/pointmaze/large-dense-v2/">Large-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/pointmaze/medium-v2/">Medium</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/pointmaze/medium-dense-v2/">Medium-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/pointmaze/open-v2/">Open</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/pointmaze/open-dense-v2/">Open-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/pointmaze/umaze-v2/">Umaze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/pointmaze/umaze-dense-v2/">Umaze-Dense</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/kitchen/partial/">Partial</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/kitchen/complete/">Complete</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/kitchen/mixed/">Mixed</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../datasets/D4RL/relocate/">Relocate</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of Relocate</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/relocate/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/relocate/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/relocate/human-v2/">Human</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -367,7 +377,7 @@
           <article role="main">
             
             <section class="tex2jax_ignore mathjax_ignore" id="minari-cli">
-<h1>Minari CLI<a class="headerlink" href="#minari-cli" title="Link to this heading">#</a></h1>
+<h1>Minari CLI<a class="headerlink" href="#minari-cli" title="Link to this heading">¶</a></h1>
 <p>Minari is also packaged with some useful CLI commands. The CLI tool is build on top off <a class="reference external" href="https://typer.tiangolo.com/">Typer</a> and it will be available after installing Minari.
 The Minari CLI gives access to most of the package functions through the command-line such as listing existing datasets, downloading and deleting.</p>
 <div class="termy">
@@ -377,7 +387,7 @@ The Minari CLI gives access to most of the package functions through the command
 
 <span class="go">// Check Minari version</span>
 <span class="gp">$ </span>minari<span class="w"> </span>--version
-<span class="go">Minari version: 0.3.0</span>
+<span class="go">Minari version: 0.5.0</span>
 
 <span class="go">// Show Minari CLI commands</span>
 <span class="gp">$ </span>minari<span class="w"> </span>--help
@@ -407,7 +417,7 @@ The Minari CLI gives access to most of the package functions through the command
 </div>
 </div>
 <section id="list-datasets">
-<h2>List datasets<a class="headerlink" href="#list-datasets" title="Link to this heading">#</a></h2>
+<h2>List datasets<a class="headerlink" href="#list-datasets" title="Link to this heading">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">minari</span> <span class="pre">list</span> <span class="pre">COMMAND</span></code> command shows a table with the existing Minari datasets as well as some of their metadata such as number of episodes and steps in the dataset as well as the author’s name and email.
 This command comes with other two required sub-commands:</p>
 <ul class="simple">
@@ -422,118 +432,164 @@ This command comes with other two required sub-commands:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">// Show local datasets.</span>
 <span class="gp">$ </span>minari<span class="w"> </span>list<span class="w"> </span><span class="nb">local</span>
 
-<span class="go">               &lt;i&gt;Local Minari datasets(&#39;.minari/&#39;)&lt;/i&gt;</span>
-<span class="go">┌───────────────┬───────────┬───────────┬─────────┬───────────┐</span>
-<span class="go">│               │     &lt;b&gt;Total&lt;/b&gt; │     &lt;b&gt;Total&lt;/b&gt; │         │           │</span>
-<span class="go">│ &lt;b&gt;Name&lt;/b&gt;          │  &lt;b&gt;Episodes&lt;/b&gt; │     &lt;b&gt;Steps&lt;/b&gt; │  &lt;b&gt;Author&lt;/b&gt; │ &lt;b&gt;Email&lt;/b&gt;     │</span>
-<span class="go">┡───────────────╇───────────╇───────────╇─────────╇───────────┩</span>
-<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;pen-cloned-v0&lt;/font&gt; │      &lt;font color=&quot;#03AC13&quot;&gt;3736&lt;/font&gt; │    &lt;font color=&quot;#03AC13&quot;&gt;500000&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;rperezvic…&lt;/font&gt;│</span>
-<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;pen-expert-v0&lt;/font&gt; │      &lt;font color=&quot;#03AC13&quot;&gt;4958&lt;/font&gt; │    &lt;font color=&quot;#03AC13&quot;&gt;499206&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;rperezvic…&lt;/font&gt;│</span>
-<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;pen-human-v0&lt;/font&gt;  │        &lt;font color=&quot;#03AC13&quot;&gt;25&lt;/font&gt; │      &lt;font color=&quot;#03AC13&quot;&gt;5000&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;rperezvic…&lt;/font&gt;│</span>
-<span class="go">└───────────────┴───────────┴───────────┴─────────┴───────────┘</span>
+<span class="go">                  &lt;i&gt;Local Minari datasets(&#39;.minari/&#39;)&lt;/i&gt;</span>
+<span class="go">┌────────────────────┬───────────┬───────────┬────────────┬─────────┐</span>
+<span class="go">│                    │     &lt;b&gt;Total&lt;/b&gt; │     &lt;b&gt;Total&lt;/b&gt; │    &lt;b&gt;Dataset&lt;/b&gt; │         │</span>
+<span class="go">│ &lt;b&gt;Name&lt;/b&gt;               │  &lt;b&gt;Episodes&lt;/b&gt; │     &lt;b&gt;Steps&lt;/b&gt; │       &lt;b&gt;Size&lt;/b&gt; │  &lt;b&gt;Author&lt;/b&gt; │</span>
+<span class="go">┡────────────────────╇───────────╇───────────╇────────────╇─────────┩</span>
+<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;D4RL/pen/cloned-v2&lt;/font&gt; │      &lt;font color=&quot;#03AC13&quot;&gt;3736&lt;/font&gt; │    &lt;font color=&quot;#03AC13&quot;&gt;500000&lt;/font&gt; │   &lt;font color=&quot;#03AC13&quot;&gt;604.0 MB&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │</span>
+<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;D4RL/pen/expert-v2&lt;/font&gt; │      &lt;font color=&quot;#03AC13&quot;&gt;4958&lt;/font&gt; │    &lt;font color=&quot;#03AC13&quot;&gt;499206&lt;/font&gt; │   &lt;font color=&quot;#03AC13&quot;&gt;638.1 MB&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │</span>
+<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;D4RL/pen/human-v2&lt;/font&gt;  │        &lt;font color=&quot;#03AC13&quot;&gt;25&lt;/font&gt; │      &lt;font color=&quot;#03AC13&quot;&gt;5000&lt;/font&gt; │     &lt;font color=&quot;#03AC13&quot;&gt;5.7 MB&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │</span>
+<span class="go">└────────────────────┴───────────┴───────────┴────────────┴─────────┘</span>
 
 <span class="go">// Show remote datasets.</span>
 <span class="gp">$ </span>minari<span class="w"> </span>list<span class="w"> </span>remote
 
-<span class="go">                 &lt;i&gt;Minari datasets in Farama server&lt;/i&gt;</span>
-<span class="go">┌────────────────┬───────────┬────────────┬─────────┬───────────┐</span>
-<span class="go">│                │     &lt;b&gt;Total&lt;/b&gt; │      &lt;b&gt;Total&lt;/b&gt; │         │           │</span>
-<span class="go">│ &lt;b&gt;Name&lt;/b&gt;           │  &lt;b&gt;Episodes&lt;/b&gt; │      &lt;b&gt;Steps&lt;/b&gt; │  &lt;b&gt;Author&lt;/b&gt; │ &lt;b&gt;Email&lt;/b&gt;     │</span>
-<span class="go">┡────────────────╇───────────╇────────────╇─────────╇───────────┩</span>
-<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;door-cloned-v0&lt;/font&gt; │      &lt;font color=&quot;#03AC13&quot;&gt;4356&lt;/font&gt; │    &lt;font color=&quot;#03AC13&quot;&gt;1000000&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;rperezvic…&lt;/font&gt;│</span>
-<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;door-expert-v0&lt;/font&gt; │      &lt;font color=&quot;#03AC13&quot;&gt;5000&lt;/font&gt; │    &lt;font color=&quot;#03AC13&quot;&gt;1000000&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;rperezvic…&lt;/font&gt;│</span>
-<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;door-human-v0&lt;/font&gt;  │        &lt;font color=&quot;#03AC13&quot;&gt;25&lt;/font&gt; │       &lt;font color=&quot;#03AC13&quot;&gt;6729&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;rperezvic…&lt;/font&gt;│</span>
-<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;pen-cloned-v0&lt;/font&gt;  │      &lt;font color=&quot;#03AC13&quot;&gt;3736&lt;/font&gt; │     &lt;font color=&quot;#03AC13&quot;&gt;500000&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;rperezvic…&lt;/font&gt;│</span>
-<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;pen-expert-v0&lt;/font&gt;  │      &lt;font color=&quot;#03AC13&quot;&gt;4958&lt;/font&gt; │     &lt;font color=&quot;#03AC13&quot;&gt;499206&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;rperezvic…&lt;/font&gt;│</span>
-<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;pen-human-v0&lt;/font&gt;   │        &lt;font color=&quot;#03AC13&quot;&gt;25&lt;/font&gt; │       &lt;font color=&quot;#03AC13&quot;&gt;5000&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;rperezvic…&lt;/font&gt;│</span>
-<span class="go">└────────────────┴───────────┴────────────┴─────────┴───────────┘</span>
+<span class="go">                  &lt;i&gt;Minari datasets in Farama server&lt;/i&gt;</span>
+<span class="go">┌─────────────────────┬───────────┬────────────┬───────────┬─────────┐</span>
+<span class="go">│                     │     &lt;b&gt;Total&lt;/b&gt; │      &lt;b&gt;Total&lt;/b&gt; │   &lt;b&gt;Dataset&lt;/b&gt; │         │</span>
+<span class="go">│ &lt;b&gt;Name&lt;/b&gt;                │  &lt;b&gt;Episodes&lt;/b&gt; │      &lt;b&gt;Steps&lt;/b&gt; │      &lt;b&gt;Size&lt;/b&gt; │  &lt;b&gt;Author&lt;/b&gt; │</span>
+<span class="go">┡─────────────────────╇───────────╇────────────╇───────────╇─────────┩</span>
+<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;D4RL/door/cloned-v2&lt;/font&gt; │      &lt;font color=&quot;#03AC13&quot;&gt;4356&lt;/font&gt; │    &lt;font color=&quot;#03AC13&quot;&gt;1000000&lt;/font&gt; │ &lt;font color=&quot;#03AC13&quot;&gt;1077.7 MB&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │</span>
+<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;D4RL/door/expert-v2&lt;/font&gt; │      &lt;font color=&quot;#03AC13&quot;&gt;5000&lt;/font&gt; │    &lt;font color=&quot;#03AC13&quot;&gt;1000000&lt;/font&gt; │ &lt;font color=&quot;#03AC13&quot;&gt;1096.4 MB&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │</span>
+<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;D4RL/door/human-v2&lt;/font&gt;  │        &lt;font color=&quot;#03AC13&quot;&gt;25&lt;/font&gt; │       &lt;font color=&quot;#03AC13&quot;&gt;6729&lt;/font&gt; │    &lt;font color=&quot;#03AC13&quot;&gt;7.1 MB&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │</span>
+<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;D4RL/pen/cloned-v2&lt;/font&gt;  │      &lt;font color=&quot;#03AC13&quot;&gt;3736&lt;/font&gt; │     &lt;font color=&quot;#03AC13&quot;&gt;500000&lt;/font&gt; │  &lt;font color=&quot;#03AC13&quot;&gt;604.0 MB&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │</span>
+<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;D4RL/pen/expert-v2&lt;/font&gt;  │      &lt;font color=&quot;#03AC13&quot;&gt;4958&lt;/font&gt; │     &lt;font color=&quot;#03AC13&quot;&gt;499206&lt;/font&gt; │  &lt;font color=&quot;#03AC13&quot;&gt;638.1 MB&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │</span>
+<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;D4RL/pen/human-v2&lt;/font&gt;   │        &lt;font color=&quot;#03AC13&quot;&gt;25&lt;/font&gt; │       &lt;font color=&quot;#03AC13&quot;&gt;5000&lt;/font&gt; │    &lt;font color=&quot;#03AC13&quot;&gt;5.7 MB&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │</span>
+<span class="go">└─────────────────────┴───────────┴────────────┴───────────┴─────────┘</span>
 </pre></div>
 </div>
 </div>
 </section>
 <section id="download-datasets">
-<h2>Download datasets<a class="headerlink" href="#download-datasets" title="Link to this heading">#</a></h2>
-<p>With the command <code class="docutils literal notranslate"><span class="pre">minari</span> <span class="pre">download</span> <span class="pre">DATASETS</span></code> you can download a group of datasets that are available in the remote Farama server. If the dataset name already exist locally, the Minari CLI will prompt you to override the
+<h2>Download datasets<a class="headerlink" href="#download-datasets" title="Link to this heading">¶</a></h2>
+<p>With the command <code class="docutils literal notranslate"><span class="pre">minari</span> <span class="pre">download</span> <span class="pre">DATASET_NAME</span></code> you can download a group of datasets that are available in the remote Farama server. If the dataset name already exist locally, the Minari CLI will prompt you to override the
 current content of the local dataset.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The download is aborted if the remote dataset is not compatible with your local installed Minari version or through a warning if the dataset already exists locally. To perform a force download add <code class="code docutils literal notranslate"><span class="pre">--force</span></code> or <code class="code docutils literal notranslate"><span class="pre">-f</span></code> to the download command.</p>
 </div>
 <div class="termy">
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">// Download datasets pen-cloned-v0 and door-human-v0</span>
-<span class="gp">$ </span>minari<span class="w"> </span>download<span class="w"> </span>pen-cloned-v0<span class="w"> </span>door-human-v0
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">// Download datasets D4RL/pen/cloned-v2 and D4RL/door/human-v2</span>
+<span class="gp">$ </span>minari<span class="w"> </span>download<span class="w"> </span>D4RL/pen/cloned-v2<span class="w"> </span>D4RL/door/human-v2
 
-<span class="go">Downloading pen-expert-v0 from Farama servers...</span>
+<span class="go">Downloading D4RL/pen/expert-v2 from Farama servers...</span>
 
-<span class="go">   * Downloading data file &#39;pen-expert-v0/data/main_data.hdf5&#39; ...</span>
-
-<span class="go">---&gt; 100%</span>
-
-<span class="go">Dataset pen-expert-v0 downloaded to &lt;path-to-local-datasets&gt;/.minari/datasets/pen-expert-v0</span>
-
-<span class="go">Downloading door-human-v0 from Farama servers...</span>
-
-<span class="go">   * Downloading data file &#39;door-human-v0/data/main_data.hdf5&#39; ...</span>
+<span class="go">   * Downloading data file &#39;D4RL/pen/expert-v2/data/main_data.hdf5&#39; ...</span>
 
 <span class="go">---&gt; 100%</span>
 
-<span class="go">Dataset door-human-v0 downloaded to &lt;path-to-local-datasets&gt;/.minari/datasets/pen-expert-v0</span>
+<span class="go">Dataset D4RL/pen/expert-v2 downloaded to &lt;path-to-local-datasets&gt;/.minari/datasets/D4RL/pen/expert-v2</span>
+
+<span class="go">Downloading D4RL/door/human-v2 from Farama servers...</span>
+
+<span class="go">   * Downloading data file &#39;D4RL/door/human-v2/data/main_data.hdf5&#39; ...</span>
+
+<span class="go">---&gt; 100%</span>
+
+<span class="go">Dataset D4RL/door/human-v2 downloaded to &lt;path-to-local-datasets&gt;/.minari/datasets/D4RL/pen/expert-v2</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="show-datasets-details">
+<h2>Show datasets details<a class="headerlink" href="#show-datasets-details" title="Link to this heading">¶</a></h2>
+<p>You can check the details of a dataset using the command <code class="docutils literal notranslate"><span class="pre">minari</span> <span class="pre">show</span> <span class="pre">DATASET_NAME</span></code>. This command works for both local and remote datasets.</p>
+<div class="termy">
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">// Show dataset details</span>
+<span class="gp">$ </span>minari<span class="w"> </span>show<span class="w"> </span>D4RL/pen/expert-v2
+
+<span class="go">┌───────────────────────────────────────────────────────────────┐</span>
+<span class="go">│                         &lt;b&gt; D4RL/pen/expert-v2 &lt;/b&gt;                  │</span>
+<span class="go">└───────────────────────────────────────────────────────────────┘</span>
+
+<span class="go">&lt;center&gt; &lt;b&gt; &lt;u&gt;Description&lt;/u&gt; &lt;/b&gt; &lt;/center&gt;</span>
+<span class="go">Trajectories have expert data from a fine-tuned RL policy provided in the &lt;a href=&quot;https://github.com/aravindr93/hand_dapg&quot;&gt;DAPG&lt;/a&gt; repository. The environment used to collect the dataset is &lt;a href=&quot;https://robotics.farama.org/envs/adroit_hand/adroit_pen/&quot;&gt;&lt;code&gt;AdroitHandPen-v1&lt;/code&gt;&lt;/a&gt;.</span>
+
+<span class="go">&lt;center&gt; &lt;b&gt; &lt;u&gt;Dataset Specs&lt;/u&gt; &lt;/b&gt; &lt;/center&gt;</span>
+<span class="go">┌───────────────────┬───────────────────────────────────────────┐</span>
+<span class="go">│ &lt;b&gt;Total Steps&lt;/b&gt;       │ 499206                                    │</span>
+<span class="go">│ &lt;b&gt;Total Episodes&lt;/b&gt;    │ 4958                                      │</span>
+<span class="go">│ &lt;b&gt;Algorithm&lt;/b&gt;         │ Not provided                              │</span>
+<span class="go">│ &lt;b&gt;Author&lt;/b&gt;            │ Rodrigo de Lazcano                        │</span>
+<span class="go">│ &lt;b&gt;Email&lt;/b&gt;             │ rperezvicente@farama.org                  │</span>
+<span class="go">│ &lt;b&gt;Code Permalink&lt;/b&gt;    │ &lt;a href=&quot;https://github.com/Farama-Foundation/minari-dataset-generation-scripts&quot;&gt;https://github.com/Farama-Foundation/...&lt;/a&gt;  │</span>
+<span class="go">│ &lt;b&gt;Minari Version&lt;/b&gt;    │ 0.4.3 (supported)                         │</span>
+<span class="go">│ &lt;b&gt;Download&lt;/b&gt;          │ &lt;code&gt;minari download D4RL/pen/expert-v2&lt;/code&gt;        │</span>
+<span class="go">└───────────────────┴───────────────────────────────────────────┘</span>
+
+<span class="go">&lt;center&gt; &lt;b&gt; &lt;u&gt;Environment Specs&lt;/u&gt; &lt;/b&gt; &lt;/center&gt;</span>
+<span class="go">┌─────────────────────┬─────────────────────────────────────────┐</span>
+<span class="go">│ &lt;b&gt;ID&lt;/b&gt;                  │ AdroitHandPen-v1                        │</span>
+<span class="go">│ &lt;b&gt;Observation Space&lt;/b&gt;   │ &lt;code&gt;Box(&lt;font color=&quot;#f01e2c&quot;&gt;-&lt;/font&gt;&lt;font color=&quot;#a256f8&quot;&gt;inf&lt;/font&gt;, &lt;font color=&quot;#a256f8&quot;&gt;inf&lt;/font&gt;, (&lt;font color=&quot;#a256f8&quot;&gt;45&lt;/font&gt;,), float64) &lt;/code&gt;         │</span>
+<span class="go">│ &lt;b&gt;Action Space&lt;/b&gt;        │ &lt;code&gt;Box(&lt;font color=&quot;#f01e2c&quot;&gt;-&lt;/font&gt;&lt;font color=&quot;#a256f8&quot;&gt;1.0&lt;/font&gt;, &lt;font color=&quot;#a256f8&quot;&gt;1.0&lt;/font&gt;, (&lt;font color=&quot;#a256f8&quot;&gt;24&lt;/font&gt;,), float32) &lt;/code&gt;         │</span>
+<span class="go">│ &lt;b&gt;entry_point&lt;/b&gt;         │ gymnasium_robotics&lt;font color=&quot;#f01e2c&quot;&gt;.&lt;/font&gt;envs&lt;font color=&quot;#f01e2c&quot;&gt;.&lt;/font&gt;adroit_h...     │</span>
+<span class="go">│ &lt;b&gt;max_episode_steps&lt;/b&gt;   │ 100                                     │</span>
+<span class="go">│ &lt;b&gt;reward_threshold &lt;/b&gt;   │ &lt;font color=&quot;#A1EFE4&quot;&gt;None&lt;/font&gt;                                    │</span>
+<span class="go">│ &lt;b&gt;nondeterministic&lt;/b&gt;    │ &lt;font color=&quot;#A1EFE4&quot;&gt;False&lt;/font&gt;                                   │</span>
+<span class="go">│ &lt;b&gt;order_enforce&lt;/b&gt;       │ &lt;font color=&quot;#A1EFE4&quot;&gt;True&lt;/font&gt;                                    │</span>
+<span class="go">│ &lt;b&gt;autoreset&lt;/b&gt;           │ &lt;font color=&quot;#A1EFE4&quot;&gt;False&lt;/font&gt;                                   │</span>
+<span class="go">│ &lt;b&gt;disable_env_checker&lt;/b&gt; │ &lt;font color=&quot;#A1EFE4&quot;&gt;False&lt;/font&gt;                                   │</span>
+<span class="go">│ &lt;b&gt;kwargs&lt;/b&gt;              │ {&lt;font color=&quot;#FED000&quot;&gt;&#39;reward_type&#39;&lt;/font&gt;: &lt;font color=&quot;#FED000&quot;&gt;&#39;dense&#39;&lt;/font&gt;}                │</span>
+<span class="go">│ &lt;b&gt;additional_wrappers&lt;/b&gt; │ ()                                      │</span>
+<span class="go">│ &lt;b&gt;vector_entry_point&lt;/b&gt;  │ &lt;font color=&quot;#A1EFE4&quot;&gt;None&lt;/font&gt;                                    │</span>
+<span class="go">└─────────────────────┴─────────────────────────────────────────┘</span>
 </pre></div>
 </div>
 </div>
 </section>
 <section id="delete-local-datasets">
-<h2>Delete local datasets<a class="headerlink" href="#delete-local-datasets" title="Link to this heading">#</a></h2>
+<h2>Delete local datasets<a class="headerlink" href="#delete-local-datasets" title="Link to this heading">¶</a></h2>
 <p>Local Minari datasets can be deleted by instantiating the following command, <code class="docutils literal notranslate"><span class="pre">minari</span> <span class="pre">delete</span> <span class="pre">DATASETS</span></code>. This command will also prompt a confirmation message to proceed with the deletion of the given datasets.</p>
 <div class="termy">
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">// Delete datasets pen-cloned-v0 and door-human-v0</span>
-<span class="gp">$ </span>minari<span class="w"> </span>delete<span class="w"> </span>pen-cloned-v0<span class="w"> </span>door-human-v0
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">// Delete datasets D4RL/pen/cloned-v2 and D4RL/door/human-v2</span>
+<span class="gp">$ </span>minari<span class="w"> </span>delete<span class="w"> </span>D4RL/pen/cloned-v2<span class="w"> </span>D4RL/door/human-v2
 
-<span class="go">                   &lt;i&gt;Delete local Minari datasets&lt;/i&gt;</span>
-<span class="go">┌────────────────┬───────────┬────────────┬─────────┬───────────┐</span>
-<span class="go">│                │     &lt;b&gt;Total&lt;/b&gt; │      &lt;b&gt;Total&lt;/b&gt; │         │           │</span>
-<span class="go">│ &lt;b&gt;Name&lt;/b&gt;           │  &lt;b&gt;Episodes&lt;/b&gt; │      &lt;b&gt;Steps&lt;/b&gt; │  &lt;b&gt;Author&lt;/b&gt; │ &lt;b&gt;Email&lt;/b&gt;     │</span>
-<span class="go">┡────────────────╇───────────╇────────────╇─────────╇───────────┩</span>
-<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;door-human-v0&lt;/font&gt;  │        &lt;font color=&quot;#03AC13&quot;&gt;25&lt;/font&gt; │       &lt;font color=&quot;#03AC13&quot;&gt;6729&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;rperezvic…&lt;/font&gt;│</span>
-<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;pen-cloned-v0&lt;/font&gt;  │      &lt;font color=&quot;#03AC13&quot;&gt;3736&lt;/font&gt; │     &lt;font color=&quot;#03AC13&quot;&gt;500000&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;rperezvic…&lt;/font&gt;│</span>
-<span class="go">└────────────────┴───────────┴────────────┴─────────┴───────────┘</span>
+<span class="go">                  &lt;i&gt;Delete local Minari datasets&lt;/i&gt;</span>
+<span class="go">┌─────────────────────┬───────────┬────────────┬───────────┬─────────┐</span>
+<span class="go">│                     │     &lt;b&gt;Total&lt;/b&gt; │      &lt;b&gt;Total&lt;/b&gt; │   &lt;b&gt;Dataset&lt;/b&gt; │         │</span>
+<span class="go">│ &lt;b&gt;Name&lt;/b&gt;                │  &lt;b&gt;Episodes&lt;/b&gt; │      &lt;b&gt;Steps&lt;/b&gt; │      &lt;b&gt;Size&lt;/b&gt; │  &lt;b&gt;Author&lt;/b&gt; │</span>
+<span class="go">┡─────────────────────╇───────────╇────────────╇───────────╇─────────┩</span>
+<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;D4RL/door/human-v2&lt;/font&gt;  │        &lt;font color=&quot;#03AC13&quot;&gt;25&lt;/font&gt; │       &lt;font color=&quot;#03AC13&quot;&gt;6729&lt;/font&gt; │    &lt;font color=&quot;#03AC13&quot;&gt;5.7 MB&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │</span>
+<span class="go">│ &lt;font color=&quot;#A1EFE4&quot;&gt;D4RL/pen/cloned-v2&lt;/font&gt;  │      &lt;font color=&quot;#03AC13&quot;&gt;3736&lt;/font&gt; │     &lt;font color=&quot;#03AC13&quot;&gt;500000&lt;/font&gt; │  &lt;font color=&quot;#03AC13&quot;&gt;604.0 MB&lt;/font&gt; │ &lt;font color=&quot;#FF00FF&quot;&gt;Rodrigo&lt;/font&gt; │</span>
+<span class="go">└─────────────────────┴───────────┴────────────┴───────────┴─────────┘</span>
 
 <span class="gp"># </span>Are<span class="w"> </span>you<span class="w"> </span>sure<span class="w"> </span>you<span class="w"> </span>want<span class="w"> </span>to<span class="w"> </span>delete<span class="w"> </span>these<span class="w"> </span><span class="nb">local</span><span class="w"> </span>datasets?<span class="w"> </span><span class="o">[</span>y/N<span class="o">]</span>:$<span class="w"> </span>y
 
-<span class="go">Dataset door-human-v0 deleted!</span>
-<span class="go">Dataset pen-cloned-v0 deleted!</span>
-</pre></div>
-</div>
-</div>
-</section>
-<section id="upload-datasets">
-<h2>Upload datasets<a class="headerlink" href="#upload-datasets" title="Link to this heading">#</a></h2>
-<p>If you would like to upload your own Minari dataset to the remote server please get in touch with the Farama team at <a class="reference external" href="mailto:contact&#37;&#52;&#48;farama&#46;org">contact<span>&#64;</span>farama<span>&#46;</span>org</a>. We will share with you a json encryption key file to give you permission to upload data to our GCP bucket. Then you can upload your dataset with the command <code class="docutils literal notranslate"><span class="pre">minari</span> <span class="pre">upload</span> <span class="pre">DATASETS</span> <span class="pre">--key-path</span> <span class="pre">PATH_STRING/KEY_FILE.json</span></code>.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>The progress bar shown in the example below is not currently implemented in the Minari package.</p>
-</div>
-<div class="termy">
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">// Upload datasets pen-cloned-v0 and door-human-v0 to Farama server.</span>
-<span class="gp">$ </span>minari<span class="w"> </span>upload<span class="w"> </span>pen-cloned-v0<span class="w"> </span>door-human-v0<span class="w"> </span>--key-path<span class="w"> </span>/path-to-key/file-name.json
-
-<span class="go">---&gt; 100%</span>
-<span class="go">Dataset door-human-v0 uploaded!</span>
-
-<span class="go">---&gt; 100%</span>
-<span class="go">Dataset pen-cloned-v0 uploaded!</span>
+<span class="go">Dataset D4RL/door/human-v2 deleted!</span>
+<span class="go">Dataset D4RL/pen/cloned-v2 deleted!</span>
 </pre></div>
 </div>
 </div>
 </section>
 <section id="combine-datasets">
-<h2>Combine datasets<a class="headerlink" href="#combine-datasets" title="Link to this heading">#</a></h2>
+<h2>Combine datasets<a class="headerlink" href="#combine-datasets" title="Link to this heading">¶</a></h2>
 <p>Minari datasets can also be merged together into a single dataset with the following command, <code class="docutils literal notranslate"><span class="pre">minari</span> <span class="pre">combine</span> <span class="pre">DATASETS</span> <span class="pre">--dataset-name</span> <span class="pre">NEW_DATASET_NAME</span></code>.</p>
 <div class="termy">
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">// Combine datasets pen-cloned-v0, pen-expert-v0 and pen-human-v0 into pen-all-v0.</span>
-<span class="gp">$ </span>minari<span class="w"> </span>combine<span class="w"> </span>pen-cloned-v0<span class="w"> </span>pen-expert-v0<span class="w"> </span>pen-human-v0<span class="w"> </span>--dataset-name<span class="w"> </span>pen-all-v0
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">// Combine datasets D4RL/pen/cloned-v2, D4RL/pen/expert-v2 and D4RL/pen/human-v2 into D4RL/pen/all-v2.</span>
+<span class="gp">$ </span>minari<span class="w"> </span>combine<span class="w"> </span>D4RL/pen/cloned-v2<span class="w"> </span>D4RL/pen/expert-v2<span class="w"> </span>D4RL/pen/human-v2<span class="w"> </span>--dataset-name<span class="w"> </span>D4RL/pen/all-v2
 
-<span class="go">The datasets &lt;font color=&quot;#03AC13&quot;&gt;[&#39;pen-cloned-v0&#39;, &#39;pen-expert-v0&#39;, &#39;pen-human-v0&#39;]&lt;/font&gt; were successfully combined into &lt;font color=&quot;#A1EFE4&quot;&gt;pen-all-v0&lt;/font&gt;!</span>
+<span class="go">The datasets &lt;font color=&quot;#03AC13&quot;&gt;[&#39;D4RL/pen/cloned-v2&#39;, &#39;D4RL/pen/expert-v2&#39;, &#39;D4RL/pen/human-v2&#39;]&lt;/font&gt; were successfully combined into &lt;font color=&quot;#A1EFE4&quot;&gt;D4RL/pen/all-v2&lt;/font&gt;!</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="upload-datasets">
+<h2>Upload datasets<a class="headerlink" href="#upload-datasets" title="Link to this heading">¶</a></h2>
+<p>If you would like to upload your Minari dataset to a remote server, you can use the command the command <code class="docutils literal notranslate"><span class="pre">minari</span> <span class="pre">upload</span> <span class="pre">DATASETS</span> <span class="pre">--key-path</span> <span class="pre">PATH_STRING/KEY_FILE.json</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The progress bar shown in the example below is not currently implemented in the Minari package.</p>
+</div>
+<div class="termy">
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">// Upload datasets D4RL/pen/cloned-v2 and D4RL/door/human-v2 to remote server.</span>
+<span class="gp">$ </span>minari<span class="w"> </span>upload<span class="w"> </span>D4RL/pen/cloned-v2<span class="w"> </span>D4RL/door/human-v2<span class="w"> </span>--key-path<span class="w"> </span>/path-to-key/file-name.json
+
+<span class="go">---&gt; 100%</span>
+<span class="go">Dataset D4RL/door/human-v2 uploaded!</span>
+
+<span class="go">---&gt; 100%</span>
+<span class="go">Dataset D4RL/pen/cloned-v2 uploaded!</span>
 </pre></div>
 </div>
 </div>
@@ -545,18 +601,18 @@ current content of the local dataset.</p>
         <footer>
           
           <div class="related-pages">
-            <a class="next-page" href="../../api/minari_functions/">
+            <a class="next-page" href="../dataset_standards/">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">Minari</div>
+                <div class="title">Dataset Standards</div>
               </div>
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
               </svg>
             </a>
-            <a class="prev-page" href="../dataset_standards/">
+            <a class="prev-page" href="../basic_usage/">
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
               </svg>
@@ -565,7 +621,7 @@ current content of the local dataset.</p>
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Dataset Standards</div>
+                <div class="title">Basic Usage</div>
                 
               </div>
             </a>
@@ -612,9 +668,10 @@ current content of the local dataset.</p>
 <li><a class="reference internal" href="#">Minari CLI</a><ul>
 <li><a class="reference internal" href="#list-datasets">List datasets</a></li>
 <li><a class="reference internal" href="#download-datasets">Download datasets</a></li>
+<li><a class="reference internal" href="#show-datasets-details">Show datasets details</a></li>
 <li><a class="reference internal" href="#delete-local-datasets">Delete local datasets</a></li>
-<li><a class="reference internal" href="#upload-datasets">Upload datasets</a></li>
 <li><a class="reference internal" href="#combine-datasets">Combine datasets</a></li>
+<li><a class="reference internal" href="#upload-datasets">Upload datasets</a></li>
 </ul>
 </li>
 </ul>
@@ -701,8 +758,8 @@ current content of the local dataset.</p>
         })()
       </script>
 
-    <script src="../../_static/documentation_options.js?v=d5185309"></script>
-    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/documentation_options.js?v=19bc2c4c"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=7660844c"></script>
     <script src="../../_static/js/termynal.js?v=ff4c6923"></script>

@@ -8,10 +8,10 @@
     <meta property="og:type" content="website" />
     <meta property="og:description" content="Minari is a Python library for conducting research in offline reinforcement learning." />
     <meta property="og:url" content="https://minari.farama.org/release_notes/index.html" /><meta property="og:image" content="https://minari.farama.org/_static/img/robotics-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../genindex/" /><link rel="search" title="Search" href="../search/" /><link rel="prev" title="Mixed" href="../datasets/kitchen/mixed/" />
+<link rel="index" title="Index" href="../genindex/" /><link rel="search" title="Search" href="../search/" /><link rel="prev" title="Human" href="../datasets/D4RL/relocate/human-v2/" />
         <link rel="canonical" href="https://minari.farama.org/release_notes/index.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>Release Notes - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=3e7f4c72" />
@@ -220,19 +220,23 @@
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../content/basic_usage/">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../content/dataset_standards/">Dataset Standards</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../content/minari_cli/">Minari CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content/dataset_standards/">Dataset Standards</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../api/minari_functions/">Minari</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Minari</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../api/minari_dataset/minari_dataset/">MinariDataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/minari_dataset/minari_storage/">MinariStorage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/minari_dataset/episode_data/">EpisodeData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/minari_dataset/step_data/">StepData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/namespace/namespace/">Namespace</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../api/data_collector/">DataCollector</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of DataCollector</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../api/data_collector_callbacks/step_data_callback/">StepDataCallback</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/data_collector_callbacks/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/data_collector/episode_buffer/">EpisodeBuffer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/data_collector/step_data_callback/">StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/data_collector/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
 </ul>
 </li>
 </ul>
@@ -246,62 +250,68 @@
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../tutorials/using_datasets/">Using Datasets</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Using Datasets</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/using_datasets/behavioral_cloning/">Behavioral cloning with PyTorch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/using_datasets/IQL_torchrl/">Implicit Q-Learning with TorchRL</a></li>
 </ul>
 </li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
 <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../datasets/minigrid/">MiniGrid</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of MiniGrid</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../datasets/D4RL/">D4RL</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of D4RL</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../datasets/D4RL/antmaze/">Ant Maze</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Ant Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/antmaze/large-diverse-v1/">Large-Diverse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/antmaze/large-play-v1/">Large-Play</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/antmaze/medium-diverse-v1/">Medium-Diverse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/antmaze/medium-play-v1/">Medium-Play</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/antmaze/umaze-v1/">Umaze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/antmaze/umaze-diverse-v1/">Umaze-Diverse</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../datasets/door/">Door</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Door</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/door/human/">Human</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/door/expert/">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/door/cloned/">Cloned</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../datasets/D4RL/door/">Door</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Door</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/door/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/door/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/door/human-v2/">Human</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../datasets/hammer/">Hammer</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Hammer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/hammer/human/">Human</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/hammer/expert/">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/hammer/cloned/">Cloned</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../datasets/D4RL/hammer/">Hammer</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Hammer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/hammer/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/hammer/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/hammer/human-v2/">Human</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../datasets/relocate/">Relocate</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Relocate</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/relocate/human/">Human</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/relocate/expert/">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/relocate/cloned/">Cloned</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../datasets/D4RL/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/kitchen/complete-v1/">Complete</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/kitchen/mixed-v1/">Mixed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/kitchen/partial-v1/">Partial</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../datasets/pen/">Pen</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Pen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/pen/human/">Human</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/pen/expert/">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/pen/cloned/">Cloned</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../datasets/D4RL/minigrid/">MiniGrid</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of MiniGrid</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/minigrid/fourrooms-v0/">Fourrooms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/minigrid/fourrooms-random-v0/">Fourrooms-Random</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../datasets/pointmaze/">Point Maze</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Point Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/pointmaze/open/">Open</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/pointmaze/umaze/">Umaze</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/pointmaze/medium/">Medium</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/pointmaze/large/">Large</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/pointmaze/open-dense/">Open-Dense</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/pointmaze/umaze-dense/">Umaze-Dense</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/pointmaze/medium-dense/">Medium-Dense</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/pointmaze/large-dense/">Large-Dense</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../datasets/D4RL/pen/">Pen</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Pen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/pen/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/pen/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/pen/human-v2/">Human</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../datasets/antmaze/">Ant Maze</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Ant Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/antmaze/umaze/">Umaze</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/antmaze/umaze-diverse/">Umaze-Diverse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/antmaze/medium-diverse/">Medium-Diverse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/antmaze/medium-play/">Medium-Play</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/antmaze/large-diverse/">Large-Diverse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/antmaze/large-play/">Large-Play</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../datasets/D4RL/pointmaze/">Point Maze</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of Point Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/pointmaze/large-v2/">Large</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/pointmaze/large-dense-v2/">Large-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/pointmaze/medium-v2/">Medium</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/pointmaze/medium-dense-v2/">Medium-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/pointmaze/open-v2/">Open</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/pointmaze/open-dense-v2/">Open-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/pointmaze/umaze-v2/">Umaze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/pointmaze/umaze-dense-v2/">Umaze-Dense</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../datasets/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/kitchen/partial/">Partial</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/kitchen/complete/">Complete</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/kitchen/mixed/">Mixed</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../datasets/D4RL/relocate/">Relocate</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of Relocate</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/relocate/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/relocate/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/relocate/human-v2/">Human</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -367,9 +377,44 @@
           <article role="main">
             
             <section class="tex2jax_ignore mathjax_ignore" id="release-notes">
-<h1>Release Notes<a class="headerlink" href="#release-notes" title="Link to this heading">#</a></h1>
+<h1>Release Notes<a class="headerlink" href="#release-notes" title="Link to this heading">¶</a></h1>
+<section id="release-v0-5-0">
+<h2>v0.5.0<a class="headerlink" href="#release-v0-5-0" title="Link to this heading">¶</a></h2>
+<p><em>Released on 2024-08-29 - <a class="reference external" href="https://github.com/Farama-Foundation/Minari/releases/tag/v0.5.0">GitHub</a> - <a class="reference external" href="https://pypi.org/project/minari/v0.5.0/">PyPI</a></em></p>
+<h2>Key changes</h2>
+<h3>PyArrow support</h3>
+<p>Minari now supports PyArrow datasets. To create a new dataset using PyArrow, set the <code>data_format</code> flag to <code>arrow</code> during the creation of a <code>DataCollector</code> or while creating a dataset with a buffer. For example:</p>
+<div class="highlight highlight-source-python notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="env = DataCollector(env, data_format=&quot;arrow&quot;)"><pre><span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-v">DataCollector</span>(<span class="pl-s1">env</span>, <span class="pl-s1">data_format</span><span class="pl-c1">=</span><span class="pl-s">"arrow"</span>)</pre></div>
+<p>Loading a dataset doesn't require any change, Minari will detect automatically the data format.</p>
+<h3>Namespaces</h3>
+<p>Datasets can now be grouped to create a more organized dataset hub. For example, current remote datasets, which are reproductions of the <code>D4RL</code> datasets, are grouped under a namespace called <code>D4RL</code>. We encourage grouping datasets based on the environment used to produce them, if applicable. For instance, the previously named <code>door-human-v2</code> dataset is now referenced as <code>D4RL/door/human-v2</code>. Multiple datasets are available in the <code>D4RL</code> group as well as in the <code>D4RL/door</code> subgroup, such as <code>D4RL/door/cloned-v2</code>. These grouped datasets can share metadata, enhancing their organization and accessibility.</p>
+<p>For more information on creating and managing namespaces, please refer to the <a href="https://minari.farama.org/api/namespace/namespace/" rel="nofollow">documentation page</a>.</p>
+<h3>Support for other remotes</h3>
+<p>You can now set your own remote storage in Minari. Currently, only Google Cloud buckets are supported, but we plan to add support for other cloud services in the future. To configure your remote storage, set the <code>MINARI_REMOTE</code> environment variable, for example as follows:</p>
+<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="export MINARI_REMOTE=gcp://bucket-name"><pre><span class="pl-k">export</span> MINARI_REMOTE=gcp://bucket-name</pre></div>
+<h2>Breaking changes</h2>
+<p>This release introduces a few breaking changes:</p>
+<ul>
+<li>The deprecated versioning of <code>DataCollector</code> has been removed. It can now only be imported as <code>DataCollector</code>, not as <code>DataCollectorV0</code>.</li>
+<li><code>DataCollector</code> no longer supports <code>max_episode_step</code>.</li>
+<li>We remove the deprecated method <code>minari.create_dataset_from_collector_env</code>; use <code>DataCollector.create_dataset</code> instead.</li>
+<li>The naming convention has been changed as explained above. When using Minari 0.5.0, remote dataset names have been updated to adhere to the new convention.</li>
+<li>We renamed <code>total_timesteps</code> to <code>total_steps</code> to unify the naming across the library.</li>
+</ul>
+<h2>Contributors</h2>
+<h3>New contributors</h3>
+<ul>
+<li><a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/tomekster/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/tomekster">@tomekster</a> made their first contribution in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="2106748064" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/183" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/183/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/183">#183</a></li>
+<li><a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/cmmcirvin/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/cmmcirvin">@cmmcirvin</a> made their first contribution in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="2170585420" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/196" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/196/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/196">#196</a></li>
+<li><a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/pseudo-rnd-thoughts/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/pseudo-rnd-thoughts">@pseudo-rnd-thoughts</a> made their first contribution in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="2329380666" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/211" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/211/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/211">#211</a></li>
+<li><a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/JosephCarrino/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/JosephCarrino">@JosephCarrino</a> made their first contribution in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="2406019642" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/218" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/218/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/218">#218</a></li>
+<li><a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/jamartinh/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/jamartinh">@jamartinh</a> made their first contribution in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="2033062692" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/177" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/177/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/177">#177</a></li>
+</ul>
+<h3>Others contributors</h3>
+<p><a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/younik/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/younik">@younik</a> <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/alexdavey/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/alexdavey">@alexdavey</a> <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/enerrio/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/enerrio">@enerrio</a></p>
+<p><strong>Full Changelog</strong>: <a class="commit-link" href="https://github.com/Farama-Foundation/Minari/compare/v0.4.3...v0.5.0"><tt>v0.4.3...v0.5.0</tt></a></p></section>
 <section id="release-v0-4-3">
-<h2>v0.4.3<a class="headerlink" href="#release-v0-4-3" title="Link to this heading">#</a></h2>
+<h2>v0.4.3<a class="headerlink" href="#release-v0-4-3" title="Link to this heading">¶</a></h2>
 <p><em>Released on 2024-01-27 - <a class="reference external" href="https://github.com/Farama-Foundation/Minari/releases/tag/v0.4.3">GitHub</a> - <a class="reference external" href="https://pypi.org/project/minari/v0.4.3/">PyPI</a></em></p>
 <h2>Minari 0.4.3 Release Notes</h2>
 <ul>
@@ -400,7 +445,7 @@
 </ul>
 <p><strong>Full Changelog</strong>: <a class="commit-link" href="https://github.com/Farama-Foundation/Minari/compare/v0.4.2...v0.4.3"><tt>v0.4.2...v0.4.3</tt></a></p></section>
 <section id="release-v0-4-2">
-<h2>v0.4.2<a class="headerlink" href="#release-v0-4-2" title="Link to this heading">#</a></h2>
+<h2>v0.4.2<a class="headerlink" href="#release-v0-4-2" title="Link to this heading">¶</a></h2>
 <p><em>Released on 2023-10-09 - <a class="reference external" href="https://github.com/Farama-Foundation/Minari/releases/tag/v0.4.2">GitHub</a> - <a class="reference external" href="https://pypi.org/project/minari/v0.4.2/">PyPI</a></em></p>
 <h2>Minari 0.4.2 Release Notes</h2>
 <ul>
@@ -419,12 +464,12 @@
 </ul>
 <p><strong>Full Changelog</strong>: <a class="commit-link" href="https://github.com/Farama-Foundation/Minari/compare/v0.4.1...v0.4.2"><tt>v0.4.1...v0.4.2</tt></a></p></section>
 <section id="release-v0-4-1">
-<h2>v0.4.1<a class="headerlink" href="#release-v0-4-1" title="Link to this heading">#</a></h2>
+<h2>v0.4.1<a class="headerlink" href="#release-v0-4-1" title="Link to this heading">¶</a></h2>
 <p><em>Released on 2023-07-19 - <a class="reference external" href="https://github.com/Farama-Foundation/Minari/releases/tag/v0.4.1">GitHub</a> - <a class="reference external" href="https://pypi.org/project/minari/v0.4.1/">PyPI</a></em></p>
 <h1>v0.4.1 Release Notes</h1>
 <p>Bugfix: Adds <code>packaging</code> as a dependency for Minari in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1812021795" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/121" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/121/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/121">#121</a>.</p></section>
 <section id="release-v0-4-0">
-<h2>v0.4.0<a class="headerlink" href="#release-v0-4-0" title="Link to this heading">#</a></h2>
+<h2>v0.4.0<a class="headerlink" href="#release-v0-4-0" title="Link to this heading">¶</a></h2>
 <p><em>Released on 2023-07-19 - <a class="reference external" href="https://github.com/Farama-Foundation/Minari/releases/tag/v0.4.0">GitHub</a> - <a class="reference external" href="https://pypi.org/project/minari/v0.4.0/">PyPI</a></em></p>
 <h1>v0.4.0 Release Notes</h1>
 <p>Important changes from this PR include the move away from observation and action flattening, the move to explicitly and fully support <code>Dict</code>, <code>Tuple</code>, <code>Box</code>, <code>Discrete</code>, and <code>Text</code> spaces, and the move to explicit dataset versioning. Additionally, we have added support for using a subset of an environment's action/observation spaces when creating a dataset.</p>
@@ -634,7 +679,7 @@
 <li>v1 pointmaze datasets copies the last info to the next episode as fixed in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1766335812" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/96" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/96/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/96">#96</a></li>
 </ul></section>
 <section id="release-v0-3-1">
-<h2>v0.3.1<a class="headerlink" href="#release-v0-3-1" title="Link to this heading">#</a></h2>
+<h2>v0.3.1<a class="headerlink" href="#release-v0-3-1" title="Link to this heading">¶</a></h2>
 <p><em>Released on 2023-05-19 - <a class="reference external" href="https://github.com/Farama-Foundation/Minari/releases/tag/v0.3.1">GitHub</a> - <a class="reference external" href="https://pypi.org/project/minari/v0.3.1/">PyPI</a></em></p>
 <h1>v0.3.1 Release notes</h1>
 <p>Minor release for fixing the following bugs:</p>
@@ -644,7 +689,7 @@
 </ul>
 <p><strong>Full Changelog</strong>: <a class="commit-link" href="https://github.com/Farama-Foundation/Minari/compare/v0.3.0...v0.3.1"><tt>v0.3.0...v0.3.1</tt></a></p></section>
 <section id="release-v0-3-0">
-<h2>v0.3.0<a class="headerlink" href="#release-v0-3-0" title="Link to this heading">#</a></h2>
+<h2>v0.3.0<a class="headerlink" href="#release-v0-3-0" title="Link to this heading">¶</a></h2>
 <p><em>Released on 2023-05-17 - <a class="reference external" href="https://github.com/Farama-Foundation/Minari/releases/tag/v0.3.0">GitHub</a> - <a class="reference external" href="https://pypi.org/project/minari/v0.3.0/">PyPI</a></em></p>
 <h1>v0.3.0: Minari is ready for testing</h1>
 <h2><strong>Minari 0.3.0 Release Notes:</strong></h2>
@@ -823,7 +868,7 @@ dataset_v3 = minari.combine_datasets(datasets_to_combine = [dataset_v1, dataset_
 <li><a href="https://minari.farama.org/main/datasets/kitchen/mixed/" rel="nofollow">kitchen-mixed-v0</a></li>
 </ul></section>
 <section id="release-0-2-2">
-<h2>0.2.2<a class="headerlink" href="#release-0-2-2" title="Link to this heading">#</a></h2>
+<h2>0.2.2<a class="headerlink" href="#release-0-2-2" title="Link to this heading">¶</a></h2>
 <p><em>Released on 2023-01-04 - <a class="reference external" href="https://github.com/Farama-Foundation/Minari/releases/tag/0.2.2">GitHub</a> - <a class="reference external" href="https://pypi.org/project/minari/0.2.2/">PyPI</a></em></p>
 <h2>What's Changed</h2>
 <ul>
@@ -842,7 +887,7 @@ dataset_v3 = minari.combine_datasets(datasets_to_combine = [dataset_v1, dataset_
 </ul>
 <p><strong>Full Changelog</strong>: <a class="commit-link" href="https://github.com/Farama-Foundation/Minari/compare/0.1.0...0.2.2"><tt>0.1.0...0.2.2</tt></a></p></section>
 <section id="release-0-1-0">
-<h2>0.1.0<a class="headerlink" href="#release-0-1-0" title="Link to this heading">#</a></h2>
+<h2>0.1.0<a class="headerlink" href="#release-0-1-0" title="Link to this heading">¶</a></h2>
 <p><em>Released on 2022-11-04 - <a class="reference external" href="https://github.com/Farama-Foundation/Minari/releases/tag/0.1.0">GitHub</a> - <a class="reference external" href="https://pypi.org/project/minari/0.1.0/">PyPI</a></em></p>
 <h2>What's Changed</h2>
 <ul>
@@ -906,6 +951,7 @@ dataset_v3 = minari.combine_datasets(datasets_to_combine = [dataset_v1, dataset_
             <div class="toc-tree">
               <ul>
 <li><a class="reference internal" href="#">Release Notes</a><ul>
+<li><a class="reference internal" href="#release-v0-5-0">v0.5.0</a></li>
 <li><a class="reference internal" href="#release-v0-4-3">v0.4.3</a></li>
 <li><a class="reference internal" href="#release-v0-4-2">v0.4.2</a></li>
 <li><a class="reference internal" href="#release-v0-4-1">v0.4.1</a></li>
@@ -1000,8 +1046,8 @@ dataset_v3 = minari.combine_datasets(datasets_to_combine = [dataset_v1, dataset_
         })()
       </script>
 
-    <script src="../_static/documentation_options.js?v=d5185309"></script>
-    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/documentation_options.js?v=19bc2c4c"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=7660844c"></script>
     <script src="../_static/js/termynal.js?v=ff4c6923"></script>

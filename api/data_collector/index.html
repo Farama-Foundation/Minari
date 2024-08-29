@@ -8,10 +8,10 @@
     <meta property="og:type" content="website" />
     <meta property="og:description" content="Minari is a Python library for conducting research in offline reinforcement learning." />
     <meta property="og:url" content="https://minari.farama.org/api/data_collector.html" /><meta property="og:image" content="https://minari.farama.org/_static/img/robotics-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="StepDataCallback" href="../data_collector_callbacks/step_data_callback/" /><link rel="prev" title="EpisodeData" href="../minari_dataset/episode_data/" />
+<link rel="index" title="Index" href="../../genindex/" /><link rel="search" title="Search" href="../../search/" /><link rel="next" title="EpisodeBuffer" href="episode_buffer/" /><link rel="prev" title="Namespace" href="../namespace/namespace/" />
         <link rel="canonical" href="https://minari.farama.org/api/data_collector.html" />
 
-    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>DataCollector - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=3e7f4c72" />
@@ -220,19 +220,23 @@
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../content/basic_usage/">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../content/dataset_standards/">Dataset Standards</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../content/minari_cli/">Minari CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../content/dataset_standards/">Dataset Standards</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul class="current">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../minari_functions/">Minari</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Minari</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../minari_dataset/minari_dataset/">MinariDataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../minari_dataset/minari_storage/">MinariStorage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../minari_dataset/episode_data/">EpisodeData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../minari_dataset/step_data/">StepData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../namespace/namespace/">Namespace</a></li>
 </ul>
 </li>
 <li class="toctree-l1 current has-children current-page"><a class="current reference internal" href="#">DataCollector</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of DataCollector</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../data_collector_callbacks/step_data_callback/">StepDataCallback</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data_collector_callbacks/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="episode_buffer/">EpisodeBuffer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="step_data_callback/">StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="episode_metadata_callback/">EpisodeMetadataCallback</a></li>
 </ul>
 </li>
 </ul>
@@ -246,62 +250,68 @@
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../tutorials/using_datasets/">Using Datasets</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Using Datasets</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../tutorials/using_datasets/behavioral_cloning/">Behavioral cloning with PyTorch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../tutorials/using_datasets/IQL_torchrl/">Implicit Q-Learning with TorchRL</a></li>
 </ul>
 </li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
 <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/minigrid/">MiniGrid</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of MiniGrid</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/D4RL/">D4RL</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of D4RL</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../datasets/D4RL/antmaze/">Ant Maze</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Ant Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/antmaze/large-diverse-v1/">Large-Diverse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/antmaze/large-play-v1/">Large-Play</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/antmaze/medium-diverse-v1/">Medium-Diverse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/antmaze/medium-play-v1/">Medium-Play</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/antmaze/umaze-v1/">Umaze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/antmaze/umaze-diverse-v1/">Umaze-Diverse</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/door/">Door</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Door</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/door/human/">Human</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/door/expert/">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/door/cloned/">Cloned</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../datasets/D4RL/door/">Door</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Door</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/door/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/door/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/door/human-v2/">Human</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/hammer/">Hammer</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Hammer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/hammer/human/">Human</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/hammer/expert/">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/hammer/cloned/">Cloned</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../datasets/D4RL/hammer/">Hammer</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Hammer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/hammer/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/hammer/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/hammer/human-v2/">Human</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/relocate/">Relocate</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Relocate</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/relocate/human/">Human</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/relocate/expert/">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/relocate/cloned/">Cloned</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../datasets/D4RL/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/kitchen/complete-v1/">Complete</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/kitchen/mixed-v1/">Mixed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/kitchen/partial-v1/">Partial</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/pen/">Pen</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Pen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/pen/human/">Human</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/pen/expert/">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/pen/cloned/">Cloned</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../datasets/D4RL/minigrid/">MiniGrid</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of MiniGrid</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/minigrid/fourrooms-v0/">Fourrooms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/minigrid/fourrooms-random-v0/">Fourrooms-Random</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/pointmaze/">Point Maze</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Point Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/open/">Open</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/umaze/">Umaze</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/medium/">Medium</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/large/">Large</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/open-dense/">Open-Dense</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/umaze-dense/">Umaze-Dense</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/medium-dense/">Medium-Dense</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/pointmaze/large-dense/">Large-Dense</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../datasets/D4RL/pen/">Pen</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Pen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/pen/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/pen/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/pen/human-v2/">Human</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/antmaze/">Ant Maze</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Ant Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/antmaze/umaze/">Umaze</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/antmaze/umaze-diverse/">Umaze-Diverse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/antmaze/medium-diverse/">Medium-Diverse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/antmaze/medium-play/">Medium-Play</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/antmaze/large-diverse/">Large-Diverse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/antmaze/large-play/">Large-Play</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../datasets/D4RL/pointmaze/">Point Maze</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of Point Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/pointmaze/large-v2/">Large</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/pointmaze/large-dense-v2/">Large-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/pointmaze/medium-v2/">Medium</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/pointmaze/medium-dense-v2/">Medium-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/pointmaze/open-v2/">Open</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/pointmaze/open-dense-v2/">Open-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/pointmaze/umaze-v2/">Umaze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/pointmaze/umaze-dense-v2/">Umaze-Dense</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../datasets/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/kitchen/partial/">Partial</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/kitchen/complete/">Complete</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../datasets/kitchen/mixed/">Mixed</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../datasets/D4RL/relocate/">Relocate</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of Relocate</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/relocate/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/relocate/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../datasets/D4RL/relocate/human-v2/">Human</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -367,14 +377,14 @@
           <article role="main">
             
             <section class="tex2jax_ignore mathjax_ignore" id="datacollector">
-<h1>DataCollector<a class="headerlink" href="#datacollector" title="Link to this heading">#</a></h1>
+<h1>DataCollector<a class="headerlink" href="#datacollector" title="Link to this heading">¶</a></h1>
 <div class="toctree-wrapper compound">
 </div>
 <section id="minari-datacollector">
-<h2>minari.DataCollector<a class="headerlink" href="#minari-datacollector" title="Link to this heading">#</a></h2>
+<h2>minari.DataCollector<a class="headerlink" href="#minari-datacollector" title="Link to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="minari.DataCollector">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">minari.</span></span><span class="sig-name descname"><span class="pre">DataCollector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_data_callback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../data_collector_callbacks/step_data_callback/#minari.StepDataCallback" title="minari.data_collector.callbacks.step_data.StepDataCallback"><span class="pre">StepDataCallback</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">StepDataCallback</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">episode_metadata_callback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../data_collector_callbacks/episode_metadata_callback/#minari.EpisodeMetadataCallback" title="minari.data_collector.callbacks.episode_metadata.EpisodeMetadataCallback"><span class="pre">EpisodeMetadataCallback</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">EpisodeMetadataCallback</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record_infos</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_buffer_steps</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observation_space</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action_space</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/minari/data_collector/data_collector/#DataCollector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#minari.DataCollector" title="Link to this definition">#</a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">minari.</span></span><span class="sig-name descname"><span class="pre">DataCollector</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_data_callback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="step_data_callback/#minari.StepDataCallback" title="minari.data_collector.callbacks.step_callback.StepDataCallback"><span class="pre">StepDataCallback</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">StepDataCallback</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">episode_metadata_callback</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Type</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="episode_metadata_callback/#minari.EpisodeMetadataCallback" title="minari.data_collector.callbacks.episode_metadata.EpisodeMetadataCallback"><span class="pre">EpisodeMetadataCallback</span></a><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">EpisodeMetadataCallback</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record_infos</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observation_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Space</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action_space</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Space</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/minari/data_collector/data_collector/#DataCollector"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#minari.DataCollector" title="Link to this definition">¶</a></dt>
 <dd><p>Gymnasium environment wrapper that collects step data.</p>
 <p>This wrapper is meant to work as a temporary buffer of the environment data before creating a Minari dataset. The creation of the buffers
 that will be convert to a Minari dataset is agnostic to the user:</p>
@@ -392,7 +402,7 @@ that will be convert to a Minari dataset is agnostic to the user:</p>
     <span class="k">if</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span><span class="p">:</span>
         <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
 
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="n">dataset_id</span><span class="o">=</span><span class="s2">&quot;env_name-dataset_name-v(version)&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="n">dataset_id</span><span class="o">=</span><span class="s2">&quot;env_name/dataset_name-v(version)&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Some of the characteristics of this wrapper:</p>
@@ -400,14 +410,9 @@ that will be convert to a Minari dataset is agnostic to the user:</p>
 <div><ul class="simple">
 <li><p>The step data is stored per episode in dictionaries. This dictionaries are then stored in-memory in a global list buffer. The
 episode dictionaries contain items with list buffers as values for the main episode step datasets <cite>observations</cite>, <cite>actions</cite>,
-<cite>terminations</cite>, and <cite>truncations</cite>, the <cite>infos</cite> key can be a list or another nested dictionary with extra datasets. Separate data
-keys can be added by passing a custom <cite>StepDataCallback</cite> to the wrapper. When creating the HDF5 file the list values in the episode
-dictionary will be stored as datasets and the nested dictionaries will generate a new HDF5 group.</p></li>
+<cite>terminations</cite>, and <cite>truncations</cite>, the <cite>infos</cite> key can be a list or another nested dictionary with extra datasets.</p></li>
 <li><p>A new episode dictionary buffer is created if the env.step(action) call returns <cite>truncated</cite> or <cite>terminated</cite>, or if the environment calls
 env.reset(). If calling reset and the previous episode was not <cite>truncated</cite> or <cite>terminated</cite>, this will automatically be <cite>truncated</cite>.</p></li>
-<li><p>To perform caching the user can set the <cite>max_buffer_steps</cite> or <cite>max_buffer_episodes</cite> before saving the in-memory buffers to a temporary HDF5
-file in disk. If non of <cite>max_buffer_steps</cite> or <cite>max_buffer_episodes</cite> are set, the data will move from in-memory to a permanent location only
-when the Minari dataset is created. To move all the stored data to a permanent location use DataCollector.save_to_disK(path_to_permanent_location).</p></li>
 </ul>
 </div></blockquote>
 <p>Initialize the data collector attributes and create the temporary directory for caching.</p>
@@ -415,29 +420,28 @@ when the Minari dataset is created. To move all the stored data to a permanent l
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>env</strong> (<em>gym.Env</em>) – Gymnasium environment</p></li>
-<li><p><strong>step_data_callback</strong> (<em>type</em><em>[</em><a class="reference internal" href="../data_collector_callbacks/step_data_callback/#minari.StepDataCallback" title="minari.StepDataCallback"><em>StepDataCallback</em></a><em>]</em><em>, </em><em>optional</em>) – Callback class to edit/update step databefore storing to buffer. Defaults to StepDataCallback.</p></li>
-<li><p><strong>episode_metadata_callback</strong> (<em>type</em><em>[</em><a class="reference internal" href="../data_collector_callbacks/episode_metadata_callback/#minari.EpisodeMetadataCallback" title="minari.EpisodeMetadataCallback"><em>EpisodeMetadataCallback</em></a><em>]</em><em>, </em><em>optional</em>) – Callback class to add custom metadata to episode group in HDF5 file. Defaults to EpisodeMetadataCallback.</p></li>
+<li><p><strong>step_data_callback</strong> (<em>type</em><em>[</em><a class="reference internal" href="step_data_callback/#minari.StepDataCallback" title="minari.StepDataCallback"><em>StepDataCallback</em></a><em>]</em><em>, </em><em>optional</em>) – Callback class to edit/update step databefore storing to buffer. Defaults to StepDataCallback.</p></li>
+<li><p><strong>episode_metadata_callback</strong> (<em>type</em><em>[</em><a class="reference internal" href="episode_metadata_callback/#minari.EpisodeMetadataCallback" title="minari.EpisodeMetadataCallback"><em>EpisodeMetadataCallback</em></a><em>]</em><em>, </em><em>optional</em>) – Callback class to add custom metadata to episode group in HDF5 file. Defaults to EpisodeMetadataCallback.</p></li>
 <li><p><strong>record_infos</strong> (<em>bool</em><em>, </em><em>optional</em>) – If True record the info return key of each step. Defaults to False.</p></li>
-<li><p><strong>max_buffer_steps</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – number of steps saved in-memory buffers before dumping to HDF5 file in disk. Defaults to None.</p></li>
+<li><p><strong>observation_space</strong> (<em>gym.Space</em>) – Observation space of the dataset. The default value is the environment observation space.</p></li>
+<li><p><strong>action_space</strong> (<em>gym.Space</em>) – Action space of the dataset. The default value is the environment action space.</p></li>
+<li><p><strong>data_format</strong> (<em>str</em><em>, </em><em>optional</em>) – Data format to store the data in the Minari dataset. If None (defaults), it will use the default format of MinariStorage.</p></li>
 </ul>
-</dd>
-<dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><strong>ValueError</strong> – <cite>max_buffer_steps</cite> and <cite>max_buffer_episodes</cite> can’t be passed at the same time</p>
 </dd>
 </dl>
 </dd></dl>
 
 <section id="methods">
-<h3>Methods<a class="headerlink" href="#methods" title="Link to this heading">#</a></h3>
+<h3>Methods<a class="headerlink" href="#methods" title="Link to this heading">¶</a></h3>
 <dl class="py function">
 <dt class="sig sig-object py" id="minari.DataCollector.step">
-<span class="sig-prename descclassname"><span class="pre">minari.DataCollector.</span></span><span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ActType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">SupportsFloat</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#minari.DataCollector.step" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">minari.DataCollector.</span></span><span class="sig-name descname"><span class="pre">step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">action</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">ActType</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">SupportsFloat</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#minari.DataCollector.step" title="Link to this definition">¶</a></dt>
 <dd><p>Gymnasium step method.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="minari.DataCollector.reset">
-<span class="sig-prename descclassname"><span class="pre">minari.DataCollector.</span></span><span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#minari.DataCollector.reset" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">minari.DataCollector.</span></span><span class="sig-name descname"><span class="pre">reset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">options</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="headerlink" href="#minari.DataCollector.reset" title="Link to this definition">¶</a></dt>
 <dd><p>Gymnasium environment reset.</p>
 <p>If no seed is set, one will be automatically generated, for reproducibility,
 unless <code class="docutils literal notranslate"><span class="pre">minari_autoseed=False</span></code> in the <code class="docutils literal notranslate"><span class="pre">options</span></code> dictionary.</p>
@@ -460,43 +464,53 @@ Set <code class="docutils literal notranslate"><span class="pre">minari_autoseed
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="minari.DataCollector.close">
-<span class="sig-prename descclassname"><span class="pre">minari.DataCollector.</span></span><span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#minari.DataCollector.close" title="Link to this definition">#</a></dt>
-<dd><p>Close the DataCollector.</p>
-<p>Clear buffer and close temporary directory.</p>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="minari.DataCollector.create_dataset">
-<span class="sig-prename descclassname"><span class="pre">minari.DataCollector.</span></span><span class="sig-name descname"><span class="pre">create_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eval_env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">gym.Env</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">EnvSpec</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">author</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">author_email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code_permalink</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_min_score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_max_score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expert_policy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_episodes_average_score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minari_version</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#minari.DataCollector.create_dataset" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">minari.DataCollector.</span></span><span class="sig-name descname"><span class="pre">create_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eval_env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">gym.Env</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">EnvSpec</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">algorithm_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">author</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">set</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">author_email</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">set</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code_permalink</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_min_score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_max_score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expert_policy</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">ObsType</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">ActType</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_episodes_average_score</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">description</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">requirements</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">list</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#minari.DataCollector.create_dataset" title="Link to this definition">¶</a></dt>
 <dd><p>Create a Minari dataset using the data collected from stepping with a Gymnasium environment wrapped with a <cite>DataCollector</cite> Minari wrapper.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">dataset_id</span></code> parameter corresponds to the name of the dataset, with the syntax as follows:
-<code class="docutils literal notranslate"><span class="pre">(env_name-)(dataset_name)(-v(version))</span></code> where <code class="docutils literal notranslate"><span class="pre">env_name</span></code> identifies the name of the environment used to generate the dataset <code class="docutils literal notranslate"><span class="pre">dataset_name</span></code>.
+<code class="docutils literal notranslate"><span class="pre">(namespace/)(env_name/)dataset_name(-v[version])</span></code> where <code class="docutils literal notranslate"><span class="pre">env_name</span></code> identifies the name of the environment used to generate the dataset. The <cite>namespace</cite> is optional.
 This <code class="docutils literal notranslate"><span class="pre">dataset_id</span></code> is used to load the Minari datasets with <a class="reference internal" href="../minari_functions/#minari.load_dataset" title="minari.load_dataset"><code class="xref py py-meth docutils literal notranslate"><span class="pre">minari.load_dataset()</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dataset_id</strong> (<em>str</em>) – name id to identify Minari dataset</p></li>
-<li><p><strong>buffer</strong> (<em>list</em><em>[</em><em>Dict</em><em>[</em><em>str</em><em>, </em><em>Union</em><em>[</em><em>list</em><em>, </em><em>Dict</em><em>]</em><em>]</em><em>]</em>) – list of episode dictionaries with data</p></li>
-<li><p><strong>eval_env</strong> (<em>Optional</em><em>[</em><em>str</em><em>|</em><em>gym.Env</em><em>|</em><em>EnvSpec</em><em>]</em>) – Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) to use for evaluation with the dataset. After loading the dataset, the environment can be recovered as follows: <cite>MinariDataset.recover_environment(eval_env=True).
+<li><p><strong>eval_env</strong> (<em>str</em><em> | </em><em>gym.Env</em><em> | </em><em>EnvSpec</em><em>, </em><em>optional</em>) – Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) to use for evaluation with the dataset. After loading the dataset, the environment can be recovered as follows: <cite>MinariDataset.recover_environment(eval_env=True).
 If None the `env</cite> used to collect the buffer data should be used for evaluation.</p></li>
-<li><p><strong>algorithm_name</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – name of the algorithm used to collect the data. Defaults to None.</p></li>
-<li><p><strong>author</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – author that generated the dataset. Defaults to None.</p></li>
-<li><p><strong>author_email</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – email of the author that generated the dataset. Defaults to None.</p></li>
-<li><p><strong>code_permalink</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – link to relevant code used to generate the dataset. Defaults to None.</p></li>
-<li><p><strong>ref_min_score</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em><em>, </em><em>optional</em>) – minimum reference score from the average returns of a random policy. This value is later used to normalize a score with <a class="reference internal" href="../minari_functions/#minari.get_normalized_score" title="minari.get_normalized_score"><code class="xref py py-meth docutils literal notranslate"><span class="pre">minari.get_normalized_score()</span></code></a>. If default None the value will be estimated with a default random policy.</p></li>
-<li><p><strong>(</strong><strong>Optional</strong><strong>[</strong><strong>float</strong><strong>]</strong> (<em>ref_max_score</em>) – maximum reference score from the average returns of a hypothetical expert policy. This value is used in <a class="reference internal" href="../minari_functions/#minari.get_normalized_score" title="minari.get_normalized_score"><code class="xref py py-meth docutils literal notranslate"><span class="pre">minari.get_normalized_score()</span></code></a>. Default None.</p></li>
-<li><p><strong>optional</strong> – maximum reference score from the average returns of a hypothetical expert policy. This value is used in <a class="reference internal" href="../minari_functions/#minari.get_normalized_score" title="minari.get_normalized_score"><code class="xref py py-meth docutils literal notranslate"><span class="pre">minari.get_normalized_score()</span></code></a>. Default None.</p></li>
-<li><p><strong>expert_policy</strong> (<em>Optional</em><em>[</em><em>Callable</em><em>[</em><em>[</em><em>ObsType</em><em>]</em><em>, </em><em>ActType</em><em>]</em><em>, </em><em>optional</em>) – policy to compute <cite>ref_max_score</cite> by averaging the returns over a number of episodes equal to  <cite>num_episodes_average_score</cite>.
+<li><p><strong>algorithm_name</strong> (<em>str</em><em>, </em><em>optional</em>) – name of the algorithm used to collect the data. Defaults to None.</p></li>
+<li><p><strong>author</strong> (<em>str</em><em> | </em><em>set</em><em>, </em><em>optional</em>) – name of the author(s) that generated the dataset. Defaults to None.</p></li>
+<li><p><strong>author_email</strong> (<em>str</em><em> | </em><em>set</em><em>, </em><em>optional</em>) – email(s) of the author(s) that generated the dataset. Defaults to None.</p></li>
+<li><p><strong>code_permalink</strong> (<em>str</em><em>, </em><em>optional</em>) – link to relevant code used to generate the dataset. Defaults to None.</p></li>
+<li><p><strong>ref_min_score</strong> (<em>float</em><em>, </em><em>optional</em>) – minimum reference score from the average returns of a random policy. This value is later used to normalize a score with <a class="reference internal" href="../minari_functions/#minari.get_normalized_score" title="minari.get_normalized_score"><code class="xref py py-meth docutils literal notranslate"><span class="pre">minari.get_normalized_score()</span></code></a>. If default None the value will be estimated with a default random policy.</p></li>
+<li><p><strong>ref_max_score</strong> (<em>float</em><em>, </em><em>optional</em>) – maximum reference score from the average returns of a hypothetical expert policy. This value is used in <a class="reference internal" href="../minari_functions/#minari.get_normalized_score" title="minari.get_normalized_score"><code class="xref py py-meth docutils literal notranslate"><span class="pre">minari.get_normalized_score()</span></code></a>. Default None.</p></li>
+<li><p><strong>expert_policy</strong> (<em>Callable</em><em>[</em><em>[</em><em>ObsType</em><em>]</em><em>, </em><em>ActType</em><em>]</em><em>, </em><em>optional</em>) – policy to compute <cite>ref_max_score</cite> by averaging the returns over a number of episodes equal to  <cite>num_episodes_average_score</cite>.
 <cite>ref_max_score</cite> and <cite>expert_policy</cite> can’t be passed at the same time. Default to None</p></li>
 <li><p><strong>num_episodes_average_score</strong> (<em>int</em>) – number of episodes to average over the returns to compute <cite>ref_min_score</cite> and <cite>ref_max_score</cite>. Default to 100.</p></li>
-<li><p><strong>minari_version</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em><em>, </em><em>optional</em>) – Minari version specifier compatible with the dataset. If None (default) use the installed Minari version.</p></li>
+<li><p><strong>description</strong> (<em>str</em><em>, </em><em>optional</em>) – description of the dataset being created. Defaults to None.</p></li>
+<li><p><strong>requirements</strong> (<em>list</em><em> of </em><em>str</em><em>, </em><em>optional</em>) – list of requirements in pip-style to load the environment and reproduce the dataset. For example, <cite>mujoco&gt;=3.1.0,&lt;3.2.0</cite>, which indicate the supported version range for mujoco package. Defaults to None.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>MinariDataset</strong></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="minari.DataCollector.add_to_dataset">
+<span class="sig-prename descclassname"><span class="pre">minari.DataCollector.</span></span><span class="sig-name descname"><span class="pre">add_to_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../minari_dataset/minari_dataset/#minari.MinariDataset" title="minari.dataset.minari_dataset.MinariDataset"><span class="pre">MinariDataset</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#minari.DataCollector.add_to_dataset" title="Link to this definition">¶</a></dt>
+<dd><p>Add extra data to Minari dataset from collector environment buffers (DataCollector).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dataset</strong> (<a class="reference internal" href="../minari_dataset/minari_dataset/#minari.MinariDataset" title="minari.MinariDataset"><em>MinariDataset</em></a>) – Dataset to add the data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="minari.DataCollector.close">
+<span class="sig-prename descclassname"><span class="pre">minari.DataCollector.</span></span><span class="sig-name descname"><span class="pre">close</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#minari.DataCollector.close" title="Link to this definition">¶</a></dt>
+<dd><p>Close the DataCollector.</p>
+<p>Clear buffer and close temporary directory.</p>
 </dd></dl>
 
 </section>
@@ -508,18 +522,18 @@ If None the `env</cite> used to collect the buffer data should be used for evalu
         <footer>
           
           <div class="related-pages">
-            <a class="next-page" href="../data_collector_callbacks/step_data_callback/">
+            <a class="next-page" href="episode_buffer/">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
                 </div>
-                <div class="title">StepDataCallback</div>
+                <div class="title">EpisodeBuffer</div>
               </div>
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
               </svg>
             </a>
-            <a class="prev-page" href="../minari_dataset/episode_data/">
+            <a class="prev-page" href="../namespace/namespace/">
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
               </svg>
@@ -528,7 +542,7 @@ If None the `env</cite> used to collect the buffer data should be used for evalu
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">EpisodeData</div>
+                <div class="title">Namespace</div>
                 
               </div>
             </a>
@@ -578,8 +592,9 @@ If None the `env</cite> used to collect the buffer data should be used for evalu
 <li><a class="reference internal" href="#methods">Methods</a><ul>
 <li><a class="reference internal" href="#minari.DataCollector.step"><code class="docutils literal notranslate"><span class="pre">step()</span></code></a></li>
 <li><a class="reference internal" href="#minari.DataCollector.reset"><code class="docutils literal notranslate"><span class="pre">reset()</span></code></a></li>
-<li><a class="reference internal" href="#minari.DataCollector.close"><code class="docutils literal notranslate"><span class="pre">close()</span></code></a></li>
 <li><a class="reference internal" href="#minari.DataCollector.create_dataset"><code class="docutils literal notranslate"><span class="pre">create_dataset()</span></code></a></li>
+<li><a class="reference internal" href="#minari.DataCollector.add_to_dataset"><code class="docutils literal notranslate"><span class="pre">add_to_dataset()</span></code></a></li>
+<li><a class="reference internal" href="#minari.DataCollector.close"><code class="docutils literal notranslate"><span class="pre">close()</span></code></a></li>
 </ul>
 </li>
 </ul>
@@ -670,8 +685,8 @@ If None the `env</cite> used to collect the buffer data should be used for evalu
         })()
       </script>
 
-    <script src="../../_static/documentation_options.js?v=d5185309"></script>
-    <script src="../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../_static/documentation_options.js?v=19bc2c4c"></script>
+    <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/furo.js?v=7660844c"></script>
     <script src="../../_static/js/termynal.js?v=ff4c6923"></script>

@@ -10,7 +10,7 @@
     <meta property="og:url" content="https://minari.farama.org/_modules/minari/utils.html" /><meta property="og:image" content="https://minari.farama.org/_static/img/robotics-github.png" /><meta name="twitter:card" content="summary_large_image"><link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" />
         <link rel="canonical" href="https://minari.farama.org/_modules/minari/utils.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>minari.utils - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -219,19 +219,23 @@
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../content/basic_usage/">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../content/dataset_standards/">Dataset Standards</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../content/minari_cli/">Minari CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../content/dataset_standards/">Dataset Standards</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/minari_functions/">Minari</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Minari</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/minari_dataset/minari_dataset/">MinariDataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/minari_dataset/minari_storage/">MinariStorage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/minari_dataset/episode_data/">EpisodeData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/minari_dataset/step_data/">StepData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/namespace/namespace/">Namespace</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/data_collector/">DataCollector</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of DataCollector</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector_callbacks/step_data_callback/">StepDataCallback</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector_callbacks/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector/episode_buffer/">EpisodeBuffer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector/step_data_callback/">StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
 </ul>
 </li>
 </ul>
@@ -245,62 +249,68 @@
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../tutorials/using_datasets/">Using Datasets</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Using Datasets</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../tutorials/using_datasets/behavioral_cloning/">Behavioral cloning with PyTorch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../tutorials/using_datasets/IQL_torchrl/">Implicit Q-Learning with TorchRL</a></li>
 </ul>
 </li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
 <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/minigrid/">MiniGrid</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of MiniGrid</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/D4RL/">D4RL</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of D4RL</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/antmaze/">Ant Maze</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Ant Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/large-diverse-v1/">Large-Diverse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/large-play-v1/">Large-Play</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/medium-diverse-v1/">Medium-Diverse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/medium-play-v1/">Medium-Play</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/umaze-v1/">Umaze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/umaze-diverse-v1/">Umaze-Diverse</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/door/">Door</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Door</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/door/human/">Human</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/door/expert/">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/door/cloned/">Cloned</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/door/">Door</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Door</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/door/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/door/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/door/human-v2/">Human</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/hammer/">Hammer</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Hammer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/hammer/human/">Human</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/hammer/expert/">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/hammer/cloned/">Cloned</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/hammer/">Hammer</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Hammer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/hammer/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/hammer/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/hammer/human-v2/">Human</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/relocate/">Relocate</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Relocate</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/relocate/human/">Human</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/relocate/expert/">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/relocate/cloned/">Cloned</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/complete-v1/">Complete</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/mixed-v1/">Mixed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/partial-v1/">Partial</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/pen/">Pen</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Pen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pen/human/">Human</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pen/expert/">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pen/cloned/">Cloned</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/minigrid/">MiniGrid</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of MiniGrid</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/minigrid/fourrooms-v0/">Fourrooms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/minigrid/fourrooms-random-v0/">Fourrooms-Random</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/pointmaze/">Point Maze</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Point Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/open/">Open</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/umaze/">Umaze</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/medium/">Medium</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/large/">Large</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/open-dense/">Open-Dense</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/umaze-dense/">Umaze-Dense</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/medium-dense/">Medium-Dense</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/large-dense/">Large-Dense</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/pen/">Pen</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Pen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pen/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pen/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pen/human-v2/">Human</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/antmaze/">Ant Maze</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Ant Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/umaze/">Umaze</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/umaze-diverse/">Umaze-Diverse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/medium-diverse/">Medium-Diverse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/medium-play/">Medium-Play</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/large-diverse/">Large-Diverse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/large-play/">Large-Play</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/">Point Maze</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of Point Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/large-v2/">Large</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/large-dense-v2/">Large-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/medium-v2/">Medium</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/medium-dense-v2/">Medium-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/open-v2/">Open</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/open-dense-v2/">Open-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/umaze-v2/">Umaze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/umaze-dense-v2/">Umaze-Dense</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/kitchen/partial/">Partial</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/kitchen/complete/">Complete</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/kitchen/mixed/">Mixed</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/relocate/">Relocate</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of Relocate</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/relocate/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/relocate/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/relocate/human-v2/">Human</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -364,18 +374,16 @@
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">re</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">portion</span> <span class="k">as</span> <span class="nn">P</span>
 <span class="kn">from</span> <span class="nn">gymnasium.core</span> <span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span>
 <span class="kn">from</span> <span class="nn">gymnasium.envs.registration</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
-<span class="kn">from</span> <span class="nn">gymnasium.wrappers.record_episode_statistics</span> <span class="kn">import</span> <span class="n">RecordEpisodeStatistics</span>
-<span class="kn">from</span> <span class="nn">packaging.specifiers</span> <span class="kn">import</span> <span class="n">InvalidSpecifier</span><span class="p">,</span> <span class="n">SpecifierSet</span>
-<span class="kn">from</span> <span class="nn">packaging.version</span> <span class="kn">import</span> <span class="n">Version</span>
+<span class="kn">from</span> <span class="nn">gymnasium.error</span> <span class="kn">import</span> <span class="n">NameNotFound</span>
+<span class="kn">from</span> <span class="nn">gymnasium.wrappers</span> <span class="kn">import</span> <span class="n">RecordEpisodeStatistics</span>  <span class="c1"># type: ignore</span>
 
-<span class="kn">from</span> <span class="nn">minari</span> <span class="kn">import</span> <span class="n">DataCollector</span>
+<span class="kn">from</span> <span class="nn">minari.data_collector.episode_buffer</span> <span class="kn">import</span> <span class="n">EpisodeBuffer</span>
 <span class="kn">from</span> <span class="nn">minari.dataset.minari_dataset</span> <span class="kn">import</span> <span class="n">MinariDataset</span>
 <span class="kn">from</span> <span class="nn">minari.dataset.minari_storage</span> <span class="kn">import</span> <span class="n">MinariStorage</span>
 <span class="kn">from</span> <span class="nn">minari.serialization</span> <span class="kn">import</span> <span class="n">deserialize_space</span>
@@ -384,131 +392,6 @@
 
 <span class="c1"># Use importlib due to circular import when: &quot;from minari import __version__&quot;</span>
 <span class="n">__version__</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">version</span><span class="p">(</span><span class="s2">&quot;minari&quot;</span><span class="p">)</span>
-
-
-<span class="k">def</span> <span class="nf">combine_minari_version_specifiers</span><span class="p">(</span><span class="n">specifier_set</span><span class="p">:</span> <span class="n">SpecifierSet</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SpecifierSet</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculates the Minari version specifier by intersecting a group of Minari version specifiers.</span>
-
-<span class="sd">    Used to calculate the `minari_version` metadata attribute when combining multiple datasets. The function</span>
-<span class="sd">    assumes that all the given version specifiers at least contain the current minari version thus the version</span>
-<span class="sd">    specifier sets will always intersect. Also, it doesn&#39;t take into account any pre-releases since Farama projects</span>
-<span class="sd">    don&#39;t use them for versioning.</span>
-
-<span class="sd">    The supported version specifier operators are those in PEP 440(https://peps.python.org/pep-0440/#version-specifiers),</span>
-<span class="sd">    except for &#39;===&#39;.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        specifier_set (SpecifierSet): set of all version specifiers to intersect</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        version_specifier (SpecifierSet): resulting version specifier</span>
-
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">specifiers</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">specifier_set</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
-
-    <span class="n">exclusion_specifiers</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">spec</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">operator</span> <span class="o">==</span> <span class="s2">&quot;!=&quot;</span><span class="p">,</span> <span class="n">specifiers</span><span class="p">)</span>
-    <span class="n">inclusion_specifiers</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">spec</span><span class="p">:</span> <span class="n">spec</span><span class="o">.</span><span class="n">operator</span> <span class="o">!=</span> <span class="s2">&quot;!=&quot;</span><span class="p">,</span> <span class="n">specifiers</span><span class="p">)</span>
-
-    <span class="n">inclusion_interval</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">closed</span><span class="p">(</span><span class="o">-</span><span class="n">P</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">P</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
-
-    <span class="c1"># Intersect the version intervals compatible with the datasets</span>
-    <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">inclusion_specifiers</span><span class="p">:</span>
-        <span class="n">operator</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">operator</span>
-        <span class="n">version</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">version</span>
-        <span class="k">if</span> <span class="n">operator</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;&gt;&quot;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">operator</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;=&quot;</span><span class="p">:</span>
-                <span class="n">inclusion_interval</span> <span class="o">&amp;=</span> <span class="n">P</span><span class="o">.</span><span class="n">closedopen</span><span class="p">(</span><span class="n">Version</span><span class="p">(</span><span class="n">version</span><span class="p">),</span> <span class="n">P</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">inclusion_interval</span> <span class="o">&amp;=</span> <span class="n">P</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">Version</span><span class="p">(</span><span class="n">version</span><span class="p">),</span> <span class="n">P</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">operator</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;&lt;&quot;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">operator</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;=&quot;</span><span class="p">:</span>
-                <span class="n">inclusion_interval</span> <span class="o">&amp;=</span> <span class="n">P</span><span class="o">.</span><span class="n">openclosed</span><span class="p">(</span><span class="o">-</span><span class="n">P</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">Version</span><span class="p">(</span><span class="n">version</span><span class="p">))</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">inclusion_interval</span> <span class="o">&amp;=</span> <span class="n">P</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="o">-</span><span class="n">P</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">Version</span><span class="p">(</span><span class="n">version</span><span class="p">))</span>
-        <span class="k">elif</span> <span class="n">operator</span> <span class="o">==</span> <span class="s2">&quot;==&quot;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">version</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;*&quot;</span><span class="p">:</span>
-                <span class="n">version</span> <span class="o">=</span> <span class="n">Version</span><span class="p">(</span><span class="n">version</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
-                <span class="n">release</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">version</span><span class="o">.</span><span class="n">release</span><span class="p">)</span>
-                <span class="n">release</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-                <span class="n">release</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-                <span class="n">max_release</span> <span class="o">=</span> <span class="n">Version</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">release</span><span class="p">))</span>
-                <span class="n">inclusion_interval</span> <span class="o">&amp;=</span> <span class="n">P</span><span class="o">.</span><span class="n">closedopen</span><span class="p">(</span><span class="n">version</span><span class="p">,</span> <span class="n">max_release</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">inclusion_interval</span> <span class="o">&amp;=</span> <span class="n">P</span><span class="o">.</span><span class="n">singleton</span><span class="p">(</span><span class="n">Version</span><span class="p">(</span><span class="n">version</span><span class="p">))</span>
-        <span class="k">elif</span> <span class="n">operator</span> <span class="o">==</span> <span class="s2">&quot;~=&quot;</span><span class="p">:</span>
-            <span class="n">release</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">Version</span><span class="p">(</span><span class="n">version</span><span class="p">)</span><span class="o">.</span><span class="n">release</span><span class="p">)</span>
-            <span class="n">release</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="n">release</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="n">max_release</span> <span class="o">=</span> <span class="n">Version</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">release</span><span class="p">))</span>
-            <span class="n">inclusion_interval</span> <span class="o">&amp;=</span> <span class="n">P</span><span class="o">.</span><span class="n">closedopen</span><span class="p">(</span><span class="n">Version</span><span class="p">(</span><span class="n">version</span><span class="p">),</span> <span class="n">max_release</span><span class="p">)</span>
-
-    <span class="c1"># Convert the intersection of version intervals to a version specifier</span>
-    <span class="n">final_version_specifier</span> <span class="o">=</span> <span class="n">SpecifierSet</span><span class="p">()</span>
-
-    <span class="k">if</span> <span class="n">inclusion_interval</span><span class="o">.</span><span class="n">lower</span> <span class="o">==</span> <span class="n">inclusion_interval</span><span class="o">.</span><span class="n">upper</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="n">inclusion_interval</span><span class="o">.</span><span class="n">lower</span> <span class="o">==</span> <span class="n">Version</span><span class="p">(</span>
-            <span class="n">__version__</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;The local installed version of Minari, </span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2">, must comply with the equality version specifier: ==</span><span class="si">{</span><span class="n">inclusion_interval</span><span class="o">.</span><span class="n">lower</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="n">final_version_specifier</span> <span class="o">&amp;=</span> <span class="sa">f</span><span class="s2">&quot;==</span><span class="si">{</span><span class="n">inclusion_interval</span><span class="o">.</span><span class="n">lower</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="c1"># There is just one compatible version of Minari</span>
-        <span class="k">return</span> <span class="n">final_version_specifier</span>
-
-    <span class="k">if</span> <span class="n">inclusion_interval</span><span class="o">.</span><span class="n">lower</span> <span class="o">!=</span> <span class="o">-</span><span class="n">P</span><span class="o">.</span><span class="n">inf</span> <span class="ow">and</span> <span class="n">inclusion_interval</span><span class="o">.</span><span class="n">upper</span> <span class="o">!=</span> <span class="n">P</span><span class="o">.</span><span class="n">inf</span><span class="p">:</span>
-        <span class="n">lower_version</span> <span class="o">=</span> <span class="n">Version</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">inclusion_interval</span><span class="o">.</span><span class="n">lower</span><span class="p">))</span>
-        <span class="n">next_release</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">lower_version</span><span class="o">.</span><span class="n">release</span><span class="p">)</span>
-        <span class="n">next_release</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">next_release</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="n">next_release</span> <span class="o">=</span> <span class="n">Version</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">next_release</span><span class="p">))</span>
-        <span class="n">upper_version</span> <span class="o">=</span> <span class="n">Version</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">inclusion_interval</span><span class="o">.</span><span class="n">upper</span><span class="p">))</span>
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="n">inclusion_interval</span><span class="o">.</span><span class="n">left</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">CLOSED</span>
-            <span class="ow">and</span> <span class="n">inclusion_interval</span><span class="o">.</span><span class="n">left</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">CLOSED</span>
-            <span class="ow">and</span> <span class="n">upper_version</span> <span class="o">==</span> <span class="n">next_release</span>
-        <span class="p">):</span>
-            <span class="n">final_version_specifier</span> <span class="o">&amp;=</span> <span class="sa">f</span><span class="s2">&quot;~=</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">lower_version</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">inclusion_interval</span><span class="o">.</span><span class="n">left</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">CLOSED</span><span class="p">:</span>
-                <span class="n">operator</span> <span class="o">=</span> <span class="s2">&quot;&gt;=&quot;</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">operator</span> <span class="o">=</span> <span class="s2">&quot;&gt;&quot;</span>
-            <span class="n">final_version_specifier</span> <span class="o">&amp;=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">operator</span><span class="si">}{</span><span class="nb">str</span><span class="p">(</span><span class="n">inclusion_interval</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-
-            <span class="k">if</span> <span class="n">inclusion_interval</span><span class="o">.</span><span class="n">right</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">CLOSED</span><span class="p">:</span>
-                <span class="n">operator</span> <span class="o">=</span> <span class="s2">&quot;&lt;=&quot;</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">operator</span> <span class="o">=</span> <span class="s2">&quot;&lt;&quot;</span>
-            <span class="n">final_version_specifier</span> <span class="o">&amp;=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">operator</span><span class="si">}{</span><span class="nb">str</span><span class="p">(</span><span class="n">inclusion_interval</span><span class="o">.</span><span class="n">upper</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">inclusion_interval</span><span class="o">.</span><span class="n">lower</span> <span class="o">!=</span> <span class="o">-</span><span class="n">P</span><span class="o">.</span><span class="n">inf</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">inclusion_interval</span><span class="o">.</span><span class="n">left</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">CLOSED</span><span class="p">:</span>
-                <span class="n">operator</span> <span class="o">=</span> <span class="s2">&quot;&gt;=&quot;</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">operator</span> <span class="o">=</span> <span class="s2">&quot;&gt;&quot;</span>
-            <span class="n">final_version_specifier</span> <span class="o">&amp;=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">operator</span><span class="si">}{</span><span class="nb">str</span><span class="p">(</span><span class="n">inclusion_interval</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">if</span> <span class="n">inclusion_interval</span><span class="o">.</span><span class="n">upper</span> <span class="o">!=</span> <span class="n">P</span><span class="o">.</span><span class="n">inf</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">inclusion_interval</span><span class="o">.</span><span class="n">right</span> <span class="o">==</span> <span class="n">P</span><span class="o">.</span><span class="n">CLOSED</span><span class="p">:</span>
-                <span class="n">operator</span> <span class="o">=</span> <span class="s2">&quot;&lt;=&quot;</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">operator</span> <span class="o">=</span> <span class="s2">&quot;&lt;&quot;</span>
-            <span class="n">final_version_specifier</span> <span class="o">&amp;=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">operator</span><span class="si">}{</span><span class="nb">str</span><span class="p">(</span><span class="n">inclusion_interval</span><span class="o">.</span><span class="n">upper</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
-
-    <span class="c1"># If the versions to be excluded fall inside the previous calculated version specifier</span>
-    <span class="c1"># add them to the specifier as `!=`</span>
-    <span class="k">for</span> <span class="n">spec</span> <span class="ow">in</span> <span class="n">exclusion_specifiers</span><span class="p">:</span>
-        <span class="n">version</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">version</span>
-        <span class="k">if</span> <span class="n">version</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;*&quot;</span><span class="p">:</span>
-            <span class="n">version</span> <span class="o">=</span> <span class="n">Version</span><span class="p">(</span><span class="n">version</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
-            <span class="n">release</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">version</span><span class="o">.</span><span class="n">release</span><span class="p">)</span>
-            <span class="n">release</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-            <span class="n">release</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="n">max_release</span> <span class="o">=</span> <span class="n">Version</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">release</span><span class="p">))</span>
-            <span class="n">exclusion_interval</span> <span class="o">=</span> <span class="n">P</span><span class="o">.</span><span class="n">closedopen</span><span class="p">(</span><span class="n">version</span><span class="p">,</span> <span class="n">max_release</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">inclusion_interval</span><span class="o">.</span><span class="n">overlaps</span><span class="p">(</span><span class="n">exclusion_interval</span><span class="p">):</span>
-                <span class="n">final_version_specifier</span> <span class="o">&amp;=</span> <span class="nb">str</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">version</span> <span class="ow">in</span> <span class="n">final_version_specifier</span><span class="p">:</span>
-            <span class="n">final_version_specifier</span> <span class="o">&amp;=</span> <span class="nb">str</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">final_version_specifier</span>
 
 
 <span class="k">def</span> <span class="nf">validate_datasets_to_combine</span><span class="p">(</span>
@@ -529,7 +412,14 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># get first among the dataset&#39;s env_spec which is not None</span>
-    <span class="n">first_not_none_env_spec</span> <span class="o">=</span> <span class="nb">next</span><span class="p">((</span><span class="n">dataset</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">env_spec</span> <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">datasets_to_combine</span> <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">env_spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">first_not_none_env_spec</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span>
+        <span class="p">(</span>
+            <span class="n">dataset</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">env_spec</span>
+            <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">datasets_to_combine</span>
+            <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">env_spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">),</span>
+        <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span>
 
     <span class="c1"># early return where all datasets have no env_spec</span>
     <span class="k">if</span> <span class="n">first_not_none_env_spec</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -559,7 +449,9 @@
                     <span class="s2">&quot;The datasets to be combined have different values for `env_spec` attribute.&quot;</span>
                 <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot combine datasets having env_spec with those having no env_spec.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Cannot combine datasets having env_spec with those having no env_spec.&quot;</span>
+            <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">common_env_spec</span>
 
@@ -594,21 +486,14 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">combined_dataset_env_spec</span> <span class="o">=</span> <span class="n">validate_datasets_to_combine</span><span class="p">(</span><span class="n">datasets_to_combine</span><span class="p">)</span>
 
-    <span class="c1"># Compute intersection of Minari version specifiers</span>
-    <span class="n">datasets_minari_version_specifiers</span> <span class="o">=</span> <span class="n">SpecifierSet</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">datasets_to_combine</span><span class="p">:</span>
-        <span class="n">datasets_minari_version_specifiers</span> <span class="o">&amp;=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">minari_version</span>
-
-    <span class="n">minari_version_specifier</span> <span class="o">=</span> <span class="n">combine_minari_version_specifiers</span><span class="p">(</span>
-        <span class="n">datasets_minari_version_specifiers</span>
-    <span class="p">)</span>
-
     <span class="n">new_dataset_path</span> <span class="o">=</span> <span class="n">get_dataset_path</span><span class="p">(</span><span class="n">new_dataset_id</span><span class="p">)</span>
     <span class="n">new_dataset_path</span><span class="o">.</span><span class="n">mkdir</span><span class="p">()</span>
     <span class="n">new_storage</span> <span class="o">=</span> <span class="n">MinariStorage</span><span class="o">.</span><span class="n">new</span><span class="p">(</span>
-        <span class="n">new_dataset_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">),</span> <span class="n">env_spec</span><span class="o">=</span><span class="n">combined_dataset_env_spec</span><span class="p">,</span>
+        <span class="n">new_dataset_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">),</span>
+        <span class="n">env_spec</span><span class="o">=</span><span class="n">combined_dataset_env_spec</span><span class="p">,</span>
         <span class="n">observation_space</span><span class="o">=</span><span class="n">datasets_to_combine</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span>
-        <span class="n">action_space</span><span class="o">=</span><span class="n">datasets_to_combine</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">action_space</span>
+        <span class="n">action_space</span><span class="o">=</span><span class="n">datasets_to_combine</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span>
+        <span class="n">data_format</span><span class="o">=</span><span class="n">datasets_to_combine</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">FORMAT</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="n">new_storage</span><span class="o">.</span><span class="n">update_metadata</span><span class="p">(</span>
@@ -617,7 +502,7 @@
             <span class="s2">&quot;combined_datasets&quot;</span><span class="p">:</span> <span class="p">[</span>
                 <span class="n">dataset</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">dataset_id</span> <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">datasets_to_combine</span>
             <span class="p">],</span>
-            <span class="s2">&quot;minari_version&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">minari_version_specifier</span><span class="p">),</span>
+            <span class="s2">&quot;minari_version&quot;</span><span class="p">:</span> <span class="n">__version__</span><span class="p">,</span>
         <span class="p">}</span>
     <span class="p">)</span>
 
@@ -669,14 +554,15 @@
     <span class="n">policy</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">ObsType</span><span class="p">],</span> <span class="n">ActType</span><span class="p">],</span>
     <span class="n">num_episodes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-
     <span class="n">env</span> <span class="o">=</span> <span class="n">RecordEpisodeStatistics</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">num_episodes</span><span class="p">)</span>
     <span class="n">episode_returns</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_episodes</span><span class="p">):</span>
         <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
             <span class="n">action</span> <span class="o">=</span> <span class="n">policy</span><span class="p">(</span><span class="n">obs</span><span class="p">)</span>
-            <span class="n">obs</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>  <span class="c1"># pyright: ignore[reportGeneralTypeIssues]</span>
+            <span class="n">obs</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span>
+                <span class="n">action</span>  <span class="c1"># pyright: ignore[reportGeneralTypeIssues]</span>
+            <span class="p">)</span>
             <span class="k">if</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span><span class="p">:</span>
                 <span class="n">episode_returns</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info</span><span class="p">[</span><span class="s2">&quot;episode&quot;</span><span class="p">][</span><span class="s2">&quot;r&quot;</span><span class="p">])</span>
                 <span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
@@ -705,14 +591,15 @@
     <span class="n">env_spec</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">EnvSpec</span><span class="p">],</span>
     <span class="n">eval_env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span> <span class="o">|</span> <span class="n">EnvSpec</span><span class="p">],</span>
     <span class="n">algorithm_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-    <span class="n">author</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-    <span class="n">author_email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">author</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
+    <span class="n">author_email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]],</span>
     <span class="n">code_permalink</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
     <span class="n">ref_min_score</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
     <span class="n">ref_max_score</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
     <span class="n">expert_policy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">ObsType</span><span class="p">],</span> <span class="n">ActType</span><span class="p">]],</span>
     <span class="n">num_episodes_average_score</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
-    <span class="n">minari_version</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">requirements</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the metadata dictionary of the dataset.&quot;&quot;&quot;</span>
     <span class="n">dataset_metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
@@ -733,7 +620,7 @@
             <span class="ne">UserWarning</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">dataset_metadata</span><span class="p">[</span><span class="s2">&quot;author&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">author</span>
+        <span class="n">dataset_metadata</span><span class="p">[</span><span class="s2">&quot;author&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="n">author</span><span class="p">}</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">author</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">author</span>
 
     <span class="k">if</span> <span class="n">author_email</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
@@ -741,7 +628,9 @@
             <span class="ne">UserWarning</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">dataset_metadata</span><span class="p">[</span><span class="s2">&quot;author_email&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">author_email</span>
+        <span class="n">dataset_metadata</span><span class="p">[</span><span class="s2">&quot;author_email&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">{</span><span class="n">author_email</span><span class="p">}</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">author_email</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">author_email</span>
+        <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">algorithm_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
@@ -751,24 +640,15 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">dataset_metadata</span><span class="p">[</span><span class="s2">&quot;algorithm_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">algorithm_name</span>
 
-    <span class="k">if</span> <span class="n">minari_version</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">version</span> <span class="o">=</span> <span class="n">Version</span><span class="p">(</span><span class="n">__version__</span><span class="p">)</span>
-        <span class="n">release</span> <span class="o">=</span> <span class="n">version</span><span class="o">.</span><span class="n">release</span>
-        <span class="c1"># For __version__ = X.Y.Z, by default compatibility with version X.Y or later, but not (X+1).0 or later.</span>
-        <span class="n">minari_version</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;~=</span><span class="si">{</span><span class="s1">&#39;.&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">release</span><span class="p">[:</span><span class="mi">2</span><span class="p">])</span><span class="si">}</span><span class="s2">&quot;</span>
+    <span class="k">if</span> <span class="n">description</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;`minari_version` is set to None. The compatible dataset version specifier for Minari will be set to </span><span class="si">{</span><span class="n">minari_version</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;`description` is set to None. For longevity purposes it is highly recommended to provide a description of the dataset&quot;</span><span class="p">,</span>
             <span class="ne">UserWarning</span><span class="p">,</span>
         <span class="p">)</span>
-    <span class="c1"># Check if the installed Minari version falls inside the minari_version specifier</span>
-    <span class="k">try</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="n">Version</span><span class="p">(</span><span class="n">__version__</span><span class="p">)</span> <span class="ow">in</span> <span class="n">SpecifierSet</span><span class="p">(</span>
-            <span class="n">minari_version</span>
-        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;The installed Minari version </span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2"> is not contained in the dataset version specifier </span><span class="si">{</span><span class="n">minari_version</span><span class="si">}</span><span class="s2">.&quot;</span>
-    <span class="k">except</span> <span class="n">InvalidSpecifier</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">minari_version</span><span class="si">}</span><span class="s2"> is not a version specifier.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dataset_metadata</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">description</span>
 
-    <span class="n">dataset_metadata</span><span class="p">[</span><span class="s2">&quot;minari_version&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">minari_version</span>
+    <span class="n">dataset_metadata</span><span class="p">[</span><span class="s2">&quot;minari_version&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">__version__</span>
 
     <span class="k">if</span> <span class="n">expert_policy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">ref_max_score</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
@@ -777,8 +657,8 @@
 
     <span class="k">if</span> <span class="n">eval_env</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;`eval_env` is set to None. If another environment is intended to be used for evaluation please specify corresponding Gymnasium environment (gym.Env | gym.envs.registration.EnvSpec).</span><span class="se">\</span>
-<span class="s2">              If None the environment used to collect the data (`env=</span><span class="si">{</span><span class="n">env_spec</span><span class="si">}</span><span class="s2">`) will be used for this purpose.&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;`eval_env` is set to None. If another environment is intended to be used for evaluation please specify corresponding Gymnasium environment (gym.Env | gym.envs.registration.EnvSpec). &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;If None the environment used to collect the data (`env=</span><span class="si">{</span><span class="n">env_spec</span><span class="si">}</span><span class="s2">`) will be used for this purpose.&quot;</span><span class="p">,</span>
             <span class="ne">UserWarning</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">eval_env_spec</span> <span class="o">=</span> <span class="n">env_spec</span>
@@ -802,7 +682,9 @@
             <span class="ne">UserWarning</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">eval_env_spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">expert_policy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">ref_max_score</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">eval_env_spec</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span>
+        <span class="n">expert_policy</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">ref_max_score</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+    <span class="p">):</span>
         <span class="n">env_ref_score</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="n">eval_env_spec</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">ref_min_score</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">ref_min_score</span> <span class="o">=</span> <span class="n">get_average_reference_score</span><span class="p">(</span>
@@ -817,6 +699,8 @@
         <span class="n">dataset_metadata</span><span class="p">[</span><span class="s2">&quot;ref_min_score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ref_min_score</span>
         <span class="n">dataset_metadata</span><span class="p">[</span><span class="s2">&quot;num_episodes_average_score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">num_episodes_average_score</span>
 
+    <span class="k">if</span> <span class="n">requirements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dataset_metadata</span><span class="p">[</span><span class="s2">&quot;requirements&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">requirements</span>
     <span class="k">return</span> <span class="n">dataset_metadata</span>
 
 
@@ -824,56 +708,51 @@
 <a class="viewcode-back" href="../../../api/minari_functions/#minari.create_dataset_from_buffers">[docs]</a>
 <span class="k">def</span> <span class="nf">create_dataset_from_buffers</span><span class="p">(</span>
     <span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">buffer</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">list</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]]],</span>
+    <span class="n">buffer</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">EpisodeBuffer</span><span class="p">],</span>
     <span class="n">env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span> <span class="o">|</span> <span class="n">EnvSpec</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">eval_env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span> <span class="o">|</span> <span class="n">EnvSpec</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">algorithm_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">author</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">author_email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">author</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">author_email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">code_permalink</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">minari_version</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">action_space</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Space</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">observation_space</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">gym</span><span class="o">.</span><span class="n">spaces</span><span class="o">.</span><span class="n">Space</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">ref_min_score</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">ref_max_score</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">expert_policy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">ObsType</span><span class="p">],</span> <span class="n">ActType</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">num_episodes_average_score</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">data_format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">requirements</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create Minari dataset from a list of episode dictionary buffers.</span>
 
 <span class="sd">    The ``dataset_id`` parameter corresponds to the name of the dataset, with the syntax as follows:</span>
-<span class="sd">    ``(env_name-)(dataset_name)(-v(version))`` where ``env_name`` identifies the name of the environment used to generate the dataset ``dataset_name``.</span>
+<span class="sd">    ``(namespace/)(env_name/)dataset_name(-v[version])`` where ``env_name`` identifies, if present, the name of the environment used to generate the dataset ``dataset_name`` and ``namespace`` optionally groups datasets together.</span>
 <span class="sd">    This ``dataset_id`` is used to load the Minari datasets with :meth:`minari.load_dataset`.</span>
-
-<span class="sd">    Each episode dictionary buffer must have the following items:</span>
-<span class="sd">        * `observations`: np.ndarray of step observations. shape = (total_episode_steps + 1, (observation_shape)). Should include initial and final observation</span>
-<span class="sd">        * `actions`: np.ndarray of step action. shape = (total_episode_steps, (action_shape)).</span>
-<span class="sd">        * `rewards`: np.ndarray of step rewards. shape = (total_episode_steps, 1).</span>
-<span class="sd">        * `terminations`: np.ndarray of step terminations. shape = (total_episode_steps, 1).</span>
-<span class="sd">        * `truncations`: np.ndarray of step truncations. shape = (total_episode_steps, 1).</span>
-
-<span class="sd">    Other additional items can be added as long as the values are np.ndarray&#39;s or other nested dictionaries.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        dataset_id (str): name id to identify Minari dataset.</span>
-<span class="sd">        buffer (list[Dict[str, Union[list, Dict]]]): list of episode dictionaries with data.</span>
-<span class="sd">        env (Optional[str|gym.Env|EnvSpec]): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) used to collect the buffer data. Defaults to None.</span>
-<span class="sd">        eval_env (Optional[str|gym.Env|EnvSpec]): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) to use for evaluation with the dataset. After loading the dataset, the environment can be recovered as follows: `MinariDataset.recover_environment(eval_env=True).</span>
+<span class="sd">        buffer (list[EpisodeBuffer]): list of episode buffer with data.</span>
+<span class="sd">        env (str | gym.Env | EnvSpec, optional): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) used to collect the buffer data. Defaults to None.</span>
+<span class="sd">        eval_env (str | gym.Env | EnvSpec, optional): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) to use for evaluation with the dataset. After loading the dataset, the environment can be recovered as follows: `MinariDataset.recover_environment(eval_env=True).</span>
 <span class="sd">                                                If None, and if the `env` used to collect the buffer data is available, latter will be used for evaluation.</span>
-<span class="sd">        algorithm_name (Optional[str], optional): name of the algorithm used to collect the data. Defaults to None.</span>
-<span class="sd">        author (Optional[str], optional): author that generated the dataset. Defaults to None.</span>
-<span class="sd">        author_email (Optional[str], optional): email of the author that generated the dataset. Defaults to None.</span>
-<span class="sd">        code_permalink (Optional[str], optional): link to relevant code used to generate the dataset. Defaults to None.</span>
-<span class="sd">        ref_min_score (Optional[float], optional): minimum reference score from the average returns of a random policy. This value is later used to normalize a score with :meth:`minari.get_normalized_score`. If default None the value will be estimated with a default random policy.</span>
+<span class="sd">        algorithm_name (str, optional): name of the algorithm used to collect the data. Defaults to None.</span>
+<span class="sd">        author (str | set, optional): name of the author(s) that generated the dataset. Defaults to None.</span>
+<span class="sd">        author_email (str | set, optional): email(s) of the author(s) that generated the dataset. Defaults to None.</span>
+<span class="sd">        code_permalink (str, optional): link to relevant code used to generate the dataset. Defaults to None.</span>
+<span class="sd">        ref_min_score (float, optional): minimum reference score from the average returns of a random policy. This value is later used to normalize a score with :meth:`minari.get_normalized_score`. If default None the value will be estimated with a default random policy.</span>
 <span class="sd">                                                    Also note that this attribute will be added to the Minari dataset only if `ref_max_score` or `expert_policy` are assigned a valid value other than None.</span>
-<span class="sd">        ref_max_score (Optional[float], optional: maximum reference score from the average returns of a hypothetical expert policy. This value is used in `MinariDataset.get_normalized_score()`. Default None.</span>
-<span class="sd">        expert_policy (Optional[Callable[[ObsType], ActType], optional): policy to compute `ref_max_score` by averaging the returns over a number of episodes equal to  `num_episodes_average_score`.</span>
+<span class="sd">        ref_max_score (float, optional): maximum reference score from the average returns of a hypothetical expert policy. This value is used in `MinariDataset.get_normalized_score()`. Default None.</span>
+<span class="sd">        expert_policy (Callable[[ObsType], ActType], optional): policy to compute `ref_max_score` by averaging the returns over a number of episodes equal to  `num_episodes_average_score`.</span>
 <span class="sd">                                                                        `ref_max_score` and `expert_policy` can&#39;t be passed at the same time. Default to None</span>
 <span class="sd">        num_episodes_average_score (int): number of episodes to average over the returns to compute `ref_min_score` and `ref_max_score`. Default to 100.</span>
 <span class="sd">                observation_space:</span>
-<span class="sd">        action_space (Optional[gym.spaces.Space]): action space of the environment. If None (default) use the environment action space.</span>
-<span class="sd">        observation_space (Optional[gym.spaces.Space]): observation space of the environment. If None (default) use the environment observation space.</span>
-<span class="sd">        minari_version (Optional[str], optional): Minari version specifier compatible with the dataset. If None (default) use the installed Minari version.</span>
+<span class="sd">        action_space (gym.spaces.Space, optional): action space of the environment. If None (default) use the environment action space.</span>
+<span class="sd">        observation_space (gym.spaces.Space, optional): observation space of the environment. If None (default) use the environment observation space.</span>
+<span class="sd">        description (str, optional): description of the dataset being created. Defaults to None.</span>
+<span class="sd">        data_format (str, optional): Data format to store the data in the Minari dataset. If None (defaults), it will use the default format of MinariStorage.</span>
+<span class="sd">        requirements (list of str, optional): list of requirements in pip-style to load the environment and reproduce the dataset. For example, `mujoco&gt;=3.1.0,&lt;3.2.0`, which indicate the supported version range for mujoco package. Defaults to None.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        MinariDataset</span>
@@ -888,7 +767,9 @@
         <span class="n">env_spec</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span>
     <span class="k">elif</span> <span class="n">env</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">observation_space</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">action_space</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Both observation space and action space must be provided, if env is None&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Both observation space and action space must be provided, if env is None&quot;</span>
+            <span class="p">)</span>
         <span class="n">env_spec</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The `env` argument must be of types str|EnvSpec|gym.Env|None&quot;</span><span class="p">)</span>
@@ -914,82 +795,25 @@
         <span class="n">ref_max_score</span><span class="p">,</span>
         <span class="n">expert_policy</span><span class="p">,</span>
         <span class="n">num_episodes_average_score</span><span class="p">,</span>
-        <span class="n">minari_version</span><span class="p">,</span>
+        <span class="n">description</span><span class="p">,</span>
+        <span class="n">requirements</span><span class="p">,</span>
     <span class="p">)</span>
 
+    <span class="n">data_format_kwarg</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;data_format&quot;</span><span class="p">:</span> <span class="n">data_format</span><span class="p">}</span> <span class="k">if</span> <span class="n">data_format</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="p">{}</span>
     <span class="n">storage</span> <span class="o">=</span> <span class="n">MinariStorage</span><span class="o">.</span><span class="n">new</span><span class="p">(</span>
         <span class="n">dataset_path</span><span class="p">,</span>
         <span class="n">observation_space</span><span class="o">=</span><span class="n">observation_space</span><span class="p">,</span>
         <span class="n">action_space</span><span class="o">=</span><span class="n">action_space</span><span class="p">,</span>
         <span class="n">env_spec</span><span class="o">=</span><span class="n">env_spec</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">data_format_kwarg</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="c1"># adding `update_metadata` before hand too, as for small envs, the absence of metadata is causing a difference of some 10ths of MBs leading to errors in unit tests.</span>
     <span class="n">storage</span><span class="o">.</span><span class="n">update_metadata</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
     <span class="n">storage</span><span class="o">.</span><span class="n">update_episodes</span><span class="p">(</span><span class="n">buffer</span><span class="p">)</span>
-
-    <span class="n">metadata</span><span class="p">[</span><span class="s1">&#39;dataset_size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">storage</span><span class="o">.</span><span class="n">get_size</span><span class="p">()</span>
-    <span class="n">storage</span><span class="o">.</span><span class="n">update_metadata</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
+    <span class="n">storage</span><span class="o">.</span><span class="n">update_metadata</span><span class="p">({</span><span class="s2">&quot;dataset_size&quot;</span><span class="p">:</span> <span class="n">storage</span><span class="o">.</span><span class="n">get_size</span><span class="p">()})</span>
 
     <span class="k">return</span> <span class="n">MinariDataset</span><span class="p">(</span><span class="n">storage</span><span class="p">)</span></div>
 
-
-
-<span class="k">def</span> <span class="nf">create_dataset_from_collector_env</span><span class="p">(</span>
-    <span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-    <span class="n">collector_env</span><span class="p">:</span> <span class="n">DataCollector</span><span class="p">,</span>
-    <span class="n">eval_env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span> <span class="o">|</span> <span class="n">EnvSpec</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">algorithm_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">author</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">author_email</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">code_permalink</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">ref_min_score</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">ref_max_score</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">expert_policy</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="n">ObsType</span><span class="p">],</span> <span class="n">ActType</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">num_episodes_average_score</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
-    <span class="n">minari_version</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a Minari dataset using the data collected from stepping with a Gymnasium environment wrapped with a `DataCollector` Minari wrapper.</span>
-
-<span class="sd">    The ``dataset_id`` parameter corresponds to the name of the dataset, with the syntax as follows:</span>
-<span class="sd">    ``(env_name-)(dataset_name)(-v(version))`` where ``env_name`` identifies the name of the environment used to generate the dataset ``dataset_name``.</span>
-<span class="sd">    This ``dataset_id`` is used to load the Minari datasets with :meth:`minari.load_dataset`.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        dataset_id (str): name id to identify Minari dataset</span>
-<span class="sd">        collector_env (DataCollector): Gymnasium environment used to collect the buffer data</span>
-<span class="sd">        buffer (list[Dict[str, Union[list, Dict]]]): list of episode dictionaries with data</span>
-<span class="sd">        eval_env (Optional[str|gym.Env|EnvSpec]): Gymnasium environment(gym.Env)/environment id(str)/environment spec(EnvSpec) to use for evaluation with the dataset. After loading the dataset, the environment can be recovered as follows: `MinariDataset.recover_environment(eval_env=True).</span>
-<span class="sd">                                                If None the `env` used to collect the buffer data should be used for evaluation.</span>
-<span class="sd">        algorithm_name (Optional[str], optional): name of the algorithm used to collect the data. Defaults to None.</span>
-<span class="sd">        author (Optional[str], optional): author that generated the dataset. Defaults to None.</span>
-<span class="sd">        author_email (Optional[str], optional): email of the author that generated the dataset. Defaults to None.</span>
-<span class="sd">        code_permalink (Optional[str], optional): link to relevant code used to generate the dataset. Defaults to None.</span>
-<span class="sd">        ref_min_score( Optional[float], optional): minimum reference score from the average returns of a random policy. This value is later used to normalize a score with :meth:`minari.get_normalized_score`. If default None the value will be estimated with a default random policy.</span>
-<span class="sd">        ref_max_score (Optional[float], optional: maximum reference score from the average returns of a hypothetical expert policy. This value is used in :meth:`minari.get_normalized_score`. Default None.</span>
-<span class="sd">        expert_policy (Optional[Callable[[ObsType], ActType], optional): policy to compute `ref_max_score` by averaging the returns over a number of episodes equal to  `num_episodes_average_score`.</span>
-<span class="sd">                                                                        `ref_max_score` and `expert_policy` can&#39;t be passed at the same time. Default to None</span>
-<span class="sd">        num_episodes_average_score (int): number of episodes to average over the returns to compute `ref_min_score` and `ref_max_score`. Default to 100.</span>
-<span class="sd">        minari_version (Optional[str], optional): Minari version specifier compatible with the dataset. If None (default) use the installed Minari version.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        MinariDataset</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;This function is deprecated and will be removed in v0.5.0. Please use DataCollector.create_dataset() instead.&quot;</span><span class="p">,</span> <span class="ne">DeprecationWarning</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
-    <span class="n">dataset</span> <span class="o">=</span> <span class="n">collector_env</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span>
-        <span class="n">dataset_id</span><span class="o">=</span><span class="n">dataset_id</span><span class="p">,</span>
-        <span class="n">eval_env</span><span class="o">=</span><span class="n">eval_env</span><span class="p">,</span>
-        <span class="n">algorithm_name</span><span class="o">=</span><span class="n">algorithm_name</span><span class="p">,</span>
-        <span class="n">author</span><span class="o">=</span><span class="n">author</span><span class="p">,</span>
-        <span class="n">author_email</span><span class="o">=</span><span class="n">author_email</span><span class="p">,</span>
-        <span class="n">code_permalink</span><span class="o">=</span><span class="n">code_permalink</span><span class="p">,</span>
-        <span class="n">ref_min_score</span><span class="o">=</span><span class="n">ref_min_score</span><span class="p">,</span>
-        <span class="n">ref_max_score</span><span class="o">=</span><span class="n">ref_max_score</span><span class="p">,</span>
-        <span class="n">expert_policy</span><span class="o">=</span><span class="n">expert_policy</span><span class="p">,</span>
-        <span class="n">num_episodes_average_score</span><span class="o">=</span><span class="n">num_episodes_average_score</span><span class="p">,</span>
-        <span class="n">minari_version</span><span class="o">=</span><span class="n">minari_version</span><span class="p">,</span>
-    <span class="p">)</span>
-    <span class="k">return</span> <span class="n">dataset</span>
 
 
 <div class="viewcode-block" id="get_normalized_score">
@@ -1029,68 +853,83 @@
 
 <span class="k">def</span> <span class="nf">get_env_spec_dict</span><span class="p">(</span><span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create dict of the environment specs, including observation and action space.&quot;&quot;&quot;</span>
-    <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="n">env_spec</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="n">env_spec</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+        <span class="n">action_space_table</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">observation_space_table</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">NameNotFound</span><span class="p">:</span>
+        <span class="n">action_space_table</span><span class="p">,</span> <span class="n">observation_space_table</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
 
-    <span class="n">action_space_table</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-    <span class="n">observation_space_table</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">md_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;ID&quot;</span><span class="p">:</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">id</span><span class="p">}</span>
+    <span class="k">if</span> <span class="n">observation_space_table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">md_dict</span><span class="p">[</span><span class="s2">&quot;Observation Space&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39; +&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">observation_space_table</span><span class="p">)</span><span class="si">}</span><span class="s2">`&quot;</span>
+    <span class="k">if</span> <span class="n">action_space_table</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">md_dict</span><span class="p">[</span><span class="s2">&quot;Action Space&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39; +&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">action_space_table</span><span class="p">)</span><span class="si">}</span><span class="s2">`&quot;</span>
 
-    <span class="n">md_dict</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;ID&quot;</span><span class="p">:</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
-        <span class="s2">&quot;Observation Space&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39; +&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">observation_space_table</span><span class="p">)</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Action Space&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="s1">&#39; +&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39; &#39;</span><span class="p">,</span><span class="w"> </span><span class="n">action_space_table</span><span class="p">)</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;entry_point&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">env_spec</span><span class="o">.</span><span class="n">entry_point</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;max_episode_steps&quot;</span><span class="p">:</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">max_episode_steps</span><span class="p">,</span>
-        <span class="s2">&quot;reward_threshold&quot;</span><span class="p">:</span> <span class="n">env_spec</span><span class="o">.</span><span class="n">reward_threshold</span><span class="p">,</span>
-        <span class="s2">&quot;nondeterministic&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">env_spec</span><span class="o">.</span><span class="n">nondeterministic</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;order_enforce&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">env_spec</span><span class="o">.</span><span class="n">order_enforce</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;autoreset&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">env_spec</span><span class="o">.</span><span class="n">autoreset</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;disable_env_checker&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">env_spec</span><span class="o">.</span><span class="n">disable_env_checker</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;kwargs&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">env_spec</span><span class="o">.</span><span class="n">kwargs</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;additional_wrappers&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">env_spec</span><span class="o">.</span><span class="n">additional_wrappers</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;vector_entry_point&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">env_spec</span><span class="o">.</span><span class="n">vector_entry_point</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
-    <span class="p">}</span>
+    <span class="n">md_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;entry_point&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">env_spec</span><span class="o">.</span><span class="n">entry_point</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;max_episode_steps&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">env_spec</span><span class="o">.</span><span class="n">max_episode_steps</span><span class="p">),</span>
+            <span class="s2">&quot;reward_threshold&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">env_spec</span><span class="o">.</span><span class="n">reward_threshold</span><span class="p">),</span>
+            <span class="s2">&quot;nondeterministic&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">env_spec</span><span class="o">.</span><span class="n">nondeterministic</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;order_enforce&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">env_spec</span><span class="o">.</span><span class="n">order_enforce</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;disable_env_checker&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">env_spec</span><span class="o">.</span><span class="n">disable_env_checker</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;kwargs&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">env_spec</span><span class="o">.</span><span class="n">kwargs</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;additional_wrappers&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">env_spec</span><span class="o">.</span><span class="n">additional_wrappers</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;vector_entry_point&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">env_spec</span><span class="o">.</span><span class="n">vector_entry_point</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
 
     <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">md_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 
 
-<span class="k">def</span> <span class="nf">get_dataset_spec_dict</span><span class="p">(</span>
-        <span class="n">dataset_spec</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
-        <span class="n">print_version</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="k">def</span> <span class="nf">get_dataset_spec_dict</span><span class="p">(</span><span class="n">dataset_spec</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create dict of the dataset specs, including observation and action space.&quot;&quot;&quot;</span>
     <span class="n">code_link</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="p">[</span><span class="s2">&quot;code_permalink&quot;</span><span class="p">]</span>
-    <span class="n">action_space</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="p">[</span><span class="s2">&quot;action_space&quot;</span><span class="p">]</span>
-    <span class="n">obs_space</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="p">[</span><span class="s2">&quot;observation_space&quot;</span><span class="p">]</span>
-
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action_space</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs_space</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
-
-    <span class="n">dataset_action_space</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">deserialize_space</span><span class="p">(</span><span class="n">action_space</span><span class="p">)</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-    <span class="p">)</span>
-    <span class="n">dataset_observation_space</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">deserialize_space</span><span class="p">(</span><span class="n">obs_space</span><span class="p">)</span>
-        <span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
-        <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
-    <span class="p">)</span>
-
-    <span class="n">version</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">dataset_spec</span><span class="p">[</span><span class="s1">&#39;minari_version&#39;</span><span class="p">])</span>
-
-    <span class="k">if</span> <span class="n">print_version</span><span class="p">:</span>
-        <span class="n">version</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; (</span><span class="si">{</span><span class="n">__version__</span><span class="si">}</span><span class="s2"> installed)&quot;</span>
+    <span class="n">action_space</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;action_space&quot;</span><span class="p">)</span>
+    <span class="n">obs_space</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;observation_space&quot;</span><span class="p">)</span>
 
     <span class="n">md_dict</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s2">&quot;Total Timesteps&quot;</span><span class="p">:</span> <span class="n">dataset_spec</span><span class="p">[</span><span class="s2">&quot;total_steps&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;Total Episodes&quot;</span><span class="p">:</span> <span class="n">dataset_spec</span><span class="p">[</span><span class="s2">&quot;total_episodes&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;Dataset Observation Space&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">dataset_observation_space</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Dataset Action Space&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">dataset_action_space</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Algorithm&quot;</span><span class="p">:</span> <span class="n">dataset_spec</span><span class="p">[</span><span class="s2">&quot;algorithm_name&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;Author&quot;</span><span class="p">:</span> <span class="n">dataset_spec</span><span class="p">[</span><span class="s2">&quot;author&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;Email&quot;</span><span class="p">:</span> <span class="n">dataset_spec</span><span class="p">[</span><span class="s2">&quot;author_email&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;Code Permalink&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">code_link</span><span class="si">}</span><span class="s2">](</span><span class="si">{</span><span class="n">code_link</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;Minari Version&quot;</span><span class="p">:</span> <span class="n">version</span><span class="p">,</span>
-        <span class="s2">&quot;Download&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`minari.download_dataset(</span><span class="se">\&quot;</span><span class="si">{</span><span class="n">dataset_spec</span><span class="p">[</span><span class="s1">&#39;dataset_id&#39;</span><span class="p">]</span><span class="si">}</span><span class="se">\&quot;</span><span class="s2">)`&quot;</span>
+        <span class="s2">&quot;Total Steps&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">dataset_spec</span><span class="p">[</span><span class="s2">&quot;total_steps&quot;</span><span class="p">]),</span>
+        <span class="s2">&quot;Total Episodes&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">dataset_spec</span><span class="p">[</span><span class="s2">&quot;total_episodes&quot;</span><span class="p">]),</span>
     <span class="p">}</span>
+
+    <span class="k">if</span> <span class="n">obs_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obs_space</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
+            <span class="n">obs_space</span> <span class="o">=</span> <span class="n">deserialize_space</span><span class="p">(</span><span class="n">obs_space</span><span class="p">)</span>
+        <span class="n">dataset_observation_space</span> <span class="o">=</span> <span class="n">obs_space</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">md_dict</span><span class="p">[</span><span class="s2">&quot;Dataset Observation Space&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">dataset_observation_space</span><span class="si">}</span><span class="s2">`&quot;</span>
+
+    <span class="k">if</span> <span class="n">action_space</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">action_space</span><span class="p">,</span> <span class="p">(</span><span class="nb">dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">)):</span>
+            <span class="n">action_space</span> <span class="o">=</span> <span class="n">deserialize_space</span><span class="p">(</span><span class="n">action_space</span><span class="p">)</span>
+        <span class="n">dataset_action_space</span> <span class="o">=</span> <span class="n">action_space</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">md_dict</span><span class="p">[</span><span class="s2">&quot;Dataset Action Space&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">dataset_action_space</span><span class="si">}</span><span class="s2">`&quot;</span>
+
+    <span class="kn">from</span> <span class="nn">minari</span> <span class="kn">import</span> <span class="n">supported_dataset_versions</span>
+
+    <span class="n">version</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="p">[</span><span class="s2">&quot;minari_version&quot;</span><span class="p">]</span>
+    <span class="n">supported</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;supported&quot;</span> <span class="k">if</span> <span class="n">version</span> <span class="ow">in</span> <span class="n">supported_dataset_versions</span> <span class="k">else</span> <span class="s2">&quot;not supported&quot;</span>
+    <span class="p">)</span>
+    <span class="n">author</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;author&quot;</span><span class="p">,</span> <span class="s2">&quot;Not provided&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">author</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+        <span class="n">author</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">author</span><span class="p">)</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;author_email&quot;</span><span class="p">,</span> <span class="s2">&quot;Not provided&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">email</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+        <span class="n">email</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">email</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">author</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">email</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+    <span class="n">md_dict</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;Algorithm&quot;</span><span class="p">:</span> <span class="n">dataset_spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;algorithm_name&quot;</span><span class="p">,</span> <span class="s2">&quot;Not provided&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;Author&quot;</span><span class="p">:</span> <span class="n">author</span><span class="p">,</span>
+            <span class="s2">&quot;Email&quot;</span><span class="p">:</span> <span class="n">email</span><span class="p">,</span>
+            <span class="s2">&quot;Code Permalink&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">code_link</span><span class="si">}</span><span class="s2">](</span><span class="si">{</span><span class="n">code_link</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Minari Version&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">` (</span><span class="si">{</span><span class="n">supported</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Download&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;`minari download </span><span class="si">{</span><span class="n">dataset_spec</span><span class="p">[</span><span class="s1">&#39;dataset_id&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">`&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">md_dict</span>
 </pre></div>
@@ -1210,8 +1049,8 @@
         })()
       </script>
 
-    <script src="../../../_static/documentation_options.js?v=d5185309"></script>
-    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/documentation_options.js?v=19bc2c4c"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
     <script src="../../../_static/js/termynal.js?v=ff4c6923"></script>

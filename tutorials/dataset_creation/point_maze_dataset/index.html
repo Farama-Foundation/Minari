@@ -11,7 +11,7 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Using Datasets" href="../../using_datasets/" /><link rel="prev" title="Serializing a custom space" href="../custom_space_serialization/" />
         <link rel="canonical" href="https://minari.farama.org/tutorials/dataset_creation/point_maze_dataset.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>PointMaze D4RL dataset - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
@@ -220,19 +220,23 @@
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../content/basic_usage/">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../content/dataset_standards/">Dataset Standards</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../content/minari_cli/">Minari CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../content/dataset_standards/">Dataset Standards</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/minari_functions/">Minari</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Minari</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/minari_dataset/minari_dataset/">MinariDataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/minari_dataset/minari_storage/">MinariStorage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../api/minari_dataset/episode_data/">EpisodeData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/minari_dataset/step_data/">StepData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/namespace/namespace/">Namespace</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../api/data_collector/">DataCollector</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of DataCollector</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector_callbacks/step_data_callback/">StepDataCallback</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector_callbacks/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector/episode_buffer/">EpisodeBuffer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector/step_data_callback/">StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../api/data_collector/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
 </ul>
 </li>
 </ul>
@@ -246,62 +250,68 @@
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../using_datasets/">Using Datasets</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Using Datasets</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../using_datasets/behavioral_cloning/">Behavioral cloning with PyTorch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../using_datasets/IQL_torchrl/">Implicit Q-Learning with TorchRL</a></li>
 </ul>
 </li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
 <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/minigrid/">MiniGrid</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of MiniGrid</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/D4RL/">D4RL</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of D4RL</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/antmaze/">Ant Maze</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Ant Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/large-diverse-v1/">Large-Diverse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/large-play-v1/">Large-Play</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/medium-diverse-v1/">Medium-Diverse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/medium-play-v1/">Medium-Play</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/umaze-v1/">Umaze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/umaze-diverse-v1/">Umaze-Diverse</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/door/">Door</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Door</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/door/human/">Human</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/door/expert/">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/door/cloned/">Cloned</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/door/">Door</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Door</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/door/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/door/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/door/human-v2/">Human</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/hammer/">Hammer</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Hammer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/hammer/human/">Human</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/hammer/expert/">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/hammer/cloned/">Cloned</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/hammer/">Hammer</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Hammer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/hammer/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/hammer/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/hammer/human-v2/">Human</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/relocate/">Relocate</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Relocate</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/relocate/human/">Human</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/relocate/expert/">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/relocate/cloned/">Cloned</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/complete-v1/">Complete</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/mixed-v1/">Mixed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/partial-v1/">Partial</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/pen/">Pen</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Pen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pen/human/">Human</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pen/expert/">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pen/cloned/">Cloned</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/minigrid/">MiniGrid</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of MiniGrid</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/minigrid/fourrooms-v0/">Fourrooms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/minigrid/fourrooms-random-v0/">Fourrooms-Random</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/pointmaze/">Point Maze</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Point Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/open/">Open</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/umaze/">Umaze</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/medium/">Medium</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/large/">Large</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/open-dense/">Open-Dense</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/umaze-dense/">Umaze-Dense</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/medium-dense/">Medium-Dense</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/pointmaze/large-dense/">Large-Dense</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/pen/">Pen</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Pen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pen/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pen/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pen/human-v2/">Human</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/antmaze/">Ant Maze</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Ant Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/umaze/">Umaze</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/umaze-diverse/">Umaze-Diverse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/medium-diverse/">Medium-Diverse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/medium-play/">Medium-Play</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/large-diverse/">Large-Diverse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/antmaze/large-play/">Large-Play</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/">Point Maze</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of Point Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/large-v2/">Large</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/large-dense-v2/">Large-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/medium-v2/">Medium</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/medium-dense-v2/">Medium-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/open-v2/">Open</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/open-dense-v2/">Open-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/umaze-v2/">Umaze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/umaze-dense-v2/">Umaze-Dense</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/kitchen/partial/">Partial</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/kitchen/complete/">Complete</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../datasets/kitchen/mixed/">Mixed</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/relocate/">Relocate</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of Relocate</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/relocate/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/relocate/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/relocate/human-v2/">Human</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -368,7 +378,7 @@
           <article role="main">
             
             <section class="sphx-glr-example-title" id="pointmaze-d4rl-dataset">
-<span id="sphx-glr-tutorials-dataset-creation-point-maze-dataset-py"></span><h1>PointMaze D4RL dataset<a class="headerlink" href="#pointmaze-d4rl-dataset" title="Link to this heading">#</a></h1>
+<span id="sphx-glr-tutorials-dataset-creation-point-maze-dataset-py"></span><h1>PointMaze D4RL dataset<a class="headerlink" href="#pointmaze-d4rl-dataset" title="Link to this heading">¶</a></h1>
 <p>In this tutorial you will learn how to re-create the Maze2D datasets from <a class="reference external" href="https://sites.google.com/view/d4rl/home">D4RL</a> [1] with Minari.
 We will be using the refactored version of the PointMaze environments in <a class="reference external" href="https://robotics.farama.org/envs/maze/point_maze/">Gymnasium-Robotics</a> which support the Gymnasium API as well as the latest
 MuJoCo python bindings.</p>
@@ -381,7 +391,7 @@ MuJoCo python bindings.</p>
 </ol>
 </dd>
 </dl>
-<p>For this tutorial we will be using the <code class="docutils literal notranslate"><span class="pre">pointmaze-medium-v3</span></code> environment to collect transition data. However, any map implementation in the PointMaze environment group can be used.
+<p>For this tutorial we will be using the <code class="docutils literal notranslate"><span class="pre">PointMaze_Medium-v3</span></code> environment to collect transition data. However, any map implementation in the PointMaze environment group can be used.
 Another important factor to take into account is that the environment is continuing, which means that it won’t be <code class="docutils literal notranslate"><span class="pre">terminated</span></code> when reaching a goal. Instead a new goal target will be randomly selected and the agent
 will start from the location it’s currently at (no <code class="docutils literal notranslate"><span class="pre">env.reset()</span></code> required).</p>
 <p>Lets start by importing the required modules for this tutorial:</p>
@@ -392,7 +402,7 @@ will start from the location it’s currently at (no <code class="docutils liter
 </pre></div>
 </div>
 <section id="waypoint-planner">
-<h2>WayPoint Planner<a class="headerlink" href="#waypoint-planner" title="Link to this heading">#</a></h2>
+<h2>WayPoint Planner<a class="headerlink" href="#waypoint-planner" title="Link to this heading">¶</a></h2>
 <p>Our first task is to create a method that generates a trajectory to the goal in the maze.
 We have the advantage that the MuJoCo maze can be discretized into a grid of cells, which reduces
 the size of the state space. The action space for this solver will also be reduced to <code class="docutils literal notranslate"><span class="pre">UP</span></code>, <code class="docutils literal notranslate"><span class="pre">DOWN</span></code>, <code class="docutils literal notranslate"><span class="pre">LEFT</span></code>,
@@ -528,13 +538,13 @@ such as:</p>
 </div>
 </section>
 <section id="waypoint-controller">
-<h2>Waypoint Controller<a class="headerlink" href="#waypoint-controller" title="Link to this heading">#</a></h2>
+<h2>Waypoint Controller<a class="headerlink" href="#waypoint-controller" title="Link to this heading">¶</a></h2>
 <p>The step will be to create a controller to allow the agent to follow the waypoint trajectory.
 D4RL uses a PD controller to output continuous force actions from position and velocity.
 A PD controller is a variation of the PID controller often used in classical Control Theory.
 PID combines three components: a Proportial Term(P), Integral Term(I) and Derivative Term (D)</p>
 <section id="proportional-term-p">
-<h3>1. Proportional Term (P)<a class="headerlink" href="#proportional-term-p" title="Link to this heading">#</a></h3>
+<h3>1. Proportional Term (P)<a class="headerlink" href="#proportional-term-p" title="Link to this heading">¶</a></h3>
 <p>The proportional term in a PID controller adjusts the control action based on the current error, which
 is the difference between the desired value (setpoint) and the current value of the process variable.
 The control action is directly proportional to the error. A higher error results in a stronger control action.
@@ -545,7 +555,7 @@ However, the proportional term alone can lead to overshooting or instability. No
 </div>
 </section>
 <section id="derivative-term-d">
-<h3>2. Derivative Term (D)<a class="headerlink" href="#derivative-term-d" title="Link to this heading">#</a></h3>
+<h3>2. Derivative Term (D)<a class="headerlink" href="#derivative-term-d" title="Link to this heading">¶</a></h3>
 <p>The derivative term in a PD controller considers the rate of change of the error over time.
 It helps to predict the future behavior of the error. By dampening the control action based
 on the rate of change of the error, the derivative term contributes to system stability and reduces overshooting.
@@ -561,7 +571,7 @@ It also helps the system respond quickly to changes in the error.</p>
 </div>
 </section>
 <section id="integral-term-i">
-<h3>3. Integral Term (I)<a class="headerlink" href="#integral-term-i" title="Link to this heading">#</a></h3>
+<h3>3. Integral Term (I)<a class="headerlink" href="#integral-term-i" title="Link to this heading">¶</a></h3>
 <p>The integral term in a PID controller integrates the cumulative error over time.
 It helps to address steady-state errors or biases that may exist in the system.
 The integral term continuously adjusts the control action based on the accumulated error,
@@ -676,13 +686,13 @@ the <span class="math notranslate nohighlight">\(x\)</span> and <span class="mat
 </section>
 </section>
 <section id="modified-stepdatacallback">
-<h2>Modified StepDataCallback<a class="headerlink" href="#modified-stepdatacallback" title="Link to this heading">#</a></h2>
+<h2>Modified StepDataCallback<a class="headerlink" href="#modified-stepdatacallback" title="Link to this heading">¶</a></h2>
 <p>We will also need to create our own custom callback function to record the data after each step.
 As previously mentioned, the task is continuing and the environment won’t be <code class="docutils literal notranslate"><span class="pre">terminated</span></code> or <code class="docutils literal notranslate"><span class="pre">truncated</span></code> when reaching a goal.
 Instead a new target will be randomly selected in the map and the agent will continue stepping to this new goal. For this reason, to divide the dataset into episodes,
 we will have to truncate the dataset ourselves when a new goal is reached. This can be done by overriding the <code class="docutils literal notranslate"><span class="pre">'truncations'</span></code> key in the step data return when the
 agent returns <code class="docutils literal notranslate"><span class="pre">success=True</span></code> in the <code class="docutils literal notranslate"><span class="pre">'infos'</span></code> item.</p>
-<p>In the <a class="reference internal" href="../../../api/data_collector_callbacks/step_data_callback/#minari.StepDataCallback" title="minari.StepDataCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.StepDataCallback</span></code></a> we can add new keys to infos that we would also want to save in our Minari dataset. For example in this
+<p>In the <a class="reference internal" href="../../../api/data_collector/step_data_callback/#minari.StepDataCallback" title="minari.StepDataCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.StepDataCallback</span></code></a> we can add new keys to infos that we would also want to save in our Minari dataset. For example in this
 case we will be generating new hdf5 datasets <code class="docutils literal notranslate"><span class="pre">qpos</span></code>, <code class="docutils literal notranslate"><span class="pre">qvel</span></code>, and <code class="docutils literal notranslate"><span class="pre">goal</span></code> in the <code class="docutils literal notranslate"><span class="pre">infos</span></code> subgroup of each episode group.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">PointMazeStepDataCallback</span><span class="p">(</span><span class="n">StepDataCallback</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Add environment state information to &#39;infos&#39;.</span>
@@ -701,23 +711,23 @@ case we will be generating new hdf5 datasets <code class="docutils literal notra
 
         <span class="n">step_data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">info</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;infos&quot;</span><span class="p">][</span><span class="s2">&quot;success&quot;</span><span class="p">]:</span>
-            <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;truncations&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;infos&quot;</span><span class="p">][</span><span class="s2">&quot;qpos&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">qpos</span>
-        <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;infos&quot;</span><span class="p">][</span><span class="s2">&quot;qvel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">qvel</span>
-        <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;infos&quot;</span><span class="p">][</span><span class="s2">&quot;goal&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">goal</span>
+        <span class="k">if</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;info&quot;</span><span class="p">][</span><span class="s2">&quot;success&quot;</span><span class="p">]:</span>
+            <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;truncation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;info&quot;</span><span class="p">][</span><span class="s2">&quot;qpos&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">qpos</span>
+        <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;info&quot;</span><span class="p">][</span><span class="s2">&quot;qvel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">qvel</span>
+        <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;info&quot;</span><span class="p">][</span><span class="s2">&quot;goal&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">goal</span>
 
         <span class="k">return</span> <span class="n">step_data</span>
 </pre></div>
 </div>
 </section>
 <section id="collect-data-and-create-minari-dataset">
-<h2>Collect Data and Create Minari Dataset<a class="headerlink" href="#collect-data-and-create-minari-dataset" title="Link to this heading">#</a></h2>
+<h2>Collect Data and Create Minari Dataset<a class="headerlink" href="#collect-data-and-create-minari-dataset" title="Link to this heading">¶</a></h2>
 <p>Now we will finally perform our data collection and create the Minari dataset. This is as simple as wrapping the environment with
 the <a class="reference internal" href="../../../api/data_collector/#minari.DataCollector" title="minari.DataCollector"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollector</span></code></a> wrapper and add the custom callback methods. Once we’ve done this we can step the environment with the <code class="docutils literal notranslate"><span class="pre">WayPointController</span></code>
 as our policy. For the tutorial, we collect 10,000 transitions. Thus, we initialize the environment with <code class="docutils literal notranslate"><span class="pre">max_episode_steps=10,000</span></code> since that’s the total amount of steps we want to
 collect for our dataset and we don’t want the environment to get <code class="docutils literal notranslate"><span class="pre">truncated</span></code> during the data collection due to a time limit.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dataset_name</span> <span class="o">=</span> <span class="s2">&quot;pointmaze-umaze-v0&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dataset_name</span> <span class="o">=</span> <span class="s2">&quot;pointmaze/umaze-v0&quot;</span>
 <span class="n">total_steps</span> <span class="o">=</span> <span class="mi">10_000</span>
 
 <span class="c1"># continuing task =&gt; the episode doesn&#39;t terminate or truncate when reaching a goal</span>
@@ -758,7 +768,7 @@ collect for our dataset and we don’t want the environment to get <code class="
 </div>
 </section>
 <section id="references">
-<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">¶</a></h2>
 <p>[1] Fu, Justin, et al. ‘D4RL: Datasets for Deep Data-Driven Reinforcement Learning’.
 CoRR, vol. abs/2004.07219, 2020, <a class="reference external" href="https://arxiv.org/abs/2004.07219">https://arxiv.org/abs/2004.07219</a>..</p>
 <p>[2] Lambert, Nathan. ‘Fundamental Iterative Methods of Reinforcement Learnin’.
@@ -940,8 +950,8 @@ Apr 8, 2020, <a class="reference external" href="https://towardsdatascience.com/
         })()
       </script>
 
-    <script src="../../../_static/documentation_options.js?v=d5185309"></script>
-    <script src="../../../_static/doctools.js?v=888ff710"></script>
+    <script src="../../../_static/documentation_options.js?v=19bc2c4c"></script>
+    <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>

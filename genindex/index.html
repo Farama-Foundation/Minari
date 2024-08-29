@@ -10,7 +10,7 @@
     <meta property="og:url" content="https://minari.farama.org/genindex.html" /><meta property="og:image" content="https://minari.farama.org/_static/img/robotics-github.png" /><meta name="twitter:card" content="summary_large_image"><link rel="index" title="Index" href="#" /><link rel="search" title="Search" href="../search/" />
         <link rel="canonical" href="https://minari.farama.org/genindex.html" />
 
-    <link rel="shortcut icon" href="../_static/favicon.png"/><!-- Generated with Sphinx 7.2.6 and Furo 2023.08.19.dev1 --><title>Index - Minari Documentation</title>
+    <link rel="shortcut icon" href="../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 --><title>Index - Minari Documentation</title>
 <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=a746c00c" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=61a4c737" />
@@ -218,19 +218,23 @@
   <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../content/basic_usage/">Basic Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../content/dataset_standards/">Dataset Standards</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../content/minari_cli/">Minari CLI</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../content/dataset_standards/">Dataset Standards</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API</span></p>
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../api/minari_functions/">Minari</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" role="switch" type="checkbox"/><label for="toctree-checkbox-1"><div class="visually-hidden">Toggle navigation of Minari</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../api/minari_dataset/minari_dataset/">MinariDataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/minari_dataset/minari_storage/">MinariStorage</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../api/minari_dataset/episode_data/">EpisodeData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/minari_dataset/step_data/">StepData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/namespace/namespace/">Namespace</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../api/data_collector/">DataCollector</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" role="switch" type="checkbox"/><label for="toctree-checkbox-2"><div class="visually-hidden">Toggle navigation of DataCollector</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../api/data_collector_callbacks/step_data_callback/">StepDataCallback</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../api/data_collector_callbacks/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/data_collector/episode_buffer/">EpisodeBuffer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/data_collector/step_data_callback/">StepDataCallback</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../api/data_collector/episode_metadata_callback/">EpisodeMetadataCallback</a></li>
 </ul>
 </li>
 </ul>
@@ -244,62 +248,68 @@
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../tutorials/using_datasets/">Using Datasets</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" role="switch" type="checkbox"/><label for="toctree-checkbox-4"><div class="visually-hidden">Toggle navigation of Using Datasets</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="../tutorials/using_datasets/behavioral_cloning/">Behavioral cloning with PyTorch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tutorials/using_datasets/IQL_torchrl/">Implicit Q-Learning with TorchRL</a></li>
 </ul>
 </li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Datasets</span></p>
 <ul>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../datasets/minigrid/">MiniGrid</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of MiniGrid</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="simple">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../datasets/D4RL/">D4RL</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of D4RL</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../datasets/D4RL/antmaze/">Ant Maze</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Ant Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/antmaze/large-diverse-v1/">Large-Diverse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/antmaze/large-play-v1/">Large-Play</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/antmaze/medium-diverse-v1/">Medium-Diverse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/antmaze/medium-play-v1/">Medium-Play</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/antmaze/umaze-v1/">Umaze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/antmaze/umaze-diverse-v1/">Umaze-Diverse</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../datasets/door/">Door</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Door</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/door/human/">Human</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/door/expert/">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/door/cloned/">Cloned</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../datasets/D4RL/door/">Door</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Door</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/door/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/door/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/door/human-v2/">Human</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../datasets/hammer/">Hammer</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Hammer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/hammer/human/">Human</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/hammer/expert/">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/hammer/cloned/">Cloned</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../datasets/D4RL/hammer/">Hammer</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Hammer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/hammer/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/hammer/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/hammer/human-v2/">Human</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../datasets/relocate/">Relocate</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Relocate</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/relocate/human/">Human</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/relocate/expert/">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/relocate/cloned/">Cloned</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../datasets/D4RL/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/kitchen/complete-v1/">Complete</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/kitchen/mixed-v1/">Mixed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/kitchen/partial-v1/">Partial</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../datasets/pen/">Pen</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Pen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/pen/human/">Human</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/pen/expert/">Expert</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/pen/cloned/">Cloned</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../datasets/D4RL/minigrid/">MiniGrid</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of MiniGrid</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/minigrid/fourrooms-v0/">Fourrooms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/minigrid/fourrooms-random-v0/">Fourrooms-Random</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../datasets/pointmaze/">Point Maze</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Point Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/pointmaze/open/">Open</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/pointmaze/umaze/">Umaze</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/pointmaze/medium/">Medium</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/pointmaze/large/">Large</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/pointmaze/open-dense/">Open-Dense</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/pointmaze/umaze-dense/">Umaze-Dense</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/pointmaze/medium-dense/">Medium-Dense</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/pointmaze/large-dense/">Large-Dense</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../datasets/D4RL/pen/">Pen</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Pen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/pen/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/pen/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/pen/human-v2/">Human</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../datasets/antmaze/">Ant Maze</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Ant Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/antmaze/umaze/">Umaze</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/antmaze/umaze-diverse/">Umaze-Diverse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/antmaze/medium-diverse/">Medium-Diverse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/antmaze/medium-play/">Medium-Play</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/antmaze/large-diverse/">Large-Diverse</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/antmaze/large-play/">Large-Play</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../datasets/D4RL/pointmaze/">Point Maze</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of Point Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/pointmaze/large-v2/">Large</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/pointmaze/large-dense-v2/">Large-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/pointmaze/medium-v2/">Medium</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/pointmaze/medium-dense-v2/">Medium-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/pointmaze/open-v2/">Open</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/pointmaze/open-dense-v2/">Open-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/pointmaze/umaze-v2/">Umaze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/pointmaze/umaze-dense-v2/">Umaze-Dense</a></li>
 </ul>
 </li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../datasets/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/kitchen/partial/">Partial</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/kitchen/complete/">Complete</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../datasets/kitchen/mixed/">Mixed</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../datasets/D4RL/relocate/">Relocate</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of Relocate</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/relocate/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/relocate/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../datasets/D4RL/relocate/human-v2/">Human</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -358,18 +368,22 @@
             
 <section class="genindex-section">
   <h1 id="index">Index</h1>
-  <div class="genindex-jumpbox"><a href="#_"><strong>_</strong></a> | <a href="#A"><strong>A</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#U"><strong>U</strong></a></div>
+  <div class="genindex-jumpbox"><a href="#_"><strong>_</strong></a> | <a href="#A"><strong>A</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#U"><strong>U</strong></a></div>
 </section>
 <section id="_" class="genindex-section">
   <h2>_</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="../api/data_collector_callbacks/episode_metadata_callback/#minari.EpisodeMetadataCallback.__call__">__call__() (in module minari.EpisodeMetadataCallback)</a>
+        <li><a href="../api/data_collector/episode_metadata_callback/#minari.EpisodeMetadataCallback.__call__">__call__() (in module minari.EpisodeMetadataCallback)</a>
 
         <ul>
-          <li><a href="../api/data_collector_callbacks/step_data_callback/#minari.StepDataCallback.__call__">(in module minari.StepDataCallback)</a>
+          <li><a href="../api/data_collector/step_data_callback/#minari.StepDataCallback.__call__">(in module minari.StepDataCallback)</a>
 </li>
         </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/data_collector/episode_buffer/#minari.data_collector.EpisodeBuffer.__len__">__len__() (in module minari.data_collector.EpisodeBuffer)</a>
+</li>
     </ul></td>
   </tr></table>
 </section>
@@ -378,7 +392,23 @@
   <h2>A</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="../api/minari_dataset/episode_data/#minari.EpisodeData.actions">actions (minari.EpisodeData attribute)</a>
+        <li><a href="../api/minari_dataset/step_data/#minari.StepData.action">action (minari.StepData attribute)</a>
+</li>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage.action_space">action_space (minari.dataset.minari_storage.MinariStorage attribute)</a>
+</li>
+        <li><a href="../api/data_collector/episode_buffer/#minari.data_collector.EpisodeBuffer.actions">actions (minari.data_collector.EpisodeBuffer attribute)</a>
+
+        <ul>
+          <li><a href="../api/minari_dataset/episode_data/#minari.EpisodeData.actions">(minari.EpisodeData attribute)</a>
+</li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/data_collector/episode_buffer/#minari.data_collector.EpisodeBuffer.add_step_data">add_step_data() (in module minari.data_collector.EpisodeBuffer)</a>
+</li>
+        <li><a href="../api/data_collector/#minari.DataCollector.add_to_dataset">add_to_dataset() (in module minari.DataCollector)</a>
+</li>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage.apply">apply() (in module minari.dataset.minari_storage.MinariStorage)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -398,6 +428,8 @@
 </li>
         <li><a href="../api/minari_functions/#minari.create_dataset_from_buffers">create_dataset_from_buffers() (in module minari)</a>
 </li>
+        <li><a href="../api/namespace/namespace/#minari.namespace.create_namespace">create_namespace() (in module minari.namespace)</a>
+</li>
     </ul></td>
   </tr></table>
 </section>
@@ -406,13 +438,19 @@
   <h2>D</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage.data_path">data_path (minari.dataset.minari_storage.MinariStorage attribute)</a>
+</li>
         <li><a href="../api/data_collector/#minari.DataCollector">DataCollector (class in minari)</a>
+</li>
+        <li><a href="../api/minari_functions/#minari.delete_dataset">delete_dataset() (in module minari)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="../api/minari_functions/#minari.delete_dataset">delete_dataset() (in module minari)</a>
+        <li><a href="../api/namespace/namespace/#minari.namespace.delete_namespace">delete_namespace() (in module minari.namespace)</a>
 </li>
         <li><a href="../api/minari_functions/#minari.download_dataset">download_dataset() (in module minari)</a>
+</li>
+        <li><a href="../api/namespace/namespace/#minari.namespace.download_namespace_metadata">download_namespace_metadata() (in module minari.namespace)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -424,11 +462,13 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/minari_dataset/minari_dataset/#minari.MinariDataset.episode_indices">episode_indices (minari.MinariDataset attribute)</a>
 </li>
+        <li><a href="../api/data_collector/episode_buffer/#minari.data_collector.EpisodeBuffer">EpisodeBuffer (class in minari.data_collector)</a>
+</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/minari_dataset/episode_data/#minari.EpisodeData">EpisodeData (class in minari)</a>
 </li>
-        <li><a href="../api/data_collector_callbacks/episode_metadata_callback/#minari.EpisodeMetadataCallback">EpisodeMetadataCallback (class in minari)</a>
+        <li><a href="../api/data_collector/episode_metadata_callback/#minari.EpisodeMetadataCallback">EpisodeMetadataCallback (class in minari)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -448,7 +488,17 @@
   <h2>G</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage.get_episode_metadata">get_episode_metadata() (in module minari.dataset.minari_storage.MinariStorage)</a>
+</li>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage.get_episodes">get_episodes() (in module minari.dataset.minari_storage.MinariStorage)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/namespace/namespace/#minari.namespace.get_namespace_metadata">get_namespace_metadata() (in module minari.namespace)</a>
+</li>
         <li><a href="../api/minari_functions/#minari.get_normalized_score">get_normalized_score() (in module minari)</a>
+</li>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage.get_size">get_size() (in module minari.dataset.minari_storage.MinariStorage)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -458,10 +508,22 @@
   <h2>I</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="../api/minari_dataset/episode_data/#minari.EpisodeData.id">id (minari.EpisodeData attribute)</a>
+        <li><a href="../api/data_collector/episode_buffer/#minari.data_collector.EpisodeBuffer.id">id (minari.data_collector.EpisodeBuffer attribute)</a>
+
+        <ul>
+          <li><a href="../api/minari_dataset/episode_data/#minari.EpisodeData.id">(minari.EpisodeData attribute)</a>
+</li>
+        </ul></li>
+        <li><a href="../api/minari_dataset/step_data/#minari.StepData.info">info (minari.StepData attribute)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/data_collector/episode_buffer/#minari.data_collector.EpisodeBuffer.infos">infos (minari.data_collector.EpisodeBuffer attribute)</a>
+
+        <ul>
+          <li><a href="../api/minari_dataset/episode_data/#minari.EpisodeData.infos">(minari.EpisodeData attribute)</a>
+</li>
+        </ul></li>
         <li><a href="../api/minari_dataset/minari_dataset/#minari.MinariDataset.iterate_episodes">iterate_episodes() (in module minari.MinariDataset)</a>
 </li>
     </ul></td>
@@ -474,9 +536,13 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/minari_functions/#minari.list_local_datasets">list_local_datasets() (in module minari)</a>
 </li>
+        <li><a href="../api/namespace/namespace/#minari.namespace.list_local_namespaces">list_local_namespaces() (in module minari.namespace)</a>
+</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/minari_functions/#minari.list_remote_datasets">list_remote_datasets() (in module minari)</a>
+</li>
+        <li><a href="../api/namespace/namespace/#minari.namespace.list_remote_namespaces">list_remote_namespaces() (in module minari.namespace)</a>
 </li>
         <li><a href="../api/minari_functions/#minari.load_dataset">load_dataset() (in module minari)</a>
 </li>
@@ -488,7 +554,23 @@
   <h2>M</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage.metadata">metadata (minari.dataset.minari_storage.MinariStorage attribute)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/minari_dataset/minari_dataset/#minari.MinariDataset">MinariDataset (class in minari)</a>
+</li>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage">MinariStorage (class in minari.dataset.minari_storage)</a>
+</li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="N" class="genindex-section">
+  <h2>N</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage.new">new() (in module minari.dataset.minari_storage.MinariStorage)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -498,8 +580,18 @@
   <h2>O</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="../api/minari_dataset/episode_data/#minari.EpisodeData.observations">observations (minari.EpisodeData attribute)</a>
+        <li><a href="../api/minari_dataset/step_data/#minari.StepData.observation">observation (minari.StepData attribute)</a>
 </li>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage.observation_space">observation_space (minari.dataset.minari_storage.MinariStorage attribute)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/data_collector/episode_buffer/#minari.data_collector.EpisodeBuffer.observations">observations (minari.data_collector.EpisodeBuffer attribute)</a>
+
+        <ul>
+          <li><a href="../api/minari_dataset/episode_data/#minari.EpisodeData.observations">(minari.EpisodeData attribute)</a>
+</li>
+        </ul></li>
     </ul></td>
   </tr></table>
 </section>
@@ -508,11 +600,15 @@
   <h2>R</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage.read">read() (in module minari.dataset.minari_storage.MinariStorage)</a>
+</li>
         <li><a href="../api/minari_dataset/minari_dataset/#minari.MinariDataset.recover_environment">recover_environment() (in module minari.MinariDataset)</a>
 </li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/data_collector/#minari.DataCollector.reset">reset() (in module minari.DataCollector)</a>
+</li>
+        <li><a href="../api/data_collector/episode_buffer/#minari.data_collector.EpisodeBuffer.rewards">rewards (minari.data_collector.EpisodeBuffer attribute)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -524,19 +620,21 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/minari_dataset/minari_dataset/#minari.MinariDataset.sample_episodes">sample_episodes() (in module minari.MinariDataset)</a>
 </li>
-        <li><a href="../api/minari_dataset/episode_data/#minari.EpisodeData.seed">seed (minari.EpisodeData attribute)</a>
+        <li><a href="../api/data_collector/episode_buffer/#minari.data_collector.EpisodeBuffer.seed">seed (minari.data_collector.EpisodeBuffer attribute)</a>
 </li>
         <li><a href="../api/minari_dataset/minari_dataset/#minari.MinariDataset.set_seed">set_seed() (in module minari.MinariDataset)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/minari_dataset/minari_dataset/#minari.MinariDataset.spec">spec (minari.MinariDataset attribute)</a>
 </li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/minari_functions/#minari.split_dataset">split_dataset() (in module minari)</a>
 </li>
         <li><a href="../api/data_collector/#minari.DataCollector.step">step() (in module minari.DataCollector)</a>
 </li>
-        <li><a href="../api/data_collector_callbacks/step_data_callback/#minari.StepDataCallback">StepDataCallback (class in minari)</a>
+        <li><a href="../api/minari_dataset/step_data/#minari.StepData">StepData (class in minari)</a>
+</li>
+        <li><a href="../api/data_collector/step_data_callback/#minari.StepDataCallback">StepDataCallback (class in minari)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -546,18 +644,36 @@
   <h2>T</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="../api/minari_dataset/episode_data/#minari.EpisodeData.terminations">terminations (minari.EpisodeData attribute)</a>
+        <li><a href="../api/minari_dataset/step_data/#minari.StepData.termination">termination (minari.StepData attribute)</a>
 </li>
-        <li><a href="../api/minari_dataset/minari_dataset/#minari.MinariDataset.total_episodes">total_episodes (minari.MinariDataset attribute)</a>
+        <li><a href="../api/data_collector/episode_buffer/#minari.data_collector.EpisodeBuffer.terminations">terminations (minari.data_collector.EpisodeBuffer attribute)</a>
+
+        <ul>
+          <li><a href="../api/minari_dataset/episode_data/#minari.EpisodeData.terminations">(minari.EpisodeData attribute)</a>
 </li>
+        </ul></li>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage.total_episodes">total_episodes (minari.dataset.minari_storage.MinariStorage attribute)</a>
+
+        <ul>
+          <li><a href="../api/minari_dataset/minari_dataset/#minari.MinariDataset.total_episodes">(minari.MinariDataset attribute)</a>
+</li>
+        </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
-        <li><a href="../api/minari_dataset/minari_dataset/#minari.MinariDataset.total_steps">total_steps (minari.MinariDataset attribute)</a>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage.total_steps">total_steps (minari.dataset.minari_storage.MinariStorage attribute)</a>
+
+        <ul>
+          <li><a href="../api/minari_dataset/minari_dataset/#minari.MinariDataset.total_steps">(minari.MinariDataset attribute)</a>
 </li>
-        <li><a href="../api/minari_dataset/episode_data/#minari.EpisodeData.total_timesteps">total_timesteps (minari.EpisodeData attribute)</a>
+        </ul></li>
+        <li><a href="../api/minari_dataset/step_data/#minari.StepData.truncation">truncation (minari.StepData attribute)</a>
 </li>
-        <li><a href="../api/minari_dataset/episode_data/#minari.EpisodeData.truncations">truncations (minari.EpisodeData attribute)</a>
+        <li><a href="../api/data_collector/episode_buffer/#minari.data_collector.EpisodeBuffer.truncations">truncations (minari.data_collector.EpisodeBuffer attribute)</a>
+
+        <ul>
+          <li><a href="../api/minari_dataset/episode_data/#minari.EpisodeData.truncations">(minari.EpisodeData attribute)</a>
 </li>
+        </ul></li>
     </ul></td>
   </tr></table>
 </section>
@@ -567,6 +683,18 @@
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="../api/minari_dataset/minari_dataset/#minari.MinariDataset.update_dataset_from_buffer">update_dataset_from_buffer() (in module minari.MinariDataset)</a>
+</li>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage.update_episode_metadata">update_episode_metadata() (in module minari.dataset.minari_storage.MinariStorage)</a>
+</li>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage.update_episodes">update_episodes() (in module minari.dataset.minari_storage.MinariStorage)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage.update_from_storage">update_from_storage() (in module minari.dataset.minari_storage.MinariStorage)</a>
+</li>
+        <li><a href="../api/minari_dataset/minari_storage/#minari.dataset.minari_storage.MinariStorage.update_metadata">update_metadata() (in module minari.dataset.minari_storage.MinariStorage)</a>
+</li>
+        <li><a href="../api/namespace/namespace/#minari.namespace.upload_namespace">upload_namespace() (in module minari.namespace)</a>
 </li>
     </ul></td>
   </tr></table>
@@ -689,8 +817,8 @@
         })()
       </script>
 
-    <script src="../_static/documentation_options.js?v=d5185309"></script>
-    <script src="../_static/doctools.js?v=888ff710"></script>
+    <script src="../_static/documentation_options.js?v=19bc2c4c"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
     <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/scripts/furo.js?v=7660844c"></script>
     <script src="../_static/js/termynal.js?v=ff4c6923"></script>

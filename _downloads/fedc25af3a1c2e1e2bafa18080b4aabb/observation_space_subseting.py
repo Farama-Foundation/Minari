@@ -66,7 +66,7 @@ observation_space_subset = spaces.Dict(
 class CustomSubsetStepDataCallback(StepDataCallback):
     def __call__(self, env, **kwargs):
         step_data = super().__call__(env, **kwargs)
-        del step_data["observations"]["achieved_goal"]
+        del step_data["observation"]["achieved_goal"]
         return step_data
 
 
@@ -74,7 +74,7 @@ class CustomSubsetStepDataCallback(StepDataCallback):
 # Finally we'll record 10 episodes with our observation space subset and
 # callback passed to :class:`minari.DataCollector`.
 
-dataset_id = "point-maze-subseted-v3"
+dataset_id = "pointmaze/subseted-v0"
 
 # delete the test dataset if it already exists
 local_datasets = minari.list_local_datasets()
@@ -105,7 +105,7 @@ dataset = env.create_dataset(
     algorithm_name="random_policy",
 )
 
-print(dataset.sample_episodes(1)[0].observations.keys())
+print(dataset[0].observations.keys())
 
 # %%
 # The output from the final line above, should be
