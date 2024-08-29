@@ -119,11 +119,12 @@ class MinariDataset:
         else:
             raise ValueError(f"Unrecognized type {type(data)} for data")
 
+        self._total_steps = None
         if episode_indices is None:
             episode_indices = np.arange(self._data.total_episodes)
+            self._total_steps = self._data.total_steps
         assert episode_indices is not None
         self._episode_indices: npt.NDArray[np.int_] = episode_indices
-        self._total_steps = None
 
         metadata = self._data.metadata
 
@@ -307,13 +308,10 @@ class MinariDataset:
     def total_steps(self) -> int:
         """Total episodes steps in the Minari dataset."""
         if self._total_steps is None:
-            if self.episode_indices is None:
-                self._total_steps = self.storage.total_steps
-            else:
-                self._total_steps = 0
-                metadatas = self.storage.get_episode_metadata(self.episode_indices)
-                for m in metadatas:
-                    self._total_steps += m["total_steps"]
+            self._total_steps = 0
+            metadatas = self.storage.get_episode_metadata(self.episode_indices)
+            for m in metadatas:
+                self._total_steps += m["total_steps"]
         return int(self._total_steps)
 
     @property
