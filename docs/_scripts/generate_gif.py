@@ -9,8 +9,8 @@ import minari
 FLAGS = flags.FLAGS
 flags.DEFINE_string("dataset_id", None, "Dataset ID")
 flags.DEFINE_string("path", None, "Path to save the gif")
-flags.DEFINE_integer("num_frames", 256, "Number of frames in the gif")
-flags.DEFINE_integer("fps", 16, "Frames per second in the gif")
+flags.DEFINE_integer("num_frames", 512, "Number of frames in the gif")
+flags.DEFINE_integer("fps", 32, "Frames per second in the gif")
 
 
 def _space_at(values, index):

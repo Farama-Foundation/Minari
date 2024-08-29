@@ -1,6 +1,9 @@
 import gymnasium as gym
 import pytest
-from torchrl.data.datasets.minari_data import MinariExperienceReplay
+
+
+pytest.importorskip("torchrl")
+from torchrl.data.datasets.minari_data import MinariExperienceReplay  # noqa: E402
 
 
 def test_torch_minari_experience_replay():
