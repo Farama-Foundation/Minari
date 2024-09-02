@@ -378,6 +378,41 @@
             
             <section class="tex2jax_ignore mathjax_ignore" id="release-notes">
 <h1>Release Notes<a class="headerlink" href="#release-notes" title="Link to this heading">¶</a></h1>
+<section id="release-v0-5-0">
+<h2>v0.5.0<a class="headerlink" href="#release-v0-5-0" title="Link to this heading">¶</a></h2>
+<p><em>Released on 2024-08-29 - <a class="reference external" href="https://github.com/Farama-Foundation/Minari/releases/tag/v0.5.0">GitHub</a> - <a class="reference external" href="https://pypi.org/project/minari/v0.5.0/">PyPI</a></em></p>
+<h2>Key changes</h2>
+<h3>PyArrow support</h3>
+<p>Minari now supports PyArrow datasets. To create a new dataset using PyArrow, set the <code>data_format</code> flag to <code>arrow</code> during the creation of a <code>DataCollector</code> or while creating a dataset with a buffer. For example:</p>
+<div class="highlight highlight-source-python notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="env = DataCollector(env, data_format=&quot;arrow&quot;)"><pre><span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-v">DataCollector</span>(<span class="pl-s1">env</span>, <span class="pl-s1">data_format</span><span class="pl-c1">=</span><span class="pl-s">"arrow"</span>)</pre></div>
+<p>Loading a dataset doesn't require any change, Minari will detect automatically the data format.</p>
+<h3>Namespaces</h3>
+<p>Datasets can now be grouped to create a more organized dataset hub. For example, current remote datasets, which are reproductions of the <code>D4RL</code> datasets, are grouped under a namespace called <code>D4RL</code>. We encourage grouping datasets based on the environment used to produce them, if applicable. For instance, the previously named <code>door-human-v2</code> dataset is now referenced as <code>D4RL/door/human-v2</code>. Multiple datasets are available in the <code>D4RL</code> group as well as in the <code>D4RL/door</code> subgroup, such as <code>D4RL/door/cloned-v2</code>. These grouped datasets can share metadata, enhancing their organization and accessibility.</p>
+<p>For more information on creating and managing namespaces, please refer to the <a href="https://minari.farama.org/api/namespace/namespace/" rel="nofollow">documentation page</a>.</p>
+<h3>Support for other remotes</h3>
+<p>You can now set your own remote storage in Minari. Currently, only Google Cloud buckets are supported, but we plan to add support for other cloud services in the future. To configure your remote storage, set the <code>MINARI_REMOTE</code> environment variable, for example as follows:</p>
+<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="export MINARI_REMOTE=gcp://bucket-name"><pre><span class="pl-k">export</span> MINARI_REMOTE=gcp://bucket-name</pre></div>
+<h2>Breaking changes</h2>
+<p>This release introduces a few breaking changes:</p>
+<ul>
+<li>The deprecated versioning of <code>DataCollector</code> has been removed. It can now only be imported as <code>DataCollector</code>, not as <code>DataCollectorV0</code>.</li>
+<li><code>DataCollector</code> no longer supports <code>max_episode_step</code>.</li>
+<li>We remove the deprecated method <code>minari.create_dataset_from_collector_env</code>; use <code>DataCollector.create_dataset</code> instead.</li>
+<li>The naming convention has been changed as explained above. When using Minari 0.5.0, remote dataset names have been updated to adhere to the new convention.</li>
+<li>We renamed <code>total_timesteps</code> to <code>total_steps</code> to unify the naming across the library.</li>
+</ul>
+<h2>Contributors</h2>
+<h3>New contributors</h3>
+<ul>
+<li><a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/tomekster/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/tomekster">@tomekster</a> made their first contribution in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="2106748064" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/183" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/183/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/183">#183</a></li>
+<li><a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/cmmcirvin/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/cmmcirvin">@cmmcirvin</a> made their first contribution in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="2170585420" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/196" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/196/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/196">#196</a></li>
+<li><a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/pseudo-rnd-thoughts/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/pseudo-rnd-thoughts">@pseudo-rnd-thoughts</a> made their first contribution in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="2329380666" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/211" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/211/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/211">#211</a></li>
+<li><a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/JosephCarrino/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/JosephCarrino">@JosephCarrino</a> made their first contribution in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="2406019642" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/218" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/218/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/218">#218</a></li>
+<li><a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/jamartinh/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/jamartinh">@jamartinh</a> made their first contribution in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="2033062692" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/177" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/177/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/177">#177</a></li>
+</ul>
+<h3>Others contributors</h3>
+<p><a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/younik/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/younik">@younik</a> <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/alexdavey/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/alexdavey">@alexdavey</a> <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/enerrio/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/enerrio">@enerrio</a></p>
+<p><strong>Full Changelog</strong>: <a class="commit-link" href="https://github.com/Farama-Foundation/Minari/compare/v0.4.3...v0.5.0"><tt>v0.4.3...v0.5.0</tt></a></p></section>
 <section id="release-v0-4-3">
 <h2>v0.4.3<a class="headerlink" href="#release-v0-4-3" title="Link to this heading">¶</a></h2>
 <p><em>Released on 2024-01-27 - <a class="reference external" href="https://github.com/Farama-Foundation/Minari/releases/tag/v0.4.3">GitHub</a> - <a class="reference external" href="https://pypi.org/project/minari/v0.4.3/">PyPI</a></em></p>
@@ -916,6 +951,7 @@ dataset_v3 = minari.combine_datasets(datasets_to_combine = [dataset_v1, dataset_
             <div class="toc-tree">
               <ul>
 <li><a class="reference internal" href="#">Release Notes</a><ul>
+<li><a class="reference internal" href="#release-v0-5-0">v0.5.0</a></li>
 <li><a class="reference internal" href="#release-v0-4-3">v0.4.3</a></li>
 <li><a class="reference internal" href="#release-v0-4-2">v0.4.2</a></li>
 <li><a class="reference internal" href="#release-v0-4-1">v0.4.1</a></li>
