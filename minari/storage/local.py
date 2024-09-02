@@ -1,5 +1,6 @@
 import importlib.metadata
 import os
+import pathlib
 import shutil
 import warnings
 from typing import Dict, Iterable, Tuple, Union
@@ -81,7 +82,7 @@ def list_local_datasets(
             namespaced_dir_name = os.path.join(namespace, dir_name)
             # Minari datasets must contain the data directory.
             if "data" in os.listdir(dir_path):
-                dataset_ids.append(namespaced_dir_name)
+                dataset_ids.append(pathlib.PurePath(namespaced_dir_name).as_posix())
             else:
                 recurse_directories(base_path, namespaced_dir_name)
 
