@@ -61,13 +61,13 @@ def _show_dataset_table(datasets: Dict[str, Dict[str, Any]], table_title: str):
         dataset_id = f"{dataset_prefix}-v{max(versions)}"
         dst_metadata = datasets[dataset_id]
         author = dst_metadata.get("author", "Unknown")
-        if isinstance(author, Iterable):
+        if not isinstance(author, str) and isinstance(author, Iterable):
             author = ", ".join(author)
         dataset_size = dst_metadata.get("dataset_size", "Unknown")
         if dataset_size != "Unknown":
             dataset_size = f"{str(dataset_size)} MB"
         author_email = dst_metadata.get("author_email", "Unknown")
-        if isinstance(author_email, Iterable):
+        if not isinstance(author_email, str) and isinstance(author_email, Iterable):
             author_email = ", ".join(author_email)
 
         assert isinstance(dst_metadata["dataset_id"], str)
