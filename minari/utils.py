@@ -504,7 +504,7 @@ def get_env_spec_dict(env_spec: EnvSpec) -> Dict[str, str]:
 
 def get_dataset_spec_dict(dataset_spec: Dict) -> Dict[str, str]:
     """Create dict of the dataset specs, including observation and action space."""
-    code_link = dataset_spec["code_permalink"]
+    code_link = dataset_spec.get("code_permalink")
     action_space = dataset_spec.get("action_space")
     obs_space = dataset_spec.get("observation_space")
 
@@ -532,10 +532,10 @@ def get_dataset_spec_dict(dataset_spec: Dict) -> Dict[str, str]:
         "supported" if version in supported_dataset_versions else "not supported"
     )
     author = dataset_spec.get("author", "Not provided")
-    if isinstance(author, Iterable):
+    if not isinstance(author, str) and isinstance(author, Iterable):
         author = ", ".join(author)
     email = dataset_spec.get("author_email", "Not provided")
-    if isinstance(email, Iterable):
+    if not isinstance(email, str) and isinstance(email, Iterable):
         email = ", ".join(email)
     assert isinstance(author, str)
     assert isinstance(email, str)
