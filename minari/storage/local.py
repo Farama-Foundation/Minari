@@ -94,7 +94,7 @@ def list_local_datasets(
     for dst_id in dataset_ids:
         data_path = os.path.join(datasets_path, dst_id, "data")
         try:
-            metadata = MinariStorage.read(data_path).metadata
+            metadata = MinariStorage.read_raw_metadata(data_path)
             metadata_id = metadata["dataset_id"]
 
             if dst_id != metadata_id:

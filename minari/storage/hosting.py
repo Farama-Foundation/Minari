@@ -9,7 +9,7 @@ from typing import Dict, List
 from gymnasium import logger
 
 from minari.dataset.minari_dataset import gen_dataset_id, parse_dataset_id
-from minari.dataset.minari_storage import METADATA_FILE_NAME
+from minari.dataset.minari_storage import METADATA_FILE_NAME, MinariStorage
 from minari.storage.datasets_root_dir import get_dataset_path
 from minari.storage.local import dataset_id_sort_key, load_dataset
 from minari.storage.remotes import get_cloud_storage
@@ -171,7 +171,9 @@ def download_dataset(dataset_id: str, force_download: bool = False):
 
     # Skip a force download of an incompatible dataset version
     if dataset_version in compatible_dataset_versions:
-        combined_datasets = load_dataset(dataset_id).spec.combined_datasets
+        data_path = file_path.joinpath("data")
+        metadata = MinariStorage.read_raw_metadata(data_path)
+        combined_datasets = metadata.get("combined_datasets", [])
 
         # If the dataset is a combination of other datasets download the subdatasets recursively
         if len(combined_datasets) > 0:
