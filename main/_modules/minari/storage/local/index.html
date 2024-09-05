@@ -468,7 +468,7 @@
     <span class="k">for</span> <span class="n">dst_id</span> <span class="ow">in</span> <span class="n">dataset_ids</span><span class="p">:</span>
         <span class="n">data_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datasets_path</span><span class="p">,</span> <span class="n">dst_id</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">metadata</span> <span class="o">=</span> <span class="n">MinariStorage</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span><span class="o">.</span><span class="n">metadata</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="n">MinariStorage</span><span class="o">.</span><span class="n">read_raw_metadata</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span>
             <span class="n">metadata_id</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;dataset_id&quot;</span><span class="p">]</span>
 
             <span class="k">if</span> <span class="n">dst_id</span> <span class="o">!=</span> <span class="n">metadata_id</span><span class="p">:</span>

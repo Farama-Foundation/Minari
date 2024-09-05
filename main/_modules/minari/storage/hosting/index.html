@@ -378,7 +378,7 @@
 <span class="kn">from</span> <span class="nn">gymnasium</span> <span class="kn">import</span> <span class="n">logger</span>
 
 <span class="kn">from</span> <span class="nn">minari.dataset.minari_dataset</span> <span class="kn">import</span> <span class="n">gen_dataset_id</span><span class="p">,</span> <span class="n">parse_dataset_id</span>
-<span class="kn">from</span> <span class="nn">minari.dataset.minari_storage</span> <span class="kn">import</span> <span class="n">METADATA_FILE_NAME</span>
+<span class="kn">from</span> <span class="nn">minari.dataset.minari_storage</span> <span class="kn">import</span> <span class="n">METADATA_FILE_NAME</span><span class="p">,</span> <span class="n">MinariStorage</span>
 <span class="kn">from</span> <span class="nn">minari.storage.datasets_root_dir</span> <span class="kn">import</span> <span class="n">get_dataset_path</span>
 <span class="kn">from</span> <span class="nn">minari.storage.local</span> <span class="kn">import</span> <span class="n">dataset_id_sort_key</span><span class="p">,</span> <span class="n">load_dataset</span>
 <span class="kn">from</span> <span class="nn">minari.storage.remotes</span> <span class="kn">import</span> <span class="n">get_cloud_storage</span>
@@ -542,7 +542,9 @@
 
     <span class="c1"># Skip a force download of an incompatible dataset version</span>
     <span class="k">if</span> <span class="n">dataset_version</span> <span class="ow">in</span> <span class="n">compatible_dataset_versions</span><span class="p">:</span>
-        <span class="n">combined_datasets</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">combined_datasets</span>
+        <span class="n">data_path</span> <span class="o">=</span> <span class="n">file_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">MinariStorage</span><span class="o">.</span><span class="n">read_raw_metadata</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span>
+        <span class="n">combined_datasets</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;combined_datasets&quot;</span><span class="p">,</span> <span class="p">[])</span>
 
         <span class="c1"># If the dataset is a combination of other datasets download the subdatasets recursively</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">combined_datasets</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
