@@ -35,14 +35,14 @@ class MinariStorage(ABC):
         self._action_space = action_space
 
     @classmethod
-    def read(cls, data_path: PathLike) -> MinariStorage:
-        """Create a MinariStorage to read data from a path.
+    def read_raw_metadata(cls, data_path: PathLike) -> Dict[str, Any]:
+        """Read the raw metadata from a path.
 
         Args:
             data_path (str or Path): directory where the data is stored.
 
         Returns:
-            A new MinariStorage object to read the data.
+            metadata (dict): metadata of the dataset.
 
         Raises:
             ValueError: if the specified path doesn't exist or doesn't contain any data.
@@ -55,6 +55,22 @@ class MinariStorage(ABC):
             raise ValueError(f"No data found in data path {data_path}")
         with open(metadata_file_path) as file:
             metadata = json.load(file)
+        return metadata
+
+    @classmethod
+    def read(cls, data_path: PathLike) -> MinariStorage:
+        """Create a MinariStorage to read data from a path.
+
+        Args:
+            data_path (str or Path): directory where the data is stored.
+
+        Returns:
+            A new MinariStorage object to read the data.
+
+        Raises:
+            ValueError: if the specified path doesn't exist or doesn't contain any data.
+        """
+        metadata = MinariStorage.read_raw_metadata(data_path)
 
         observation_space = None
         action_space = None
@@ -85,7 +101,7 @@ class MinariStorage(ABC):
         from minari.dataset._storages import get_minari_storage  # avoid circular import
 
         return get_minari_storage(metadata["data_format"])(
-            data_path,
+            pathlib.Path(data_path),
             observation_space,
             action_space,
         )
@@ -180,8 +196,7 @@ class MinariStorage(ABC):
     @property
     def metadata(self) -> Dict[str, Any]:
         """Metadata of the dataset."""
-        with open(self.data_path.joinpath(METADATA_FILE_NAME)) as file:
-            metadata = json.load(file)
+        metadata = MinariStorage.read_raw_metadata(self.data_path)
 
         metadata["observation_space"] = self.observation_space
         metadata["action_space"] = self.action_space
@@ -215,8 +230,7 @@ class MinariStorage(ABC):
         assert isinstance(metadata.get("author_email", set()), set)
         assert isinstance(metadata.get("minari_version", ""), str)
 
-        with open(self.data_path.joinpath(METADATA_FILE_NAME)) as file:
-            saved_metadata = json.load(file)
+        saved_metadata = MinariStorage.read_raw_metadata(self.data_path)
 
         forbidden_keys = not_updatable_keys.intersection(metadata.keys())
         forbidden_keys = forbidden_keys.intersection(saved_metadata.keys())
