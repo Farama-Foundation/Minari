@@ -102,10 +102,24 @@ dataset = env.create_dataset("frozenlake/test-v0")
 
 For other examples, see [Basic Usage](https://minari.farama.org/main/content/basic_usage/). For a complete tutorial on how to create new datasets using Minari, see our [Pointmaze D4RL Dataset](https://minari.farama.org/main/tutorials/dataset_creation/point_maze_dataset/) tutorial, which re-creates the Maze2D datasets from [D4RL](https://github.com/Farama-Foundation/D4RL).
 
-## Project Maintainers
-Main Contributors: [Rodrigo Perez-Vicente](https://github.com/rodrigodelazcano), [Omar Younis](https://github.com/younik), [John Balis](https://github.com/balisujohn), [Alex Davey](https://github.com/alexdavey)
+## Citation
+If you use Minari, please consider citing it:
 
-Maintenance for this project is also contributed by the broader Farama team: [farama.org/team](https://farama.org/team).
+```
+@software{minari,
+	author = {Younis, Omar G. and Perez-Vicente, Rodrigo and Balis, John U. and Dudley, Will and Davey, Alex and Terry, Jordan K},
+	doi = {10.5281/zenodo.13767625},
+	month = sep,
+	publisher = {Zenodo},
+	title = {Minari},
+	url = {https://doi.org/10.5281/zenodo.13767625},
+	version = {0.5.0},
+	year = 2024,
+	bdsk-url-1 = {https://doi.org/10.5281/zenodo.13767625}
+}
+```
+
+
 
 ___
 
