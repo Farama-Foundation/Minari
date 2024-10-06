@@ -1,4 +1,5 @@
 """Minari CLI commands."""
+
 import os
 from collections import defaultdict
 from typing import Any, Dict, Iterable, List, Optional
