@@ -1,7 +1,7 @@
 ---
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v5.0.0
     hooks:
       - id: check-symlinks
       - id: destroyed-symlinks
@@ -19,17 +19,17 @@ repos:
       - id: mixed-line-ending
         args: [ --fix=lf ]
   - repo: https://github.com/python/black
-    rev: 23.11.0
+    rev: 24.8.0
     hooks:
       - id: black
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.2.6
+    rev: v2.3.0
     hooks:
       - id: codespell
         args:
           - --skip=*.css,*.js,*.map,*.scss,*svg
   - repo: https://github.com/PyCQA/flake8
-    rev: 6.1.0
+    rev: 7.1.1
     hooks:
       - id: flake8
         args:
@@ -43,19 +43,19 @@ repos:
           - --show-source
           - --statistics
   - repo: https://github.com/PyCQA/isort
-    rev: 5.12.0
+    rev: 5.13.2
     hooks:
       - id: isort
         args: ["--profile", "black"]
         exclude: "docs/tutorials/using_datasets/IQL_torchrl.py"
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.15.0
+    rev: v3.17.0
     hooks:
       - id: pyupgrade
         # TODO: remove `--keep-runtime-typing` option
         args: ["--py37-plus", "--keep-runtime-typing"]
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.5.0
+    rev: v5.0.0
     hooks:
       - id: mixed-line-ending
         args: ["--fix=lf"]
@@ -84,6 +84,6 @@ repos:
         args:
           - --project=pyproject.toml
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.27.1
+    rev: 0.29.3
     hooks:
       - id: check-github-workflows

@@ -190,8 +190,7 @@ class MinariStorage(ABC):
         data_path: pathlib.Path,
         observation_space: gym.Space,
         action_space: gym.Space,
-    ) -> MinariStorage:
-        ...
+    ) -> MinariStorage: ...
 
     @property
     def metadata(self) -> Dict[str, Any]:

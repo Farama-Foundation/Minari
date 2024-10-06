@@ -93,9 +93,11 @@ class ArrowStorage(MinariStorage):
                 "rewards": np.asarray(episode["rewards"])[:-1],
                 "terminations": np.asarray(episode["terminations"])[:-1],
                 "truncations": np.asarray(episode["truncations"])[:-1],
-                "infos": _decode_info(episode["infos"])
-                if "infos" in episode.column_names
-                else {},
+                "infos": (
+                    _decode_info(episode["infos"])
+                    if "infos" in episode.column_names
+                    else {}
+                ),
             }
 
         return map(_to_dict, episode_indices, dataset.to_batches())
