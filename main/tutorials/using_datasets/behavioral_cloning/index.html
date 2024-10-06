@@ -534,9 +534,9 @@ We then train the policy to predict the actions:</p>
 <span class="n">accumulated_rew</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="k">while</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
     <span class="n">action</span> <span class="o">=</span> <span class="n">policy_net</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">obs</span><span class="p">))</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
-    <span class="n">obs</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">ter</span><span class="p">,</span> <span class="n">tru</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
-    <span class="n">done</span> <span class="o">=</span> <span class="n">ter</span> <span class="ow">or</span> <span class="n">tru</span>
-    <span class="n">accumulated_rew</span> <span class="o">+=</span> <span class="n">rew</span>
+    <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+    <span class="n">done</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
+    <span class="n">accumulated_rew</span> <span class="o">+=</span> <span class="n">reward</span>
 
 <span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Accumulated rew: &quot;</span><span class="p">,</span> <span class="n">accumulated_rew</span><span class="p">)</span>

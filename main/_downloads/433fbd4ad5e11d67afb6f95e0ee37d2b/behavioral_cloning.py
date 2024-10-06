@@ -174,9 +174,9 @@ done = False
 accumulated_rew = 0
 while not done:
     action = policy_net(torch.Tensor(obs)).argmax()
-    obs, rew, ter, tru, _ = env.step(action.numpy())
-    done = ter or tru
-    accumulated_rew += rew
+    obs, reward, terminated, truncated, _ = env.step(action.numpy())
+    done = terminated or truncated
+    accumulated_rew += reward
 
 env.close()
 print("Accumulated rew: ", accumulated_rew)
