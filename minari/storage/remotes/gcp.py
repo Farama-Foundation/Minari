@@ -1,7 +1,9 @@
+import json
 import os
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Iterable, Optional
 
+from minari.dataset.minari_storage import METADATA_FILE_NAME
 from minari.storage.remotes.cloud_storage import CloudStorage
 
 
@@ -39,10 +41,26 @@ class GCPStorage(CloudStorage):
         blob = self.bucket.blob(remote_path)
         blob.upload_from_filename(local_path)
 
-    def list_blobs(self, prefix: Optional[str] = None) -> list:
-        return self.bucket.list_blobs(prefix=prefix)
+    def list_datasets(self, prefix: Optional[str] = None) -> Iterable[str]:
+        for blob in self.bucket.list_blobs(prefix=prefix):
+            if os.path.basename(blob.name) == METADATA_FILE_NAME:
+                yield blob.name
+    
+    def get_dataset_metadata(self, dataset_id: str) -> dict:
+        blob = self.bucket.blob(dataset_id)
+        metadata = json.loads(blob.download_as_bytes(client=self.storage_client))
+        return metadata
 
-    def download_blob(self, blob: Any, file_path: Path) -> None:
-        with open(file_path, "wb") as f:
-            with tqdm.wrapattr(f, "write", total=blob.size) as file_obj:
-                self.storage_client.download_blob_to_file(blob, file_obj)
+    def download_dataset(self, dataset_id: str, path: Path) -> None:
+        blobs = self.bucket.list_blobs(prefix=dataset_id)
+
+        for blob in blobs:
+            blob_path = Path(blob.name)
+            if not blob_path.is_file(): 
+                file_path = path.joinpath(blob_path)
+                file_path.mkdir(parents=True, exist_ok=True)
+                
+                print(f"\n * Downloading data file '{blob.name}' ...\n")
+                with open(file_path, "wb") as f:
+                    with tqdm.wrapattr(f, "write", total=blob.size) as file_obj:
+                        self.storage_client.download_blob_to_file(blob, file_obj)        

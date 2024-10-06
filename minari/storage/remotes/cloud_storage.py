@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Iterable, Optional
 
 
 class CloudStorage(ABC):
@@ -17,9 +17,13 @@ class CloudStorage(ABC):
         ...
 
     @abstractmethod
-    def list_blobs(self, prefix: Optional[str] = None) -> list:
+    def list_datasets(self, prefix: Optional[str] = None) -> Iterable[str]:
+        ...
+    
+    @abstractmethod
+    def get_dataset_metadata(self, dataset_id: str) -> dict:
         ...
 
     @abstractmethod
-    def download_blob(self, blob: Any, file_path: str) -> None:
+    def download_dataset(self, dataset_id: str, path: Path) -> None:
         ...

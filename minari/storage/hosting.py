@@ -9,7 +9,7 @@ from typing import Dict, List
 from gymnasium import logger
 
 from minari.dataset.minari_dataset import gen_dataset_id, parse_dataset_id
-from minari.dataset.minari_storage import METADATA_FILE_NAME, MinariStorage
+from minari.dataset.minari_storage import MinariStorage
 from minari.storage.datasets_root_dir import get_dataset_path
 from minari.storage.local import dataset_id_sort_key, load_dataset
 from minari.storage.remotes import get_cloud_storage
@@ -153,20 +153,7 @@ def download_dataset(dataset_id: str, force_download: bool = False):
     print(f"\nDownloading {dataset_id} from Farama servers...")
     datasets_path = get_dataset_path("")
     cloud_storage = get_cloud_storage()
-    blobs = cloud_storage.list_blobs(prefix=dataset_id)
-
-    for blob in blobs:
-        print(f"\n * Downloading data file '{blob.name}' ...\n")
-        blob_dir, file_name = os.path.split(blob.name)
-        if (
-            file_name == ""
-        ):  # If the object blob path is a directory continue searching for files
-            continue
-        blob_local_dir = os.path.join(datasets_path, blob_dir)
-        if not os.path.exists(blob_local_dir):
-            os.makedirs(blob_local_dir)
-        cloud_storage.download_blob(blob, os.path.join(blob_local_dir, file_name))
-
+    cloud_storage.download_dataset(dataset_id, datasets_path)
     print(f"\nDataset {dataset_id} downloaded to {file_path}")
 
     # Skip a force download of an incompatible dataset version
@@ -203,33 +190,32 @@ def list_remote_datasets(
     from minari import supported_dataset_versions
 
     cloud_storage = get_cloud_storage()
-    blobs = cloud_storage.list_blobs()
+    dataset_ids = cloud_storage.list_datasets()
 
     # Generate dict = {'dataset_id': (version, metadata)}
     remote_datasets = {}
-    for blob in blobs:
+    for dataset_id in dataset_ids:
         try:
-            if os.path.basename(blob.name) == METADATA_FILE_NAME:
-                metadata = json.loads(blob.download_as_bytes(client=None))
-                if (
-                    compatible_minari_version
-                    and metadata["minari_version"] not in supported_dataset_versions
-                ):
-                    continue
-                dataset_id = metadata["dataset_id"]
-                namespace, dataset_name, version = parse_dataset_id(dataset_id)
-                dataset = gen_dataset_id(namespace, dataset_name)
+            metadata = cloud_storage.get_dataset_metadata(dataset_id)
+            if (
+                compatible_minari_version
+                and metadata["minari_version"] not in supported_dataset_versions
+            ):
+                continue
+            dataset_id = metadata["dataset_id"]
+            namespace, dataset_name, version = parse_dataset_id(dataset_id)
+            dataset = gen_dataset_id(namespace, dataset_name)
 
-                if latest_version:
-                    if (
-                        dataset not in remote_datasets
-                        or version > remote_datasets[dataset][0]
-                    ):
-                        remote_datasets[dataset] = (version, metadata)
-                else:
-                    remote_datasets[dataset_id] = metadata
+            if latest_version:
+                if (
+                    dataset not in remote_datasets
+                    or version > remote_datasets[dataset][0]
+                ):
+                    remote_datasets[dataset] = (version, metadata)
+            else:
+                remote_datasets[dataset_id] = metadata
         except Exception:
-            warnings.warn(f"Misconfigured dataset named {blob.name} on remote")
+            warnings.warn(f"Misconfigured dataset {dataset_id} on remote")
 
     if latest_version:
         # Convert to dict = {'dataset_id': metadata}

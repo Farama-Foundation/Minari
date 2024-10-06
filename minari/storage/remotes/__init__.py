@@ -9,11 +9,18 @@ DEFAULT_REMOTE = "gcp://minari-remote"
 
 def get_gcps() -> Type[CloudStorage]:
     from .gcp import GCPStorage
-
     return GCPStorage
 
 
-_registry: Dict[str, Callable[[], Type[CloudStorage]]] = {"gcp": get_gcps}
+def get_hfs() -> Type[CloudStorage]:
+    from .huggingface import HuggingFaceStorage
+    return HuggingFaceStorage
+
+
+_registry: Dict[str, Callable[[], Type[CloudStorage]]] = {
+    "gcp": get_gcps,
+    "hf": get_hfs
+}
 
 
 def get_cloud_storage(key_path=None) -> CloudStorage:
