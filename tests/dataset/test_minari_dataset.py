@@ -156,7 +156,7 @@ def test_filter_episodes_and_subsequent_updates(
     assert isinstance(filtered_dataset.spec.total_steps, int)
     assert filtered_dataset.total_episodes == 17
     assert filtered_dataset.spec.total_episodes == 17
-    assert filtered_dataset.spec.total_steps == 17 * 5
+    assert filtered_dataset.spec.total_steps == 17 * env.max_timesteps
     assert tuple(filtered_dataset.episode_indices) == (
         0,
         1,
@@ -217,7 +217,7 @@ def test_filter_episodes_and_subsequent_updates(
     assert isinstance(filtered_dataset.spec.total_steps, int)
     assert filtered_dataset.total_episodes == 27
     assert filtered_dataset.spec.total_episodes == 27
-    assert filtered_dataset.spec.total_steps == 27 * 5
+    assert filtered_dataset.spec.total_steps == 27 * env.max_timesteps
 
     assert tuple(filtered_dataset.episode_indices) == (
         0,

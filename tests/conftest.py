@@ -20,6 +20,7 @@ def register_dummy_envs():
     env_names = [
         "DummyBoxEnv",
         "DummyInfoEnv",
+        "DummySingleStepEnv",
         "DummyInconsistentInfoEnv",
         "DummyMultiDimensionalBoxEnv",
         "DummyTupleDiscreteBoxEnv",
