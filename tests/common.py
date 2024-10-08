@@ -41,8 +41,8 @@ class DummyEnv(gym.Env):
         return {}
 
     def step(self, action):
-        terminated = self.timestep > self._max_timesteps
         self.timestep += 1
+        terminated = self.timestep >= self._max_timesteps
 
         return (
             self.observation_space.sample(),
