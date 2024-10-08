@@ -43,7 +43,7 @@ all = ["minari[arrow,hdf5,gcs,create]"]
 
 testing = [
     "pytest>=7.1.3",
-    "gymnasium-robotics@git+https://github.com/Farama-Foundation/Gymnasium-Robotics.git",
+    "gymnasium-robotics>=1.23",
     "mktestdocs",
     "torchrl",
     "agilerl>=1.0.6"
