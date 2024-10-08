@@ -382,29 +382,25 @@ def create_dataset_from_buffers(
     """
     dataset_path = _generate_dataset_path(dataset_id)
 
-    if isinstance(env, str):
-        env_spec = gym.spec(env)
-    elif isinstance(env, EnvSpec):
-        env_spec = env
-    elif isinstance(env, gym.Env):
-        env_spec = env.spec
-    elif env is None:
+    if env is None:
+        env_spec = None
         if observation_space is None or action_space is None:
             raise ValueError(
                 "Both observation space and action space must be provided, if env is None"
             )
-        env_spec = None
     else:
-        raise ValueError("The `env` argument must be of types str|EnvSpec|gym.Env|None")
+        if isinstance(env, EnvSpec):
+            env_spec = env
+        elif isinstance(env, str):
+            env_spec = gym.spec(env)
+        elif isinstance(env, gym.Env):
+            env_spec = env.spec
+        else:
+            raise TypeError("Unsupported env type")
 
-    if isinstance(env, (str, EnvSpec)):
-        env = gym.make(env)
-    if observation_space is None:
-        assert isinstance(env, gym.Env)
-        observation_space = env.observation_space
-    if action_space is None:
-        assert isinstance(env, gym.Env)
-        action_space = env.action_space
+        gym_env: gym.Env = gym.make(env) if isinstance(env, (str, EnvSpec)) else env
+        observation_space = observation_space or gym_env.observation_space
+        action_space = action_space or gym_env.action_space
 
     metadata = _generate_dataset_metadata(
         dataset_id,
