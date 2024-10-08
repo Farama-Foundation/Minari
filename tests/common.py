@@ -29,23 +29,20 @@ dummy_test_datasets = [
     ("dummy-combo/test-v0", "DummyComboEnv-v0"),
     ("dummy-tuple-discrete-box/test-v0", "DummyTupleDiscreteBoxEnv-v0"),
     ("nested/namespace/dummy-dict/test-v0", "DummyDictEnv-v0"),
+    ("dummy-single-step/test-v0", "DummySingleStepEnv-v0"),
 ] + dummy_box_dataset
 
 
-class DummyBoxEnv(gym.Env):
+class DummyEnv(gym.Env):
     def __init__(self):
-        self.action_space = spaces.Box(low=-1, high=4, shape=(2,), dtype=np.float32)
-        self.observation_space = spaces.Box(
-            low=-1, high=4, shape=(3,), dtype=np.float32
-        )
         self._max_timesteps = 5
 
     def _get_info(self):
-        return {"timestep": np.array([self.timestep])}
+        return {}
 
     def step(self, action):
-        terminated = self.timestep > self._max_timesteps
         self.timestep += 1
+        terminated = self.timestep >= self._max_timesteps
 
         return (
             self.observation_space.sample(),
@@ -63,6 +60,18 @@ class DummyBoxEnv(gym.Env):
         return self.observation_space.sample(), self._get_info()
 
 
+class DummyBoxEnv(DummyEnv):
+    def __init__(self):
+        super().__init__()
+        self.action_space = spaces.Box(low=-1, high=4, shape=(2,), dtype=np.float32)
+        self.observation_space = spaces.Box(
+            low=-1, high=4, shape=(3,), dtype=np.float32
+        )
+
+    def _get_info(self):
+        return {"timestep": np.array([self.timestep])}
+
+
 class DummyInfoEnv(DummyBoxEnv):
     def __init__(self, info=None):
         super().__init__()
@@ -70,6 +79,12 @@ class DummyInfoEnv(DummyBoxEnv):
 
     def _get_info(self):
         return self.info
+
+
+class DummySingleStepEnv(DummyBoxEnv):
+    def __init__(self):
+        super().__init__()
+        self._max_timesteps = 1
 
 
 class DummyInconsistentInfoEnv(DummyBoxEnv):
@@ -101,8 +116,9 @@ class DummyMultiDimensionalBoxEnv(gym.Env):
         return self.observation_space.sample(), {}
 
 
-class DummyTupleDiscreteBoxEnv(gym.Env):
+class DummyTupleDiscreteBoxEnv(DummyEnv):
     def __init__(self):
+        super().__init__()
         self.action_space = spaces.Tuple(
             (
                 spaces.Discrete(1),
@@ -119,29 +135,10 @@ class DummyTupleDiscreteBoxEnv(gym.Env):
     def _get_info(self):
         return {"timestep": np.array([self.timestep])}
 
-    def step(self, action):
-        terminated = self.timestep > 5
-        self.timestep += 1
 
-        return (
-            self.observation_space.sample(),
-            0,
-            terminated,
-            False,
-            self._get_info(),
-        )
-
-    def reset(self, seed=None, options=None):
-        self.timestep = 0
-        self.observation_space.seed(seed)
-        return (
-            self.observation_space.sample(),
-            self._get_info(),
-        )
-
-
-class DummyDictEnv(gym.Env):
+class DummyDictEnv(DummyEnv):
     def __init__(self):
+        super().__init__()
         self.action_space = spaces.Dict(
             {
                 "component_1": spaces.Box(low=-1, high=1, dtype=np.float32),
@@ -171,27 +168,10 @@ class DummyDictEnv(gym.Env):
             "component_1": {"next_timestep": np.array([self.timestep + 1])},
         }
 
-    def step(self, action):
-        terminated = self.timestep > 5
-        self.timestep += 1
 
-        return (
-            self.observation_space.sample(),
-            0,
-            terminated,
-            False,
-            self._get_info(),
-        )
-
-    def reset(self, seed=None, options=None):
-        self.timestep = 0
-        self.observation_space.seed(seed)
-
-        return self.observation_space.sample(), self._get_info()
-
-
-class DummyTupleEnv(gym.Env):
+class DummyTupleEnv(DummyEnv):
     def __init__(self):
+        super().__init__()
         self.action_space = spaces.Tuple(
             (
                 spaces.Box(low=2, high=3, dtype=np.float32),
@@ -217,29 +197,12 @@ class DummyTupleEnv(gym.Env):
             "component_1": {"component_1_info_1": np.ones((2,))},
         }
 
-    def step(self, action):
-        terminated = self.timestep > 5
-        self.timestep += 1
 
-        return self.observation_space.sample(), 0, terminated, False, self._get_info()
-
-    def reset(self, seed=None, options=None):
-        self.timestep = 0
-        self.observation_space.seed(seed)
-
-        return self.observation_space.sample(), self._get_info()
-
-
-class DummyTextEnv(gym.Env):
+class DummyTextEnv(DummyEnv):
     def __init__(self):
+        super().__init__()
         self.action_space = spaces.Text(max_length=10, min_length=2, charset="01")
         self.observation_space = spaces.Text(max_length=20, charset=unicode_charset)
-
-    def step(self, action):
-        terminated = self.timestep > 5
-        self.timestep += 1
-
-        return self.observation_space.sample(), 0, terminated, False, {}
 
     def reset(self, seed=None, options=None):
         self.timestep = 0
@@ -247,8 +210,9 @@ class DummyTextEnv(gym.Env):
         return "者示序袋費欠走立🐝🗓🈸🐿🍯🚆▶️🎧🎇💫", {}
 
 
-class DummyComboEnv(gym.Env):
+class DummyComboEnv(DummyEnv):
     def __init__(self):
+        super().__init__()
         self.action_space = spaces.Tuple(
             (
                 spaces.Box(low=2, high=3, dtype=np.float32),
@@ -288,17 +252,6 @@ class DummyComboEnv(gym.Env):
                 ),
             )
         )
-
-    def step(self, action):
-        terminated = self.timestep > 5
-        self.timestep += 1
-
-        return self.observation_space.sample(), 0, terminated, False, {}
-
-    def reset(self, seed=None, options=None):
-        self.timestep = 0
-        self.observation_space.seed(seed)
-        return self.observation_space.sample(), {}
 
 
 test_spaces = [

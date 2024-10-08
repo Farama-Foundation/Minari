@@ -64,10 +64,6 @@ def test_episode_data(space: gym.Space):
 def test_update_dataset_from_collector_env(
     dataset_id, env_id, data_format, register_dummy_envs
 ):
-    local_datasets = minari.list_local_datasets()
-    if dataset_id in local_datasets:
-        minari.delete_dataset(dataset_id)
-
     env = gym.make(env_id)
 
     env = DataCollector(env, data_format=data_format)
@@ -114,10 +110,6 @@ def test_filter_episodes_and_subsequent_updates(
 
     Additionally ensures indices are correctly updated when adding more episodes to a filtered dataset.
     """
-    local_datasets = minari.list_local_datasets()
-    if dataset_id in local_datasets:
-        minari.delete_dataset(dataset_id)
-
     env = gym.make(env_id)
 
     env = DataCollector(env, data_format=data_format)
@@ -152,11 +144,14 @@ def test_filter_episodes_and_subsequent_updates(
 
     env.add_to_dataset(filtered_dataset)
 
+    max_timesteps = getattr(env.unwrapped, "_max_timesteps", None)
+    assert max_timesteps is not None
+
     assert isinstance(filtered_dataset, MinariDataset)
     assert isinstance(filtered_dataset.spec.total_steps, int)
     assert filtered_dataset.total_episodes == 17
     assert filtered_dataset.spec.total_episodes == 17
-    assert filtered_dataset.spec.total_steps == 17 * 5
+    assert filtered_dataset.spec.total_steps == 17 * max_timesteps
     assert tuple(filtered_dataset.episode_indices) == (
         0,
         1,
@@ -213,11 +208,14 @@ def test_filter_episodes_and_subsequent_updates(
 
     filtered_dataset.update_dataset_from_buffer(buffer)
 
+    max_timesteps = getattr(env.unwrapped, "_max_timesteps", None)
+    assert max_timesteps is not None
+
     assert isinstance(filtered_dataset, MinariDataset)
     assert isinstance(filtered_dataset.spec.total_steps, int)
     assert filtered_dataset.total_episodes == 27
     assert filtered_dataset.spec.total_episodes == 27
-    assert filtered_dataset.spec.total_steps == 27 * 5
+    assert filtered_dataset.spec.total_steps == 27 * max_timesteps
 
     assert tuple(filtered_dataset.episode_indices) == (
         0,
@@ -261,10 +259,6 @@ def test_filter_episodes_and_subsequent_updates(
 )
 @pytest.mark.parametrize("data_format", get_storage_keys())
 def test_sample_episodes(dataset_id, env_id, data_format, register_dummy_envs):
-    local_datasets = minari.list_local_datasets()
-    if dataset_id in local_datasets:
-        minari.delete_dataset(dataset_id)
-
     env = gym.make(env_id)
 
     env = DataCollector(env, data_format=data_format)
@@ -297,10 +291,6 @@ def test_sample_episodes(dataset_id, env_id, data_format, register_dummy_envs):
 )
 @pytest.mark.parametrize("data_format", get_storage_keys())
 def test_iterate_episodes(dataset_id, env_id, data_format, register_dummy_envs):
-    local_datasets = minari.list_local_datasets()
-    if dataset_id in local_datasets:
-        minari.delete_dataset(dataset_id)
-
     env = gym.make(env_id)
 
     env = DataCollector(env, data_format=data_format)
@@ -340,10 +330,6 @@ def test_iterate_episodes(dataset_id, env_id, data_format, register_dummy_envs):
 def test_update_dataset_from_buffer(
     dataset_id, env_id, data_format, register_dummy_envs
 ):
-    local_datasets = minari.list_local_datasets()
-    if dataset_id in local_datasets:
-        minari.delete_dataset(dataset_id)
-
     env = gym.make(env_id)
 
     collector_env = DataCollector(env, data_format=data_format)
