@@ -278,9 +278,9 @@
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/complete-v1/">Complete</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/mixed-v1/">Mixed</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/partial-v1/">Partial</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/complete-v2/">Complete</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/mixed-v2/">Mixed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/partial-v2/">Partial</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/minigrid/">MiniGrid</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of MiniGrid</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -759,29 +759,25 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">dataset_path</span> <span class="o">=</span> <span class="n">_generate_dataset_path</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="n">env_spec</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">spec</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">EnvSpec</span><span class="p">):</span>
-        <span class="n">env_spec</span> <span class="o">=</span> <span class="n">env</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
-        <span class="n">env_spec</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span>
-    <span class="k">elif</span> <span class="n">env</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">env</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">env_spec</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="n">observation_space</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">action_space</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;Both observation space and action space must be provided, if env is None&quot;</span>
             <span class="p">)</span>
-        <span class="n">env_spec</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The `env` argument must be of types str|EnvSpec|gym.Env|None&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">EnvSpec</span><span class="p">):</span>
+            <span class="n">env_spec</span> <span class="o">=</span> <span class="n">env</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">env_spec</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">spec</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
+            <span class="n">env_spec</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">spec</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Unsupported env type&quot;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">EnvSpec</span><span class="p">)):</span>
-        <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">observation_space</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">)</span>
-        <span class="n">observation_space</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
-    <span class="k">if</span> <span class="n">action_space</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">)</span>
-        <span class="n">action_space</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span>
+        <span class="n">gym_env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="n">env</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">EnvSpec</span><span class="p">))</span> <span class="k">else</span> <span class="n">env</span>
+        <span class="n">observation_space</span> <span class="o">=</span> <span class="n">observation_space</span> <span class="ow">or</span> <span class="n">gym_env</span><span class="o">.</span><span class="n">observation_space</span>
+        <span class="n">action_space</span> <span class="o">=</span> <span class="n">action_space</span> <span class="ow">or</span> <span class="n">gym_env</span><span class="o">.</span><span class="n">action_space</span>
 
     <span class="n">metadata</span> <span class="o">=</span> <span class="n">_generate_dataset_metadata</span><span class="p">(</span>
         <span class="n">dataset_id</span><span class="p">,</span>
@@ -885,7 +881,7 @@
 
 <span class="k">def</span> <span class="nf">get_dataset_spec_dict</span><span class="p">(</span><span class="n">dataset_spec</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create dict of the dataset specs, including observation and action space.&quot;&quot;&quot;</span>
-    <span class="n">code_link</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="p">[</span><span class="s2">&quot;code_permalink&quot;</span><span class="p">]</span>
+    <span class="n">code_link</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;code_permalink&quot;</span><span class="p">)</span>
     <span class="n">action_space</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;action_space&quot;</span><span class="p">)</span>
     <span class="n">obs_space</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;observation_space&quot;</span><span class="p">)</span>
 
@@ -913,10 +909,10 @@
         <span class="s2">&quot;supported&quot;</span> <span class="k">if</span> <span class="n">version</span> <span class="ow">in</span> <span class="n">supported_dataset_versions</span> <span class="k">else</span> <span class="s2">&quot;not supported&quot;</span>
     <span class="p">)</span>
     <span class="n">author</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;author&quot;</span><span class="p">,</span> <span class="s2">&quot;Not provided&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">author</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">author</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">author</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
         <span class="n">author</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">author</span><span class="p">)</span>
     <span class="n">email</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;author_email&quot;</span><span class="p">,</span> <span class="s2">&quot;Not provided&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">email</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">email</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">email</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">):</span>
         <span class="n">email</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">email</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">author</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">email</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
@@ -1049,7 +1045,7 @@
         })()
       </script>
 
-    <script src="../../../_static/documentation_options.js?v=19bc2c4c"></script>
+    <script src="../../../_static/documentation_options.js?v=e4cc130a"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>

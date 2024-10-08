@@ -279,9 +279,9 @@
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/complete-v1/">Complete</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/mixed-v1/">Mixed</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/partial-v1/">Partial</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/complete-v2/">Complete</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/mixed-v2/">Mixed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/partial-v2/">Partial</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/minigrid/">MiniGrid</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of MiniGrid</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -534,9 +534,9 @@ We then train the policy to predict the actions:</p>
 <span class="n">accumulated_rew</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="k">while</span> <span class="ow">not</span> <span class="n">done</span><span class="p">:</span>
     <span class="n">action</span> <span class="o">=</span> <span class="n">policy_net</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">(</span><span class="n">obs</span><span class="p">))</span><span class="o">.</span><span class="n">argmax</span><span class="p">()</span>
-    <span class="n">obs</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">ter</span><span class="p">,</span> <span class="n">tru</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
-    <span class="n">done</span> <span class="o">=</span> <span class="n">ter</span> <span class="ow">or</span> <span class="n">tru</span>
-    <span class="n">accumulated_rew</span> <span class="o">+=</span> <span class="n">rew</span>
+    <span class="n">obs</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+    <span class="n">done</span> <span class="o">=</span> <span class="n">terminated</span> <span class="ow">or</span> <span class="n">truncated</span>
+    <span class="n">accumulated_rew</span> <span class="o">+=</span> <span class="n">reward</span>
 
 <span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Accumulated rew: &quot;</span><span class="p">,</span> <span class="n">accumulated_rew</span><span class="p">)</span>
@@ -714,7 +714,7 @@ We then train the policy to predict the actions:</p>
         })()
       </script>
 
-    <script src="../../../_static/documentation_options.js?v=19bc2c4c"></script>
+    <script src="../../../_static/documentation_options.js?v=e4cc130a"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/furo.js?v=7660844c"></script>

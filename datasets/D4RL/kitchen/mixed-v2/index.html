@@ -7,9 +7,9 @@
     <meta property="og:title" content="Minari Documentation" />
     <meta property="og:type" content="website" />
     <meta property="og:description" content="Minari is a Python library for conducting research in offline reinforcement learning." />
-    <meta property="og:url" content="https://minari.farama.org/datasets/D4RL/kitchen/mixed-v1.html" /><meta property="og:image" content="https://minari.farama.org/_static/img/robotics-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="../../../../genindex/" /><link rel="search" title="Search" href="../../../../search/" /><link rel="next" title="Partial" href="../partial-v1/" /><link rel="prev" title="Complete" href="../complete-v1/" />
-        <link rel="canonical" href="https://minari.farama.org/datasets/D4RL/kitchen/mixed-v1.html" />
+    <meta property="og:url" content="https://minari.farama.org/datasets/D4RL/kitchen/mixed-v2.html" /><meta property="og:image" content="https://minari.farama.org/_static/img/robotics-github.png" /><meta name="twitter:card" content="summary_large_image"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="../../../../genindex/" /><link rel="search" title="Search" href="../../../../search/" /><link rel="next" title="Partial" href="../partial-v2/" /><link rel="prev" title="Complete" href="../complete-v2/" />
+        <link rel="canonical" href="https://minari.farama.org/datasets/D4RL/kitchen/mixed-v2.html" />
 
     <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>Mixed - Minari Documentation</title>
@@ -279,9 +279,9 @@
 </ul>
 </li>
 <li class="toctree-l2 current has-children"><a class="reference internal" href="../">Kitchen</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="../complete-v1/">Complete</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../complete-v2/">Complete</a></li>
 <li class="toctree-l3 current current-page"><a class="current reference internal" href="#">Mixed</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../partial-v1/">Partial</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../partial-v2/">Partial</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../minigrid/">MiniGrid</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of MiniGrid</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -369,7 +369,7 @@
             
             <section class="tex2jax_ignore mathjax_ignore" id="mixed">
 <h1>Mixed<a class="headerlink" href="#mixed" title="Link to this heading">¶</a></h1>
-<img src="../mixed-v1.gif" width="200" style="display: block; margin:0 auto"/>
+<img src="../mixed-v2.gif" width="200" style="display: block; margin:0 auto"/>
 <section id="description">
 <h2>Description<a class="headerlink" href="#description" title="Link to this heading">¶</a></h2>
 <p>The mixed dataset contains various subtasks being performed, but the 4 target subtasks are never completed in sequence together.</p>
@@ -390,6 +390,12 @@
 <tr class="row-odd"><td><p>Total Episodes</p></td>
 <td><p>621</p></td>
 </tr>
+<tr class="row-even"><td><p>Dataset Observation Space</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Dict('achieved_goal':</span> <span class="pre">Dict('bottom</span> <span class="pre">burner':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(2,),</span> <span class="pre">float64),</span> <span class="pre">'kettle':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(7,),</span> <span class="pre">float64),</span> <span class="pre">'light</span> <span class="pre">switch':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(2,),</span> <span class="pre">float64),</span> <span class="pre">'microwave':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(1,),</span> <span class="pre">float64)),</span> <span class="pre">'desired_goal':</span> <span class="pre">Dict('bottom</span> <span class="pre">burner':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(2,),</span> <span class="pre">float64),</span> <span class="pre">'kettle':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(7,),</span> <span class="pre">float64),</span> <span class="pre">'light</span> <span class="pre">switch':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(2,),</span> <span class="pre">float64),</span> <span class="pre">'microwave':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(1,),</span> <span class="pre">float64)),</span> <span class="pre">'observation':</span> <span class="pre">Box(-inf,</span> <span class="pre">inf,</span> <span class="pre">(59,),</span> <span class="pre">float64))</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Dataset Action Space</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Box(-1.0,</span> <span class="pre">1.0,</span> <span class="pre">(9,),</span> <span class="pre">float64)</span></code></p></td>
+</tr>
 <tr class="row-even"><td><p>Algorithm</p></td>
 <td><p>None</p></td>
 </tr>
@@ -406,7 +412,7 @@
 <td><p><code class="docutils literal notranslate"><span class="pre">0.4.3</span></code> (supported)</p></td>
 </tr>
 <tr class="row-odd"><td><p>Download</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">minari</span> <span class="pre">download</span> <span class="pre">D4RL/kitchen/mixed-v1</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">minari</span> <span class="pre">download</span> <span class="pre">D4RL/kitchen/mixed-v2</span></code></p></td>
 </tr>
 </tbody>
 </table>
@@ -419,7 +425,7 @@ To read more about what each parameter means you can have a look at the Gymnasiu
 <p>This environment can be recovered from the Minari dataset as follows:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">minari</span>
 
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;D4RL/kitchen/mixed-v1&#39;</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;D4RL/kitchen/mixed-v2&#39;</span><span class="p">)</span>
 <span class="n">env</span>  <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">recover_environment</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -476,7 +482,7 @@ To read more about what each parameter means you can have a look at the Gymnasiu
 <p>This dataset doesn’t contain an <cite>eval_env_spec</cite> attribute which means that the specs of the environment used for evaluation are the same as the specs of the environment used for creating the dataset. The following calls will return the same environment:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">minari</span>
 
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;D4RL/kitchen/mixed-v1&#39;</span><span class="p">)</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;D4RL/kitchen/mixed-v2&#39;</span><span class="p">)</span>
 <span class="n">env</span>  <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">recover_environment</span><span class="p">()</span>
 <span class="n">eval_env</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">recover_environment</span><span class="p">(</span><span class="n">eval_env</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -491,7 +497,7 @@ To read more about what each parameter means you can have a look at the Gymnasiu
         <footer>
           
           <div class="related-pages">
-            <a class="next-page" href="../partial-v1/">
+            <a class="next-page" href="../partial-v2/">
               <div class="page-info">
                 <div class="context">
                   <span>Next</span>
@@ -502,7 +508,7 @@ To read more about what each parameter means you can have a look at the Gymnasiu
                 <use href="#svg-arrow-right"></use>
               </svg>
             </a>
-            <a class="prev-page" href="../complete-v1/">
+            <a class="prev-page" href="../complete-v2/">
               <svg class="furo-related-icon">
                 <use href="#svg-arrow-right"></use>
               </svg>
@@ -646,7 +652,7 @@ To read more about what each parameter means you can have a look at the Gymnasiu
         })()
       </script>
 
-    <script src="../../../../_static/documentation_options.js?v=19bc2c4c"></script>
+    <script src="../../../../_static/documentation_options.js?v=e4cc130a"></script>
     <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/scripts/furo.js?v=7660844c"></script>

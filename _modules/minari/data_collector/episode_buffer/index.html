@@ -278,9 +278,9 @@
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../../datasets/D4RL/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../../datasets/D4RL/kitchen/complete-v1/">Complete</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../datasets/D4RL/kitchen/mixed-v1/">Mixed</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../datasets/D4RL/kitchen/partial-v1/">Partial</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../datasets/D4RL/kitchen/complete-v2/">Complete</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../datasets/D4RL/kitchen/mixed-v2/">Mixed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../datasets/D4RL/kitchen/partial-v2/">Partial</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../../datasets/D4RL/minigrid/">MiniGrid</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of MiniGrid</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -419,12 +419,17 @@
             <span class="n">observations</span> <span class="o">=</span> <span class="n">jtu</span><span class="o">.</span><span class="n">tree_map</span><span class="p">(</span>
                 <span class="n">_append</span><span class="p">,</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">observations</span>
             <span class="p">)</span>
-        <span class="n">actions</span> <span class="o">=</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;action&quot;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">actions</span> <span class="o">=</span> <span class="n">jtu</span><span class="o">.</span><span class="n">tree_map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;action&quot;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
             <span class="n">actions</span> <span class="o">=</span> <span class="n">jtu</span><span class="o">.</span><span class="n">tree_map</span><span class="p">(</span><span class="n">_append</span><span class="p">,</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;action&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">actions</span><span class="p">)</span>
-        <span class="n">infos</span> <span class="o">=</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;info&quot;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">infos</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">infos</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">infos</span> <span class="o">=</span> <span class="n">jtu</span><span class="o">.</span><span class="n">tree_map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">[</span><span class="n">x</span><span class="p">],</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;info&quot;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
             <span class="n">infos</span> <span class="o">=</span> <span class="n">jtu</span><span class="o">.</span><span class="n">tree_map</span><span class="p">(</span><span class="n">_append</span><span class="p">,</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;info&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">infos</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">rewards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;reward&quot;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">terminations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;termination&quot;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">truncations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;truncation&quot;</span><span class="p">])</span>
@@ -562,7 +567,7 @@
         })()
       </script>
 
-    <script src="../../../../_static/documentation_options.js?v=19bc2c4c"></script>
+    <script src="../../../../_static/documentation_options.js?v=e4cc130a"></script>
     <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/scripts/furo.js?v=7660844c"></script>

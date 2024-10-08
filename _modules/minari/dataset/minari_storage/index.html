@@ -278,9 +278,9 @@
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../../datasets/D4RL/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../../datasets/D4RL/kitchen/complete-v1/">Complete</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../datasets/D4RL/kitchen/mixed-v1/">Mixed</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../../datasets/D4RL/kitchen/partial-v1/">Partial</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../datasets/D4RL/kitchen/complete-v2/">Complete</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../datasets/D4RL/kitchen/mixed-v2/">Mixed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../datasets/D4RL/kitchen/partial-v2/">Partial</a></li>
 </ul>
 </li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../../datasets/D4RL/minigrid/">MiniGrid</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of MiniGrid</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
@@ -406,14 +406,14 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_action_space</span> <span class="o">=</span> <span class="n">action_space</span>
 
     <span class="nd">@classmethod</span>
-    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data_path</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MinariStorage</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a MinariStorage to read data from a path.</span>
+    <span class="k">def</span> <span class="nf">read_raw_metadata</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data_path</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read the raw metadata from a path.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            data_path (str or Path): directory where the data is stored.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            A new MinariStorage object to read the data.</span>
+<span class="sd">            metadata (dict): metadata of the dataset.</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            ValueError: if the specified path doesn&#39;t exist or doesn&#39;t contain any data.</span>
@@ -426,6 +426,22 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No data found in data path </span><span class="si">{</span><span class="n">data_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">metadata_file_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
             <span class="n">metadata</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">metadata</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">read</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data_path</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MinariStorage</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a MinariStorage to read data from a path.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data_path (str or Path): directory where the data is stored.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A new MinariStorage object to read the data.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: if the specified path doesn&#39;t exist or doesn&#39;t contain any data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">MinariStorage</span><span class="o">.</span><span class="n">read_raw_metadata</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span>
 
         <span class="n">observation_space</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="n">action_space</span> <span class="o">=</span> <span class="kc">None</span>
@@ -456,7 +472,7 @@
         <span class="kn">from</span> <span class="nn">minari.dataset._storages</span> <span class="kn">import</span> <span class="n">get_minari_storage</span>  <span class="c1"># avoid circular import</span>
 
         <span class="k">return</span> <span class="n">get_minari_storage</span><span class="p">(</span><span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;data_format&quot;</span><span class="p">])(</span>
-            <span class="n">data_path</span><span class="p">,</span>
+            <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">data_path</span><span class="p">),</span>
             <span class="n">observation_space</span><span class="p">,</span>
             <span class="n">action_space</span><span class="p">,</span>
         <span class="p">)</span>
@@ -545,14 +561,12 @@
         <span class="n">data_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span>
         <span class="n">observation_space</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Space</span><span class="p">,</span>
         <span class="n">action_space</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Space</span><span class="p">,</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MinariStorage</span><span class="p">:</span>
-        <span class="o">...</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MinariStorage</span><span class="p">:</span> <span class="o">...</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Metadata of the dataset.&quot;&quot;&quot;</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">METADATA_FILE_NAME</span><span class="p">))</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-            <span class="n">metadata</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">MinariStorage</span><span class="o">.</span><span class="n">read_raw_metadata</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_path</span><span class="p">)</span>
 
         <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;observation_space&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span>
         <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;action_space&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span>
@@ -586,8 +600,7 @@
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;author_email&quot;</span><span class="p">,</span> <span class="nb">set</span><span class="p">()),</span> <span class="nb">set</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;minari_version&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span> <span class="nb">str</span><span class="p">)</span>
 
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">METADATA_FILE_NAME</span><span class="p">))</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
-            <span class="n">saved_metadata</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+        <span class="n">saved_metadata</span> <span class="o">=</span> <span class="n">MinariStorage</span><span class="o">.</span><span class="n">read_raw_metadata</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_path</span><span class="p">)</span>
 
         <span class="n">forbidden_keys</span> <span class="o">=</span> <span class="n">not_updatable_keys</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
         <span class="n">forbidden_keys</span> <span class="o">=</span> <span class="n">forbidden_keys</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">saved_metadata</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
@@ -862,7 +875,7 @@
         })()
       </script>
 
-    <script src="../../../../_static/documentation_options.js?v=19bc2c4c"></script>
+    <script src="../../../../_static/documentation_options.js?v=e4cc130a"></script>
     <script src="../../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../../_static/scripts/furo.js?v=7660844c"></script>
