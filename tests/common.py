@@ -35,7 +35,7 @@ dummy_test_datasets = [
 
 class DummyEnv(gym.Env):
     def __init__(self):
-        self.max_timesteps = 5
+        self._max_timesteps = 5
 
     def _get_info(self):
         return {}
@@ -55,7 +55,7 @@ class DummyEnv(gym.Env):
     def reset(self, seed=None, options=None):
         self.timestep = 0
         if options:
-            self.max_timesteps = options.get("max_timesteps", self.max_timesteps)
+            self._max_timesteps = options.get("max_timesteps", self._max_timesteps)
         self.observation_space.seed(seed)
         return self.observation_space.sample(), self._get_info()
 
@@ -84,7 +84,7 @@ class DummyInfoEnv(DummyBoxEnv):
 class DummySingleStepEnv(DummyBoxEnv):
     def __init__(self):
         super().__init__()
-        self.max_timesteps = 1
+        self._max_timesteps = 1
 
 
 class DummyInconsistentInfoEnv(DummyBoxEnv):
