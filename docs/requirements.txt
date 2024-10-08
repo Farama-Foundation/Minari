@@ -1,5 +1,5 @@
---extra-index-url https://download.pytorch.org/whl/nightly/cpu
-torch>=2.3.0.dev20231230
+torch
+torchrl
 sphinx
 sphinx-autobuild
 sphinx_github_changelog
@@ -12,6 +12,6 @@ imageio>=2.14.1
 nbmake
 git+https://github.com/sphinx-gallery/sphinx-gallery.git@4006662c8c1984453a247dc6d3df6260e5b00f4b#egg=sphinx_gallery
 git+https://github.com/Farama-Foundation/Celshast#egg=furo
-torchrl-nightly>=2023.12.30
+torchrl
 pyvirtualdisplay
 moviepy
