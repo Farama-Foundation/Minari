@@ -1,11 +1,11 @@
 from __future__ import annotations
 
 import copy
-import logging
 import os
 import secrets
 import shutil
 import tempfile
+import warnings
 from typing import Any, Callable, Dict, Optional, SupportsFloat, Type
 
 import gymnasium as gym
@@ -139,12 +139,12 @@ class DataCollector(gym.Wrapper):
         )
 
         if not self._storage.observation_space.contains(step_data["observation"]):
-            logging.warning(
+            warnings.warn(
                 "Observation is not in observation space.\n"
                 f"Observation: {step_data['observation']}\nSpace: {self._storage.observation_space}"
             )
         if not self._storage.action_space.contains(step_data["action"]):
-            logging.warning(
+            warnings.warn(
                 "Action is not in action space.\n"
                 f"Action: {step_data['action']}\nSpace: {self._storage.action_space}",
             )
@@ -196,7 +196,7 @@ class DataCollector(gym.Wrapper):
         step_data = self._step_data_callback(env=self.env, obs=obs, info=info)
 
         if not self._storage.observation_space.contains(step_data["observation"]):
-            logging.warning(
+            warnings.warn(
                 "Observation is not in observation space.\n"
                 f"Observation: {step_data['observation']}\nSpace: {self._storage.observation_space}"
             )
