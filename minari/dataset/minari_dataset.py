@@ -4,6 +4,7 @@ import importlib.metadata
 import logging
 import os
 import re
+import warnings
 from dataclasses import dataclass, field
 from typing import Callable, Iterable, Iterator, List
 
@@ -189,18 +190,18 @@ class MinariDataset:
             try:
                 req = Requirement(req_str)
             except InvalidRequirement:
-                logging.warning(f"Ignoring malformed requirement `{req_str}`")
+                warnings.warn(f"Ignoring malformed requirement `{req_str}`")
                 continue
 
             try:
                 installed_version = Version(importlib.metadata.version(req.name))
             except importlib.metadata.PackageNotFoundError:
-                logging.warning(
+                warnings.warn(
                     f'Package {req.name} is not installed. Install it with `pip install "{req_str}"`'
                 )
             else:
                 if not req.specifier.contains(installed_version):
-                    logging.warning(
+                    warnings.warn(
                         f"Installed {req.name} version {installed_version} does not meet the requirement {req.specifier}.\n"
                         f'We recommend to install the required version with `pip install "{req_str}"`'
                     )
