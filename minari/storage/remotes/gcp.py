@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, Iterable, Optional
 
 from minari.storage.remotes.cloud_storage import CloudStorage
 
@@ -39,7 +39,7 @@ class GCPStorage(CloudStorage):
         blob = self.bucket.blob(remote_path)
         blob.upload_from_filename(local_path)
 
-    def list_blobs(self, prefix: Optional[str] = None) -> list:
+    def list_blobs(self, prefix: Optional[str] = None) -> Iterable:
         return self.bucket.list_blobs(prefix=prefix)
 
     def download_blob(self, blob: Any, file_path: Path) -> None:
