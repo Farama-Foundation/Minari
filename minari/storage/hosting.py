@@ -225,15 +225,21 @@ def list_remote_datasets(
     remote_datasets = {}
     max_version = defaultdict(dict)
     for metadata in remote_metadatas:
-        if metadata:
-            dataset_id = metadata["dataset_id"]
-            if latest_version:
-                namespace, dataset_name, version = parse_dataset_id(dataset_id)
-                if version >= max_version[namespace].get(dataset_name, 0):
-                    max_version[namespace][dataset_name] = version
-                    remote_datasets[dataset_id] = metadata
-            else:
-                remote_datasets[dataset_id] = metadata
+        if metadata is None:
+            continue
+
+        dataset_id = metadata["dataset_id"]
+        remote_datasets[dataset_id] = metadata
+
+        if latest_version:
+            namespace, dataset_name, version = parse_dataset_id(dataset_id)
+            old_version = max_version[namespace].get(dataset_name, version)
+            max_version[namespace][dataset_name] = max(old_version, version)
+            if old_version != max_version[namespace][dataset_name]:
+                min_id = gen_dataset_id(
+                    namespace, dataset_name, min(old_version, version)
+                )
+                del remote_datasets[min_id]
 
     return remote_datasets
 
