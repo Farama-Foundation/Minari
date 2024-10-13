@@ -608,7 +608,7 @@ def check_episode_data_integrity(
     episode_data_list: Union[List[EpisodeData], MinariDataset],
     observation_space: gym.spaces.Space,
     action_space: gym.spaces.Space,
-    info_sample: Optional[dict] = None,
+    info_sample: Optional[Union[dict, List[Dict]]] = None,
 ):
     """Checks to see if a list of EpisodeData instances has consistent data and that the observations and actions are in the appropriate spaces.
 

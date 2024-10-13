@@ -142,7 +142,12 @@ def test_truncation_without_reset(dataset_id, env_id, data_format, register_dumm
         else:
             assert np.array_equal(first_step.observations, last_step.observations)
 
-        check_infos_equal(last_step.infos, first_step.infos)
+        if isinstance(last_step.infos, dict) and isinstance(first_step.infos, dict):
+            check_infos_equal(last_step.infos, first_step.infos)
+        else:
+            assert last_step.infos == first_step.infos
+            check_infos_equal(last_step.infos[0], first_step.infos[0])
+            
         last_step = get_single_step_from_episode(episode, -1)
         assert bool(last_step.truncations) is True
 

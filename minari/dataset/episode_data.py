@@ -25,6 +25,8 @@ class EpisodeData:
         elif isinstance(self.infos, list):
             infos_repr = (f"infos=list of dicts with the following keys: "
                           f"{set(key for d in self.infos for key in d.keys())}")
+        elif self.infos is None:
+            infos_repr = "infos=None"
         else:
             raise ValueError(f"Unexpected type for infos: {type(self.infos)}")
         return (

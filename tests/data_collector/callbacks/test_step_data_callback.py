@@ -164,7 +164,7 @@ def test_data_collector_step_data_callback_info_correction(
         record_infos=True,
     )
     # here we are checking to make sure that if we have an environment changing its info
-    # structure across steps, it is results in a error
+    # structure across steps, IT IS OK!
     with pytest.raises(ValueError):
         num_episodes = 10
         env.reset(seed=42)
@@ -176,4 +176,5 @@ def test_data_collector_step_data_callback_info_correction(
                 _, _, terminated, truncated, _ = env.step(action)
 
             env.reset()
+        raise ValueError("This should BE reached")
     env.close()

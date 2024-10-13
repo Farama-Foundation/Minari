@@ -1,16 +1,17 @@
 from __future__ import annotations
 
+import json
 import pathlib
 from collections import OrderedDict
 from itertools import zip_longest
-from typing import Dict, Iterable, List, Optional, Tuple, Union
+from typing import Dict, Iterable, List, Optional, Tuple, Union, Any
 
 import gymnasium as gym
 import numpy as np
 
 from minari.data_collector import EpisodeBuffer
 from minari.dataset.minari_storage import MinariStorage
-
+from minari.dataset._storages.serde import serialize_dict, deserialize_dict
 
 try:
     import h5py
@@ -217,6 +218,9 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
                 episode_group.create_dataset(key, data=data)
 
         elif key == "infos":
+            print("infos", type(data))
+            print(data)
+
             create_dict_dataset_in_group(episode_group, "infos", data)
         else:
             dtype = None
@@ -269,83 +273,59 @@ def unflatten_dict(d: Dict) -> Dict:
     return result
 
 
-def create_dict_dataset_in_group(group, dataset_name, dict_list):
-    # Collect all unique keys
-    all_keys = set()
-    for d in dict_list:
-        all_keys.update(d.keys())
-
-    # Determine the structure
-    dtype = []
-    for key in all_keys:
-        # Find the first non-None value for this key
-        sample_value = next((d[key] for d in dict_list if key in d), None)
-
-        if sample_value is None:
-            # If we didn't find any non-None values, default to float (to allow np.nan)
-            dtype.append((key, float))
-        elif isinstance(sample_value, str):
-            dtype.append((key, h5py.special_dtype(vlen=str)))
-        elif isinstance(sample_value, list):
-            if all(isinstance(item, str) for item in sample_value):
-                dtype.append((key, h5py.special_dtype(vlen=str), (len(sample_value),)))
-            else:
-                # For simplicity, assume all non-string lists are float
-                dtype.append((key, float, (len(sample_value),)))
-        elif isinstance(sample_value, (int, float)):
-            dtype.append((key, float))
+def infer_dtype(value):
+    if isinstance(value, str):
+        return h5py.special_dtype(vlen=str)
+    elif isinstance(value, (int, np.integer)):
+        return np.int64
+    elif isinstance(value, (float, np.floating)):
+        return np.float64
+    elif isinstance(value, bool):
+        return np.bool_
+    elif isinstance(value, list):
+        if all(isinstance(item, str) for item in value):
+            return h5py.special_dtype(vlen=str)
+        elif all(isinstance(item, (int, float, np.integer, np.floating)) for item in value):
+            return np.float64
         else:
-            dtype.append((key, type(sample_value)))
+            return h5py.special_dtype(vlen=str)  # Store as JSON string
+    elif isinstance(value, np.ndarray):
+        if value.dtype.kind in ['U', 'S']:
+            return h5py.special_dtype(vlen=str)
+        else:
+            return value.dtype
+    elif isinstance(value, dict):
+        return h5py.special_dtype(vlen=str)  # Store as JSON string
+    else:
+        return h5py.special_dtype(vlen=str)  # Default to string for unknown types
 
-    # Create a numpy structured array
-    data = np.empty(len(dict_list), dtype=dtype)
-    for i, d in enumerate(dict_list):
-        for key in all_keys:
-            if key in d:
-                if isinstance(d[key], list):
-                    if all(isinstance(item, str) for item in d[key]):
-                        data[key][i] = d[key]
-                    else:
-                        data[key][i] = d[key] + [np.nan] * (len(data[key][i]) - len(d[key]))
-                elif isinstance(d[key], (int, float)):
-                    data[key][i] = float(d[key])
-                else:
-                    data[key][i] = d[key]
-            else:
-                if data[key].dtype.kind == 'f':
-                    data[key][i] = np.nan
-                elif data[key].dtype.kind == 'O':
-                    data[key][i] = ''
-                # For other types, it will use the default value (0 for int, False for bool, etc.)
 
-    # Create the dataset within the group
-    dataset = group.create_dataset(dataset_name, data=data, chunks=True, compression='gzip')
-    # Add metadata to the dataset
-    dataset.attrs['num_records'] = len(dict_list)
-    dataset.attrs['keys'] = list(all_keys)
+def serialize_value(value):
+    if isinstance(value, (str, int, float, bool, np.integer, np.floating)):
+        return value
+    elif isinstance(value, np.ndarray):
+        if value.dtype.kind in ['U', 'S']:
+            return value.astype(str).tolist()
+        else:
+            return value.tolist()
+    elif isinstance(value, list):
+        if all(isinstance(item, (str, int, float, bool, np.integer, np.floating)) for item in value):
+            return value
+        else:
+            return json.dumps(value)
+    elif isinstance(value, dict):
+        return json.dumps(value)
+    else:
+        return str(value)
 
+
+def create_dict_dataset_in_group(group, dataset_name, dict_list: List[Dict[str, Any]]):
+    serialized_list = [serialize_dict(d) for d in dict_list]
+    dt = h5py.special_dtype(vlen=str)
+    dataset = group.create_dataset(dataset_name, (len(serialized_list),), dtype=dt)
+    dataset[:] = serialized_list
     return dataset
-
 
 def read_dict_dataset_from_group(group, dataset_name):
     dataset = group[dataset_name]
-
-    data = dataset[:]
-    dict_list = []
-    for row in data:
-        d = {}
-        for field in row.dtype.names:
-            value = row[field]
-            if isinstance(value, np.ndarray):
-                if value.dtype.kind == 'S' or value.dtype.kind == 'U':
-                    d[field] = [v.decode('utf-8') if isinstance(v, bytes) else v for v in value if v]
-                else:
-                    d[field] = [v for v in value if not np.isnan(v)]
-            elif isinstance(value, (bytes, np.bytes_)):
-                d[field] = value.decode('utf-8')
-            elif isinstance(value, float) and np.isnan(value):
-                continue  # Skip NaN values
-            else:
-                d[field] = value
-        dict_list.append(d)
-    return dict_list
+    return [deserialize_dict(item) for item in dataset]

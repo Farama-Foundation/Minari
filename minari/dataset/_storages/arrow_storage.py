@@ -8,7 +8,6 @@ from typing import Any, Dict, Iterable, Optional, Sequence, List
 import gymnasium as gym
 import numpy as np
 
-
 try:
     import pyarrow as pa
     import pyarrow.dataset as ds
@@ -19,6 +18,7 @@ except ImportError:
 
 from minari.data_collector.episode_buffer import EpisodeBuffer
 from minari.dataset.minari_storage import MinariStorage
+from minari.dataset._storages.serde import NumpyEncoder, serialize_dict, deserialize_dict
 
 
 class ArrowStorage(MinariStorage):
@@ -93,7 +93,7 @@ class ArrowStorage(MinariStorage):
                     except Exception as e:
                         raise ValueError(f"Failed to decode infos: {e}")
             else:
-                infos = {}
+                infos = []
 
             return {
                 "id": id,
@@ -264,94 +264,11 @@ def _decode_info(values: pa.Array):
     return nested_dict
 
 
-def encode_info_list(info_list: List[Dict[str, Any]]):
-    if not info_list:
-        return pa.StructArray.from_arrays([], fields=[])
-
-    # Collect all unique keys
-    all_keys = set()
-    for d in info_list:
-        all_keys.update(d.keys())
-
-    arrays, fields = [], []
-    for key in all_keys:
-        values = [d.get(key) for d in info_list]
-
-        # Handle missing values
-        if all(v is None for v in values):
-            arrays.append(pa.array(values))
-            fields.append(pa.field(key, pa.null()))
-            continue
-
-        sample_value = next(v for v in values if v is not None)
-
-        if isinstance(sample_value, dict):
-            nested_list = [{k: v.get(k) if v is not None else None for k in sample_value.keys()} for v in values]
-            array = encode_info_list(nested_list)
-            arrays.append(array)
-            fields.append(pa.field(key, array.type))
-        elif isinstance(sample_value, tuple):
-            nested_list = [{str(i): v[i] if v is not None else None for i in range(len(sample_value))} for v in values]
-            array = encode_info_list(nested_list)
-            arrays.append(array)
-            fields.append(pa.field(key, array.type))
-        elif isinstance(sample_value, np.ndarray) or (
-                isinstance(sample_value, Sequence) and isinstance(sample_value[0], np.ndarray)
-        ):
-            # Handle potential None values
-            valid_values = [v for v in values if v is not None]
-            if isinstance(sample_value, Sequence):
-                valid_values = np.stack(valid_values)
-            else:
-                valid_values = np.array(valid_values)
-            data_shape = valid_values.shape[1:]
-            valid_values = valid_values.reshape(len(valid_values), -1)
-            dtype = pa.from_numpy_dtype(valid_values.dtype)
-            struct = pa.list_(dtype, list_size=valid_values.shape[1])
-            array = pa.FixedSizeListArray.from_arrays(valid_values.reshape(-1), type=struct)
-            # Handle None values
-            mask = [v is not None for v in values]
-            array = array.fill_null(pa.null())
-            array = array.filter(mask)
-            arrays.append(array)
-            fields.append(pa.field(key, struct, metadata={"shape": bytes(data_shape)}))
-        else:
-            array = pa.array(values)
-            arrays.append(array)
-            fields.append(pa.field(key, array.type))
-
-    return pa.StructArray.from_arrays(arrays, fields=fields)
+def encode_info_list(info_list: List[Dict[str, Any]]) -> pa.Array:
+    serialized_list = [serialize_dict(d) for d in info_list]
+    return pa.array(serialized_list, type=pa.string())
 
 
 def decode_info_list(values: pa.Array) -> List[Dict[str, Any]]:
-    result = []
-    for i in range(len(values)):
-        nested_dict = {}
-        for j, field in enumerate(values.type):
-            if pa.types.is_struct(field.type):
-                nested_value = decode_info_list(values.field(j)[i])
-                if len(nested_value) == 1:
-                    nested_dict[field.name] = nested_value[0]
-                else:
-                    nested_dict[field.name] = nested_value
-            else:
-                value = values.field(j)[i]
-                if value is None:
-                    continue
-                if isinstance(value, pa.FixedSizeListArray):
-                    value = np.array(value.to_numpy(zero_copy_only=False))
-                    if field.metadata is not None and b"shape" in field.metadata:
-                        data_shape = tuple(field.metadata[b"shape"])
-                        value = value.reshape(data_shape)
-                else:
-                    value = value.as_py()
-                nested_dict[field.name] = value
-        result.append(nested_dict)
-    return result
+    return [deserialize_dict(item.as_py()) for item in values]
 
-
-class NumpyEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, np.ndarray):
-            return obj.tolist()
-        return super().default(obj)
