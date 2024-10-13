@@ -117,8 +117,10 @@ class HDF5Storage(MinariStorage):
                 infos = None
                 if "infos" in ep_group:
                     info_group = ep_group["infos"]
-                    assert isinstance(info_group, h5py.Group)
-                    infos = _decode_info(info_group)
+                    if isinstance(info_group, h5py.Group):  # for backward compatibility
+                         infos = _decode_info(info_group)
+                    else:
+                        infos = read_dict_dataset_from_group(ep_group, "infos")
 
                 ep_dict = {
                     "id": ep_idx,
@@ -213,6 +215,9 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
         elif not isinstance(data, Iterable):
             if data is not None:
                 episode_group.create_dataset(key, data=data)
+
+        elif key == "infos":
+            create_dict_dataset_in_group(episode_group, "infos", data)
         else:
             dtype = None
             if all(map(lambda elem: isinstance(elem, str), data)):
@@ -262,3 +267,85 @@ def unflatten_dict(d: Dict) -> Dict:
             current = current[key]
         current[keys[-1]] = v
     return result
+
+
+def create_dict_dataset_in_group(group, dataset_name, dict_list):
+    # Collect all unique keys
+    all_keys = set()
+    for d in dict_list:
+        all_keys.update(d.keys())
+
+    # Determine the structure
+    dtype = []
+    for key in all_keys:
+        # Find the first non-None value for this key
+        sample_value = next((d[key] for d in dict_list if key in d), None)
+
+        if sample_value is None:
+            # If we didn't find any non-None values, default to float (to allow np.nan)
+            dtype.append((key, float))
+        elif isinstance(sample_value, str):
+            dtype.append((key, h5py.special_dtype(vlen=str)))
+        elif isinstance(sample_value, list):
+            if all(isinstance(item, str) for item in sample_value):
+                dtype.append((key, h5py.special_dtype(vlen=str), (len(sample_value),)))
+            else:
+                # For simplicity, assume all non-string lists are float
+                dtype.append((key, float, (len(sample_value),)))
+        elif isinstance(sample_value, (int, float)):
+            dtype.append((key, float))
+        else:
+            dtype.append((key, type(sample_value)))
+
+    # Create a numpy structured array
+    data = np.empty(len(dict_list), dtype=dtype)
+    for i, d in enumerate(dict_list):
+        for key in all_keys:
+            if key in d:
+                if isinstance(d[key], list):
+                    if all(isinstance(item, str) for item in d[key]):
+                        data[key][i] = d[key]
+                    else:
+                        data[key][i] = d[key] + [np.nan] * (len(data[key][i]) - len(d[key]))
+                elif isinstance(d[key], (int, float)):
+                    data[key][i] = float(d[key])
+                else:
+                    data[key][i] = d[key]
+            else:
+                if data[key].dtype.kind == 'f':
+                    data[key][i] = np.nan
+                elif data[key].dtype.kind == 'O':
+                    data[key][i] = ''
+                # For other types, it will use the default value (0 for int, False for bool, etc.)
+
+    # Create the dataset within the group
+    dataset = group.create_dataset(dataset_name, data=data, chunks=True, compression='gzip')
+    # Add metadata to the dataset
+    dataset.attrs['num_records'] = len(dict_list)
+    dataset.attrs['keys'] = list(all_keys)
+
+    return dataset
+
+
+def read_dict_dataset_from_group(group, dataset_name):
+    dataset = group[dataset_name]
+
+    data = dataset[:]
+    dict_list = []
+    for row in data:
+        d = {}
+        for field in row.dtype.names:
+            value = row[field]
+            if isinstance(value, np.ndarray):
+                if value.dtype.kind == 'S' or value.dtype.kind == 'U':
+                    d[field] = [v.decode('utf-8') if isinstance(v, bytes) else v for v in value if v]
+                else:
+                    d[field] = [v for v in value if not np.isnan(v)]
+            elif isinstance(value, (bytes, np.bytes_)):
+                d[field] = value.decode('utf-8')
+            elif isinstance(value, float) and np.isnan(value):
+                continue  # Skip NaN values
+            else:
+                d[field] = value
+        dict_list.append(d)
+    return dict_list

@@ -493,18 +493,27 @@ def check_data_integrity(dataset: MinariDataset, episode_indices: List[int]):
     assert total_steps == dataset.total_steps
 
 
-def get_info_at_step_index(infos: Dict, step_index: int) -> Dict:
-    result = {}
-    for key in infos.keys():
-        if isinstance(infos[key], dict):
-            result[key] = get_info_at_step_index(infos[key], step_index)
-        elif isinstance(infos[key], np.ndarray):
-            result[key] = infos[key][step_index]
-        else:
-            raise ValueError(
-                "Infos are in an unsupported format; see Minari documentation for supported formats."
-            )
-    return result
+def get_info_at_step_index(infos: Dict|List[Dict], step_index: int) -> Dict:
+
+    if isinstance(infos, dict):  # for backwards compatibility
+        result = {}
+        for key in infos.keys():
+            if isinstance(infos[key], dict):
+                result[key] = get_info_at_step_index(infos[key], step_index)
+            elif isinstance(infos[key], np.ndarray):
+                result[key] = infos[key][step_index]
+            else:
+                raise ValueError(
+                    "Infos are in an unsupported format; see Minari documentation for supported formats."
+                )
+        return result
+    elif isinstance(infos, list):
+        return infos[step_index]
+
+    else:
+        raise ValueError(
+            "Infos are in an unsupported format; see Minari documentation for supported formats."
+        )
 
 
 def _reconstuct_obs_or_action_at_index_recursive(

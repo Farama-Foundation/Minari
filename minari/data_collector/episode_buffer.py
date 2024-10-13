@@ -18,7 +18,7 @@ class EpisodeBuffer:
     rewards: list = field(default_factory=list)
     terminations: list = field(default_factory=list)
     truncations: list = field(default_factory=list)
-    infos: Optional[dict] = None
+    infos: Optional[list] = field(default_factory=list)
 
     def add_step_data(self, step_data: StepData) -> EpisodeBuffer:
         """Add step data dictionary to episode buffer.
@@ -54,11 +54,7 @@ class EpisodeBuffer:
         else:
             actions = jtu.tree_map(_append, step_data["action"], self.actions)
 
-        if self.infos is None:
-            infos = jtu.tree_map(lambda x: [x], step_data["info"])
-        else:
-            infos = jtu.tree_map(_append, step_data["info"], self.infos)
-
+        self.infos.append(step_data["info"])
         self.rewards.append(step_data["reward"])
         self.terminations.append(step_data["termination"])
         self.truncations.append(step_data["truncation"])
@@ -72,7 +68,7 @@ class EpisodeBuffer:
             rewards=self.rewards,
             terminations=self.terminations,
             truncations=self.truncations,
-            infos=infos,
+            infos=self.infos,
         )
 
     def __len__(self) -> int:
