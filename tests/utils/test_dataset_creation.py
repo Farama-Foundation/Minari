@@ -346,7 +346,7 @@ def test_generate_big_episode(data_format, register_dummy_envs):
     )
 
     buffer = EpisodeBuffer(
-        observations=[observation_space.sample()], infos=info_generator.sample()
+        observations=[observation_space.sample()], infos=[info_generator.sample()]
     )
     for step_id in range(episode_length):
         buffer = buffer.add_step_data(
@@ -380,5 +380,7 @@ def test_generate_big_episode(data_format, register_dummy_envs):
     assert np.all(dataset[0].truncations == buffer.truncations)
     buffer_infos = buffer.infos
     assert buffer_infos is not None
-    assert np.all(dataset[0].infos["info1"] == buffer_infos["info1"])
-    assert np.all(dataset[0].infos["info2"] == buffer_infos["info2"])
+    assert len(dataset[0].infos) == len(buffer_infos)
+    for ds_info, buf_info in zip(dataset[0].infos, buffer_infos):
+        assert np.all(np.array(ds_info["info1"]) == np.array(buf_info["info1"]))
+        assert np.all(np.array(ds_info["info2"]) == np.array(buf_info["info2"]))

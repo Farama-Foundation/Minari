@@ -632,9 +632,8 @@ def check_episode_data_integrity(
             obs = _reconstuct_obs_or_action_at_index_recursive(episode.observations, i)
             if info_sample is not None:
                 assert episode.infos is not None
-                assert check_infos_equal(
-                    get_info_at_step_index(episode.infos, i), info_sample
-                )
+                info = get_info_at_step_index(episode.infos, i)
+                assert check_infos_equal(info, info_sample)
 
             assert observation_space.contains(obs)
 
