@@ -38,7 +38,7 @@ class EpisodeData:
             f"rewards=ndarray of {len(self.rewards)} floats, "
             f"terminations=ndarray of {len(self.terminations)} bools, "
             f"truncations=ndarray of {len(self.truncations)} bools, "
-            f"{infos_repr}"            
+            f"{infos_repr}"
             ")"
         )
 

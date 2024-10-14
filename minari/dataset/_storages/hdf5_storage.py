@@ -10,8 +10,8 @@ import gymnasium as gym
 import numpy as np
 
 from minari.data_collector import EpisodeBuffer
-from minari.dataset.minari_storage import MinariStorage
 from minari.dataset._storages.serde import serialize_dict, deserialize_dict
+from minari.dataset.minari_storage import MinariStorage
 
 try:
     import h5py
@@ -27,10 +27,10 @@ class HDF5Storage(MinariStorage):
     FORMAT = "hdf5"
 
     def __init__(
-        self,
-        data_path: pathlib.Path,
-        observation_space: gym.Space,
-        action_space: gym.Space,
+            self,
+            data_path: pathlib.Path,
+            observation_space: gym.Space,
+            action_space: gym.Space,
     ):
         super().__init__(data_path, observation_space, action_space)
         file_path = self.data_path.joinpath(_MAIN_FILE_NAME)
@@ -40,17 +40,17 @@ class HDF5Storage(MinariStorage):
 
     @classmethod
     def _create(
-        cls,
-        data_path: pathlib.Path,
-        observation_space: gym.Space,
-        action_space: gym.Space,
+            cls,
+            data_path: pathlib.Path,
+            observation_space: gym.Space,
+            action_space: gym.Space,
     ) -> MinariStorage:
         data_path.joinpath(_MAIN_FILE_NAME).touch(exist_ok=False)
         obj = cls(data_path, observation_space, action_space)
         return obj
 
     def update_episode_metadata(
-        self, metadatas: Iterable[Dict], episode_indices: Optional[Iterable] = None
+            self, metadatas: Iterable[Dict], episode_indices: Optional[Iterable] = None
     ):
         if episode_indices is None:
             episode_indices = range(self.total_episodes)
@@ -58,7 +58,7 @@ class HDF5Storage(MinariStorage):
         sentinel = object()
         with h5py.File(self._file_path, "a") as file:
             for metadata, episode_id in zip_longest(
-                metadatas, episode_indices, fillvalue=sentinel
+                    metadatas, episode_indices, fillvalue=sentinel
             ):
                 if sentinel in (metadata, episode_id):
                     raise ValueError(
@@ -84,9 +84,9 @@ class HDF5Storage(MinariStorage):
                 yield metadata
 
     def _decode_space(
-        self,
-        hdf_ref: Union[h5py.Group, h5py.Dataset, h5py.Datatype],
-        space: gym.spaces.Space,
+            self,
+            hdf_ref: Union[h5py.Group, h5py.Dataset, h5py.Datatype],
+            space: gym.spaces.Space,
     ) -> Union[Dict, Tuple, List, np.ndarray]:
         assert not isinstance(hdf_ref, h5py.Datatype)
 
@@ -121,7 +121,7 @@ class HDF5Storage(MinariStorage):
                 if "infos" in ep_group:
                     info_group = ep_group["infos"]
                     if isinstance(info_group, h5py.Group):  # for backward compatibility
-                         infos = _decode_info(info_group)
+                        infos = _decode_info(info_group)
                     else:
                         infos = read_dict_dataset_from_group(ep_group, "infos")
 
@@ -149,7 +149,7 @@ class HDF5Storage(MinariStorage):
                 total_episodes = len(file.keys())
                 episode_id = eps_buff.id if eps_buff.id is not None else total_episodes
                 assert (
-                    episode_id <= total_episodes
+                        episode_id <= total_episodes
                 ), "Invalid episode id; ids must be sequential."
                 episode_group = _get_from_h5py(file, f"episode_{episode_id}")
                 episode_group.attrs["id"] = episode_id
@@ -210,7 +210,7 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
             episode_group_to_clear = _get_from_h5py(episode_group, key)
             _add_episode_to_group(dict_data, episode_group_to_clear)
         elif isinstance(data, List) and all(
-            isinstance(entry, OrderedDict) for entry in data
+                isinstance(entry, OrderedDict) for entry in data
         ):  # list of OrderedDict
             dict_data = {key: [entry[key] for entry in data] for key in data[0].keys()}
             episode_group_to_clear = _get_from_h5py(episode_group, key)
@@ -221,7 +221,7 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
             dataset = episode_group[key]
             assert isinstance(dataset, h5py.Dataset)
             dataset.resize((dataset.shape[0] + len(data), *dataset.shape[1:]))
-            dataset[-len(data) :] = data
+            dataset[-len(data):] = data
         elif not isinstance(data, Iterable):
             if data is not None:
                 episode_group.create_dataset(key, data=data)
@@ -328,6 +328,7 @@ def create_dict_dataset_in_group(group, dataset_name, dict_list: List[Dict[str, 
     dataset = group.create_dataset(dataset_name, (len(serialized_list),), dtype=dt)
     dataset[:] = serialized_list
     return dataset
+
 
 def read_dict_dataset_from_group(group, dataset_name):
     dataset = group[dataset_name]

@@ -26,31 +26,31 @@ class ArrowStorage(MinariStorage):
     FORMAT = "arrow"
 
     def __init__(
-        self,
-        data_path: pathlib.Path,
-        observation_space: gym.Space,
-        action_space: gym.Space,
+            self,
+            data_path: pathlib.Path,
+            observation_space: gym.Space,
+            action_space: gym.Space,
     ):
         super().__init__(data_path, observation_space, action_space)
 
     @classmethod
     def _create(
-        cls,
-        data_path: pathlib.Path,
-        observation_space: gym.Space,
-        action_space: gym.Space,
+            cls,
+            data_path: pathlib.Path,
+            observation_space: gym.Space,
+            action_space: gym.Space,
     ) -> MinariStorage:
         return cls(data_path, observation_space, action_space)
 
     def update_episode_metadata(
-        self, metadatas: Iterable[Dict], episode_indices: Optional[Iterable] = None
+            self, metadatas: Iterable[Dict], episode_indices: Optional[Iterable] = None
     ):
         if episode_indices is None:
             episode_indices = range(self.total_episodes)
 
         sentinel = object()
         for new_metadata, episode_id in zip_longest(
-            metadatas, episode_indices, fillvalue=sentinel
+                metadatas, episode_indices, fillvalue=sentinel
         ):
             if sentinel in (new_metadata, episode_id):
                 raise ValueError("Metadatas and episode_indices have different lengths")
@@ -90,7 +90,7 @@ class ArrowStorage(MinariStorage):
             if "infos" in episode.column_names:
                 try:
                     infos = decode_info_list(episode["infos"])
-                except Exception as e:  # for backwards compatibility
+                except:  # noqa for backwards compatibility
                     try:
                         infos = _decode_info(episode["infos"])
                     except Exception as e:
@@ -143,7 +143,7 @@ class ArrowStorage(MinariStorage):
                     episode_batch["infos"] = _encode_info(episode_data.infos)
                 elif isinstance(episode_data.infos, list):
                     info_pad = len(observations) - len(episode_data.infos)
-                    episode_batch["infos"] = encode_info_list(episode_data.infos + [episode_data.infos[-1]]*info_pad)
+                    episode_batch["infos"] = encode_info_list(episode_data.infos + [episode_data.infos[-1]] * info_pad)
 
             episode_batch = pa.RecordBatch.from_pydict(episode_batch)
 
@@ -241,7 +241,7 @@ def _encode_info(info: dict):
             fields.append(pa.field(key, array.type))
 
         elif isinstance(values, np.ndarray) or (
-            isinstance(values, Sequence) and isinstance(values[0], np.ndarray)
+                isinstance(values, Sequence) and isinstance(values[0], np.ndarray)
         ):
             if isinstance(values, Sequence):
                 values = np.stack(values)
@@ -287,4 +287,3 @@ def encode_info_list(info_list: List[Dict[str, Any]]) -> pa.Array:
 
 def decode_info_list(values: pa.Array) -> List[Dict[str, Any]]:
     return [deserialize_dict(item.as_py()) for item in values]
-
