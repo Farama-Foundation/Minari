@@ -23,9 +23,9 @@ except ImportError:
     loads = json.loads
     dumps = partial(json.dumps,cls=NumpyEncoder)
 
-def serialize_dict(data: Dict[str, Any]) -> bytes:
+def serialize_dict(data: Dict[str, Any]):
     return dumps(data)
 
 
 def deserialize_dict(serialized_data: str) -> Dict[str, Any]:
-    return orjson.loads(serialized_data)
+    return loads(serialized_data)

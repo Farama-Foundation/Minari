@@ -14,7 +14,7 @@ class EpisodeData:
     rewards: np.ndarray
     terminations: np.ndarray
     truncations: np.ndarray
-    infos: Union[Dict | List]  # dict is for backwards compatibility
+    infos: Union[Dict, List]  # dict is for backwards compatibility
 
     def __len__(self) -> int:
         return len(self.rewards)
