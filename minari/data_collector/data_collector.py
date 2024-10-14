@@ -289,10 +289,7 @@ class DataCollector(gym.Wrapper):
         )
 
         self._save_to_disk(dataset_path, metadata)
-
-        dataset = MinariDataset(dataset_path)
-        dataset.storage.update_metadata({"dataset_size": dataset.storage.get_size()})
-        return dataset
+        return MinariDataset(dataset_path)
 
     def _flush_to_storage(self):
         if self._buffer is not None and len(self._buffer) > 0:
