@@ -429,8 +429,6 @@ def create_dataset_from_buffers(
 
     storage.update_metadata(metadata)
     storage.update_episodes(buffer)
-    storage.update_metadata({"dataset_size": storage.get_size()})
-
     return MinariDataset(storage)
 
 

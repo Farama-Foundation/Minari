@@ -65,6 +65,8 @@ class ArrowStorage(MinariStorage):
             with open(metadata_path, "w") as file:
                 json.dump(metadata, file, cls=NumpyEncoder)
 
+        self.update_metadata({"dataset_size": self.get_size()})
+
     def get_episode_metadata(self, episode_indices: Iterable[int]) -> Iterable[Dict]:
         for episode_id in episode_indices:
             metadata_path = self.data_path.joinpath(str(episode_id), "metadata.json")
@@ -148,7 +150,11 @@ class ArrowStorage(MinariStorage):
             self.update_episode_metadata([episode_metadata], [episode_id])
 
         self.update_metadata(
-            {"total_steps": total_steps, "total_episodes": total_episodes}
+            {
+                "total_steps": total_steps,
+                "total_episodes": total_episodes,
+                "dataset_size": self.get_size(),
+            }
         )
 
 

@@ -68,6 +68,8 @@ class HDF5Storage(MinariStorage):
                 ep_group = file[f"episode_{episode_id}"]
                 ep_group.attrs.update(metadata)
 
+        self.update_metadata({"dataset_size": self.get_size()})
+
     def get_episode_metadata(self, episode_indices: Iterable[int]) -> Iterable[Dict]:
         with h5py.File(self._file_path, "r") as file:
             for ep_idx in episode_indices:
@@ -174,7 +176,11 @@ class HDF5Storage(MinariStorage):
 
         total_steps = self.total_steps + additional_steps
         self.update_metadata(
-            {"total_steps": total_steps, "total_episodes": total_episodes}
+            {
+                "total_steps": total_steps,
+                "total_episodes": total_episodes,
+                "dataset_size": self.get_size(),
+            }
         )
 
 
