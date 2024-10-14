@@ -16,13 +16,16 @@ class NumpyEncoder(json.JSONEncoder):
 
         return super().default(obj)
 
+
 try:
     import orjson
+
     dumps = partial(orjson.dumps, option=orjson.OPT_SERIALIZE_NUMPY)
     loads = orjson.loads
 except ImportError:
     loads = json.loads
-    dumps = partial(json.dumps,cls=NumpyEncoder)
+    dumps = partial(json.dumps, cls=NumpyEncoder)
+
 
 def serialize_dict(data: Dict[str, Any]):
     return dumps(data)

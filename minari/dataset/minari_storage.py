@@ -14,6 +14,7 @@ from gymnasium.envs.registration import EnvSpec
 from minari.data_collector.episode_buffer import EpisodeBuffer
 from minari.serialization import deserialize_space, serialize_space
 
+
 PathLike = Union[str, os.PathLike]
 METADATA_FILE_NAME = "metadata.json"
 
@@ -325,7 +326,7 @@ class MinariStorage(ABC):
                 rewards=episode["rewards"],
                 terminations=episode["terminations"],
                 truncations=episode["truncations"],
-                infos=episode.get("infos",[]),
+                infos=episode.get("infos", []),
             )
             self.update_episodes([episode_buffer])
 
