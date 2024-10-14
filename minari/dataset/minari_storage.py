@@ -326,7 +326,7 @@ class MinariStorage(ABC):
                 rewards=episode["rewards"],
                 terminations=episode["terminations"],
                 truncations=episode["truncations"],
-                infos=episode.get("infos"),
+                infos=episode.get("infos",[]),
             )
             self.update_episodes([episode_buffer])
 

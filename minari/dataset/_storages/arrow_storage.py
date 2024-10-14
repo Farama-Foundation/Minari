@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import pathlib
+from collections.abc import Iterable as ABCIterable
 from itertools import zip_longest
 from typing import Any, Dict, Iterable, Optional, Sequence, List
 
@@ -124,6 +125,7 @@ class ArrowStorage(MinariStorage):
             terminations = np.asarray(episode_data.terminations).reshape(-1)
             truncations = np.asarray(episode_data.truncations).reshape(-1)
             pad = len(observations) - len(rewards)
+
             actions = _encode_space(self._action_space, episode_data.actions, pad=pad)
 
             episode_batch = {
@@ -135,7 +137,12 @@ class ArrowStorage(MinariStorage):
                 "truncations": np.pad(truncations, ((0, pad))),
             }
             if episode_data.infos:
-                episode_batch["infos"] = encode_info_list(episode_data.infos)
+                if isinstance(episode_data.infos, dict):
+                    episode_batch["infos"] = _encode_info(episode_data.infos)
+                elif isinstance(episode_data.infos, list):
+                    info_pad = len(observations) - len(episode_data.infos)
+                    episode_batch["infos"] = encode_info_list(episode_data.infos + [episode_data.infos[-1]]*info_pad)
+
             episode_batch = pa.RecordBatch.from_pydict(episode_batch)
 
             total_steps += len(rewards)
@@ -252,6 +259,8 @@ def _encode_info(info: dict):
 
 def _decode_info(values: pa.Array):
     nested_dict = {}
+    if not isinstance(values.type, ABCIterable):
+        return nested_dict
     for i, field in enumerate(values.type):
         if isinstance(field, pa.StructArray):
             nested_dict[field.name] = _decode_info(values.field(i))

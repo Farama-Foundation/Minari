@@ -193,7 +193,10 @@ def _get_from_h5py(group: h5py.Group, name: str) -> h5py.Group:
 
 def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
     for key, data in episode_buffer.items():
-        if isinstance(data, dict):
+
+        if key == "infos":
+            create_dict_dataset_in_group(episode_group, "infos", data)
+        elif isinstance(data, dict):
             episode_group_to_clear = _get_from_h5py(episode_group, key)
             _add_episode_to_group(data, episode_group_to_clear)
         elif isinstance(data, tuple):
@@ -216,12 +219,6 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
         elif not isinstance(data, Iterable):
             if data is not None:
                 episode_group.create_dataset(key, data=data)
-
-        elif key == "infos":
-            print("infos", type(data))
-            print(data)
-
-            create_dict_dataset_in_group(episode_group, "infos", data)
         else:
             dtype = None
             if all(map(lambda elem: isinstance(elem, str), data)):
@@ -320,7 +317,7 @@ def serialize_value(value):
 
 
 def create_dict_dataset_in_group(group, dataset_name, dict_list: List[Dict[str, Any]]):
-    serialized_list = [serialize_dict(d) for d in dict_list]
+    serialized_list = [serialize_dict(d) for d in dict_list] if dict_list else []
     dt = h5py.special_dtype(vlen=str)
     dataset = group.create_dataset(dataset_name, (len(serialized_list),), dtype=dt)
     dataset[:] = serialized_list

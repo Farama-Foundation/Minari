@@ -616,7 +616,7 @@ def check_episode_data_integrity(
         episode_data_list (List[EpisodeData]): A list of EpisodeData instances representing episodes.
         observation_space (gym.spaces.Space): The environment's observation space.
         action_space (gym.spaces.Space): The environment's action space.
-        info_sample (dict): An info returned by the environment used to build the dataset.
+        info_sample (dict|list(dict)): An info returned by the environment used to build the dataset.
 
     """
     # verify the actions and observations are in the appropriate action space and observation space, and that the episode lengths are correct
@@ -656,7 +656,7 @@ def check_infos_equal(info_1: Dict, info_2: Dict) -> bool:
         elif isinstance(info_1[key], np.ndarray):
             return bool(np.all(info_1[key] == info_2[key]))
         else:
-            return info_1[key] == info_2[key]
+            return bool(np.all(info_1[key] == info_2[key]))
     return True
 
 

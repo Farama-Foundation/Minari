@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Dict, List, Union
 
 import numpy as np
 
@@ -14,7 +14,7 @@ class EpisodeData:
     rewards: np.ndarray
     terminations: np.ndarray
     truncations: np.ndarray
-    infos: dict | list  # dict is for backwards compatibility
+    infos: Union[Dict | List]  # dict is for backwards compatibility
 
     def __len__(self) -> int:
         return len(self.rewards)
