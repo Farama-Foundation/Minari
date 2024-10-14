@@ -493,7 +493,7 @@ def check_data_integrity(dataset: MinariDataset, episode_indices: List[int]):
     assert total_steps == dataset.total_steps
 
 
-def get_info_at_step_index(infos: Dict|List[Dict], step_index: int) -> Dict:
+def get_info_at_step_index(infos: Union[Dict, List[Dict]], step_index: int) -> Dict:
 
     if isinstance(infos, dict):  # for backwards compatibility
         result = {}
@@ -608,7 +608,7 @@ def check_episode_data_integrity(
     episode_data_list: Union[List[EpisodeData], MinariDataset],
     observation_space: gym.spaces.Space,
     action_space: gym.spaces.Space,
-    info_sample: Optional[Union[dict, List[Dict]]] = None,
+    info_sample: Optional[Union[Dict, List[Dict]]] = None,
 ):
     """Checks to see if a list of EpisodeData instances has consistent data and that the observations and actions are in the appropriate spaces.
 
@@ -616,7 +616,7 @@ def check_episode_data_integrity(
         episode_data_list (List[EpisodeData]): A list of EpisodeData instances representing episodes.
         observation_space (gym.spaces.Space): The environment's observation space.
         action_space (gym.spaces.Space): The environment's action space.
-        info_sample (dict|list(dict)): An info returned by the environment used to build the dataset.
+        info_sample (Optional[Union[Dict, List[Dict]]]): An info returned by the environment used to build the dataset.
 
     """
     # verify the actions and observations are in the appropriate action space and observation space, and that the episode lengths are correct
@@ -647,7 +647,7 @@ def check_episode_data_integrity(
         assert len(episode) == len(episode.truncations)
 
 
-def check_infos_equal(info_1: Dict, info_2: Dict) -> bool:
+def check_infos_equal(info_1: Dict, info_2: Union[Dict, List[Dict]]) -> bool:
     if info_1.keys() != info_2.keys():
         return False
     for key in info_1.keys():
