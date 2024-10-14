@@ -61,7 +61,7 @@ minari --help
 
 ## Basic Usage
 
-### Reading a dataset
+### Reading a Dataset
 
 ```python
 import minari
@@ -78,7 +78,7 @@ for episode_data in dataset.iterate_episodes():
     ...
 ```
 
-### Writing a dataset
+### Writing a Dataset
 
 ```python
 import minari
@@ -101,6 +101,13 @@ dataset = env.create_dataset("frozenlake/test-v0")
 ```
 
 For other examples, see [Basic Usage](https://minari.farama.org/main/content/basic_usage/). For a complete tutorial on how to create new datasets using Minari, see our [Pointmaze D4RL Dataset](https://minari.farama.org/main/tutorials/dataset_creation/point_maze_dataset/) tutorial, which re-creates the Maze2D datasets from [D4RL](https://github.com/Farama-Foundation/D4RL).
+
+## Training Libraries Integrating Minari
+
+ - [TorchRL](https://github.com/pytorch/rl)
+ - [d3rlpy](https://github.com/takuseno/d3rlpy)
+ - [AgileRL](https://github.com/AgileRL/AgileRL)
+
 
 ## Citation
 If you use Minari, please consider citing it:
