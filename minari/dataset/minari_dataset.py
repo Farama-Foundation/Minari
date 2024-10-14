@@ -1,15 +1,16 @@
 from __future__ import annotations
 
 import importlib.metadata
+import logging
 import os
 import re
+import warnings
 from dataclasses import dataclass, field
 from typing import Callable, Iterable, Iterator, List
 
 import gymnasium as gym
 import numpy as np
 import numpy.typing as npt
-from gymnasium import error, logger
 from gymnasium.envs.registration import EnvSpec
 from packaging.requirements import InvalidRequirement, Requirement
 from packaging.version import Version
@@ -37,7 +38,7 @@ def parse_dataset_id(dataset_id: str) -> tuple[str | None, str, int]:
     """
     match = DATASET_ID_RE.fullmatch(dataset_id)
     if not match:
-        raise error.Error(
+        raise ValueError(
             f"Malformed dataset ID: {dataset_id}. (IDs must be of the form (namespace/)(dataset_name)-v(version). The namespace is optional.)"
         )
     namespace, dataset_name, version = match.group("namespace", "dataset", "version")
@@ -189,18 +190,18 @@ class MinariDataset:
             try:
                 req = Requirement(req_str)
             except InvalidRequirement:
-                logger.warn(f"Ignoring malformed requirement `{req_str}`")
+                warnings.warn(f"Ignoring malformed requirement `{req_str}`")
                 continue
 
             try:
                 installed_version = Version(importlib.metadata.version(req.name))
             except importlib.metadata.PackageNotFoundError:
-                logger.warn(
+                warnings.warn(
                     f'Package {req.name} is not installed. Install it with `pip install "{req_str}"`'
                 )
             else:
                 if not req.specifier.contains(installed_version):
-                    logger.warn(
+                    warnings.warn(
                         f"Installed {req.name} version {installed_version} does not meet the requirement {req.specifier}.\n"
                         f'We recommend to install the required version with `pip install "{req_str}"`'
                     )
@@ -208,7 +209,7 @@ class MinariDataset:
         if eval_env:
             if self._eval_env_spec is not None:
                 return gym.make(self._eval_env_spec, **kwargs)
-            logger.info(
+            logging.info(
                 f"`eval_env` has been set to True but the dataset {self._dataset_id} doesn't provide an evaluation environment. Instead, the environment used for collecting the data will be returned: {self._env_spec}"
             )
 

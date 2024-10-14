@@ -1,9 +1,9 @@
 from __future__ import annotations
 
-import logging
 import pathlib
 import subprocess
 import sys
+import warnings
 from collections import defaultdict
 from typing import Dict, OrderedDict
 
@@ -85,7 +85,7 @@ def _generate_dataset_page(dataset_id, metadata):
         minari.delete_dataset(dataset_id)
         img_link_str = f'<img src="../{versioned_name}.gif" width="200" style="display: block; margin:0 auto"/>'
     except Exception as e:
-        logging.warning(f"Failed to generate gif for {dataset_id}: {e}")
+        warnings.warn(f"Failed to generate gif for {dataset_id}: {e}")
         img_link_str = None
 
     env_docs = """"""

@@ -339,6 +339,7 @@ class MinariStorage(ABC):
             {
                 "author": author1.union(author2),
                 "author_email": email1.union(email2),
+                "dataset_size": self.get_size(),
             }
         )
 

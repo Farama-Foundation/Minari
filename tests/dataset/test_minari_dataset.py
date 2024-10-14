@@ -452,19 +452,15 @@ def test_requirements():
         dataset_id, env, requirements=["mal<formed@@3.2"]
     )
 
-    with pytest.warns(UserWarning, match="Ignoring malformed requirement"):
+    with pytest.warns(Warning, match="Ignoring malformed requirement"):
         dataset.recover_environment()
 
     dataset.storage.update_metadata({"requirements": ["non-existent-package"]})
-    with pytest.warns(
-        UserWarning, match="is not installed. Install it with `pip install"
-    ):
+    with pytest.warns(Warning, match="is not installed. Install it with `pip install"):
         dataset.recover_environment()
 
     dataset.storage.update_metadata({"requirements": [f"minari<{minari.__version__}"]})
-    with pytest.warns(
-        UserWarning, match="We recommend to install the required version"
-    ):
+    with pytest.warns(Warning, match="We recommend to install the required version"):
         dataset.recover_environment()
 
     dataset.storage.update_metadata(

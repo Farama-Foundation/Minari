@@ -51,7 +51,7 @@ testing = [
 
 integrations = [
     "torchrl",
-    "agilerl@git+https://github.com/AgileRL/AgileRL.git"
+    "agilerl>=1.0.6"
 ]
 
 [project.urls]

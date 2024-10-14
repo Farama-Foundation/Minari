@@ -66,6 +66,8 @@ class ArrowStorage(MinariStorage):
             with open(metadata_path, "w") as file:
                 json.dump(metadata, file, cls=NumpyEncoder)
 
+        self.update_metadata({"dataset_size": self.get_size()})
+
     def get_episode_metadata(self, episode_indices: Iterable[int]) -> Iterable[Dict]:
         for episode_id in episode_indices:
             metadata_path = self.data_path.joinpath(str(episode_id), "metadata.json")
@@ -162,7 +164,11 @@ class ArrowStorage(MinariStorage):
             self.update_episode_metadata([episode_metadata], [episode_id])
 
         self.update_metadata(
-            {"total_steps": total_steps, "total_episodes": total_episodes}
+            {
+                "total_steps": total_steps,
+                "total_episodes": total_episodes,
+                "dataset_size": self.get_size(),
+            }
         )
 
 
@@ -240,14 +246,14 @@ def _encode_info(info: dict):
             if isinstance(values, Sequence):
                 values = np.stack(values)
 
-            data_shape = values.shape[1:]
+            data_enc = ",".join(str(n) for n in values.shape[1:])
             values = values.reshape(len(values), -1)
             dtype = pa.from_numpy_dtype(values.dtype)
             struct = pa.list_(dtype, list_size=values.shape[1])
             arrays.append(
                 pa.FixedSizeListArray.from_arrays(values.reshape(-1), type=struct)
             )
-            fields.append(pa.field(key, struct, metadata={"shape": bytes(data_shape)}))
+            fields.append(pa.field(key, struct, metadata={"shape": data_enc}))
 
         else:
             array = pa.array(list(values))
@@ -267,7 +273,8 @@ def _decode_info(values: pa.Array):
         else:
             value = np.stack(values.field(i).to_numpy(zero_copy_only=False))
             if field.metadata is not None and b"shape" in field.metadata:
-                data_shape = tuple(field.metadata[b"shape"])
+                data_shape = field.metadata[b"shape"].split(b",")
+                data_shape = tuple(int(d) for d in data_shape)
                 value = value.reshape(len(value), *data_shape)
             nested_dict[field.name] = value
     return nested_dict
