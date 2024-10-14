@@ -2,9 +2,10 @@ from __future__ import annotations
 
 import json
 from functools import partial
-from typing import Dict, Any
+from typing import Any, Dict
 
 import numpy as np
+
 
 class NumpyEncoder(json.JSONEncoder):
     def default(self, obj):

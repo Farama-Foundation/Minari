@@ -14,7 +14,6 @@ from gymnasium.envs.registration import EnvSpec
 from minari.data_collector.episode_buffer import EpisodeBuffer
 from minari.serialization import deserialize_space, serialize_space
 
-
 PathLike = Union[str, os.PathLike]
 METADATA_FILE_NAME = "metadata.json"
 

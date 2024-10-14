@@ -13,6 +13,7 @@ from tests.common import (
     get_info_at_step_index,
 )
 
+
 MAX_UINT64 = np.iinfo(np.uint64).max
 
 
@@ -135,7 +136,7 @@ def test_truncation_without_reset(dataset_id, env_id, data_format, register_dumm
         # Check that the last observation of the previous episode is carried over to the next episode
         # as the reset observation.
         if isinstance(first_step.observations, dict) or isinstance(
-                first_step.observations, tuple
+            first_step.observations, tuple
         ):
             assert first_step.observations == last_step.observations
         else:
