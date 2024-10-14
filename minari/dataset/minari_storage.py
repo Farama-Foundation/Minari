@@ -335,11 +335,13 @@ class MinariStorage(ABC):
         email1 = self.metadata.get("author_email", set())
         email2 = storage.metadata.get("author_email", set())
 
-        self.update_metadata({
-            "author": author1.union(author2),
-            "author_email": email1.union(email2),
-            "dataset_size": self.get_size(),
-        })
+        self.update_metadata(
+            {
+                "author": author1.union(author2),
+                "author_email": email1.union(email2),
+                "dataset_size": self.get_size(),
+            }
+        )
 
     def get_size(self) -> float:
         """Returns the dataset size in MB.
