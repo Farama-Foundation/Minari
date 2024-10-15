@@ -393,12 +393,15 @@ def test_generate_big_episode(data_format, register_dummy_envs, infos_format):
     assert np.all(dataset[0].truncations == buffer.truncations)
     buffer_infos = buffer.infos
     assert buffer_infos is not None
-    print(infos_format, type(dataset[0].infos))
     if infos_format == "dict":
+        assert isinstance(dataset[0].infos, dict)
+        assert isinstance(buffer_infos, dict)
         assert np.all(dataset[0].infos["info1"] == buffer_infos["info1"])
         assert np.all(dataset[0].infos["info2"] == buffer_infos["info2"])
     else:
         assert len(dataset[0].infos) == len(buffer_infos)
+        assert isinstance(dataset[0].infos, list)
+        assert isinstance(buffer_infos, list)
         for ds_info, buf_info in zip(dataset[0].infos, buffer_infos):
             assert np.all(np.array(ds_info["info1"]) == np.array(buf_info["info1"]))
             assert np.all(np.array(ds_info["info2"]) == np.array(buf_info["info2"]))
