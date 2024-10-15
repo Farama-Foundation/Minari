@@ -9,6 +9,7 @@ from typing import Any, Dict, Iterable, List, Optional, Sequence
 import gymnasium as gym
 import numpy as np
 
+
 try:
     import pyarrow as pa
     import pyarrow.dataset as ds

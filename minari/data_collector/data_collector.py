@@ -20,6 +20,7 @@ from minari.dataset.minari_storage import MinariStorage
 from minari.namespace import create_namespace, list_local_namespaces
 from minari.utils import _generate_dataset_metadata, _generate_dataset_path
 
+
 # H5Py supports ints up to uint64
 AUTOSEED_BIT_SIZE = 64
 
