@@ -93,21 +93,19 @@ class ArrowStorage(MinariStorage):
 
         def _to_dict(id, episode):
             if "infos" in episode.column_names:
-                try:
-                    infos = decode_info_list(episode["infos"])
-                except:  # noqa for backwards compatibility
-                    try:
-                        infos = _decode_info(episode["infos"])
-                    except Exception as e:
-                        raise ValueError(f"Failed to decode infos: {e}")
+                raw_infos = episode["infos"]
+                if isinstance(raw_infos, pa.lib.StringArray):
+                    infos = decode_info_list(raw_infos)
+                elif isinstance(raw_infos, pa.lib.StructArray):
+                    infos = _decode_info(episode["infos"])
+                else:
+                    raise ValueError(f"Unexpected type for infos: {type(raw_infos)}")
             else:
-                infos = []
+                infos = None
 
             return {
                 "id": id,
-                "observations": _decode_space(
-                    self.observation_space, episode["observations"]
-                ),
+                "observations": _decode_space(self.observation_space, episode["observations"]),
                 "actions": _decode_space(self.action_space, episode["actions"][:-1]),
                 "rewards": np.asarray(episode["rewards"])[:-1],
                 "terminations": np.asarray(episode["terminations"])[:-1],

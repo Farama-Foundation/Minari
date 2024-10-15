@@ -59,9 +59,9 @@ def test_non_existing_data(tmp_dataset_dir):
     with pytest.raises(ValueError, match="No data found in data path"):
         MinariStorage.read(tmp_dataset_dir)
 
-
+@pytest.mark.parametrize("infos_format", ["dict", "list"])
 @pytest.mark.parametrize("data_format", get_storage_keys())
-def test_metadata(tmp_dataset_dir, data_format):
+def test_metadata(tmp_dataset_dir, data_format, infos_format):
     action_space = spaces.Box(-1, 1)
     observation_space = spaces.Box(-1, 1)
     storage = MinariStorage.new(
@@ -69,6 +69,7 @@ def test_metadata(tmp_dataset_dir, data_format):
         observation_space=observation_space,
         action_space=action_space,
         data_format=data_format,
+        infos_format=infos_format,
     )
     assert str(storage.data_path) == tmp_dataset_dir
 
@@ -86,6 +87,7 @@ def test_metadata(tmp_dataset_dir, data_format):
         "total_episodes",
         "total_steps",
         "data_format",
+        "infos_format",
     }
 
     for key, value in extra_metadata.items():
@@ -94,9 +96,9 @@ def test_metadata(tmp_dataset_dir, data_format):
     storage2 = MinariStorage.read(tmp_dataset_dir)
     assert storage_metadata == storage2.metadata
 
-
+@pytest.mark.parametrize("infos_format", ["dict", "list"])
 @pytest.mark.parametrize("data_format", get_storage_keys())
-def test_add_episodes(tmp_dataset_dir, data_format):
+def test_add_episodes(tmp_dataset_dir, data_format,infos_format):
     action_space = spaces.Box(-1, 1, shape=(10,))
     observation_space = spaces.Text(max_length=5)
     n_episodes = 10
@@ -112,6 +114,7 @@ def test_add_episodes(tmp_dataset_dir, data_format):
         observation_space=observation_space,
         action_space=action_space,
         data_format=data_format,
+        infos_format=infos_format,
     )
     storage.update_episodes(episodes)
     del storage

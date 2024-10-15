@@ -62,17 +62,18 @@ def test_combine_datasets():
     # generating multiple test datasets
     test_max_episode_steps = [5, 3, 7, 10, None]
     data_formats = ["hdf5", "arrow", None, "arrow", None]
+    infos_formats = ["dict", None, "list", "list", None]
 
     test_datasets = []
-    for dataset_id, max_episode_steps, data_format in zip(
-        test_datasets_ids, test_max_episode_steps, data_formats
+    for dataset_id, max_episode_steps, data_format, infos_formats in zip(
+        test_datasets_ids, test_max_episode_steps, data_formats, infos_formats
     ):
         env = gym.make("CartPole-v1", max_episode_steps=max_episode_steps)
         assert env.spec is not None
         env.spec.max_episode_steps = (
             max_episode_steps  # with None max_episode_steps=default
         )
-        env = DataCollector(env, data_format=data_format)
+        env = DataCollector(env, data_format=data_format, infos_format=infos_formats)
         dataset = create_dummy_dataset_with_collecter_env_helper(
             dataset_id, env, num_episodes
         )

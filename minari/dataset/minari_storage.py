@@ -114,6 +114,7 @@ class MinariStorage(ABC):
         action_space: Optional[gym.Space] = None,
         env_spec: Optional[EnvSpec] = None,
         data_format: str = "hdf5",
+        infos_format: Optional[str] = None,
     ) -> MinariStorage:
         """Class method to create a new data storage.
 
@@ -123,6 +124,7 @@ class MinariStorage(ABC):
             action_space (gymnasium.Space, optional): Gymnasium action space of the dataset.
             env_spec (EnvSpec, optional): Gymnasium EnvSpec of the environment that generates the dataset.
             data_format (str): Format of the data. Default value is "hdf5".
+            infos_format (str): Format of the infos data. Can be "dict" or "list". Default value is "dict".
 
         Returns:
             A new MinariStorage object to write new data.
@@ -145,6 +147,9 @@ class MinariStorage(ABC):
                 f"No storage implemented for {data_format}. Available formats: {get_storage_keys()}"
             )
 
+        infos_format = infos_format or "dict"
+
+
         data_path = pathlib.Path(data_path)
         data_path.mkdir(exist_ok=True)
         if data_path.joinpath(METADATA_FILE_NAME).exists():
@@ -164,6 +169,7 @@ class MinariStorage(ABC):
             "total_episodes": 0,
             "total_steps": 0,
             "data_format": data_format,
+            "infos_format": infos_format,
             "observation_space": serialize_space(observation_space),
             "action_space": serialize_space(action_space),
         }
@@ -217,6 +223,7 @@ class MinariStorage(ABC):
             "action_space",
             "env_spec",
             "data_format",
+            "infos_format",
             "minari_version",
         }
 
@@ -326,7 +333,7 @@ class MinariStorage(ABC):
                 rewards=episode["rewards"],
                 terminations=episode["terminations"],
                 truncations=episode["truncations"],
-                infos=episode.get("infos", []),
+                infos=episode.get("infos"),
             )
             self.update_episodes([episode_buffer])
 

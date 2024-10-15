@@ -307,6 +307,15 @@ env = DataCollector(env, record_infos=True)
 ```{eval-rst}
 In this example, the :class:`minari.DataCollector` wraps the `'CartPole-v1'` environment from Gymnasium. We set ``record_infos=True`` so the wrapper will also collect the returned ``info`` dictionaries to create the dataset. For the full list of arguments, read the :class:`minari.DataCollector` documentation.
 ```
+Infos can be saved as a dictionary of np.arrays or as a list of arbitrary dictionaries by 
+setting the `infos_format` parameter. Default is dictionary format `infos_format = None or "dict"`:
+```python
+from minari import DataCollector
+import gymnasium as gym
+
+env = gym.make('CartPole-v1')
+env = DataCollector(env, record_infos=True, infos_format="list")
+```
 
 ### Save Dataset
 

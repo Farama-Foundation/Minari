@@ -495,7 +495,9 @@ def check_data_integrity(dataset: MinariDataset, episode_indices: List[int]):
 
 def get_info_at_step_index(infos: Union[Dict, List[Dict]], step_index: int) -> Dict:
 
-    if isinstance(infos, dict):  # for backwards compatibility
+    if infos is None:
+        return {}
+    elif isinstance(infos, dict):  # for backwards compatibility
         result = {}
         for key in infos.keys():
             if isinstance(infos[key], dict):
@@ -511,6 +513,7 @@ def get_info_at_step_index(infos: Union[Dict, List[Dict]], step_index: int) -> D
         return infos[step_index]
 
     else:
+        print(infos, type(infos))
         raise ValueError(
             "Infos are in an unsupported format; see Minari documentation for supported formats."
         )

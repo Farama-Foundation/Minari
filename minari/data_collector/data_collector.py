@@ -71,6 +71,7 @@ class DataCollector(gym.Wrapper):
         observation_space: Optional[gym.Space] = None,
         action_space: Optional[gym.Space] = None,
         data_format: Optional[str] = None,
+        infos_format: Optional[str] = None,
     ):
         """Initialize the data collector attributes and create the temporary directory for caching.
 
@@ -82,10 +83,12 @@ class DataCollector(gym.Wrapper):
             observation_space (gym.Space): Observation space of the dataset. The default value is the environment observation space.
             action_space (gym.Space): Action space of the dataset. The default value is the environment action space.
             data_format (str, optional): Data format to store the data in the Minari dataset. If None (defaults), it will use the default format of MinariStorage.
+            infos_format (str, optional): Format of the infos data. Can be "dict" or "list". If None (defaults), it will use the "dict" format.
         """
         super().__init__(env)
         self._step_data_callback = step_data_callback()
         self._episode_metadata_callback = episode_metadata_callback()
+        self.infos_format = infos_format or "dict"
 
         self.datasets_path = os.environ.get("MINARI_DATASETS_PATH")
         if self.datasets_path is None:
@@ -160,7 +163,7 @@ class DataCollector(gym.Wrapper):
             self._buffer = EpisodeBuffer(
                 id=self._episode_id,
                 observations=step_data["observation"],
-                infos=[step_data["info"]],
+                infos=step_data["info"] if self.infos_format == "dict" else [step_data["info"]],
             )
 
         return obs, rew, terminated, truncated, info
@@ -201,12 +204,13 @@ class DataCollector(gym.Wrapper):
                 f"Observation: {step_data['observation']}\nSpace: {self._storage.observation_space}"
             )
 
+        infos = step_data["info"] if self._record_infos else None
         self._buffer = EpisodeBuffer(
             id=self._episode_id,
             seed=seed,
             options=options,
             observations=step_data["observation"],
-            infos=[step_data["info"]] if self._record_infos else None,
+            infos=infos if self.infos_format == "dict" else [infos] if infos is not None else None,
         )
         return obs, info
 

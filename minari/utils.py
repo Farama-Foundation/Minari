@@ -346,6 +346,7 @@ def create_dataset_from_buffers(
     num_episodes_average_score: int = 100,
     description: Optional[str] = None,
     data_format: Optional[str] = None,
+    infos_format: Optional[str] = None,
     requirements: Optional[list] = None,
 ):
     """Create Minari dataset from a list of episode dictionary buffers.
@@ -375,6 +376,7 @@ def create_dataset_from_buffers(
         observation_space (gym.spaces.Space, optional): observation space of the environment. If None (default) use the environment observation space.
         description (str, optional): description of the dataset being created. Defaults to None.
         data_format (str, optional): Data format to store the data in the Minari dataset. If None (defaults), it will use the default format of MinariStorage.
+        infos_format (str, optional): Format of the infos data. Can be "dict" or "list". Defaults to None.
         requirements (list of str, optional): list of requirements in pip-style to load the environment and reproduce the dataset. For example, `mujoco>=3.1.0,<3.2.0`, which indicate the supported version range for mujoco package. Defaults to None.
 
     Returns:
@@ -424,6 +426,7 @@ def create_dataset_from_buffers(
         observation_space=observation_space,
         action_space=action_space,
         env_spec=env_spec,
+        infos_format=infos_format,
         **data_format_kwarg,
     )
 

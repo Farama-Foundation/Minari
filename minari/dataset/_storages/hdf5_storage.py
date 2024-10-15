@@ -201,7 +201,7 @@ def _get_from_h5py(group: h5py.Group, name: str) -> h5py.Group:
 def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
     for key, data in episode_buffer.items():
 
-        if key == "infos":
+        if key == "infos" and isinstance(data, List):
             create_dict_dataset_in_group(episode_group, "infos", data)
         elif isinstance(data, dict):
             episode_group_to_clear = _get_from_h5py(episode_group, key)
