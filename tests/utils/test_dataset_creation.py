@@ -31,7 +31,9 @@ CODELINK = "https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/te
     cartpole_test_dataset + dummy_test_datasets + dummy_text_dataset,
 )
 @pytest.mark.parametrize("infos_format", ["dict", "list"])
-def test_generate_dataset_with_collector_env(dataset_id, env_id, register_dummy_envs, infos_format):
+def test_generate_dataset_with_collector_env(
+    dataset_id, env_id, register_dummy_envs, infos_format
+):
     """Test DataCollector wrapper and Minari dataset creation."""
     env = gym.make(env_id)
     env = DataCollector(env, record_infos=True, infos_format=infos_format)
@@ -92,17 +94,21 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id, register_dummy_
     [
         None,
         {},
-        {"foo": np.ones((10, 10), dtype=np.float32)}, # TODO: causes non-serializable warning
+        {
+            "foo": np.ones((10, 10), dtype=np.float32)
+        },  # TODO: causes non-serializable warning
         {"int": 1},
         {"bool": False},
         {
             "value1": True,
             "value2": 5,
-            "value3": {"nested1": False, "nested2": np.empty(10)}, # TODO: causes non-serializable warning
+            "value3": {
+                "nested1": False,
+                "nested2": np.empty(10),
+            },  # TODO: causes non-serializable warning
         },
     ],
 )
-
 @pytest.mark.parametrize("infos_format", ["dict", "list"])
 def test_record_infos_collector_env(info_override, register_dummy_envs, infos_format):
     """Test DataCollector wrapper and Minari dataset creation including infos."""
@@ -387,7 +393,7 @@ def test_generate_big_episode(data_format, register_dummy_envs, infos_format):
     assert np.all(dataset[0].truncations == buffer.truncations)
     buffer_infos = buffer.infos
     assert buffer_infos is not None
-    print(infos_format,type(dataset[0].infos) )
+    print(infos_format, type(dataset[0].infos))
     if infos_format == "dict":
         assert np.all(dataset[0].infos["info1"] == buffer_infos["info1"])
         assert np.all(dataset[0].infos["info2"] == buffer_infos["info2"])

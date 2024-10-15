@@ -57,7 +57,11 @@ class EpisodeBuffer:
 
         infos_format = infos_format or "dict"
         if self.infos is None:
-            infos = jtu.tree_map(lambda x: [x], step_data["info"]) if infos_format == "dict" else [step_data["info"]]
+            infos = (
+                jtu.tree_map(lambda x: [x], step_data["info"])
+                if infos_format == "dict"
+                else [step_data["info"]]
+            )
         else:
             if isinstance(self.infos, dict):
                 infos = jtu.tree_map(_append, step_data["info"], self.infos)
@@ -66,7 +70,6 @@ class EpisodeBuffer:
                 infos = self.infos
             else:
                 raise ValueError(f"Unexpected type for infos: {type(self.infos)}")
-
 
         self.rewards.append(step_data["reward"])
         self.terminations.append(step_data["termination"])

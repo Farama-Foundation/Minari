@@ -20,7 +20,6 @@ from minari.dataset.minari_storage import MinariStorage
 from minari.namespace import create_namespace, list_local_namespaces
 from minari.utils import _generate_dataset_metadata, _generate_dataset_path
 
-
 # H5Py supports ints up to uint64
 AUTOSEED_BIT_SIZE = 64
 
@@ -163,7 +162,11 @@ class DataCollector(gym.Wrapper):
             self._buffer = EpisodeBuffer(
                 id=self._episode_id,
                 observations=step_data["observation"],
-                infos=step_data["info"] if self.infos_format == "dict" else [step_data["info"]],
+                infos=(
+                    step_data["info"]
+                    if self.infos_format == "dict"
+                    else [step_data["info"]]
+                ),
             )
 
         return obs, rew, terminated, truncated, info
@@ -210,7 +213,11 @@ class DataCollector(gym.Wrapper):
             seed=seed,
             options=options,
             observations=step_data["observation"],
-            infos=infos if self.infos_format == "dict" else [infos] if infos is not None else None,
+            infos=(
+                infos
+                if self.infos_format == "dict"
+                else [infos] if infos is not None else None
+            ),
         )
         return obs, info
 

@@ -9,7 +9,6 @@ from typing import Any, Dict, Iterable, List, Optional, Sequence
 import gymnasium as gym
 import numpy as np
 
-
 try:
     import pyarrow as pa
     import pyarrow.dataset as ds
@@ -105,7 +104,9 @@ class ArrowStorage(MinariStorage):
 
             return {
                 "id": id,
-                "observations": _decode_space(self.observation_space, episode["observations"]),
+                "observations": _decode_space(
+                    self.observation_space, episode["observations"]
+                ),
                 "actions": _decode_space(self.action_space, episode["actions"][:-1]),
                 "rewards": np.asarray(episode["rewards"])[:-1],
                 "terminations": np.asarray(episode["terminations"])[:-1],

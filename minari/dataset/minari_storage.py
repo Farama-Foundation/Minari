@@ -149,7 +149,6 @@ class MinariStorage(ABC):
 
         infos_format = infos_format or "dict"
 
-
         data_path = pathlib.Path(data_path)
         data_path.mkdir(exist_ok=True)
         if data_path.joinpath(METADATA_FILE_NAME).exists():

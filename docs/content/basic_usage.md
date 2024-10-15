@@ -5,7 +5,9 @@ title: Basic Usage
 
 # Basic Usage
 
-Minari is a standard dataset hosting interface for Offline Reinforcement Learning applications. Minari is compatible with most of the RL environments that follow the Gymnasium API and facilitates Offline RL dataset handling by providing data collection, dataset hosting, and dataset sampling capabilities.
+Minari is a standard dataset hosting interface for Offline Reinforcement Learning applications. Minari is compatible
+with most of the RL environments that follow the Gymnasium API and facilitates Offline RL dataset handling by providing
+data collection, dataset hosting, and dataset sampling capabilities.
 
 ## Installation
 
@@ -15,7 +17,9 @@ To install the most recent version of the Minari library run this command:
 pip install minari
 ```
 
-This will install the minimum required dependencies. Additional dependencies will be prompted for installation based on your use case. To install all dependencies at once, use:
+This will install the minimum required dependencies. Additional dependencies will be prompted for installation based on
+your use case. To install all dependencies at once, use:
+
 ```bash
 pip install "minari[all]"
 ```
@@ -53,14 +57,14 @@ minari list remote
 │             ...                │       ...      │     ...     │     ...      │       ...       │
 ```
 
-To use your own server with Minari, set the `MINARI_REMOTE` environment variable in the format `remote-type://remote-path`. For example, to set up a GCP bucket named `my-datasets`, run the following command:
+To use your own server with Minari, set the `MINARI_REMOTE` environment variable in the format
+`remote-type://remote-path`. For example, to set up a GCP bucket named `my-datasets`, run the following command:
 
 ```bash
 export MINARI_REMOTE=gcp://my-datasets
 ```
 
 Currently, only GCP is supported, but we plan to support other cloud providers in the future.
-
 
 ```{eval-rst}
 To download any of the remote datasets into the local storage use the download command:
@@ -95,12 +99,14 @@ In order to use any of the dataset sampling features of Minari we first need to 
 
 ```python
 import minari
+
 dataset = minari.load_dataset('D4RL/door/human-v2')
 print("Observation space:", dataset.observation_space)
 print("Action space:", dataset.action_space)
 print("Total episodes:", dataset.total_episodes)
 print("Total steps:", dataset.total_steps)
 ```
+
 ```
 Observation space: Box(-inf, inf, (39,), float64)
 Action space: Box(-1.0, 1.0, (28,), float32)
@@ -180,7 +186,6 @@ for episode in dataset:
     print(f"EPISODE ID {episode.id}")
 ```
 
-
 #### Filter Episodes
 
 ```{eval-rst}
@@ -248,7 +253,6 @@ for _ in range(100):
         env.reset()
 ```
 
-
 ```{eval-rst}
 
 .. note::
@@ -275,6 +279,7 @@ minari download D4RL/door/expert-v2
 minari combine D4RL/door/human-v2 D4RL/door/expert-v2 --dataset-id=D4RL/door/all-v0
 minari list local
 ```
+
 ```
                     Local Minari datasets('/Users/farama/.minari/datasets/')
 ┏━━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┓
@@ -307,8 +312,10 @@ env = DataCollector(env, record_infos=True)
 ```{eval-rst}
 In this example, the :class:`minari.DataCollector` wraps the `'CartPole-v1'` environment from Gymnasium. We set ``record_infos=True`` so the wrapper will also collect the returned ``info`` dictionaries to create the dataset. For the full list of arguments, read the :class:`minari.DataCollector` documentation.
 ```
-Infos can be saved as a dictionary of np.arrays or as a list of arbitrary dictionaries by 
+
+Infos can be saved as a dictionary of np.arrays or as a list of arbitrary dictionaries by
 setting the `infos_format` parameter. Default is dictionary format `infos_format = None or "dict"`:
+
 ```python
 from minari import DataCollector
 import gymnasium as gym
@@ -367,6 +374,7 @@ Once the dataset has been created we can check if the Minari dataset id appears 
 ```bash
 minari list local
 ```
+
 ```
         Local Minari datasets('/Users/farama/.minari/datasets/')
 ┏━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━━━┓
@@ -428,7 +436,6 @@ for episode_id in range(total_episodes):
         else:
             env.add_to_dataset(dataset)
 ```
-
 
 ## Using Namespaces
 
