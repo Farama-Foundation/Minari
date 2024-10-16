@@ -30,10 +30,13 @@ CODELINK = "https://github.com/Farama-Foundation/Minari/blob/main/tests/utils/te
     "dataset_id,env_id",
     cartpole_test_dataset + dummy_test_datasets + dummy_text_dataset,
 )
-def test_generate_dataset_with_collector_env(dataset_id, env_id, register_dummy_envs):
+@pytest.mark.parametrize("infos_format", ["dict", "list"])
+def test_generate_dataset_with_collector_env(
+    dataset_id, env_id, register_dummy_envs, infos_format
+):
     """Test DataCollector wrapper and Minari dataset creation."""
     env = gym.make(env_id)
-    env = DataCollector(env, record_infos=True)
+    env = DataCollector(env, record_infos=True, infos_format=infos_format)
     num_episodes = 10
     env.reset(seed=42)
     for episode in range(num_episodes):
@@ -91,22 +94,28 @@ def test_generate_dataset_with_collector_env(dataset_id, env_id, register_dummy_
     [
         None,
         {},
-        {"foo": np.ones((10, 10), dtype=np.float32)},
+        {
+            "foo": np.ones((10, 10), dtype=np.float32)
+        },  # TODO: causes non-serializable warning
         {"int": 1},
         {"bool": False},
         {
             "value1": True,
             "value2": 5,
-            "value3": {"nested1": False, "nested2": np.empty(10)},
+            "value3": {
+                "nested1": False,
+                "nested2": np.empty(10),
+            },  # TODO: causes non-serializable warning
         },
     ],
 )
-def test_record_infos_collector_env(info_override, register_dummy_envs):
+@pytest.mark.parametrize("infos_format", ["dict", "list"])
+def test_record_infos_collector_env(info_override, register_dummy_envs, infos_format):
     """Test DataCollector wrapper and Minari dataset creation including infos."""
     dataset_id = "dummy-mutable-info-box/test-v0"
     env = gym.make("DummyInfoEnv-v0", info=info_override)
 
-    env = DataCollector(env, record_infos=True)
+    env = DataCollector(env, record_infos=True, infos_format=infos_format)
     num_episodes = 10
 
     _, info_sample = env.reset(seed=42)
@@ -332,7 +341,8 @@ def test_generate_dataset_with_space_subset_external_buffer(
 
 
 @pytest.mark.parametrize("data_format", get_storage_keys())
-def test_generate_big_episode(data_format, register_dummy_envs):
+@pytest.mark.parametrize("infos_format", ["dict", "list"])
+def test_generate_big_episode(data_format, register_dummy_envs, infos_format):
     """Test generate a long episode and create a dataset."""
     dataset_id = "test/big-episode-v0"
     episode_length = 1024
@@ -345,8 +355,10 @@ def test_generate_big_episode(data_format, register_dummy_envs):
         }
     )
 
+    infos = info_generator.sample()
     buffer = EpisodeBuffer(
-        observations=[observation_space.sample()], infos=info_generator.sample()
+        observations=[observation_space.sample()],
+        infos=infos if infos_format == "dict" else [infos],
     )
     for step_id in range(episode_length):
         buffer = buffer.add_step_data(
@@ -371,6 +383,7 @@ def test_generate_big_episode(data_format, register_dummy_envs):
         author_email="farama@farama.org",
         description="Test dataset",
         data_format=data_format,
+        infos_format=infos_format,
     )
 
     assert np.all(dataset[0].observations == buffer.observations)
@@ -380,5 +393,15 @@ def test_generate_big_episode(data_format, register_dummy_envs):
     assert np.all(dataset[0].truncations == buffer.truncations)
     buffer_infos = buffer.infos
     assert buffer_infos is not None
-    assert np.all(dataset[0].infos["info1"] == buffer_infos["info1"])
-    assert np.all(dataset[0].infos["info2"] == buffer_infos["info2"])
+    if infos_format == "dict":
+        assert isinstance(dataset[0].infos, dict)
+        assert isinstance(buffer_infos, dict)
+        assert np.all(dataset[0].infos["info1"] == buffer_infos["info1"])
+        assert np.all(dataset[0].infos["info2"] == buffer_infos["info2"])
+    else:
+        assert len(dataset[0].infos) == len(buffer_infos)
+        assert isinstance(dataset[0].infos, list)
+        assert isinstance(buffer_infos, list)
+        for ds_info, buf_info in zip(dataset[0].infos, buffer_infos):
+            assert np.all(np.array(ds_info["info1"]) == np.array(buf_info["info1"]))
+            assert np.all(np.array(ds_info["info2"]) == np.array(buf_info["info2"]))

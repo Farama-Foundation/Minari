@@ -41,7 +41,7 @@ def test_episode_data(space: gym.Space):
         rewards=rewards,
         terminations=terminations,
         truncations=truncations,
-        infos={"info": True},
+        infos=[{"info": True}],
     )
 
     pattern = r"EpisodeData\("

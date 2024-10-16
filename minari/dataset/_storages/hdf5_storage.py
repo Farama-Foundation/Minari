@@ -1,14 +1,16 @@
 from __future__ import annotations
 
+import json
 import pathlib
 from collections import OrderedDict
 from itertools import zip_longest
-from typing import Dict, Iterable, List, Optional, Tuple, Union
+from typing import Any, Dict, Iterable, List, Optional, Tuple, Union
 
 import gymnasium as gym
 import numpy as np
 
 from minari.data_collector import EpisodeBuffer
+from minari.dataset._storages.serde import deserialize_dict, serialize_dict
 from minari.dataset.minari_storage import MinariStorage
 
 
@@ -119,8 +121,10 @@ class HDF5Storage(MinariStorage):
                 infos = None
                 if "infos" in ep_group:
                     info_group = ep_group["infos"]
-                    assert isinstance(info_group, h5py.Group)
-                    infos = _decode_info(info_group)
+                    if isinstance(info_group, h5py.Group):  # for backward compatibility
+                        infos = _decode_info(info_group)
+                    else:
+                        infos = read_dict_dataset_from_group(ep_group, "infos")
 
                 ep_dict = {
                     "id": ep_idx,
@@ -196,7 +200,10 @@ def _get_from_h5py(group: h5py.Group, name: str) -> h5py.Group:
 
 def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
     for key, data in episode_buffer.items():
-        if isinstance(data, dict):
+
+        if key == "infos" and isinstance(data, List):
+            create_dict_dataset_in_group(episode_group, "infos", data)
+        elif isinstance(data, dict):
             episode_group_to_clear = _get_from_h5py(episode_group, key)
             _add_episode_to_group(data, episode_group_to_clear)
         elif isinstance(data, tuple):
@@ -268,3 +275,67 @@ def unflatten_dict(d: Dict) -> Dict:
             current = current[key]
         current[keys[-1]] = v
     return result
+
+
+def infer_dtype(value):
+    if isinstance(value, str):
+        return h5py.special_dtype(vlen=str)
+    elif isinstance(value, (int, np.integer)):
+        return np.int64
+    elif isinstance(value, (float, np.floating)):
+        return np.float64
+    elif isinstance(value, bool):
+        return np.bool_
+    elif isinstance(value, list):
+        if all(isinstance(item, str) for item in value):
+            return h5py.special_dtype(vlen=str)
+        elif all(
+            isinstance(item, (int, float, np.integer, np.floating)) for item in value
+        ):
+            return np.float64
+        else:
+            return h5py.special_dtype(vlen=str)  # Store as JSON string
+    elif isinstance(value, np.ndarray):
+        if value.dtype.kind in ["U", "S"]:
+            return h5py.special_dtype(vlen=str)
+        else:
+            return value.dtype
+    elif isinstance(value, dict):
+        return h5py.special_dtype(vlen=str)  # Store as JSON string
+    else:
+        return h5py.special_dtype(vlen=str)  # Default to string for unknown types
+
+
+def serialize_value(value):
+    if isinstance(value, (str, int, float, bool, np.integer, np.floating)):
+        return value
+    elif isinstance(value, np.ndarray):
+        if value.dtype.kind in ["U", "S"]:
+            return value.astype(str).tolist()
+        else:
+            return value.tolist()
+    elif isinstance(value, list):
+        if all(
+            isinstance(item, (str, int, float, bool, np.integer, np.floating))
+            for item in value
+        ):
+            return value
+        else:
+            return json.dumps(value)
+    elif isinstance(value, dict):
+        return json.dumps(value)
+    else:
+        return str(value)
+
+
+def create_dict_dataset_in_group(group, dataset_name, dict_list: List[Dict[str, Any]]):
+    serialized_list = [serialize_dict(d) for d in dict_list] if dict_list else []
+    dt = h5py.special_dtype(vlen=str)
+    dataset = group.create_dataset(dataset_name, (len(serialized_list),), dtype=dt)
+    dataset[:] = serialized_list
+    return dataset
+
+
+def read_dict_dataset_from_group(group, dataset_name):
+    dataset = group[dataset_name]
+    return [deserialize_dict(item) for item in dataset]
