@@ -50,7 +50,8 @@ testing = [
 
 integrations = [
     "torchrl",
-    "agilerl>=1.0.6"
+    "agilerl>=1.0.6",
+    "d3rlpy"
 ]
 
 [project.urls]
