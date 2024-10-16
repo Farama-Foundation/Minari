@@ -1,9 +1,11 @@
-import pytest
-import minari
 import numpy as np
+import pytest
+
+import minari
+
 
 pytest.importorskip("d3rlpy")
-from d3rlpy.datasets import get_minari
+from d3rlpy.datasets import get_minari  # noqa: E402
 
 
 def test_d3rlpy():
@@ -26,7 +28,11 @@ def test_d3rlpy():
         assert env.observation_space.contains(d3rlpy_episode.observations[step_idx])
         assert env.action_space.contains(d3rlpy_episode.actions[step_idx])
 
-        assert np.all(d3rlpy_episode.observations[step_idx] == minari_episode.observations[step_idx])
-        assert np.all(d3rlpy_episode.actions[step_idx] == minari_episode.actions[step_idx])
+        assert np.all(
+            d3rlpy_episode.observations[step_idx]
+            == minari_episode.observations[step_idx]
+        )
+        assert np.all(
+            d3rlpy_episode.actions[step_idx] == minari_episode.actions[step_idx]
+        )
         assert d3rlpy_episode.rewards[step_idx] == minari_episode.rewards[step_idx]
-
