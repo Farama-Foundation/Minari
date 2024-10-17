@@ -19,10 +19,7 @@ unicode_charset = "".join(
 )
 
 cartpole_test_dataset = [("cartpole/test-v0", "CartPole-v1")]
-dummy_box_dataset = [
-    ("dummy-box/test-v0", "DummyBoxEnv-v0"),
-    ("dummy-multi-dim-box/test-v0", "DummyMultiDimensionalBoxEnv-v0"),
-    ]
+dummy_box_dataset = [("dummy-box/test-v0", "DummyBoxEnv-v0"),]
 dummy_text_dataset = [("dummy-text/test-v0", "DummyTextEnv-v0")]
 
 # Note: Doesn't include the text dataset, since this is often handled separately
@@ -30,6 +27,7 @@ dummy_test_datasets = [
     ("dummy-dict/test-v0", "DummyDictEnv-v0"),
     ("dummy-tuple/test-v0", "DummyTupleEnv-v0"),
     ("dummy-combo/test-v0", "DummyComboEnv-v0"),
+    ("dummy-multi-dim-box/test-v0", "DummyMultiDimensionalBoxEnv-v0"),
     ("dummy-multidim-space/test-v0", "DummyMultiSpaceEnv-v0"),
     ("dummy-tuple-discrete-box/test-v0", "DummyTupleDiscreteBoxEnv-v0"),
     ("nested/namespace/dummy-dict/test-v0", "DummyDictEnv-v0"),
@@ -99,25 +97,15 @@ class DummyInconsistentInfoEnv(DummyBoxEnv):
         return super()._get_info() if self.timestep % 2 == 0 else {}
 
 
-class DummyMultiDimensionalBoxEnv(gym.Env):
+class DummyMultiDimensionalBoxEnv(DummyEnv):
     def __init__(self):
+        super().__init__()
         self.action_space = spaces.Box(
             low=-1, high=4, shape=(2, 2, 2), dtype=np.float32
         )
         self.observation_space = spaces.Box(
             low=-1, high=4, shape=(3, 3, 3), dtype=np.float32
         )
-
-    def step(self, action):
-        terminated = self.timestep > 5
-        self.timestep += 1
-
-        return self.observation_space.sample(), 0, terminated, False, {}
-
-    def reset(self, seed=None, options=None):
-        self.timestep = 0
-        self.observation_space.seed(seed)
-        return self.observation_space.sample(), {}
 
 
 class DummyMultiSpaceEnv(DummyEnv):
