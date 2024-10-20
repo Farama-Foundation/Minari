@@ -19,7 +19,9 @@ unicode_charset = "".join(
 )
 
 cartpole_test_dataset = [("cartpole/test-v0", "CartPole-v1")]
-dummy_box_dataset = [("dummy-box/test-v0", "DummyBoxEnv-v0"),]
+dummy_box_dataset = [
+    ("dummy-box/test-v0", "DummyBoxEnv-v0"),
+]
 dummy_text_dataset = [("dummy-text/test-v0", "DummyTextEnv-v0")]
 
 # Note: Doesn't include the text dataset, since this is often handled separately

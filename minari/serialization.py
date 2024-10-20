@@ -44,7 +44,9 @@ def _serialize_discrete(space: spaces.Discrete, to_string=True) -> Union[Dict, s
 
 
 @serialize_space.register(spaces.MultiDiscrete)
-def _serialize_multi_discrete(space: spaces.MultiDiscrete, to_string=True) -> Union[Dict, str]:
+def _serialize_multi_discrete(
+    space: spaces.MultiDiscrete, to_string=True
+) -> Union[Dict, str]:
     result = {}
     result["type"] = "MultiDiscrete"
     result["dtype"] = str(space.dtype)
@@ -57,7 +59,9 @@ def _serialize_multi_discrete(space: spaces.MultiDiscrete, to_string=True) -> Un
 
 
 @serialize_space.register(spaces.MultiBinary)
-def _serialize_multi_binary(space: spaces.MultiBinary, to_string=True) -> Union[Dict, str]:
+def _serialize_multi_binary(
+    space: spaces.MultiBinary, to_string=True
+) -> Union[Dict, str]:
     result = {"type": "MultiBinary", "n": space.n}
 
     if to_string:
@@ -177,10 +181,12 @@ def _deserialize_multi_discrete(space_dict: Dict) -> spaces.MultiDiscrete:
         start=space_dict["start"],
     )
 
+
 @deserialize_space.register("MultiBinary")
 def _deserialize_multi_binary(space_dict: Dict) -> spaces.MultiBinary:
     assert space_dict["type"] == "MultiBinary"
     return spaces.MultiBinary(n=space_dict["n"])
+
 
 @deserialize_space.register("Text")
 def _deserialize_text(space_dict: Dict) -> spaces.Text:

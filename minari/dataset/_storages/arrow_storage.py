@@ -21,6 +21,9 @@ from minari.data_collector.episode_buffer import EpisodeBuffer
 from minari.dataset.minari_storage import MinariStorage
 
 
+_FIXEDLIST_SPACES = (gym.spaces.Box, gym.spaces.MultiDiscrete, gym.spaces.MultiBinary)
+
+
 class ArrowStorage(MinariStorage):
     FORMAT = "arrow"
 
@@ -173,7 +176,7 @@ def _encode_space(space: gym.Space, values: Any, pad: int = 0):
             names.append(str(i))
             arrays.append(_encode_space(space[i], value, pad=pad))
         return pa.StructArray.from_arrays(arrays, names=names)
-    elif isinstance(space, gym.spaces.Box):
+    elif isinstance(space, _FIXEDLIST_SPACES):
         values = np.asarray(values)
         assert values.shape[1:] == space.shape
         values = values.reshape(values.shape[0], -1)
@@ -183,7 +186,7 @@ def _encode_space(space: gym.Space, values: Any, pad: int = 0):
     elif isinstance(space, gym.spaces.Discrete):
         values = np.asarray(values).reshape(-1, 1)
         values = np.pad(values, ((0, pad), (0, 0)))
-        return pa.array(values.squeeze(-1), type=pa.int32())
+        return pa.array(values.squeeze(-1), type=pa.from_numpy_dtype(space.dtype))
     else:
         if not isinstance(values, list):
             values = list(values)
@@ -203,7 +206,7 @@ def _decode_space(space, values: pa.Array):
                 for i, subspace in enumerate(space.spaces)
             ]
         )
-    elif isinstance(space, gym.spaces.Box):
+    elif isinstance(space, _FIXEDLIST_SPACES):
         data = np.stack(values.to_numpy(zero_copy_only=False))
         return data.reshape(-1, *space.shape)
     elif isinstance(space, gym.spaces.Discrete):
