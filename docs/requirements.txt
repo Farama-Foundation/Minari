@@ -8,6 +8,7 @@ matplotlib
 gymnasium-robotics>=1.2.1
 minigrid>=2.2.0
 rl_zoo3>=2.0.0
+gymnasium>=1.0.0
 imageio>=2.14.1
 nbmake
 git+https://github.com/sphinx-gallery/sphinx-gallery.git@4006662c8c1984453a247dc6d3df6260e5b00f4b#egg=sphinx_gallery
