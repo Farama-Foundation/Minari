@@ -23,6 +23,7 @@ def register_dummy_envs():
         "DummySingleStepEnv",
         "DummyInconsistentInfoEnv",
         "DummyMultiDimensionalBoxEnv",
+        "DummyMultiSpaceEnv",
         "DummyTupleDiscreteBoxEnv",
         "DummyDictEnv",
         "DummyTupleEnv",

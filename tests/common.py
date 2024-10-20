@@ -19,7 +19,9 @@ unicode_charset = "".join(
 )
 
 cartpole_test_dataset = [("cartpole/test-v0", "CartPole-v1")]
-dummy_box_dataset = [("dummy-box/test-v0", "DummyBoxEnv-v0")]
+dummy_box_dataset = [
+    ("dummy-box/test-v0", "DummyBoxEnv-v0"),
+]
 dummy_text_dataset = [("dummy-text/test-v0", "DummyTextEnv-v0")]
 
 # Note: Doesn't include the text dataset, since this is often handled separately
@@ -27,6 +29,8 @@ dummy_test_datasets = [
     ("dummy-dict/test-v0", "DummyDictEnv-v0"),
     ("dummy-tuple/test-v0", "DummyTupleEnv-v0"),
     ("dummy-combo/test-v0", "DummyComboEnv-v0"),
+    ("dummy-multi-dim-box/test-v0", "DummyMultiDimensionalBoxEnv-v0"),
+    ("dummy-multidim-space/test-v0", "DummyMultiSpaceEnv-v0"),
     ("dummy-tuple-discrete-box/test-v0", "DummyTupleDiscreteBoxEnv-v0"),
     ("nested/namespace/dummy-dict/test-v0", "DummyDictEnv-v0"),
     ("dummy-single-step/test-v0", "DummySingleStepEnv-v0"),
@@ -95,8 +99,9 @@ class DummyInconsistentInfoEnv(DummyBoxEnv):
         return super()._get_info() if self.timestep % 2 == 0 else {}
 
 
-class DummyMultiDimensionalBoxEnv(gym.Env):
+class DummyMultiDimensionalBoxEnv(DummyEnv):
     def __init__(self):
+        super().__init__()
         self.action_space = spaces.Box(
             low=-1, high=4, shape=(2, 2, 2), dtype=np.float32
         )
@@ -104,16 +109,15 @@ class DummyMultiDimensionalBoxEnv(gym.Env):
             low=-1, high=4, shape=(3, 3, 3), dtype=np.float32
         )
 
-    def step(self, action):
-        terminated = self.timestep > 5
-        self.timestep += 1
 
-        return self.observation_space.sample(), 0, terminated, False, {}
+class DummyMultiSpaceEnv(DummyEnv):
+    def __init__(self):
+        super().__init__()
+        self.action_space = spaces.MultiBinary(10)
+        self.observation_space = spaces.MultiDiscrete([10, 2, 4], dtype=np.int32)
 
-    def reset(self, seed=None, options=None):
-        self.timestep = 0
-        self.observation_space.seed(seed)
-        return self.observation_space.sample(), {}
+    def _get_info(self):
+        return {"timestep": np.array([self.timestep])}
 
 
 class DummyTupleDiscreteBoxEnv(DummyEnv):
@@ -256,12 +260,13 @@ class DummyComboEnv(DummyEnv):
 
 test_spaces = [
     gym.spaces.Box(low=-1, high=4, shape=(2,), dtype=np.float32),
-    gym.spaces.Box(low=-1, high=4, shape=(3,), dtype=np.float32),
     gym.spaces.Box(low=-1, high=4, shape=(2, 2, 2), dtype=np.float32),
-    gym.spaces.Box(low=-1, high=4, shape=(3, 3, 3), dtype=np.float32),
-    gym.spaces.Text(max_length=10, min_length=10),
+    gym.spaces.Text(max_length=10, min_length=10, seed=42),
     gym.spaces.Text(max_length=20, charset=unicode_charset),
     gym.spaces.Text(max_length=10, charset="01"),
+    gym.spaces.Discrete(10, seed=7, start=2),
+    gym.spaces.MultiDiscrete([5, 2, 3], dtype=np.int32),
+    gym.spaces.MultiBinary(10, seed=1),
     gym.spaces.Tuple(
         (
             gym.spaces.Discrete(1),

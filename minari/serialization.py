@@ -43,9 +43,36 @@ def _serialize_discrete(space: spaces.Discrete, to_string=True) -> Union[Dict, s
     return result
 
 
+@serialize_space.register(spaces.MultiDiscrete)
+def _serialize_multi_discrete(
+    space: spaces.MultiDiscrete, to_string=True
+) -> Union[Dict, str]:
+    result = {}
+    result["type"] = "MultiDiscrete"
+    result["dtype"] = str(space.dtype)
+    result["nvec"] = space.nvec.tolist()
+    result["start"] = space.start.tolist()
+
+    if to_string:
+        result = json.dumps(result)
+    return result
+
+
+@serialize_space.register(spaces.MultiBinary)
+def _serialize_multi_binary(
+    space: spaces.MultiBinary, to_string=True
+) -> Union[Dict, str]:
+    result = {"type": "MultiBinary", "n": space.n}
+
+    if to_string:
+        result = json.dumps(result)
+    return result
+
+
 @serialize_space.register(spaces.Dict)
 def _serialize_dict(space: spaces.Dict, to_string=True) -> Union[Dict, str]:
     result = {"type": "Dict", "subspaces": {}}
+
     for key in space.spaces.keys():
         result["subspaces"][key] = serialize_space(space.spaces[key], to_string=False)
 
@@ -57,6 +84,7 @@ def _serialize_dict(space: spaces.Dict, to_string=True) -> Union[Dict, str]:
 @serialize_space.register(spaces.Tuple)
 def _serialize_tuple(space: spaces.Tuple, to_string=True) -> Union[Dict, str]:
     result = {"type": "Tuple", "subspaces": []}
+
     for subspace in space.spaces:
         result["subspaces"].append(serialize_space(subspace, to_string=False))
 
@@ -130,10 +158,10 @@ def _deserialize_dict(space_dict: Dict) -> spaces.Dict:
 def _deserialize_box(space_dict: Dict) -> spaces.Box:
     assert space_dict["type"] == "Box"
     shape = tuple(space_dict["shape"])
-    dtype = np.dtype(space_dict["dtype"])
+    dtype = space_dict["dtype"]
     low = np.array(space_dict["low"], dtype=dtype)
     high = np.array(space_dict["high"], dtype=dtype)
-    return spaces.Box(low=low, high=high, shape=shape, dtype=dtype)  # type: ignore
+    return spaces.Box(low=low, high=high, shape=shape, dtype=dtype)
 
 
 @deserialize_space.register("Discrete")
@@ -142,6 +170,22 @@ def _deserialize_discrete(space_dict: Dict) -> spaces.Discrete:
     n = space_dict["n"]
     start = space_dict["start"]
     return spaces.Discrete(n=n, start=start)
+
+
+@deserialize_space.register("MultiDiscrete")
+def _deserialize_multi_discrete(space_dict: Dict) -> spaces.MultiDiscrete:
+    assert space_dict["type"] == "MultiDiscrete"
+    return spaces.MultiDiscrete(
+        nvec=space_dict["nvec"],
+        dtype=space_dict["dtype"],
+        start=space_dict["start"],
+    )
+
+
+@deserialize_space.register("MultiBinary")
+def _deserialize_multi_binary(space_dict: Dict) -> spaces.MultiBinary:
+    assert space_dict["type"] == "MultiBinary"
+    return spaces.MultiBinary(n=space_dict["n"])
 
 
 @deserialize_space.register("Text")
