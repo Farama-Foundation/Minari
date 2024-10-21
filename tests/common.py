@@ -498,18 +498,30 @@ def check_data_integrity(dataset: MinariDataset, episode_indices: List[int]):
     assert total_steps == dataset.total_steps
 
 
-def get_info_at_step_index(infos: Dict, step_index: int) -> Dict:
-    result = {}
-    for key in infos.keys():
-        if isinstance(infos[key], dict):
-            result[key] = get_info_at_step_index(infos[key], step_index)
-        elif isinstance(infos[key], np.ndarray):
-            result[key] = infos[key][step_index]
-        else:
-            raise ValueError(
-                "Infos are in an unsupported format; see Minari documentation for supported formats."
-            )
-    return result
+def get_info_at_step_index(infos: Union[Dict, List[Dict]], step_index: int) -> Dict:
+
+    if infos is None:
+        return {}
+    elif isinstance(infos, dict):  # for backwards compatibility
+        result = {}
+        for key in infos.keys():
+            if isinstance(infos[key], dict):
+                result[key] = get_info_at_step_index(infos[key], step_index)
+            elif isinstance(infos[key], np.ndarray):
+                result[key] = infos[key][step_index]
+            else:
+                raise ValueError(
+                    "Infos are in an unsupported format; see Minari documentation for supported formats."
+                )
+        return result
+    elif isinstance(infos, list):
+        return infos[step_index]
+
+    else:
+        print(infos, type(infos))
+        raise ValueError(
+            "Infos are in an unsupported format; see Minari documentation for supported formats."
+        )
 
 
 def _reconstuct_obs_or_action_at_index_recursive(
@@ -604,7 +616,7 @@ def check_episode_data_integrity(
     episode_data_list: Union[List[EpisodeData], MinariDataset],
     observation_space: gym.spaces.Space,
     action_space: gym.spaces.Space,
-    info_sample: Optional[dict] = None,
+    info_sample: Optional[Dict] = None,
 ):
     """Checks to see if a list of EpisodeData instances has consistent data and that the observations and actions are in the appropriate spaces.
 
@@ -612,7 +624,7 @@ def check_episode_data_integrity(
         episode_data_list (List[EpisodeData]): A list of EpisodeData instances representing episodes.
         observation_space (gym.spaces.Space): The environment's observation space.
         action_space (gym.spaces.Space): The environment's action space.
-        info_sample (dict): An info returned by the environment used to build the dataset.
+        info_sample (Optional[Union[Dict, List[Dict]]]): An info returned by the environment used to build the dataset.
 
     """
     # verify the actions and observations are in the appropriate action space and observation space, and that the episode lengths are correct
@@ -628,9 +640,8 @@ def check_episode_data_integrity(
             obs = _reconstuct_obs_or_action_at_index_recursive(episode.observations, i)
             if info_sample is not None:
                 assert episode.infos is not None
-                assert check_infos_equal(
-                    get_info_at_step_index(episode.infos, i), info_sample
-                )
+                info = get_info_at_step_index(episode.infos, i)
+                assert check_infos_equal(info, info_sample)
 
             assert observation_space.contains(obs)
 
@@ -652,7 +663,7 @@ def check_infos_equal(info_1: Dict, info_2: Dict) -> bool:
         elif isinstance(info_1[key], np.ndarray):
             return bool(np.all(info_1[key] == info_2[key]))
         else:
-            return info_1[key] == info_2[key]
+            return bool(np.all(info_1[key] == info_2[key]))
     return True
 
 

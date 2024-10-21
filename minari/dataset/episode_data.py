@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Dict, List, Union
 
 import numpy as np
 
@@ -14,12 +14,25 @@ class EpisodeData:
     rewards: np.ndarray
     terminations: np.ndarray
     truncations: np.ndarray
-    infos: dict
+    infos: Union[Dict, List]  # dict is for backwards compatibility
 
     def __len__(self) -> int:
         return len(self.rewards)
 
     def __repr__(self) -> str:
+        if isinstance(self.infos, dict):
+            infos_repr = (
+                f"infos=dict with the following keys: {list(self.infos.keys())}"
+            )
+        elif isinstance(self.infos, list):
+            infos_repr = (
+                f"infos=list of dicts with the following keys: "
+                f"{set(key for d in self.infos for key in d.keys())}"
+            )
+        elif self.infos is None:
+            infos_repr = "infos=None"
+        else:
+            raise ValueError(f"Unexpected type for infos: {type(self.infos)}")
         return (
             "EpisodeData("
             f"id={self.id}, "
@@ -29,7 +42,7 @@ class EpisodeData:
             f"rewards=ndarray of {len(self.rewards)} floats, "
             f"terminations=ndarray of {len(self.terminations)} bools, "
             f"truncations=ndarray of {len(self.truncations)} bools, "
-            f"infos=dict with the following keys: {list(self.infos.keys())}"
+            f"{infos_repr}"
             ")"
         )
 

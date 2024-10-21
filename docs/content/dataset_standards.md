@@ -92,15 +92,15 @@ sampled_episodes = dataset.sample_episodes(10)
 
 The `sampled_episodes` variable will be a list of 10 `EpisodeData` elements, each containing episode data. An `EpisodeData` element is a data class consisting of the following fields:
 
-| Field             | Type                                 | Description                                                   |
-| ----------------- | ------------------------------------ | ------------------------------------------------------------- |
-| `id`              | `int`                           | ID of the episode.                                            |
-| `observations`    | `np.ndarray`, `list`, `tuple`, `dict` | Stacked observations for each step including initial observation.    |
-| `actions`         | `np.ndarray`, `list`, `tuple`, `dict` | Stacked actions for each step.                                       |
-| `rewards`         | `np.ndarray`                         | Rewards for each step.                                        |
-| `terminations`    | `np.ndarray`                         | Terminations for each step.                                   |
-| `truncations`     | `np.ndarray`                         | Truncations for each step.                                    |
-| `infos`           | `dict`                               | A dictionary containing additional information returned by the environment             |
+| Field             | Type                                  | Description                                                                                                                        |
+| ----------------- |---------------------------------------|------------------------------------------------------------------------------------------------------------------------------------|
+| `id`              | `int`                                 | ID of the episode.                                                                                                                 |
+| `observations`    | `np.ndarray`, `list`, `tuple`, `dict` | Stacked observations for each step including initial observation.                                                                  |
+| `actions`         | `np.ndarray`, `list`, `tuple`, `dict` | Stacked actions for each step.                                                                                                     |
+| `rewards`         | `np.ndarray`                          | Rewards for each step.                                                                                                             |
+| `terminations`    | `np.ndarray`                          | Terminations for each step.                                                                                                        |
+| `truncations`     | `np.ndarray`                          | Truncations for each step.                                                                                                         |
+| `infos`           | `dict`, `list`                         | A dictionary of iterables (e.g. list, array) or list of dictionaries containing additional information returned by the environment |
 
 As mentioned in the `Supported Spaces` section, many different observation and action spaces are supported so the data type for these fields are dependent on the environment being used.
 

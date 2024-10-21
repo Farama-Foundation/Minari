@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import json
 import pathlib
+from collections.abc import Iterable as ABCIterable
 from itertools import zip_longest
-from typing import Any, Dict, Iterable, Optional, Sequence
+from typing import Any, Dict, Iterable, List, Optional, Sequence
 
 import gymnasium as gym
 import numpy as np
@@ -18,6 +19,11 @@ except ImportError:
     )
 
 from minari.data_collector.episode_buffer import EpisodeBuffer
+from minari.dataset._storages.serde import (
+    NumpyEncoder,
+    deserialize_dict,
+    serialize_dict,
+)
 from minari.dataset.minari_storage import MinariStorage
 
 
@@ -89,6 +95,17 @@ class ArrowStorage(MinariStorage):
         )
 
         def _to_dict(id, episode):
+            if "infos" in episode.column_names:
+                raw_infos = episode["infos"]
+                if isinstance(raw_infos, pa.lib.StringArray):
+                    infos = decode_info_list(raw_infos)
+                elif isinstance(raw_infos, pa.lib.StructArray):
+                    infos = _decode_info(episode["infos"])
+                else:
+                    raise ValueError(f"Unexpected type for infos: {type(raw_infos)}")
+            else:
+                infos = None
+
             return {
                 "id": id,
                 "observations": _decode_space(
@@ -98,11 +115,7 @@ class ArrowStorage(MinariStorage):
                 "rewards": np.asarray(episode["rewards"])[:-1],
                 "terminations": np.asarray(episode["terminations"])[:-1],
                 "truncations": np.asarray(episode["truncations"])[:-1],
-                "infos": (
-                    _decode_info(episode["infos"])
-                    if "infos" in episode.column_names
-                    else {}
-                ),
+                "infos": infos,
             }
 
         return map(_to_dict, episode_indices, dataset.to_batches())
@@ -122,6 +135,7 @@ class ArrowStorage(MinariStorage):
             terminations = np.asarray(episode_data.terminations).reshape(-1)
             truncations = np.asarray(episode_data.truncations).reshape(-1)
             pad = len(observations) - len(rewards)
+
             actions = _encode_space(self._action_space, episode_data.actions, pad=pad)
 
             episode_batch = {
@@ -133,7 +147,14 @@ class ArrowStorage(MinariStorage):
                 "truncations": np.pad(truncations, ((0, pad))),
             }
             if episode_data.infos:
-                episode_batch["infos"] = _encode_info(episode_data.infos)
+                if isinstance(episode_data.infos, dict):
+                    episode_batch["infos"] = _encode_info(episode_data.infos)
+                elif isinstance(episode_data.infos, list):
+                    info_pad = len(observations) - len(episode_data.infos)
+                    episode_batch["infos"] = encode_info_list(
+                        episode_data.infos + [episode_data.infos[-1]] * info_pad
+                    )
+
             episode_batch = pa.RecordBatch.from_pydict(episode_batch)
 
             total_steps += len(rewards)
@@ -254,6 +275,8 @@ def _encode_info(info: dict):
 
 def _decode_info(values: pa.Array):
     nested_dict = {}
+    if not isinstance(values.type, ABCIterable):
+        return nested_dict
     for i, field in enumerate(values.type):
         if isinstance(field, pa.StructArray):
             nested_dict[field.name] = _decode_info(values.field(i))
@@ -267,8 +290,10 @@ def _decode_info(values: pa.Array):
     return nested_dict
 
 
-class NumpyEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, np.ndarray):
-            return obj.tolist()
-        return super().default(obj)
+def encode_info_list(info_list: List[Dict[str, Any]]) -> pa.Array:
+    serialized_list = [serialize_dict(d) for d in info_list]
+    return pa.array(serialized_list, type=pa.string())
+
+
+def decode_info_list(values: pa.Array) -> List[Dict[str, Any]]:
+    return [deserialize_dict(item.as_py()) for item in values]

@@ -39,8 +39,9 @@ arrow = ["pyarrow"]
 hdf5 = ["h5py>=3.8.0"]
 gcs = ["google-cloud-storage>=2.5.0", "tqdm>=4.65.0"]
 create = ["jax[cpu]"]
+orjson = ["orjson>=3.10.0"]
 
-all = ["minari[arrow,hdf5,gcs,create]"]
+all = ["minari[arrow,hdf5,gcs,create,orjson]"]
 
 testing = [
     "pytest>=7.1.3",
