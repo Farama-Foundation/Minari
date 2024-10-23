@@ -18,14 +18,14 @@ jobs:
         with:
             python-version: '3.9'
 
-      - name: Install dependencies
+      - name: Install Minari
+        run: pip install .[all,testing]
+
+      - name: Install docs dependencies
         run: pip install -r docs/requirements.txt
 
       - name: Build documentation
         run: sphinx-build -b dirhtml -v docs _build
-  
-      - name: Install Minari
-        run: pip install .[all,testing]
 
       - name: Run markdown documentation tests
         run: pytest tests/test_docs.py
