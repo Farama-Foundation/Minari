@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import contextlib
+import io
+import logging
 import os
 import pathlib
 import subprocess
@@ -32,7 +35,7 @@ def _md_table(table_dict: Dict[str, str]) -> str:
 def main():
     remote_datasets = minari.list_remote_datasets(latest_version=True)
     processes = []
-    for i, (dataset_id, metadata) in enumerate(remote_datasets.items()):
+    for i, (dataset_id, metadata) in enumerate(list(remote_datasets.items())[:2]):
         namespace, dataset_name, version = parse_dataset_id(dataset_id)
         if namespace is not None:
             DATASET_FOLDER.joinpath(namespace).mkdir(parents=True, exist_ok=True)
@@ -81,11 +84,12 @@ def _generate_dataset_page(dataset_id, metadata):
         dataset_env = os.environ.copy()
 
         requirements = metadata.get("requirements", [])
-        if len(requirements) > 0:
-            call_args = [sys.executable, "-m", "pip", "install", *requirements]
-            subprocess.check_call(call_args, env=dataset_env)
 
-        minari.download_dataset(dataset_id)
+        with contextlib.redirect_stdout(io.StringIO()):
+            if len(requirements) > 0:
+                call_args = [sys.executable, "-m", "pip", "install", *requirements]
+                subprocess.check_call(call_args, env=dataset_env)
+            minari.download_dataset(dataset_id)
 
         subprocess.check_call(
             [
@@ -218,6 +222,7 @@ title: {dataset_name.title()}
     file.write(content)
     file.close()
 
+    logging.info(f"Generated dataset page for {dataset_id}")
 
 def _generate_namespace_page(namespace: str, namespace_content):
     namespace_path = DATASET_FOLDER.joinpath(namespace)
