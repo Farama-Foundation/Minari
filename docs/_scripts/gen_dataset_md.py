@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import pathlib
 import subprocess
 import sys
@@ -77,20 +78,23 @@ def _generate_dataset_page(dataset_id, metadata):
 
     description = metadata.get("description")
     try:
+        dataset_env = os.environ.copy()
+
         requirements = metadata.get("requirements", [])
-        reqs_cmd = ""
         if len(requirements) > 0:
-            reqs_cmd = f"-m pip install {' '.join(requirements)} && {sys.executable}"
+            call_args = [sys.executable, "-m", "pip", "install", *requirements]
+            subprocess.check_call(call_args, env=dataset_env)
 
         minari.download_dataset(dataset_id)
+
         subprocess.check_call(
             [
                 sys.executable,
-                reqs_cmd,
                 generate_gif.__file__,
                 f"--dataset_id={dataset_id}",
                 f"--path={DATASET_FOLDER}",
-            ]
+            ],
+            env=dataset_env,
         )
         minari.delete_dataset(dataset_id)
         img_link_str = f'<img src="../{versioned_name}.gif" width="200" style="display: block; margin:0 auto"/>'
