@@ -4,7 +4,7 @@ import logging
 import os
 import pathlib
 import subprocess
-import sys
+import venv
 import warnings
 from collections import defaultdict
 from multiprocessing import Process
@@ -83,25 +83,25 @@ def _generate_dataset_page(dataset_id, metadata):
 
     description = metadata.get("description")
     try:
-        dataset_env = os.environ.copy()
+        venv.create(dataset_id, with_pip=True)
 
         requirements = metadata.get("requirements", [])
-
         if len(requirements) > 0:
-            call_args = [sys.executable, "-m", "pip", "install", *requirements]
-            subprocess.check_call(call_args, env=dataset_env, stdout=subprocess.DEVNULL)
+            pip_path = pathlib.Path(dataset_id) / "bin" / "pip"
+            req_args = [pip_path, "install", *requirements]
+            subprocess.check_call(req_args, stdout=subprocess.DEVNULL)
             logging.info(f"Installed requirements {requirements} for {dataset_id}")
 
         minari.download_dataset(dataset_id)
 
-        subprocess.check_call(
+        python_path = pathlib.Path(dataset_id) / "bin" / "python"
+        subprocess.run(
             [
-                sys.executable,
+                python_path,
                 generate_gif.__file__,
                 f"--dataset_id={dataset_id}",
                 f"--path={DATASET_FOLDER}",
-            ],
-            env=dataset_env,
+            ]
         )
         minari.delete_dataset(dataset_id)
         img_link_str = f'<img src="../{versioned_name}.gif" width="200" style="display: block; margin:0 auto"/>'
