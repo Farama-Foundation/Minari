@@ -5,6 +5,7 @@ import subprocess
 import sys
 import warnings
 from collections import defaultdict
+from multiprocessing import Process
 from typing import Dict, OrderedDict
 
 import generate_gif
@@ -29,6 +30,7 @@ def _md_table(table_dict: Dict[str, str]) -> str:
 
 def main():
     remote_datasets = minari.list_remote_datasets(latest_version=True)
+    processes = []
     for i, (dataset_id, metadata) in enumerate(remote_datasets.items()):
         namespace, dataset_name, version = parse_dataset_id(dataset_id)
         if namespace is not None:
@@ -58,10 +60,15 @@ def main():
                 "display_name": versioned_name,
             }
 
-        _generate_dataset_page(dataset_id, metadata)
+        p = Process(target=_generate_dataset_page, args=(dataset_id, metadata))
+        p.start()
+        processes.append(p)
 
     for namespace, content in NAMESPACE_CONTENTS.items():
         _generate_namespace_page(namespace, content)
+
+    for p in processes:
+        p.join()
 
 
 def _generate_dataset_page(dataset_id, metadata):
