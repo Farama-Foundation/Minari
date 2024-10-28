@@ -29,7 +29,7 @@ Implicit Q-Learning with TorchRL
 # %%
 # .. code-block:: bash
 #
-#     ! pip install "torchrl-nightly>=2023.12.30"
+#     ! pip install torchrl
 #     ! pip install matplotlib minari gymnasium-robotics
 
 # %%
@@ -329,7 +329,7 @@ actor = ProbabilisticActor(
         "max": action_spec.space.high,
         "tanh_loc": False,
     },
-    default_interaction_type=ExplorationType.MODE,
+    default_interaction_type=ExplorationType.DETERMINISTIC,
 )
 
 # %%
