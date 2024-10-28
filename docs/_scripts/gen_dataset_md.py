@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import contextlib
-import io
 import logging
 import os
 import pathlib
@@ -33,9 +31,11 @@ def _md_table(table_dict: Dict[str, str]) -> str:
 
 
 def main():
+    os.environ["TQDM_DISABLE"] = "1"
+
     remote_datasets = minari.list_remote_datasets(latest_version=True)
     processes = []
-    for i, (dataset_id, metadata) in enumerate(list(remote_datasets.items())[:2]):
+    for i, (dataset_id, metadata) in enumerate(remote_datasets.items()):
         namespace, dataset_name, version = parse_dataset_id(dataset_id)
         if namespace is not None:
             DATASET_FOLDER.joinpath(namespace).mkdir(parents=True, exist_ok=True)
@@ -74,6 +74,8 @@ def main():
     for p in processes:
         p.join()
 
+    del os.environ["TQDM_DISABLE"]
+
 
 def _generate_dataset_page(dataset_id, metadata):
     _, dataset_name, version = parse_dataset_id(dataset_id)
@@ -85,11 +87,12 @@ def _generate_dataset_page(dataset_id, metadata):
 
         requirements = metadata.get("requirements", [])
 
-        with contextlib.redirect_stdout(io.StringIO()):
-            if len(requirements) > 0:
-                call_args = [sys.executable, "-m", "pip", "install", *requirements]
-                subprocess.check_call(call_args, env=dataset_env)
-            minari.download_dataset(dataset_id)
+        if len(requirements) > 0:
+            call_args = [sys.executable, "-m", "pip", "install", *requirements]
+            subprocess.check_call(call_args, env=dataset_env, stdout=subprocess.DEVNULL)
+            logging.info(f"Installed requirements {requirements} for {dataset_id}")
+
+        minari.download_dataset(dataset_id)
 
         subprocess.check_call(
             [
@@ -223,6 +226,7 @@ title: {dataset_name.title()}
     file.close()
 
     logging.info(f"Generated dataset page for {dataset_id}")
+
 
 def _generate_namespace_page(namespace: str, namespace_content):
     namespace_path = DATASET_FOLDER.joinpath(namespace)
