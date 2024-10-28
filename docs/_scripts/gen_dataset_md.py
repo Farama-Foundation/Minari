@@ -80,13 +80,13 @@ def _generate_dataset_page(dataset_id, metadata):
         requirements = metadata.get("requirements", [])
         reqs_cmd = ""
         if len(requirements) > 0:
-            reqs_cmd = f"{sys.executable} -m pip install {' '.join(requirements)} &&"
+            reqs_cmd = f"-m pip install {' '.join(requirements)} && {sys.executable}"
 
         minari.download_dataset(dataset_id)
         subprocess.check_call(
             [
-                reqs_cmd,
                 sys.executable,
+                reqs_cmd,
                 generate_gif.__file__,
                 f"--dataset_id={dataset_id}",
                 f"--path={DATASET_FOLDER}",
