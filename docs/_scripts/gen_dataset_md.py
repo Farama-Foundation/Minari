@@ -85,12 +85,12 @@ def _generate_dataset_page(dataset_id, metadata):
     try:
         venv.create(dataset_id, with_pip=True)
 
-        requirements = metadata.get("requirements", [])
-        if len(requirements) > 0:
-            pip_path = pathlib.Path(dataset_id) / "bin" / "pip"
-            req_args = [pip_path, "install", *requirements]
-            subprocess.check_call(req_args, stdout=subprocess.DEVNULL)
-            logging.info(f"Installed requirements {requirements} for {dataset_id}")
+        requirements = [minari.__path__, "imageio"]
+        requirements.extend(metadata.get("requirements", []))
+        pip_path = pathlib.Path(dataset_id) / "bin" / "pip"
+        req_args = [pip_path, "install", *requirements]
+        subprocess.check_call(req_args, stdout=subprocess.DEVNULL)
+        logging.info(f"Installed requirements for {dataset_id}")
 
         minari.download_dataset(dataset_id)
 
