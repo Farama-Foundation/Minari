@@ -591,7 +591,7 @@
 
     <span class="n">cloud_storage</span> <span class="o">=</span> <span class="n">get_cloud_storage</span><span class="p">()</span>
     <span class="n">blobs</span> <span class="o">=</span> <span class="n">cloud_storage</span><span class="o">.</span><span class="n">list_blobs</span><span class="p">()</span>
-    <span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
+    <span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
         <span class="n">remote_metadatas</span> <span class="o">=</span> <span class="n">executor</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">blob_to_metadata</span><span class="p">,</span> <span class="n">blobs</span><span class="p">)</span>
 
     <span class="n">remote_datasets</span> <span class="o">=</span> <span class="p">{}</span>

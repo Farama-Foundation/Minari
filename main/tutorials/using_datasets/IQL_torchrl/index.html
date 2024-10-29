@@ -392,7 +392,7 @@
 <section id="pre-requisites">
 <h2>Pre-requisites<a class="headerlink" href="#pre-requisites" title="Link to this heading">¶</a></h2>
 <p>This tutorial currently requires a recent nightly build of TorchRL:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>!<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;torchrl-nightly&gt;=2023.12.30&quot;</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>!<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>torchrl
 !<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>matplotlib<span class="w"> </span>minari<span class="w"> </span>gymnasium-robotics
 </pre></div>
 </div>
@@ -631,7 +631,7 @@
         <span class="s2">&quot;max&quot;</span><span class="p">:</span> <span class="n">action_spec</span><span class="o">.</span><span class="n">space</span><span class="o">.</span><span class="n">high</span><span class="p">,</span>
         <span class="s2">&quot;tanh_loc&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">},</span>
-    <span class="n">default_interaction_type</span><span class="o">=</span><span class="n">ExplorationType</span><span class="o">.</span><span class="n">MODE</span><span class="p">,</span>
+    <span class="n">default_interaction_type</span><span class="o">=</span><span class="n">ExplorationType</span><span class="o">.</span><span class="n">DETERMINISTIC</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
