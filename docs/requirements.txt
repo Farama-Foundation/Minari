@@ -7,3 +7,4 @@ git+https://github.com/sphinx-gallery/sphinx-gallery.git@4006662c8c1984453a247dc
 git+https://github.com/Farama-Foundation/Celshast#egg=furo
 pyvirtualdisplay
 absl-py
+imageio
