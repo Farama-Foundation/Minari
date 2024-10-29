@@ -87,6 +87,7 @@ def _generate_dataset_page(dataset_id, metadata):
     requirements = [
         "minari[gcs,hdf5] @ git+https://github.com/Farama-Foundation/Minari.git",
         "imageio",
+        "absl-py",
     ]
     requirements.extend(metadata.get("requirements", []))
     pip_path = pathlib.Path(dataset_id) / "bin" / "pip"
