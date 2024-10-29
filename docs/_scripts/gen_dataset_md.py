@@ -6,7 +6,7 @@ import pathlib
 import subprocess
 import venv
 from collections import defaultdict
-from multiprocessing import Process
+from multiprocessing import Pool
 from typing import Dict, OrderedDict
 
 import generate_gif
@@ -33,7 +33,6 @@ def main():
     os.environ["TQDM_DISABLE"] = "1"
 
     remote_datasets = minari.list_remote_datasets(latest_version=True)
-    processes = []
     for i, (dataset_id, metadata) in enumerate(remote_datasets.items()):
         namespace, dataset_name, version = parse_dataset_id(dataset_id)
         if namespace is not None:
@@ -63,20 +62,17 @@ def main():
                 "display_name": versioned_name,
             }
 
-        p = Process(target=_generate_dataset_page, args=(dataset_id, metadata))
-        p.start()
-        processes.append(p)
-
     for namespace, content in NAMESPACE_CONTENTS.items():
         _generate_namespace_page(namespace, content)
 
-    for p in processes:
-        p.join()
+    with Pool(processes=8) as pool:
+        pool.map(_generate_dataset_page, remote_datasets.items())
 
     del os.environ["TQDM_DISABLE"]
 
 
-def _generate_dataset_page(dataset_id, metadata):
+def _generate_dataset_page(arg):
+    dataset_id, metadata = arg
     _, dataset_name, version = parse_dataset_id(dataset_id)
     versioned_name = gen_dataset_id(None, dataset_name, version)
 

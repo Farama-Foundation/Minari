@@ -217,7 +217,7 @@ def list_remote_datasets(
 
     cloud_storage = get_cloud_storage()
     blobs = cloud_storage.list_blobs()
-    with ThreadPoolExecutor(max_workers=32) as executor:
+    with ThreadPoolExecutor(max_workers=10) as executor:
         remote_metadatas = executor.map(blob_to_metadata, blobs)
 
     remote_datasets = {}
