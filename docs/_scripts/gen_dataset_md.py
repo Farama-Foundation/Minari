@@ -34,7 +34,7 @@ def main():
 
     remote_datasets = minari.list_remote_datasets(latest_version=True)
     processes = []
-    for i, (dataset_id, metadata) in enumerate(list(remote_datasets.items())[:1]):
+    for i, (dataset_id, metadata) in enumerate(remote_datasets.items()):
         namespace, dataset_name, version = parse_dataset_id(dataset_id)
         if namespace is not None:
             DATASET_FOLDER.joinpath(namespace).mkdir(parents=True, exist_ok=True)
