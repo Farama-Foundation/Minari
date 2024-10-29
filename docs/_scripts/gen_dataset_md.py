@@ -82,32 +82,32 @@ def _generate_dataset_page(dataset_id, metadata):
     versioned_name = gen_dataset_id(None, dataset_name, version)
 
     description = metadata.get("description")
-    try:
-        venv.create(dataset_id, with_pip=True)
+    # try:
+    venv.create(dataset_id, with_pip=True)
 
-        requirements = [minari.__path__, "imageio"]
-        requirements.extend(metadata.get("requirements", []))
-        pip_path = pathlib.Path(dataset_id) / "bin" / "pip"
-        req_args = [pip_path, "install", *requirements]
-        subprocess.check_call(req_args, stdout=subprocess.DEVNULL)
-        logging.info(f"Installed requirements for {dataset_id}")
+    requirements = [minari.__path__, "imageio"]
+    requirements.extend(metadata.get("requirements", []))
+    pip_path = pathlib.Path(dataset_id) / "bin" / "pip"
+    req_args = [pip_path, "install", *requirements]
+    subprocess.check_call(req_args, stdout=subprocess.DEVNULL)
+    logging.info(f"Installed requirements for {dataset_id}")
 
-        minari.download_dataset(dataset_id)
+    minari.download_dataset(dataset_id)
 
-        python_path = pathlib.Path(dataset_id) / "bin" / "python"
-        subprocess.run(
-            [
-                python_path,
-                generate_gif.__file__,
-                f"--dataset_id={dataset_id}",
-                f"--path={DATASET_FOLDER}",
-            ]
-        )
-        minari.delete_dataset(dataset_id)
-        img_link_str = f'<img src="../{versioned_name}.gif" width="200" style="display: block; margin:0 auto"/>'
-    except Exception as e:
-        warnings.warn(f"Failed to generate gif for {dataset_id}: {e}")
-        img_link_str = None
+    python_path = pathlib.Path(dataset_id) / "bin" / "python"
+    subprocess.check_call(
+        [
+            python_path,
+            generate_gif.__file__,
+            f"--dataset_id={dataset_id}",
+            f"--path={DATASET_FOLDER}",
+        ]
+    )
+    minari.delete_dataset(dataset_id)
+    img_link_str = f'<img src="../{versioned_name}.gif" width="200" style="display: block; margin:0 auto"/>'
+    # except Exception as e:
+    #     warnings.warn(f"Failed to generate gif for {dataset_id}: {e}")
+    #     img_link_str = None
 
     env_docs = """"""
     env_spec = metadata.get("env_spec")
