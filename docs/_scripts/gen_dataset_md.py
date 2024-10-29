@@ -35,7 +35,7 @@ def main():
 
     remote_datasets = minari.list_remote_datasets(latest_version=True)
     processes = []
-    for i, (dataset_id, metadata) in enumerate(remote_datasets.items()):
+    for i, (dataset_id, metadata) in enumerate(list(remote_datasets.items())[:1]):
         namespace, dataset_name, version = parse_dataset_id(dataset_id)
         if namespace is not None:
             DATASET_FOLDER.joinpath(namespace).mkdir(parents=True, exist_ok=True)
@@ -85,10 +85,10 @@ def _generate_dataset_page(dataset_id, metadata):
     # try:
     venv.create(dataset_id, with_pip=True)
 
-    requirements = [minari.__path__, "imageio"]
+    requirements = [str(minari.__path__), "imageio"]
     requirements.extend(metadata.get("requirements", []))
     pip_path = pathlib.Path(dataset_id) / "bin" / "pip"
-    req_args = [pip_path, "install", *requirements]
+    req_args = [str(pip_path), "install", *requirements]
     subprocess.check_call(req_args, stdout=subprocess.DEVNULL)
     logging.info(f"Installed requirements for {dataset_id}")
 
@@ -97,7 +97,7 @@ def _generate_dataset_page(dataset_id, metadata):
     python_path = pathlib.Path(dataset_id) / "bin" / "python"
     subprocess.check_call(
         [
-            python_path,
+            str(python_path),
             generate_gif.__file__,
             f"--dataset_id={dataset_id}",
             f"--path={DATASET_FOLDER}",
