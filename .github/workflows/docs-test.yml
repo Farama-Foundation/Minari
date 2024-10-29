@@ -18,17 +18,20 @@ jobs:
         with:
             python-version: '3.9'
 
-      - name: Install dependencies
-        run: pip install -r docs/requirements.txt
-
       - name: Install Minari
         run: pip install .[all,testing]
 
-      - name: Build
+      - name: Install docs dependencies
+        run: pip install -r docs/requirements.txt
+
+      - name: Build documentation
         run: sphinx-build -b dirhtml -v docs _build
 
       - name: Run markdown documentation tests
         run: pytest tests/test_docs.py
+
+      - name: Install tutorial dependencies
+        run: pip install -r docs/tutorials/requirements.txt
 
       - name: Run tutorial documentation tests
         run:  pytest --nbmake docs/tutorials/**/*.ipynb --nbmake-timeout=600

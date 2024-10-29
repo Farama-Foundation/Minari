@@ -1,0 +1,7 @@
+torch
+torchrl
+matplotlib
+gymnasium-robotics>=1.2.1
+minigrid>=2.2.0
+rl_zoo3>=2.0.0
+imageio>=2.14.1

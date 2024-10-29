@@ -11,7 +11,6 @@ import gymnasium as gym
 import numpy as np
 from gymnasium.core import ActType, ObsType
 from gymnasium.envs.registration import EnvSpec
-from gymnasium.error import NameNotFound
 from gymnasium.wrappers import RecordEpisodeStatistics  # type: ignore
 
 from minari.data_collector.episode_buffer import EpisodeBuffer
@@ -467,10 +466,11 @@ def get_normalized_score(dataset: MinariDataset, returns: np.ndarray) -> np.ndar
 def get_env_spec_dict(env_spec: EnvSpec) -> Dict[str, str]:
     """Create dict of the environment specs, including observation and action space."""
     try:
-        env = gym.make(env_spec.id)
+        env = gym.make(env_spec)
         action_space_table = env.action_space.__repr__().replace("\n", "")
         observation_space_table = env.observation_space.__repr__().replace("\n", "")
-    except NameNotFound:
+    except Exception as e:
+        warnings.warn(f"Failed to make env {env_spec.id}, {e}")
         action_space_table, observation_space_table = None, None
 
     md_dict = {"ID": env_spec.id}
