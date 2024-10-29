@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 import os
 import pathlib
+import shutil
 import subprocess
 import venv
 from collections import defaultdict
@@ -103,6 +104,7 @@ def _generate_dataset_page(arg):
         ]
     )
     minari.delete_dataset(dataset_id)
+    shutil.rmtree(dataset_id)
     img_link_str = f'<img src="../{versioned_name}.gif" width="200" style="display: block; margin:0 auto"/>'
     # except Exception as e:
     #     warnings.warn(f"Failed to generate gif for {dataset_id}: {e}")
