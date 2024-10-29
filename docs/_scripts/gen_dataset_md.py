@@ -6,6 +6,7 @@ import pathlib
 import shutil
 import subprocess
 import venv
+import warnings
 from collections import defaultdict
 from multiprocessing import Pool
 from typing import Dict, OrderedDict
@@ -66,7 +67,7 @@ def main():
     for namespace, content in NAMESPACE_CONTENTS.items():
         _generate_namespace_page(namespace, content)
 
-    with Pool(processes=8) as pool:
+    with Pool(processes=16) as pool:
         pool.map(_generate_dataset_page, remote_datasets.items())
 
     del os.environ["TQDM_DISABLE"]
@@ -78,37 +79,37 @@ def _generate_dataset_page(arg):
     versioned_name = gen_dataset_id(None, dataset_name, version)
 
     description = metadata.get("description")
-    # try:
-    venv.create(dataset_id, with_pip=True)
+    try:
+        venv.create(dataset_id, with_pip=True)
 
-    requirements = [
-        "minari[gcs,hdf5] @ git+https://github.com/Farama-Foundation/Minari.git",
-        "imageio",
-        "absl-py",
-    ]
-    requirements.extend(metadata.get("requirements", []))
-    pip_path = pathlib.Path(dataset_id) / "bin" / "pip"
-    req_args = [pip_path, "install", *requirements]
-    subprocess.check_call(req_args, stdout=subprocess.DEVNULL)
-    logging.info(f"Installed requirements for {dataset_id}")
-
-    minari.download_dataset(dataset_id)
-
-    python_path = pathlib.Path(dataset_id) / "bin" / "python"
-    subprocess.check_call(
-        [
-            python_path,
-            generate_gif.__file__,
-            f"--dataset_id={dataset_id}",
-            f"--path={DATASET_FOLDER}",
+        requirements = [
+            "minari[gcs,hdf5] @ git+https://github.com/Farama-Foundation/Minari.git",
+            "imageio",
+            "absl-py",
         ]
-    )
-    minari.delete_dataset(dataset_id)
-    shutil.rmtree(dataset_id)
-    img_link_str = f'<img src="../{versioned_name}.gif" width="200" style="display: block; margin:0 auto"/>'
-    # except Exception as e:
-    #     warnings.warn(f"Failed to generate gif for {dataset_id}: {e}")
-    #     img_link_str = None
+        requirements.extend(metadata.get("requirements", []))
+        pip_path = pathlib.Path(dataset_id) / "bin" / "pip"
+        req_args = [pip_path, "install", *requirements]
+        subprocess.check_call(req_args, stdout=subprocess.DEVNULL)
+        logging.info(f"Installed requirements for {dataset_id}")
+
+        minari.download_dataset(dataset_id)
+
+        python_path = pathlib.Path(dataset_id) / "bin" / "python"
+        subprocess.check_call(
+            [
+                python_path,
+                generate_gif.__file__,
+                f"--dataset_id={dataset_id}",
+                f"--path={DATASET_FOLDER}",
+            ]
+        )
+        minari.delete_dataset(dataset_id)
+        shutil.rmtree(dataset_id)
+        img_link_str = f'<img src="../{versioned_name}.gif" width="200" style="display: block; margin:0 auto"/>'
+    except Exception as e:
+        warnings.warn(f"Failed to generate gif for {dataset_id}: {e}")
+        img_link_str = None
 
     env_docs = """"""
     env_spec = metadata.get("env_spec")

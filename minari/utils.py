@@ -470,7 +470,8 @@ def get_env_spec_dict(env_spec: EnvSpec) -> Dict[str, str]:
         env = gym.make(env_spec.id)
         action_space_table = env.action_space.__repr__().replace("\n", "")
         observation_space_table = env.observation_space.__repr__().replace("\n", "")
-    except NameNotFound:
+    except Exception as e:
+        warnings.warn(f"Failed to make env {env_spec.id}, {e}")
         action_space_table, observation_space_table = None, None
 
     md_dict = {"ID": env_spec.id}
