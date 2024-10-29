@@ -86,7 +86,7 @@ def _generate_dataset_page(dataset_id, metadata):
     venv.create(dataset_id, with_pip=True)
 
 
-    minari_req = "git+https://github.com/Farama-Foundation/Minari.git"
+    minari_req = "minari[gcs,hdf5] @ git+https://github.com/Farama-Foundation/Minari.git"
     requirements = [minari_req, "imageio"]
     requirements.extend(metadata.get("requirements", []))
     pip_path = pathlib.Path(dataset_id) / "bin" / "pip"
