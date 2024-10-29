@@ -5,12 +5,10 @@ import os
 import pathlib
 import subprocess
 import venv
-import warnings
 from collections import defaultdict
 from multiprocessing import Process
 from typing import Dict, OrderedDict
 
-import generate_gif
 from gymnasium.envs.registration import EnvSpec
 
 import minari
@@ -100,7 +98,7 @@ def _generate_dataset_page(dataset_id, metadata):
     subprocess.check_call(
         [
             python_path,
-            generate_gif.__file__,
+            "generate_gif.py",
             f"--dataset_id={dataset_id}",
             f"--path={DATASET_FOLDER}",
         ]
