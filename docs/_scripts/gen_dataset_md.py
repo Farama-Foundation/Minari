@@ -243,7 +243,7 @@ def _generate_dataset_page(arg):
     file.close()
 
     logging.info(f"Generated dataset page for {dataset_id}")
-    shutil.rmtree(f"venv_{dataset_id}")
+    shutil.rmtree(venv_name)
 
 
 def _generate_namespace_page(namespace: str, namespace_content):
