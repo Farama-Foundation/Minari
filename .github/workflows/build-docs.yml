@@ -1,5 +1,6 @@
 name: Build Documentation website
 on:
+  pull_request:
   push:
     branches: [main]
 permissions:
