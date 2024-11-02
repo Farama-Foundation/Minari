@@ -48,12 +48,17 @@ class EpisodeBuffer:
             observations = jtu.tree_map(
                 _append, step_data["observation"], self.observations
             )
-        actions = step_data["action"]
-        if self.actions is not None:
+
+        if self.actions is None:
+            actions = jtu.tree_map(lambda x: [x], step_data["action"])
+        else:
             actions = jtu.tree_map(_append, step_data["action"], self.actions)
-        infos = step_data["info"]
-        if self.infos is not None:
+
+        if self.infos is None:
+            infos = jtu.tree_map(lambda x: [x], step_data["info"])
+        else:
             infos = jtu.tree_map(_append, step_data["info"], self.infos)
+
         self.rewards.append(step_data["reward"])
         self.terminations.append(step_data["termination"])
         self.truncations.append(step_data["truncation"])

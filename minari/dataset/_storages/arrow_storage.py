@@ -21,6 +21,9 @@ from minari.data_collector.episode_buffer import EpisodeBuffer
 from minari.dataset.minari_storage import MinariStorage
 
 
+_FIXEDLIST_SPACES = (gym.spaces.Box, gym.spaces.MultiDiscrete, gym.spaces.MultiBinary)
+
+
 class ArrowStorage(MinariStorage):
     FORMAT = "arrow"
 
@@ -65,6 +68,8 @@ class ArrowStorage(MinariStorage):
             with open(metadata_path, "w") as file:
                 json.dump(metadata, file, cls=NumpyEncoder)
 
+        self.update_metadata({"dataset_size": self.get_size()})
+
     def get_episode_metadata(self, episode_indices: Iterable[int]) -> Iterable[Dict]:
         for episode_id in episode_indices:
             metadata_path = self.data_path.joinpath(str(episode_id), "metadata.json")
@@ -93,9 +98,11 @@ class ArrowStorage(MinariStorage):
                 "rewards": np.asarray(episode["rewards"])[:-1],
                 "terminations": np.asarray(episode["terminations"])[:-1],
                 "truncations": np.asarray(episode["truncations"])[:-1],
-                "infos": _decode_info(episode["infos"])
-                if "infos" in episode.column_names
-                else {},
+                "infos": (
+                    _decode_info(episode["infos"])
+                    if "infos" in episode.column_names
+                    else {}
+                ),
             }
 
         return map(_to_dict, episode_indices, dataset.to_batches())
@@ -146,7 +153,11 @@ class ArrowStorage(MinariStorage):
             self.update_episode_metadata([episode_metadata], [episode_id])
 
         self.update_metadata(
-            {"total_steps": total_steps, "total_episodes": total_episodes}
+            {
+                "total_steps": total_steps,
+                "total_episodes": total_episodes,
+                "dataset_size": self.get_size(),
+            }
         )
 
 
@@ -165,7 +176,7 @@ def _encode_space(space: gym.Space, values: Any, pad: int = 0):
             names.append(str(i))
             arrays.append(_encode_space(space[i], value, pad=pad))
         return pa.StructArray.from_arrays(arrays, names=names)
-    elif isinstance(space, gym.spaces.Box):
+    elif isinstance(space, _FIXEDLIST_SPACES):
         values = np.asarray(values)
         assert values.shape[1:] == space.shape
         values = values.reshape(values.shape[0], -1)
@@ -175,7 +186,7 @@ def _encode_space(space: gym.Space, values: Any, pad: int = 0):
     elif isinstance(space, gym.spaces.Discrete):
         values = np.asarray(values).reshape(-1, 1)
         values = np.pad(values, ((0, pad), (0, 0)))
-        return pa.array(values.squeeze(-1), type=pa.int32())
+        return pa.array(values.squeeze(-1), type=pa.from_numpy_dtype(space.dtype))
     else:
         if not isinstance(values, list):
             values = list(values)
@@ -195,7 +206,7 @@ def _decode_space(space, values: pa.Array):
                 for i, subspace in enumerate(space.spaces)
             ]
         )
-    elif isinstance(space, gym.spaces.Box):
+    elif isinstance(space, _FIXEDLIST_SPACES):
         data = np.stack(values.to_numpy(zero_copy_only=False))
         return data.reshape(-1, *space.shape)
     elif isinstance(space, gym.spaces.Discrete):
@@ -224,14 +235,14 @@ def _encode_info(info: dict):
             if isinstance(values, Sequence):
                 values = np.stack(values)
 
-            data_shape = values.shape[1:]
+            data_enc = ",".join(str(n) for n in values.shape[1:])
             values = values.reshape(len(values), -1)
             dtype = pa.from_numpy_dtype(values.dtype)
             struct = pa.list_(dtype, list_size=values.shape[1])
             arrays.append(
                 pa.FixedSizeListArray.from_arrays(values.reshape(-1), type=struct)
             )
-            fields.append(pa.field(key, struct, metadata={"shape": bytes(data_shape)}))
+            fields.append(pa.field(key, struct, metadata={"shape": data_enc}))
 
         else:
             array = pa.array(list(values))
@@ -249,7 +260,8 @@ def _decode_info(values: pa.Array):
         else:
             value = np.stack(values.field(i).to_numpy(zero_copy_only=False))
             if field.metadata is not None and b"shape" in field.metadata:
-                data_shape = tuple(field.metadata[b"shape"])
+                data_shape = field.metadata[b"shape"].split(b",")
+                data_shape = tuple(int(d) for d in data_shape)
                 value = value.reshape(len(value), *data_shape)
             nested_dict[field.name] = value
     return nested_dict

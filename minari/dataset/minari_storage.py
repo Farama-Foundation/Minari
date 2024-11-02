@@ -190,8 +190,7 @@ class MinariStorage(ABC):
         data_path: pathlib.Path,
         observation_space: gym.Space,
         action_space: gym.Space,
-    ) -> MinariStorage:
-        ...
+    ) -> MinariStorage: ...
 
     @property
     def metadata(self) -> Dict[str, Any]:
@@ -340,6 +339,7 @@ class MinariStorage(ABC):
             {
                 "author": author1.union(author2),
                 "author_email": email1.union(email2),
+                "dataset_size": self.get_size(),
             }
         )
 

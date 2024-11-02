@@ -260,10 +260,6 @@ def test_generate_dataset_with_space_subset_external_buffer(
         }
     )
 
-    local_datasets = minari.list_local_datasets()
-    if dataset_id in local_datasets:
-        minari.delete_dataset(dataset_id)
-
     env = gym.make("DummyDictEnv-v0")
     num_episodes = 10
     buffer = get_sample_buffer_for_dataset_from_env(env, num_episodes)
@@ -333,3 +329,56 @@ def test_generate_dataset_with_space_subset_external_buffer(
     env.close()
 
     check_load_and_delete_dataset(dataset_id)
+
+
+@pytest.mark.parametrize("data_format", get_storage_keys())
+def test_generate_big_episode(data_format, register_dummy_envs):
+    """Test generate a long episode and create a dataset."""
+    dataset_id = "test/big-episode-v0"
+    episode_length = 1024
+    observation_space = spaces.Box(low=0, high=255, shape=(64, 64, 3), dtype=np.uint8)
+    action_space = spaces.Discrete(10)
+    info_generator = spaces.Dict(
+        {
+            "info1": spaces.Discrete(10),
+            "info2": spaces.Box(low=0.0, high=1.0, shape=(512,), dtype=np.uint8),
+        }
+    )
+
+    buffer = EpisodeBuffer(
+        observations=[observation_space.sample()], infos=info_generator.sample()
+    )
+    for step_id in range(episode_length):
+        buffer = buffer.add_step_data(
+            {
+                "observation": observation_space.sample(),
+                "action": action_space.sample(),
+                "reward": 0.0,
+                "termination": False,
+                "truncation": step_id == episode_length - 1,
+                "info": info_generator.sample(),
+            }
+        )
+
+    dataset = minari.create_dataset_from_buffers(
+        dataset_id=dataset_id,
+        buffer=[buffer],
+        observation_space=observation_space,
+        action_space=action_space,
+        algorithm_name="random_policy",
+        code_permalink=CODELINK,
+        author="Farama",
+        author_email="farama@farama.org",
+        description="Test dataset",
+        data_format=data_format,
+    )
+
+    assert np.all(dataset[0].observations == buffer.observations)
+    assert np.all(dataset[0].actions == buffer.actions)
+    assert np.all(dataset[0].rewards == buffer.rewards)
+    assert np.all(dataset[0].terminations == buffer.terminations)
+    assert np.all(dataset[0].truncations == buffer.truncations)
+    buffer_infos = buffer.infos
+    assert buffer_infos is not None
+    assert np.all(dataset[0].infos["info1"] == buffer_infos["info1"])
+    assert np.all(dataset[0].infos["info2"] == buffer_infos["info2"])

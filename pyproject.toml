@@ -20,6 +20,7 @@ classifiers = [
     "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
     'Intended Audience :: Science/Research',
     'Topic :: Scientific/Engineering :: Artificial Intelligence',
 ]
@@ -49,7 +50,8 @@ testing = [
 
 integrations = [
     "torchrl",
-    "agilerl"
+    "agilerl>=1.0.6",
+    "d3rlpy"
 ]
 
 [project.urls]

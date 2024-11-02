@@ -4,14 +4,14 @@ import importlib.metadata
 import json
 import os
 import warnings
+from collections import defaultdict
+from concurrent.futures import ThreadPoolExecutor
 from typing import Dict, List
-
-from gymnasium import logger
 
 from minari.dataset.minari_dataset import gen_dataset_id, parse_dataset_id
 from minari.dataset.minari_storage import MinariStorage
 from minari.storage.datasets_root_dir import get_dataset_path
-from minari.storage.local import dataset_id_sort_key, load_dataset
+from minari.storage.local import load_dataset
 from minari.storage.remotes import get_cloud_storage
 
 
@@ -99,7 +99,7 @@ def download_dataset(dataset_id: str, force_download: bool = False):
         if not force_download:
             raise ValueError(message)
         else:
-            logger.warn(message)
+            warnings.warn(message)
 
     # 3. Check that the dataset version exists
     if dataset_version not in all_dataset_versions:
@@ -128,21 +128,21 @@ def download_dataset(dataset_id: str, force_download: bool = False):
             )
         # Only a warning and force download incompatible dataset
         elif compatible_dataset_versions:
-            logger.warn(
+            warnings.warn(
                 e_msg
                 + f" {dataset_id} will be FORCE download but you can download the latest compatible version of this dataset: {dataset_versionless}-v{max(all_dataset_versions)}."
             )
 
     # 5. Warning to recommend downloading the latest compatible version of the dataset
     elif dataset_version < max(compatible_dataset_versions):
-        logger.warn(
+        warnings.warn(
             f"We recommend you install a higher dataset version available and compatible with your local installed Minari version: {dataset_versionless}-v{max(compatible_dataset_versions)}."
         )
 
     file_path = get_dataset_path(dataset_id)
     if os.path.exists(file_path):
         if not force_download:
-            logger.warn(
+            warnings.warn(
                 f"Skipping Download. Dataset {dataset_id} found locally at {file_path}, Use force_download=True to download the dataset again.\n"
             )
             return
@@ -215,7 +215,7 @@ def list_remote_datasets(
             else:
                 remote_datasets[dataset_id] = metadata
         except Exception:
-            warnings.warn(f"Misconfigured dataset {dataset_id} on remote")
+            warnings.warn(f"Misconfigured dataset named {blob.name} on remote")
 
     if latest_version:
         # Convert to dict = {'dataset_id': metadata}

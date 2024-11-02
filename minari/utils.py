@@ -11,7 +11,6 @@ import gymnasium as gym
 import numpy as np
 from gymnasium.core import ActType, ObsType
 from gymnasium.envs.registration import EnvSpec
-from gymnasium.error import NameNotFound
 from gymnasium.wrappers import RecordEpisodeStatistics  # type: ignore
 
 from minari.data_collector.episode_buffer import EpisodeBuffer
@@ -382,29 +381,25 @@ def create_dataset_from_buffers(
     """
     dataset_path = _generate_dataset_path(dataset_id)
 
-    if isinstance(env, str):
-        env_spec = gym.spec(env)
-    elif isinstance(env, EnvSpec):
-        env_spec = env
-    elif isinstance(env, gym.Env):
-        env_spec = env.spec
-    elif env is None:
+    if env is None:
+        env_spec = None
         if observation_space is None or action_space is None:
             raise ValueError(
                 "Both observation space and action space must be provided, if env is None"
             )
-        env_spec = None
     else:
-        raise ValueError("The `env` argument must be of types str|EnvSpec|gym.Env|None")
+        if isinstance(env, EnvSpec):
+            env_spec = env
+        elif isinstance(env, str):
+            env_spec = gym.spec(env)
+        elif isinstance(env, gym.Env):
+            env_spec = env.spec
+        else:
+            raise TypeError("Unsupported env type")
 
-    if isinstance(env, (str, EnvSpec)):
-        env = gym.make(env)
-    if observation_space is None:
-        assert isinstance(env, gym.Env)
-        observation_space = env.observation_space
-    if action_space is None:
-        assert isinstance(env, gym.Env)
-        action_space = env.action_space
+        gym_env: gym.Env = gym.make(env) if isinstance(env, (str, EnvSpec)) else env
+        observation_space = observation_space or gym_env.observation_space
+        action_space = action_space or gym_env.action_space
 
     metadata = _generate_dataset_metadata(
         dataset_id,
@@ -433,8 +428,6 @@ def create_dataset_from_buffers(
 
     storage.update_metadata(metadata)
     storage.update_episodes(buffer)
-    storage.update_metadata({"dataset_size": storage.get_size()})
-
     return MinariDataset(storage)
 
 
@@ -473,10 +466,11 @@ def get_normalized_score(dataset: MinariDataset, returns: np.ndarray) -> np.ndar
 def get_env_spec_dict(env_spec: EnvSpec) -> Dict[str, str]:
     """Create dict of the environment specs, including observation and action space."""
     try:
-        env = gym.make(env_spec.id)
+        env = gym.make(env_spec)
         action_space_table = env.action_space.__repr__().replace("\n", "")
         observation_space_table = env.observation_space.__repr__().replace("\n", "")
-    except NameNotFound:
+    except Exception as e:
+        warnings.warn(f"Failed to make env {env_spec.id}, {e}")
         action_space_table, observation_space_table = None, None
 
     md_dict = {"ID": env_spec.id}
