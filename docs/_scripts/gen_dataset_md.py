@@ -9,26 +9,85 @@ import venv
 import warnings
 from collections import defaultdict
 from multiprocessing import Pool
-from typing import Dict, OrderedDict
+from typing import OrderedDict
 
+import generate_env_table
 import generate_gif
-from gymnasium.envs.registration import EnvSpec
+from md_utils import dict_to_table
 
 import minari
 from minari.dataset.minari_dataset import gen_dataset_id, parse_dataset_id
 from minari.namespace import download_namespace_metadata, get_namespace_metadata
-from minari.utils import get_dataset_spec_dict, get_env_spec_dict
+from minari.utils import get_dataset_spec_dict
 
 
 DATASET_FOLDER = pathlib.Path(__file__).parent.parent.joinpath("datasets")
 NAMESPACE_CONTENTS = defaultdict(OrderedDict)
 
+NO_ENV_MSG = """
+```{eval-rst}
 
-def _md_table(table_dict: Dict[str, str]) -> str:
-    markdown = "|    |    |\n |----|----|"
-    for key, value in table_dict.items():
-        markdown += f"\n| {key} | {value} |"
-    return markdown
+.. warning::
+This dataset doesn't contain an `env_spec`, neither an `eval_env_spec` attribute. Any call to :func:`minari.MinariDataset.recover_environment` will throw an error.
+
+```
+"""
+NO_TRAIN_ENV_MSG = """
+```{eval-rst}
+
+.. warning::
+This dataset doesn't contain an `env_spec` attribute. Calling :func:`minari.MinariDataset.recover_environment` with `eval_env=False` will throw an error.
+
+```
+"""
+NO_EVAL_ENV_MSG = """
+```{{eval-rst}}
+
+.. note::
+This dataset doesn't contain an `eval_env_spec` attribute which means that the specs of the environment used for evaluation are the same as the specs of the environment used for creating the dataset. The following calls will return the same environment:
+
+.. code-block::
+
+        import minari
+
+        dataset = minari.load_dataset('{}')
+        env  = dataset.recover_environment()
+        eval_env = dataset.recover_environment(eval_env=True)
+
+        assert env.spec == eval_env.spec
+```
+"""
+PRE_TRAIN_ENV_MSG = """
+```{{eval-rst}}
+
+.. note::
+The following table rows correspond to the Gymnasium environment specifications used to generate the dataset.
+To read more about what each parameter means you can have a look at the Gymnasium documentation https://gymnasium.farama.org/api/registry/#gymnasium.envs.registration.EnvSpec
+
+This environment can be recovered from the Minari dataset as follows:
+
+.. code-block::
+
+        import minari
+
+        dataset = minari.load_dataset('{}')
+        env  = dataset.recover_environment()
+```
+"""
+PRE_EVAL_ENV_MSG = """
+```{{eval-rst}}
+
+.. note::
+This environment can be recovered from the Minari dataset as follows:
+
+.. code-block::
+
+        import minari
+
+        dataset = minari.load_dataset('{}')
+        eval_env  = dataset.recover_environment(eval_env=True)
+```
+"""
 
 
 def main():
@@ -78,24 +137,23 @@ def _generate_dataset_page(arg):
     _, dataset_name, version = parse_dataset_id(dataset_id)
     versioned_name = gen_dataset_id(None, dataset_name, version)
 
-    description = metadata.get("description")
+    venv_name = f"venv_{dataset_id.replace('/', '_')}"
+    venv.create(venv_name, with_pip=True)
+    python_path = pathlib.Path(venv_name) / "bin" / "python"
+    pip_path = pathlib.Path(venv_name) / "bin" / "pip"
+
+    requirements = [
+        "minari[gcs,hdf5] @ git+https://github.com/Farama-Foundation/Minari.git",
+        "imageio",
+        "absl-py",
+    ]
+    requirements.extend(metadata.get("requirements", []))
+    req_args = [pip_path, "install", *requirements]
+    subprocess.check_call(req_args, stdout=subprocess.DEVNULL)
+    logging.info(f"Installed requirements for {dataset_id}")
+
     try:
-        venv.create(dataset_id, with_pip=True)
-
-        requirements = [
-            "minari[gcs,hdf5] @ git+https://github.com/Farama-Foundation/Minari.git",
-            "imageio",
-            "absl-py",
-        ]
-        requirements.extend(metadata.get("requirements", []))
-        pip_path = pathlib.Path(dataset_id) / "bin" / "pip"
-        req_args = [pip_path, "install", *requirements]
-        subprocess.check_call(req_args, stdout=subprocess.DEVNULL)
-        logging.info(f"Installed requirements for {dataset_id}")
-
         minari.download_dataset(dataset_id)
-
-        python_path = pathlib.Path(dataset_id) / "bin" / "python"
         subprocess.check_call(
             [
                 python_path,
@@ -105,7 +163,6 @@ def _generate_dataset_page(arg):
             ]
         )
         minari.delete_dataset(dataset_id)
-        shutil.rmtree(dataset_id)
         img_link_str = f'<img src="../{versioned_name}.gif" width="200" style="display: block; margin:0 auto"/>'
     except Exception as e:
         warnings.warn(f"Failed to generate gif for {dataset_id}: {e}")
@@ -116,109 +173,67 @@ def _generate_dataset_page(arg):
     eval_env_spec = metadata.get("eval_env_spec")
 
     if env_spec is None and eval_env_spec is None:
-        env_docs += """
-```{eval-rst}
+        env_docs += NO_ENV_MSG
 
-.. warning::
-This dataset doesn't contain an `env_spec`, neither an `eval_env_spec` attribute. Any call to :func:`minari.MinariDataset.recover_environment` will throw an error.
-
-```
-"""
     else:
-        env_docs += """
-## Environment Specs
-"""
+        env_docs += "\n## Environment Specs\n"
         if env_spec is None:
-            env_docs += """
-```{eval-rst}
-
-.. warning::
-This dataset doesn't contain an `env_spec` attribute. Calling :func:`minari.MinariDataset.recover_environment` with `eval_env=False` will throw an error.
-
-```
-"""
+            env_docs += NO_TRAIN_ENV_MSG
         else:
-            env_docs += f"""
-```{{eval-rst}}
+            env_docs += PRE_TRAIN_ENV_MSG.format(dataset_id)
+            env_docs += "\n"
 
-.. note::
-The following table rows correspond to (in addition to the action and observation space) the Gymnasium environment specifications used to generate the dataset.
-To read more about what each parameter means you can have a look at the Gymnasium documentation https://gymnasium.farama.org/api/registry/#gymnasium.envs.registration.EnvSpec
+            train_spec_file = f"train_spec_{dataset_id.replace('/', '_')}.md"
+            subprocess.check_call(
+                [
+                    python_path,
+                    generate_env_table.__file__,
+                    f"--env_spec={env_spec}",
+                    f"--file_name={train_spec_file}",
+                ]
+            )
 
-This environment can be recovered from the Minari dataset as follows:
+            env_docs += pathlib.Path(train_spec_file).read_text()
+            env_docs += "\n"
 
-.. code-block::
-
-        import minari
-
-        dataset = minari.load_dataset('{dataset_id}')
-        env  = dataset.recover_environment()
-```
-
-{_md_table(get_env_spec_dict(EnvSpec.from_json(env_spec)))}
-"""
-
-        env_docs += """
-## Evaluation Environment Specs
-
-"""
+        env_docs += """\n## Evaluation Environment Specs\n"""
         if eval_env_spec is None:
-            env_docs += f"""
-```{{eval-rst}}
-
-.. note::
-This dataset doesn't contain an `eval_env_spec` attribute which means that the specs of the environment used for evaluation are the same as the specs of the environment used for creating the dataset. The following calls will return the same environment:
-
-.. code-block::
-
-        import minari
-
-        dataset = minari.load_dataset('{dataset_id}')
-        env  = dataset.recover_environment()
-        eval_env = dataset.recover_environment(eval_env=True)
-
-        assert env.spec == eval_env.spec
-```
-"""
+            env_docs += NO_EVAL_ENV_MSG.format(dataset_id)
         else:
-            env_docs += f"""
+            env_docs += PRE_EVAL_ENV_MSG.format(dataset_id)
+            env_docs += "\n"
 
-```{{eval-rst}}
+            eval_spec_file = f"eval_spec_{dataset_id.replace('/', '_')}.md"
+            subprocess.check_call(
+                [
+                    python_path,
+                    generate_env_table.__file__,
+                    f"--env_spec={env_spec}",
+                    f"--file_name={eval_spec_file}",
+                ]
+            )
 
-.. note::
-This environment can be recovered from the Minari dataset as follows:
+            env_docs += pathlib.Path(eval_spec_file).read_text()
+            env_docs += "\n"
 
-.. code-block::
-
-        import minari
-
-        dataset = minari.load_dataset('{dataset_id}')
-        eval_env  = dataset.recover_environment(eval_env=True)
-```
-
-{_md_table(get_env_spec_dict(EnvSpec.from_json(eval_env_spec)))}
-"""
-
-    content = f"""---
-autogenerated:
-title: {dataset_name.title()}
----
-
-# {dataset_name.title()}
-"""
+    content = "---\nautogenerated:\n"
+    content += f"title: {dataset_name.title()}"
+    content += "---\n\n"
+    content += f"# {dataset_name.title()}"
     content += "\n\n"
+
     if img_link_str is not None:
         content += img_link_str
         content += "\n\n"
-    if description is not None:
+    if "description" in metadata:
         content += "## Description"
         content += "\n\n"
-        content += description
+        content += metadata["description"]
         content += "\n\n"
 
     content += "## Dataset Specs"
     content += "\n\n"
-    content += _md_table(get_dataset_spec_dict(metadata))
+    content += dict_to_table(get_dataset_spec_dict(metadata))
     content += "\n\n"
     content += env_docs
 
@@ -228,6 +243,7 @@ title: {dataset_name.title()}
     file.close()
 
     logging.info(f"Generated dataset page for {dataset_id}")
+    shutil.rmtree(venv_name)
 
 
 def _generate_namespace_page(namespace: str, namespace_content):

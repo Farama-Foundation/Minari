@@ -72,11 +72,13 @@ The Minari storage format supports the following observation and action spaces:
 
 | Space                                                                                 | Description                                                                                              |
 | ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| [Discrete](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/discrete.py) |Describes a discrete space where `{0, 1, ..., n-1}` are the possible values our observation can take. An optional argument can be used to shift the values to `{a, a+1, ..., a+n-1}`.|
-| [Box](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/box.py)           |An n-dimensional continuous space. The `upper` and `lower` arguments can be used to define bounded spaces.|
-| [Tuple](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/tuple.py)       |Represents a tuple of spaces.                                                                             |
-| [Dict](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/dict.py)         |Represents a dictionary of spaces.                                                                        |
-| [Text](https://github.com/Farama-Foundation/Gymnasium/blob/main/gymnasium/spaces/text.py)         |The elements of this space are bounded strings from a charset. Note: at the moment, we don't guarantee support for all surrogate pairs.                                                                        |                                                                       |
+| [Box](https://gymnasium.farama.org/api/spaces/fundamental/#gymnasium.spaces.Box)           |An n-dimensional continuous space. The `upper` and `lower` arguments can be used to define bounded spaces.|
+| [Discrete](https://gymnasium.farama.org/api/spaces/fundamental/#gymnasium.spaces.Discrete) |Describes a discrete space where `{0, 1, ..., n-1}` are the possible values our observation can take. An optional argument can be used to shift the values to `{a, a+1, ..., a+n-1}`.|
+| [MultiDiscrete](https://gymnasium.farama.org/api/spaces/fundamental/#gymnasium.spaces.MultiDiscrete) |Represents the cartesian product of arbitrary Discrete spaces.|
+| [MultiBinary](https://gymnasium.farama.org/api/spaces/fundamental/#gymnasium.spaces.MultiBinary) |A binary space. The elements are binary array.|
+| [Tuple](https://gymnasium.farama.org/api/spaces/composite/#gymnasium.spaces.Tuple)       |Represents a tuple of spaces.                                                                             |
+| [Dict](https://gymnasium.farama.org/api/spaces/composite/#gymnasium.spaces.Dict)         |Represents a dictionary of spaces.                                                                        |
+| [Text](https://gymnasium.farama.org/api/spaces/fundamental/#gymnasium.spaces.Text)         |The elements of this space are bounded strings from a charset. Note: at the moment, we don't guarantee support for all surrogate pairs.                                                                        |                                                                       |
 
 Spaces are serialized to a JSON format when saving to disk. This serialization supports all space types supported by Minari, and aims to be both human, and machine readable.
 
