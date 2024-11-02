@@ -31,6 +31,7 @@ tutorials/**/index
 :hidden:
 :caption: Datasets
 datasets/D4RL/index
+datasets/mujoco/index
 ```
 
 ```{toctree}
