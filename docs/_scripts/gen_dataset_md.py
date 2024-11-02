@@ -41,7 +41,7 @@ This dataset doesn't contain an `env_spec` attribute. Calling :func:`minari.Mina
 ```
 """
 NO_EVAL_ENV_MSG = """
-```{eval-rst}
+```{{eval-rst}}
 
 .. note::
 This dataset doesn't contain an `eval_env_spec` attribute which means that the specs of the environment used for evaluation are the same as the specs of the environment used for creating the dataset. The following calls will return the same environment:
@@ -58,7 +58,7 @@ This dataset doesn't contain an `eval_env_spec` attribute which means that the s
 ```
 """
 PRE_TRAIN_ENV_MSG = """
-```{eval-rst}
+```{{eval-rst}}
 
 .. note::
 The following table rows correspond to the Gymnasium environment specifications used to generate the dataset.
@@ -75,7 +75,7 @@ This environment can be recovered from the Minari dataset as follows:
 ```
 """
 PRE_EVAL_ENV_MSG = """
-```{eval-rst}
+```{{eval-rst}}
 
 .. note::
 This environment can be recovered from the Minari dataset as follows:

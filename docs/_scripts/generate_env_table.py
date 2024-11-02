@@ -1,10 +1,9 @@
-
 from absl import app, flags
-
 from gymnasium.envs.registration import EnvSpec
+from md_utils import dict_to_table
 
 from minari.utils import get_env_spec_dict
-from md_utils import dict_to_table
+
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string("env_spec", None, "Environment spec json file")
