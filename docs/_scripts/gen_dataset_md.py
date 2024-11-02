@@ -137,9 +137,10 @@ def _generate_dataset_page(arg):
     _, dataset_name, version = parse_dataset_id(dataset_id)
     versioned_name = gen_dataset_id(None, dataset_name, version)
 
-    venv.create(f"venv_{dataset_id}", with_pip=True)
-    python_path = pathlib.Path(f"venv_{dataset_id}") / "bin" / "python"
-    pip_path = pathlib.Path(f"venv_{dataset_id}") / "bin" / "pip"
+    venv_name = f"venv_{dataset_id.replace('/', '_')}"
+    venv.create(venv_name, with_pip=True)
+    python_path = pathlib.Path(venv_name) / "bin" / "python"
+    pip_path = pathlib.Path(venv_name) / "bin" / "pip"
 
     requirements = [
         "minari[gcs,hdf5] @ git+https://github.com/Farama-Foundation/Minari.git",
@@ -182,7 +183,7 @@ def _generate_dataset_page(arg):
             env_docs += PRE_TRAIN_ENV_MSG.format(dataset_id)
             env_docs += "\n"
 
-            train_spec_file = f"train_spec_{dataset_id}.md"
+            train_spec_file = f"train_spec_{dataset_id.replace('/', '_')}.md"
             subprocess.check_call(
                 [
                     python_path,
@@ -202,7 +203,7 @@ def _generate_dataset_page(arg):
             env_docs += PRE_EVAL_ENV_MSG.format(dataset_id)
             env_docs += "\n"
 
-            eval_spec_file = f"eval_spec_{dataset_id}.md"
+            eval_spec_file = f"eval_spec_{dataset_id.replace('/', '_')}.md"
             subprocess.check_call(
                 [
                     python_path,
