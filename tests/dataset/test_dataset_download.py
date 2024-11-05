@@ -18,7 +18,8 @@ env_names = ["pen", "door", "hammer", "relocate"]
         for env_name in env_names
     ],
 )
-def test_download_dataset_from_farama_server(dataset_id: str):
+@pytest.mark.parametrize("remote_name", [None, "hf://farama-minari"])
+def test_download_dataset_from_farama_server(dataset_id: str, remote_name):
     """Test downloading Minari datasets from remote server.
 
     Use 'human' adroit test since they are not excessively heavy.
@@ -26,31 +27,35 @@ def test_download_dataset_from_farama_server(dataset_id: str):
     Args:
         dataset_id (str): name of the remote Minari dataset.
     """
-    remote_datasets = minari.list_remote_datasets()
-    assert dataset_id in remote_datasets
+    with pytest.MonkeyPatch.context() as mp:
+        if remote_name:
+            mp.setenv("MINARI_REMOTE", remote_name)
 
-    minari.download_dataset(dataset_id, force_download=True)
-    local_datasets = minari.list_local_datasets()
-    assert dataset_id in local_datasets
+        remote_datasets = minari.list_remote_datasets()
+        assert dataset_id in remote_datasets
 
-    file_path = get_dataset_path(dataset_id)
+        minari.download_dataset(dataset_id, force_download=True)
+        local_datasets = minari.list_local_datasets()
+        assert dataset_id in local_datasets
 
-    with pytest.warns(
-        UserWarning,
-        match=f"Skipping Download. Dataset {dataset_id} found locally at {file_path}, Use force_download=True to download the dataset again.\n",
-    ):
-        download_dataset_output = minari.download_dataset(dataset_id)
+        file_path = get_dataset_path(dataset_id)
 
-    assert download_dataset_output is None
+        with pytest.warns(
+            UserWarning,
+            match=f"Skipping Download. Dataset {dataset_id} found locally at {file_path}, Use force_download=True to download the dataset again.\n",
+        ):
+            download_dataset_output = minari.download_dataset(dataset_id)
 
-    dataset = minari.load_dataset(dataset_id)
-    assert isinstance(dataset, MinariDataset)
+        assert download_dataset_output is None
 
-    check_data_integrity(dataset, list(dataset.episode_indices))
+        dataset = minari.load_dataset(dataset_id)
+        assert isinstance(dataset, MinariDataset)
 
-    minari.delete_dataset(dataset_id)
-    local_datasets = minari.list_local_datasets()
-    assert dataset_id not in local_datasets
+        check_data_integrity(dataset, list(dataset.episode_indices))
+
+        minari.delete_dataset(dataset_id)
+        local_datasets = minari.list_local_datasets()
+        assert dataset_id not in local_datasets
 
 
 @pytest.mark.parametrize(
@@ -62,15 +67,20 @@ def test_download_dataset_from_farama_server(dataset_id: str):
         for env_name in env_names
     ],
 )
-def test_load_dataset_with_download(dataset_id: str):
+@pytest.mark.parametrize("remote_name", [None, "hf://farama-minari"])
+def test_load_dataset_with_download(dataset_id: str, remote_name):
     """Test load dataset with and without download."""
-    with pytest.raises(FileNotFoundError):
-        dataset = minari.load_dataset(dataset_id)
+    with pytest.MonkeyPatch.context() as mp:
+        if remote_name:
+            mp.setenv("MINARI_REMOTE", remote_name)
 
-    dataset = minari.load_dataset(dataset_id, download=True)
-    assert isinstance(dataset, MinariDataset)
+        with pytest.raises(FileNotFoundError):
+            dataset = minari.load_dataset(dataset_id)
 
-    minari.delete_dataset(dataset_id)
+        dataset = minari.load_dataset(dataset_id, download=True)
+        assert isinstance(dataset, MinariDataset)
+
+        minari.delete_dataset(dataset_id)
 
 
 def test_download_error_messages(monkeypatch):

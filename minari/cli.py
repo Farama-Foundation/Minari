@@ -175,7 +175,7 @@ def show(dataset: Annotated[str, typer.Argument()]):
         if dataset in remote_datasets:
             dst_metadata = remote_datasets[dataset]
         else:
-            local_dataset_path = get_dataset_path("")
+            local_dataset_path = get_dataset_path()
             print(
                 Text(
                     f"""The dataset `{dataset}` can't be found locally"""
@@ -248,7 +248,7 @@ def delete(datasets: Annotated[List[str], typer.Argument()]):
     local_dsts = local.list_local_datasets()
     non_matching_local = [dst for dst in datasets if dst not in local_dsts]
     if len(non_matching_local) > 0:
-        local_dataset_path = get_dataset_path("")
+        local_dataset_path = get_dataset_path()
         tree = Tree(
             f"The following datasets can't be found locally at `{local_dataset_path}`",
             style="red",
@@ -325,7 +325,7 @@ def upload(
     # check that the given local datasets exist
     non_matching_local = [dst for dst in datasets if dst not in local_dsts]
     if len(non_matching_local) > 0:
-        local_dataset_path = get_dataset_path("")
+        local_dataset_path = get_dataset_path()
         tree = Tree(
             f"The following datasets can't be found locally at `{local_dataset_path}`",
             style="red",
@@ -370,7 +370,7 @@ def combine(
     # check list of local datasets to combine exist
     non_matching_local = [dst for dst in datasets if dst not in local_dsts]
     if len(non_matching_local) > 0:
-        local_dataset_path = get_dataset_path("")
+        local_dataset_path = get_dataset_path()
         tree = Tree(
             f"The following datasets can't be found locally at `{local_dataset_path}`",
             style="red",

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import importlib.metadata
-import json
 import os
 import warnings
 from collections import defaultdict
@@ -19,14 +18,15 @@ from minari.storage.remotes import get_cloud_storage
 __version__ = importlib.metadata.version("minari")
 
 
-def upload_dataset(dataset_id: str, key_path: str):
+def upload_dataset(dataset_id: str, token: str):
     """Upload a Minari dataset to the remote Farama server.
 
     If you would like to upload a dataset please first get in touch with the Farama team at contact@farama.org.
 
     Args:
         dataset_id (str): name id of the local Minari dataset
-        key_path (str): path to the credentials file.
+        token (str): token used for authenticating to the remote storage.
+            Notice, that for GCP, this is the path to the service account key file, while for Hugging Face, this is the API token.
     """
     # Avoid circular import
     from minari.namespace import list_remote_namespaces, upload_namespace
@@ -38,19 +38,17 @@ def upload_dataset(dataset_id: str, key_path: str):
         )
         return
 
-    cloud_storage = get_cloud_storage(key_path=key_path)
+    cloud_storage = get_cloud_storage(token=token)
+    namespace, _, _ = parse_dataset_id(dataset_id)
+    if namespace is not None and namespace not in list_remote_namespaces():
+        upload_namespace(namespace, token)
 
     datasets_to_upload = [dataset_id]
     while len(datasets_to_upload):
         dataset_id = datasets_to_upload.pop()
-        namespace, _, _ = parse_dataset_id(dataset_id)
-
-        if namespace is not None and namespace not in list_remote_namespaces():
-            upload_namespace(namespace, key_path)
 
         print(f"Uploading dataset {dataset_id}")
-        path = get_dataset_path(dataset_id)
-        cloud_storage.upload_directory(path, dataset_id)
+        cloud_storage.upload_dataset(dataset_id)
 
         dataset = load_dataset(dataset_id)
         combined_datasets = dataset.spec.combined_datasets
@@ -69,7 +67,12 @@ def download_dataset(dataset_id: str, force_download: bool = False):
         force_download (bool): boolean flag for force downloading the dataset. Default Value = False
     """
     # Avoid circular import
-    from minari.namespace import create_namespace, list_local_namespaces
+    from minari.namespace import (
+        create_namespace,
+        download_namespace_metadata,
+        list_local_namespaces,
+        namespace_hierarchy,
+    )
 
     (
         namespace,
@@ -149,9 +152,11 @@ def download_dataset(dataset_id: str, force_download: bool = False):
 
     if namespace is not None and namespace not in list_local_namespaces():
         create_namespace(namespace)
+        for parent_namespace in namespace_hierarchy(namespace):
+            download_namespace_metadata(parent_namespace)
 
     print(f"\nDownloading {dataset_id} from Farama servers...")
-    datasets_path = get_dataset_path("")
+    datasets_path = get_dataset_path()
     cloud_storage = get_cloud_storage()
     cloud_storage.download_dataset(dataset_id, datasets_path)
     print(f"\nDataset {dataset_id} downloaded to {file_path}")
@@ -190,42 +195,37 @@ def list_remote_datasets(
     from minari import supported_dataset_versions
 
     cloud_storage = get_cloud_storage()
+
+    def download_metadata(dataset_id):
+        metadata = cloud_storage.get_dataset_metadata(dataset_id)
+        supported_dataset = metadata.get("minari_version") in supported_dataset_versions
+        if supported_dataset or not compatible_minari_version:
+            return metadata
+
     dataset_ids = cloud_storage.list_datasets()
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        remote_metadatas = executor.map(download_metadata, dataset_ids)
 
-    # Generate dict = {'dataset_id': (version, metadata)}
     remote_datasets = {}
-    for dataset_id in dataset_ids:
-        try:
-            metadata = cloud_storage.get_dataset_metadata(dataset_id)
-            if (
-                compatible_minari_version
-                and metadata["minari_version"] not in supported_dataset_versions
-            ):
-                continue
-            dataset_id = metadata["dataset_id"]
+    max_version = defaultdict(dict)
+    for metadata in remote_metadatas:
+        if metadata is None:
+            continue
+
+        dataset_id = metadata["dataset_id"]
+        remote_datasets[dataset_id] = metadata
+
+        if latest_version:
             namespace, dataset_name, version = parse_dataset_id(dataset_id)
-            dataset = gen_dataset_id(namespace, dataset_name)
+            old_version = max_version[namespace].get(dataset_name, version)
+            max_version[namespace][dataset_name] = max(old_version, version)
+            if old_version != max_version[namespace][dataset_name]:
+                min_id = gen_dataset_id(
+                    namespace, dataset_name, min(old_version, version)
+                )
+                del remote_datasets[min_id]
 
-            if latest_version:
-                if (
-                    dataset not in remote_datasets
-                    or version > remote_datasets[dataset][0]
-                ):
-                    remote_datasets[dataset] = (version, metadata)
-            else:
-                remote_datasets[dataset_id] = metadata
-        except Exception:
-            warnings.warn(f"Misconfigured dataset named {blob.name} on remote")
-
-    if latest_version:
-        # Convert to dict = {'dataset_id': metadata}
-        remote_datasets = dict(
-            map(lambda x: (f"{x[0]}-v{x[1][0]}", x[1][1]), remote_datasets.items())
-        )
-
-    return {
-        k: remote_datasets[k] for k in sorted(remote_datasets, key=dataset_id_sort_key)
-    }
+    return remote_datasets
 
 
 def get_remote_dataset_versions(
