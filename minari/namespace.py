@@ -182,7 +182,6 @@ def download_namespace_metadata(namespace: str, overwrite: bool = False) -> None
         overwrite (bool): whether to overwrite existing local metadata. Defaults to False.
     """
     validate_namespace(namespace)
-
     if namespace not in list_remote_namespaces():
         raise ValueError(
             f"The namespace '{namespace}' doesn't exist in the remote Farama server."

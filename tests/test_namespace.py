@@ -126,7 +126,12 @@ def test_download_namespace_dataset(remote_name):
         minari.download_dataset(kitchen_complete)
         assert set(minari.list_local_datasets().keys()) == {kitchen_complete}
         assert list_local_namespaces() == ["D4RL", "D4RL/kitchen"]
-        assert get_namespace_metadata(namespace) == {}
+        namespace_metadatas = {}
+        for local_namespace in list_local_namespaces():
+            namespace_metadatas[local_namespace] = get_namespace_metadata(
+                local_namespace
+            )
+            assert namespace_metadatas[local_namespace] != {}
 
         minari.download_dataset(kitchen_mix)
         assert set(minari.list_local_datasets().keys()) == {
@@ -134,7 +139,9 @@ def test_download_namespace_dataset(remote_name):
             kitchen_mix,
         }
         assert list_local_namespaces() == ["D4RL", "D4RL/kitchen"]
-        assert get_namespace_metadata(namespace) == {}
+        for local_namespace in list_local_namespaces():
+            ns_metadata = get_namespace_metadata(local_namespace)
+            assert ns_metadata == namespace_metadatas[local_namespace]
 
         with pytest.warns(UserWarning, match="Skipping Download."):
             minari.download_dataset(kitchen_complete)

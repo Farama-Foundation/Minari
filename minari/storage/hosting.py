@@ -68,7 +68,6 @@ def download_dataset(dataset_id: str, force_download: bool = False):
     """
     # Avoid circular import
     from minari.namespace import (
-        create_namespace,
         download_namespace_metadata,
         list_local_namespaces,
         namespace_hierarchy,
@@ -151,7 +150,6 @@ def download_dataset(dataset_id: str, force_download: bool = False):
             return
 
     if namespace is not None and namespace not in list_local_namespaces():
-        create_namespace(namespace)
         for parent_namespace in namespace_hierarchy(namespace):
             download_namespace_metadata(parent_namespace)
 

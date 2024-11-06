@@ -168,7 +168,6 @@ class HuggingFaceStorage(CloudStorage):
 
     def download_namespace_metadata(self, namespace: str, path: Path) -> None:
         repo_id, path_in_repo = self._decompose_path(namespace)
-
         self._api.hf_hub_download(
             repo_id=f"{self.name}/{repo_id}",
             filename=os.path.join(path_in_repo, _NAMESPACE_METADATA_FILENAME),
