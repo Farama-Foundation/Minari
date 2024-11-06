@@ -14,8 +14,9 @@ from gymnasium.envs.registration import EnvSpec
 from gymnasium.wrappers import RecordEpisodeStatistics  # type: ignore
 
 from minari.data_collector.episode_buffer import EpisodeBuffer
-from minari.dataset.minari_dataset import MinariDataset
+from minari.dataset.minari_dataset import MinariDataset, parse_dataset_id
 from minari.dataset.minari_storage import MinariStorage
+from minari.namespace import create_namespace, list_local_namespaces
 from minari.serialization import deserialize_space
 from minari.storage.datasets_root_dir import get_dataset_path
 
@@ -401,6 +402,10 @@ def create_dataset_from_buffers(
         observation_space = observation_space or gym_env.observation_space
         action_space = action_space or gym_env.action_space
 
+    namespace = parse_dataset_id(dataset_id)[0]
+    if namespace is not None and namespace not in list_local_namespaces():
+        create_namespace(namespace)
+
     metadata = _generate_dataset_metadata(
         dataset_id,
         env_spec,
@@ -416,7 +421,6 @@ def create_dataset_from_buffers(
         description,
         requirements,
     )
-
     data_format_kwarg = {"data_format": data_format} if data_format is not None else {}
     storage = MinariStorage.new(
         dataset_path,

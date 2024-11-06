@@ -47,6 +47,12 @@ def create_namespace(
     with open(directory / NAMESPACE_METADATA_FILENAME, "w") as file:
         json.dump(metadata, file)
 
+    for parent_namespace in namespace_hierarchy(namespace):
+        if parent_namespace not in list_local_namespaces():
+            parent_namespace_path = get_dataset_path(parent_namespace)
+            with open(parent_namespace_path / NAMESPACE_METADATA_FILENAME, "w") as file:
+                json.dump({}, file)
+
 
 def update_namespace_metadata(
     namespace: str,
