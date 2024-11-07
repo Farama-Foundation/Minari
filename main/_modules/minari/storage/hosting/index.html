@@ -377,7 +377,6 @@
 <span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span> <span class="nn">importlib.metadata</span>
-<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
@@ -385,7 +384,7 @@
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span>
 
 <span class="kn">from</span> <span class="nn">minari.dataset.minari_dataset</span> <span class="kn">import</span> <span class="n">gen_dataset_id</span><span class="p">,</span> <span class="n">parse_dataset_id</span>
-<span class="kn">from</span> <span class="nn">minari.dataset.minari_storage</span> <span class="kn">import</span> <span class="n">METADATA_FILE_NAME</span><span class="p">,</span> <span class="n">MinariStorage</span>
+<span class="kn">from</span> <span class="nn">minari.dataset.minari_storage</span> <span class="kn">import</span> <span class="n">MinariStorage</span>
 <span class="kn">from</span> <span class="nn">minari.storage.datasets_root_dir</span> <span class="kn">import</span> <span class="n">get_dataset_path</span>
 <span class="kn">from</span> <span class="nn">minari.storage.local</span> <span class="kn">import</span> <span class="n">load_dataset</span>
 <span class="kn">from</span> <span class="nn">minari.storage.remotes</span> <span class="kn">import</span> <span class="n">get_cloud_storage</span>
@@ -395,14 +394,15 @@
 <span class="n">__version__</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">version</span><span class="p">(</span><span class="s2">&quot;minari&quot;</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">upload_dataset</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">key_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">upload_dataset</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Upload a Minari dataset to the remote Farama server.</span>
 
 <span class="sd">    If you would like to upload a dataset please first get in touch with the Farama team at contact@farama.org.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        dataset_id (str): name id of the local Minari dataset</span>
-<span class="sd">        key_path (str): path to the credentials file.</span>
+<span class="sd">        token (str): token used for authenticating to the remote storage.</span>
+<span class="sd">            Notice, that for GCP, this is the path to the service account key file, while for Hugging Face, this is the API token.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Avoid circular import</span>
     <span class="kn">from</span> <span class="nn">minari.namespace</span> <span class="kn">import</span> <span class="n">list_remote_namespaces</span><span class="p">,</span> <span class="n">upload_namespace</span>
@@ -414,19 +414,17 @@
         <span class="p">)</span>
         <span class="k">return</span>
 
-    <span class="n">cloud_storage</span> <span class="o">=</span> <span class="n">get_cloud_storage</span><span class="p">(</span><span class="n">key_path</span><span class="o">=</span><span class="n">key_path</span><span class="p">)</span>
+    <span class="n">cloud_storage</span> <span class="o">=</span> <span class="n">get_cloud_storage</span><span class="p">(</span><span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">)</span>
+    <span class="n">namespace</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">parse_dataset_id</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">namespace</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">namespace</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">list_remote_namespaces</span><span class="p">():</span>
+        <span class="n">upload_namespace</span><span class="p">(</span><span class="n">namespace</span><span class="p">,</span> <span class="n">token</span><span class="p">)</span>
 
     <span class="n">datasets_to_upload</span> <span class="o">=</span> <span class="p">[</span><span class="n">dataset_id</span><span class="p">]</span>
     <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">datasets_to_upload</span><span class="p">):</span>
         <span class="n">dataset_id</span> <span class="o">=</span> <span class="n">datasets_to_upload</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
-        <span class="n">namespace</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">parse_dataset_id</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
-
-        <span class="k">if</span> <span class="n">namespace</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">namespace</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">list_remote_namespaces</span><span class="p">():</span>
-            <span class="n">upload_namespace</span><span class="p">(</span><span class="n">namespace</span><span class="p">,</span> <span class="n">key_path</span><span class="p">)</span>
 
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Uploading dataset </span><span class="si">{</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="n">get_dataset_path</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
-        <span class="n">cloud_storage</span><span class="o">.</span><span class="n">upload_directory</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dataset_id</span><span class="p">)</span>
+        <span class="n">cloud_storage</span><span class="o">.</span><span class="n">upload_dataset</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
 
         <span class="n">dataset</span> <span class="o">=</span> <span class="n">load_dataset</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
         <span class="n">combined_datasets</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">combined_datasets</span>
@@ -447,7 +445,11 @@
 <span class="sd">        force_download (bool): boolean flag for force downloading the dataset. Default Value = False</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Avoid circular import</span>
-    <span class="kn">from</span> <span class="nn">minari.namespace</span> <span class="kn">import</span> <span class="n">create_namespace</span><span class="p">,</span> <span class="n">list_local_namespaces</span>
+    <span class="kn">from</span> <span class="nn">minari.namespace</span> <span class="kn">import</span> <span class="p">(</span>
+        <span class="n">download_namespace_metadata</span><span class="p">,</span>
+        <span class="n">list_local_namespaces</span><span class="p">,</span>
+        <span class="n">namespace_hierarchy</span><span class="p">,</span>
+    <span class="p">)</span>
 
     <span class="p">(</span>
         <span class="n">namespace</span><span class="p">,</span>
@@ -526,25 +528,13 @@
             <span class="k">return</span>
 
     <span class="k">if</span> <span class="n">namespace</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">namespace</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">list_local_namespaces</span><span class="p">():</span>
-        <span class="n">create_namespace</span><span class="p">(</span><span class="n">namespace</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">parent_namespace</span> <span class="ow">in</span> <span class="n">namespace_hierarchy</span><span class="p">(</span><span class="n">namespace</span><span class="p">):</span>
+            <span class="n">download_namespace_metadata</span><span class="p">(</span><span class="n">parent_namespace</span><span class="p">)</span>
 
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Downloading </span><span class="si">{</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2"> from Farama servers...&quot;</span><span class="p">)</span>
-    <span class="n">datasets_path</span> <span class="o">=</span> <span class="n">get_dataset_path</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">datasets_path</span> <span class="o">=</span> <span class="n">get_dataset_path</span><span class="p">()</span>
     <span class="n">cloud_storage</span> <span class="o">=</span> <span class="n">get_cloud_storage</span><span class="p">()</span>
-    <span class="n">blobs</span> <span class="o">=</span> <span class="n">cloud_storage</span><span class="o">.</span><span class="n">list_blobs</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="n">dataset_id</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">blob</span> <span class="ow">in</span> <span class="n">blobs</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2"> * Downloading data file &#39;</span><span class="si">{</span><span class="n">blob</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; ...</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">blob_dir</span><span class="p">,</span> <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">blob</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
-        <span class="k">if</span> <span class="p">(</span>
-            <span class="n">file_name</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span>
-        <span class="p">):</span>  <span class="c1"># If the object blob path is a directory continue searching for files</span>
-            <span class="k">continue</span>
-        <span class="n">blob_local_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">datasets_path</span><span class="p">,</span> <span class="n">blob_dir</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">blob_local_dir</span><span class="p">):</span>
-            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">blob_local_dir</span><span class="p">)</span>
-        <span class="n">cloud_storage</span><span class="o">.</span><span class="n">download_blob</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">blob_local_dir</span><span class="p">,</span> <span class="n">file_name</span><span class="p">))</span>
-
+    <span class="n">cloud_storage</span><span class="o">.</span><span class="n">download_dataset</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">,</span> <span class="n">datasets_path</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Dataset </span><span class="si">{</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2"> downloaded to </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
     <span class="c1"># Skip a force download of an incompatible dataset version</span>
@@ -583,23 +573,17 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="kn">from</span> <span class="nn">minari</span> <span class="kn">import</span> <span class="n">supported_dataset_versions</span>
 
-    <span class="k">def</span> <span class="nf">blob_to_metadata</span><span class="p">(</span><span class="n">blob</span><span class="p">):</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">blob</span><span class="o">.</span><span class="n">name</span><span class="p">)</span> <span class="o">==</span> <span class="n">METADATA_FILE_NAME</span><span class="p">:</span>
-                <span class="n">metadata</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">blob</span><span class="o">.</span><span class="n">download_as_bytes</span><span class="p">(</span><span class="n">client</span><span class="o">=</span><span class="kc">None</span><span class="p">))</span>
-                <span class="k">if</span> <span class="p">(</span>
-                    <span class="n">compatible_minari_version</span>
-                    <span class="ow">and</span> <span class="n">metadata</span><span class="p">[</span><span class="s2">&quot;minari_version&quot;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">supported_dataset_versions</span>
-                <span class="p">):</span>
-                    <span class="k">return</span>
-                <span class="k">return</span> <span class="n">metadata</span>
-        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Misconfigured dataset named </span><span class="si">{</span><span class="n">blob</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> on remote&quot;</span><span class="p">)</span>
-
     <span class="n">cloud_storage</span> <span class="o">=</span> <span class="n">get_cloud_storage</span><span class="p">()</span>
-    <span class="n">blobs</span> <span class="o">=</span> <span class="n">cloud_storage</span><span class="o">.</span><span class="n">list_blobs</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">download_metadata</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">):</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="n">cloud_storage</span><span class="o">.</span><span class="n">get_dataset_metadata</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
+        <span class="n">supported_dataset</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;minari_version&quot;</span><span class="p">)</span> <span class="ow">in</span> <span class="n">supported_dataset_versions</span>
+        <span class="k">if</span> <span class="n">supported_dataset</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">compatible_minari_version</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">metadata</span>
+
+    <span class="n">dataset_ids</span> <span class="o">=</span> <span class="n">cloud_storage</span><span class="o">.</span><span class="n">list_datasets</span><span class="p">()</span>
     <span class="k">with</span> <span class="n">ThreadPoolExecutor</span><span class="p">(</span><span class="n">max_workers</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="k">as</span> <span class="n">executor</span><span class="p">:</span>
-        <span class="n">remote_metadatas</span> <span class="o">=</span> <span class="n">executor</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">blob_to_metadata</span><span class="p">,</span> <span class="n">blobs</span><span class="p">)</span>
+        <span class="n">remote_metadatas</span> <span class="o">=</span> <span class="n">executor</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">download_metadata</span><span class="p">,</span> <span class="n">dataset_ids</span><span class="p">)</span>
 
     <span class="n">remote_datasets</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">max_version</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span>
