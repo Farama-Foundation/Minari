@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import importlib.metadata
-import json
 import os
 import warnings
 from collections import defaultdict
@@ -9,7 +8,7 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import Dict, List
 
 from minari.dataset.minari_dataset import gen_dataset_id, parse_dataset_id
-from minari.dataset.minari_storage import METADATA_FILE_NAME, MinariStorage
+from minari.dataset.minari_storage import MinariStorage
 from minari.storage.datasets_root_dir import get_dataset_path
 from minari.storage.local import load_dataset
 from minari.storage.remotes import get_cloud_storage
@@ -19,14 +18,15 @@ from minari.storage.remotes import get_cloud_storage
 __version__ = importlib.metadata.version("minari")
 
 
-def upload_dataset(dataset_id: str, key_path: str):
+def upload_dataset(dataset_id: str, token: str):
     """Upload a Minari dataset to the remote Farama server.
 
     If you would like to upload a dataset please first get in touch with the Farama team at contact@farama.org.
 
     Args:
         dataset_id (str): name id of the local Minari dataset
-        key_path (str): path to the credentials file.
+        token (str): token used for authenticating to the remote storage.
+            Notice, that for GCP, this is the path to the service account key file, while for Hugging Face, this is the API token.
     """
     # Avoid circular import
     from minari.namespace import list_remote_namespaces, upload_namespace
@@ -38,19 +38,17 @@ def upload_dataset(dataset_id: str, key_path: str):
         )
         return
 
-    cloud_storage = get_cloud_storage(key_path=key_path)
+    cloud_storage = get_cloud_storage(token=token)
+    namespace, _, _ = parse_dataset_id(dataset_id)
+    if namespace is not None and namespace not in list_remote_namespaces():
+        upload_namespace(namespace, token)
 
     datasets_to_upload = [dataset_id]
     while len(datasets_to_upload):
         dataset_id = datasets_to_upload.pop()
-        namespace, _, _ = parse_dataset_id(dataset_id)
-
-        if namespace is not None and namespace not in list_remote_namespaces():
-            upload_namespace(namespace, key_path)
 
         print(f"Uploading dataset {dataset_id}")
-        path = get_dataset_path(dataset_id)
-        cloud_storage.upload_directory(path, dataset_id)
+        cloud_storage.upload_dataset(dataset_id)
 
         dataset = load_dataset(dataset_id)
         combined_datasets = dataset.spec.combined_datasets
@@ -69,7 +67,11 @@ def download_dataset(dataset_id: str, force_download: bool = False):
         force_download (bool): boolean flag for force downloading the dataset. Default Value = False
     """
     # Avoid circular import
-    from minari.namespace import create_namespace, list_local_namespaces
+    from minari.namespace import (
+        download_namespace_metadata,
+        list_local_namespaces,
+        namespace_hierarchy,
+    )
 
     (
         namespace,
@@ -148,25 +150,13 @@ def download_dataset(dataset_id: str, force_download: bool = False):
             return
 
     if namespace is not None and namespace not in list_local_namespaces():
-        create_namespace(namespace)
+        for parent_namespace in namespace_hierarchy(namespace):
+            download_namespace_metadata(parent_namespace)
 
     print(f"\nDownloading {dataset_id} from Farama servers...")
-    datasets_path = get_dataset_path("")
+    datasets_path = get_dataset_path()
     cloud_storage = get_cloud_storage()
-    blobs = cloud_storage.list_blobs(prefix=dataset_id)
-
-    for blob in blobs:
-        print(f"\n * Downloading data file '{blob.name}' ...\n")
-        blob_dir, file_name = os.path.split(blob.name)
-        if (
-            file_name == ""
-        ):  # If the object blob path is a directory continue searching for files
-            continue
-        blob_local_dir = os.path.join(datasets_path, blob_dir)
-        if not os.path.exists(blob_local_dir):
-            os.makedirs(blob_local_dir)
-        cloud_storage.download_blob(blob, os.path.join(blob_local_dir, file_name))
-
+    cloud_storage.download_dataset(dataset_id, datasets_path)
     print(f"\nDataset {dataset_id} downloaded to {file_path}")
 
     # Skip a force download of an incompatible dataset version
@@ -202,23 +192,17 @@ def list_remote_datasets(
     """
     from minari import supported_dataset_versions
 
-    def blob_to_metadata(blob):
-        try:
-            if os.path.basename(blob.name) == METADATA_FILE_NAME:
-                metadata = json.loads(blob.download_as_bytes(client=None))
-                if (
-                    compatible_minari_version
-                    and metadata["minari_version"] not in supported_dataset_versions
-                ):
-                    return
-                return metadata
-        except Exception:
-            warnings.warn(f"Misconfigured dataset named {blob.name} on remote")
-
     cloud_storage = get_cloud_storage()
-    blobs = cloud_storage.list_blobs()
+
+    def download_metadata(dataset_id):
+        metadata = cloud_storage.get_dataset_metadata(dataset_id)
+        supported_dataset = metadata.get("minari_version") in supported_dataset_versions
+        if supported_dataset or not compatible_minari_version:
+            return metadata
+
+    dataset_ids = cloud_storage.list_datasets()
     with ThreadPoolExecutor(max_workers=10) as executor:
-        remote_metadatas = executor.map(blob_to_metadata, blobs)
+        remote_metadatas = executor.map(download_metadata, dataset_ids)
 
     remote_datasets = {}
     max_version = defaultdict(dict)

@@ -13,10 +13,19 @@ def get_gcps() -> Type[CloudStorage]:
     return GCPStorage
 
 
-_registry: Dict[str, Callable[[], Type[CloudStorage]]] = {"gcp": get_gcps}
+def get_hfs() -> Type[CloudStorage]:
+    from .huggingface import HuggingFaceStorage
+
+    return HuggingFaceStorage
 
 
-def get_cloud_storage(key_path=None) -> CloudStorage:
+_registry: Dict[str, Callable[[], Type[CloudStorage]]] = {
+    "gcp": get_gcps,
+    "hf": get_hfs,
+}
+
+
+def get_cloud_storage(token=None) -> CloudStorage:
     remote_spec = os.getenv("MINARI_REMOTE", DEFAULT_REMOTE)
     cloud_type, name = remote_spec.split("://", maxsplit=1)
-    return _registry[cloud_type]()(name, key_path)
+    return _registry[cloud_type]()(name, token)

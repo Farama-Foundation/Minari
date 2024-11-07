@@ -72,7 +72,7 @@ def list_local_datasets(
     """
     from minari import supported_dataset_versions
 
-    datasets_path = get_dataset_path("")
+    datasets_path = get_dataset_path()
     dataset_ids = []
 
     def recurse_directories(base_path, namespace):

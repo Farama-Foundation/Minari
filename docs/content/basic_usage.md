@@ -53,13 +53,18 @@ minari list remote
 │             ...                │       ...      │     ...     │     ...      │       ...       │
 ```
 
+Minari supports storing datasets on remote servers, including Google Cloud Platform (GCP) and Hugging Face Hub.
 To use your own server with Minari, set the `MINARI_REMOTE` environment variable in the format `remote-type://remote-path`. For example, to set up a GCP bucket named `my-datasets`, run the following command:
 
 ```bash
 export MINARI_REMOTE=gcp://my-datasets
 ```
 
-Currently, only GCP is supported, but we plan to support other cloud providers in the future.
+To access the Minari datasets of a user or organization on HuggingFace, you can use the format `hf://username-or-org`. For example, for `farama-minari` organization:
+
+```bash
+export MINARI_REMOTE=hf://farama-minari
+```
 
 
 ```{eval-rst}

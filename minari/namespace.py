@@ -3,7 +3,7 @@ import json
 import os
 import re
 import warnings
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Iterable, List, Optional
 
 from minari.storage import get_dataset_path
 from minari.storage.hosting import get_cloud_storage
@@ -46,6 +46,13 @@ def create_namespace(
 
     with open(directory / NAMESPACE_METADATA_FILENAME, "w") as file:
         json.dump(metadata, file)
+
+    local_namespaces = list_local_namespaces()
+    for parent_namespace in namespace_hierarchy(namespace):
+        if parent_namespace not in local_namespaces:
+            parent_namespace_path = get_dataset_path(parent_namespace)
+            with open(parent_namespace_path / NAMESPACE_METADATA_FILENAME, "w") as file:
+                json.dump({}, file)
 
 
 def update_namespace_metadata(
@@ -137,7 +144,7 @@ def list_local_namespaces() -> List[str]:
     Returns:
        List[str]: names of all local namespaces.
     """
-    datasets_path = get_dataset_path("")
+    datasets_path = get_dataset_path()
     namespaces = []
 
     def recurse_directories(base_path, namespace):
@@ -168,16 +175,8 @@ def list_remote_namespaces() -> List[str]:
        List[str]: names of all remote namespaces.
     """
     cloud_storage = get_cloud_storage()
-    blobs = cloud_storage.list_blobs()
-
-    remote_namespaces = []
-
-    for blob in blobs:
-        if os.path.basename(blob.name) == NAMESPACE_METADATA_FILENAME:
-            namespace = os.path.dirname(blob.name)
-            remote_namespaces.append(namespace)
-
-    return remote_namespaces
+    remote_namespaces = cloud_storage.list_namespaces()
+    return list(remote_namespaces)
 
 
 def download_namespace_metadata(namespace: str, overwrite: bool = False) -> None:
@@ -190,25 +189,17 @@ def download_namespace_metadata(namespace: str, overwrite: bool = False) -> None
         overwrite (bool): whether to overwrite existing local metadata. Defaults to False.
     """
     validate_namespace(namespace)
-
     if namespace not in list_remote_namespaces():
         raise ValueError(
             f"The namespace '{namespace}' doesn't exist in the remote Farama server."
         )
 
-    metadata_filename = os.path.join(namespace, NAMESPACE_METADATA_FILENAME)
     cloud_storage = get_cloud_storage()
-    blobs = list(cloud_storage.list_blobs(prefix=metadata_filename))
-
-    if not blobs:
-        return
-
-    assert len(blobs) == 1
 
     if overwrite or namespace not in list_local_namespaces():
-        directory = get_dataset_path(namespace)
-        os.makedirs(directory, exist_ok=True)
-        blobs[0].download_to_filename(directory / NAMESPACE_METADATA_FILENAME)
+        data_path = get_dataset_path()
+        (data_path / namespace).mkdir(parents=True, exist_ok=True)
+        cloud_storage.download_namespace_metadata(namespace, data_path)
     else:
         warnings.warn(
             f"Skipping update for namespace '{namespace}' due to existing local metadata. Set overwrite=True to overwrite local data.",
@@ -216,7 +207,7 @@ def download_namespace_metadata(namespace: str, overwrite: bool = False) -> None
         )
 
 
-def upload_namespace(namespace: str, key_path: str) -> None:
+def upload_namespace(namespace: str, token: str) -> None:
     """Upload a local namespace to the remote server.
 
     If you would like to upload a namespace please first get in touch with the Farama team at contact@farama.org.
@@ -225,27 +216,43 @@ def upload_namespace(namespace: str, key_path: str) -> None:
 
     Args:
         namespace (str): identifier for the local namespace.
-        key_path (str): path to the credentials file.
+        token (str): authentication token for the remote server.
+            Notice, that for GCP, this is the path to the service account key file, while for Hugging Face, this is the API token.
     """
     validate_namespace(namespace)
-
-    if namespace not in list_local_namespaces():
+    local_namespaces = list_local_namespaces()
+    remote_namespaces = list_remote_namespaces()
+    if namespace not in local_namespaces:
         raise ValueError(f"Namespace '{namespace}' does not exist locally.")
-
-    if namespace in list_remote_namespaces():
+    if namespace in remote_namespaces:
         warnings.warn(
             f"Upload aborted. Namespace '{namespace}' is already in remote.",
             UserWarning,
         )
         return
 
-    cloud_storage = get_cloud_storage(key_path=key_path)
+    cloud_storage = get_cloud_storage(token=token)
+    for parent_namespace in namespace_hierarchy(namespace):
+        if (
+            parent_namespace in local_namespaces
+            and parent_namespace not in remote_namespaces
+        ):
+            print(f"Uploading namespace '{parent_namespace}'")
+            cloud_storage.upload_namespace(parent_namespace)
 
-    print(f"Uploading namespace '{namespace}'")
 
-    local_filepath = get_dataset_path(namespace) / NAMESPACE_METADATA_FILENAME
-    remote_filepath = os.path.join(namespace, NAMESPACE_METADATA_FILENAME)
-    cloud_storage.upload_file(local_filepath, remote_filepath)
+def namespace_hierarchy(namespace: str) -> Iterable[str]:
+    """Get all parent namespaces of a given namespace.
+
+    Args:
+        namespace (str): identifier for the local namespace.
+
+    Returns:
+        Iterable[str]: names of all parent namespaces.
+    """
+    namespace_parts = namespace.split(os.sep)
+    for i in range(len(namespace_parts)):
+        yield os.path.join(*namespace_parts[: i + 1])
 
 
 def validate_namespace(namespace: Optional[str]) -> None:

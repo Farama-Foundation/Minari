@@ -33,19 +33,16 @@ def _version_callback(value: bool):
 
 def _show_dataset_table(datasets: Dict[str, Dict[str, Any]], table_title: str):
     # Collect compatible versions of each dataset
-    dataset_versions = defaultdict(list)
+    dataset_hierarchy = defaultdict(lambda: defaultdict(list))
 
+    display_versions = False
     for dataset_id in datasets.keys():
         namespace, dataset_name, version = parse_dataset_id(dataset_id)
-        dataset_id_versionless = gen_dataset_id(namespace, dataset_name)
-        dataset_versions[dataset_id_versionless].append(version)
-
-    # "Versions" column is only displayed if there are multiple versions
-    display_versions = any([len(x) > 1 for x in dataset_versions.values()])
+        dataset_hierarchy[namespace][dataset_name].append(version)
+        display_versions |= len(dataset_hierarchy[namespace][dataset_name]) > 1
 
     # Build the Rich Table
     table = Table(title=table_title)
-
     table.add_column("Name", justify="left", style="cyan", no_wrap=True)
 
     if display_versions:
@@ -56,54 +53,49 @@ def _show_dataset_table(datasets: Dict[str, Dict[str, Any]], table_title: str):
     table.add_column("Dataset Size", justify="left", style="green", no_wrap=True)
     table.add_column("Author", justify="left", style="magenta", no_wrap=True)
 
-    previous_namespace = None
+    for namespace, namespace_datasets in dataset_hierarchy.items():
+        for dataset_name, versions in namespace_datasets.items():
+            dataset_id = gen_dataset_id(namespace, dataset_name, max(versions))
 
-    for dataset_prefix, versions in dataset_versions.items():
-        dataset_id = f"{dataset_prefix}-v{max(versions)}"
-        dst_metadata = datasets[dataset_id]
-        author = dst_metadata.get("author", "Unknown")
-        if not isinstance(author, str) and isinstance(author, Iterable):
-            author = ", ".join(author)
-        dataset_size = dst_metadata.get("dataset_size", "Unknown")
-        if dataset_size != "Unknown":
-            dataset_size = f"{str(dataset_size)} MB"
-        author_email = dst_metadata.get("author_email", "Unknown")
-        if not isinstance(author_email, str) and isinstance(author_email, Iterable):
-            author_email = ", ".join(author_email)
+            dst_metadata = datasets[dataset_id]
+            author = dst_metadata.get("author", "Unknown")
+            if not isinstance(author, str) and isinstance(author, Iterable):
+                author = ", ".join(author)
+            dataset_size = dst_metadata.get("dataset_size", "Unknown")
+            if dataset_size != "Unknown":
+                dataset_size = f"{str(dataset_size)} MB"
+            author_email = dst_metadata.get("author_email", "Unknown")
+            if not isinstance(author_email, str) and isinstance(author_email, Iterable):
+                author_email = ", ".join(author_email)
 
-        assert isinstance(dst_metadata["dataset_id"], str)
-        assert isinstance(author, str)
-        assert isinstance(author_email, str)
+            assert isinstance(dst_metadata["dataset_id"], str)
+            assert isinstance(author, str)
+            assert isinstance(author_email, str)
 
-        docs_url = dst_metadata.get("docs_url", None)
-        compatible_versions = ", ".join(
-            [f"v{x}" for x in sorted(versions, reverse=True)]
-        )
+            docs_url = dst_metadata.get("docs_url", None)
+            compatible_versions = ", ".join(
+                [f"v{x}" for x in sorted(versions, reverse=True)]
+            )
 
-        if docs_url is not None:
-            dataset_id_text = f"[link={docs_url}]{dataset_id}[/link]"
-        else:
-            dataset_id_text = dataset_id
+            if docs_url is not None:
+                dataset_id_text = f"[link={docs_url}]{dataset_id}[/link]"
+            else:
+                dataset_id_text = dataset_id
 
-        namespace, _, _ = parse_dataset_id(dataset_id)
+            # Build the current table row
+            rows = []
+            rows.append(dataset_id_text)
 
-        if namespace != previous_namespace:
-            table.add_section()
-            previous_namespace = namespace
+            if display_versions:
+                rows.append(compatible_versions)
 
-        # Build the current table row
-        rows = []
-        rows.append(dataset_id_text)
+            rows.append(str(dst_metadata["total_episodes"]))
+            rows.append(str(dst_metadata["total_steps"]))
+            rows.append(dataset_size)
+            rows.append(author)
+            table.add_row(*rows)
 
-        if display_versions:
-            rows.append(compatible_versions)
-
-        rows.append(str(dst_metadata["total_episodes"]))
-        rows.append(str(dst_metadata["total_steps"]))
-        rows.append(dataset_size)
-        rows.append(author)
-        table.add_row(*rows)
-
+        table.add_section()
     print(table)
 
 
@@ -175,7 +167,7 @@ def show(dataset: Annotated[str, typer.Argument()]):
         if dataset in remote_datasets:
             dst_metadata = remote_datasets[dataset]
         else:
-            local_dataset_path = get_dataset_path("")
+            local_dataset_path = get_dataset_path()
             print(
                 Text(
                     f"""The dataset `{dataset}` can't be found locally"""
@@ -248,7 +240,7 @@ def delete(datasets: Annotated[List[str], typer.Argument()]):
     local_dsts = local.list_local_datasets()
     non_matching_local = [dst for dst in datasets if dst not in local_dsts]
     if len(non_matching_local) > 0:
-        local_dataset_path = get_dataset_path("")
+        local_dataset_path = get_dataset_path()
         tree = Tree(
             f"The following datasets can't be found locally at `{local_dataset_path}`",
             style="red",
@@ -325,7 +317,7 @@ def upload(
     # check that the given local datasets exist
     non_matching_local = [dst for dst in datasets if dst not in local_dsts]
     if len(non_matching_local) > 0:
-        local_dataset_path = get_dataset_path("")
+        local_dataset_path = get_dataset_path()
         tree = Tree(
             f"The following datasets can't be found locally at `{local_dataset_path}`",
             style="red",
@@ -370,7 +362,7 @@ def combine(
     # check list of local datasets to combine exist
     non_matching_local = [dst for dst in datasets if dst not in local_dsts]
     if len(non_matching_local) > 0:
-        local_dataset_path = get_dataset_path("")
+        local_dataset_path = get_dataset_path()
         tree = Tree(
             f"The following datasets can't be found locally at `{local_dataset_path}`",
             style="red",
