@@ -105,7 +105,7 @@ class HuggingFaceStorage(CloudStorage):
         )
 
     def list_datasets(self, prefix: Optional[str] = None) -> Iterable[str]:
-        if prefix is not None: # TODO: support prefix
+        if prefix is not None:  # TODO: support prefix
             raise NotImplementedError("prefix is not supported yet")
 
         for hf_dataset in self._api.list_datasets(author=self.name):
