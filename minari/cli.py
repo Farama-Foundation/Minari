@@ -39,7 +39,7 @@ def _show_dataset_table(datasets: Dict[str, Dict[str, Any]], table_title: str):
     for dataset_id in datasets.keys():
         namespace, dataset_name, version = parse_dataset_id(dataset_id)
         dataset_hierarchy[namespace][dataset_name].append(version)
-        display_versions = display_versions or len(dataset_hierarchy[namespace][dataset_name]) > 1
+        display_versions |= len(dataset_hierarchy[namespace][dataset_name]) > 1
 
     # Build the Rich Table
     table = Table(title=table_title)
@@ -94,7 +94,7 @@ def _show_dataset_table(datasets: Dict[str, Dict[str, Any]], table_title: str):
             rows.append(dataset_size)
             rows.append(author)
             table.add_row(*rows)
-        
+
         table.add_section()
     print(table)
 
