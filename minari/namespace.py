@@ -47,8 +47,9 @@ def create_namespace(
     with open(directory / NAMESPACE_METADATA_FILENAME, "w") as file:
         json.dump(metadata, file)
 
+    local_namespaces = list_local_namespaces()
     for parent_namespace in namespace_hierarchy(namespace):
-        if parent_namespace not in list_local_namespaces():
+        if parent_namespace not in local_namespaces:
             parent_namespace_path = get_dataset_path(parent_namespace)
             with open(parent_namespace_path / NAMESPACE_METADATA_FILENAME, "w") as file:
                 json.dump({}, file)
@@ -232,7 +233,6 @@ def upload_namespace(namespace: str, token: str) -> None:
 
     cloud_storage = get_cloud_storage(token=token)
     for parent_namespace in namespace_hierarchy(namespace):
-        # TODO if parent_namespace in local_namespaces  in all_parents_namespace?
         if (
             parent_namespace in local_namespaces
             and parent_namespace not in remote_namespaces
