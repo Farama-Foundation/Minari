@@ -308,7 +308,7 @@ def download(
 @app.command()
 def upload(
     datasets: Annotated[List[str], typer.Argument()],
-    key_path: Annotated[str, typer.Option()],
+    token: Annotated[str, typer.Option()],
 ):
     """Upload Minari datasets to the remote Farama server."""
     local_dsts = local.list_local_datasets()
@@ -342,7 +342,7 @@ def upload(
 
     # Upload datasets
     for dst in datasets:
-        hosting.upload_dataset(dst, key_path)
+        hosting.upload_dataset(dst, token)
 
 
 @app.command()
