@@ -5,7 +5,7 @@ import os
 import warnings
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from minari.dataset.minari_dataset import gen_dataset_id, parse_dataset_id
 from minari.dataset.minari_storage import MinariStorage
@@ -180,6 +180,7 @@ def download_dataset(dataset_id: str, force_download: bool = False):
 def list_remote_datasets(
     latest_version: bool = False,
     compatible_minari_version: bool = False,
+    prefix: Optional[str] = None,
 ) -> Dict[str, Dict[str, str]]:
     """Get the names and metadata of all the Minari datasets in the remote Farama server.
 
@@ -200,7 +201,7 @@ def list_remote_datasets(
         if supported_dataset or not compatible_minari_version:
             return metadata
 
-    dataset_ids = cloud_storage.list_datasets()
+    dataset_ids = cloud_storage.list_datasets(prefix=prefix)
     with ThreadPoolExecutor(max_workers=10) as executor:
         remote_metadatas = executor.map(download_metadata, dataset_ids)
 

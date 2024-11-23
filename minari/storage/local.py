@@ -3,7 +3,7 @@ import os
 import pathlib
 import shutil
 import warnings
-from typing import Dict, Iterable, Tuple, Union
+from typing import Dict, Iterable, Optional, Tuple, Union
 
 from minari.dataset.minari_dataset import (
     MinariDataset,
@@ -19,9 +19,9 @@ from minari.storage.datasets_root_dir import get_dataset_path
 __version__ = importlib.metadata.version("minari")
 
 
-def list_non_hidden_dirs(path: str) -> Iterable[str]:
+def list_non_hidden_dirs(path: pathlib.Path) -> Iterable[str]:
     """List all non-hidden subdirectories."""
-    for d in os.scandir(path):
+    for d in path.iterdir():
         if d.is_dir() and (not d.name.startswith(".")):
             yield d.name
 
@@ -60,6 +60,7 @@ def load_dataset(dataset_id: str, download: bool = False):
 def list_local_datasets(
     latest_version: bool = False,
     compatible_minari_version: bool = False,
+    prefix: Optional[str] = None,
 ) -> Dict[str, Dict[str, Union[str, int, bool]]]:
     """Get the ids and metadata of all the Minari datasets in the local database.
 
@@ -75,8 +76,11 @@ def list_local_datasets(
     datasets_path = get_dataset_path()
     dataset_ids = []
 
-    def recurse_directories(base_path, namespace):
-        parent_dir = os.path.join(base_path, namespace)
+    def recurse_directories(base_path: pathlib.Path, namespace):
+        parent_dir = base_path.joinpath(namespace)
+        if not parent_dir.exists():
+            return
+
         for dir_name in list_non_hidden_dirs(parent_dir):
             dir_path = os.path.join(parent_dir, dir_name)
             namespaced_dir_name = os.path.join(namespace, dir_name)
@@ -86,7 +90,7 @@ def list_local_datasets(
             else:
                 recurse_directories(base_path, namespaced_dir_name)
 
-    recurse_directories(datasets_path, "")
+    recurse_directories(datasets_path, prefix or "")
 
     dataset_ids = sorted(dataset_ids, key=dataset_id_sort_key)
 
