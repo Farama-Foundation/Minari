@@ -3,6 +3,7 @@ import json
 import os
 import re
 import warnings
+from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional
 
 from minari.storage import get_dataset_path
@@ -147,8 +148,8 @@ def list_local_namespaces() -> List[str]:
     datasets_path = get_dataset_path()
     namespaces = []
 
-    def recurse_directories(base_path, namespace):
-        parent_dir = os.path.join(base_path, namespace)
+    def recurse_directories(base_path: Path, namespace):
+        parent_dir = base_path.joinpath(namespace)
         for dir_name in list_non_hidden_dirs(parent_dir):
             dir_path = os.path.join(parent_dir, dir_name)
             namespaced_dir_name = os.path.join(namespace, dir_name)

@@ -105,31 +105,38 @@ class HuggingFaceStorage(CloudStorage):
         )
 
     def list_datasets(self, prefix: Optional[str] = None) -> Iterable[str]:
-        if prefix is not None:  # TODO: support prefix
-            raise NotImplementedError("prefix is not supported yet")
+        if prefix is not None:
+            group_name, _ = self._decompose_path(prefix)
+        else:
+            prefix = ""
+            group_name = None
 
-        for hf_dataset in self._api.list_datasets(author=self.name):
+        hf_datasets = self._api.list_datasets(author=self.name, dataset_name=group_name)
+        for group_info in hf_datasets:
             try:
                 repo_metadata = self._api.hf_hub_download(
-                    repo_id=hf_dataset.id,
+                    repo_id=group_info.id,
                     filename=_NAMESPACE_METADATA_FILENAME,
                     repo_type="dataset",
                 )
             except EntryNotFoundError:
                 try:
                     self._api.hf_hub_download(
-                        repo_id=hf_dataset.id,
+                        repo_id=group_info.id,
                         filename=f"data/{METADATA_FILE_NAME}",
                         repo_type="dataset",
                     )
-                    yield hf_dataset.id
+                    if group_info.id.startswith(prefix):
+                        yield group_info.id
                 except Exception:
-                    warnings.warn(f"Skipping {hf_dataset.id} as it is malformed.")
+                    warnings.warn(f"Skipping {group_info.id} as it is malformed.")
             else:
                 with open(repo_metadata) as f:
                     namespace_metadata = json.load(f)
 
-                yield from namespace_metadata.get("datasets", [])
+                group_datasets = namespace_metadata.get("datasets", [])
+                group_datasets = filter(lambda x: x.startswith(prefix), group_datasets)
+                yield from group_datasets
 
     def download_dataset(self, dataset_id: Any, path: Path) -> None:
         repo_id, path_in_repo = self._decompose_path(dataset_id)
