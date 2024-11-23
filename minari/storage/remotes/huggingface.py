@@ -28,8 +28,8 @@ class HuggingFaceStorage(CloudStorage):
         self._api = HfApi(token=token)
 
     def _decompose_path(self, path: str) -> Tuple[str, str]:
-        root, *rem = path.split('/')
-        return root, '/'.join(rem)
+        root, *rem = path.split("/")
+        return root, "/".join(rem)
 
     def upload_dataset(self, dataset_id: str) -> None:
         path = get_dataset_path(dataset_id)
@@ -108,13 +108,10 @@ class HuggingFaceStorage(CloudStorage):
         if prefix is not None:
             group_name, _ = self._decompose_path(prefix)
         else:
-            prefix = ''
+            prefix = ""
             group_name = None
 
-        hf_datasets = self._api.list_datasets(
-            author=self.name,
-            dataset_name=group_name
-        )
+        hf_datasets = self._api.list_datasets(author=self.name, dataset_name=group_name)
         for group_info in hf_datasets:
             try:
                 repo_metadata = self._api.hf_hub_download(
