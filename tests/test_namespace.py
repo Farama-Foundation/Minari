@@ -121,9 +121,7 @@ def test_download_namespace_dataset():
     assert list_local_namespaces() == ["D4RL", "D4RL/kitchen"]
     namespace_metadatas = {}
     for local_namespace in list_local_namespaces():
-        namespace_metadatas[local_namespace] = get_namespace_metadata(
-            local_namespace
-        )
+        namespace_metadatas[local_namespace] = get_namespace_metadata(local_namespace)
         assert namespace_metadatas[local_namespace] != {}
 
     minari.download_dataset(kitchen_mix)
@@ -169,7 +167,5 @@ def test_download_namespace_metadata(namespace):
     download_namespace_metadata(namespace, overwrite=True)
     assert get_namespace_metadata(namespace) != metadata
 
-    with pytest.raises(
-        ValueError, match="doesn't exist in the remote Farama server."
-    ):
+    with pytest.raises(ValueError, match="doesn't exist in the remote Farama server."):
         download_namespace_metadata("non_existent_namespace")

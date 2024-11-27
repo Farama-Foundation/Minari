@@ -1,4 +1,5 @@
 import random
+
 import pytest
 from typer.testing import CliRunner
 
@@ -8,6 +9,7 @@ from tests.dataset.test_dataset_download import get_latest_compatible_dataset_id
 
 
 runner = CliRunner()
+
 
 def test_list_app():
     result = runner.invoke(app, ["list", "local", "--all"])
@@ -52,7 +54,9 @@ def test_dataset_download_then_delete(dataset_id: str):
 @pytest.mark.parametrize(
     "dataset_id",
     random.sample(
-        sorted(list_remote_datasets(compatible_minari_version=True, latest_version=True)),
+        sorted(
+            list_remote_datasets(compatible_minari_version=True, latest_version=True)
+        ),
         k=8,
     ),
 )
