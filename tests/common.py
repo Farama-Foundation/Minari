@@ -707,14 +707,14 @@ def get_latest_compatible_dataset_id(namespace, dataset_name):
 
 
 def skip_if_error(error_type):
-    """
-    A decorator to ignore specific error types during test execution.
+    """A decorator to ignore specific error types during test execution.
 
     :param error_type: The type of error to ignore
     :return: Decorated test function
     """
+
     def decorator(func):
-        @functools.wraps(func)    
+        @functools.wraps(func)
         def wrapper(*args, **kwargs):
             try:
                 return func(*args, **kwargs)
