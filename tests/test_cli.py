@@ -1,8 +1,8 @@
 import random
 
 import pytest
-from typer.testing import CliRunner
 from huggingface_hub.errors import HfHubHTTPError
+from typer.testing import CliRunner
 
 from minari.cli import app
 from minari.storage.hosting import list_remote_datasets
@@ -25,11 +25,11 @@ def test_list_app():
     assert "Minari datasets in " in result.stdout
 
 
-@skip_if_error(HfHubHTTPError)
 @pytest.mark.parametrize(
     "dataset_id",
     [get_latest_compatible_dataset_id(namespace="D4RL/pen", dataset_name="human")],
 )
+@skip_if_error(HfHubHTTPError)
 def test_dataset_download_then_delete(dataset_id: str):
     """Test download dataset invocation from CLI.
 
@@ -55,7 +55,6 @@ def test_dataset_download_then_delete(dataset_id: str):
     assert f"Dataset {dataset_id} deleted!" in result.stdout
 
 
-@skip_if_error(HfHubHTTPError)
 @pytest.mark.parametrize(
     "dataset_id",
     random.sample(
@@ -65,6 +64,7 @@ def test_dataset_download_then_delete(dataset_id: str):
         k=8,
     ),
 )
+@skip_if_error(HfHubHTTPError)
 def test_minari_show(dataset_id):
     result = runner.invoke(app, ["show", dataset_id])
     assert result.exit_code == 0
