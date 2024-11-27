@@ -6,6 +6,7 @@ import gymnasium as gym
 import numpy as np
 from gymnasium import spaces
 from gymnasium.utils.env_checker import data_equivalence
+import pytest
 
 import minari
 from minari import DataCollector, EpisodeData, MinariDataset, StepData
@@ -702,3 +703,20 @@ def get_latest_compatible_dataset_id(namespace, dataset_name):
 
     assert len(latest_compatible_versions) == 1
     return gen_dataset_id(namespace, dataset_name, latest_compatible_versions[0])
+
+
+def skip_if_error(error_type):
+    """
+    A decorator to ignore specific error types during test execution.
+    
+    :param error_type: The type of error to ignore
+    :return: Decorated test function
+    """
+    def decorator(func):
+        def wrapper(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except error_type:
+                pytest.skip(f"Skipping test due to {error_type.__name__}")
+        return wrapper
+    return decorator

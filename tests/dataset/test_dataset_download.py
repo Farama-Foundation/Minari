@@ -1,14 +1,16 @@
 import pytest
+from huggingface_hub.errors import HfHubHTTPError
 
 import minari
 from minari import MinariDataset
 from minari.storage.datasets_root_dir import get_dataset_path
-from tests.common import check_data_integrity, get_latest_compatible_dataset_id
+from tests.common import check_data_integrity, get_latest_compatible_dataset_id, skip_if_error
 
 
 env_names = ["pen", "door", "hammer", "relocate"]
 
 
+@skip_if_error(HfHubHTTPError)
 @pytest.mark.parametrize(
     "dataset_id",
     [
@@ -53,6 +55,7 @@ def test_download_dataset_from_farama_server(dataset_id: str):
     assert dataset_id not in local_datasets
 
 
+@skip_if_error(HfHubHTTPError)
 @pytest.mark.parametrize(
     "dataset_id",
     [
@@ -73,6 +76,7 @@ def test_load_dataset_with_download(dataset_id: str):
     minari.delete_dataset(dataset_id)
 
 
+@skip_if_error(HfHubHTTPError)
 def test_download_error_messages(monkeypatch):
     # 1. Check if there are any remote versions of the dataset at all
     with pytest.raises(ValueError, match="Couldn't find any version for dataset"):
