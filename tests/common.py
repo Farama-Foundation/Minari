@@ -1,9 +1,11 @@
+import functools
 import sys
 import unicodedata
 from typing import Any, Dict, List, Optional, Union
 
 import gymnasium as gym
 import numpy as np
+import pytest
 from gymnasium import spaces
 from gymnasium.utils.env_checker import data_equivalence
 
@@ -702,3 +704,23 @@ def get_latest_compatible_dataset_id(namespace, dataset_name):
 
     assert len(latest_compatible_versions) == 1
     return gen_dataset_id(namespace, dataset_name, latest_compatible_versions[0])
+
+
+def skip_if_error(error_type):
+    """A decorator to ignore specific error types during test execution.
+
+    :param error_type: The type of error to ignore
+    :return: Decorated test function
+    """
+
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except error_type:
+                pytest.skip(f"Skipping test due to {error_type.__name__}")
+
+        return wrapper
+
+    return decorator

@@ -242,7 +242,7 @@ def upload_namespace(namespace: str, token: str) -> None:
             cloud_storage.upload_namespace(parent_namespace)
 
 
-def namespace_hierarchy(namespace: str) -> Iterable[str]:
+def namespace_hierarchy(namespace: Optional[str]) -> Iterable[str]:
     """Get all parent namespaces of a given namespace.
 
     Args:
@@ -251,6 +251,9 @@ def namespace_hierarchy(namespace: str) -> Iterable[str]:
     Returns:
         Iterable[str]: names of all parent namespaces.
     """
+    if namespace is None:
+        return []
+
     namespace_parts = namespace.split(os.sep)
     for i in range(len(namespace_parts)):
         yield os.path.join(*namespace_parts[: i + 1])

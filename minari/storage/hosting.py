@@ -194,21 +194,16 @@ def list_remote_datasets(
     from minari import supported_dataset_versions
 
     cloud_storage = get_cloud_storage()
-
-    def download_metadata(dataset_id):
-        metadata = cloud_storage.get_dataset_metadata(dataset_id)
-        supported_dataset = metadata.get("minari_version") in supported_dataset_versions
-        if supported_dataset or not compatible_minari_version:
-            return metadata
-
     dataset_ids = cloud_storage.list_datasets(prefix=prefix)
+
     with ThreadPoolExecutor(max_workers=10) as executor:
-        remote_metadatas = executor.map(download_metadata, dataset_ids)
+        remote_metadatas = executor.map(cloud_storage.get_dataset_metadata, dataset_ids)
 
     remote_datasets = {}
     max_version = defaultdict(dict)
     for metadata in remote_metadatas:
-        if metadata is None:
+        supported_dataset = metadata.get("minari_version") in supported_dataset_versions
+        if compatible_minari_version and not supported_dataset:
             continue
 
         dataset_id = metadata["dataset_id"]

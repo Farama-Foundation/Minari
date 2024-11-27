@@ -1,9 +1,14 @@
 import pytest
+from huggingface_hub.errors import HfHubHTTPError
 
 import minari
 from minari import MinariDataset
 from minari.storage.datasets_root_dir import get_dataset_path
-from tests.common import check_data_integrity, get_latest_compatible_dataset_id
+from tests.common import (
+    check_data_integrity,
+    get_latest_compatible_dataset_id,
+    skip_if_error,
+)
 
 
 env_names = ["pen", "door", "hammer", "relocate"]
@@ -18,8 +23,8 @@ env_names = ["pen", "door", "hammer", "relocate"]
         for env_name in env_names
     ],
 )
-@pytest.mark.parametrize("remote_name", [None, "hf://farama-minari"])
-def test_download_dataset_from_farama_server(dataset_id: str, remote_name):
+@skip_if_error(HfHubHTTPError)
+def test_download_dataset_from_farama_server(dataset_id: str):
     """Test downloading Minari datasets from remote server.
 
     Use 'human' adroit test since they are not excessively heavy.
@@ -27,35 +32,31 @@ def test_download_dataset_from_farama_server(dataset_id: str, remote_name):
     Args:
         dataset_id (str): name of the remote Minari dataset.
     """
-    with pytest.MonkeyPatch.context() as mp:
-        if remote_name:
-            mp.setenv("MINARI_REMOTE", remote_name)
+    remote_datasets = minari.list_remote_datasets()
+    assert dataset_id in remote_datasets
 
-        remote_datasets = minari.list_remote_datasets()
-        assert dataset_id in remote_datasets
+    minari.download_dataset(dataset_id, force_download=True)
+    local_datasets = minari.list_local_datasets()
+    assert dataset_id in local_datasets
 
-        minari.download_dataset(dataset_id, force_download=True)
-        local_datasets = minari.list_local_datasets()
-        assert dataset_id in local_datasets
+    file_path = get_dataset_path(dataset_id)
 
-        file_path = get_dataset_path(dataset_id)
+    with pytest.warns(
+        UserWarning,
+        match=f"Skipping Download. Dataset {dataset_id} found locally at {file_path}, Use force_download=True to download the dataset again.\n",
+    ):
+        download_dataset_output = minari.download_dataset(dataset_id)
 
-        with pytest.warns(
-            UserWarning,
-            match=f"Skipping Download. Dataset {dataset_id} found locally at {file_path}, Use force_download=True to download the dataset again.\n",
-        ):
-            download_dataset_output = minari.download_dataset(dataset_id)
+    assert download_dataset_output is None
 
-        assert download_dataset_output is None
+    dataset = minari.load_dataset(dataset_id)
+    assert isinstance(dataset, MinariDataset)
 
-        dataset = minari.load_dataset(dataset_id)
-        assert isinstance(dataset, MinariDataset)
+    check_data_integrity(dataset, list(dataset.episode_indices))
 
-        check_data_integrity(dataset, list(dataset.episode_indices))
-
-        minari.delete_dataset(dataset_id)
-        local_datasets = minari.list_local_datasets()
-        assert dataset_id not in local_datasets
+    minari.delete_dataset(dataset_id)
+    local_datasets = minari.list_local_datasets()
+    assert dataset_id not in local_datasets
 
 
 @pytest.mark.parametrize(
@@ -67,22 +68,19 @@ def test_download_dataset_from_farama_server(dataset_id: str, remote_name):
         for env_name in env_names
     ],
 )
-@pytest.mark.parametrize("remote_name", [None, "hf://farama-minari"])
-def test_load_dataset_with_download(dataset_id: str, remote_name):
+@skip_if_error(HfHubHTTPError)
+def test_load_dataset_with_download(dataset_id: str):
     """Test load dataset with and without download."""
-    with pytest.MonkeyPatch.context() as mp:
-        if remote_name:
-            mp.setenv("MINARI_REMOTE", remote_name)
+    with pytest.raises(FileNotFoundError):
+        dataset = minari.load_dataset(dataset_id)
 
-        with pytest.raises(FileNotFoundError):
-            dataset = minari.load_dataset(dataset_id)
+    dataset = minari.load_dataset(dataset_id, download=True)
+    assert isinstance(dataset, MinariDataset)
 
-        dataset = minari.load_dataset(dataset_id, download=True)
-        assert isinstance(dataset, MinariDataset)
-
-        minari.delete_dataset(dataset_id)
+    minari.delete_dataset(dataset_id)
 
 
+@skip_if_error(HfHubHTTPError)
 def test_download_error_messages(monkeypatch):
     # 1. Check if there are any remote versions of the dataset at all
     with pytest.raises(ValueError, match="Couldn't find any version for dataset"):

@@ -1,8 +1,8 @@
 """Minari CLI commands."""
 
 import os
-from collections import defaultdict
-from typing import Any, Dict, Iterable, List, Optional
+from collections import deque
+from typing import Any, Dict, List, Optional
 from typing_extensions import Annotated
 
 import typer
@@ -14,8 +14,10 @@ from rich.text import Text
 from rich.tree import Tree
 
 from minari import __version__
-from minari.dataset.minari_dataset import gen_dataset_id, parse_dataset_id
+from minari.dataset.minari_dataset import parse_dataset_id
+from minari.namespace import namespace_hierarchy
 from minari.storage import get_dataset_path, hosting, local
+from minari.storage.remotes import DEFAULT_REMOTE
 from minari.utils import combine_datasets, get_dataset_spec_dict, get_env_spec_dict
 
 
@@ -31,71 +33,126 @@ def _version_callback(value: bool):
         raise typer.Exit()
 
 
+class TableTree:
+
+    def __init__(
+        self,
+        name: Optional[str] = None,
+        total_episodes: int = 0,
+        total_steps: int = 0,
+        size: float = 0,
+        authors: Optional[set] = None,
+        count: int = 0,
+        sub_nodes: Optional[Dict] = None,
+        docs_url: Optional[str] = None,
+    ):
+        self.name = name
+        self.total_episodes = total_episodes
+        self.total_steps = total_steps
+        self.size = size
+        self.authors = authors if authors is not None else set()
+        self.count = count
+        self.sub_nodes = sub_nodes if sub_nodes is not None else {}
+        self.docs_url = docs_url
+
+    def update(self, other):
+        self.total_episodes += other.total_episodes
+        self.total_steps += other.total_steps
+        self.size += other.size
+        self.authors.update(other.authors)
+        self.count += other.count
+
+    def to_row(self) -> List[str]:
+        if len(self.authors) == 0:
+            authors = "Unknown"
+        else:
+            authors = ", ".join(self.authors)
+
+        name = self.name
+        assert name is not None
+        if len(self.sub_nodes) > 0:
+            name = f"[bold]{name}/...[/bold]\n [italic]Group with {self.count} datasets[/italic]"
+        if self.docs_url is not None:
+            name = f"[link={self.docs_url}]{name}[/link]"
+
+        return [
+            name,
+            TableTree.print_num(self.total_episodes),
+            TableTree.print_num(self.total_steps),
+            self.print_size(),
+            authors,
+        ]
+
+    def print_size(self) -> str:
+        if self.size < 1_000:
+            return f"{self.size:.1f} MB"
+        elif self.size < 1_000_000:
+            return f"{self.size / 1_000:.2f} GB"
+        else:
+            return f"{self.size / 1_000_000:.2f} TB"
+
+    @staticmethod
+    def print_num(num: float) -> str:
+        num_letters = ["", "K", "M", "B", "T"]
+        i = 0
+        while num >= 1_000 and i < len(num_letters):
+            num /= 1000
+            i += 1
+
+        return f"{num:.0f}{num_letters[i]}"
+
+
 def _show_dataset_table(datasets: Dict[str, Dict[str, Any]], table_title: str):
-    # Collect compatible versions of each dataset
-    dataset_hierarchy = defaultdict(lambda: defaultdict(list))
+    MAX_ROWS_PER_GROUP = 10
 
-    display_versions = False
+    table_tree = TableTree()
     for dataset_id in datasets.keys():
-        namespace, dataset_name, version = parse_dataset_id(dataset_id)
-        dataset_hierarchy[namespace][dataset_name].append(version)
-        display_versions |= len(dataset_hierarchy[namespace][dataset_name]) > 1
+        dataset_metadata = datasets[dataset_id]
+        dataset_node = TableTree(
+            name=dataset_id,
+            total_episodes=dataset_metadata["total_episodes"],
+            total_steps=dataset_metadata["total_steps"],
+            size=dataset_metadata["dataset_size"],
+            authors=dataset_metadata.get("author"),
+            count=1,
+            docs_url=dataset_metadata.get("docs_url"),
+        )
 
-    # Build the Rich Table
-    table = Table(title=table_title)
+        table_tree.update(dataset_node)
+        namespace, _, _ = parse_dataset_id(dataset_id)
+        current_root = table_tree
+        for ns in namespace_hierarchy(namespace):
+            if ns not in current_root.sub_nodes:
+                current_root.sub_nodes[ns] = TableTree(name=ns)
+            current_root = current_root.sub_nodes[ns]
+            current_root.update(dataset_node)
+        current_root.sub_nodes[dataset_id] = dataset_node
+
+    caption = (
+        f"Number of datasets: {table_tree.count}, total size: {table_tree.print_size()}"
+    )
+    table = Table(title=table_title, caption=caption)
     table.add_column("Name", justify="left", style="cyan", no_wrap=True)
-
-    if display_versions:
-        table.add_column("Versions", justify="right", style="green", no_wrap=True)
-
-    table.add_column("Total Episodes", justify="right", style="green", no_wrap=True)
-    table.add_column("Total Steps", justify="right", style="green", no_wrap=True)
-    table.add_column("Dataset Size", justify="left", style="green", no_wrap=True)
+    table.add_column("# Episodes", justify="right", style="green", no_wrap=True)
+    table.add_column("# Steps", justify="right", style="green", no_wrap=True)
+    table.add_column("Size", justify="left", style="green", no_wrap=True)
     table.add_column("Author", justify="left", style="magenta", no_wrap=True)
 
-    for namespace, namespace_datasets in dataset_hierarchy.items():
-        for dataset_name, versions in namespace_datasets.items():
-            dataset_id = gen_dataset_id(namespace, dataset_name, max(versions))
+    queue = deque(table_tree.sub_nodes.values())
+    section_sentinel = object()
+    while queue:
+        table_node = queue.popleft()
+        if table_node is section_sentinel:
+            table.add_section()
+        elif len(table_node.sub_nodes) == 0:
+            table.add_row(*table_node.to_row())
+        elif len(table_node.sub_nodes) <= MAX_ROWS_PER_GROUP:
+            queue.extend(table_node.sub_nodes.values())
+            queue.append(section_sentinel)
+        else:
+            table.add_row(*table_node.to_row())
+            table.add_section()
 
-            dst_metadata = datasets[dataset_id]
-            author = dst_metadata.get("author", "Unknown")
-            if not isinstance(author, str) and isinstance(author, Iterable):
-                author = ", ".join(author)
-            dataset_size = dst_metadata.get("dataset_size", "Unknown")
-            if dataset_size != "Unknown":
-                dataset_size = f"{str(dataset_size)} MB"
-            author_email = dst_metadata.get("author_email", "Unknown")
-            if not isinstance(author_email, str) and isinstance(author_email, Iterable):
-                author_email = ", ".join(author_email)
-
-            assert isinstance(dst_metadata["dataset_id"], str)
-            assert isinstance(author, str)
-            assert isinstance(author_email, str)
-
-            docs_url = dst_metadata.get("docs_url", None)
-            compatible_versions = ", ".join(
-                [f"v{x}" for x in sorted(versions, reverse=True)]
-            )
-
-            if docs_url is not None:
-                dataset_id_text = f"[link={docs_url}]{dataset_id}[/link]"
-            else:
-                dataset_id_text = dataset_id
-
-            # Build the current table row
-            rows = []
-            rows.append(dataset_id_text)
-
-            if display_versions:
-                rows.append(compatible_versions)
-
-            rows.append(str(dst_metadata["total_episodes"]))
-            rows.append(str(dst_metadata["total_steps"]))
-            rows.append(dataset_size)
-            rows.append(author)
-            table.add_row(*rows)
-
-        table.add_section()
     print(table)
 
 
@@ -123,12 +180,14 @@ def list_remote(
 ):
     """List Minari datasets hosted in the Farama server."""
     if all:
-        datasets = hosting.list_remote_datasets()
+        datasets = hosting.list_remote_datasets(latest_version=True)
     else:
         datasets = hosting.list_remote_datasets(
-            latest_version=False, compatible_minari_version=True
+            latest_version=True, compatible_minari_version=True
         )
-    table_title = "Minari datasets in Farama server"
+
+    remote_name = os.getenv("MINARI_REMOTE", DEFAULT_REMOTE)
+    table_title = f"Minari datasets in {remote_name}"
     _show_dataset_table(datasets, table_title)
 
 
@@ -308,7 +367,7 @@ def download(
 @app.command()
 def upload(
     datasets: Annotated[List[str], typer.Argument()],
-    token: Annotated[str, typer.Option()],
+    key_path: Annotated[str, typer.Option()],
 ):
     """Upload Minari datasets to the remote Farama server."""
     local_dsts = local.list_local_datasets()
@@ -342,7 +401,7 @@ def upload(
 
     # Upload datasets
     for dst in datasets:
-        hosting.upload_dataset(dst, token)
+        hosting.upload_dataset(dst, key_path)
 
 
 @app.command()

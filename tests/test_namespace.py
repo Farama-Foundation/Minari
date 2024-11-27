@@ -108,76 +108,64 @@ def test_create_namespaced_datasets():
     delete_namespace(namespace)
 
 
-@pytest.mark.parametrize("remote_name", [None, "hf://farama-minari"])
-def test_download_namespace_dataset(remote_name):
-    with pytest.MonkeyPatch.context() as mp:
-        if remote_name:
-            mp.setenv("MINARI_REMOTE", remote_name)
-        namespace = "D4RL/kitchen"
-        kitchen_complete = get_latest_compatible_dataset_id(namespace, "complete")
-        kitchen_mix = get_latest_compatible_dataset_id(namespace, "mixed")
+def test_download_namespace_dataset():
+    namespace = "D4RL/kitchen"
+    kitchen_complete = get_latest_compatible_dataset_id(namespace, "complete")
+    kitchen_mix = get_latest_compatible_dataset_id(namespace, "mixed")
 
-        remote_datasets = minari.list_remote_datasets()
-        assert kitchen_complete in remote_datasets
+    remote_datasets = minari.list_remote_datasets()
+    assert kitchen_complete in remote_datasets
 
+    minari.download_dataset(kitchen_complete)
+    assert set(minari.list_local_datasets().keys()) == {kitchen_complete}
+    assert list_local_namespaces() == ["D4RL", "D4RL/kitchen"]
+    namespace_metadatas = {}
+    for local_namespace in list_local_namespaces():
+        namespace_metadatas[local_namespace] = get_namespace_metadata(local_namespace)
+        assert namespace_metadatas[local_namespace] != {}
+
+    minari.download_dataset(kitchen_mix)
+    assert set(minari.list_local_datasets().keys()) == {
+        kitchen_complete,
+        kitchen_mix,
+    }
+    assert list_local_namespaces() == ["D4RL", "D4RL/kitchen"]
+    for local_namespace in list_local_namespaces():
+        ns_metadata = get_namespace_metadata(local_namespace)
+        assert ns_metadata == namespace_metadatas[local_namespace]
+
+    with pytest.warns(UserWarning, match="Skipping Download."):
         minari.download_dataset(kitchen_complete)
-        assert set(minari.list_local_datasets().keys()) == {kitchen_complete}
-        assert list_local_namespaces() == ["D4RL", "D4RL/kitchen"]
-        namespace_metadatas = {}
-        for local_namespace in list_local_namespaces():
-            namespace_metadatas[local_namespace] = get_namespace_metadata(
-                local_namespace
-            )
-            assert namespace_metadatas[local_namespace] != {}
 
-        minari.download_dataset(kitchen_mix)
-        assert set(minari.list_local_datasets().keys()) == {
-            kitchen_complete,
-            kitchen_mix,
-        }
-        assert list_local_namespaces() == ["D4RL", "D4RL/kitchen"]
-        for local_namespace in list_local_namespaces():
-            ns_metadata = get_namespace_metadata(local_namespace)
-            assert ns_metadata == namespace_metadatas[local_namespace]
+    dataset = minari.load_dataset(kitchen_complete)
+    assert isinstance(dataset, MinariDataset)
 
-        with pytest.warns(UserWarning, match="Skipping Download."):
-            minari.download_dataset(kitchen_complete)
+    check_data_integrity(dataset, list(dataset.episode_indices))
 
-        dataset = minari.load_dataset(kitchen_complete)
-        assert isinstance(dataset, MinariDataset)
-
-        check_data_integrity(dataset, list(dataset.episode_indices))
-
-        minari.delete_dataset(kitchen_complete)
-        assert set(minari.list_local_datasets().keys()) == {kitchen_mix}
-        assert list_local_namespaces() == ["D4RL", "D4RL/kitchen"]
+    minari.delete_dataset(kitchen_complete)
+    assert set(minari.list_local_datasets().keys()) == {kitchen_mix}
+    assert list_local_namespaces() == ["D4RL", "D4RL/kitchen"]
 
 
-@pytest.mark.parametrize("remote_name", [None, "hf://farama-minari"])
 @pytest.mark.parametrize("namespace", ["D4RL/door", "D4RL/pen"])
-def test_download_namespace_metadata(remote_name, namespace):
-    with pytest.MonkeyPatch.context() as mp:
-        if remote_name:
-            mp.setenv("MINARI_REMOTE", remote_name)
-        assert len(list_local_namespaces()) == 0
-        assert namespace in list_remote_namespaces()
+def test_download_namespace_metadata(namespace):
+    assert len(list_local_namespaces()) == 0
+    assert namespace in list_remote_namespaces()
 
+    download_namespace_metadata(namespace)
+    assert list_local_namespaces() == [namespace]
+    get_namespace_metadata(namespace)
+    delete_namespace(namespace)
+
+    metadata = {"description": "Conflicting description"}
+    create_namespace(namespace, **metadata)
+    with pytest.warns(UserWarning, match="Skipping update for namespace"):
         download_namespace_metadata(namespace)
-        assert list_local_namespaces() == [namespace]
-        get_namespace_metadata(namespace)
-        delete_namespace(namespace)
 
-        metadata = {"description": "Conflicting description"}
-        create_namespace(namespace, **metadata)
-        with pytest.warns(UserWarning, match="Skipping update for namespace"):
-            download_namespace_metadata(namespace)
+    assert get_namespace_metadata(namespace) == metadata
 
-        assert get_namespace_metadata(namespace) == metadata
+    download_namespace_metadata(namespace, overwrite=True)
+    assert get_namespace_metadata(namespace) != metadata
 
-        download_namespace_metadata(namespace, overwrite=True)
-        assert get_namespace_metadata(namespace) != metadata
-
-        with pytest.raises(
-            ValueError, match="doesn't exist in the remote Farama server."
-        ):
-            download_namespace_metadata("non_existent_namespace")
+    with pytest.raises(ValueError, match="doesn't exist in the remote Farama server."):
+        download_namespace_metadata("non_existent_namespace")

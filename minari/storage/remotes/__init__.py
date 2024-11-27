@@ -4,7 +4,7 @@ from typing import Callable, Dict, Type
 from minari.storage.remotes.cloud_storage import CloudStorage
 
 
-DEFAULT_REMOTE = "gcp://minari-remote"
+DEFAULT_REMOTE = "hf://farama-minari"
 
 
 def get_gcps() -> Type[CloudStorage]:
