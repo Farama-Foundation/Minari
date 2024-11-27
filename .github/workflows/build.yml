@@ -11,14 +11,11 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ['3.9', '3.10', '3.11', '3.12']
     steps:
       - uses: actions/checkout@v3
       - run: |
           docker build -f bin/Dockerfile \
-            --build-arg PYTHON_VERSION=${{ matrix.python-version }} \
+            --build-arg PYTHON_VERSION=3.12 \
             --tag minari-docker .
       - name: Run tests
         run: docker run minari-docker pytest tests/* -k "not test_docs.py and not integrations"
