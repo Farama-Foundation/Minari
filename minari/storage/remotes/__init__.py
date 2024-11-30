@@ -1,5 +1,5 @@
 import os
-from typing import Callable, Dict, Type
+from typing import Callable, Dict, Optional, Type
 
 from minari.storage.remotes.cloud_storage import CloudStorage
 
@@ -25,7 +25,10 @@ _registry: Dict[str, Callable[[], Type[CloudStorage]]] = {
 }
 
 
-def get_cloud_storage(token=None) -> CloudStorage:
-    remote_spec = os.getenv("MINARI_REMOTE", DEFAULT_REMOTE)
-    cloud_type, name = remote_spec.split("://", maxsplit=1)
+def get_cloud_storage(
+    remote_path: Optional[str] = None, token: Optional[str] = None
+) -> CloudStorage:
+    if remote_path is None:
+        remote_path = os.getenv("MINARI_REMOTE", DEFAULT_REMOTE)
+    cloud_type, name = remote_path.split("://", maxsplit=1)
     return _registry[cloud_type]()(name, token)

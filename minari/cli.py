@@ -22,8 +22,6 @@ from minari.utils import combine_datasets, get_dataset_spec_dict, get_env_spec_d
 
 
 app = typer.Typer()
-list_app = typer.Typer()
-app.add_typer(list_app, name="list", short_help="List Minari datasets.")
 
 
 def _version_callback(value: bool):
@@ -172,71 +170,83 @@ def common(
     pass
 
 
-@list_app.command("remote")
-def list_remote(
+@app.command("list")
+def list_cmd(
+    path: Annotated[
+        str, typer.Argument(help="Can be `local`, `remote` or a remote path.")
+    ],
     all: Annotated[
         bool, typer.Option("--all", "-a", help="Show all dataset versions.")
-    ] = False
+    ] = False,
 ):
-    """List Minari datasets hosted in the Farama server."""
-    if all:
-        datasets = hosting.list_remote_datasets(latest_version=True)
-    else:
-        datasets = hosting.list_remote_datasets(
-            latest_version=True, compatible_minari_version=True
-        )
-
-    remote_name = os.getenv("MINARI_REMOTE", DEFAULT_REMOTE)
-    table_title = f"Minari datasets in {remote_name}"
-    _show_dataset_table(datasets, table_title)
-
-
-@list_app.command("local")
-def list_local(
-    all: Annotated[
-        bool, typer.Option("--all", "-a", help="Show all dataset versions.")
-    ] = False
-):
-    """List local Minari datasets."""
-    if all:
-        datasets = local.list_local_datasets()
-    else:
+    """List Minari datasets in local or remote storage."""
+    if path == "local":
         datasets = local.list_local_datasets(
-            latest_version=False, compatible_minari_version=True
+            latest_version=True, compatible_minari_version=not all
         )
-    dataset_dir = os.environ.get(
-        "MINARI_DATASETS_PATH",
-        os.path.join(os.path.expanduser("~"), ".minari/datasets/"),
-    )
-    table_title = f"Local Minari datasets('{dataset_dir}')"
+        dataset_dir = os.environ.get(
+            "MINARI_DATASETS_PATH",
+            os.path.join(os.path.expanduser("~"), ".minari/datasets/"),
+        )
+        table_title = f"Local Minari datasets('{dataset_dir}')"
+    else:
+        remote_path = path
+        if remote_path == "remote":
+            remote_path = os.getenv("MINARI_REMOTE", DEFAULT_REMOTE)
+
+        if "://" not in remote_path:
+            print(
+                Text(
+                    f"Invalid remote path '{remote_path}'. Remote path should be in the format 'remote_type://remote_path'.",
+                    style="red",
+                )
+            )
+            raise typer.Abort()
+
+        remote_type, remote_path = remote_path.split("://", maxsplit=1)
+        remote_path, prefix, *_ = remote_path.split("/", maxsplit=1) + [None]
+        remote_path = f"{remote_type}://{remote_path}"
+
+        datasets = hosting.list_remote_datasets(
+            remote_path=remote_path,
+            prefix=prefix,
+            latest_version=True,
+            compatible_minari_version=not all,
+        )
+        table_title = f"Minari datasets in {remote_path}"
+
     _show_dataset_table(datasets, table_title)
 
 
 @app.command()
-def show(dataset: Annotated[str, typer.Argument()]):
+def show(dataset_id: Annotated[str, typer.Argument()]):
     """Describe a local or remote dataset, and its environment."""
-    local_datasets = local.list_local_datasets()
-
-    # Try to find a local dataset first, then fall back to remote datasets
-    if dataset in local_datasets:
-        dst_metadata = local_datasets[dataset]
+    local_datasets = local.list_local_datasets(prefix=dataset_id)
+    if dataset_id in local_datasets:
+        dst_metadata = local_datasets[dataset_id]
     else:
-        remote_datasets = hosting.list_remote_datasets()
+        remote_path = None
+        if "://" in dataset_id:
+            remote_type, remote_path = dataset_id.split("://", maxsplit=1)
+            remote_path, dataset_id = remote_path.split("/", maxsplit=1)
+            remote_path = f"{remote_type}://{remote_path}"
+        remote_datasets = hosting.list_remote_datasets(
+            remote_path=remote_path, prefix=dataset_id
+        )
 
-        if dataset in remote_datasets:
-            dst_metadata = remote_datasets[dataset]
+        if dataset_id in remote_datasets:
+            dst_metadata = remote_datasets[dataset_id]
         else:
             local_dataset_path = get_dataset_path()
             print(
                 Text(
-                    f"""The dataset `{dataset}` can't be found locally"""
+                    f"""The dataset `{dataset_id}` can't be found locally """
                     f"""(at `{local_dataset_path}`) or remotely.""",
                     style="red",
                 )
             )
             raise typer.Abort()
 
-    dataset_id = dst_metadata["dataset_id"]
     description = dst_metadata.get("description")
     docs_url = dst_metadata.get("docs_url")
 
@@ -324,44 +334,28 @@ def delete(datasets: Annotated[List[str], typer.Argument()]):
 
 @app.command()
 def download(
-    datasets: Annotated[List[str], typer.Argument()],
+    dataset_id: Annotated[str, typer.Argument()],
     force: Annotated[
         bool, typer.Option("--force", "-f", help="Perform a force download.")
     ] = False,
 ):
     """Download Minari datasets from Farama server."""
-    # check if datasets exist in remote server
-    remote_dsts = hosting.list_remote_datasets()
-
-    non_matching_remote = [dst for dst in datasets if dst not in remote_dsts]
-    if len(non_matching_remote) > 0:
-        tree = Tree(
-            "The following datasets can't be found in the remote Farama server",
-            style="red",
-        )
-        for dst in non_matching_remote:
-            tree.add(dst, style="magenta")
-        print(tree)
-        raise typer.Abort()
-
-    # check existing datasets locally and ask again if you want them to be overridden
     local_dsts = local.list_local_datasets()
-    datasets_to_override = {
-        local_name: local_dsts[local_name]
-        for local_name in local_dsts.keys()
-        if local_name in datasets
-    }
 
-    if len(datasets_to_override) > 0 and not force:
-        _show_dataset_table(datasets_to_override, "Download remote Minari datasets")
+    dataset_name = dataset_id
+    if "://" in dataset_name:
+        _, dataset_name = dataset_name.split("://", maxsplit=1)
+        _, dataset_name = dataset_name.split("/", maxsplit=1)
+    if dataset_name in local_dsts and not force:
+        _show_dataset_table(
+            {dataset_name: local_dsts[dataset_name]}, "Download remote Minari datasets"
+        )
         typer.confirm(
-            "Are you sure you want to download and override these local datasets?",
+            f"Are you sure you want to override {dataset_id}?",
             abort=True,
         )
 
-    # download datastets
-    for dst in datasets:
-        hosting.download_dataset(dst, force_download=force)
+    hosting.download_dataset(dataset_id, force_download=True)
 
 
 @app.command()

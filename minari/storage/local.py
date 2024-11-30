@@ -80,15 +80,15 @@ def list_local_datasets(
         parent_dir = base_path.joinpath(namespace)
         if not parent_dir.exists():
             return
+        # TODO: metadata.json of HDF5 should stay in dataset root directory not /data
+        # Then we can use metadata.json to check if it is a dataset
+        if parent_dir.joinpath("data").exists():
+            dataset_ids.append(namespace)
+            return
 
         for dir_name in list_non_hidden_dirs(parent_dir):
-            dir_path = os.path.join(parent_dir, dir_name)
             namespaced_dir_name = os.path.join(namespace, dir_name)
-            # Minari datasets must contain the data directory.
-            if "data" in os.listdir(dir_path):
-                dataset_ids.append(pathlib.PurePath(namespaced_dir_name).as_posix())
-            else:
-                recurse_directories(base_path, namespaced_dir_name)
+            recurse_directories(base_path, namespaced_dir_name)
 
     recurse_directories(datasets_path, prefix or "")
 
