@@ -13,7 +13,6 @@ import minari
 from minari import DataCollector, EpisodeData, MinariDataset, StepData
 from minari.data_collector import EpisodeBuffer
 from minari.dataset.minari_dataset import gen_dataset_id
-from minari.storage.hosting import get_remote_dataset_versions
 
 
 unicode_charset = "".join(
@@ -690,9 +689,8 @@ def get_sample_buffer_for_dataset_from_env(env: gym.Env, num_episodes: int = 10)
 
 
 def get_latest_compatible_dataset_id(namespace, dataset_name):
-    latest_compatible_versions = get_remote_dataset_versions(
-        namespace=namespace,
-        dataset_name=dataset_name,
+    latest_compatible_versions = minari.list_remote_datasets(
+        prefix=gen_dataset_id(namespace, dataset_name),
         latest_version=True,
         compatible_minari_version=True,
     )
@@ -703,7 +701,7 @@ def get_latest_compatible_dataset_id(namespace, dataset_name):
         )
 
     assert len(latest_compatible_versions) == 1
-    return gen_dataset_id(namespace, dataset_name, latest_compatible_versions[0])
+    return next(iter(latest_compatible_versions))
 
 
 def skip_if_error(error_type):
