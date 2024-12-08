@@ -143,7 +143,9 @@ def _show_dataset_table(datasets: Dict[str, Dict[str, Any]], table_title: str):
         table_node = queue.popleft()
         if table_node is section_sentinel:
             table.add_section()
-        elif len(table_node.sub_nodes) == 0:
+            continue
+
+        if len(table_node.sub_nodes) == 0:
             table.add_row(*table_node.to_row())
         elif aggregate and len(table_node.sub_nodes) > MAX_ROWS_PER_GROUP:
             table.add_row(*table_node.to_row())
