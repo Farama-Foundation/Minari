@@ -837,7 +837,7 @@
 <h2>Key changes</h2>
 <h3>PyArrow support</h3>
 <p>Minari now supports PyArrow datasets. To create a new dataset using PyArrow, set the <code>data_format</code> flag to <code>arrow</code> during the creation of a <code>DataCollector</code> or while creating a dataset with a buffer. For example:</p>
-<div class="highlight highlight-source-python notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="env = DataCollector(env, data_format=&quot;arrow&quot;)"><pre><span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-v">DataCollector</span>(<span class="pl-s1">env</span>, <span class="pl-s1">data_format</span><span class="pl-c1">=</span><span class="pl-s">"arrow"</span>)</pre></div>
+<div class="highlight highlight-source-python notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="env = DataCollector(env, data_format=&quot;arrow&quot;)"><pre><span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-en">DataCollector</span>(<span class="pl-s1">env</span>, <span class="pl-s1">data_format</span><span class="pl-c1">=</span><span class="pl-s">"arrow"</span>)</pre></div>
 <p>Loading a dataset doesn't require any change, Minari will detect automatically the data format.</p>
 <h3>Namespaces</h3>
 <p>Datasets can now be grouped to create a more organized dataset hub. For example, current remote datasets, which are reproductions of the <code>D4RL</code> datasets, are grouped under a namespace called <code>D4RL</code>. We encourage grouping datasets based on the environment used to produce them, if applicable. For instance, the previously named <code>door-human-v2</code> dataset is now referenced as <code>D4RL/door/human-v2</code>. Multiple datasets are available in the <code>D4RL</code> group as well as in the <code>D4RL/door</code> subgroup, such as <code>D4RL/door/cloned-v2</code>. These grouped datasets can share metadata, enhancing their organization and accessibility.</p>
@@ -946,13 +946,13 @@
             }
         ),
     }
-)"><pre><span class="pl-s1">spaces</span>.<span class="pl-v">Dict</span>(
+)"><pre><span class="pl-s1">spaces</span>.<span class="pl-c1">Dict</span>(
     {
-        <span class="pl-s">"component_1"</span>: <span class="pl-s1">spaces</span>.<span class="pl-v">Box</span>(<span class="pl-s1">low</span><span class="pl-c1">=</span><span class="pl-c1">-</span><span class="pl-c1">1</span>, <span class="pl-s1">high</span><span class="pl-c1">=</span><span class="pl-c1">1</span>, <span class="pl-s1">dtype</span><span class="pl-c1">=</span><span class="pl-s1">np</span>.<span class="pl-s1">float32</span>),
-        <span class="pl-s">"component_2"</span>: <span class="pl-s1">spaces</span>.<span class="pl-v">Dict</span>(
+        <span class="pl-s">"component_1"</span>: <span class="pl-s1">spaces</span>.<span class="pl-c1">Box</span>(<span class="pl-s1">low</span><span class="pl-c1">=</span><span class="pl-c1">-</span><span class="pl-c1">1</span>, <span class="pl-s1">high</span><span class="pl-c1">=</span><span class="pl-c1">1</span>, <span class="pl-s1">dtype</span><span class="pl-c1">=</span><span class="pl-s1">np</span>.<span class="pl-c1">float32</span>),
+        <span class="pl-s">"component_2"</span>: <span class="pl-s1">spaces</span>.<span class="pl-c1">Dict</span>(
             {
-                <span class="pl-s">"subcomponent_1"</span>: <span class="pl-s1">spaces</span>.<span class="pl-v">Box</span>(<span class="pl-s1">low</span><span class="pl-c1">=</span><span class="pl-c1">2</span>, <span class="pl-s1">high</span><span class="pl-c1">=</span><span class="pl-c1">3</span>, <span class="pl-s1">dtype</span><span class="pl-c1">=</span><span class="pl-s1">np</span>.<span class="pl-s1">float32</span>),
-                <span class="pl-s">"subcomponent_2"</span>: <span class="pl-s1">spaces</span>.<span class="pl-v">Box</span>(<span class="pl-s1">low</span><span class="pl-c1">=</span><span class="pl-c1">4</span>, <span class="pl-s1">high</span><span class="pl-c1">=</span><span class="pl-c1">5</span>, <span class="pl-s1">dtype</span><span class="pl-c1">=</span><span class="pl-s1">np</span>.<span class="pl-s1">float32</span>),
+                <span class="pl-s">"subcomponent_1"</span>: <span class="pl-s1">spaces</span>.<span class="pl-c1">Box</span>(<span class="pl-s1">low</span><span class="pl-c1">=</span><span class="pl-c1">2</span>, <span class="pl-s1">high</span><span class="pl-c1">=</span><span class="pl-c1">3</span>, <span class="pl-s1">dtype</span><span class="pl-c1">=</span><span class="pl-s1">np</span>.<span class="pl-c1">float32</span>),
+                <span class="pl-s">"subcomponent_2"</span>: <span class="pl-s1">spaces</span>.<span class="pl-c1">Box</span>(<span class="pl-s1">low</span><span class="pl-c1">=</span><span class="pl-c1">4</span>, <span class="pl-s1">high</span><span class="pl-c1">=</span><span class="pl-c1">5</span>, <span class="pl-s1">dtype</span><span class="pl-c1">=</span><span class="pl-s1">np</span>.<span class="pl-c1">float32</span>),
             }
         ),
     }
@@ -990,13 +990,13 @@
             )
         ),
     )
-)"><pre><span class="pl-s1">spaces</span>.<span class="pl-v">Tuple</span>(
+)"><pre><span class="pl-s1">spaces</span>.<span class="pl-c1">Tuple</span>(
     (
-        <span class="pl-s1">spaces</span>.<span class="pl-v">Box</span>(<span class="pl-s1">low</span><span class="pl-c1">=</span><span class="pl-c1">2</span>, <span class="pl-s1">high</span><span class="pl-c1">=</span><span class="pl-c1">3</span>, <span class="pl-s1">dtype</span><span class="pl-c1">=</span><span class="pl-s1">np</span>.<span class="pl-s1">float32</span>),
-        <span class="pl-s1">spaces</span>.<span class="pl-v">Tuple</span>(
+        <span class="pl-s1">spaces</span>.<span class="pl-c1">Box</span>(<span class="pl-s1">low</span><span class="pl-c1">=</span><span class="pl-c1">2</span>, <span class="pl-s1">high</span><span class="pl-c1">=</span><span class="pl-c1">3</span>, <span class="pl-s1">dtype</span><span class="pl-c1">=</span><span class="pl-s1">np</span>.<span class="pl-c1">float32</span>),
+        <span class="pl-s1">spaces</span>.<span class="pl-c1">Tuple</span>(
             (
-                <span class="pl-s1">spaces</span>.<span class="pl-v">Box</span>(<span class="pl-s1">low</span><span class="pl-c1">=</span><span class="pl-c1">2</span>, <span class="pl-s1">high</span><span class="pl-c1">=</span><span class="pl-c1">3</span>, <span class="pl-s1">dtype</span><span class="pl-c1">=</span><span class="pl-s1">np</span>.<span class="pl-s1">float32</span>),
-                <span class="pl-s1">spaces</span>.<span class="pl-v">Box</span>(<span class="pl-s1">low</span><span class="pl-c1">=</span><span class="pl-c1">4</span>, <span class="pl-s1">high</span><span class="pl-c1">=</span><span class="pl-c1">5</span>, <span class="pl-s1">dtype</span><span class="pl-c1">=</span><span class="pl-s1">np</span>.<span class="pl-s1">float32</span>),
+                <span class="pl-s1">spaces</span>.<span class="pl-c1">Box</span>(<span class="pl-s1">low</span><span class="pl-c1">=</span><span class="pl-c1">2</span>, <span class="pl-s1">high</span><span class="pl-c1">=</span><span class="pl-c1">3</span>, <span class="pl-s1">dtype</span><span class="pl-c1">=</span><span class="pl-s1">np</span>.<span class="pl-c1">float32</span>),
+                <span class="pl-s1">spaces</span>.<span class="pl-c1">Box</span>(<span class="pl-s1">low</span><span class="pl-c1">=</span><span class="pl-c1">4</span>, <span class="pl-s1">high</span><span class="pl-c1">=</span><span class="pl-c1">5</span>, <span class="pl-s1">dtype</span><span class="pl-c1">=</span><span class="pl-s1">np</span>.<span class="pl-c1">float32</span>),
             )
         ),
     )
@@ -1178,14 +1178,14 @@ print(f'TOTAL EPISODES ORIGINAL DATASET: {dataset.total_episodes}')
 # get episodes with mean reward greater than 2
 filter_dataset = dataset.filter_episodes(lambda episode: episode[&quot;rewards&quot;].attrs.get(&quot;mean&quot;) &gt; 2)
 
-print(f'TOTAL EPISODES FILTER DATASET: {filter_dataset.total_episodes}')"><pre><span class="pl-s1">dataset</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-en">load_dataset</span>(<span class="pl-s">"door-human-v0"</span>)
+print(f'TOTAL EPISODES FILTER DATASET: {filter_dataset.total_episodes}')"><pre><span class="pl-s1">dataset</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-c1">load_dataset</span>(<span class="pl-s">"door-human-v0"</span>)
 
-<span class="pl-en">print</span>(<span class="pl-s">f'TOTAL EPISODES ORIGINAL DATASET: <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">dataset</span>.<span class="pl-s1">total_episodes</span><span class="pl-kos">}</span></span>'</span>)
+<span class="pl-en">print</span>(<span class="pl-s">f'TOTAL EPISODES ORIGINAL DATASET: <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">dataset</span>.<span class="pl-c1">total_episodes</span><span class="pl-kos">}</span></span>'</span>)
 
 <span class="pl-c"># get episodes with mean reward greater than 2</span>
-<span class="pl-s1">filter_dataset</span> <span class="pl-c1">=</span> <span class="pl-s1">dataset</span>.<span class="pl-en">filter_episodes</span>(<span class="pl-k">lambda</span> <span class="pl-s1">episode</span>: <span class="pl-s1">episode</span>[<span class="pl-s">"rewards"</span>].<span class="pl-s1">attrs</span>.<span class="pl-en">get</span>(<span class="pl-s">"mean"</span>) <span class="pl-c1">&gt;</span> <span class="pl-c1">2</span>)
+<span class="pl-s1">filter_dataset</span> <span class="pl-c1">=</span> <span class="pl-s1">dataset</span>.<span class="pl-c1">filter_episodes</span>(<span class="pl-k">lambda</span> <span class="pl-s1">episode</span>: <span class="pl-s1">episode</span>[<span class="pl-s">"rewards"</span>].<span class="pl-c1">attrs</span>.<span class="pl-c1">get</span>(<span class="pl-s">"mean"</span>) <span class="pl-c1">&gt;</span> <span class="pl-c1">2</span>)
 
-<span class="pl-en">print</span>(<span class="pl-s">f'TOTAL EPISODES FILTER DATASET: <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">filter_dataset</span>.<span class="pl-s1">total_episodes</span><span class="pl-kos">}</span></span>'</span>)</pre></div>
+<span class="pl-en">print</span>(<span class="pl-s">f'TOTAL EPISODES FILTER DATASET: <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">filter_dataset</span>.<span class="pl-c1">total_episodes</span><span class="pl-kos">}</span></span>'</span>)</pre></div>
 <div class="highlight highlight-source-shell notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="&gt;&gt;&gt; TOTAL EPISODES ORIGINAL DATASET: 25
 &gt;&gt;&gt; TOTAL EPISODES FILTER DATASET: 18"><pre>&gt;&gt;&gt; TOTAL EPISODES ORIGINAL DATASET: 25
 &gt;&gt;&gt; TOTAL EPISODES FILTER DATASET: 18</pre></div>
@@ -1195,12 +1195,12 @@ print(f'TOTAL EPISODES FILTER DATASET: {filter_dataset.total_episodes}')"><pre><
 split_datasets = minari.split_dataset(dataset, sizes=[20, 5], seed=123)
 
 print(f'TOTAL EPISODES FIRST SPLIT: {split_datasets[0].total_episodes}')
-print(f'TOTAL EPISODES SECOND SPLIT: {split_datasets[1].total_episodes}')"><pre><span class="pl-s1">dataset</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-en">load_dataset</span>(<span class="pl-s">"door-human-v0"</span>)
+print(f'TOTAL EPISODES SECOND SPLIT: {split_datasets[1].total_episodes}')"><pre><span class="pl-s1">dataset</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-c1">load_dataset</span>(<span class="pl-s">"door-human-v0"</span>)
 
-<span class="pl-s1">split_datasets</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-en">split_dataset</span>(<span class="pl-s1">dataset</span>, <span class="pl-s1">sizes</span><span class="pl-c1">=</span>[<span class="pl-c1">20</span>, <span class="pl-c1">5</span>], <span class="pl-s1">seed</span><span class="pl-c1">=</span><span class="pl-c1">123</span>)
+<span class="pl-s1">split_datasets</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-c1">split_dataset</span>(<span class="pl-s1">dataset</span>, <span class="pl-s1">sizes</span><span class="pl-c1">=</span>[<span class="pl-c1">20</span>, <span class="pl-c1">5</span>], <span class="pl-s1">seed</span><span class="pl-c1">=</span><span class="pl-c1">123</span>)
 
-<span class="pl-en">print</span>(<span class="pl-s">f'TOTAL EPISODES FIRST SPLIT: <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">split_datasets</span>[<span class="pl-c1">0</span>].<span class="pl-s1">total_episodes</span><span class="pl-kos">}</span></span>'</span>)
-<span class="pl-en">print</span>(<span class="pl-s">f'TOTAL EPISODES SECOND SPLIT: <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">split_datasets</span>[<span class="pl-c1">1</span>].<span class="pl-s1">total_episodes</span><span class="pl-kos">}</span></span>'</span>)</pre></div>
+<span class="pl-en">print</span>(<span class="pl-s">f'TOTAL EPISODES FIRST SPLIT: <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">split_datasets</span>[<span class="pl-c1">0</span>].<span class="pl-c1">total_episodes</span><span class="pl-kos">}</span></span>'</span>)
+<span class="pl-en">print</span>(<span class="pl-s">f'TOTAL EPISODES SECOND SPLIT: <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">split_datasets</span>[<span class="pl-c1">1</span>].<span class="pl-c1">total_episodes</span><span class="pl-kos">}</span></span>'</span>)</pre></div>
 <div class="highlight highlight-source-shell notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="&gt;&gt;&gt; TOTAL EPISODES FIRST SPLIT: 20
 &gt;&gt;&gt; TOTAL EPISODES SECOND SPLIT: 5"><pre>&gt;&gt;&gt; TOTAL EPISODES FIRST SPLIT: 20
 &gt;&gt;&gt; TOTAL EPISODES SECOND SPLIT: 5</pre></div>
@@ -1244,37 +1244,37 @@ for n_step in range(1000):
         	dataset.update_dataset_from_collector_env(collector_env)"><pre><span class="pl-k">import</span> <span class="pl-s1">minari</span>
 <span class="pl-k">import</span> <span class="pl-s1">gynasium</span> <span class="pl-k">as</span> <span class="pl-s1">gym</span>
 
-<span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-en">make</span>(<span class="pl-s">'CartPole-v1'</span>)   
-<span class="pl-s1">collector_env</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-v">DataCollectorV0</span>(<span class="pl-s1">env</span>)
+<span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-c1">make</span>(<span class="pl-s">'CartPole-v1'</span>)   
+<span class="pl-s1">collector_env</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-c1">DataCollectorV0</span>(<span class="pl-s1">env</span>)
 
 <span class="pl-s1">dataset_id</span> <span class="pl-c1">=</span> <span class="pl-s">'cartpole-test-v0'</span>
 
 <span class="pl-c"># Collect 1000 episodes for the dataset</span>
 <span class="pl-k">for</span> <span class="pl-s1">n_step</span> <span class="pl-c1">in</span> <span class="pl-en">range</span>(<span class="pl-c1">1000</span>):
-	<span class="pl-s1">collector_env</span>.<span class="pl-en">reset</span>(<span class="pl-s1">seed</span><span class="pl-c1">=</span><span class="pl-c1">123</span>)
+	<span class="pl-s1">collector_env</span>.<span class="pl-c1">reset</span>(<span class="pl-s1">seed</span><span class="pl-c1">=</span><span class="pl-c1">123</span>)
 	<span class="pl-k">while</span> <span class="pl-c1">True</span>:
-    	<span class="pl-s1">action</span> <span class="pl-c1">=</span> <span class="pl-s1">collector_env</span>.<span class="pl-s1">action_space</span>.<span class="pl-en">sample</span>()
-    	<span class="pl-s1">obs</span>, <span class="pl-s1">rew</span>, <span class="pl-s1">terminated</span>, <span class="pl-s1">truncated</span>, <span class="pl-s1">info</span> <span class="pl-c1">=</span> <span class="pl-s1">collector_env</span>.<span class="pl-en">step</span>(<span class="pl-s1">action</span>)
+    	<span class="pl-s1">action</span> <span class="pl-c1">=</span> <span class="pl-s1">collector_env</span>.<span class="pl-c1">action_space</span>.<span class="pl-c1">sample</span>()
+    	<span class="pl-s1">obs</span>, <span class="pl-s1">rew</span>, <span class="pl-s1">terminated</span>, <span class="pl-s1">truncated</span>, <span class="pl-s1">info</span> <span class="pl-c1">=</span> <span class="pl-s1">collector_env</span>.<span class="pl-c1">step</span>(<span class="pl-s1">action</span>)
     	<span class="pl-k">if</span> <span class="pl-s1">terminated</span> <span class="pl-c1">or</span> <span class="pl-s1">truncated</span>:
          	<span class="pl-k">break</span>
 
 	<span class="pl-c"># Checkpoint data after each 100 episodes</span>
 	<span class="pl-k">if</span> (<span class="pl-s1">n_step</span> <span class="pl-c1">+</span> <span class="pl-c1">1</span>) <span class="pl-c1">%</span> <span class="pl-c1">100</span> <span class="pl-c1">==</span> <span class="pl-c1">0</span>:
     	<span class="pl-c"># If the Minari dataset id does not exist create a new dataset, otherwise update the existing one</span>
-    	<span class="pl-k">if</span> <span class="pl-s1">dataset_id</span> <span class="pl-c1">not</span> <span class="pl-c1">in</span> <span class="pl-s1">minari</span>.<span class="pl-en">list_local_datasets</span>():
-        	<span class="pl-s1">dataset</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-en">create_dataset_from_collector_env</span>(<span class="pl-s1">collector_env</span><span class="pl-c1">=</span><span class="pl-s1">collector_env</span>, <span class="pl-s1">dataset_id</span><span class="pl-c1">=</span><span class="pl-s1">dataset_id</span>)
+    	<span class="pl-k">if</span> <span class="pl-s1">dataset_id</span> <span class="pl-c1"><span class="pl-c1">not</span> <span class="pl-c1">in</span></span> <span class="pl-s1">minari</span>.<span class="pl-c1">list_local_datasets</span>():
+        	<span class="pl-s1">dataset</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-c1">create_dataset_from_collector_env</span>(<span class="pl-s1">collector_env</span><span class="pl-c1">=</span><span class="pl-s1">collector_env</span>, <span class="pl-s1">dataset_id</span><span class="pl-c1">=</span><span class="pl-s1">dataset_id</span>)
     	<span class="pl-k">else</span>:
-        	<span class="pl-s1">dataset</span>.<span class="pl-en">update_dataset_from_collector_env</span>(<span class="pl-s1">collector_env</span>)</pre></div>
+        	<span class="pl-s1">dataset</span>.<span class="pl-c1">update_dataset_from_collector_env</span>(<span class="pl-s1">collector_env</span>)</pre></div>
 <p>We provide a curated tutorial in the documentation on how to use these dataset creation tools: <a href="https://minari.farama.org/main/tutorials/dataset_creation/point_maze_dataset/#sphx-glr-tutorials-dataset-creation-point-maze-dataset-py" rel="nofollow">https://minari.farama.org/main/tutorials/dataset_creation/point_maze_dataset/#sphx-glr-tutorials-dataset-creation-point-maze-dataset-py</a></p>
 <p>Finally, multiple existent datasets can be combined into a larger dataset. This requires that the datasets to be combined have the same observation/action space as well as the same <code>EnvSpec</code> (except for the <a href="https://gymnasium.farama.org/api/wrappers/misc_wrappers/#gymnasium.wrappers.TimeLimit" rel="nofollow"><code>max_episode_steps</code></a> argument for which the largest will be selected among all the datasets)</p>
 <p>Multiple already existent Minari datasets can be combined under a different name as follows:</p>
 <div class="highlight highlight-source-python notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="dataset_v1 = minari.load_dataset('dataset-v1')
 dataset_v2 = minari.load_dataset('dataset-v2')
 
-dataset_v3 = minari.combine_datasets(datasets_to_combine = [dataset_v1, dataset_v2], new_dataset_id = 'dataset-v3')"><pre><span class="pl-s1">dataset_v1</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-en">load_dataset</span>(<span class="pl-s">'dataset-v1'</span>)
-<span class="pl-s1">dataset_v2</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-en">load_dataset</span>(<span class="pl-s">'dataset-v2'</span>)
+dataset_v3 = minari.combine_datasets(datasets_to_combine = [dataset_v1, dataset_v2], new_dataset_id = 'dataset-v3')"><pre><span class="pl-s1">dataset_v1</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-c1">load_dataset</span>(<span class="pl-s">'dataset-v1'</span>)
+<span class="pl-s1">dataset_v2</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-c1">load_dataset</span>(<span class="pl-s">'dataset-v2'</span>)
 
-<span class="pl-s1">dataset_v3</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-en">combine_datasets</span>(<span class="pl-s1">datasets_to_combine</span> <span class="pl-c1">=</span> [<span class="pl-s1">dataset_v1</span>, <span class="pl-s1">dataset_v2</span>], <span class="pl-s1">new_dataset_id</span> <span class="pl-c1">=</span> <span class="pl-s">'dataset-v3'</span>)</pre></div>
+<span class="pl-s1">dataset_v3</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-c1">combine_datasets</span>(<span class="pl-s1">datasets_to_combine</span> <span class="pl-c1">=</span> [<span class="pl-s1">dataset_v1</span>, <span class="pl-s1">dataset_v2</span>], <span class="pl-s1">new_dataset_id</span> <span class="pl-c1">=</span> <span class="pl-s">'dataset-v3'</span>)</pre></div>
 <h3>CLI</h3>
 <p>To improve accessibility to the remote public datasets, we are also including a <a href="https://minari.farama.org/main/content/minari_cli/" rel="nofollow">CLI</a> tool with commands to list, download, and upload Minari datasets.</p>
 <h2>New Public Datasets</h2>
