@@ -154,7 +154,7 @@ class DataCollector(gym.Wrapper):
             step_data["info"] = {}
         self._buffer = self._buffer.add_step_data(step_data)
 
-        if step_data["termination"] or step_data["truncation"]:
+        if step_data["terminated"] or step_data["truncated"]:
             self._storage.update_episodes([self._buffer])
             self._episode_id += 1
             self._buffer = EpisodeBuffer(

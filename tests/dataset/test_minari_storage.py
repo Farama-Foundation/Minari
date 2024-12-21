@@ -43,8 +43,8 @@ def _generate_episode_buffer(
             "observation": observation,
             "action": action,
             "reward": rewards[i],
-            "termination": terminations[i],
-            "truncation": truncations[i],
+            "terminated": terminations[i],
+            "truncated": truncations[i],
             "info": {},
         }
         buffer = buffer.add_step_data(step_data)
@@ -267,8 +267,8 @@ def test_minari_get_dataset_size_from_buffer(
                 "observation": observation,
                 "action": action,
                 "reward": reward,
-                "termination": terminated,
-                "truncation": truncated,
+                "terminated": terminated,
+                "truncated": truncated,
                 "info": {},
             }
             episode_buffer = episode_buffer.add_step_data(step_data)

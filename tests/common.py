@@ -674,8 +674,8 @@ def get_sample_buffer_for_dataset_from_env(env: gym.Env, num_episodes: int = 10)
                 "observation": observation,
                 "action": action,
                 "reward": reward,
-                "termination": terminated,
-                "truncation": truncated,
+                "terminated": terminated,
+                "truncated": truncated,
                 "info": {},
             }
             episode_buffer = episode_buffer.add_step_data(step_data)

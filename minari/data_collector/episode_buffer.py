@@ -60,8 +60,8 @@ class EpisodeBuffer:
             infos = jtu.tree_map(_append, step_data["info"], self.infos)
 
         self.rewards.append(step_data["reward"])
-        self.terminations.append(step_data["termination"])
-        self.truncations.append(step_data["truncation"])
+        self.terminations.append(step_data["terminated"])
+        self.truncations.append(step_data["truncated"])
 
         return EpisodeBuffer(
             id=self.id,
