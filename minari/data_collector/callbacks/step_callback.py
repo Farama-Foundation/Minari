@@ -61,8 +61,8 @@ class StepDataCallback:
             "action": action,
             "observation": obs,
             "reward": rew,
-            "termination": terminated,
-            "truncation": truncated,
+            "terminated": terminated,
+            "truncated": truncated,
             "info": info,
         }
 

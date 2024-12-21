@@ -196,8 +196,8 @@ def test_filter_episodes_and_subsequent_updates(
                 "observation": observation,
                 "action": action,
                 "reward": reward,
-                "termination": terminated,
-                "truncation": truncated,
+                "terminated": terminated,
+                "truncated": truncated,
                 "info": {},
             }
             episode_buffer = episode_buffer.add_step_data(step_data)
@@ -357,8 +357,8 @@ def test_update_dataset_from_buffer(
                 "observation": observation,
                 "action": action,
                 "reward": reward,
-                "termination": terminated,
-                "truncation": truncated,
+                "terminated": terminated,
+                "truncated": truncated,
                 "info": {},
             }
             episode_buffer = episode_buffer.add_step_data(step_data)

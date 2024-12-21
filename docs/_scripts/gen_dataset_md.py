@@ -117,7 +117,7 @@ def main():
 
             versioned_name = gen_dataset_id(None, dataset_name, version)
             NAMESPACE_CONTENTS[namespace][dataset_id] = {
-                "short_description": metadata.get("description", "").split(". ", 1)[0],
+                "short_description": metadata.get("description", "").split(".", 1)[0],
                 "file": versioned_name,
                 "toctree": versioned_name,
                 "display_name": versioned_name,

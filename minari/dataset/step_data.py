@@ -7,6 +7,6 @@ class StepData(TypedDict):
     observation: Any
     action: Optional[Any]
     reward: Optional[SupportsFloat]
-    termination: Optional[bool]
-    truncation: Optional[bool]
+    terminated: Optional[bool]
+    truncated: Optional[bool]
     info: Dict[str, Any]

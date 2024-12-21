@@ -182,8 +182,8 @@ def test_generate_dataset_with_external_buffer(
                 "observation": observation,
                 "action": action,
                 "reward": reward,
-                "termination": terminated,
-                "truncation": truncated,
+                "terminated": terminated,
+                "truncated": truncated,
                 "info": {},
             }
             episode_buffer = episode_buffer.add_step_data(step_data)
@@ -354,8 +354,8 @@ def test_generate_big_episode(data_format, register_dummy_envs):
                 "observation": observation_space.sample(),
                 "action": action_space.sample(),
                 "reward": 0.0,
-                "termination": False,
-                "truncation": step_id == episode_length - 1,
+                "terminated": False,
+                "truncated": step_id == episode_length - 1,
                 "info": info_generator.sample(),
             }
         )
