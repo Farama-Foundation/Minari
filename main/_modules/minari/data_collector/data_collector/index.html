@@ -742,7 +742,7 @@
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../../datasets/mujoco/">MuJoCo</a><input class="toctree-checkbox" id="toctree-checkbox-100" name="toctree-checkbox-100" role="switch" type="checkbox"/><label for="toctree-checkbox-100"><div class="visually-hidden">Toggle navigation of MuJoCo</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../datasets/mujoco/ant/">Mujoco/ant</a><input class="toctree-checkbox" id="toctree-checkbox-101" name="toctree-checkbox-101" role="switch" type="checkbox"/><label for="toctree-checkbox-101"><div class="visually-hidden">Toggle navigation of Mujoco/ant</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../datasets/mujoco/ant/">Ant</a><input class="toctree-checkbox" id="toctree-checkbox-101" name="toctree-checkbox-101" role="switch" type="checkbox"/><label for="toctree-checkbox-101"><div class="visually-hidden">Toggle navigation of Ant</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../../datasets/mujoco/ant/expert-v0/">Expert</a></li>
 </ul>
 </li>
@@ -960,7 +960,7 @@
             <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;info&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">add_step_data</span><span class="p">(</span><span class="n">step_data</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;termination&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;truncation&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;terminated&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;truncated&quot;</span><span class="p">]:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_storage</span><span class="o">.</span><span class="n">update_episodes</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">])</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_episode_id</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span> <span class="o">=</span> <span class="n">EpisodeBuffer</span><span class="p">(</span>
