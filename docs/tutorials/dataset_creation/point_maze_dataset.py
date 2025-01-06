@@ -20,7 +20,7 @@ PointMaze D4RL dataset
 # Lets start by importing the required modules for this tutorial:
 
 import gymnasium as gym
-import gymnasium_robotics
+import gymnasium_robotics  # noqa: F401
 import numpy as np
 
 from minari import DataCollector, StepDataCallback
