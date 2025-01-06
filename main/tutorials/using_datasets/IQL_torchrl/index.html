@@ -13,7 +13,7 @@
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>Implicit Q-Learning with TorchRL - Minari Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=ca3c1c84" />
@@ -833,12 +833,12 @@
 </div>
 <p><strong>Note:</strong> If you run into conflicts with PyTorch when installing it, you may have to first install <a class="reference external" href="https://pytorch.org/get-started/locally/">PyTorch nightly</a>. Remember to add the “-U” flag to upgrade torch if it’s already installed.</p>
 <p>To confirm that everything is installed properly we import the required modules:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">gymnasium</span>
-<span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">import</span> <span class="nn">torchrl</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torchrl</span>
 
 <span class="n">seed</span> <span class="o">=</span> <span class="mi">42</span>
 <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
@@ -858,7 +858,7 @@
 </pre></div>
 </div>
 <p>Then restart the notebook kernel. Once the pre-requisites are installed you can start a virtual display:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyvirtualdisplay</span> <span class="kn">import</span> <span class="n">Display</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyvirtualdisplay</span><span class="w"> </span><span class="kn">import</span> <span class="n">Display</span>
 
 <span class="n">virtual_display</span> <span class="o">=</span> <span class="n">Display</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1400</span><span class="p">,</span> <span class="mi">900</span><span class="p">))</span>
 <span class="n">virtual_display</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
@@ -867,8 +867,8 @@
 </section>
 <section id="the-adroit-pen-environment">
 <h2>The Adroit Pen environment<a class="headerlink" href="#the-adroit-pen-environment" title="Link to this heading">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torchrl.envs.libs.gym</span> <span class="kn">import</span> <span class="n">GymEnv</span>
-<span class="kn">from</span> <span class="nn">torchrl.envs</span> <span class="kn">import</span> <span class="n">DoubleToFloat</span><span class="p">,</span> <span class="n">TransformedEnv</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">torchrl.envs.libs.gym</span><span class="w"> </span><span class="kn">import</span> <span class="n">GymEnv</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchrl.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">DoubleToFloat</span><span class="p">,</span> <span class="n">TransformedEnv</span>
 </pre></div>
 </div>
 <p>We will be using the <code class="docutils literal notranslate"><span class="pre">AdroitHandPen</span></code> environment from <a class="reference external" href="https://robotics.farama.org/envs/adroit_hand/adroit_pen/">Gymnasium-Robotics</a>. TorchRL is designed to be agnostic to different frameworks, so instead of working with a Gymnasium environment directly we load it using the <code class="docutils literal notranslate"><span class="pre">GymEnv</span></code> wrapper:</p>
@@ -925,8 +925,8 @@
 <section id="building-a-replay-buffer">
 <h2>Building a replay buffer<a class="headerlink" href="#building-a-replay-buffer" title="Link to this heading">¶</a></h2>
 <p>The Minari dataset we will be using is <a class="reference external" href="https://minari.farama.org/main/datasets/pen/human/">D4RL/pen/human-v2</a>, which consists of 25 human demonstrations. We can create a replay buffer using <code class="docutils literal notranslate"><span class="pre">MinariExperienceReplay()</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">torchrl.data.datasets.minari_data</span> <span class="kn">import</span> <span class="n">MinariExperienceReplay</span>
-<span class="kn">from</span> <span class="nn">torchrl.data.replay_buffers</span> <span class="kn">import</span> <span class="n">SamplerWithoutReplacement</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">torchrl.data.datasets.minari_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">MinariExperienceReplay</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchrl.data.replay_buffers</span><span class="w"> </span><span class="kn">import</span> <span class="n">SamplerWithoutReplacement</span>
 
 <span class="n">dataset_id</span> <span class="o">=</span> <span class="s2">&quot;D4RL/pen/human-v2&quot;</span>
 <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">256</span>
@@ -987,12 +987,12 @@
 </section>
 <section id="defining-the-model">
 <span id="label-defining-the-model"></span><h2>Defining the model<a class="headerlink" href="#defining-the-model" title="Link to this heading">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tensordict.nn</span> <span class="kn">import</span> <span class="n">TensorDictModule</span>
-<span class="kn">from</span> <span class="nn">tensordict.nn.distributions</span> <span class="kn">import</span> <span class="n">NormalParamExtractor</span>
-<span class="kn">from</span> <span class="nn">torchrl.envs.utils</span> <span class="kn">import</span> <span class="n">ExplorationType</span><span class="p">,</span> <span class="n">set_exploration_type</span>
-<span class="kn">from</span> <span class="nn">torchrl.modules</span> <span class="kn">import</span> <span class="n">MLP</span><span class="p">,</span> <span class="n">ProbabilisticActor</span><span class="p">,</span> <span class="n">TanhNormal</span><span class="p">,</span> <span class="n">ValueOperator</span>
-<span class="kn">from</span> <span class="nn">torchrl.objectives</span> <span class="kn">import</span> <span class="n">IQLLoss</span><span class="p">,</span> <span class="n">SoftUpdate</span>
-<span class="kn">from</span> <span class="nn">torchrl.trainers.helpers.models</span> <span class="kn">import</span> <span class="n">ACTIVATIONS</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tensordict.nn</span><span class="w"> </span><span class="kn">import</span> <span class="n">TensorDictModule</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tensordict.nn.distributions</span><span class="w"> </span><span class="kn">import</span> <span class="n">NormalParamExtractor</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchrl.envs.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExplorationType</span><span class="p">,</span> <span class="n">set_exploration_type</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchrl.modules</span><span class="w"> </span><span class="kn">import</span> <span class="n">MLP</span><span class="p">,</span> <span class="n">ProbabilisticActor</span><span class="p">,</span> <span class="n">TanhNormal</span><span class="p">,</span> <span class="n">ValueOperator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchrl.objectives</span><span class="w"> </span><span class="kn">import</span> <span class="n">IQLLoss</span><span class="p">,</span> <span class="n">SoftUpdate</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torchrl.trainers.helpers.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ACTIVATIONS</span>
 </pre></div>
 </div>
 <p>We first initialise the value network <span class="math notranslate nohighlight">\(V_\psi(s)\)</span> which estimates the expectile of the value of a state <span class="math notranslate nohighlight">\(s\)</span> with respect to the distribution of actions in the dataset. TorchRL provides a <code class="docutils literal notranslate"><span class="pre">MLP</span></code> convenience class which we use to build a two layer Multi-Layer Perceptron. To plug this MLP into the rest of the network, we specify that the inputs are read from the <code class="docutils literal notranslate"><span class="pre">&quot;observation&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;action&quot;</span></code> keys of the input tensordict (and concatenated, by default), and the output of the MLP is written to the <code class="docutils literal notranslate"><span class="pre">&quot;state_value&quot;</span></code> key:</p>
@@ -1110,7 +1110,7 @@
 <h2>Training<a class="headerlink" href="#training" title="Link to this heading">¶</a></h2>
 <p>To demonstrate training, we run IQL for 50,000 iterations. During training, we will evaluate the policy every 1000 iterations. But note that this is for evaluation purposes only. Unlike online RL, we do not collect new data during training.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
-<span class="k">def</span> <span class="nf">evaluate_policy</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">num_eval_episodes</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">evaluate_policy</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">num_eval_episodes</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the mean cumulative reward over multiple episodes.&quot;&quot;&quot;</span>
     <span class="n">episode_rewards</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -1127,7 +1127,7 @@
 <li><p>Compute the loss <span class="math notranslate nohighlight">\(\ell = L_V(\psi) + L_Q(\theta) + L_\pi(\phi)\)</span>.</p></li>
 <li><p>Backpropagate the gradients and update the networks, including the target Q-network.</p></li>
 </ol>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">tqdm.auto</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tqdm.auto</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
 
 <span class="n">iterations</span> <span class="o">=</span> <span class="mi">10_000</span>  <span class="c1"># Set to 50_000 to reproduce the results below</span>
 <span class="n">eval_interval</span> <span class="o">=</span> <span class="mi">1_000</span>
@@ -1178,9 +1178,9 @@
 </section>
 <section id="results">
 <h2>Results<a class="headerlink" href="#results" title="Link to this heading">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">IPython.display</span> <span class="kn">import</span> <span class="n">HTML</span>
-<span class="kn">from</span> <span class="nn">gymnasium.utils.save_video</span> <span class="kn">import</span> <span class="n">save_video</span>
-<span class="kn">from</span> <span class="nn">base64</span> <span class="kn">import</span> <span class="n">b64encode</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">HTML</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.utils.save_video</span><span class="w"> </span><span class="kn">import</span> <span class="n">save_video</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">base64</span><span class="w"> </span><span class="kn">import</span> <span class="n">b64encode</span>
 </pre></div>
 </div>
 <p>Evaluated over 100 episodes, the final performance is:</p>

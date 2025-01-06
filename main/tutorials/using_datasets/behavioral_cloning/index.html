@@ -13,7 +13,7 @@
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>Behavioral cloning with PyTorch - Minari Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=ca3c1c84" />
@@ -821,22 +821,22 @@ The objective is to balance the pole on the cart, and we receive a reward of +1 
 <h2>Imports<a class="headerlink" href="#imports" title="Link to this heading">¶</a></h2>
 <p>For this tutorial you will need the <a class="reference external" href="https://github.com/DLR-RM/rl-baselines3-zoo">RL Baselines3 Zoo</a> library, which you can install with <cite>pip install rl_zoo3</cite>.
 Let’s then import all the required packages and set the random seed for reproducibility:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">sys</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 
-<span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">torch</span>
-<span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
-<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
-<span class="kn">from</span> <span class="nn">gymnasium</span> <span class="kn">import</span> <span class="n">spaces</span>
-<span class="kn">from</span> <span class="nn">rl_zoo3.train</span> <span class="kn">import</span> <span class="n">train</span>
-<span class="kn">from</span> <span class="nn">stable_baselines3</span> <span class="kn">import</span> <span class="n">PPO</span>
-<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
-<span class="kn">from</span> <span class="nn">tqdm.auto</span> <span class="kn">import</span> <span class="n">tqdm</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nn</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch.nn.functional</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">F</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="kn">import</span> <span class="n">spaces</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rl_zoo3.train</span><span class="w"> </span><span class="kn">import</span> <span class="n">train</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">stable_baselines3</span><span class="w"> </span><span class="kn">import</span> <span class="n">PPO</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">torch.utils.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataLoader</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm.auto</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
 
-<span class="kn">import</span> <span class="nn">minari</span>
-<span class="kn">from</span> <span class="nn">minari</span> <span class="kn">import</span> <span class="n">DataCollector</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">minari</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minari</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataCollector</span>
 
 
 <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
@@ -885,14 +885,14 @@ We train a PPO agent on the environment:</p>
 <h2>Behavioral cloning with PyTorch<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h2>
 <p>Now we can use PyTorch to learn the policy from the offline dataset.
 Let’s define the policy network:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">PolicyNetwork</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_dim</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">PolicyNetwork</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_dim</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fc1</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">input_dim</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fc2</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">256</span><span class="p">,</span> <span class="mi">128</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fc3</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="mi">128</span><span class="p">,</span> <span class="n">output_dim</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fc1</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">relu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fc2</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
         <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fc3</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
@@ -903,7 +903,7 @@ Let’s define the policy network:</p>
 Our next step is to load the dataset and set up the training loop. The <code class="docutils literal notranslate"><span class="pre">MinariDataset</span></code> is compatible with the PyTorch Dataset API, allowing us to load it directly using <a class="reference external" href="https://pytorch.org/docs/stable/data.html">PyTorch DataLoader</a>.
 However, since each episode can have a varying length, we need to pad them.
 To achieve this, we can utilize the <a class="reference external" href="https://pytorch.org/docs/stable/data.html#working-with-collate-fn">collate_fn</a> feature of PyTorch DataLoader. Let’s create the <code class="docutils literal notranslate"><span class="pre">collate_fn</span></code> function:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">collate_fn</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">collate_fn</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">{</span>
         <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">]),</span>
         <span class="s2">&quot;observations&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">rnn</span><span class="o">.</span><span class="n">pad_sequence</span><span class="p">(</span>

@@ -13,7 +13,7 @@
 
     <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>Basic Usage - Minari Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=ca3c1c84" />
@@ -879,7 +879,7 @@ To use your own server with Minari, set the <code class="docutils literal notran
 </pre></div>
 </div>
 <p>In order to use any of the dataset sampling features of Minari we first need to load the dataset as a <a class="reference internal" href="../../api/minari_dataset/minari_dataset/#minari.MinariDataset" title="minari.MinariDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.MinariDataset</span></code></a> object using the <a class="reference internal" href="../../api/minari_functions/#minari.load_dataset" title="minari.load_dataset"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.load_dataset()</span></code></a> Python function as follows:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">minari</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">minari</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;D4RL/door/human-v2&#39;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Observation space:&quot;</span><span class="p">,</span> <span class="n">dataset</span><span class="o">.</span><span class="n">observation_space</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Action space:&quot;</span><span class="p">,</span> <span class="n">dataset</span><span class="o">.</span><span class="n">action_space</span><span class="p">)</span>
@@ -897,7 +897,7 @@ To use your own server with Minari, set the <code class="docutils literal notran
 <section id="sampling-episodes">
 <h3>Sampling Episodes<a class="headerlink" href="#sampling-episodes" title="Link to this heading">¶</a></h3>
 <p>Minari can retrieve a certain amount of episode shards from the dataset files as a list of <a class="reference internal" href="../../api/minari_dataset/episode_data/#minari.EpisodeData" title="minari.EpisodeData"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.EpisodeData</span></code></a> objects. The sampling process of the Minari datasets is performed through the method <a class="reference internal" href="../../api/minari_dataset/minari_dataset/#minari.MinariDataset.sample_episodes" title="minari.MinariDataset.sample_episodes"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.MinariDataset.sample_episodes()</span></code></a>. This method is a generator that randomly samples <code class="docutils literal notranslate"><span class="pre">n</span></code> number of <a class="reference internal" href="../../api/minari_dataset/episode_data/#minari.EpisodeData" title="minari.EpisodeData"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.EpisodeData</span></code></a> from the <a class="reference internal" href="../../api/minari_dataset/minari_dataset/#minari.MinariDataset" title="minari.MinariDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.MinariDataset</span></code></a>. The seed of this generator can be set with <a class="reference internal" href="../../api/minari_dataset/minari_dataset/#minari.MinariDataset.set_seed" title="minari.MinariDataset.set_seed"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.MinariDataset.set_seed()</span></code></a>. For example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">minari</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">minari</span>
 
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;D4RL/door/human-v2&quot;</span><span class="p">)</span>
 <span class="n">dataset</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">123</span><span class="p">)</span>
@@ -921,7 +921,7 @@ To use your own server with Minari, set the <code class="docutils literal notran
 <p>Notice that in each sample non of the episodes are sampled more than once but the same episode can be retrieved in different <a class="reference internal" href="../../api/minari_dataset/minari_dataset/#minari.MinariDataset.sample_episodes" title="minari.MinariDataset.sample_episodes"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.MinariDataset.sample_episodes()</span></code></a> calls.</p>
 <p>Minari doesn’t serve the purpose of creating replay buffers out of the Minari datasets, we leave this task for the user to make for their specific needs.
 To create your own buffers and dataloaders, you may need the ability to iterate through an episodes in a deterministic order. This can be achieved with <a class="reference internal" href="../../api/minari_dataset/minari_dataset/#minari.MinariDataset.iterate_episodes" title="minari.MinariDataset.iterate_episodes"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.MinariDataset.iterate_episodes()</span></code></a>. This method is a generator that iterates over <a class="reference internal" href="../../api/minari_dataset/episode_data/#minari.EpisodeData" title="minari.EpisodeData"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.EpisodeData</span></code></a> episodes from <a class="reference internal" href="../../api/minari_dataset/minari_dataset/#minari.MinariDataset" title="minari.MinariDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.MinariDataset</span></code></a>. Specific indices can be also provided. For example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">minari</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">minari</span>
 
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;D4RL/door/human-v2&quot;</span><span class="p">)</span>
 <span class="n">episodes_generator</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">iterate_episodes</span><span class="p">(</span><span class="n">episode_indices</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
@@ -937,7 +937,7 @@ To create your own buffers and dataloaders, you may need the ability to iterate 
 </pre></div>
 </div>
 <p>In addition, the <a class="reference internal" href="../../api/minari_dataset/minari_dataset/#minari.MinariDataset" title="minari.MinariDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.MinariDataset</span></code></a> dataset itself is iterable:.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">minari</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">minari</span>
 
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;D4RL/door/human-v2&quot;</span><span class="p">)</span>
 
@@ -948,7 +948,7 @@ To create your own buffers and dataloaders, you may need the ability to iterate 
 <section id="filter-episodes">
 <h4>Filter Episodes<a class="headerlink" href="#filter-episodes" title="Link to this heading">¶</a></h4>
 <p>The episodes in the dataset can be filtered before sampling. This is done with a custom conditional callable passed to <a class="reference internal" href="../../api/minari_dataset/minari_dataset/#minari.MinariDataset.filter_episodes" title="minari.MinariDataset.filter_episodes"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.MinariDataset.filter_episodes()</span></code></a>. The input to the conditional callable is an <a class="reference internal" href="../../api/minari_dataset/episode_data/#minari.EpisodeData" title="minari.EpisodeData"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.EpisodeData</span></code></a> and the return value must be <code class="docutils literal notranslate"><span class="pre">True</span></code> if you want to keep the episode or <code class="docutils literal notranslate"><span class="pre">False</span></code> otherwise. The method will return a new <a class="reference internal" href="../../api/minari_dataset/minari_dataset/#minari.MinariDataset" title="minari.MinariDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.MinariDataset</span></code></a>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">minari</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">minari</span>
 
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;D4RL/door/human-v2&quot;</span><span class="p">)</span>
 
@@ -969,7 +969,7 @@ To create your own buffers and dataloaders, you may need the ability to iterate 
 <section id="split-dataset">
 <h4>Split Dataset<a class="headerlink" href="#split-dataset" title="Link to this heading">¶</a></h4>
 <p>Minari provides another utility function to divide a dataset into multiple datasets, <a class="reference internal" href="../../api/minari_functions/#minari.split_dataset" title="minari.split_dataset"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.split_dataset()</span></code></a></p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">minari</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">minari</span>
 
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;D4RL/door/human-v2&quot;</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -988,7 +988,7 @@ To create your own buffers and dataloaders, you may need the ability to iterate 
 <section id="recover-environment">
 <h3>Recover Environment<a class="headerlink" href="#recover-environment" title="Link to this heading">¶</a></h3>
 <p>From a <a class="reference internal" href="../../api/minari_dataset/minari_dataset/#minari.MinariDataset" title="minari.MinariDataset"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.MinariDataset</span></code></a> object we can also recover the Gymnasium environment used to create the dataset, this can be useful for reproducibility or to generate more data for a specific dataset:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">minari</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">minari</span>
 
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;D4RL/door/human-v2&#39;</span><span class="p">)</span>
 <span class="n">env</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">recover_environment</span><span class="p">()</span>
@@ -1003,7 +1003,7 @@ To create your own buffers and dataloaders, you may need the ability to iterate 
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>There are some datasets that provide a different environment for evaluation purposes than the one used for collecting the data. This environment can be recovered by setting to <cite>True</cite> the <cite>eval_env</cite> argument:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">minari</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">minari</span>
 
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;D4RL/door/human-v2&#39;</span><span class="p">)</span>
 <span class="n">eval_env</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">recover_environment</span><span class="p">(</span><span class="n">eval_env</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1038,8 +1038,8 @@ minari<span class="w"> </span>list<span class="w"> </span><span class="nb">local
 <h3>Collecting Data<a class="headerlink" href="#collecting-data" title="Link to this heading">¶</a></h3>
 <p>Minari can abstract the data collection process. This is achieved by using the <a class="reference internal" href="../../api/data_collector/#minari.DataCollector" title="minari.DataCollector"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollector</span></code></a> wrapper which stores the environments stepping data in internal memory buffers before saving the dataset into disk. The <a class="reference internal" href="../../api/data_collector/#minari.DataCollector" title="minari.DataCollector"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollector</span></code></a> wrapper can also perform caching by scheduling the amount of episodes or steps that are stored in-memory before saving the data in a temporary <a class="reference external" href="/content/dataset_standards">Minari dataset file</a> . This wrapper also computes relevant metadata of the dataset while collecting the data.</p>
 <p>The wrapper is very simple to initialize:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">minari</span> <span class="kn">import</span> <span class="n">DataCollector</span>
-<span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">minari</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataCollector</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
 
 <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;CartPole-v1&#39;</span><span class="p">)</span>
 <span class="n">env</span> <span class="o">=</span> <span class="n">DataCollector</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">record_infos</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1052,9 +1052,9 @@ minari<span class="w"> </span>list<span class="w"> </span><span class="nb">local
 <p>To create a Minari dataset first we need to step the environment with a given policy to allow the <a class="reference internal" href="../../api/data_collector/#minari.DataCollector" title="minari.DataCollector"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollector</span></code></a> to record the data that will comprise the dataset. This is as simple as just looping through the Gymansium MDP API. For our example we will loop through <code class="docutils literal notranslate"><span class="pre">100</span></code> episodes of the <code class="docutils literal notranslate"><span class="pre">'CartPole-v1'</span></code> environment with a random policy.</p>
 <p>Finally, we need to create the Minari dataset and give it a name id. This is done by calling the <a class="reference internal" href="../../api/data_collector/#minari.DataCollector.create_dataset" title="minari.DataCollector.create_dataset"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.DataCollector.create_dataset()</span></code></a> Minari function which will move the temporary data recorded in the <a class="reference internal" href="../../api/data_collector/#minari.DataCollector" title="minari.DataCollector"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollector</span></code></a> environment to a permanent location in the <a class="reference external" href="/content/dataset_standards">local Minari root path</a> with the Minari dataset standard structure.</p>
 <p>Extending the code example for the <code class="docutils literal notranslate"><span class="pre">'CartPole-v1'</span></code> environment we can create the Minari dataset as follows:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">minari</span>
-<span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="kn">from</span> <span class="nn">minari</span> <span class="kn">import</span> <span class="n">DataCollector</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">minari</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minari</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataCollector</span>
 
 <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;CartPole-v1&#39;</span><span class="p">)</span>
 <span class="n">env</span> <span class="o">=</span> <span class="n">DataCollector</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">record_infos</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1101,9 +1101,9 @@ minari<span class="w"> </span>list<span class="w"> </span><span class="nb">local
 <h3>Checkpoint Minari Dataset<a class="headerlink" href="#checkpoint-minari-dataset" title="Link to this heading">¶</a></h3>
 <p>When collecting data with the <a class="reference internal" href="../../api/data_collector/#minari.DataCollector" title="minari.DataCollector"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollector</span></code></a> wrapper, the recorded data is saved into temporary files and it won’t be permanently saved on disk until the <code class="xref py py-func docutils literal notranslate"><span class="pre">DataCollector.create_dataset()</span></code> function is called. To prevent losing data for large datasets, it is recommended to create the dataset during data collection and append the data to it using <code class="xref py py-func docutils literal notranslate"><span class="pre">DataCollector.add_to_dataset()</span></code>.</p>
 <p>Continuing the <code class="docutils literal notranslate"><span class="pre">'CartPole-v1'</span></code> example we can checkpoint the newly created Minari dataset every 10 episodes as follows:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">minari</span>
-<span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="kn">from</span> <span class="nn">minari</span> <span class="kn">import</span> <span class="n">DataCollector</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">minari</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minari</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataCollector</span>
 
 <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;CartPole-v1&#39;</span><span class="p">)</span>
 <span class="n">env</span> <span class="o">=</span> <span class="n">DataCollector</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">record_infos</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>

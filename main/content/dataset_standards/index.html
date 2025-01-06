@@ -13,7 +13,7 @@
 
     <link rel="shortcut icon" href="../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>Dataset Standards - Minari Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=ca3c1c84" />
@@ -974,7 +974,7 @@
 <section id="episodedata-structure">
 <h2>EpisodeData Structure<a class="headerlink" href="#episodedata-structure" title="Link to this heading">¶</a></h2>
 <p>A Minari dataset is encapsulated in the <code class="docutils literal notranslate"><span class="pre">MinariDataset</span></code> class which allows for iterating and sampling through episodes which are defined as <code class="docutils literal notranslate"><span class="pre">EpisodeData</span></code> data class. Take the following example where we load the <code class="docutils literal notranslate"><span class="pre">D4RL/door/human-v2</span></code> dataset and randomly sample 10 episodes:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">minari</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">minari</span>
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;D4RL/door/human-v2&quot;</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">sampled_episodes</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">sample_episodes</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>

@@ -13,7 +13,7 @@
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>Serializing a custom space - Minari Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=ca3c1c84" />
@@ -822,15 +822,15 @@ show how to serialize its unique observation space.</p>
 <p>Let’s start by installing the minigrid library:</p>
 <p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">minigrid</span></code></p>
 <p>Then we can import the required modules:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="kn">from</span> <span class="nn">minigrid.core.mission</span> <span class="kn">import</span> <span class="n">MissionSpace</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minigrid.core.mission</span><span class="w"> </span><span class="kn">import</span> <span class="n">MissionSpace</span>
 
-<span class="kn">import</span> <span class="nn">minari</span>
-<span class="kn">from</span> <span class="nn">minari</span> <span class="kn">import</span> <span class="n">DataCollector</span>
-<span class="kn">from</span> <span class="nn">minari.serialization</span> <span class="kn">import</span> <span class="n">deserialize_space</span><span class="p">,</span> <span class="n">serialize_space</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">minari</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minari</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataCollector</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minari.serialization</span><span class="w"> </span><span class="kn">import</span> <span class="n">deserialize_space</span><span class="p">,</span> <span class="n">serialize_space</span>
 </pre></div>
 </div>
 <p>First we’ll initialize the MiniGrid Empty environment and take a look at its observation and action space.</p>
@@ -874,7 +874,7 @@ function takes care of this conversion for various supported Gymnasium spaces. T
 for a custom space we can register 2 new functions that will serialize the space into a JSON object
 and also deserialize it back into the custom space.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@serialize_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MissionSpace</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">serialize_custom_space</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">MissionSpace</span><span class="p">,</span> <span class="n">to_string</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">serialize_custom_space</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">MissionSpace</span><span class="p">,</span> <span class="n">to_string</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
     <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">result</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;MissionSpace&quot;</span>
     <span class="n">result</span><span class="p">[</span><span class="s2">&quot;mission_func&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">space</span><span class="o">.</span><span class="n">mission_func</span><span class="p">()</span>
@@ -885,7 +885,7 @@ and also deserialize it back into the custom space.</p>
 
 
 <span class="nd">@deserialize_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;MissionSpace&quot;</span><span class="p">)</span>
-<span class="k">def</span> <span class="nf">deserialize_custom_space</span><span class="p">(</span><span class="n">space_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MissionSpace</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">deserialize_custom_space</span><span class="p">(</span><span class="n">space_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MissionSpace</span><span class="p">:</span>
     <span class="k">assert</span> <span class="n">space_dict</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;MissionSpace&quot;</span>
     <span class="n">mission_func</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">space_dict</span><span class="p">[</span><span class="s2">&quot;mission_func&quot;</span><span class="p">]</span>  <span class="c1"># noqa: E731</span>
 

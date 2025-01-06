@@ -12,7 +12,7 @@
 
     <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>minari.data_collector.data_collector - Minari Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=ca3c1c84" />
@@ -802,27 +802,27 @@
           <article role="main">
             
             <h1>Source code for minari.data_collector.data_collector</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">secrets</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">import</span> <span class="nn">tempfile</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="n">Type</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">secrets</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="n">Type</span>
 
-<span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">gymnasium.core</span> <span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span>
-<span class="kn">from</span> <span class="nn">gymnasium.envs.registration</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.envs.registration</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnvSpec</span>
 
-<span class="kn">from</span> <span class="nn">minari.data_collector.callbacks</span> <span class="kn">import</span> <span class="n">EpisodeMetadataCallback</span><span class="p">,</span> <span class="n">StepDataCallback</span>
-<span class="kn">from</span> <span class="nn">minari.data_collector.episode_buffer</span> <span class="kn">import</span> <span class="n">EpisodeBuffer</span>
-<span class="kn">from</span> <span class="nn">minari.dataset.minari_dataset</span> <span class="kn">import</span> <span class="n">MinariDataset</span><span class="p">,</span> <span class="n">parse_dataset_id</span>
-<span class="kn">from</span> <span class="nn">minari.dataset.minari_storage</span> <span class="kn">import</span> <span class="n">MinariStorage</span>
-<span class="kn">from</span> <span class="nn">minari.namespace</span> <span class="kn">import</span> <span class="n">create_namespace</span><span class="p">,</span> <span class="n">list_local_namespaces</span>
-<span class="kn">from</span> <span class="nn">minari.utils</span> <span class="kn">import</span> <span class="n">_generate_dataset_metadata</span><span class="p">,</span> <span class="n">_generate_dataset_path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minari.data_collector.callbacks</span><span class="w"> </span><span class="kn">import</span> <span class="n">EpisodeMetadataCallback</span><span class="p">,</span> <span class="n">StepDataCallback</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minari.data_collector.episode_buffer</span><span class="w"> </span><span class="kn">import</span> <span class="n">EpisodeBuffer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minari.dataset.minari_dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">MinariDataset</span><span class="p">,</span> <span class="n">parse_dataset_id</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minari.dataset.minari_storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">MinariStorage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minari.namespace</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_namespace</span><span class="p">,</span> <span class="n">list_local_namespaces</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minari.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">_generate_dataset_metadata</span><span class="p">,</span> <span class="n">_generate_dataset_path</span>
 
 
 <span class="c1"># H5Py supports ints up to uint64</span>
@@ -831,7 +831,7 @@
 
 <div class="viewcode-block" id="DataCollector">
 <a class="viewcode-back" href="../../../../api/data_collector/#minari.DataCollector">[docs]</a>
-<span class="k">class</span> <span class="nc">DataCollector</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">):</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">DataCollector</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">Wrapper</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Gymnasium environment wrapper that collects step data.</span>
 
 <span class="sd">    This wrapper is meant to work as a temporary buffer of the environment data before creating a Minari dataset. The creation of the buffers</span>
@@ -866,7 +866,7 @@
 
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">,</span>
         <span class="n">step_data_callback</span><span class="p">:</span> <span class="n">Type</span><span class="p">[</span><span class="n">StepDataCallback</span><span class="p">]</span> <span class="o">=</span> <span class="n">StepDataCallback</span><span class="p">,</span>
@@ -914,7 +914,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_episode_id</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_reset_storage</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">_reset_storage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_reset_storage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_episode_id</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_tmp_dir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">TemporaryDirectory</span><span class="p">(</span><span class="nb">dir</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">datasets_path</span><span class="p">)</span>
         <span class="n">data_format_kwarg</span> <span class="o">=</span> <span class="p">(</span>
@@ -928,7 +928,7 @@
             <span class="o">**</span><span class="n">data_format_kwarg</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">step</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">ActType</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ObsType</span><span class="p">,</span> <span class="n">SupportsFloat</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">bool</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Gymnasium step method.&quot;&quot;&quot;</span>
@@ -971,7 +971,7 @@
 
         <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">rew</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">info</span>
 
-    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
         <span class="n">seed</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1016,7 +1016,7 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">obs</span><span class="p">,</span> <span class="n">info</span>
 
-    <span class="k">def</span> <span class="nf">add_to_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">MinariDataset</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_to_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">MinariDataset</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add extra data to Minari dataset from collector environment buffers (DataCollector).</span>
 
 <span class="sd">        Args:</span>
@@ -1032,7 +1032,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_reset_storage</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">create_dataset</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_dataset</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">eval_env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span> <span class="o">|</span> <span class="n">EnvSpec</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1097,7 +1097,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_save_to_disk</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">MinariDataset</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">_flush_to_storage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_flush_to_storage</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">terminations</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span><span class="o">.</span><span class="n">truncations</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
@@ -1105,7 +1105,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_episode_id</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_buffer</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="k">def</span> <span class="nf">_save_to_disk</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_save_to_disk</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span> <span class="n">dataset_metadata</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Save all in-memory buffer data and move temporary files to a permanent location in disk.</span>
@@ -1139,7 +1139,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_reset_storage</span><span class="p">()</span>
 
-    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Close the DataCollector.</span>
 
 <span class="sd">        Clear buffer and close temporary directory.</span>
@@ -1150,7 +1150,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">_check_infos_same_shape</span><span class="p">(</span><span class="n">info_1</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">info_2</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_check_infos_same_shape</span><span class="p">(</span><span class="n">info_1</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">info_2</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">info_1</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">!=</span> <span class="n">info_2</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="k">return</span> <span class="kc">False</span>
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">info_1</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>

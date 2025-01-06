@@ -12,7 +12,7 @@
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>minari.utils - Minari Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=ca3c1c84" />
@@ -802,34 +802,34 @@
           <article role="main">
             
             <h1>Source code for minari.utils</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">import</span> <span class="nn">importlib.metadata</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib.metadata</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">gymnasium.core</span> <span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span>
-<span class="kn">from</span> <span class="nn">gymnasium.envs.registration</span> <span class="kn">import</span> <span class="n">EnvSpec</span>
-<span class="kn">from</span> <span class="nn">gymnasium.wrappers</span> <span class="kn">import</span> <span class="n">RecordEpisodeStatistics</span>  <span class="c1"># type: ignore</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">ActType</span><span class="p">,</span> <span class="n">ObsType</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.envs.registration</span><span class="w"> </span><span class="kn">import</span> <span class="n">EnvSpec</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.wrappers</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecordEpisodeStatistics</span>  <span class="c1"># type: ignore</span>
 
-<span class="kn">from</span> <span class="nn">minari.data_collector.episode_buffer</span> <span class="kn">import</span> <span class="n">EpisodeBuffer</span>
-<span class="kn">from</span> <span class="nn">minari.dataset.minari_dataset</span> <span class="kn">import</span> <span class="n">MinariDataset</span><span class="p">,</span> <span class="n">parse_dataset_id</span>
-<span class="kn">from</span> <span class="nn">minari.dataset.minari_storage</span> <span class="kn">import</span> <span class="n">MinariStorage</span>
-<span class="kn">from</span> <span class="nn">minari.namespace</span> <span class="kn">import</span> <span class="n">create_namespace</span><span class="p">,</span> <span class="n">list_local_namespaces</span>
-<span class="kn">from</span> <span class="nn">minari.serialization</span> <span class="kn">import</span> <span class="n">deserialize_space</span>
-<span class="kn">from</span> <span class="nn">minari.storage.datasets_root_dir</span> <span class="kn">import</span> <span class="n">get_dataset_path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minari.data_collector.episode_buffer</span><span class="w"> </span><span class="kn">import</span> <span class="n">EpisodeBuffer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minari.dataset.minari_dataset</span><span class="w"> </span><span class="kn">import</span> <span class="n">MinariDataset</span><span class="p">,</span> <span class="n">parse_dataset_id</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minari.dataset.minari_storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">MinariStorage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minari.namespace</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_namespace</span><span class="p">,</span> <span class="n">list_local_namespaces</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minari.serialization</span><span class="w"> </span><span class="kn">import</span> <span class="n">deserialize_space</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minari.storage.datasets_root_dir</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_dataset_path</span>
 
 
 <span class="c1"># Use importlib due to circular import when: &quot;from minari import __version__&quot;</span>
 <span class="n">__version__</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">version</span><span class="p">(</span><span class="s2">&quot;minari&quot;</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">validate_datasets_to_combine</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_datasets_to_combine</span><span class="p">(</span>
     <span class="n">datasets_to_combine</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">MinariDataset</span><span class="p">],</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">EnvSpec</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if the given datasets can be combined.</span>
@@ -891,22 +891,22 @@
     <span class="k">return</span> <span class="n">common_env_spec</span>
 
 
-<span class="k">class</span> <span class="nc">RandomPolicy</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">RandomPolicy</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A random action selection policy to compute `ref_min_score`.&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">123</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">observation_space</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">:</span> <span class="n">ObsType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ActType</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observation</span><span class="p">:</span> <span class="n">ObsType</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ActType</span><span class="p">:</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">observation</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
 
 
 <div class="viewcode-block" id="combine_datasets">
 <a class="viewcode-back" href="../../../api/minari_functions/#minari.combine_datasets">[docs]</a>
-<span class="k">def</span> <span class="nf">combine_datasets</span><span class="p">(</span><span class="n">datasets_to_combine</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">MinariDataset</span><span class="p">],</span> <span class="n">new_dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">combine_datasets</span><span class="p">(</span><span class="n">datasets_to_combine</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">MinariDataset</span><span class="p">],</span> <span class="n">new_dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Combine a group of MinariDataset in to a single dataset with its own name id.</span>
 
 <span class="sd">    The new dataset will contain a metadata attribute `combined_datasets` containing a list</span>
@@ -950,7 +950,7 @@
 
 <div class="viewcode-block" id="split_dataset">
 <a class="viewcode-back" href="../../../api/minari_functions/#minari.split_dataset">[docs]</a>
-<span class="k">def</span> <span class="nf">split_dataset</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">split_dataset</span><span class="p">(</span>
     <span class="n">dataset</span><span class="p">:</span> <span class="n">MinariDataset</span><span class="p">,</span> <span class="n">sizes</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">seed</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">MinariDataset</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Split a MinariDataset in multiple datasets.</span>
@@ -984,7 +984,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">get_average_reference_score</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_average_reference_score</span><span class="p">(</span>
     <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">,</span>
     <span class="n">policy</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">ObsType</span><span class="p">],</span> <span class="n">ActType</span><span class="p">],</span>
     <span class="n">num_episodes</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
@@ -1007,7 +1007,7 @@
     <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">mean_ref_score</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">_generate_dataset_path</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_generate_dataset_path</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Checks if the dataset already exists locally, then create and return the data storage directory.&quot;&quot;&quot;</span>
     <span class="n">dataset_path</span> <span class="o">=</span> <span class="n">get_dataset_path</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">dataset_path</span><span class="p">):</span>
@@ -1021,7 +1021,7 @@
     <span class="k">return</span> <span class="n">dataset_path</span>
 
 
-<span class="k">def</span> <span class="nf">_generate_dataset_metadata</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_generate_dataset_metadata</span><span class="p">(</span>
     <span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">env_spec</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">EnvSpec</span><span class="p">],</span>
     <span class="n">eval_env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span> <span class="o">|</span> <span class="n">EnvSpec</span><span class="p">],</span>
@@ -1141,7 +1141,7 @@
 
 <div class="viewcode-block" id="create_dataset_from_buffers">
 <a class="viewcode-back" href="../../../api/minari_functions/#minari.create_dataset_from_buffers">[docs]</a>
-<span class="k">def</span> <span class="nf">create_dataset_from_buffers</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_dataset_from_buffers</span><span class="p">(</span>
     <span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">buffer</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">EpisodeBuffer</span><span class="p">],</span>
     <span class="n">env</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span> <span class="o">|</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span> <span class="o">|</span> <span class="n">EnvSpec</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -1250,7 +1250,7 @@
 
 <div class="viewcode-block" id="get_normalized_score">
 <a class="viewcode-back" href="../../../api/minari_functions/#minari.get_normalized_score">[docs]</a>
-<span class="k">def</span> <span class="nf">get_normalized_score</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">MinariDataset</span><span class="p">,</span> <span class="n">returns</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_normalized_score</span><span class="p">(</span><span class="n">dataset</span><span class="p">:</span> <span class="n">MinariDataset</span><span class="p">,</span> <span class="n">returns</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Normalize undiscounted return of an episode.</span>
 
 <span class="sd">    This function was originally provided in the `D4RL repository &lt;https://github.com/Farama-Foundation/D4RL/blob/71a9549f2091accff93eeff68f1f3ab2c0e0a288/d4rl/offline_env.py#L71&gt;`_.</span>
@@ -1283,7 +1283,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">get_env_spec_dict</span><span class="p">(</span><span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_env_spec_dict</span><span class="p">(</span><span class="n">env_spec</span><span class="p">:</span> <span class="n">EnvSpec</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create dict of the environment specs, including observation and action space.&quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="n">env_spec</span><span class="p">)</span>
@@ -1316,7 +1316,7 @@
     <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">md_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 
 
-<span class="k">def</span> <span class="nf">get_dataset_spec_dict</span><span class="p">(</span><span class="n">dataset_spec</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_dataset_spec_dict</span><span class="p">(</span><span class="n">dataset_spec</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create dict of the dataset specs, including observation and action space.&quot;&quot;&quot;</span>
     <span class="n">code_link</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;code_permalink&quot;</span><span class="p">)</span>
     <span class="n">action_space</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;action_space&quot;</span><span class="p">)</span>
@@ -1339,7 +1339,7 @@
         <span class="n">dataset_action_space</span> <span class="o">=</span> <span class="n">action_space</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
         <span class="n">md_dict</span><span class="p">[</span><span class="s2">&quot;Dataset Action Space&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;`</span><span class="si">{</span><span class="n">dataset_action_space</span><span class="si">}</span><span class="s2">`&quot;</span>
 
-    <span class="kn">from</span> <span class="nn">minari</span> <span class="kn">import</span> <span class="n">supported_dataset_versions</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">minari</span><span class="w"> </span><span class="kn">import</span> <span class="n">supported_dataset_versions</span>
 
     <span class="n">version</span> <span class="o">=</span> <span class="n">dataset_spec</span><span class="p">[</span><span class="s2">&quot;minari_version&quot;</span><span class="p">]</span>
     <span class="n">supported</span> <span class="o">=</span> <span class="p">(</span>

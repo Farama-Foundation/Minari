@@ -12,7 +12,7 @@
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>minari.namespace - Minari Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=ca3c1c84" />
@@ -802,17 +802,17 @@
           <article role="main">
             
             <h1>Source code for minari.namespace</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">from</span> <span class="nn">minari.storage</span> <span class="kn">import</span> <span class="n">get_dataset_path</span>
-<span class="kn">from</span> <span class="nn">minari.storage.hosting</span> <span class="kn">import</span> <span class="n">get_cloud_storage</span>
-<span class="kn">from</span> <span class="nn">minari.storage.local</span> <span class="kn">import</span> <span class="n">list_non_hidden_dirs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minari.storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_dataset_path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minari.storage.hosting</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_cloud_storage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minari.storage.local</span><span class="w"> </span><span class="kn">import</span> <span class="n">list_non_hidden_dirs</span>
 
 
 <span class="n">NAMESPACE_REGEX</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;[-_\w][-_\w/]*[-_\w]+&quot;</span><span class="p">)</span>
@@ -821,7 +821,7 @@
 
 <div class="viewcode-block" id="create_namespace">
 <a class="viewcode-back" href="../../../api/namespace/namespace/#minari.namespace.create_namespace">[docs]</a>
-<span class="k">def</span> <span class="nf">create_namespace</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_namespace</span><span class="p">(</span>
     <span class="n">namespace</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
@@ -863,7 +863,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">update_namespace_metadata</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">update_namespace_metadata</span><span class="p">(</span>
     <span class="n">namespace</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">description</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
@@ -892,7 +892,7 @@
 
 <div class="viewcode-block" id="get_namespace_metadata">
 <a class="viewcode-back" href="../../../api/namespace/namespace/#minari.namespace.get_namespace_metadata">[docs]</a>
-<span class="k">def</span> <span class="nf">get_namespace_metadata</span><span class="p">(</span><span class="n">namespace</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_namespace_metadata</span><span class="p">(</span><span class="n">namespace</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Load local namespace metadata.</span>
 
 <span class="sd">    Note: The namespace API is an experimental feature and may change in future releases.</span>
@@ -919,7 +919,7 @@
 
 <div class="viewcode-block" id="delete_namespace">
 <a class="viewcode-back" href="../../../api/namespace/namespace/#minari.namespace.delete_namespace">[docs]</a>
-<span class="k">def</span> <span class="nf">delete_namespace</span><span class="p">(</span><span class="n">namespace</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">delete_namespace</span><span class="p">(</span><span class="n">namespace</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Delete local namespace. Only empty namespaces can be deleted.</span>
 
 <span class="sd">    Note: The namespace API is an experimental feature and may change in future releases.</span>
@@ -952,7 +952,7 @@
 
 <div class="viewcode-block" id="list_local_namespaces">
 <a class="viewcode-back" href="../../../api/namespace/namespace/#minari.namespace.list_local_namespaces">[docs]</a>
-<span class="k">def</span> <span class="nf">list_local_namespaces</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">list_local_namespaces</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the names of the namespaces in the local database.</span>
 
 <span class="sd">    Note: The namespace API is an experimental feature and may change in future releases.</span>
@@ -963,7 +963,7 @@
     <span class="n">datasets_path</span> <span class="o">=</span> <span class="n">get_dataset_path</span><span class="p">()</span>
     <span class="n">namespaces</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">def</span> <span class="nf">recurse_directories</span><span class="p">(</span><span class="n">base_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">namespace</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">recurse_directories</span><span class="p">(</span><span class="n">base_path</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">namespace</span><span class="p">):</span>
         <span class="n">parent_dir</span> <span class="o">=</span> <span class="n">base_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">namespace</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">dir_name</span> <span class="ow">in</span> <span class="n">list_non_hidden_dirs</span><span class="p">(</span><span class="n">parent_dir</span><span class="p">):</span>
             <span class="n">dir_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">parent_dir</span><span class="p">,</span> <span class="n">dir_name</span><span class="p">)</span>
@@ -985,7 +985,7 @@
 
 <div class="viewcode-block" id="list_remote_namespaces">
 <a class="viewcode-back" href="../../../api/namespace/namespace/#minari.namespace.list_remote_namespaces">[docs]</a>
-<span class="k">def</span> <span class="nf">list_remote_namespaces</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">list_remote_namespaces</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the names of the namespaces in the remote server.</span>
 
 <span class="sd">    Note: The namespace API is an experimental feature and may change in future releases.</span>
@@ -1001,7 +1001,7 @@
 
 <div class="viewcode-block" id="download_namespace_metadata">
 <a class="viewcode-back" href="../../../api/namespace/namespace/#minari.namespace.download_namespace_metadata">[docs]</a>
-<span class="k">def</span> <span class="nf">download_namespace_metadata</span><span class="p">(</span><span class="n">namespace</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">download_namespace_metadata</span><span class="p">(</span><span class="n">namespace</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Download remote namespace to local database.</span>
 
 <span class="sd">    Note: The namespace API is an experimental feature and may change in future releases.</span>
@@ -1032,7 +1032,7 @@
 
 <div class="viewcode-block" id="upload_namespace">
 <a class="viewcode-back" href="../../../api/namespace/namespace/#minari.namespace.upload_namespace">[docs]</a>
-<span class="k">def</span> <span class="nf">upload_namespace</span><span class="p">(</span><span class="n">namespace</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">upload_namespace</span><span class="p">(</span><span class="n">namespace</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Upload a local namespace to the remote server.</span>
 
 <span class="sd">    If you would like to upload a namespace please first get in touch with the Farama team at contact@farama.org.</span>
@@ -1067,7 +1067,7 @@
 
 
 
-<span class="k">def</span> <span class="nf">namespace_hierarchy</span><span class="p">(</span><span class="n">namespace</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">namespace_hierarchy</span><span class="p">(</span><span class="n">namespace</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Get all parent namespaces of a given namespace.</span>
 
 <span class="sd">    Args:</span>
@@ -1084,7 +1084,7 @@
         <span class="k">yield</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="o">*</span><span class="n">namespace_parts</span><span class="p">[:</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
 
 
-<span class="k">def</span> <span class="nf">validate_namespace</span><span class="p">(</span><span class="n">namespace</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_namespace</span><span class="p">(</span><span class="n">namespace</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate a namespace identifier.</span>
 
 <span class="sd">    Note: The namespace API is an experimental feature and may change in future releases.</span>

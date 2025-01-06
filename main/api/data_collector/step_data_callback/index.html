@@ -13,7 +13,7 @@
 
     <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>StepDataCallback - Minari Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=ca3c1c84" />
@@ -832,8 +832,8 @@ edit the observation, action, reward, termination, truncation, or info returns.<
 <p>The input arguments belong to a Gymnasium stepping transition: <cite>obs, rew, terminated, truncated, info = env.step(action)</cite>.
 Override this method to add additional keys or edit each environment’s step returns. Additional nested dictionaries can be added to the returned step dictionary
 as follows:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">CustomStepDataCallback</span><span class="p">(</span><span class="n">StepDataCallback</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">CustomStepDataCallback</span><span class="p">(</span><span class="n">StepDataCallback</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="n">step_data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="n">step_data</span><span class="p">[</span><span class="s1">&#39;environment_states&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">step_data</span><span class="p">[</span><span class="s1">&#39;environment_states&#39;</span><span class="p">][</span><span class="s1">&#39;pose&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>

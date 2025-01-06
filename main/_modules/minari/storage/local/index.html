@@ -12,7 +12,7 @@
 
     <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>minari.storage.local - Minari Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=ca3c1c84" />
@@ -802,35 +802,35 @@
           <article role="main">
             
             <h1>Source code for minari.storage.local</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">importlib.metadata</span>
-<span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">import</span> <span class="nn">pathlib</span>
-<span class="kn">import</span> <span class="nn">shutil</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">importlib.metadata</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">from</span> <span class="nn">minari.dataset.minari_dataset</span> <span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minari.dataset.minari_dataset</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">MinariDataset</span><span class="p">,</span>
     <span class="n">gen_dataset_id</span><span class="p">,</span>
     <span class="n">parse_dataset_id</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span> <span class="nn">minari.dataset.minari_storage</span> <span class="kn">import</span> <span class="n">MinariStorage</span>
-<span class="kn">from</span> <span class="nn">minari.storage</span> <span class="kn">import</span> <span class="n">hosting</span>
-<span class="kn">from</span> <span class="nn">minari.storage.datasets_root_dir</span> <span class="kn">import</span> <span class="n">get_dataset_path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minari.dataset.minari_storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">MinariStorage</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minari.storage</span><span class="w"> </span><span class="kn">import</span> <span class="n">hosting</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minari.storage.datasets_root_dir</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_dataset_path</span>
 
 
 <span class="c1"># Use importlib due to circular import when: &quot;from minari import __version__&quot;</span>
 <span class="n">__version__</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">version</span><span class="p">(</span><span class="s2">&quot;minari&quot;</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">list_non_hidden_dirs</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">list_non_hidden_dirs</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;List all non-hidden subdirectories.&quot;&quot;&quot;</span>
     <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">path</span><span class="o">.</span><span class="n">iterdir</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">d</span><span class="o">.</span><span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)):</span>
             <span class="k">yield</span> <span class="n">d</span><span class="o">.</span><span class="n">name</span>
 
 
-<span class="k">def</span> <span class="nf">dataset_id_sort_key</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">dataset_id_sort_key</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Key for sorting dataset ids first by namespace, and then alphabetically.&quot;&quot;&quot;</span>
     <span class="n">namespace</span><span class="p">,</span> <span class="n">dataset_name</span><span class="p">,</span> <span class="n">version</span> <span class="o">=</span> <span class="n">parse_dataset_id</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
     <span class="n">namespace</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="n">namespace</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">namespace</span>
@@ -839,7 +839,7 @@
 
 <div class="viewcode-block" id="load_dataset">
 <a class="viewcode-back" href="../../../../api/minari_functions/#minari.load_dataset">[docs]</a>
-<span class="k">def</span> <span class="nf">load_dataset</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">download</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">load_dataset</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">download</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Retrieve Minari dataset from local database.</span>
 
 <span class="sd">    Args:</span>
@@ -866,7 +866,7 @@
 
 <div class="viewcode-block" id="list_local_datasets">
 <a class="viewcode-back" href="../../../../api/minari_functions/#minari.list_local_datasets">[docs]</a>
-<span class="k">def</span> <span class="nf">list_local_datasets</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">list_local_datasets</span><span class="p">(</span>
     <span class="n">latest_version</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">compatible_minari_version</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">prefix</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -880,12 +880,12 @@
 <span class="sd">    Returns:</span>
 <span class="sd">       Dict[str, Dict[str, str]]: keys the names of the Minari datasets and values the metadata</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="kn">from</span> <span class="nn">minari</span> <span class="kn">import</span> <span class="n">supported_dataset_versions</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">minari</span><span class="w"> </span><span class="kn">import</span> <span class="n">supported_dataset_versions</span>
 
     <span class="n">datasets_path</span> <span class="o">=</span> <span class="n">get_dataset_path</span><span class="p">()</span>
     <span class="n">dataset_ids</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="k">def</span> <span class="nf">recurse_directories</span><span class="p">(</span><span class="n">base_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="n">namespace</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">recurse_directories</span><span class="p">(</span><span class="n">base_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span> <span class="n">namespace</span><span class="p">):</span>
         <span class="n">parent_dir</span> <span class="o">=</span> <span class="n">base_path</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">namespace</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">parent_dir</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
             <span class="k">return</span>
@@ -945,7 +945,7 @@
 
 <div class="viewcode-block" id="delete_dataset">
 <a class="viewcode-back" href="../../../../api/minari_functions/#minari.delete_dataset">[docs]</a>
-<span class="k">def</span> <span class="nf">delete_dataset</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">delete_dataset</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Delete a Minari dataset from the local Minari database.</span>
 
 <span class="sd">    Args:</span>

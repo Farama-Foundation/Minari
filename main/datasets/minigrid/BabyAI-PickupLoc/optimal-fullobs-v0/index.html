@@ -13,7 +13,7 @@
 
     <link rel="shortcut icon" href="../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>Optimal-Fullobs - Minari Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=ca3c1c84" />
@@ -859,7 +859,7 @@ This version of the dataset uses the FullyObsWrapper, which provides the full ob
 <p>The following table rows correspond to the Gymnasium environment specifications used to generate the dataset.
 To read more about what each parameter means you can have a look at the Gymnasium documentation <a class="reference external" href="https://gymnasium.farama.org/api/registry/#gymnasium.envs.registration.EnvSpec">https://gymnasium.farama.org/api/registry/#gymnasium.envs.registration.EnvSpec</a></p>
 <p>This environment can be recovered from the Minari dataset as follows:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">minari</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">minari</span>
 
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;minigrid/BabyAI-PickupLoc/optimal-fullobs-v0&#39;</span><span class="p">)</span>
 <span class="n">env</span>  <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">recover_environment</span><span class="p">()</span>
@@ -877,7 +877,7 @@ To read more about what each parameter means you can have a look at the Gymnasiu
 <td><p>BabyAI-PickupLoc-v0</p></td>
 </tr>
 <tr class="row-odd"><td><p>Observation Space</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">Dict('direction':</span> <span class="pre">Discrete(4),</span> <span class="pre">'image':</span> <span class="pre">Box(0,</span> <span class="pre">255,</span> <span class="pre">(8,</span> <span class="pre">8,</span> <span class="pre">3),</span> <span class="pre">uint8),</span> <span class="pre">'mission':</span> <span class="pre">MissionSpace(&lt;function</span> <span class="pre">BabyAIMissionSpace._gen_mission</span> <span class="pre">at</span> <span class="pre">0x7f32e4787dc0&gt;,</span> <span class="pre">None))</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Dict('direction':</span> <span class="pre">Discrete(4),</span> <span class="pre">'image':</span> <span class="pre">Box(0,</span> <span class="pre">255,</span> <span class="pre">(8,</span> <span class="pre">8,</span> <span class="pre">3),</span> <span class="pre">uint8),</span> <span class="pre">'mission':</span> <span class="pre">MissionSpace(&lt;function</span> <span class="pre">BabyAIMissionSpace._gen_mission</span> <span class="pre">at</span> <span class="pre">0x7f7927347dc0&gt;,</span> <span class="pre">None))</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>Action Space</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">Discrete(7)</span></code></p></td>
@@ -916,7 +916,7 @@ To read more about what each parameter means you can have a look at the Gymnasiu
 <section id="evaluation-environment-specs">
 <h2>Evaluation Environment Specs<a class="headerlink" href="#evaluation-environment-specs" title="Link to this heading">¶</a></h2>
 <p>This dataset doesn’t contain an <cite>eval_env_spec</cite> attribute which means that the specs of the environment used for evaluation are the same as the specs of the environment used for creating the dataset. The following calls will return the same environment:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">minari</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">minari</span>
 
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">&#39;minigrid/BabyAI-PickupLoc/optimal-fullobs-v0&#39;</span><span class="p">)</span>
 <span class="n">env</span>  <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">recover_environment</span><span class="p">()</span>

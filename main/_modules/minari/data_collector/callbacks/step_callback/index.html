@@ -12,7 +12,7 @@
 
     <link rel="shortcut icon" href="../../../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
         <title>minari.data_collector.callbacks.step_callback - Minari Documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=a746c00c" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/styles/furo.css?v=3e7f4c72" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-binder.css?v=ca3c1c84" />
@@ -802,23 +802,23 @@
           <article role="main">
             
             <h1>Source code for minari.data_collector.callbacks.step_callback</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">import</span> <span class="nn">gymnasium</span> <span class="k">as</span> <span class="nn">gym</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
 
-<span class="kn">from</span> <span class="nn">minari.dataset.step_data</span> <span class="kn">import</span> <span class="n">StepData</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minari.dataset.step_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">StepData</span>
 
 
 <div class="viewcode-block" id="StepDataCallback">
 <a class="viewcode-back" href="../../../../../api/data_collector/step_data_callback/#minari.StepDataCallback">[docs]</a>
-<span class="k">class</span> <span class="nc">StepDataCallback</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">StepDataCallback</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Callback to create step data dictionary from the return data of each Gymnasium environment step.</span>
 
 <span class="sd">    This callback can be overridden to add extra environment information in each step or</span>
 <span class="sd">    edit the observation, action, reward, termination, truncation, or info returns.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">env</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Env</span><span class="p">,</span>
         <span class="n">obs</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
