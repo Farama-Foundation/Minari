@@ -20,6 +20,7 @@ PointMaze D4RL dataset
 # Lets start by importing the required modules for this tutorial:
 
 import gymnasium as gym
+import gymnasium_robotics  # noqa: F401
 import numpy as np
 
 from minari import DataCollector, StepDataCallback
@@ -383,7 +384,7 @@ collector_env = DataCollector(
 
 obs, _ = collector_env.reset(seed=123)
 
-waypoint_controller = WaypointController(maze=env.maze)
+waypoint_controller = WaypointController(maze=env.unwrapped.maze)
 
 for n_step in range(int(total_steps)):
     action = waypoint_controller.compute_action(obs)
