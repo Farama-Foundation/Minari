@@ -4,6 +4,8 @@ import json
 import pathlib
 from itertools import zip_longest
 from typing import Any, Dict, Iterable, Optional, Sequence
+from PIL import Image
+import io
 
 import gymnasium as gym
 import numpy as np
@@ -178,11 +180,20 @@ def _encode_space(space: gym.Space, values: Any, pad: int = 0):
         return pa.StructArray.from_arrays(arrays, names=names)
     elif isinstance(space, _FIXEDLIST_SPACES):
         values = np.asarray(values)
-        assert values.shape[1:] == space.shape
-        values = values.reshape(values.shape[0], -1)
-        values = np.pad(values, ((0, pad), (0, 0)))
-        dtype = pa.list_(pa.from_numpy_dtype(space.dtype), list_size=values.shape[1])
-        return pa.FixedSizeListArray.from_arrays(values.reshape(-1), type=dtype)
+        if values.ndim == 3 and values.shape[-1] == 3: #if isImage do JPEG encoding
+            jpeg_bytes = []
+            for frame in values:
+                img = Image.fromarray(frame)
+                buffer = io.BytesIO()
+                img.save(buffer, format="JPEG")
+                jpeg_bytes.append(buffer.getvalue())
+            return pa.array(jpeg_bytes, type=pa.binary())
+        else:
+            assert values.shape[1:] == space.shape
+            values = values.reshape(values.shape[0], -1)
+            values = np.pad(values, ((0, pad), (0, 0)))
+            dtype = pa.list_(pa.from_numpy_dtype(space.dtype), list_size=values.shape[1])
+            return pa.FixedSizeListArray.from_arrays(values.reshape(-1), type=dtype)
     elif isinstance(space, gym.spaces.Discrete):
         values = np.asarray(values).reshape(-1, 1)
         values = np.pad(values, ((0, pad), (0, 0)))
