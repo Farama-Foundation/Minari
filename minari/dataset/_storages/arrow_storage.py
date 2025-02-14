@@ -180,7 +180,7 @@ def _encode_space(space: gym.Space, values: Any, pad: int = 0):
         return pa.StructArray.from_arrays(arrays, names=names)
     elif isinstance(space, _FIXEDLIST_SPACES):
         values = np.asarray(values)
-        if data.shape == (4, 84, 84) and data.dtype == np.uint8: # check for image observation (4 stacked greyscale images)
+        if values.shape == (4, 84, 84) and values.dtype == np.uint8: # check for image observation (4 stacked greyscale images)
             jpeg_bytes = []
             for frame in values:
                 img = Image.fromarray(frame)
