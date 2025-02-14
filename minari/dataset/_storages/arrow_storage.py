@@ -180,14 +180,14 @@ def _encode_space(space: gym.Space, values: Any, pad: int = 0):
         return pa.StructArray.from_arrays(arrays, names=names)
     elif isinstance(space, _FIXEDLIST_SPACES):
         values = np.asarray(values)
-        if values.ndim == 3 and values.shape[-1] == 3: # check if input is an image
+        if data.shape == (4, 84, 84) and data.dtype == np.uint8: # check for image observation (4 stacked greyscale images)
             jpeg_bytes = []
-            for frame in values: # convert into JPEG
+            for frame in values:
                 img = Image.fromarray(frame)
                 buffer = io.BytesIO()
                 img.save(buffer, format="JPEG")
                 jpeg_bytes.append(buffer.getvalue())
-            return pa.array(jpeg_bytes, type=pa.binary()) # return JPEG bytes
+            return pa.array(jpeg_bytes, type=pa.binary())
         else:
             assert values.shape[1:] == space.shape
             values = values.reshape(values.shape[0], -1)
@@ -221,9 +221,9 @@ def _decode_space(space, values: pa.Array):
         if values.type == pa.binary():  # check for binary data (JPEG)
             jpeg_images = []
             for jpeg_bytes in values:
-                image = Image.open(io.BytesIO(jpeg_bytes))  # decode JPEG
+                image = Image.open(io.BytesIO(jpeg_bytes)).convert("L") # decode JPEG and convert to greyscale
                 jpeg_images.append(np.array(image))
-            return np.stack(jpeg_images)  # return a stacked numpy array of images
+            return np.stack(jpeg_images)
         else:
             data = np.stack(values.to_numpy(zero_copy_only=False))
             return data.reshape(-1, *space.shape)

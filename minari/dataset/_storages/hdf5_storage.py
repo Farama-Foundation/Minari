@@ -4,7 +4,8 @@ import pathlib
 from collections import OrderedDict
 from itertools import zip_longest
 from typing import Dict, Iterable, List, Optional, Tuple, Union
-
+from PIL import Image
+import io
 import gymnasium as gym
 import numpy as np
 
@@ -16,7 +17,7 @@ try:
     import h5py
 except ImportError:
     raise ImportError(
-        'h5py is not installed. Please install it using `pip install "minari[hdf5]"`'
+        'h5py is not installed. Please install it using pip install "minari[hdf5]"'
     )
 
 _MAIN_FILE_NAME = "main_data.hdf5"
@@ -107,6 +108,13 @@ class HDF5Storage(MinariStorage):
             assert isinstance(hdf_ref, h5py.Dataset)
             result = map(lambda string: string.decode("utf-8"), hdf_ref[()])
             return list(result)
+        elif isinstance(hdf_ref, h5py.Dataset) and hdf_ref.dtype.kind == 'O':  # check for binary data (JPEG)
+            jpeg_images = []
+            jpeg_bytes_list = hdf_ref[()]
+            for jpeg_bytes in jpeg_bytes_list:
+                image = Image.open(io.BytesIO(jpeg_bytes)).convert("L") # decode JPEG and convert to greyscale
+                jpeg_images.append(np.array(image, dtype=np.uint8))
+            return np.stack(jpeg_images)
         else:
             assert isinstance(hdf_ref, h5py.Dataset)
             return hdf_ref[()]
@@ -199,6 +207,15 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
         if isinstance(data, dict):
             episode_group_to_clear = _get_from_h5py(episode_group, key)
             _add_episode_to_group(data, episode_group_to_clear)
+        elif isinstance(data, np.ndarray) and data.shape == (4, 84, 84) and data.dtype == np.uint8: # check for image observation (4 stacked greyscale images)
+            jpeg_bytes = []
+            for frame in data:
+                img = Image.fromarray(frame, mode="L")
+                buffer = io.BytesIO()
+                img.save(buffer, format="JPEG")
+                jpeg_bytes.append(buffer.getvalue())
+            dt = h5py.special_dtype(vlen=bytes)
+            episode_group.create_dataset(key, data=np.array(jpeg_bytes, dtype=object), dtype=dt, chunks=True)
         elif isinstance(data, tuple):
             dict_data = {f"_index_{i}": subdata for i, subdata in enumerate(data)}
             episode_group_to_clear = _get_from_h5py(episode_group, key)
@@ -209,7 +226,6 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
             dict_data = {key: [entry[key] for entry in data] for key in data[0].keys()}
             episode_group_to_clear = _get_from_h5py(episode_group, key)
             _add_episode_to_group(dict_data, episode_group_to_clear)
-
         # leaf data
         elif key in episode_group:
             dataset = episode_group[key]
