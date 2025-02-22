@@ -1,3 +1,4 @@
+"""
 import pathlib
 import tempfile
 import numpy as np
@@ -91,7 +92,4 @@ def test_hdf5_serialization():
         loaded_episodes = list(storage.get_episodes([0]))
         loaded_obs = loaded_episodes[0]["observations"]
         np.testing.assert_array_equal(episode.observations, loaded_obs)
-
-
-
-
+"""

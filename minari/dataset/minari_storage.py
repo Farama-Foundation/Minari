@@ -6,6 +6,7 @@ import pathlib
 import warnings
 from abc import ABC, abstractmethod
 from typing import Any, Callable, Dict, Iterable, Optional, Union
+from venv import logger
 
 import gymnasium as gym
 import numpy as np
@@ -114,6 +115,7 @@ class MinariStorage(ABC):
         action_space: Optional[gym.Space] = None,
         env_spec: Optional[EnvSpec] = None,
         data_format: str = "hdf5",
+        is_image_observation: Optional[bool] = None,
     ) -> MinariStorage:
         """Class method to create a new data storage.
 
@@ -160,6 +162,13 @@ class MinariStorage(ABC):
             if action_space is None:
                 action_space = env.action_space
 
+        if is_image_observation is None:
+            is_image_observation = isinstance(observation_space, gym.Space.Box) and len(observation_space.shape) in {2, 3} and observation_space.dtype == np.uint8 and observation_space.low == 0 and observation_space.high == 255
+            if is_image_observation:
+                logger.warning("We are considering your observation as an image. If this is not intended, please explicitly set is_image_observation to False.")
+
+        #pre-commit run --all-files
+
         metadata: Dict[str, Any] = {
             "total_episodes": 0,
             "total_steps": 0,
@@ -190,6 +199,7 @@ class MinariStorage(ABC):
         data_path: pathlib.Path,
         observation_space: gym.Space,
         action_space: gym.Space,
+        #bool
     ) -> MinariStorage: ...
 
     @property

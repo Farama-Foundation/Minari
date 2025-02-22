@@ -178,17 +178,16 @@ def _encode_space(space: gym.Space, values: Any, pad: int = 0):
             names.append(str(i))
             arrays.append(_encode_space(space[i], value, pad=pad))
         return pa.StructArray.from_arrays(arrays, names=names)
-    elif isinstance(space, _FIXEDLIST_SPACES):
+    elif is_image_observation:
         values = np.asarray(values)
-        if values.shape == (4, 84, 84) and values.dtype == np.uint8: # check for image observation (4 stacked greyscale images)
-            jpeg_bytes = []
-            for frame in values:
-                img = Image.fromarray(frame)
-                buffer = io.BytesIO()
-                img.save(buffer, format="JPEG")
-                jpeg_bytes.append(buffer.getvalue())
-            return pa.array(jpeg_bytes, type=pa.binary())
-        else:
+        jpeg_bytes = []
+        for frame in values:
+            img = Image.fromarray(frame)
+            buffer = io.BytesIO()
+            img.save(buffer, format="JPEG")
+            jpeg_bytes.append(buffer.getvalue())
+        return pa.array(jpeg_bytes, type=pa.binary())
+    elif isinstance(space, _FIXEDLIST_SPACES):
             assert values.shape[1:] == space.shape
             values = values.reshape(values.shape[0], -1)
             values = np.pad(values, ((0, pad), (0, 0)))
@@ -217,16 +216,15 @@ def _decode_space(space, values: pa.Array):
                 for i, subspace in enumerate(space.spaces)
             ]
         )
+    elif is_image_observation:
+        jpeg_images = []
+        for jpeg_bytes in values:
+            image = Image.open(io.BytesIO(jpeg_bytes))
+            jpeg_images.append(np.array(image))
+        return np.stack(jpeg_images)
     elif isinstance(space, _FIXEDLIST_SPACES):
-        if values.type == pa.binary():  # check for binary data (JPEG)
-            jpeg_images = []
-            for jpeg_bytes in values:
-                image = Image.open(io.BytesIO(jpeg_bytes)).convert("L") # decode JPEG and convert to greyscale
-                jpeg_images.append(np.array(image))
-            return np.stack(jpeg_images)
-        else:
-            data = np.stack(values.to_numpy(zero_copy_only=False))
-            return data.reshape(-1, *space.shape)
+        data = np.stack(values.to_numpy(zero_copy_only=False))
+        return data.reshape(-1, *space.shape)
     elif isinstance(space, gym.spaces.Discrete):
         return values.to_numpy()
     else:
