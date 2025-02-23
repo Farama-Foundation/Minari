@@ -395,6 +395,6 @@ def is_image_space(space: gym.Space) -> bool:
         isinstance(space, gym.spaces.Box) and
         len(space.shape) in {2, 3} and
         space.dtype == np.uint8 and
-        space.low == 0 and
-        space.high == 255
+        np.all(space.low == 0) and
+        np.all(space.high == 255)
     )

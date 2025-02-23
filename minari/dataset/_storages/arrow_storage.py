@@ -179,7 +179,6 @@ def _encode_space(space: gym.Space, values: Any, pad: int = 0):
             arrays.append(_encode_space(space[i], value, pad=pad))
         return pa.StructArray.from_arrays(arrays, names=names)
     elif is_image_space(space):
-        values = np.asarray(values)
         jpeg_bytes = []
         for frame in values:
             img = Image.fromarray(frame)
@@ -188,6 +187,7 @@ def _encode_space(space: gym.Space, values: Any, pad: int = 0):
             jpeg_bytes.append(buffer.getvalue())
         return pa.array(jpeg_bytes, type=pa.binary())
     elif isinstance(space, _FIXEDLIST_SPACES):
+            values = np.asarray(values)
             assert values.shape[1:] == space.shape
             values = values.reshape(values.shape[0], -1)
             values = np.pad(values, ((0, pad), (0, 0)))
