@@ -10,7 +10,7 @@ import gymnasium as gym
 import numpy as np
 
 from minari.data_collector import EpisodeBuffer
-from minari.dataset.minari_storage import MinariStorage
+from minari.dataset.minari_storage import MinariStorage, is_image_space
 
 
 try:
@@ -108,13 +108,15 @@ class HDF5Storage(MinariStorage):
             assert isinstance(hdf_ref, h5py.Dataset)
             result = map(lambda string: string.decode("utf-8"), hdf_ref[()])
             return list(result)
-        elif isinstance(hdf_ref, h5py.Dataset) and hdf_ref.dtype.kind == 'O':  # check for binary data (JPEG)
-            jpeg_images = []
+        elif is_image_space(space):
             jpeg_bytes_list = hdf_ref[()]
-            for jpeg_bytes in jpeg_bytes_list:
-                image = Image.open(io.BytesIO(jpeg_bytes)).convert("L") # decode JPEG and convert to greyscale
-                jpeg_images.append(np.array(image, dtype=np.uint8))
-            return np.stack(jpeg_images)
+            first_image = np.array(Image.open(io.BytesIO(jpeg_bytes_list[0])), dtype=np.uint8)
+            jpeg_images = np.empty((len(jpeg_bytes_list),) + first_image.shape, dtype=np.uint8)
+            jpeg_images[0] = first_image
+            for i, jpeg_bytes in enumerate(jpeg_bytes_list[1:], start=1):
+                image = Image.open(io.BytesIO(jpeg_bytes))
+                jpeg_images[i] = np.array(image, dtype=np.uint8)
+            return jpeg_images
         else:
             assert isinstance(hdf_ref, h5py.Dataset)
             return hdf_ref[()]
@@ -207,15 +209,14 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
         if isinstance(data, dict):
             episode_group_to_clear = _get_from_h5py(episode_group, key)
             _add_episode_to_group(data, episode_group_to_clear)
-        elif isinstance(data, np.ndarray) and data.shape == (4, 84, 84) and data.dtype == np.uint8: # check for image observation (4 stacked greyscale images)
+        elif isinstance(data, np.ndarray) and len(data.shape) in {3, 4} and data.dtype == np.uint8:
             jpeg_bytes = []
             for frame in data:
-                img = Image.fromarray(frame, mode="L")
                 buffer = io.BytesIO()
-                img.save(buffer, format="JPEG")
+                Image.fromarray(frame).save(buffer, format="JPEG")
                 jpeg_bytes.append(buffer.getvalue())
             dt = h5py.special_dtype(vlen=bytes)
-            episode_group.create_dataset(key, data=np.array(jpeg_bytes, dtype=object), dtype=dt, chunks=True)
+            episode_group.create_dataset(key, data=jpeg_bytes, dtype=dt, chunks=True)
         elif isinstance(data, tuple):
             dict_data = {f"_index_{i}": subdata for i, subdata in enumerate(data)}
             episode_group_to_clear = _get_from_h5py(episode_group, key)

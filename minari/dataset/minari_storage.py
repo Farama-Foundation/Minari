@@ -115,7 +115,6 @@ class MinariStorage(ABC):
         action_space: Optional[gym.Space] = None,
         env_spec: Optional[EnvSpec] = None,
         data_format: str = "hdf5",
-        is_image_observation: Optional[bool] = None,
     ) -> MinariStorage:
         """Class method to create a new data storage.
 
@@ -162,13 +161,6 @@ class MinariStorage(ABC):
             if action_space is None:
                 action_space = env.action_space
 
-        if is_image_observation is None:
-            is_image_observation = isinstance(observation_space, gym.Space.Box) and len(observation_space.shape) in {2, 3} and observation_space.dtype == np.uint8 and observation_space.low == 0 and observation_space.high == 255
-            if is_image_observation:
-                logger.warning("We are considering your observation as an image. If this is not intended, please explicitly set is_image_observation to False.")
-
-        #pre-commit run --all-files
-
         metadata: Dict[str, Any] = {
             "total_episodes": 0,
             "total_steps": 0,
@@ -199,7 +191,6 @@ class MinariStorage(ABC):
         data_path: pathlib.Path,
         observation_space: gym.Space,
         action_space: gym.Space,
-        #bool
     ) -> MinariStorage: ...
 
     @property
@@ -397,3 +388,13 @@ def _json_converter(obj: Any):
     if isinstance(obj, set):
         return list(obj)
     raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
+
+
+def is_image_space(space: gym.Space) -> bool:
+    return (
+        isinstance(space, gym.spaces.Box) and
+        len(space.shape) in {2, 3} and
+        space.dtype == np.uint8 and
+        space.low == 0 and
+        space.high == 255
+    )
