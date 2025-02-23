@@ -29,6 +29,8 @@ def register_dummy_envs():
         "DummyTupleEnv",
         "DummyTextEnv",
         "DummyComboEnv",
+        "DummyImageObsEnv",
+        "DummyGrayscaleImageObsEnv",
     ]
     for env_name in env_names:
         register(
