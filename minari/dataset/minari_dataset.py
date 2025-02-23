@@ -36,7 +36,6 @@ def parse_dataset_id(dataset_id: str) -> tuple[str | None, str, int]:
     Raises:
         Error: If the dataset id is not valid dataset regex
     """
-    dataset_id = dataset_id.replace("\\", "/")
     match = DATASET_ID_RE.fullmatch(dataset_id)
     if not match:
         raise ValueError(
