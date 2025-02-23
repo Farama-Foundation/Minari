@@ -151,7 +151,7 @@ class HuggingFaceStorage(CloudStorage):
         repo_id, path_in_repo = self._decompose_path(dataset_id)
         dataset_metadata = self._api.hf_hub_download(
             repo_id=f"{self.name}/{repo_id}",
-            filename=os.path.join(path_in_repo, "data", METADATA_FILE_NAME),
+            filename=Path(path_in_repo, "data", METADATA_FILE_NAME).as_posix(),
             repo_type="dataset",
         )
         with open(dataset_metadata) as f:
@@ -179,7 +179,7 @@ class HuggingFaceStorage(CloudStorage):
         repo_id, path_in_repo = self._decompose_path(namespace)
         self._api.hf_hub_download(
             repo_id=f"{self.name}/{repo_id}",
-            filename=os.path.join(path_in_repo, _NAMESPACE_METADATA_FILENAME),
+            filename=Path(path_in_repo, _NAMESPACE_METADATA_FILENAME).as_posix(),
             repo_type="dataset",
             local_dir=path.joinpath(repo_id),
             force_download=True,

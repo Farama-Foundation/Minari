@@ -87,7 +87,7 @@ def list_local_datasets(
             return
 
         for dir_name in list_non_hidden_dirs(parent_dir):
-            namespaced_dir_name = os.path.join(namespace, dir_name)
+            namespaced_dir_name = pathlib.Path(namespace, dir_name).as_posix()
             recurse_directories(base_path, namespaced_dir_name)
 
     recurse_directories(datasets_path, prefix or "")
@@ -96,7 +96,7 @@ def list_local_datasets(
 
     local_datasets = {}
     for dst_id in dataset_ids:
-        data_path = os.path.join(datasets_path, dst_id, "data")
+        data_path = pathlib.Path(datasets_path, dst_id, "data").as_posix()
         try:
             metadata = MinariStorage.read_raw_metadata(data_path)
             metadata_id = metadata["dataset_id"]
