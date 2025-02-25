@@ -216,15 +216,19 @@ def _decode_space(space, values: pa.Array):
                 for i, subspace in enumerate(space.spaces)
             ]
         )
+
     elif is_image_space(space):
-        first_image = io.BytesIO(values[0])
+        first_image = io.BytesIO((values[0]).as_py())
         first_image = np.array(Image.open(first_image))
         jpeg_images = np.empty((len(values),) + first_image.shape, dtype=np.uint8)
         jpeg_images[0] = first_image
         for i, jpeg_bytes in enumerate(values[1:], start=1):
-            jpeg_bytes = io.BytesIO(jpeg_bytes)
+            jpeg_bytes = io.BytesIO(jpeg_bytes.as_py())
             jpeg_images[i] = np.array(Image.open(jpeg_bytes))
         return jpeg_images
+
+
+
     elif isinstance(space, _FIXEDLIST_SPACES):
         data = np.stack(values.to_numpy(zero_copy_only=False))
         return data.reshape(-1, *space.shape)
