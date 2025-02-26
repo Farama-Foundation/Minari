@@ -6,6 +6,7 @@ import pathlib
 import warnings
 from abc import ABC, abstractmethod
 from typing import Any, Callable, Dict, Iterable, Optional, Union
+from venv import logger
 
 import gymnasium as gym
 import numpy as np
@@ -387,3 +388,13 @@ def _json_converter(obj: Any):
     if isinstance(obj, set):
         return list(obj)
     raise TypeError(f"Object of type {type(obj)} is not JSON serializable")
+
+
+def is_image_space(space: gym.Space) -> bool:
+    return (
+        isinstance(space, gym.spaces.Box) and
+        len(space.shape) in {2, 3} and
+        space.dtype == np.uint8 and
+        np.all(space.low == 0) and
+        np.all(space.high == 255)
+    )
