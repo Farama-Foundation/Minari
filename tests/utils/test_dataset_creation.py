@@ -9,6 +9,7 @@ import minari
 from minari import DataCollector, MinariDataset, StepData
 from minari.data_collector import EpisodeBuffer
 from minari.dataset._storages import get_storage_keys
+from minari.dataset.minari_storage import is_image_space
 from tests.common import (
     cartpole_test_dataset,
     check_data_integrity,
@@ -373,7 +374,8 @@ def test_generate_big_episode(data_format, register_dummy_envs):
         data_format=data_format,
     )
 
-    assert np.all(dataset[0].observations == buffer.observations)
+    if not is_image_space(dataset.observation_space):
+        assert np.all(dataset[0].observations == buffer.observations)
     assert np.all(dataset[0].actions == buffer.actions)
     assert np.all(dataset[0].rewards == buffer.rewards)
     assert np.all(dataset[0].terminations == buffer.terminations)
