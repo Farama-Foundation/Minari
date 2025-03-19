@@ -221,15 +221,14 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
             episode_group_to_clear = _get_from_h5py(episode_group, key)
             _add_episode_to_group(dict_data, episode_group_to_clear)
         # leaf data
-        elif isinstance(data, List) and all(_is_image(entry) for entry in data):
-            jpeg_bytes = []
-            for frame in data:
-                buffer = io.BytesIO()
-                Image.fromarray(frame).save(buffer, format="JPEG")
-                jpeg_encoded = np.frombuffer(buffer.getvalue(), dtype=np.uint8)
-                jpeg_bytes.append(jpeg_encoded)
-            dt = h5py.special_dtype(vlen=np.dtype("uint8"))
-            episode_group.create_dataset(key, data=jpeg_bytes, dtype=dt, chunks=True)
+        elif ((isinstance(data, list) and all(_is_image(entry) for entry in data)) or
+              (isinstance(data, np.ndarray) and _is_image(data))):
+            dt = h5py.vlen_dtype(np.uint8)
+            frames = (data if isinstance(data, list)
+                      else ([data] if len(data.shape) in {2, 3} and data.shape[-1] in {1, 3}
+                            else list(data)))
+            episode_group.create_dataset(key, data=[encode_frame(f) for f in frames],
+                                         dtype=dt, chunks=True)
         elif key in episode_group:
             dataset = episode_group[key]
             assert isinstance(dataset, h5py.Dataset)
@@ -251,7 +250,18 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
             )
 
 def _is_image(data) -> bool:
-    return isinstance(data, np.ndarray) and data.dtype == np.uint8 and len(data.shape) in {2, 3}
+    if not (isinstance(data, np.ndarray) and data.dtype == np.uint8):
+        return False
+    if len(data.shape) in {2, 3}:
+        return True
+    if len(data.shape) == 4:
+        return data.shape[-1] in {1, 3}
+    return False
+
+def encode_frame(frame: np.ndarray) -> np.ndarray:
+    buffer = io.BytesIO()
+    Image.fromarray(frame).save(buffer, format="JPEG")
+    return np.frombuffer(buffer.getvalue(), dtype=np.uint8).flatten()
 
 
 def _decode_info(info_group: h5py.Group) -> Dict:
