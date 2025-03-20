@@ -264,13 +264,18 @@ class DummyComboEnv(DummyEnv):
 class DummyImageObsEnv(DummyEnv):
     def __init__(self):
         super().__init__()
-        self.observation_space = spaces.Box(low=0, high=255, shape=(64, 72, 3), dtype=np.uint8)
+        self.observation_space = spaces.Box(
+            low=0, high=255, shape=(64, 72, 3), dtype=np.uint8
+        )
         self.action_space = spaces.Discrete(2)
+
 
 class DummyGrayscaleImageObsEnv(DummyEnv):
     def __init__(self):
         super().__init__()
-        self.observation_space = spaces.Box(low=0, high=255, shape=(128, 128), dtype=np.uint8)
+        self.observation_space = spaces.Box(
+            low=0, high=255, shape=(128, 128), dtype=np.uint8
+        )
         self.action_space = spaces.Discrete(2)
 
 

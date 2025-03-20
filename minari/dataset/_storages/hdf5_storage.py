@@ -1,13 +1,14 @@
 from __future__ import annotations
 
+import io
 import pathlib
 from collections import OrderedDict
 from itertools import zip_longest
 from typing import Dict, Iterable, List, Optional, Tuple, Union
-from PIL import Image
-import io
+
 import gymnasium as gym
 import numpy as np
+from PIL import Image
 
 from minari.data_collector import EpisodeBuffer
 from minari.dataset.minari_storage import MinariStorage, is_image_space
@@ -110,8 +111,12 @@ class HDF5Storage(MinariStorage):
             return list(result)
         elif is_image_space(space):
             jpeg_bytes_list = hdf_ref[()]
-            first_image = np.array(Image.open(io.BytesIO(jpeg_bytes_list[0])), dtype=np.uint8)
-            jpeg_images = np.empty((len(jpeg_bytes_list),) + first_image.shape, dtype=np.uint8)
+            first_image = np.array(
+                Image.open(io.BytesIO(jpeg_bytes_list[0])), dtype=np.uint8
+            )
+            jpeg_images = np.empty(
+                (len(jpeg_bytes_list),) + first_image.shape, dtype=np.uint8
+            )
             jpeg_images[0] = first_image
             for i, jpeg_bytes in enumerate(jpeg_bytes_list[1:], start=1):
                 image = Image.open(io.BytesIO(jpeg_bytes))
@@ -221,14 +226,22 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
             episode_group_to_clear = _get_from_h5py(episode_group, key)
             _add_episode_to_group(dict_data, episode_group_to_clear)
         # leaf data
-        elif ((isinstance(data, list) and all(_is_image(entry) for entry in data)) or
-              (isinstance(data, np.ndarray) and _is_image(data))):
+        elif (isinstance(data, list) and all(_is_image(entry) for entry in data)) or (
+            isinstance(data, np.ndarray) and _is_image(data)
+        ):
             dt = h5py.vlen_dtype(np.uint8)
-            frames = (data if isinstance(data, list)
-                      else ([data] if len(data.shape) in {2, 3} and data.shape[-1] in {1, 3}
-                            else list(data)))
-            episode_group.create_dataset(key, data=[encode_frame(f) for f in frames],
-                                         dtype=dt, chunks=True)
+            frames = (
+                data
+                if isinstance(data, list)
+                else (
+                    [data]
+                    if len(data.shape) in {2, 3} and data.shape[-1] in {1, 3}
+                    else list(data)
+                )
+            )
+            episode_group.create_dataset(
+                key, data=[encode_frame(f) for f in frames], dtype=dt, chunks=True
+            )
         elif key in episode_group:
             dataset = episode_group[key]
             assert isinstance(dataset, h5py.Dataset)
@@ -249,6 +262,7 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
                 key, data=data, dtype=dtype, chunks=True, maxshape=(None, *dshape)
             )
 
+
 def _is_image(data) -> bool:
     if not (isinstance(data, np.ndarray) and data.dtype == np.uint8):
         return False
@@ -257,6 +271,7 @@ def _is_image(data) -> bool:
     if len(data.shape) == 4:
         return data.shape[-1] in {1, 3}
     return False
+
 
 def encode_frame(frame: np.ndarray) -> np.ndarray:
     buffer = io.BytesIO()

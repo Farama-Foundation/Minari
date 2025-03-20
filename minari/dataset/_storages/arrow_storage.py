@@ -1,14 +1,14 @@
 from __future__ import annotations
 
+import io
 import json
 import pathlib
 from itertools import zip_longest
 from typing import Any, Dict, Iterable, Optional, Sequence
-from PIL import Image
-import io
 
 import gymnasium as gym
 import numpy as np
+from PIL import Image
 
 
 try:
@@ -187,12 +187,12 @@ def _encode_space(space: gym.Space, values: Any, pad: int = 0):
             jpeg_bytes.append(buffer.getvalue())
         return pa.array(jpeg_bytes, type=pa.binary())
     elif isinstance(space, _FIXEDLIST_SPACES):
-            values = np.asarray(values)
-            assert values.shape[1:] == space.shape
-            values = values.reshape(values.shape[0], -1)
-            values = np.pad(values, ((0, pad), (0, 0)))
-            dtype = pa.list_(pa.from_numpy_dtype(space.dtype), list_size=values.shape[1])
-            return pa.FixedSizeListArray.from_arrays(values.reshape(-1), type=dtype)
+        values = np.asarray(values)
+        assert values.shape[1:] == space.shape
+        values = values.reshape(values.shape[0], -1)
+        values = np.pad(values, ((0, pad), (0, 0)))
+        dtype = pa.list_(pa.from_numpy_dtype(space.dtype), list_size=values.shape[1])
+        return pa.FixedSizeListArray.from_arrays(values.reshape(-1), type=dtype)
     elif isinstance(space, gym.spaces.Discrete):
         values = np.asarray(values).reshape(-1, 1)
         values = np.pad(values, ((0, pad), (0, 0)))
@@ -226,8 +226,6 @@ def _decode_space(space, values: pa.Array):
             jpeg_bytes = io.BytesIO(jpeg_bytes.as_py())
             jpeg_images[i] = np.array(Image.open(jpeg_bytes))
         return jpeg_images
-
-
 
     elif isinstance(space, _FIXEDLIST_SPACES):
         data = np.stack(values.to_numpy(zero_copy_only=False))
