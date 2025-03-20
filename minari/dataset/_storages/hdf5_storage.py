@@ -229,10 +229,11 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
         elif (isinstance(data, list) and all(_is_image(entry) for entry in data)) or (
             isinstance(data, np.ndarray) and _is_image(data)
         ):
-            dt = h5py.vlen_dtype(np.uint8)
-            episode_group.create_dataset(
-                key, data=[encode_frame(f) for f in data], dtype=dt, chunks=True
-            )
+            data = [encode_frame(f) for f in data]
+            dt = None
+            if any(f.shape != data[0].shape for f in data):
+                dt = h5py.vlen_dtype(np.uint8)
+            episode_group.create_dataset(key, data=data, dtype=dt, chunks=True)
         elif key in episode_group:
             dataset = episode_group[key]
             assert isinstance(dataset, h5py.Dataset)
