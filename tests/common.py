@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Optional, Union
 import gymnasium as gym
 import numpy as np
 import pytest
+import skimage
 from gymnasium import spaces
 from gymnasium.utils.env_checker import data_equivalence
 
@@ -279,10 +280,19 @@ class DummyGrayscaleImageObsEnv(DummyEnv):
         self.action_space = spaces.Discrete(2)
 
 
+class ImageSpace(gym.spaces.Box):
+    def __init__(self):
+        self._image = skimage.data.cat()
+        super().__init__(low=0, high=255, shape=self._image.shape, dtype=np.uint8)
+
+    def sample(self):
+        return self._image
+
+
 test_spaces = [
     gym.spaces.Box(low=-1, high=4, shape=(2,), dtype=np.float32),
     gym.spaces.Box(low=-1, high=4, shape=(2, 2, 2), dtype=np.float32),
-    gym.spaces.Box(low=0, high=255, shape=(128, 128, 3), dtype=np.uint8),
+    ImageSpace(),
     gym.spaces.Text(max_length=10, min_length=10, seed=42),
     gym.spaces.Text(max_length=20, charset=unicode_charset),
     gym.spaces.Text(max_length=10, charset="01"),

@@ -212,6 +212,9 @@ def _get_from_h5py(group: h5py.Group, name: str) -> h5py.Group:
 def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
     # TODO: simplify
     for key, data in episode_buffer.items():
+        if isinstance(data, list) and all(_is_image(entry) for entry in data):
+            data = [encode_frame(f) for f in data]
+
         if isinstance(data, dict):
             episode_group_to_clear = _get_from_h5py(episode_group, key)
             _add_episode_to_group(data, episode_group_to_clear)
@@ -226,22 +229,6 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
             episode_group_to_clear = _get_from_h5py(episode_group, key)
             _add_episode_to_group(dict_data, episode_group_to_clear)
         # leaf data
-        elif (isinstance(data, list) and all(_is_image(entry) for entry in data)) or (
-            isinstance(data, np.ndarray) and _is_image(data)
-        ):
-            dt = h5py.vlen_dtype(np.uint8)
-            frames = (
-                data
-                if isinstance(data, list)
-                else (
-                    [data]
-                    if len(data.shape) in {2, 3} and data.shape[-1] in {1, 3}
-                    else list(data)
-                )
-            )
-            episode_group.create_dataset(
-                key, data=[encode_frame(f) for f in frames], dtype=dt, chunks=True
-            )
         elif key in episode_group:
             dataset = episode_group[key]
             assert isinstance(dataset, h5py.Dataset)
