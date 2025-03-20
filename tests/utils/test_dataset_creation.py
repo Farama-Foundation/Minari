@@ -4,11 +4,13 @@ import gymnasium as gym
 import numpy as np
 import pytest
 from gymnasium import spaces
+from skimage.metrics import structural_similarity
 
 import minari
 from minari import DataCollector, MinariDataset, StepData
 from minari.data_collector import EpisodeBuffer
 from minari.dataset._storages import get_storage_keys
+from minari.dataset.minari_storage import is_image_space
 from tests.common import (
     cartpole_test_dataset,
     check_data_integrity,
@@ -20,6 +22,7 @@ from tests.common import (
     dummy_test_datasets,
     dummy_text_dataset,
     get_sample_buffer_for_dataset_from_env,
+    test_spaces,
 )
 
 
@@ -332,11 +335,83 @@ def test_generate_dataset_with_space_subset_external_buffer(
 
 
 @pytest.mark.parametrize("data_format", get_storage_keys())
-def test_generate_big_episode(data_format, register_dummy_envs):
+@pytest.mark.parametrize("observation_space", test_spaces)
+def test_encoding_consistency(data_format, observation_space):
     """Test generate a long episode and create a dataset."""
     dataset_id = "test/big-episode-v0"
-    episode_length = 1024
-    observation_space = spaces.Box(low=0, high=255, shape=(64, 64, 3), dtype=np.uint8)
+    num_episodes, episode_length = 4, 8
+    action_space = spaces.Discrete(10)
+
+    buffer_list = []
+    for _ in range(num_episodes):
+        buffer = EpisodeBuffer(observations=observation_space.sample())
+        for step_id in range(episode_length):
+            buffer = buffer.add_step_data(
+                {
+                    "observation": observation_space.sample(),
+                    "action": action_space.sample(),
+                    "reward": 0.0,
+                    "terminated": False,
+                    "truncated": step_id == episode_length - 1,
+                    "info": {},
+                }
+            )
+        buffer_list.append(buffer)
+
+    dataset = minari.create_dataset_from_buffers(
+        dataset_id=dataset_id,
+        buffer=buffer_list,
+        observation_space=observation_space,
+        action_space=action_space,
+        algorithm_name="random_policy",
+        code_permalink=CODELINK,
+        author="Farama",
+        author_email="farama@farama.org",
+        description="Test dataset",
+        data_format=data_format,
+    )
+
+    def _check_equal(observation_space, dataset_obs, buffer_obs):
+        if isinstance(observation_space, spaces.Dict):
+            for k in observation_space.keys():
+                _check_equal(observation_space[k], dataset_obs[k], buffer_obs[k])
+        elif isinstance(observation_space, spaces.Tuple):
+            for i, space in enumerate(observation_space):
+                _check_equal(space, dataset_obs[i], buffer_obs[i])
+        elif is_image_space(observation_space):
+            ssim_score = [
+                structural_similarity(
+                    original_image,
+                    encoded_decoded_image,
+                    data_range=255,
+                    channel_axis=2,
+                )
+                for original_image, encoded_decoded_image in zip(
+                    buffer_obs, dataset_obs
+                )
+            ]
+            assert np.min(ssim_score) > 0.3
+        else:
+            assert np.all(dataset_obs == buffer_obs)
+
+    for ep_id in range(num_episodes):
+        _check_equal(
+            observation_space,
+            dataset[ep_id].observations,
+            buffer_list[ep_id].observations,
+        )
+        assert np.all(dataset[ep_id].actions == buffer_list[ep_id].actions)
+        assert np.all(dataset[ep_id].rewards == buffer_list[ep_id].rewards)
+        assert np.all(dataset[ep_id].terminations == buffer_list[ep_id].terminations)
+        assert np.all(dataset[ep_id].truncations == buffer_list[ep_id].truncations)
+
+
+@pytest.mark.parametrize("data_format", get_storage_keys())
+def test_generate_big_episode(data_format):
+    """Test generate a long episode and create a dataset."""
+    dataset_id = "test/big-episode-v0"
+    episode_length = 2048
+    observation_space = spaces.Box(-1, 1, shape=(128,), dtype=np.float32)
     action_space = spaces.Discrete(10)
     info_generator = spaces.Dict(
         {
@@ -346,7 +421,7 @@ def test_generate_big_episode(data_format, register_dummy_envs):
     )
 
     buffer = EpisodeBuffer(
-        observations=[observation_space.sample()], infos=info_generator.sample()
+        observations=observation_space.sample(), infos=info_generator.sample()
     )
     for step_id in range(episode_length):
         buffer = buffer.add_step_data(

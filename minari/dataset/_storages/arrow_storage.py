@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import io
 import json
 import pathlib
 from itertools import zip_longest
@@ -7,6 +8,7 @@ from typing import Any, Dict, Iterable, Optional, Sequence
 
 import gymnasium as gym
 import numpy as np
+from PIL import Image
 
 
 try:
@@ -18,7 +20,7 @@ except ImportError:
     )
 
 from minari.data_collector.episode_buffer import EpisodeBuffer
-from minari.dataset.minari_storage import MinariStorage
+from minari.dataset.minari_storage import MinariStorage, is_image_space
 
 
 _FIXEDLIST_SPACES = (gym.spaces.Box, gym.spaces.MultiDiscrete, gym.spaces.MultiBinary)
@@ -176,6 +178,14 @@ def _encode_space(space: gym.Space, values: Any, pad: int = 0):
             names.append(str(i))
             arrays.append(_encode_space(space[i], value, pad=pad))
         return pa.StructArray.from_arrays(arrays, names=names)
+    elif is_image_space(space):
+        jpeg_bytes = []
+        for frame in values:
+            img = Image.fromarray(frame)
+            buffer = io.BytesIO()
+            img.save(buffer, format="JPEG")
+            jpeg_bytes.append(buffer.getvalue())
+        return pa.array(jpeg_bytes, type=pa.binary())
     elif isinstance(space, _FIXEDLIST_SPACES):
         values = np.asarray(values)
         assert values.shape[1:] == space.shape
@@ -206,6 +216,17 @@ def _decode_space(space, values: pa.Array):
                 for i, subspace in enumerate(space.spaces)
             ]
         )
+
+    elif is_image_space(space):
+        first_image = io.BytesIO((values[0]).as_py())
+        first_image = np.array(Image.open(first_image))
+        jpeg_images = np.empty((len(values),) + first_image.shape, dtype=np.uint8)
+        jpeg_images[0] = first_image
+        for i, jpeg_bytes in enumerate(values[1:], start=1):
+            jpeg_bytes = io.BytesIO(jpeg_bytes.as_py())
+            jpeg_images[i] = np.array(Image.open(jpeg_bytes))
+        return jpeg_images
+
     elif isinstance(space, _FIXEDLIST_SPACES):
         data = np.stack(values.to_numpy(zero_copy_only=False))
         return data.reshape(-1, *space.shape)

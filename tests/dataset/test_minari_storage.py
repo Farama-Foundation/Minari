@@ -96,9 +96,12 @@ def test_metadata(tmp_dataset_dir, data_format):
 
 
 @pytest.mark.parametrize("data_format", get_storage_keys())
-def test_add_episodes(tmp_dataset_dir, data_format):
+@pytest.mark.parametrize(
+    "observation_space",
+    [spaces.Text(max_length=5), spaces.Box(low=0, high=255, shape=(3, 128, 128))],
+)
+def test_add_episodes(tmp_dataset_dir, data_format, observation_space):
     action_space = spaces.Box(-1, 1, shape=(10,))
-    observation_space = spaces.Text(max_length=5)
     n_episodes = 10
     steps_per_episode = 25
     episodes = [

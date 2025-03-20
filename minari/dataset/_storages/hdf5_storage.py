@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import io
 import pathlib
 from collections import OrderedDict
 from itertools import zip_longest
@@ -7,9 +8,10 @@ from typing import Dict, Iterable, List, Optional, Tuple, Union
 
 import gymnasium as gym
 import numpy as np
+from PIL import Image
 
 from minari.data_collector import EpisodeBuffer
-from minari.dataset.minari_storage import MinariStorage
+from minari.dataset.minari_storage import MinariStorage, is_image_space
 
 
 try:
@@ -107,6 +109,19 @@ class HDF5Storage(MinariStorage):
             assert isinstance(hdf_ref, h5py.Dataset)
             result = map(lambda string: string.decode("utf-8"), hdf_ref[()])
             return list(result)
+        elif is_image_space(space):
+            jpeg_bytes_list = hdf_ref[()]
+            first_image = np.array(
+                Image.open(io.BytesIO(jpeg_bytes_list[0])), dtype=np.uint8
+            )
+            jpeg_images = np.empty(
+                (len(jpeg_bytes_list),) + first_image.shape, dtype=np.uint8
+            )
+            jpeg_images[0] = first_image
+            for i, jpeg_bytes in enumerate(jpeg_bytes_list[1:], start=1):
+                image = Image.open(io.BytesIO(jpeg_bytes))
+                jpeg_images[i] = np.array(image, dtype=np.uint8)
+            return jpeg_images
         else:
             assert isinstance(hdf_ref, h5py.Dataset)
             return hdf_ref[()]
@@ -195,6 +210,7 @@ def _get_from_h5py(group: h5py.Group, name: str) -> h5py.Group:
 
 
 def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
+    # TODO: simplify
     for key, data in episode_buffer.items():
         if isinstance(data, dict):
             episode_group_to_clear = _get_from_h5py(episode_group, key)
@@ -209,8 +225,15 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
             dict_data = {key: [entry[key] for entry in data] for key in data[0].keys()}
             episode_group_to_clear = _get_from_h5py(episode_group, key)
             _add_episode_to_group(dict_data, episode_group_to_clear)
-
         # leaf data
+        elif (isinstance(data, list) and all(_is_image(entry) for entry in data)) or (
+            isinstance(data, np.ndarray) and _is_image(data)
+        ):
+            data = [encode_frame(f) for f in data]
+            dt = None
+            if any(f.shape != data[0].shape for f in data):
+                dt = h5py.vlen_dtype(np.uint8)
+            episode_group.create_dataset(key, data=data, dtype=dt, chunks=True)
         elif key in episode_group:
             dataset = episode_group[key]
             assert isinstance(dataset, h5py.Dataset)
@@ -230,6 +253,22 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
             episode_group.create_dataset(
                 key, data=data, dtype=dtype, chunks=True, maxshape=(None, *dshape)
             )
+
+
+def _is_image(data) -> bool:
+    if not (isinstance(data, np.ndarray) and data.dtype == np.uint8):
+        return False
+    if len(data.shape) in {2, 3}:
+        return True
+    if len(data.shape) == 4:
+        return data.shape[-1] in {1, 3}
+    return False
+
+
+def encode_frame(frame: np.ndarray) -> np.ndarray:
+    buffer = io.BytesIO()
+    Image.fromarray(frame).save(buffer, format="JPEG")
+    return np.frombuffer(buffer.getvalue(), dtype=np.uint8).flatten()
 
 
 def _decode_info(info_group: h5py.Group) -> Dict:
