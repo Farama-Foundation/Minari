@@ -9,7 +9,7 @@ For more information about how to contribute to the documentation go to our [CON
 Install the required packages and Minari:
 
 ```
-git clone https://github.com/Farama-Foundation/Minari.git
+git clone https://github.com/Farama-Foundation/Minari.git --single-branch
 cd Minari
 pip install -e .
 pip install -r docs/requirements.txt
