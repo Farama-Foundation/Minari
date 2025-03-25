@@ -24,7 +24,7 @@ pip install "minari[all]"
 If you'd like to start testing or contribute to Minari please install this project from source with:
 
 ```
-git clone https://github.com/Farama-Foundation/Minari.git
+git clone https://github.com/Farama-Foundation/Minari.git --single-branch
 cd Minari
 pip install -e ".[all]"
 ```
