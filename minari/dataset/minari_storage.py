@@ -396,6 +396,6 @@ def is_image_space(space: gym.Space) -> bool:
         and space.shape[0] >= 32  # we don't consider images if smaller, e.g. minigrid
         and space.shape[1] >= 32
         and space.dtype == np.uint8
-        and np.all(space.low == 0)
-        and np.all(space.high == 255)
+        and bool(np.all(space.low == 0))
+        and bool(np.all(space.high == 255))
     )
