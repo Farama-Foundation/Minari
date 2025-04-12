@@ -248,7 +248,6 @@ def _generate_dataset_page(arg):
 
 def _generate_namespace_page(namespace: str, namespace_content):
     namespace_path = DATASET_FOLDER.joinpath(namespace)
-    download_namespace_metadata(namespace)
     namespace_metadata = get_namespace_metadata(namespace)
     title = namespace_metadata.get("display_name", namespace[0].upper() + namespace[1:])
 
