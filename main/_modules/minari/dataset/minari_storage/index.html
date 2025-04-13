@@ -1485,8 +1485,8 @@
         <span class="ow">and</span> <span class="n">space</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">32</span>  <span class="c1"># we don&#39;t consider images if smaller, e.g. minigrid</span>
         <span class="ow">and</span> <span class="n">space</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">32</span>
         <span class="ow">and</span> <span class="n">space</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">uint8</span>
-        <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">low</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">high</span> <span class="o">==</span> <span class="mi">255</span><span class="p">)</span>
+        <span class="ow">and</span> <span class="nb">bool</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">low</span> <span class="o">==</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="ow">and</span> <span class="nb">bool</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">space</span><span class="o">.</span><span class="n">high</span> <span class="o">==</span> <span class="mi">255</span><span class="p">))</span>
     <span class="p">)</span>
 </pre></div>
           </article>
