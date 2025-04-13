@@ -16,7 +16,7 @@ def get_hdf5_storage() -> Type[MinariStorage]:
 
 
 def get_parquet_storage() -> Type[MinariStorage]:
-    from .parquet_storage import ParquetStorage
+    from .arrow_storage import ParquetStorage
 
     return ParquetStorage
 
