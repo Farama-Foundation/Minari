@@ -163,6 +163,18 @@ class ArrowStorage(MinariStorage):
         )
 
 
+class ParquetStorage(ArrowStorage):
+    FORMAT = "parquet"
+
+    def __init__(
+        self,
+        data_path: pathlib.Path,
+        observation_space: gym.Space,
+        action_space: gym.Space,
+    ):
+        super().__init__(data_path, observation_space, action_space)
+
+
 def _encode_space(space: gym.Space, values: Any, pad: int = 0):
     if isinstance(space, gym.spaces.Dict):
         assert isinstance(values, dict), values
