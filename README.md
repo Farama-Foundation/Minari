@@ -1,6 +1,7 @@
 [![build](https://github.com/Farama-Foundation/Minari/actions/workflows/build.yml/badge.svg)](https://github.com/Farama-Foundation/Minari/actions)
-[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://pre-commit.com/) 
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://pre-commit.com/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![release](https://img.shields.io/github/v/release/Farama-Foundation/Minari)](https://github.com/Farama-Foundation/Minari/releases)
 
 
 <p align="center">

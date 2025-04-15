@@ -39,7 +39,7 @@ __all__ = [
     "get_normalized_score",
 ]
 
-__version__ = "0.5.2"
+__version__ = "0.5.3"
 supported_dataset_versions = {
     "0.4.0",
     "0.4.1",
@@ -48,4 +48,5 @@ supported_dataset_versions = {
     "0.5.0",
     "0.5.1",
     "0.5.2",
+    "0.5.3",
 }
