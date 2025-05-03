@@ -13,6 +13,7 @@ from typing import OrderedDict
 
 import generate_env_table
 import generate_gif
+import requests
 from md_utils import dict_to_table
 
 import minari
@@ -132,26 +133,7 @@ def main():
     del os.environ["TQDM_DISABLE"]
 
 
-def _generate_dataset_page(arg):
-    dataset_id, metadata = arg
-    _, dataset_name, version = parse_dataset_id(dataset_id)
-    versioned_name = gen_dataset_id(None, dataset_name, version)
-
-    venv_name = f"venv_{dataset_id.replace('/', '_')}"
-    venv.create(venv_name, with_pip=True)
-    python_path = pathlib.Path(venv_name) / "bin" / "python"
-    pip_path = pathlib.Path(venv_name) / "bin" / "pip"
-
-    requirements = [
-        "minari[gcs,hdf5] @ git+https://github.com/Farama-Foundation/Minari.git",
-        "imageio",
-        "absl-py",
-    ]
-    requirements.extend(metadata.get("requirements", []))
-    req_args = [pip_path, "install", *requirements]
-    subprocess.check_call(req_args, stdout=subprocess.DEVNULL)
-    logging.info(f"Installed requirements for {dataset_id}")
-
+def _generate_gif(dataset_id: str, gif_name: str, python_path: pathlib.Path):
     try:
         minari.download_dataset(dataset_id)
         subprocess.check_call(
@@ -163,10 +145,39 @@ def _generate_dataset_page(arg):
             ]
         )
         minari.delete_dataset(dataset_id)
-        img_link_str = f'<img src="../{versioned_name}.gif" width="200" style="display: block; margin:0 auto"/>'
+        return f'<img src="../{gif_name}.gif" width="200" style="display: block; margin:0 auto"/>'
     except Exception as e:
         warnings.warn(f"Failed to generate gif for {dataset_id}: {e}")
-        img_link_str = None
+        return None
+
+
+def _generate_dataset_page(arg):
+    dataset_id, metadata = arg
+    _, dataset_name, version = parse_dataset_id(dataset_id)
+    versioned_name = gen_dataset_id(None, dataset_name, version)
+
+    venv_name = f"venv_{dataset_id.replace('/', '_')}"
+    venv.create(venv_name, with_pip=True)
+    python_path = pathlib.Path(venv_name) / "bin" / "python"
+    pip_path = pathlib.Path(venv_name) / "bin" / "pip"
+    requirements = [
+        "minari[gcs,hdf5] @ git+https://github.com/Farama-Foundation/Minari.git",
+        "imageio",
+        "absl-py",
+    ]
+    requirements.extend(metadata.get("requirements", []))
+    req_args = [pip_path, "install", *requirements]
+    subprocess.check_call(req_args, stdout=subprocess.DEVNULL)
+    logging.info(f"Installed requirements for {dataset_id}")
+
+    gif_url = f"https://github.com/Farama-Foundation/Minari/blob/gh-pages/main/datasets/gifs/{versioned_name}.gif"
+    response = requests.get(gif_url)
+    if response.status_code == 200:
+        with open(f"{DATASET_FOLDER}/{dataset_id}.gif", "wb") as f:
+            f.write(response.content)
+        img_link_str = f'<img src="../{versioned_name}.gif" width="200" style="display: block; margin:0 auto"/>'
+    else:
+        img_link_str = _generate_gif(dataset_id, versioned_name, python_path)
 
     env_docs = """"""
     env_spec = metadata.get("env_spec")
