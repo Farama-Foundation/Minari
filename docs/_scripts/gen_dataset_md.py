@@ -170,7 +170,7 @@ def _generate_dataset_page(arg):
     subprocess.check_call(req_args, stdout=subprocess.DEVNULL)
     logging.info(f"Installed requirements for {dataset_id}")
 
-    gif_url = f"https://github.com/Farama-Foundation/Minari/blob/gh-pages/main/datasets/gifs/{versioned_name}.gif"
+    gif_url = f"https://github.com/Farama-Foundation/Minari/blob/gh-pages/main/datasets/{dataset_id}.gif"
     response = requests.get(gif_url)
     if response.status_code == 200:
         with open(f"{DATASET_FOLDER}/{dataset_id}.gif", "wb") as f:

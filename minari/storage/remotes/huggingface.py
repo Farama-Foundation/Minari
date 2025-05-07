@@ -7,7 +7,7 @@ from typing import Any, Iterable, Optional, Tuple
 
 try:
     from huggingface_hub import HfApi
-    from huggingface_hub.utils import EntryNotFoundError
+    from huggingface_hub.errors import EntryNotFoundError
 except ImportError:
     raise ImportError(
         'huggingface_hub is not installed. Please install it using `pip install "minari[hf]"`'
