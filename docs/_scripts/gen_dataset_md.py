@@ -10,10 +10,10 @@ import warnings
 from collections import defaultdict
 from multiprocessing import Pool
 from typing import OrderedDict
-import huggingface_hub
 
 import generate_env_table
 import generate_gif
+import huggingface_hub
 import requests
 from md_utils import dict_to_table
 
@@ -99,10 +99,10 @@ def main():
     for hf_dataset in huggingface_hub.list_datasets(author="farama-minari"):
         huggingface_hub.snapshot_download(
             repo_id=hf_dataset.id,
+            local_dir=pathlib.Path().home() / ".minari" / "datasets" / hf_dataset.id,
             allow_patterns="*namespace_metadata.json",
             repo_type="dataset",
         )
-
 
     remote_datasets = minari.list_remote_datasets(latest_version=True)
     for i, (dataset_id, metadata) in enumerate(remote_datasets.items()):
