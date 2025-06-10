@@ -34,6 +34,8 @@ datasets/D4RL/index
 datasets/minigrid/index
 datasets/mujoco/index
 datasets/atari/index
+datasets/metaworld/index
+datasets/webagents/index
 ```
 
 ```{toctree}
