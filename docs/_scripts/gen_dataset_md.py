@@ -219,7 +219,7 @@ def _generate_dataset_page(arg):
                 [
                     python_path,
                     generate_env_table.__file__,
-                    f"--env_spec={env_spec}",
+                    f"--env_spec={eval_env_spec}",
                     f"--file_name={eval_spec_file}",
                 ]
             )
