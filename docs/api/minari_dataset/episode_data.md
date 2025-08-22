@@ -30,6 +30,10 @@
 
     Stacked actions taken in each episode step.
 
+.. autoattribute:: minari.EpisodeData.rewards
+
+    The ``reward`` value after each environment step.
+
 .. autoattribute:: minari.EpisodeData.terminations
 
     The ``terminated`` value after each environment step.
