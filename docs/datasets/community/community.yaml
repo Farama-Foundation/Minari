@@ -1,0 +1,22 @@
+# Community Datasets
+#
+# To add your dataset to this page, open a PR adding an entry below.
+#
+# Fields:
+#   - dataset_id: (required) HuggingFace dataset ID in format "username/dataset-name"
+#   - display_name: (required) Human-readable name for the dataset
+#   - description: (optional) Brief description of the dataset
+#   - author: (optional) Author name or organization
+#   - tags: (optional) List of tags for categorization
+
+- dataset_id: farama-minari/minigrid
+  display_name: Minigrid Dataset
+  description: Minigrid dataset
+  author: Farama Foundation
+  tags: [minigrid]
+
+- dataset_id: farama-minari/D4RL
+  display_name: D4RL Dataset
+  description: D4RL dataset
+  author: Farama Foundation
+  tags: [d4rl]
