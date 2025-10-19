@@ -5,18 +5,11 @@
 # Fields:
 #   - dataset_id: (required) HuggingFace dataset ID in format "username/dataset-name"
 #   - display_name: (required) Human-readable name for the dataset
-#   - description: (optional) Brief description of the dataset
-#   - author: (optional) Author name or organization
-#   - tags: (optional) List of tags for categorization
+#
+# Note: Description, author, and tags are automatically extracted from the dataset metadata.
 
-- dataset_id: farama-minari/minigrid
-  display_name: Minigrid Dataset
-  description: Minigrid dataset
-  author: Farama Foundation
-  tags: [minigrid]
+- dataset_id: D4RL/minigrid/fourrooms-v0
+  display_name: D4RL Minigrid Four Rooms
 
-- dataset_id: farama-minari/D4RL
-  display_name: D4RL Dataset
-  description: D4RL dataset
-  author: Farama Foundation
-  tags: [d4rl]
+- dataset_id: mujoco/halfcheetah/expert-v0
+  display_name: MuJoCo HalfCheetah Expert
