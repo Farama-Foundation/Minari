@@ -117,24 +117,39 @@ def generate_community_page(
                 remote_datasets[dataset_id].get("description", "")
             )
 
-        # Thumb card - wrap entire card in clickable link
+        # Thumb card - matching tutorial style
         content += ".. raw:: html\n\n"
         tooltip = description if description else display_name
-        content += f'    <div class="sphx-glr-thumbcontainer" tooltip="{tooltip}">\n'
-        content += (
-            f'      <a class="sphx-glr-thumbcontainer-link" href="{local_url}">\n\n'
-        )
+        content += f'    <div class="sphx-glr-thumbcontainer" tooltip="{tooltip}">\n\n'
 
         content += ".. only:: html\n\n"
-        # Default to minari-text.png
+        # Default to minari-text.png with width constraint to match tutorial cards
+        # Wrap image in link using target directive
         img_src = "/_static/img/minari-text.png"
         content += f"  .. image:: {img_src}\n"
-        content += f"    :alt: {display_name}\n\n"
+        content += f"    :alt: {display_name}\n"
+        content += "    :width: 400px\n"
+        content += f"    :target: {local_url}\n\n"
 
         content += ".. raw:: html\n\n"
         content += f'      <div class="sphx-glr-thumbnail-title">{display_name}</div>\n'
-        content += "      </a>\n"
         content += "    </div>\n\n"
+
+    # Add "Add your own dataset" card
+    content += ".. raw:: html\n\n"
+    content += '    <div class="sphx-glr-thumbcontainer" tooltip="Add your own dataset to this page">\n\n'
+
+    content += ".. only:: html\n\n"
+    # Link to README with instructions
+    readme_url = "https://github.com/Farama-Foundation/Minari/blob/main/docs/datasets/community/README.md"
+    content += "  .. image:: /_static/img/minari-text.png\n"
+    content += "    :alt: Add Your Dataset\n"
+    content += "    :width: 400px\n"
+    content += f"    :target: {readme_url}\n\n"
+
+    content += ".. raw:: html\n\n"
+    content += '      <div class="sphx-glr-thumbnail-title">Add Your Dataset</div>\n'
+    content += "    </div>\n\n"
 
     content += ".. raw:: html\n\n"
     content += "    </div>\n\n"
