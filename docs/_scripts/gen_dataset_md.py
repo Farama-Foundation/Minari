@@ -100,6 +100,7 @@ def main():
         if namespace is not None:
             DATASET_FOLDER.joinpath(namespace).mkdir(parents=True, exist_ok=True)
             ns = namespace.split("/")
+            download_namespace_metadata(ns[0])
             for i in range(1, len(ns)):
                 parent = "/".join(ns[:i])
                 sub_namespace = "/".join(ns[: i + 1])
