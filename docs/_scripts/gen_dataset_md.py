@@ -96,8 +96,10 @@ def main():
     os.environ["TQDM_DISABLE"] = "1"
 
     def short_desc(desc: str) -> str:
-        match = re.search(r'\.(?!\s*(?:Mr|Mrs|Dr|Ms|Prof|Sr|Jr)\b)(?:\s*[A-Z]|\n)', desc)
-        return (desc[:match.start() + 1] if match else desc).split("\n", 1)[0]
+        match = re.search(
+            r"\.(?!\s*(?:Mr|Mrs|Dr|Ms|Prof|Sr|Jr)\b)(?:\s*[A-Z]|\n)", desc
+        )
+        return (desc[: match.start() + 1] if match else desc).split("\n", 1)[0]
 
     remote_datasets = minari.list_remote_datasets(latest_version=True)
     for i, (dataset_id, metadata) in enumerate(remote_datasets.items()):
