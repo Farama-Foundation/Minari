@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 import os
 import pathlib
+import re
 import shutil
 import subprocess
 import venv
@@ -94,21 +95,28 @@ This environment can be recovered from the Minari dataset as follows:
 def main():
     os.environ["TQDM_DISABLE"] = "1"
 
+    def short_desc(desc: str) -> str:
+        match = re.search(
+            r"\.(?!\s*(?:Mr|Mrs|Dr|Ms|Prof|Sr|Jr)\b)(?:\s*[A-Z]|\n)", desc
+        )
+        return (desc[: match.start() + 1] if match else desc).split("\n", 1)[0]
+
     remote_datasets = minari.list_remote_datasets(latest_version=True)
     for i, (dataset_id, metadata) in enumerate(remote_datasets.items()):
         namespace, dataset_name, version = parse_dataset_id(dataset_id)
         if namespace is not None:
             DATASET_FOLDER.joinpath(namespace).mkdir(parents=True, exist_ok=True)
             ns = namespace.split("/")
+            download_namespace_metadata(ns[0])
             for i in range(1, len(ns)):
                 parent = "/".join(ns[:i])
                 sub_namespace = "/".join(ns[: i + 1])
                 download_namespace_metadata(sub_namespace)
                 sub_namespace_metadata = get_namespace_metadata(sub_namespace)
                 NAMESPACE_CONTENTS[parent][sub_namespace] = {
-                    "short_description": sub_namespace_metadata.get(
-                        "description", ""
-                    ).split(". ", 1)[0],
+                    "short_description": short_desc(
+                        sub_namespace_metadata.get("description", "")
+                    ),
                     "file": ns[i],
                     "toctree": f"{ns[i]}/index",
                     "display_name": sub_namespace_metadata.get(
@@ -118,7 +126,7 @@ def main():
 
             versioned_name = gen_dataset_id(None, dataset_name, version)
             NAMESPACE_CONTENTS[namespace][dataset_id] = {
-                "short_description": metadata.get("description", "").split(".", 1)[0],
+                "short_description": short_desc(metadata.get("description", "")),
                 "file": versioned_name,
                 "toctree": versioned_name,
                 "display_name": versioned_name,
@@ -270,7 +278,7 @@ def _generate_namespace_page(namespace: str, namespace_content):
     file_content += "## Content\n"
     file_content += "|     ID     | Description |\n"
     file_content += "| ---------- | ----------- |\n"
-    for c in namespace_content.values():
+    for c in sorted(namespace_content.values(), key=lambda x: x["display_name"]):
         file_content += f'| <a href="{c["file"]}" title="{c["display_name"]}">{c["display_name"]}</a> | {c["short_description"]} |\n'
 
     file_content += "\n```{toctree}\n:hidden:\n"
