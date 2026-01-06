@@ -30,13 +30,6 @@ jobs:
       - name: Install Minari
         run: pip install .[all]
 
-      - name: Download HF datasets with CLI
-        run: |
-          huggingface-cli download farama-minari/D4RL --repo-type=dataset --include="*namespace_metadata.json" --local-dir="$HOME/.minari/datasets/D4RL"
-          huggingface-cli download farama-minari/minigrid --repo-type=dataset --include="*namespace_metadata.json" --local-dir="$HOME/.minari/datasets/minigrid"
-          huggingface-cli download farama-minari/atari --repo-type=dataset --include="*namespace_metadata.json" --local-dir="$HOME/.minari/datasets/atari"
-          huggingface-cli download farama-minari/mujoco --repo-type=dataset --include="*namespace_metadata.json" --local-dir="$HOME/.minari/datasets/mujoco"
-
       - name: Build Datasets Docs
         run: xvfb-run --auto-servernum python docs/_scripts/gen_dataset_md.py
 
