@@ -1101,6 +1101,7 @@
             
             <section class="tex2jax_ignore mathjax_ignore" id="atari">
 <h1>Atari<a class="headerlink" href="#atari" title="Link to this heading">¶</a></h1>
+<p>This dataset comprises expert demonstrations across 57 distinct Atari games, showcasing a wide range of gameplay dynamics and difficulty levels. For each environment, we recorded 10 complete episodes using pretrained agents from <a class="reference external" href="https://cleanrl.dev">CleanRL</a>. Although the agents operated with standard preprocessing techniques, such as frame stacking, grayscale conversion, and image resizing, the dataset preserves raw images as observations, allowing users the flexibility to apply their own preprocessing methods.</p>
 <section id="content">
 <h2>Content<a class="headerlink" href="#content" title="Link to this heading">¶</a></h2>
 <div class="table-wrapper colwidths-auto docutils container">
@@ -1111,96 +1112,180 @@
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><a href="jamesbond" title="Jamesbond">Jamesbond</a></p></td>
-<td><p>Your mission is to control Mr</p></td>
+<tr class="row-even"><td><p><a href="alien" title="Alien">Alien</a></p></td>
+<td><p>You are stuck in a maze-like space ship with three aliens.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a href="pitfall" title="Pitfall">Pitfall</a></p></td>
-<td><p>You control Pitfall Harry and are tasked with collecting all the treasures in a jungle within 20 minutes</p></td>
+<tr class="row-odd"><td><p><a href="amidar" title="Amidar">Amidar</a></p></td>
+<td><p>This game is similar to Pac-Man: You are trying to visit all places on a 2-dimensional grid while simultaneously avoiding your enemies.</p></td>
 </tr>
-<tr class="row-even"><td><p><a href="robotank" title="Robotank">Robotank</a></p></td>
-<td><p>You control your Robot Tanks to destroy enemies and avoid enemy fire.Game ends when all of your Robot Tanks are destroyed or all 12 enemy squadrons are destroyed.The game begins with one active Robot Tank and three reserves.Your Robot Tank may get lost when it is hit by enemy    rocket fire - your video scrambles with static interference when this    happens - or just become damaged - sensors report the damage by flashing on your control panel (look at V/C/R/T squares).You earn one bonus Robot Tank for every enemy squadron destroyed</p></td>
+<tr class="row-even"><td><p><a href="assault" title="Assault">Assault</a></p></td>
+<td><p>You control a vehicle that can move sideways.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a href="alien" title="Alien">Alien</a></p></td>
-<td><p>You are stuck in a maze-like space ship with three aliens</p></td>
+<tr class="row-odd"><td><p><a href="asterix" title="Asterix">Asterix</a></p></td>
+<td><p>You are Asterix and can move horizontally (continuously) and vertically (discretely).</p></td>
 </tr>
-<tr class="row-even"><td><p><a href="phoenix" title="Phoenix">Phoenix</a></p></td>
-<td><p>Your goal is to reach and shoot the alien pilot</p></td>
+<tr class="row-even"><td><p><a href="asteroids" title="Asteroids">Asteroids</a></p></td>
+<td><p>This is a well-known arcade game: You control a spaceship in an asteroid field and must break up asteroids by shooting them.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a href="choppercommand" title="Chopper Command">Chopper Command</a></p></td>
-<td><p>You control a helicopter and must protect truck convoys</p></td>
+<tr class="row-odd"><td><p><a href="atlantis" title="Atlantis">Atlantis</a></p></td>
+<td><p>Your job is to defend the submerged city of Atlantis.</p></td>
 </tr>
-<tr class="row-even"><td><p><a href="centipede" title="Centipede">Centipede</a></p></td>
-<td><p>You are an elf and must use your magic wands to fend off spiders, fleas and centipedes</p></td>
+<tr class="row-even"><td><p><a href="bankheist" title="Bank Heist">Bank Heist</a></p></td>
+<td><p>You are a bank robber and (naturally) want to rob as many banks as possible.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a href="battlezone" title="Battle Zone">Battle Zone</a></p></td>
+<td><p>You control a tank and must destroy enemy vehicles.</p></td>
+</tr>
+<tr class="row-even"><td><p><a href="beamrider" title="Beam Rider">Beam Rider</a></p></td>
+<td><p>You control a space-ship that travels forward at a constant speed.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a href="berzerk" title="Berzerk">Berzerk</a></p></td>
+<td><p>You are stuck in a maze with evil robots.</p></td>
+</tr>
+<tr class="row-even"><td><p><a href="bowling" title="Bowling">Bowling</a></p></td>
+<td><p>Your goal is to score as many points as possible in the game of Bowling.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a href="boxing" title="Boxing">Boxing</a></p></td>
+<td><p>You fight an opponent in a boxing ring.</p></td>
+</tr>
+<tr class="row-even"><td><p><a href="breakout" title="Breakout">Breakout</a></p></td>
+<td><p>Another famous Atari game.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a href="centipede" title="Centipede">Centipede</a></p></td>
+<td><p>You are an elf and must use your magic wands to fend off spiders, fleas and centipedes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a href="choppercommand" title="Chopper Command">Chopper Command</a></p></td>
+<td><p>You control a helicopter and must protect truck convoys.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a href="crazyclimber" title="Crazy Climber">Crazy Climber</a></p></td>
+<td><p>You are a climber trying to reach the top of four buildings, while avoiding obstacles like closing windows and falling objects.</p></td>
+</tr>
+<tr class="row-even"><td><p><a href="defender" title="Defender">Defender</a></p></td>
+<td><p>Aliens attack the earth.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a href="demonattack" title="Demon Attack">Demon Attack</a></p></td>
+<td><p>You are facing waves of demons in the ice planet of Krybor.</p></td>
+</tr>
+<tr class="row-even"><td><p><a href="doubledunk" title="Double Dunk">Double Dunk</a></p></td>
+<td><p>You are playing a 2v2 game of basketball.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a href="enduro" title="Enduro">Enduro</a></p></td>
+<td><p>You are a racer in the National Enduro, a long-distance endurance race.</p></td>
+</tr>
+<tr class="row-even"><td><p><a href="fishingderby" title="Fishing Derby">Fishing Derby</a></p></td>
+<td><p>Your objective is to catch more sunfish than your opponent.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a href="freeway" title="Freeway">Freeway</a></p></td>
+<td><p>Your objective is to guide your chicken across lane after lane of busy rush hour traffic.</p></td>
+</tr>
+<tr class="row-even"><td><p><a href="frostbite" title="Frostbite">Frostbite</a></p></td>
+<td><p>In Frostbite, the player controls “Frostbite Bailey” who hops back and forth across across an Arctic river, changing the color of the ice blocks from white to blue.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a href="gopher" title="Gopher">Gopher</a></p></td>
+<td><p>The player controls a shovel-wielding farmer who protects a crop of three carrots from a gopher.</p></td>
+</tr>
+<tr class="row-even"><td><p><a href="gravitar" title="Gravitar">Gravitar</a></p></td>
+<td><p>The player controls a small blue spacecraft.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a href="hero" title="Hero">Hero</a></p></td>
+<td><p>You need to rescue miners that are stuck in a mine shaft.</p></td>
+</tr>
+<tr class="row-even"><td><p><a href="icehockey" title="Ice Hockey">Ice Hockey</a></p></td>
+<td><p>Your goal is to score as many points as possible in a standard game of Ice Hockey over a 3-minute time period.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a href="jamesbond" title="Jamesbond">Jamesbond</a></p></td>
+<td><p>Your mission is to control Mr.</p></td>
+</tr>
+<tr class="row-even"><td><p><a href="kangaroo" title="Kangaroo">Kangaroo</a></p></td>
+<td><p>The object of the game is to score as many points as you can while controlling Mother Kangaroo to rescue her precious baby.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a href="krull" title="Krull">Krull</a></p></td>
-<td><p>Your mission is to find and enter the Beast’s Black Fortress, rescue Princess Lyssa, and destroy the Beast.The task is not an easy one, for the location of the Black Fortress changes with each sunrise on Krull.</p></td>
+<td><p>Your mission is to find and enter the Beast’s Black Fortress, rescue Princess Lyssa, and destroy the Beast.</p></td>
+</tr>
+<tr class="row-even"><td><p><a href="kungfumaster" title="Kung Fu Master">Kung Fu Master</a></p></td>
+<td><p>You are a Kung-Fu Master fighting your way through the Evil Wizard’s temple.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a href="montezumarevenge" title="Montezuma Revenge">Montezuma Revenge</a></p></td>
+<td><p>Your goal is to acquire Montezuma’s treasure by making your way through a maze of chambers within the emperor’s fortress.</p></td>
+</tr>
+<tr class="row-even"><td><p><a href="mspacman" title="Ms PacMan">Ms PacMan</a></p></td>
+<td><p>Your goal is to collect all of the pellets on the screen while avoiding the ghosts.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a href="namethisgame" title="Name This Game">Name This Game</a></p></td>
+<td><p>Your goal is to defend the treasure that you have discovered.</p></td>
+</tr>
+<tr class="row-even"><td><p><a href="phoenix" title="Phoenix">Phoenix</a></p></td>
+<td><p>Your goal is to reach and shoot the alien pilot.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a href="pitfall" title="Pitfall">Pitfall</a></p></td>
+<td><p>You control Pitfall Harry and are tasked with collecting all the treasures in a jungle within 20 minutes.</p></td>
+</tr>
+<tr class="row-even"><td><p><a href="pong" title="Pong">Pong</a></p></td>
+<td><p>You control the right paddle, you compete against the left paddle controlled by the computer.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a href="privateeye" title="Private Eye">Private Eye</a></p></td>
+<td><p>You control the French Private Eye Pierre Touche.</p></td>
+</tr>
+<tr class="row-even"><td><p><a href="qbert" title="Qbert">Qbert</a></p></td>
+<td><p>You are Q*bert.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a href="riverraid" title="Riverraid">Riverraid</a></p></td>
+<td><p>You control a jet that flies over a river: you can move it sideways and fire missiles to destroy enemy objects.</p></td>
+</tr>
+<tr class="row-even"><td><p><a href="roadrunner" title="Road Runner">Road Runner</a></p></td>
+<td><p>You control the Road Runner(TM) in a race; you can control the direction to run in and times to jumps.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a href="robotank" title="Robotank">Robotank</a></p></td>
+<td><p>You control your Robot Tanks to destroy enemies and avoid enemy fire.</p></td>
+</tr>
+<tr class="row-even"><td><p><a href="seaquest" title="Seaquest">Seaquest</a></p></td>
+<td><p>You control a sub able to move in all directions and fire torpedoes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a href="skiing" title="Skiing">Skiing</a></p></td>
+<td><p>You control a skier who can move sideways.</p></td>
+</tr>
+<tr class="row-even"><td><p><a href="solaris" title="Solaris">Solaris</a></p></td>
+<td><p>You control a spaceship.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a href="spaceinvaders" title="Space Invaders">Space Invaders</a></p></td>
+<td><p>Your objective is to destroy the space invaders by shooting your laser cannon at them before they reach the Earth.</p></td>
+</tr>
+<tr class="row-even"><td><p><a href="stargunner" title="Star Gunner">Star Gunner</a></p></td>
+<td><p>Stop the alien invasion by shooting down alien saucers and creatures while avoiding bombs.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a href="surround" title="Surround">Surround</a></p></td>
+<td><p>Surround your opponent without running into anything yourself.</p></td>
+</tr>
+<tr class="row-even"><td><p><a href="tennis" title="Tennis">Tennis</a></p></td>
+<td><p>You control the orange player playing against a computer-controlled blue player.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a href="timepilot" title="Time Pilot">Time Pilot</a></p></td>
+<td><p>You control an aircraft.</p></td>
+</tr>
+<tr class="row-even"><td><p><a href="tutankham" title="Tutankham">Tutankham</a></p></td>
+<td><p>Your goal is to rack up points by finding treasures in the mazes of the tomb while eliminating its guardians.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a href="upndown" title="Up n Down">Up n Down</a></p></td>
+<td><p>Your goal is to steer your baja bugger to collect prizes and eliminate opponents.</p></td>
+</tr>
+<tr class="row-even"><td><p><a href="venture" title="Venture">Venture</a></p></td>
+<td><p>Your goal is to capture the treasure in every chamber of the dungeon while eliminating the monsters.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a href="videopinball" title="Video Pinball">Video Pinball</a></p></td>
+<td><p>Your goal is to keep the ball in play as long as possible and to score as many points as possible.</p></td>
+</tr>
+<tr class="row-even"><td><p><a href="wizardofwor" title="Wizard of Wor">Wizard of Wor</a></p></td>
+<td><p>Your goal is to beat the Wizard using your laser and radar scanner.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a href="yarsrevenge" title="Yars Revenge">Yars Revenge</a></p></td>
+<td><p>The objective is to break a path through the shield and destroy the Qotile with a blast from the Zorlon Cannon.</p></td>
+</tr>
+<tr class="row-even"><td><p><a href="zaxxon" title="Zaxxon">Zaxxon</a></p></td>
+<td><p>Your goal is to stop the evil robot Zaxxon and its armies from enslaving the galaxy by piloting your fighter and shooting enemies.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>For a more detailed documentation, see <a class="reference external" href="https://ale.farama.org/environments/krull">the ALE documentation</a> |
-| <a href="frostbite" title="Frostbite">Frostbite</a> | In Frostbite, the player controls “Frostbite Bailey” who hops back and forth across across an Arctic river, changing the color of the ice blocks from white to blue |
-| <a href="breakout" title="Breakout">Breakout</a> | Another famous Atari game |
-| <a href="kungfumaster" title="Kung Fu Master">Kung Fu Master</a> | You are a Kung-Fu Master fighting your way through the Evil Wizard’s temple |
-| <a href="demonattack" title="Demon Attack">Demon Attack</a> | You are facing waves of demons in the ice planet of Krybor |
-| <a href="fishingderby" title="Fishing Derby">Fishing Derby</a> | Your objective is to catch more sunfish than your opponent.</p>
-<p>For a more detailed documentation, see <a class="reference external" href="https://ale.farama.org/environments/fishing_derby">the ALE documentation</a> |
-| <a href="boxing" title="Boxing">Boxing</a> | You fight an opponent in a boxing ring |
-| <a href="riverraid" title="Riverraid">Riverraid</a> | You control a jet that flies over a river: you can move it sideways and fire missiles to destroy enemy objects |
-| <a href="kangaroo" title="Kangaroo">Kangaroo</a> | The object of the game is to score as many points as you can while controlling Mother Kangaroo to rescue her precious baby |
-| <a href="atlantis" title="Atlantis">Atlantis</a> | Your job is to defend the submerged city of Atlantis |
-| <a href="gopher" title="Gopher">Gopher</a> | The player controls a shovel-wielding farmer who protects a crop of three carrots from a gopher.</p>
-<p>For a more detailed documentation, see <a class="reference external" href="https://ale.farama.org/environments/gopher">the ALE documentation</a> |
-| <a href="amidar" title="Amidar">Amidar</a> | This game is similar to Pac-Man: You are trying to visit all places on a 2-dimensional grid while simultaneously avoiding your enemies |
-| <a href="bankheist" title="Bank Heist">Bank Heist</a> | You are a bank robber and (naturally) want to rob as many banks as possible |
-| <a href="asteroids" title="Asteroids">Asteroids</a> | This is a well-known arcade game: You control a spaceship in an asteroid field and must break up asteroids by shooting them |
-| <a href="videopinball" title="Video Pinball">Video Pinball</a> | Your goal is to keep the ball in play as long as possible and to score as many points as possible.</p>
-<p>For a more detailed documentation, see <a class="reference external" href="https://ale.farama.org/environments/video_pinball">the ALE documentation</a> |
-| <a href="asterix" title="Asterix">Asterix</a> | You are Asterix and can move horizontally (continuously) and vertically (discretely) |
-| <a href="wizardofwor" title="Wizard of Wor">Wizard of Wor</a> | Your goal is to beat the Wizard using your laser and radar scanner.</p>
-<p>For a more detailed documentation, see <a class="reference external" href="https://ale.farama.org/environments/wizard_of_wor">the ALE documentation</a> |
-| <a href="timepilot" title="Time Pilot">Time Pilot</a> | You control an aircraft |
-| <a href="crazyclimber" title="Crazy Climber">Crazy Climber</a> | You are a climber trying to reach the top of four buildings, while avoiding obstacles like closing windows and falling objects |
-| <a href="mspacman" title="Ms PacMan">Ms PacMan</a> | Your goal is to collect all of the pellets on the screen while avoiding the ghosts.</p>
-<p>For a more detailed documentation, see <a class="reference external" href="https://ale.farama.org/environments/ms_pacman">the ALE documentation</a> |
-| <a href="tutankham" title="Tutankham">Tutankham</a> | Your goal is to rack up points by finding treasures in the mazes of the tomb while eliminating its guardians.</p>
-<p>For a more detailed documentation, see <a class="reference external" href="https://ale.farama.org/environments/tutankham">the ALE documentation</a> |
-| <a href="skiing" title="Skiing">Skiing</a> | You control a skier who can move sideways.The goal is to run through all gates (between the poles) in the fastest time.You are penalized five seconds for each gate you miss.If you hit a gate or a tree, your skier will jump back up and keep going.</p>
-<p>For a more detailed documentation, see <a class="reference external" href="https://ale.farama.org/environments/skiing">the ALE documentation</a> |
-| <a href="enduro" title="Enduro">Enduro</a> | You are a racer in the National Enduro, a long-distance endurance race |
-| <a href="zaxxon" title="Zaxxon">Zaxxon</a> | Your goal is to stop the evil robot Zaxxon and its armies from enslaving the galaxy by piloting your fighter and shooting enemies.</p>
-<p>For a more detailed documentation, see <a class="reference external" href="https://ale.farama.org/environments/zaxxon">the ALE documentation</a> |
-| <a href="pong" title="Pong">Pong</a> | You control the right paddle, you compete against the left paddle controlled by the computer |
-| <a href="venture" title="Venture">Venture</a> | Your goal is to capture the treasure in every chamber of the dungeon while eliminating the monsters.</p>
-<p>For a more detailed documentation, see <a class="reference external" href="https://ale.farama.org/environments/venture">the ALE documentation</a> |
-| <a href="roadrunner" title="Road Runner">Road Runner</a> | You control the Road Runner(TM) in a race; you can control the direction to run in and times to jumps.The goal is to outrun Wile E |
-| <a href="freeway" title="Freeway">Freeway</a> | Your objective is to guide your chicken across lane after lane of busy rush hour traffic |
-| <a href="battlezone" title="Battle Zone">Battle Zone</a> | You control a tank and must destroy enemy vehicles |
-| <a href="solaris" title="Solaris">Solaris</a> | You control a spaceship |
-| <a href="icehockey" title="Ice Hockey">Ice Hockey</a> | Your goal is to score as many points as possible in a standard game of Ice Hockey over a 3-minute time period |
-| <a href="yarsrevenge" title="Yars Revenge">Yars Revenge</a> | The objective is to break a path through the shield and destroy the Qotile with a blast from the Zorlon Cannon.</p>
-<p>For a more detailed documentation, see <a class="reference external" href="https://ale.farama.org/environments/yars_revenge">the ALE documentation</a> |
-| <a href="doubledunk" title="Double Dunk">Double Dunk</a> | You are playing a 2v2 game of basketball |
-| <a href="spaceinvaders" title="Space Invaders">Space Invaders</a> | Your objective is to destroy the space invaders by shooting your laser cannon at them before they reach the Earth |
-| <a href="beamrider" title="Beam Rider">Beam Rider</a> | You control a space-ship that travels forward at a constant speed |
-| <a href="namethisgame" title="Name This Game">Name This Game</a> | Your goal is to defend the treasure that you have discovered |
-| <a href="upndown" title="Up n Down">Up n Down</a> | Your goal is to steer your baja bugger to collect prizes and eliminate opponents.</p>
-<p>For a more detailed documentation, see <a class="reference external" href="https://ale.farama.org/environments/up_n_down">the ALE documentation</a> |
-| <a href="tennis" title="Tennis">Tennis</a> | You control the orange player playing against a computer-controlled blue player |
-| <a href="hero" title="Hero">Hero</a> | You need to rescue miners that are stuck in a mine shaft |
-| <a href="qbert" title="Qbert">Qbert</a> | You are Q*bert |
-| <a href="surround" title="Surround">Surround</a> | Surround your opponent without running into anything yourself.</p>
-<p>For a more detailed documentation, see <a class="reference external" href="https://ale.farama.org/environments/surround">the ALE documentation</a> |
-| <a href="berzerk" title="Berzerk">Berzerk</a> | You are stuck in a maze with evil robots |
-| <a href="assault" title="Assault">Assault</a> | You control a vehicle that can move sideways |
-| <a href="defender" title="Defender">Defender</a> | Aliens attack the earth |
-| <a href="bowling" title="Bowling">Bowling</a> | Your goal is to score as many points as possible in the game of Bowling |
-| <a href="montezumarevenge" title="Montezuma Revenge">Montezuma Revenge</a> | Your goal is to acquire Montezuma’s treasure by making your way through a maze of chambers within the emperor’s fortress |
-| <a href="stargunner" title="Star Gunner">Star Gunner</a> | Stop the alien invasion by shooting down alien saucers and creatures while avoiding bombs.</p>
-<p>For a more detailed documentation, see <a class="reference external" href="https://ale.farama.org/environments/star_gunner">the ALE documentation</a> |
-| <a href="privateeye" title="Private Eye">Private Eye</a> | You control the French Private Eye Pierre Touche |
-| <a href="seaquest" title="Seaquest">Seaquest</a> | You control a sub able to move in all directions and fire torpedoes.The goal is to retrieve as many divers as you can, while dodging and blasting enemy subs and killer sharks; points will be awarded accordingly.The game begins with one sub and three waiting on the horizon |
-| <a href="gravitar" title="Gravitar">Gravitar</a> | The player controls a small blue spacecraft |</p>
 <div class="toctree-wrapper compound">
 </div>
 </section>
