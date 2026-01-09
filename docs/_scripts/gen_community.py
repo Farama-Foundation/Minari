@@ -1,3 +1,4 @@
+import html
 import os
 import pathlib
 import warnings
@@ -14,6 +15,10 @@ DATASET_FOLDER = pathlib.Path(__file__).parent.parent.joinpath("datasets")
 
 def _rst_escape(text: str) -> str:
     return text.replace("*", r"\*").replace("_", r"\_").replace("`", r"\`")
+
+
+def _html_escape(text: str) -> str:
+    return html.escape(text, quote=True)
 
 
 def _parse_dataset_path(dataset_path: str) -> tuple:
@@ -155,6 +160,7 @@ def generate_community_page(
         # Thumb card - matching tutorial style
         content += ".. raw:: html\n\n"
         tooltip = description if description else display_name
+        tooltip = _html_escape(tooltip)
         content += f'    <div class="sphx-glr-thumbcontainer" tooltip="{tooltip}">\n\n'
 
         content += ".. only:: html\n\n"
