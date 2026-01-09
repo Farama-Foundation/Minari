@@ -3,13 +3,10 @@
 # To add your dataset to this page, open a PR adding an entry below.
 #
 # Fields:
-#   - dataset_id: (required) HuggingFace dataset ID in format "username/dataset-name"
+#   - dataset_id: (required) Dataset ID. For example, for a custom HuggingFace dataset: "hf://username/dataset-name-v0"
 #   - display_name: (required) Human-readable name for the dataset
 #
 # Note: Description, author, and tags are automatically extracted from the dataset metadata.
 
-- dataset_id: D4RL/minigrid/fourrooms-v0
-  display_name: D4RL Minigrid Four Rooms
-
-- dataset_id: mujoco/halfcheetah/expert-v0
-  display_name: MuJoCo HalfCheetah Expert
+- dataset_id: hf://lukasz-sawala-goat/Farama-Antmaze-v5
+  display_name: AntMaze-v5

@@ -13,22 +13,43 @@ DATASET_FOLDER = pathlib.Path(__file__).parent.parent.joinpath("datasets")
 
 
 def _rst_escape(text: str) -> str:
-    """Escape text for RST."""
     return text.replace("*", r"\*").replace("_", r"\_").replace("`", r"\`")
+
+
+def _parse_dataset_path(dataset_path: str) -> tuple:
+    """Parse a dataset path that may include a remote prefix.
+
+    Args:
+        dataset_path: Dataset ID, optionally with remote prefix (e.g., "hf://user/dataset-id")
+
+    Returns:
+        Tuple of (remote_path, dataset_id) where remote_path is None for default remote
+    """
+    if "://" in dataset_path:
+        remote_type, rest = dataset_path.split("://", maxsplit=1)
+        remote_name, dataset_id = rest.split("/", maxsplit=1)
+        remote_path = f"{remote_type}://{remote_name}"
+        return remote_path, dataset_id
+    return None, dataset_path
 
 
 def _generate_community_dataset_page(dataset_entry):
     """Generate a dataset page for a community dataset."""
-    dataset_id = dataset_entry.get("dataset_id", "")
-    display_name = dataset_entry.get("display_name", dataset_id)
+    dataset_path = dataset_entry.get("dataset_id", "")
+    display_name = dataset_entry.get("display_name", dataset_path)
 
-    if not dataset_id:
+    if not dataset_path:
         warnings.warn(f"Skipping dataset entry without dataset_id: {dataset_entry}")
         return
 
     try:
-        # Get metadata from remote datasets first
-        remote_datasets = minari.list_remote_datasets(latest_version=True)
+        # Parse the dataset path to extract remote_path if present
+        remote_path, dataset_id = _parse_dataset_path(dataset_path)
+
+        # Get metadata from the appropriate remote
+        remote_datasets = minari.list_remote_datasets(
+            remote_path=remote_path, latest_version=True
+        )
         if dataset_id not in remote_datasets:
             warnings.warn(f"Dataset {dataset_id} not found in remote datasets")
             return
@@ -59,7 +80,8 @@ def _generate_community_dataset_page(dataset_entry):
             content += "This environment can be recovered from the Minari dataset as follows:\n\n"
             content += "```python\n"
             content += "import minari\n"
-            content += f"dataset = minari.load_dataset('{dataset_id}')\n"
+            load_path = dataset_path if remote_path else dataset_id
+            content += f"dataset = minari.load_dataset('{load_path}', download=True)\n"
             content += "env = dataset.recover_environment()\n"
             content += "```\n\n"
 
@@ -74,7 +96,26 @@ def _generate_community_dataset_page(dataset_entry):
         print(f"Generated community dataset page for {dataset_id}")
 
     except Exception as e:
-        warnings.warn(f"Failed to generate page for {dataset_id}: {e}")
+        warnings.warn(f"Failed to generate page for {dataset_path}: {e}")
+
+
+def _get_dataset_metadata(dataset_path: str) -> dict:
+    """Get metadata for a dataset, handling custom remotes.
+
+    Args:
+        dataset_path: Dataset ID, optionally with remote prefix
+
+    Returns:
+        Metadata dict or empty dict if not found
+    """
+    remote_path, dataset_id = _parse_dataset_path(dataset_path)
+    try:
+        remote_datasets = minari.list_remote_datasets(
+            remote_path=remote_path, latest_version=True
+        )
+        return remote_datasets.get(dataset_id, {})
+    except Exception:
+        return {}
 
 
 def generate_community_page(
@@ -82,8 +123,7 @@ def generate_community_page(
     out_rst=DATASET_FOLDER.joinpath("community", "index.rst"),
 ):
     if not os.path.exists(yaml_path):
-        print(f"YAML file not found: {yaml_path}")
-        return
+        raise FileNotFoundError(f"YAML file not found: {yaml_path}")
 
     with open(yaml_path) as f:
         community_data = yaml.safe_load(f) or []
@@ -95,27 +135,22 @@ def generate_community_page(
     # Generate the index page
     content = "Community Datasets\n"
     content += "==================\n\n"
-    content += "Below is a list of datasets contributed by the community. "
-    content += "To add yours, open a PR editing ``docs/datasets/community/community.yaml``.\n\n"
+    content += "Below is a list of datasets contributed by the community.\n\n"
 
     content += ".. raw:: html\n\n"
     content += '    <div class="sphx-glr-thumbnails">\n\n'
 
-    # Get metadata for all datasets to extract descriptions
-    remote_datasets = minari.list_remote_datasets(latest_version=True)
-
     for dataset_entry in community_data:
-        dataset_id = dataset_entry.get("dataset_id", "")
-        display_name = _rst_escape(dataset_entry.get("display_name", dataset_id))
+        dataset_path = dataset_entry.get("dataset_id", "")
+        display_name = _rst_escape(dataset_entry.get("display_name", dataset_path))
 
-        # Get description from metadata
-        description = ""
-        local_url = f"/datasets/{dataset_id}/"  # Set default URL
+        # Parse the path to get the actual dataset_id for URL
+        _, dataset_id = _parse_dataset_path(dataset_path)
 
-        if dataset_id in remote_datasets:
-            description = _rst_escape(
-                remote_datasets[dataset_id].get("description", "")
-            )
+        # Get description from metadata (handles custom remotes)
+        metadata = _get_dataset_metadata(dataset_path)
+        description = _rst_escape(metadata.get("description", ""))
+        local_url = f"/datasets/{dataset_id}/"
 
         # Thumb card - matching tutorial style
         content += ".. raw:: html\n\n"

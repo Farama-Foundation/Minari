@@ -287,9 +287,8 @@ def _generate_namespace_page(namespace: str, namespace_content):
     file_content += "```\n"
 
     namespace_file = namespace_path.joinpath("index.md")
-    file = open(namespace_file, "w", encoding="utf-8")
-    file.write(file_content)
-    file.close()
+    with open(namespace_file, "w", encoding="utf-8") as f:
+        f.write(file_content)
 
 
 if __name__ == "__main__":
