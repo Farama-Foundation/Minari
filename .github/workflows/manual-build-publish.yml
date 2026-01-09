@@ -4,11 +4,9 @@
 #   - https://packaging.python.org/en/latest/guides/publishing-package-distribution-releases-using-github-actions-ci-cd-workflows/
 #
 
-name: build-publish
-
+name: Manual Build and Publish
 on:
-  release:
-    types: [published]
+  workflow_dispatch:
 
 jobs:
   build-wheels:
@@ -35,7 +33,6 @@ jobs:
     runs-on: ubuntu-latest
     needs:
     - build-wheels
-    if: github.event_name == 'release' && github.event.action == 'published'
     steps:
     - name: Download dists
       uses: actions/download-artifact@v4

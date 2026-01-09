@@ -18,11 +18,15 @@
 
     The action performed by the agent on the environment.
 
-.. autoattribute:: minari.StepData.termination
+.. autoattribute:: minari.StepData.reward
+
+    The ``reward`` value returned by the environment after performing the action.
+
+.. autoattribute:: minari.StepData.terminated
 
     The ``terminated`` value returned by the environment after performing the action.
 
-.. autoattribute:: minari.StepData.truncation
+.. autoattribute:: minari.StepData.truncated
 
     The ``truncated`` value returned by the environment after performing the action.
 

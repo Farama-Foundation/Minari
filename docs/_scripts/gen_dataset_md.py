@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 import os
 import pathlib
+import re
 import shutil
 import subprocess
 import venv
@@ -13,6 +14,7 @@ from typing import OrderedDict
 
 import generate_env_table
 import generate_gif
+import requests
 from md_utils import dict_to_table
 
 import minari
@@ -93,21 +95,28 @@ This environment can be recovered from the Minari dataset as follows:
 def main():
     os.environ["TQDM_DISABLE"] = "1"
 
+    def short_desc(desc: str) -> str:
+        match = re.search(
+            r"\.(?!\s*(?:Mr|Mrs|Dr|Ms|Prof|Sr|Jr)\b)(?:\s*[A-Z]|\n)", desc
+        )
+        return (desc[: match.start() + 1] if match else desc).split("\n", 1)[0]
+
     remote_datasets = minari.list_remote_datasets(latest_version=True)
     for i, (dataset_id, metadata) in enumerate(remote_datasets.items()):
         namespace, dataset_name, version = parse_dataset_id(dataset_id)
         if namespace is not None:
             DATASET_FOLDER.joinpath(namespace).mkdir(parents=True, exist_ok=True)
             ns = namespace.split("/")
+            download_namespace_metadata(ns[0])
             for i in range(1, len(ns)):
                 parent = "/".join(ns[:i])
                 sub_namespace = "/".join(ns[: i + 1])
                 download_namespace_metadata(sub_namespace)
                 sub_namespace_metadata = get_namespace_metadata(sub_namespace)
                 NAMESPACE_CONTENTS[parent][sub_namespace] = {
-                    "short_description": sub_namespace_metadata.get(
-                        "description", ""
-                    ).split(". ", 1)[0],
+                    "short_description": short_desc(
+                        sub_namespace_metadata.get("description", "")
+                    ),
                     "file": ns[i],
                     "toctree": f"{ns[i]}/index",
                     "display_name": sub_namespace_metadata.get(
@@ -117,7 +126,7 @@ def main():
 
             versioned_name = gen_dataset_id(None, dataset_name, version)
             NAMESPACE_CONTENTS[namespace][dataset_id] = {
-                "short_description": metadata.get("description", "").split(".", 1)[0],
+                "short_description": short_desc(metadata.get("description", "")),
                 "file": versioned_name,
                 "toctree": versioned_name,
                 "display_name": versioned_name,
@@ -132,26 +141,7 @@ def main():
     del os.environ["TQDM_DISABLE"]
 
 
-def _generate_dataset_page(arg):
-    dataset_id, metadata = arg
-    _, dataset_name, version = parse_dataset_id(dataset_id)
-    versioned_name = gen_dataset_id(None, dataset_name, version)
-
-    venv_name = f"venv_{dataset_id.replace('/', '_')}"
-    venv.create(venv_name, with_pip=True)
-    python_path = pathlib.Path(venv_name) / "bin" / "python"
-    pip_path = pathlib.Path(venv_name) / "bin" / "pip"
-
-    requirements = [
-        "minari[gcs,hdf5] @ git+https://github.com/Farama-Foundation/Minari.git",
-        "imageio",
-        "absl-py",
-    ]
-    requirements.extend(metadata.get("requirements", []))
-    req_args = [pip_path, "install", *requirements]
-    subprocess.check_call(req_args, stdout=subprocess.DEVNULL)
-    logging.info(f"Installed requirements for {dataset_id}")
-
+def _generate_gif(dataset_id: str, gif_name: str, python_path: pathlib.Path):
     try:
         minari.download_dataset(dataset_id)
         subprocess.check_call(
@@ -163,10 +153,39 @@ def _generate_dataset_page(arg):
             ]
         )
         minari.delete_dataset(dataset_id)
-        img_link_str = f'<img src="../{versioned_name}.gif" width="200" style="display: block; margin:0 auto"/>'
+        return f'<img src="../{gif_name}.gif" width="200" style="display: block; margin:0 auto"/>'
     except Exception as e:
         warnings.warn(f"Failed to generate gif for {dataset_id}: {e}")
-        img_link_str = None
+        return None
+
+
+def _generate_dataset_page(arg):
+    dataset_id, metadata = arg
+    _, dataset_name, version = parse_dataset_id(dataset_id)
+    versioned_name = gen_dataset_id(None, dataset_name, version)
+
+    venv_name = f"venv_{dataset_id.replace('/', '_')}"
+    venv.create(venv_name, with_pip=True)
+    python_path = pathlib.Path(venv_name) / "bin" / "python"
+    pip_path = pathlib.Path(venv_name) / "bin" / "pip"
+    requirements = [
+        "minari[gcs,hdf5] @ git+https://github.com/Farama-Foundation/Minari.git",
+        "imageio",
+        "absl-py",
+    ]
+    requirements.extend(metadata.get("requirements", []))
+    req_args = [pip_path, "install", *requirements]
+    subprocess.check_call(req_args, stdout=subprocess.DEVNULL)
+    logging.info(f"Installed requirements for {dataset_id}")
+
+    gif_url = f"https://github.com/Farama-Foundation/Minari/blob/gh-pages/main/datasets/{dataset_id}.gif"
+    response = requests.get(gif_url)
+    if response.status_code == 200:
+        with open(f"{DATASET_FOLDER}/{dataset_id}.gif", "wb") as f:
+            f.write(response.content)
+        img_link_str = f'<img src="../{versioned_name}.gif" width="200" style="display: block; margin:0 auto"/>'
+    else:
+        img_link_str = _generate_gif(dataset_id, versioned_name, python_path)
 
     env_docs = """"""
     env_spec = metadata.get("env_spec")
@@ -208,7 +227,7 @@ def _generate_dataset_page(arg):
                 [
                     python_path,
                     generate_env_table.__file__,
-                    f"--env_spec={env_spec}",
+                    f"--env_spec={eval_env_spec}",
                     f"--file_name={eval_spec_file}",
                 ]
             )
@@ -248,7 +267,6 @@ def _generate_dataset_page(arg):
 
 def _generate_namespace_page(namespace: str, namespace_content):
     namespace_path = DATASET_FOLDER.joinpath(namespace)
-    download_namespace_metadata(namespace)
     namespace_metadata = get_namespace_metadata(namespace)
     title = namespace_metadata.get("display_name", namespace[0].upper() + namespace[1:])
 
@@ -260,7 +278,7 @@ def _generate_namespace_page(namespace: str, namespace_content):
     file_content += "## Content\n"
     file_content += "|     ID     | Description |\n"
     file_content += "| ---------- | ----------- |\n"
-    for c in namespace_content.values():
+    for c in sorted(namespace_content.values(), key=lambda x: x["display_name"]):
         file_content += f'| <a href="{c["file"]}" title="{c["display_name"]}">{c["display_name"]}</a> | {c["short_description"]} |\n'
 
     file_content += "\n```{toctree}\n:hidden:\n"

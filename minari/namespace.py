@@ -190,22 +190,21 @@ def download_namespace_metadata(namespace: str, overwrite: bool = False) -> None
         overwrite (bool): whether to overwrite existing local metadata. Defaults to False.
     """
     validate_namespace(namespace)
+    if not overwrite and namespace in list_local_namespaces():
+        warnings.warn(
+            f"Skipping update for namespace '{namespace}' due to existing local metadata. Set overwrite=True to overwrite local data.",
+            UserWarning,
+        )
+        return
     if namespace not in list_remote_namespaces():
         raise ValueError(
             f"The namespace '{namespace}' doesn't exist in the remote Farama server."
         )
 
     cloud_storage = get_cloud_storage()
-
-    if overwrite or namespace not in list_local_namespaces():
-        data_path = get_dataset_path()
-        (data_path / namespace).mkdir(parents=True, exist_ok=True)
-        cloud_storage.download_namespace_metadata(namespace, data_path)
-    else:
-        warnings.warn(
-            f"Skipping update for namespace '{namespace}' due to existing local metadata. Set overwrite=True to overwrite local data.",
-            UserWarning,
-        )
+    data_path = get_dataset_path()
+    (data_path / namespace).mkdir(parents=True, exist_ok=True)
+    cloud_storage.download_namespace_metadata(namespace, data_path)
 
 
 def upload_namespace(namespace: str, token: str) -> None:
