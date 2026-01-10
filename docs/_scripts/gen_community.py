@@ -8,18 +8,18 @@ from collections import defaultdict
 from typing import OrderedDict
 
 import yaml
+from gen_dataset_md import (
+    NO_ENV_MSG,
+    NO_EVAL_ENV_MSG,
+    NO_TRAIN_ENV_MSG,
+    PRE_EVAL_ENV_MSG,
+    PRE_TRAIN_ENV_MSG,
+)
 from md_utils import dict_to_table
 
 import minari
 from minari.dataset.minari_dataset import gen_dataset_id, parse_dataset_id
 from minari.utils import get_dataset_spec_dict
-from gen_dataset_md import (
-    NO_ENV_MSG,
-    NO_TRAIN_ENV_MSG,
-    NO_EVAL_ENV_MSG,
-    PRE_TRAIN_ENV_MSG,
-    PRE_EVAL_ENV_MSG,
-)
 
 
 logger = logging.getLogger(__name__)
@@ -136,12 +136,14 @@ def _generate_dataset_page(
 
     dataset_md_path = dataset_folder.joinpath(f"{versioned_name}.md")
     with open(dataset_md_path, "w", encoding="utf-8") as f:
-            f.write(content)
+        f.write(content)
 
     return versioned_name
 
 
-def _generate_namespace_page(namespace_path: pathlib.Path, title: str, namespace_content: dict):
+def _generate_namespace_page(
+    namespace_path: pathlib.Path, title: str, namespace_content: dict
+):
     """Generate an index page for a namespace (matching gen_dataset_md.py style)."""
     file_content = "---\nfirstpage:\nlastpage:\n---\n\n"
     file_content += f"# {title}\n\n"
@@ -263,7 +265,9 @@ def _generate_dataset_group_pages(group_entry):
             if top_level:
                 _generate_namespace_page(group_folder, display_name, top_level)
 
-        logger.info(f"Generated community dataset group page for {group_name} ({len(remote_datasets)} datasets)")
+        logger.info(
+            f"Generated community dataset group page for {group_name} ({len(remote_datasets)} datasets)"
+        )
         return group_name, len(remote_datasets)
 
     except Exception:
@@ -313,11 +317,13 @@ def generate_community_page(
         result = _generate_dataset_group_pages(group_entry)
         if result:
             group_name, dataset_count = result
-            group_entries_info.append({
-                "group_name": group_name,
-                "display_name": group_entry.get("display_name", group_name),
-                "dataset_count": dataset_count,
-            })
+            group_entries_info.append(
+                {
+                    "group_name": group_name,
+                    "display_name": group_entry.get("display_name", group_name),
+                    "dataset_count": dataset_count,
+                }
+            )
 
     # Generate the index page with cards (using MyST markdown)
     content = "---\nfirstpage:\nlastpage:\n---\n\n"
@@ -346,7 +352,7 @@ def generate_community_page(
     readme_url = "https://github.com/Farama-Foundation/Minari/blob/main/docs/datasets/community/README.md"
 
     content += "```{raw} html\n"
-    content += f'<div class="sphx-glr-thumbcontainer" tooltip="Add your own dataset group to this page" style="min-height: 120px;">\n'
+    content += '<div class="sphx-glr-thumbcontainer" tooltip="Add your own dataset group to this page" style="min-height: 120px;">\n'
     content += f'<a href="{readme_url}"><img src="/_static/img/minari-text.png" alt="Add your dataset here" style="width: 250px; height: auto; display: block; margin: 0 auto;"></a>\n'
     content += '  <div class="sphx-glr-thumbnail-title">Add your dataset here</div>\n'
     content += "</div>\n"
