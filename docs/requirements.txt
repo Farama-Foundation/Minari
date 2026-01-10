@@ -8,3 +8,4 @@ git+https://github.com/Farama-Foundation/Celshast#egg=furo
 pyvirtualdisplay
 absl-py
 moviepy
+PyYAML

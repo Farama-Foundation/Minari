@@ -33,6 +33,9 @@ jobs:
       - name: Build Datasets Docs
         run: xvfb-run --auto-servernum python docs/_scripts/gen_dataset_md.py
 
+      - name: Build Community Datasets Docs
+        run: python docs/_scripts/gen_community.py
+
       - name: Build
         run: sphinx-build -b dirhtml -v docs _build
 

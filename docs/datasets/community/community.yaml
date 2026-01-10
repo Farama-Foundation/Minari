@@ -1,0 +1,12 @@
+# Community Dataset Groups
+#
+# To add your dataset group to this page, open a PR adding an entry below.
+#
+# Fields:
+#   - dataset_group: (required) Path to the dataset group. For example, for a HuggingFace repo: "hf://username"
+#   - display_name: (required) Human-readable name for the dataset group
+#
+# Note: All datasets within the remote path will be automatically listed on the group's page.
+
+- dataset_group: hf://lukasz-sawala-goat/Farama-Antmaze-v5
+  display_name: AntMaze-v5

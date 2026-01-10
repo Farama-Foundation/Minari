@@ -35,6 +35,7 @@ datasets/minigrid/index
 datasets/mujoco/index
 datasets/atari/index
 datasets/webagents/index
+datasets/community/index
 ```
 
 ```{toctree}
