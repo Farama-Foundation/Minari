@@ -1224,10 +1224,17 @@
         <span class="n">data_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span>
         <span class="n">observation_space</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Space</span><span class="p">,</span>
         <span class="n">action_space</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Space</span><span class="p">,</span>
+        <span class="n">jpeg_encoding</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span> <span class="o">=</span> <span class="n">data_path</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_observation_space</span> <span class="o">=</span> <span class="n">observation_space</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_action_space</span> <span class="o">=</span> <span class="n">action_space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_jpeg_encoding</span> <span class="o">=</span> <span class="n">jpeg_encoding</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">jpeg_encoding</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Whether image-space observations and actions are JPEG-encoded on disk.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jpeg_encoding</span>
 
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">read_raw_metadata</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data_path</span><span class="p">:</span> <span class="n">PathLike</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
@@ -1299,6 +1306,7 @@
             <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span><span class="n">data_path</span><span class="p">),</span>
             <span class="n">observation_space</span><span class="p">,</span>
             <span class="n">action_space</span><span class="p">,</span>
+            <span class="n">jpeg_encoding</span><span class="o">=</span><span class="nb">bool</span><span class="p">(</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;jpeg_encoding&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)),</span>
         <span class="p">)</span>
 
     <span class="nd">@classmethod</span>
@@ -1309,6 +1317,8 @@
         <span class="n">action_space</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">gym</span><span class="o">.</span><span class="n">Space</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">env_spec</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">EnvSpec</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">data_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;hdf5&quot;</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">jpeg_encoding</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MinariStorage</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Class method to create a new data storage.</span>
 
@@ -1318,6 +1328,8 @@
 <span class="sd">            action_space (gymnasium.Space, optional): Gymnasium action space of the dataset.</span>
 <span class="sd">            env_spec (EnvSpec, optional): Gymnasium EnvSpec of the environment that generates the dataset.</span>
 <span class="sd">            data_format (str): Format of the data. Default value is &quot;hdf5&quot;.</span>
+<span class="sd">            jpeg_encoding (bool): If True (default), image-space observations and actions are</span>
+<span class="sd">              JPEG-encoded on disk (lossy, smaller). Set to False to store raw arrays (lossless but larger).</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            A new MinariStorage object to write new data.</span>
@@ -1359,6 +1371,7 @@
             <span class="s2">&quot;total_episodes&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
             <span class="s2">&quot;total_steps&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
             <span class="s2">&quot;data_format&quot;</span><span class="p">:</span> <span class="n">data_format</span><span class="p">,</span>
+            <span class="s2">&quot;jpeg_encoding&quot;</span><span class="p">:</span> <span class="n">jpeg_encoding</span><span class="p">,</span>
             <span class="s2">&quot;observation_space&quot;</span><span class="p">:</span> <span class="n">serialize_space</span><span class="p">(</span><span class="n">observation_space</span><span class="p">),</span>
             <span class="s2">&quot;action_space&quot;</span><span class="p">:</span> <span class="n">serialize_space</span><span class="p">(</span><span class="n">action_space</span><span class="p">),</span>
         <span class="p">}</span>
@@ -1374,7 +1387,10 @@
             <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
 
         <span class="n">obj</span> <span class="o">=</span> <span class="n">get_minari_storage</span><span class="p">(</span><span class="n">data_format</span><span class="p">)</span><span class="o">.</span><span class="n">_create</span><span class="p">(</span>
-            <span class="n">data_path</span><span class="p">,</span> <span class="n">observation_space</span><span class="p">,</span> <span class="n">action_space</span>
+            <span class="n">data_path</span><span class="p">,</span>
+            <span class="n">observation_space</span><span class="p">,</span>
+            <span class="n">action_space</span><span class="p">,</span>
+            <span class="n">jpeg_encoding</span><span class="o">=</span><span class="n">jpeg_encoding</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">obj</span>
 
@@ -1385,6 +1401,7 @@
         <span class="n">data_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">,</span>
         <span class="n">observation_space</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Space</span><span class="p">,</span>
         <span class="n">action_space</span><span class="p">:</span> <span class="n">gym</span><span class="o">.</span><span class="n">Space</span><span class="p">,</span>
+        <span class="n">jpeg_encoding</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MinariStorage</span><span class="p">:</span> <span class="o">...</span>
 
     <span class="nd">@property</span>
@@ -1412,6 +1429,7 @@
             <span class="s2">&quot;action_space&quot;</span><span class="p">,</span>
             <span class="s2">&quot;env_spec&quot;</span><span class="p">,</span>
             <span class="s2">&quot;data_format&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;jpeg_encoding&quot;</span><span class="p">,</span>
             <span class="s2">&quot;minari_version&quot;</span><span class="p">,</span>
         <span class="p">}</span>
 
