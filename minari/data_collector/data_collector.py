@@ -71,6 +71,7 @@ class DataCollector(gym.Wrapper):
         observation_space: Optional[gym.Space] = None,
         action_space: Optional[gym.Space] = None,
         data_format: Optional[str] = None,
+        *,
         jpeg_encoding: bool = True,
     ):
         """Initialize the data collector attributes and create the temporary directory for caching.
@@ -83,7 +84,7 @@ class DataCollector(gym.Wrapper):
             observation_space (gym.Space): Observation space of the dataset. The default value is the environment observation space.
             action_space (gym.Space): Action space of the dataset. The default value is the environment action space.
             data_format (str, optional): Data format to store the data in the Minari dataset. If None (defaults), it will use the default format of MinariStorage.
-            jpeg_encoding (bool): If True (default), image-space observations and actions are JPEG-encoded on disk. Set to False to store raw arrays (lossless but larger).
+            jpeg_encoding (bool): If True (default), image-space observations and actions are JPEG-encoded on disk (lossy, smaller). Set to False to store raw arrays (lossless but larger).
         """
         super().__init__(env)
         self._step_data_callback = step_data_callback()

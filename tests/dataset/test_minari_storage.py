@@ -13,6 +13,7 @@ from minari.data_collector.episode_buffer import EpisodeBuffer
 from minari.dataset._storages import get_storage_keys
 from minari.dataset.minari_storage import MinariStorage
 from tests.common import (
+    ImageSpace,
     cartpole_test_dataset,
     check_data_integrity,
     check_load_and_delete_dataset,
@@ -131,6 +132,47 @@ def test_add_episodes(tmp_dataset_dir, data_format, observation_space):
         assert np.all(ep.rewards == storage_ep["rewards"])
         assert np.all(ep.terminations == storage_ep["terminations"])
         assert np.all(ep.truncations == storage_ep["truncations"])
+
+
+@pytest.mark.parametrize("data_format", get_storage_keys())
+@pytest.mark.parametrize("jpeg_encoding", [True, False])
+def test_image_jpeg_encoding_round_trip(tmp_dataset_dir, data_format, jpeg_encoding):
+    """Round-trip image-space data with and without JPEG encoding.
+
+    With jpeg_encoding=False the stored arrays must be byte-identical to the
+    originals; with jpeg_encoding=True we only require the shape to match,
+    since JPEG is lossy.
+    """
+    observation_space = ImageSpace()
+    action_space = spaces.Box(-1, 1, shape=(10,))
+    n_episodes = 3
+    steps_per_episode = 5
+    episodes = [
+        _generate_episode_buffer(
+            observation_space, action_space, length=steps_per_episode
+        )
+        for _ in range(n_episodes)
+    ]
+    storage = MinariStorage.new(
+        data_path=tmp_dataset_dir,
+        observation_space=observation_space,
+        action_space=action_space,
+        data_format=data_format,
+        jpeg_encoding=jpeg_encoding,
+    )
+    storage.update_episodes(episodes)
+    del storage
+
+    storage = MinariStorage.read(tmp_dataset_dir)
+    assert storage.jpeg_encoding is jpeg_encoding
+    assert storage.metadata["jpeg_encoding"] is jpeg_encoding
+
+    storage_episodes = list(storage.get_episodes(range(n_episodes)))
+    for ep, storage_ep in zip(episodes, storage_episodes):
+        obs = np.asarray(storage_ep["observations"])
+        assert obs.shape == np.asarray(ep.observations).shape
+        if not jpeg_encoding:
+            assert np.array_equal(obs, np.asarray(ep.observations))
 
 
 @pytest.mark.parametrize("data_format", get_storage_keys())

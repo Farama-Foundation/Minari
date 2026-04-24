@@ -122,6 +122,7 @@ class MinariStorage(ABC):
         action_space: Optional[gym.Space] = None,
         env_spec: Optional[EnvSpec] = None,
         data_format: str = "hdf5",
+        *,
         jpeg_encoding: bool = True,
     ) -> MinariStorage:
         """Class method to create a new data storage.
@@ -132,8 +133,8 @@ class MinariStorage(ABC):
             action_space (gymnasium.Space, optional): Gymnasium action space of the dataset.
             env_spec (EnvSpec, optional): Gymnasium EnvSpec of the environment that generates the dataset.
             data_format (str): Format of the data. Default value is "hdf5".
-            jpeg_encoding (bool): If True (default), image-space observations and actions
-              are compressed as JPEG on disk. Set to False to store raw arrays instead.
+            jpeg_encoding (bool): If True (default), image-space observations and actions are
+              JPEG-encoded on disk (lossy, smaller). Set to False to store raw arrays (lossless but larger).
 
         Returns:
             A new MinariStorage object to write new data.
