@@ -34,8 +34,9 @@ class ArrowStorage(MinariStorage):
         data_path: pathlib.Path,
         observation_space: gym.Space,
         action_space: gym.Space,
+        jpeg_encoding: bool = True,
     ):
-        super().__init__(data_path, observation_space, action_space)
+        super().__init__(data_path, observation_space, action_space, jpeg_encoding)
 
     @classmethod
     def _create(
@@ -43,8 +44,9 @@ class ArrowStorage(MinariStorage):
         data_path: pathlib.Path,
         observation_space: gym.Space,
         action_space: gym.Space,
+        jpeg_encoding: bool = True,
     ) -> MinariStorage:
-        return cls(data_path, observation_space, action_space)
+        return cls(data_path, observation_space, action_space, jpeg_encoding)
 
     def update_episode_metadata(
         self, metadatas: Iterable[Dict], episode_indices: Optional[Iterable] = None
@@ -94,9 +96,15 @@ class ArrowStorage(MinariStorage):
             return {
                 "id": id,
                 "observations": _decode_space(
-                    self.observation_space, episode["observations"]
+                    self.observation_space,
+                    episode["observations"],
+                    jpeg_encoding=self._jpeg_encoding,
                 ),
-                "actions": _decode_space(self.action_space, episode["actions"][:-1]),
+                "actions": _decode_space(
+                    self.action_space,
+                    episode["actions"][:-1],
+                    jpeg_encoding=self._jpeg_encoding,
+                ),
                 "rewards": np.asarray(episode["rewards"])[:-1],
                 "terminations": np.asarray(episode["terminations"])[:-1],
                 "truncations": np.asarray(episode["truncations"])[:-1],
@@ -118,13 +126,20 @@ class ArrowStorage(MinariStorage):
             )
             total_episodes = max(total_episodes, episode_id + 1)
             observations = _encode_space(
-                self.observation_space, episode_data.observations
+                self.observation_space,
+                episode_data.observations,
+                jpeg_encoding=self._jpeg_encoding,
             )
             rewards = np.asarray(episode_data.rewards).reshape(-1)
             terminations = np.asarray(episode_data.terminations).reshape(-1)
             truncations = np.asarray(episode_data.truncations).reshape(-1)
             pad = len(observations) - len(rewards)
-            actions = _encode_space(self._action_space, episode_data.actions, pad=pad)
+            actions = _encode_space(
+                self._action_space,
+                episode_data.actions,
+                pad=pad,
+                jpeg_encoding=self._jpeg_encoding,
+            )
 
             episode_batch = {
                 "episode_id": np.full(len(observations), episode_id, dtype=np.int32),
@@ -171,26 +186,33 @@ class ParquetStorage(ArrowStorage):
         data_path: pathlib.Path,
         observation_space: gym.Space,
         action_space: gym.Space,
+        jpeg_encoding: bool = True,
     ):
-        super().__init__(data_path, observation_space, action_space)
+        super().__init__(data_path, observation_space, action_space, jpeg_encoding)
 
 
-def _encode_space(space: gym.Space, values: Any, pad: int = 0):
+def _encode_space(
+    space: gym.Space, values: Any, pad: int = 0, jpeg_encoding: bool = True
+):
     if isinstance(space, gym.spaces.Dict):
         assert isinstance(values, dict), values
         arrays, names = [], []
         for key, value in values.items():
             names.append(key)
-            arrays.append(_encode_space(space[key], value, pad=pad))
+            arrays.append(
+                _encode_space(space[key], value, pad=pad, jpeg_encoding=jpeg_encoding)
+            )
         return pa.StructArray.from_arrays(arrays, names=names)
     if isinstance(space, gym.spaces.Tuple):
         assert isinstance(values, tuple), values
         arrays, names = [], []
         for i, value in enumerate(values):
             names.append(str(i))
-            arrays.append(_encode_space(space[i], value, pad=pad))
+            arrays.append(
+                _encode_space(space[i], value, pad=pad, jpeg_encoding=jpeg_encoding)
+            )
         return pa.StructArray.from_arrays(arrays, names=names)
-    elif is_image_space(space):
+    elif jpeg_encoding and is_image_space(space):
         jpeg_bytes = []
         for frame in values:
             img = Image.fromarray(frame)
@@ -215,21 +237,25 @@ def _encode_space(space: gym.Space, values: Any, pad: int = 0):
         return pa.array(values + [None] * pad)
 
 
-def _decode_space(space, values: pa.Array):
+def _decode_space(space, values: pa.Array, jpeg_encoding: bool = True):
     if isinstance(space, gym.spaces.Dict):
         return {
-            name: _decode_space(subspace, values.field(name))
+            name: _decode_space(
+                subspace, values.field(name), jpeg_encoding=jpeg_encoding
+            )
             for name, subspace in space.spaces.items()
         }
     elif isinstance(space, gym.spaces.Tuple):
         return tuple(
             [
-                _decode_space(subspace, values.field(str(i)))
+                _decode_space(
+                    subspace, values.field(str(i)), jpeg_encoding=jpeg_encoding
+                )
                 for i, subspace in enumerate(space.spaces)
             ]
         )
 
-    elif is_image_space(space):
+    elif jpeg_encoding and is_image_space(space):
         first_image = io.BytesIO((values[0]).as_py())
         first_image = np.array(Image.open(first_image))
         jpeg_images = np.empty((len(values),) + first_image.shape, dtype=np.uint8)

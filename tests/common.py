@@ -292,6 +292,12 @@ class ImageSpace(gym.spaces.Box):
 test_spaces = [
     gym.spaces.Box(low=-1, high=4, shape=(2,), dtype=np.float32),
     gym.spaces.Box(low=-1, high=4, shape=(2, 2, 2), dtype=np.float32),
+    gym.spaces.Box(low=0, high=255, shape=(3,), dtype=np.uint8),
+    gym.spaces.Dict(
+        {
+            "vector_state": gym.spaces.Box(low=0, high=255, shape=(3,), dtype=np.uint8),
+        }
+    ),
     ImageSpace(),
     gym.spaces.Text(max_length=10, min_length=10, seed=42),
     gym.spaces.Text(max_length=20, charset=unicode_charset),

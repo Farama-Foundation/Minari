@@ -32,8 +32,9 @@ class HDF5Storage(MinariStorage):
         data_path: pathlib.Path,
         observation_space: gym.Space,
         action_space: gym.Space,
+        jpeg_encoding: bool = True,
     ):
-        super().__init__(data_path, observation_space, action_space)
+        super().__init__(data_path, observation_space, action_space, jpeg_encoding)
         file_path = self.data_path.joinpath(_MAIN_FILE_NAME)
         if not file_path.exists():
             raise ValueError(f"No data found in data path {self.data_path}")
@@ -45,9 +46,10 @@ class HDF5Storage(MinariStorage):
         data_path: pathlib.Path,
         observation_space: gym.Space,
         action_space: gym.Space,
+        jpeg_encoding: bool = True,
     ) -> MinariStorage:
         data_path.joinpath(_MAIN_FILE_NAME).touch(exist_ok=False)
-        obj = cls(data_path, observation_space, action_space)
+        obj = cls(data_path, observation_space, action_space, jpeg_encoding)
         return obj
 
     def update_episode_metadata(
@@ -109,7 +111,7 @@ class HDF5Storage(MinariStorage):
             assert isinstance(hdf_ref, h5py.Dataset)
             result = map(lambda string: string.decode("utf-8"), hdf_ref[()])
             return list(result)
-        elif is_image_space(space):
+        elif self._jpeg_encoding and is_image_space(space):
             jpeg_bytes_list = hdf_ref[()]
             first_image = np.array(
                 Image.open(io.BytesIO(jpeg_bytes_list[0])), dtype=np.uint8
@@ -185,7 +187,13 @@ class HDF5Storage(MinariStorage):
                     "truncations": eps_buff.truncations,
                     "infos": eps_buff.infos,
                 }
-                _add_episode_to_group(dict_buffer, episode_group)
+                spaces_map = None
+                if self._jpeg_encoding:
+                    spaces_map = {
+                        "observations": self.observation_space,
+                        "actions": self._action_space,
+                    }
+                _add_episode_to_group(dict_buffer, episode_group, spaces=spaces_map)
 
             total_episodes = len(file.keys())
 
@@ -209,16 +217,31 @@ def _get_from_h5py(group: h5py.Group, name: str) -> h5py.Group:
     return subgroup
 
 
-def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
+def _add_episode_to_group(
+    episode_buffer: Dict,
+    episode_group: h5py.Group,
+    spaces: Optional[Dict[str, gym.Space]] = None,
+):
     # TODO: simplify
     for key, data in episode_buffer.items():
+        space = spaces.get(key) if spaces is not None else None
         if isinstance(data, dict):
+            subspaces: Optional[Dict[str, gym.Space]] = None
+            if space is not None:
+                assert isinstance(space, gym.spaces.Dict)
+                subspaces = dict(space.spaces)
             episode_group_to_clear = _get_from_h5py(episode_group, key)
-            _add_episode_to_group(data, episode_group_to_clear)
+            _add_episode_to_group(data, episode_group_to_clear, subspaces)
         elif isinstance(data, tuple):
             dict_data = {f"_index_{i}": subdata for i, subdata in enumerate(data)}
+            subspaces = None
+            if space is not None:
+                assert isinstance(space, gym.spaces.Tuple)
+                subspaces = {
+                    f"_index_{i}": subspace for i, subspace in enumerate(space.spaces)
+                }
             episode_group_to_clear = _get_from_h5py(episode_group, key)
-            _add_episode_to_group(dict_data, episode_group_to_clear)
+            _add_episode_to_group(dict_data, episode_group_to_clear, subspaces)
         elif isinstance(data, List) and all(
             isinstance(entry, OrderedDict) for entry in data
         ):  # list of OrderedDict
@@ -226,9 +249,7 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
             episode_group_to_clear = _get_from_h5py(episode_group, key)
             _add_episode_to_group(dict_data, episode_group_to_clear)
         # leaf data
-        elif (isinstance(data, list) and all(_is_image(entry) for entry in data)) or (
-            isinstance(data, np.ndarray) and _is_image(data)
-        ):
+        elif isinstance(space, gym.Space) and is_image_space(space):
             data = [encode_frame(f) for f in data]
             dt = None
             if any(f.shape != data[0].shape for f in data):
@@ -253,16 +274,6 @@ def _add_episode_to_group(episode_buffer: Dict, episode_group: h5py.Group):
             episode_group.create_dataset(
                 key, data=data, dtype=dtype, chunks=True, maxshape=(None, *dshape)
             )
-
-
-def _is_image(data) -> bool:
-    if not (isinstance(data, np.ndarray) and data.dtype == np.uint8):
-        return False
-    if len(data.shape) in {2, 3}:
-        return True
-    if len(data.shape) == 4:
-        return data.shape[-1] in {1, 3}
-    return False
 
 
 def encode_frame(frame: np.ndarray) -> np.ndarray:
