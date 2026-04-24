@@ -191,7 +191,9 @@ class ParquetStorage(ArrowStorage):
         super().__init__(data_path, observation_space, action_space, jpeg_encoding)
 
 
-def _encode_space(space: gym.Space, values: Any, pad: int = 0, jpeg_encoding: bool = True):
+def _encode_space(
+    space: gym.Space, values: Any, pad: int = 0, jpeg_encoding: bool = True
+):
     if isinstance(space, gym.spaces.Dict):
         assert isinstance(values, dict), values
         arrays, names = [], []

@@ -295,9 +295,7 @@ test_spaces = [
     gym.spaces.Box(low=0, high=255, shape=(3,), dtype=np.uint8),
     gym.spaces.Dict(
         {
-            "vector_state": gym.spaces.Box(
-                low=0, high=255, shape=(3,), dtype=np.uint8
-            ),
+            "vector_state": gym.spaces.Box(low=0, high=255, shape=(3,), dtype=np.uint8),
         }
     ),
     ImageSpace(),

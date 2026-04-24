@@ -86,6 +86,7 @@ def test_metadata(tmp_dataset_dir, data_format):
         "total_episodes",
         "total_steps",
         "data_format",
+        "jpeg_encoding",
     }
 
     for key, value in extra_metadata.items():
