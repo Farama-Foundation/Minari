@@ -347,6 +347,7 @@ def create_dataset_from_buffers(
     description: Optional[str] = None,
     data_format: Optional[str] = None,
     requirements: Optional[list] = None,
+    jpeg_encoding: bool = True,
 ):
     """Create Minari dataset from a list of episode dictionary buffers.
 
@@ -376,6 +377,7 @@ def create_dataset_from_buffers(
         description (str, optional): description of the dataset being created. Defaults to None.
         data_format (str, optional): Data format to store the data in the Minari dataset. If None (defaults), it will use the default format of MinariStorage.
         requirements (list of str, optional): list of requirements in pip-style to load the environment and reproduce the dataset. For example, `mujoco>=3.1.0,<3.2.0`, which indicate the supported version range for mujoco package. Defaults to None.
+        jpeg_encoding (bool): If True (default), image-space observations and actions are JPEG-encoded on disk. Set to False to store raw arrays (lossless but larger).
 
     Returns:
         MinariDataset
@@ -427,6 +429,7 @@ def create_dataset_from_buffers(
         observation_space=observation_space,
         action_space=action_space,
         env_spec=env_spec,
+        jpeg_encoding=jpeg_encoding,
         **data_format_kwarg,
     )
 

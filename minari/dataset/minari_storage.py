@@ -29,10 +29,17 @@ class MinariStorage(ABC):
         data_path: pathlib.Path,
         observation_space: gym.Space,
         action_space: gym.Space,
+        jpeg_encoding: bool = True,
     ):
         self._data_path: pathlib.Path = data_path
         self._observation_space = observation_space
         self._action_space = action_space
+        self._jpeg_encoding = jpeg_encoding
+
+    @property
+    def jpeg_encoding(self) -> bool:
+        """Whether image-space observations and actions are JPEG-encoded on disk."""
+        return self._jpeg_encoding
 
     @classmethod
     def read_raw_metadata(cls, data_path: PathLike) -> Dict[str, Any]:
@@ -104,6 +111,7 @@ class MinariStorage(ABC):
             pathlib.Path(data_path),
             observation_space,
             action_space,
+            jpeg_encoding=bool(metadata.get("jpeg_encoding", True)),
         )
 
     @classmethod
@@ -114,6 +122,7 @@ class MinariStorage(ABC):
         action_space: Optional[gym.Space] = None,
         env_spec: Optional[EnvSpec] = None,
         data_format: str = "hdf5",
+        jpeg_encoding: bool = True,
     ) -> MinariStorage:
         """Class method to create a new data storage.
 
@@ -123,6 +132,8 @@ class MinariStorage(ABC):
             action_space (gymnasium.Space, optional): Gymnasium action space of the dataset.
             env_spec (EnvSpec, optional): Gymnasium EnvSpec of the environment that generates the dataset.
             data_format (str): Format of the data. Default value is "hdf5".
+            jpeg_encoding (bool): If True (default), image-space observations and actions
+              are compressed as JPEG on disk. Set to False to store raw arrays instead.
 
         Returns:
             A new MinariStorage object to write new data.
@@ -164,6 +175,7 @@ class MinariStorage(ABC):
             "total_episodes": 0,
             "total_steps": 0,
             "data_format": data_format,
+            "jpeg_encoding": jpeg_encoding,
             "observation_space": serialize_space(observation_space),
             "action_space": serialize_space(action_space),
         }
@@ -179,7 +191,10 @@ class MinariStorage(ABC):
             json.dump(metadata, f)
 
         obj = get_minari_storage(data_format)._create(
-            data_path, observation_space, action_space
+            data_path,
+            observation_space,
+            action_space,
+            jpeg_encoding=jpeg_encoding,
         )
         return obj
 
@@ -190,6 +205,7 @@ class MinariStorage(ABC):
         data_path: pathlib.Path,
         observation_space: gym.Space,
         action_space: gym.Space,
+        jpeg_encoding: bool = True,
     ) -> MinariStorage: ...
 
     @property
@@ -217,6 +233,7 @@ class MinariStorage(ABC):
             "action_space",
             "env_spec",
             "data_format",
+            "jpeg_encoding",
             "minari_version",
         }
 
