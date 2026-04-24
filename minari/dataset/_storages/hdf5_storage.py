@@ -226,15 +226,17 @@ def _add_episode_to_group(
     for key, data in episode_buffer.items():
         space = spaces.get(key) if spaces is not None else None
         if isinstance(data, dict):
-            subspaces = (
-                dict(space.spaces) if isinstance(space, gym.spaces.Dict) else None
-            )
+            subspaces: Optional[Dict[str, gym.Space]] = None
+            if space is not None:
+                assert isinstance(space, gym.spaces.Dict)
+                subspaces = dict(space.spaces)
             episode_group_to_clear = _get_from_h5py(episode_group, key)
             _add_episode_to_group(data, episode_group_to_clear, subspaces)
         elif isinstance(data, tuple):
             dict_data = {f"_index_{i}": subdata for i, subdata in enumerate(data)}
             subspaces = None
-            if isinstance(space, gym.spaces.Tuple):
+            if space is not None:
+                assert isinstance(space, gym.spaces.Tuple)
                 subspaces = {
                     f"_index_{i}": subspace for i, subspace in enumerate(space.spaces)
                 }
