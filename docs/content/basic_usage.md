@@ -28,7 +28,7 @@ cd Minari
 pip install -e ".[all]"
 ```
 
-We support Python with minimum version 3.8 on Linux and macOS.
+We support Python 3.8 through 3.13 on Linux and macOS.
 
 ## Using Minari Datasets
 

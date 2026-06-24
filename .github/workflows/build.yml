@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v3
       - run: |
           docker build -f bin/Dockerfile \
-            --build-arg PYTHON_VERSION=3.12 \
+            --build-arg PYTHON_VERSION=3.13 \
             --tag minari-docker .
       - name: Run tests
         run: docker run minari-docker pytest tests/* -k "not test_docs.py and not integrations"
