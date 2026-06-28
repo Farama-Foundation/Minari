@@ -1,6 +1,8 @@
 import gymnasium as gym
 import pytest
 
+import minari
+
 
 pytest.importorskip("torchrl")
 from torchrl.data.datasets.minari_data import MinariExperienceReplay  # noqa: E402
@@ -16,7 +18,15 @@ def test_torch_minari_experience_replay():
 
     batch_size = 32
 
+    # torchrl downloads and preprocesses the dataset inside its own temporary
+    # directory but its final ``minari.load_dataset`` call reads from the active
+    # ``MINARI_DATASETS_PATH``, so the dataset must also be available there.
+    minari.download_dataset("D4RL/door/human-v2")
+
     dataset = MinariExperienceReplay("D4RL/door/human-v2", batch_size=batch_size)
+
+    gymnasium_robotics = pytest.importorskip("gymnasium_robotics")
+    gym.register_envs(gymnasium_robotics)
     env = gym.make("AdroitHandDoor-v1")
 
     sample = dataset.sample()
