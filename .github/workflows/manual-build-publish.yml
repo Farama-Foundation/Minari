@@ -31,6 +31,7 @@ jobs:
 
   publish:
     runs-on: ubuntu-latest
+    permissions: {}
     needs:
     - build-wheels
     steps:
