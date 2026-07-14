@@ -33,6 +33,8 @@ jobs:
 
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     needs:
     - build-wheels
     if: github.event_name == 'release' && github.event.action == 'published'
