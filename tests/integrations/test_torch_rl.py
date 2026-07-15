@@ -15,8 +15,10 @@ def test_torch_minari_experience_replay():
     """
 
     batch_size = 32
-
     dataset = MinariExperienceReplay("D4RL/door/human-v2", batch_size=batch_size)
+
+    gymnasium_robotics = pytest.importorskip("gymnasium_robotics")
+    gym.register_envs(gymnasium_robotics)
     env = gym.make("AdroitHandDoor-v1")
 
     sample = dataset.sample()

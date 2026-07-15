@@ -20,12 +20,16 @@ Collecting a subset of a dictionary space with StepDataCallback
 
 # %%
 import gymnasium as gym
+import gymnasium_robotics
 import numpy as np
 from gymnasium import spaces
 
 import minari
 from minari import DataCollector
 from minari.data_collector.callbacks import StepDataCallback
+
+
+gym.register_envs(gymnasium_robotics)
 
 
 # %%

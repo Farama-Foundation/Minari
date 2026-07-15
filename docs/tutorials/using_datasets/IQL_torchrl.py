@@ -42,8 +42,11 @@ import warnings
 import matplotlib.pyplot as plt
 import numpy as np
 import gymnasium
+import gymnasium_robotics
 import torch
 import torchrl
+
+gymnasium.register_envs(gymnasium_robotics)
 
 seed = 42
 torch.manual_seed(seed)
