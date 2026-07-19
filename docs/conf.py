@@ -44,7 +44,7 @@ extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.githubpages",
     "sphinx.ext.viewcode",
-    "furo.gen_tutorials",
+    "celshast.gen_tutorials",
     "myst_parser",
     "sphinx_gallery.gen_gallery",
     "sphinx_github_changelog",
@@ -73,7 +73,7 @@ autodoc_preserve_defaults = True
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = "furo"
+html_theme = "celshast"
 html_title = "Minari Documentation"
 html_baseurl = "https://minari.farama.org"
 html_copy_source = False
