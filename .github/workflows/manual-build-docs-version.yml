@@ -19,10 +19,10 @@ jobs:
     name: Generate Website for new version
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
         if: inputs.commit == ''
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
         if: inputs.commit != ''
         with:
           ref: ${{ inputs.commit }}
