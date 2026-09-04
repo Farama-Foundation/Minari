@@ -28,8 +28,6 @@ cd Minari
 pip install -e ".[all]"
 ```
 
-We support Python 3.8 through 3.13 on Linux and macOS.
-
 ## Using Minari Datasets
 
 ### Download Datasets
