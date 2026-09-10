@@ -105,6 +105,7 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_id: s
 
     The new dataset will contain a metadata attribute `combined_datasets` containing a list
     with the dataset names that were combined to form this new Minari dataset.
+    Only the selected episodes of each dataset are copied, in their existing order.
 
     Args:
         datasets_to_combine (list[MinariDataset]): list of datasets to be combined
@@ -136,7 +137,9 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_id: s
     )
 
     for dataset in datasets_to_combine:
-        new_storage.update_from_storage(dataset.storage)
+        new_storage.update_from_storage(
+            dataset.storage, episode_indices=dataset.episode_indices
+        )
 
     return MinariDataset(new_storage)
 
