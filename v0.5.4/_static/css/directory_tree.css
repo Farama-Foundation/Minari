@@ -1,0 +1,136 @@
+
+
+/* The list style
+-------------------------------------------------------------- */
+
+.directory-list ul {
+  margin-left: 10px;
+  padding-left: 20px;
+  border-left: 1px dashed #000000;
+}
+
+.directory-list ul.white{
+  border-left: 1px dashed #ffffff;
+}
+
+.directory-list li {
+  list-style: none;
+  font-size: 17px;
+  font-style: italic;
+  font-weight: normal;
+}
+
+.directory-list  {
+  list-style: none;
+  color: #1e1e1e;
+  font-size: 17px;
+  font-style: italic;
+  font-weight: normal;
+}
+
+.directory-list a {
+  border-bottom: 1px solid transparent;
+  color: #000000;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.directory-list a:hover {
+  border-color: #eee;
+  color: #000;
+}
+
+.directory-list .folder,
+.directory-list .folder > a {
+  color: #000000;
+  font-weight: bold;
+}
+
+.directory-list .folder-closed,
+.directory-list .folder-closed > a {
+  color: #000000;
+  font-weight: bold;
+}
+
+.directory-list .folder-white,
+.directory-list .folder-white > a {
+  color: #efebeb;
+  font-weight: bold;
+}
+
+.directory-list .folder-white-closed,
+.directory-list .folder-white-closed > a {
+  color: #efebeb;
+  font-weight: bold;
+}
+
+
+/* The icons
+-------------------------------------------------------------- */
+
+.directory-list li:before {
+  margin-right: 10px;
+  color: #101010;
+  content: "";
+  height: 25px;
+  vertical-align: middle;
+  width: 25px;
+  background-repeat: no-repeat;
+  display: inline-block;
+}
+
+
+
+.directory-list li.file:before {
+  background-image: url("../img/file-svgrepo-com.svg");
+  background-position: center top;
+  background-size: 100% auto;
+}
+
+.directory-list li.file-white:before {
+  color: #efebeb;
+  background-image: url("../img/file-svgrepo-com-white.svg");
+  background-position: center top;
+  background-size: 100% auto;
+}
+
+.directory-list li.dataset:before {
+  color: #efebeb;
+  background-image: url("../img/data-svgrepo-com.svg");
+  background-position: center top;
+  background-size: 100% auto;
+}
+
+.directory-list li.dataset-white:before {
+  color: #efebeb;
+  background-image: url("../img/data-svgrepo-com-white.svg");
+  background-position: center top;
+  background-size: 100% auto;
+}
+.directory-list li.folder:before {
+  /* folder icon if folder class is specified */
+  background-image: url("../img/folder-open-svgrepo-com.svg");
+  background-position: center top;
+  background-size: 100% auto;
+}
+
+.directory-list li.folder-closed:before {
+  /* folder icon if folder class is specified */
+  background-image: url("../img/folder-svgrepo-com.svg");
+  background-position: center top;
+  background-size: 100% auto;
+}
+
+.directory-list li.folder-white:before {
+  /* folder icon if folder class is specified */
+  background-image: url("../img/folder-open-svgrepo-com-white.svg");
+  background-position: center top;
+  background-size: 100% auto;
+}
+
+.directory-list li.folder-white-closed:before {
+  /* folder icon if folder class is specified */
+  background-image: url("../img/folder-svgrepo-com-white.svg");
+  background-position: center top;
+  background-size: 100% auto;
+}
