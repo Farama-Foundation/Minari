@@ -25,6 +25,11 @@ from minari.utils import get_dataset_spec_dict
 
 DATASET_FOLDER = pathlib.Path(__file__).parent.parent.joinpath("datasets")
 NAMESPACE_CONTENTS = defaultdict(OrderedDict)
+# Requirements stored in remote dataset metadata that no longer resolve
+OUTDATED_REQUIREMENTS = {
+    # Metaworld renamed its default branch from master to main
+    "git+https://github.com/Farama-Foundation/Metaworld.git@master#egg=metaworld": "git+https://github.com/Farama-Foundation/Metaworld.git@main#egg=metaworld",
+}
 
 NO_ENV_MSG = """
 ```{eval-rst}
@@ -173,7 +178,9 @@ def _generate_dataset_page(arg):
         "imageio",
         "absl-py",
     ]
-    requirements.extend(metadata.get("requirements", []))
+    requirements.extend(
+        OUTDATED_REQUIREMENTS.get(req, req) for req in metadata.get("requirements", [])
+    )
     req_args = [pip_path, "install", *requirements]
     subprocess.check_call(req_args, stdout=subprocess.DEVNULL)
     logging.info(f"Installed requirements for {dataset_id}")
