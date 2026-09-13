@@ -11,15 +11,15 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="Implicit Q-Learning with TorchRL" href="../IQL_torchrl/" /><link rel="prev" title="Using Datasets" href="../" />
         <link rel="canonical" href="https://minari.farama.org/tutorials/using_datasets/behavioral_cloning.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Celshast 0.0.1 -->
         <title>Behavioral cloning with PyTorch - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/celshast.css?v=9fbfb63d" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=ca3c1c84" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=e5fbc548" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=82c8b628" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/celshast-extensions.css?v=42bfddca" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/termynal.css?v=d6ad0c61" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=16dd5f1b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/directory_tree.css?v=083c6588" />
@@ -243,8 +243,8 @@
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="current">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../dataset_creation/">Dataset Creation</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Dataset Creation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../dataset_creation/observation_space_subseting/">Collecting a subset of a dictionary space with StepDataCallback</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../dataset_creation/custom_space_serialization/">Serializing a custom space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dataset_creation/observation_space_subseting/">Collecting a subset of a dictionary space with StepDataCallback</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../dataset_creation/point_maze_dataset/">PointMaze D4RL dataset</a></li>
 </ul>
 </li>
@@ -258,58 +258,58 @@
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/D4RL/">D4RL</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of D4RL</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/antmaze/">Ant Maze</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Ant Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/medium-play-v1/">Medium-Play</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/umaze-diverse-v1/">Umaze-Diverse</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/large-diverse-v1/">Large-Diverse</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/large-play-v1/">Large-Play</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/medium-diverse-v1/">Medium-Diverse</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/umaze-v1/">Umaze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/umaze-v2/">Umaze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/medium-play-v2/">Medium-Play</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/large-diverse-v2/">Large-Diverse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/large-play-v2/">Large-Play</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/umaze-diverse-v2/">Umaze-Diverse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/medium-diverse-v2/">Medium-Diverse</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/">Point Maze</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Point Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/open-dense-v2/">Open-Dense</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/umaze-v2/">Umaze</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/large-dense-v2/">Large-Dense</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/medium-v2/">Medium</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/umaze-dense-v2/">Umaze-Dense</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/medium-dense-v2/">Medium-Dense</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/large-v2/">Large</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/open-v2/">Open</a></li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/pen/">Pen</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Pen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pen/human-v2/">Human</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pen/cloned-v2/">Cloned</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pen/expert-v2/">Expert</a></li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/partial-v2/">Partial</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/complete-v2/">Complete</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/mixed-v2/">Mixed</a></li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/door/">Door</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Door</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/door/human-v2/">Human</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/door/cloned-v2/">Cloned</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/door/expert-v2/">Expert</a></li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/hammer/">Hammer</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Hammer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/hammer/">Hammer</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Hammer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/hammer/cloned-v2/">Cloned</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/hammer/expert-v2/">Expert</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/hammer/human-v2/">Human</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/relocate/">Relocate</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of Relocate</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/relocate/human-v2/">Human</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/relocate/expert-v2/">Expert</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/relocate/cloned-v2/">Cloned</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/partial-v2/">Partial</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/mixed-v2/">Mixed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/complete-v2/">Complete</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/minigrid/">MiniGrid</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of MiniGrid</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/door/">Door</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Door</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/door/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/door/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/door/human-v2/">Human</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/relocate/">Relocate</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Relocate</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/relocate/human-v2/">Human</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/relocate/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/relocate/expert-v2/">Expert</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/">Point Maze</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Point Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/large-dense-v2/">Large-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/umaze-dense-v2/">Umaze-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/medium-v2/">Medium</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/umaze-v2/">Umaze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/open-dense-v2/">Open-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/medium-dense-v2/">Medium-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/large-v2/">Large</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/open-v2/">Open</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/minigrid/">MiniGrid</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of MiniGrid</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/minigrid/fourrooms-random-v0/">Fourrooms-Random</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/minigrid/fourrooms-v0/">Fourrooms</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/pen/">Pen</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of Pen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pen/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pen/human-v2/">Human</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pen/cloned-v2/">Cloned</a></li>
 </ul>
 </li>
 </ul>
@@ -1236,7 +1236,7 @@ Let’s then import all the required packages and set the random seed for reprod
 <h2>Policy training<a class="headerlink" href="#policy-training" title="Link to this heading">¶</a></h2>
 <p>Now we can train the expert policy using RL Baselines3 Zoo.
 We train a PPO agent on the environment:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="s2">&quot;--algo&quot;</span><span class="p">,</span> <span class="s2">&quot;ppo&quot;</span><span class="p">,</span> <span class="s2">&quot;--env&quot;</span><span class="p">,</span> <span class="s2">&quot;CartPole-v1&quot;</span><span class="p">]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"python"</span><span class="p">,</span> <span class="s2">"--algo"</span><span class="p">,</span> <span class="s2">"ppo"</span><span class="p">,</span> <span class="s2">"--env"</span><span class="p">,</span> <span class="s2">"CartPole-v1"</span><span class="p">]</span>
 <span class="n">train</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -1245,8 +1245,8 @@ We train a PPO agent on the environment:</p>
 <section id="dataset-generation">
 <h2>Dataset generation<a class="headerlink" href="#dataset-generation" title="Link to this heading">¶</a></h2>
 <p>Now let’s generate the dataset using the <a class="reference external" href="https://minari.farama.org/api/data_collector/">DataCollector</a> wrapper:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">DataCollector</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">&#39;CartPole-v1&#39;</span><span class="p">))</span>
-<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/logs/ppo/CartPole-v1_1/best_model&#39;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">DataCollector</span><span class="p">(</span><span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s1">'CartPole-v1'</span><span class="p">))</span>
+<span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="s1">''</span><span class="p">)</span> <span class="o">+</span> <span class="s1">'/logs/ppo/CartPole-v1_1/best_model'</span>
 <span class="n">agent</span> <span class="o">=</span> <span class="n">PPO</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
 <span class="n">total_episodes</span> <span class="o">=</span> <span class="mi">1_000</span>
@@ -1260,11 +1260,11 @@ We train a PPO agent on the environment:</p>
             <span class="k">break</span>
 
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span>
-    <span class="n">dataset_id</span><span class="o">=</span><span class="s2">&quot;cartpole/expert-v0&quot;</span><span class="p">,</span>
-    <span class="n">algorithm_name</span><span class="o">=</span><span class="s2">&quot;ExpertPolicy&quot;</span><span class="p">,</span>
-    <span class="n">code_permalink</span><span class="o">=</span><span class="s2">&quot;https://minari.farama.org/tutorials/behavioral_cloning&quot;</span><span class="p">,</span>
-    <span class="n">author</span><span class="o">=</span><span class="s2">&quot;Farama&quot;</span><span class="p">,</span>
-    <span class="n">author_email</span><span class="o">=</span><span class="s2">&quot;contact@farama.org&quot;</span>
+    <span class="n">dataset_id</span><span class="o">=</span><span class="s2">"cartpole/expert-v0"</span><span class="p">,</span>
+    <span class="n">algorithm_name</span><span class="o">=</span><span class="s2">"ExpertPolicy"</span><span class="p">,</span>
+    <span class="n">code_permalink</span><span class="o">=</span><span class="s2">"https://minari.farama.org/tutorials/behavioral_cloning"</span><span class="p">,</span>
+    <span class="n">author</span><span class="o">=</span><span class="s2">"Farama"</span><span class="p">,</span>
+    <span class="n">author_email</span><span class="o">=</span><span class="s2">"contact@farama.org"</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -1294,24 +1294,24 @@ However, since each episode can have a varying length, we need to pad them.
 To achieve this, we can utilize the <a class="reference external" href="https://pytorch.org/docs/stable/data.html#working-with-collate-fn">collate_fn</a> feature of PyTorch DataLoader. Let’s create the <code class="docutils literal notranslate"><span class="pre">collate_fn</span></code> function:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">collate_fn</span><span class="p">(</span><span class="n">batch</span><span class="p">):</span>
     <span class="k">return</span> <span class="p">{</span>
-        <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">]),</span>
-        <span class="s2">&quot;observations&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">rnn</span><span class="o">.</span><span class="n">pad_sequence</span><span class="p">(</span>
+        <span class="s2">"id"</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">Tensor</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">id</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">]),</span>
+        <span class="s2">"observations"</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">rnn</span><span class="o">.</span><span class="n">pad_sequence</span><span class="p">(</span>
             <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">observations</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">],</span>
             <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">),</span>
-        <span class="s2">&quot;actions&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">rnn</span><span class="o">.</span><span class="n">pad_sequence</span><span class="p">(</span>
+        <span class="s2">"actions"</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">rnn</span><span class="o">.</span><span class="n">pad_sequence</span><span class="p">(</span>
             <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">actions</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">],</span>
             <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">),</span>
-        <span class="s2">&quot;rewards&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">rnn</span><span class="o">.</span><span class="n">pad_sequence</span><span class="p">(</span>
+        <span class="s2">"rewards"</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">rnn</span><span class="o">.</span><span class="n">pad_sequence</span><span class="p">(</span>
             <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">rewards</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">],</span>
             <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">),</span>
-        <span class="s2">&quot;terminations&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">rnn</span><span class="o">.</span><span class="n">pad_sequence</span><span class="p">(</span>
+        <span class="s2">"terminations"</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">rnn</span><span class="o">.</span><span class="n">pad_sequence</span><span class="p">(</span>
             <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">terminations</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">],</span>
             <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">),</span>
-        <span class="s2">&quot;truncations&quot;</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">rnn</span><span class="o">.</span><span class="n">pad_sequence</span><span class="p">(</span>
+        <span class="s2">"truncations"</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">rnn</span><span class="o">.</span><span class="n">pad_sequence</span><span class="p">(</span>
             <span class="p">[</span><span class="n">torch</span><span class="o">.</span><span class="n">as_tensor</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">truncations</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">],</span>
             <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
@@ -1320,7 +1320,7 @@ To achieve this, we can utilize the <a class="reference external" href="https://
 </div>
 <p>We can now proceed to load the data and create the training loop.
 To begin, let’s initialize the DataLoader, neural network, optimizer, and loss.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">minari_dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s2">&quot;cartpole/expert-v0&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">minari_dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s2">"cartpole/expert-v0"</span><span class="p">)</span>
 <span class="n">dataloader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">minari_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">256</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">collate_fn</span><span class="o">=</span><span class="n">collate_fn</span><span class="p">)</span>
 
 <span class="n">env</span> <span class="o">=</span> <span class="n">minari_dataset</span><span class="o">.</span><span class="n">recover_environment</span><span class="p">()</span>
@@ -1340,19 +1340,19 @@ We then train the policy to predict the actions:</p>
 
 <span class="k">for</span> <span class="n">epoch</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_epochs</span><span class="p">):</span>
     <span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">dataloader</span><span class="p">:</span>
-        <span class="n">a_pred</span> <span class="o">=</span> <span class="n">policy_net</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="s1">&#39;observations&#39;</span><span class="p">][:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
-        <span class="n">a_hat</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">one_hot</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="s2">&quot;actions&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">int64</span><span class="p">))</span>
+        <span class="n">a_pred</span> <span class="o">=</span> <span class="n">policy_net</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="s1">'observations'</span><span class="p">][:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">a_hat</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">one_hot</span><span class="p">(</span><span class="n">batch</span><span class="p">[</span><span class="s2">"actions"</span><span class="p">]</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">int64</span><span class="p">))</span>
         <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_fn</span><span class="p">(</span><span class="n">a_pred</span><span class="p">,</span> <span class="n">a_hat</span><span class="o">.</span><span class="n">type</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">))</span>
 
         <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
         <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
         <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Epoch: </span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">num_epochs</span><span class="si">}</span><span class="s2">, Loss: </span><span class="si">{</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Epoch: </span><span class="si">{</span><span class="n">epoch</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">num_epochs</span><span class="si">}</span><span class="s2">, Loss: </span><span class="si">{</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">()</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>And now, we can evaluate if the policy learned from the expert!</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;CartPole-v1&quot;</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">&quot;human&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"CartPole-v1"</span><span class="p">,</span> <span class="n">render_mode</span><span class="o">=</span><span class="s2">"human"</span><span class="p">)</span>
 <span class="n">obs</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
 <span class="n">done</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="n">accumulated_rew</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1363,7 +1363,7 @@ We then train the policy to predict the actions:</p>
     <span class="n">accumulated_rew</span> <span class="o">+=</span> <span class="n">reward</span>
 
 <span class="n">env</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Accumulated rew: &quot;</span><span class="p">,</span> <span class="n">accumulated_rew</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Accumulated rew: "</span><span class="p">,</span> <span class="n">accumulated_rew</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>We can visually observe that the learned policy aces this simple control task, and we get the maximum reward 500, as the episode is truncated after 500 steps.</p>
@@ -1541,7 +1541,7 @@ We then train the policy to predict the actions:</p>
     <script src="../../../_static/documentation_options.js?v=c55d6bc7"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
+    <script src="../../../_static/scripts/celshast.js?v=a788a8c6"></script>
     <script src="../../../_static/js/termynal.js?v=ff4c6923"></script>
     <script src="../../../_static/js/custom.js?v=a0ed09ce"></script>
     
@@ -1604,14 +1604,6 @@ We then train the policy to predict the actions:</p>
         const jsonResponse = xhr.response;
         const sections = {
           "Core Projects": [],
-          "Mature Projects": {
-            "Documentation": [],
-            "Repositories": [],
-          },
-          "Incubating Projects": {
-            "Documentation": [],
-            "Repositories": [],
-          },
           "Foundation": [
             {
               name: "About",
@@ -1625,7 +1617,14 @@ We then train the policy to predict the actions:</p>
               name: "Donate",
               link: "https://farama.org/donations"
             }
-          ]
+          ],
+          "Mature Projects": {
+            "Documentation": [],
+          },
+          "Incubating Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          }
         }
 
         // Categorize projects
@@ -1641,8 +1640,6 @@ We then train the policy to predict the actions:</p>
           } else if (projectJson.type == "mature") {
             if (projectJson.website !== null) {
               sections["Mature Projects"]["Documentation"].push(projectJson)
-            } else {
-              sections["Mature Projects"]["Repositories"].push(projectJson)
             }
           } else {
             if (projectJson.website !== null) {
@@ -1654,6 +1651,13 @@ We then train the policy to predict the actions:</p>
         })
 
         const menuContainer = document.querySelector(".farama-header-menu__body");
+
+        const stackedColumnElem = Object.assign(
+          document.createElement('div'), {
+            style: 'display: flex; flex-direction: column;'
+          }
+        );
+        const stackedKeys = new Set(["Core Projects", "Foundation"]);
 
         Object.keys(sections).forEach((key, i) => {
           const sectionElem = Object.assign(
@@ -1698,7 +1702,14 @@ We then train the policy to predict the actions:</p>
             const ulElem = createProjectsList(projects, true);
             sectionElem.appendChild(ulElem);
           }
-          menuContainer.appendChild(sectionElem)
+          if (stackedKeys.has(key)) {
+            if (!stackedColumnElem.parentNode) {
+              menuContainer.appendChild(stackedColumnElem);
+            }
+            stackedColumnElem.appendChild(sectionElem);
+          } else {
+            menuContainer.appendChild(sectionElem);
+          }
         });
       }
 

@@ -11,15 +11,15 @@
 <link rel="index" title="Index" href="../../../genindex/" /><link rel="search" title="Search" href="../../../search/" /><link rel="next" title="D4RL" href="../../../datasets/D4RL/" /><link rel="prev" title="Behavioral cloning with PyTorch" href="../behavioral_cloning/" />
         <link rel="canonical" href="https://minari.farama.org/tutorials/using_datasets/IQL_torchrl.html" />
 
-    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Furo 2023.08.19.dev1 -->
+    <link rel="shortcut icon" href="../../../_static/favicon.png"/><!-- Generated with Sphinx 7.4.7 and Celshast 0.0.1 -->
         <title>Implicit Q-Learning with TorchRL - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo.css?v=3e7f4c72" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/celshast.css?v=9fbfb63d" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=ca3c1c84" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=e5fbc548" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/styles/furo-extensions.css?v=82c8b628" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/styles/celshast-extensions.css?v=42bfddca" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/termynal.css?v=d6ad0c61" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom.css?v=16dd5f1b" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/directory_tree.css?v=083c6588" />
@@ -243,8 +243,8 @@
 <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
 <ul class="current">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../dataset_creation/">Dataset Creation</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" role="switch" type="checkbox"/><label for="toctree-checkbox-3"><div class="visually-hidden">Toggle navigation of Dataset Creation</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l2"><a class="reference internal" href="../../dataset_creation/observation_space_subseting/">Collecting a subset of a dictionary space with StepDataCallback</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../dataset_creation/custom_space_serialization/">Serializing a custom space</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../dataset_creation/observation_space_subseting/">Collecting a subset of a dictionary space with StepDataCallback</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../dataset_creation/point_maze_dataset/">PointMaze D4RL dataset</a></li>
 </ul>
 </li>
@@ -258,58 +258,58 @@
 <ul>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../datasets/D4RL/">D4RL</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" role="switch" type="checkbox"/><label for="toctree-checkbox-5"><div class="visually-hidden">Toggle navigation of D4RL</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/antmaze/">Ant Maze</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" role="switch" type="checkbox"/><label for="toctree-checkbox-6"><div class="visually-hidden">Toggle navigation of Ant Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/medium-play-v1/">Medium-Play</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/umaze-diverse-v1/">Umaze-Diverse</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/large-diverse-v1/">Large-Diverse</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/large-play-v1/">Large-Play</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/medium-diverse-v1/">Medium-Diverse</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/umaze-v1/">Umaze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/umaze-v2/">Umaze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/medium-play-v2/">Medium-Play</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/large-diverse-v2/">Large-Diverse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/large-play-v2/">Large-Play</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/umaze-diverse-v2/">Umaze-Diverse</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/antmaze/medium-diverse-v2/">Medium-Diverse</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/">Point Maze</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Point Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/open-dense-v2/">Open-Dense</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/umaze-v2/">Umaze</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/large-dense-v2/">Large-Dense</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/medium-v2/">Medium</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/umaze-dense-v2/">Umaze-Dense</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/medium-dense-v2/">Medium-Dense</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/large-v2/">Large</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/open-v2/">Open</a></li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/pen/">Pen</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Pen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pen/human-v2/">Human</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pen/cloned-v2/">Cloned</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pen/expert-v2/">Expert</a></li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/partial-v2/">Partial</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/complete-v2/">Complete</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/mixed-v2/">Mixed</a></li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/door/">Door</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Door</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/door/human-v2/">Human</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/door/cloned-v2/">Cloned</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/door/expert-v2/">Expert</a></li>
-</ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/hammer/">Hammer</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Hammer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/hammer/">Hammer</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" role="switch" type="checkbox"/><label for="toctree-checkbox-7"><div class="visually-hidden">Toggle navigation of Hammer</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/hammer/cloned-v2/">Cloned</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/hammer/expert-v2/">Expert</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/hammer/human-v2/">Human</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/relocate/">Relocate</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of Relocate</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/relocate/human-v2/">Human</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/relocate/expert-v2/">Expert</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/relocate/cloned-v2/">Cloned</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/kitchen/">Kitchen</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" role="switch" type="checkbox"/><label for="toctree-checkbox-8"><div class="visually-hidden">Toggle navigation of Kitchen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/partial-v2/">Partial</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/mixed-v2/">Mixed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/kitchen/complete-v2/">Complete</a></li>
 </ul>
 </li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/minigrid/">MiniGrid</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of MiniGrid</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/door/">Door</a><input class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" role="switch" type="checkbox"/><label for="toctree-checkbox-9"><div class="visually-hidden">Toggle navigation of Door</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/door/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/door/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/door/human-v2/">Human</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/relocate/">Relocate</a><input class="toctree-checkbox" id="toctree-checkbox-10" name="toctree-checkbox-10" role="switch" type="checkbox"/><label for="toctree-checkbox-10"><div class="visually-hidden">Toggle navigation of Relocate</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/relocate/human-v2/">Human</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/relocate/cloned-v2/">Cloned</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/relocate/expert-v2/">Expert</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/">Point Maze</a><input class="toctree-checkbox" id="toctree-checkbox-11" name="toctree-checkbox-11" role="switch" type="checkbox"/><label for="toctree-checkbox-11"><div class="visually-hidden">Toggle navigation of Point Maze</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/large-dense-v2/">Large-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/umaze-dense-v2/">Umaze-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/medium-v2/">Medium</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/umaze-v2/">Umaze</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/open-dense-v2/">Open-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/medium-dense-v2/">Medium-Dense</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/large-v2/">Large</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pointmaze/open-v2/">Open</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/minigrid/">MiniGrid</a><input class="toctree-checkbox" id="toctree-checkbox-12" name="toctree-checkbox-12" role="switch" type="checkbox"/><label for="toctree-checkbox-12"><div class="visually-hidden">Toggle navigation of MiniGrid</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
 <li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/minigrid/fourrooms-random-v0/">Fourrooms-Random</a></li>
 <li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/minigrid/fourrooms-v0/">Fourrooms</a></li>
+</ul>
+</li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../datasets/D4RL/pen/">Pen</a><input class="toctree-checkbox" id="toctree-checkbox-13" name="toctree-checkbox-13" role="switch" type="checkbox"/><label for="toctree-checkbox-13"><div class="visually-hidden">Toggle navigation of Pen</div><i class="icon"><svg><use href="#svg-arrow-right"></use></svg></i></label><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pen/expert-v2/">Expert</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pen/human-v2/">Human</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../datasets/D4RL/pen/cloned-v2/">Cloned</a></li>
 </ul>
 </li>
 </ul>
@@ -1226,13 +1226,16 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium_robotics</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">torchrl</span>
+
+<span class="n">gymnasium</span><span class="o">.</span><span class="n">register_envs</span><span class="p">(</span><span class="n">gymnasium_robotics</span><span class="p">)</span>
 
 <span class="n">seed</span> <span class="o">=</span> <span class="mi">42</span>
 <span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
 <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -1261,7 +1264,7 @@
 </pre></div>
 </div>
 <p>We will be using the <code class="docutils literal notranslate"><span class="pre">AdroitHandPen</span></code> environment from <a class="reference external" href="https://robotics.farama.org/envs/adroit_hand/adroit_pen/">Gymnasium-Robotics</a>. TorchRL is designed to be agnostic to different frameworks, so instead of working with a Gymnasium environment directly we load it using the <code class="docutils literal notranslate"><span class="pre">GymEnv</span></code> wrapper:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">env_id</span> <span class="o">=</span> <span class="s2">&quot;AdroitHandPen-v1&quot;</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">env_id</span> <span class="o">=</span> <span class="s2">"AdroitHandPen-v1"</span>
 <span class="n">example_env</span> <span class="o">=</span> <span class="n">GymEnv</span><span class="p">(</span><span class="n">env_id</span><span class="p">,</span> <span class="n">from_pixels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pixels_only</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">example_env</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
 </pre></div>
@@ -1289,21 +1292,21 @@
 </pre></div>
 </div>
 <p>We can compute the cumulative reward by summing <code class="docutils literal notranslate"><span class="pre">tensordict['next',</span> <span class="pre">'reward']</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cumulative reward: </span><span class="si">{</span><span class="n">tensordict</span><span class="p">[</span><span class="s1">&#39;next&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;reward&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cumulative reward: </span><span class="si">{</span><span class="n">tensordict</span><span class="p">[</span><span class="s1">'next'</span><span class="p">,</span><span class="w"> </span><span class="s1">'reward'</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Cumulative reward: 884.10
 </pre></div>
 </div>
 <p>Because we specified <code class="docutils literal notranslate"><span class="pre">from_pixels=True</span></code> when initialising the environment, the <code class="docutils literal notranslate"><span class="pre">pixels</span></code> field of the tensordict is populated with image data. Here’s the first frame of that episode:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">tensordict</span><span class="p">[</span><span class="s2">&quot;pixels&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">());</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">tensordict</span><span class="p">[</span><span class="s2">"pixels"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">());</span>
 </pre></div>
 </div>
 <a class="reference internal image-reference" href="../../../_images/IQL_torchrl_first_frame.png"><img alt="First frame of AdroitHandPen environment" src="../../../_images/IQL_torchrl_first_frame.png" style="width: 350px;" />
 </a>
 <p>The aim of the <a class="reference external" href="https://robotics.farama.org/envs/adroit_hand/adroit_pen/">Adroit Pen task</a> is to control the 24-dof hand to manipulate the blue pen from the initial configuration (shown above) to the goal configuration (green pen). There is a shaped dense reward which quantifies how close the pen is to the target configuration, which is randomised at the start of each episode.</p>
 <p>To use this environment for training, we need to perform some pre-processing transforms on the step data returned. We transform the base environment with <code class="docutils literal notranslate"><span class="pre">DoubleToFloat()</span></code>, which converts all doubles in the observations to floats:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">"cuda"</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">"cpu"</span><span class="p">)</span>
 
 <span class="n">base_env</span> <span class="o">=</span> <span class="n">GymEnv</span><span class="p">(</span><span class="n">env_id</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
 <span class="n">env</span> <span class="o">=</span> <span class="n">TransformedEnv</span><span class="p">(</span><span class="n">base_env</span><span class="p">,</span> <span class="n">DoubleToFloat</span><span class="p">())</span>
@@ -1317,7 +1320,7 @@
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">torchrl.data.datasets.minari_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">MinariExperienceReplay</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">torchrl.data.replay_buffers</span><span class="w"> </span><span class="kn">import</span> <span class="n">SamplerWithoutReplacement</span>
 
-<span class="n">dataset_id</span> <span class="o">=</span> <span class="s2">&quot;D4RL/pen/human-v2&quot;</span>
+<span class="n">dataset_id</span> <span class="o">=</span> <span class="s2">"D4RL/pen/human-v2"</span>
 <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">256</span>
 
 <span class="n">replay_buffer</span> <span class="o">=</span> <span class="n">MinariExperienceReplay</span><span class="p">(</span>
@@ -1386,7 +1389,7 @@
 </div>
 <p>We first initialise the value network <span class="math notranslate nohighlight">\(V_\psi(s)\)</span> which estimates the expectile of the value of a state <span class="math notranslate nohighlight">\(s\)</span> with respect to the distribution of actions in the dataset. TorchRL provides a <code class="docutils literal notranslate"><span class="pre">MLP</span></code> convenience class which we use to build a two layer Multi-Layer Perceptron. To plug this MLP into the rest of the network, we specify that the inputs are read from the <code class="docutils literal notranslate"><span class="pre">&quot;observation&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;action&quot;</span></code> keys of the input tensordict (and concatenated, by default), and the output of the MLP is written to the <code class="docutils literal notranslate"><span class="pre">&quot;state_value&quot;</span></code> key:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hidden_sizes</span> <span class="o">=</span> <span class="p">[</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">]</span>
-<span class="n">activation_fn</span> <span class="o">=</span> <span class="n">ACTIVATIONS</span><span class="p">[</span><span class="s2">&quot;relu&quot;</span><span class="p">]</span>
+<span class="n">activation_fn</span> <span class="o">=</span> <span class="n">ACTIVATIONS</span><span class="p">[</span><span class="s2">"relu"</span><span class="p">]</span>
 
 <span class="c1"># MLP network</span>
 <span class="n">value_net</span> <span class="o">=</span> <span class="n">MLP</span><span class="p">(</span>
@@ -1397,8 +1400,8 @@
 
 <span class="c1"># Specify the keys to read/write from the tensordict</span>
 <span class="n">value_net</span> <span class="o">=</span> <span class="n">ValueOperator</span><span class="p">(</span>
-    <span class="n">in_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">],</span>
-    <span class="n">out_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;state_value&quot;</span><span class="p">],</span>
+    <span class="n">in_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">"observation"</span><span class="p">],</span>
+    <span class="n">out_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">"state_value"</span><span class="p">],</span>
     <span class="n">module</span><span class="o">=</span><span class="n">value_net</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
@@ -1411,8 +1414,8 @@
 <span class="p">)</span>
 
 <span class="n">qvalue</span> <span class="o">=</span> <span class="n">ValueOperator</span><span class="p">(</span>
-    <span class="n">in_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">,</span> <span class="s2">&quot;action&quot;</span><span class="p">],</span>
-    <span class="n">out_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;state_action_value&quot;</span><span class="p">],</span>
+    <span class="n">in_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">"observation"</span><span class="p">,</span> <span class="s2">"action"</span><span class="p">],</span>
+    <span class="n">out_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">"state_action_value"</span><span class="p">],</span>
     <span class="n">module</span><span class="o">=</span><span class="n">q_net</span>
 <span class="p">)</span>
 </pre></div>
@@ -1440,20 +1443,20 @@
 <span class="c1"># Specify tensordict inputs and outputs</span>
 <span class="n">actor_module</span> <span class="o">=</span> <span class="n">TensorDictModule</span><span class="p">(</span>
     <span class="n">actor_net</span><span class="p">,</span>
-    <span class="n">in_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;observation&quot;</span><span class="p">],</span>
-    <span class="n">out_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;loc&quot;</span><span class="p">,</span> <span class="s2">&quot;scale&quot;</span><span class="p">]</span>
+    <span class="n">in_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">"observation"</span><span class="p">],</span>
+    <span class="n">out_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">"loc"</span><span class="p">,</span> <span class="s2">"scale"</span><span class="p">]</span>
 <span class="p">)</span>
 
 <span class="c1"># Use ProbabilisticActor to map it to the correct action space</span>
 <span class="n">actor</span> <span class="o">=</span> <span class="n">ProbabilisticActor</span><span class="p">(</span>
     <span class="n">module</span><span class="o">=</span><span class="n">actor_module</span><span class="p">,</span>
-    <span class="n">in_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;loc&quot;</span><span class="p">,</span> <span class="s2">&quot;scale&quot;</span><span class="p">],</span>
+    <span class="n">in_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">"loc"</span><span class="p">,</span> <span class="s2">"scale"</span><span class="p">],</span>
     <span class="n">spec</span><span class="o">=</span><span class="n">action_spec</span><span class="p">,</span>
     <span class="n">distribution_class</span><span class="o">=</span><span class="n">TanhNormal</span><span class="p">,</span>
     <span class="n">distribution_kwargs</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">&quot;low&quot;</span><span class="p">:</span> <span class="n">action_spec</span><span class="o">.</span><span class="n">space</span><span class="o">.</span><span class="n">low</span><span class="p">,</span>
-        <span class="s2">&quot;high&quot;</span><span class="p">:</span> <span class="n">action_spec</span><span class="o">.</span><span class="n">space</span><span class="o">.</span><span class="n">high</span><span class="p">,</span>
-        <span class="s2">&quot;tanh_loc&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">"low"</span><span class="p">:</span> <span class="n">action_spec</span><span class="o">.</span><span class="n">space</span><span class="o">.</span><span class="n">low</span><span class="p">,</span>
+        <span class="s2">"high"</span><span class="p">:</span> <span class="n">action_spec</span><span class="o">.</span><span class="n">space</span><span class="o">.</span><span class="n">high</span><span class="p">,</span>
+        <span class="s2">"tanh_loc"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">},</span>
     <span class="n">default_interaction_type</span><span class="o">=</span><span class="n">ExplorationType</span><span class="o">.</span><span class="n">DETERMINISTIC</span><span class="p">,</span>
 <span class="p">)</span>
@@ -1479,7 +1482,7 @@
     <span class="n">model</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
     <span class="n">model</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
     <span class="n">value_network</span><span class="o">=</span><span class="n">model</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
-    <span class="n">loss_function</span><span class="o">=</span><span class="s2">&quot;l2&quot;</span><span class="p">,</span>
+    <span class="n">loss_function</span><span class="o">=</span><span class="s2">"l2"</span><span class="p">,</span>
     <span class="n">temperature</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
     <span class="n">expectile</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
 <span class="p">)</span>
@@ -1500,12 +1503,12 @@
 <p>To demonstrate training, we run IQL for 50,000 iterations. During training, we will evaluate the policy every 1000 iterations. But note that this is for evaluation purposes only. Unlike online RL, we do not collect new data during training.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_policy</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">num_eval_episodes</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the mean cumulative reward over multiple episodes.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Calculate the mean cumulative reward over multiple episodes."""</span>
     <span class="n">episode_rewards</span> <span class="o">=</span> <span class="p">[]</span>
 
     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_eval_episodes</span><span class="p">):</span>
         <span class="n">eval_td</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">rollout</span><span class="p">(</span><span class="n">max_steps</span><span class="o">=</span><span class="n">max_episode_steps</span><span class="p">,</span> <span class="n">policy</span><span class="o">=</span><span class="n">policy</span><span class="p">,</span> <span class="n">auto_cast_to_device</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">episode_rewards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">eval_td</span><span class="p">[</span><span class="s2">&quot;next&quot;</span><span class="p">,</span> <span class="s2">&quot;reward&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
+        <span class="n">episode_rewards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">eval_td</span><span class="p">[</span><span class="s2">"next"</span><span class="p">,</span> <span class="s2">"reward"</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
 
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">episode_rewards</span><span class="p">)</span>
 </pre></div>
@@ -1531,7 +1534,7 @@
 
     <span class="c1"># 2) Compute loss l = L_V + L_Q + L_pi</span>
     <span class="n">loss_dict</span> <span class="o">=</span> <span class="n">loss_module</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">))</span>
-    <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_dict</span><span class="p">[</span><span class="s2">&quot;loss_value&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">loss_dict</span><span class="p">[</span><span class="s2">&quot;loss_qvalue&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">loss_dict</span><span class="p">[</span><span class="s2">&quot;loss_actor&quot;</span><span class="p">]</span>
+    <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_dict</span><span class="p">[</span><span class="s2">"loss_value"</span><span class="p">]</span> <span class="o">+</span> <span class="n">loss_dict</span><span class="p">[</span><span class="s2">"loss_qvalue"</span><span class="p">]</span> <span class="o">+</span> <span class="n">loss_dict</span><span class="p">[</span><span class="s2">"loss_actor"</span><span class="p">]</span>
     <span class="n">loss_logs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
 
     <span class="c1"># 3) Backpropagate the gradients</span>
@@ -1544,7 +1547,7 @@
     <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="n">eval_interval</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">eval_reward_logs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">evaluate_policy</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">model</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
         <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;Loss: </span><span class="si">{</span><span class="n">loss_logs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">, Avg return: </span><span class="si">{</span><span class="n">eval_reward_logs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="sa">f</span><span class="s2">"Loss: </span><span class="si">{</span><span class="n">loss_logs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">, Avg return: </span><span class="si">{</span><span class="n">eval_reward_logs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">"</span>
         <span class="p">)</span>
 
 <span class="n">pbar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -1553,11 +1556,11 @@
 <p>We can plot the loss and episodic return:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
 <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">loss_logs</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Loss&quot;</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;iterations&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Loss"</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"iterations"</span><span class="p">)</span>
 <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">eval_interval</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">eval_reward_logs</span><span class="p">)),</span> <span class="n">eval_reward_logs</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Cumulative reward&quot;</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;iterations&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Cumulative reward"</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"iterations"</span><span class="p">)</span>
 <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
@@ -1574,7 +1577,7 @@
 </div>
 <p>Evaluated over 100 episodes, the final performance is:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">final_score</span> <span class="o">=</span> <span class="n">evaluate_policy</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">model</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">num_eval_episodes</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cumulative reward (averaged over 100 episodes): </span><span class="si">{</span><span class="n">final_score</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cumulative reward (averaged over 100 episodes): </span><span class="si">{</span><span class="n">final_score</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 </pre></div>
 </div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Cumulative reward (averaged over 100 episodes): 1872.69
@@ -1588,19 +1591,19 @@
 <span class="n">viewer_env</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
 
 <span class="n">tensordict</span> <span class="o">=</span> <span class="n">viewer_env</span><span class="o">.</span><span class="n">rollout</span><span class="p">(</span><span class="n">max_steps</span><span class="o">=</span><span class="n">max_episode_steps</span><span class="p">,</span> <span class="n">policy</span><span class="o">=</span><span class="n">model</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">auto_cast_to_device</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cumulative reward: </span><span class="si">{</span><span class="n">tensordict</span><span class="p">[</span><span class="s1">&#39;next&#39;</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;reward&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cumulative reward: </span><span class="si">{</span><span class="n">tensordict</span><span class="p">[</span><span class="s1">'next'</span><span class="p">,</span><span class="w"> </span><span class="s1">'reward'</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
-<span class="n">frames</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tensordict</span><span class="p">[</span><span class="s2">&quot;pixels&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
-<span class="n">save_video</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">video_folder</span><span class="o">=</span><span class="s2">&quot;results_video&quot;</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+<span class="n">frames</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tensordict</span><span class="p">[</span><span class="s2">"pixels"</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+<span class="n">save_video</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">video_folder</span><span class="o">=</span><span class="s2">"results_video"</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
 
 <span class="c1"># Display the video. Embedding is necessary for Google Colab etc</span>
-<span class="n">mp4</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;results_video/rl-video-episode-0.mp4&quot;</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-<span class="n">data_url</span> <span class="o">=</span> <span class="s2">&quot;data:video/mp4;base64,&quot;</span> <span class="o">+</span> <span class="n">b64encode</span><span class="p">(</span><span class="n">mp4</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
-<span class="n">HTML</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
-<span class="s2">&lt;video controls style=&#39;margin: auto; display: block&#39;&gt;</span>
-<span class="s2">    &lt;source src=&#39;</span><span class="si">%s</span><span class="s2">&#39; type=&#39;video/mp4&#39;&gt;</span>
+<span class="n">mp4</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"results_video/rl-video-episode-0.mp4"</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+<span class="n">data_url</span> <span class="o">=</span> <span class="s2">"data:video/mp4;base64,"</span> <span class="o">+</span> <span class="n">b64encode</span><span class="p">(</span><span class="n">mp4</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
+<span class="n">HTML</span><span class="p">(</span><span class="s2">"""</span>
+<span class="s2">&lt;video controls style='margin: auto; display: block'&gt;</span>
+<span class="s2">    &lt;source src='</span><span class="si">%s</span><span class="s2">' type='video/mp4'&gt;</span>
 <span class="s2">&lt;/video&gt;</span>
-<span class="s2">&quot;&quot;&quot;</span> <span class="o">%</span> <span class="n">data_url</span><span class="p">)</span>
+<span class="s2">"""</span> <span class="o">%</span> <span class="n">data_url</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Here are some examples of our trained agent:</p>
@@ -1790,7 +1793,7 @@
     <script src="../../../_static/documentation_options.js?v=c55d6bc7"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../../../_static/scripts/furo.js?v=7660844c"></script>
+    <script src="../../../_static/scripts/celshast.js?v=a788a8c6"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../../../_static/js/termynal.js?v=ff4c6923"></script>
@@ -1855,14 +1858,6 @@
         const jsonResponse = xhr.response;
         const sections = {
           "Core Projects": [],
-          "Mature Projects": {
-            "Documentation": [],
-            "Repositories": [],
-          },
-          "Incubating Projects": {
-            "Documentation": [],
-            "Repositories": [],
-          },
           "Foundation": [
             {
               name: "About",
@@ -1876,7 +1871,14 @@
               name: "Donate",
               link: "https://farama.org/donations"
             }
-          ]
+          ],
+          "Mature Projects": {
+            "Documentation": [],
+          },
+          "Incubating Projects": {
+            "Documentation": [],
+            "Repositories": [],
+          }
         }
 
         // Categorize projects
@@ -1892,8 +1894,6 @@
           } else if (projectJson.type == "mature") {
             if (projectJson.website !== null) {
               sections["Mature Projects"]["Documentation"].push(projectJson)
-            } else {
-              sections["Mature Projects"]["Repositories"].push(projectJson)
             }
           } else {
             if (projectJson.website !== null) {
@@ -1905,6 +1905,13 @@
         })
 
         const menuContainer = document.querySelector(".farama-header-menu__body");
+
+        const stackedColumnElem = Object.assign(
+          document.createElement('div'), {
+            style: 'display: flex; flex-direction: column;'
+          }
+        );
+        const stackedKeys = new Set(["Core Projects", "Foundation"]);
 
         Object.keys(sections).forEach((key, i) => {
           const sectionElem = Object.assign(
@@ -1949,7 +1956,14 @@
             const ulElem = createProjectsList(projects, true);
             sectionElem.appendChild(ulElem);
           }
-          menuContainer.appendChild(sectionElem)
+          if (stackedKeys.has(key)) {
+            if (!stackedColumnElem.parentNode) {
+              menuContainer.appendChild(stackedColumnElem);
+            }
+            stackedColumnElem.appendChild(sectionElem);
+          } else {
+            menuContainer.appendChild(sectionElem);
+          }
         });
       }
 
