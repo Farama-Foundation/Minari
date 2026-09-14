@@ -81,16 +81,7 @@ class ArrowStorage(MinariStorage):
                 yield json.load(file)
 
     def get_episodes(self, episode_indices: Iterable[int]) -> Iterable[dict]:
-        dataset = pa.dataset.dataset(
-            [
-                pa.dataset.dataset(
-                    f"{self.data_path}/{ep_id}",
-                    format=self.FORMAT,
-                    ignore_prefixes=["_", ".", "metadata.json"],
-                )
-                for ep_id in episode_indices
-            ]
-        )
+        """Read complete episodes in the order provided by any index iterable."""
 
         def _to_dict(id, episode):
             return {
@@ -115,7 +106,16 @@ class ArrowStorage(MinariStorage):
                 ),
             }
 
-        return map(_to_dict, episode_indices, dataset.to_batches())
+        def _read_episode(episode_id):
+            dataset = pa.dataset.dataset(
+                f"{self.data_path}/{episode_id}",
+                format=self.FORMAT,
+                ignore_prefixes=["_", ".", "metadata.json"],
+            )
+            batch = dataset.to_table().combine_chunks().to_batches()[0]
+            return _to_dict(episode_id, batch)
+
+        return map(_read_episode, episode_indices)
 
     def update_episodes(self, episodes: Iterable[EpisodeBuffer]):
         total_steps = self.total_steps
@@ -160,6 +160,7 @@ class ArrowStorage(MinariStorage):
                 format=self.FORMAT,
                 partitioning=["episode_id"],
                 existing_data_behavior="overwrite_or_ignore",
+                use_threads=False,
             )
 
             episode_metadata: dict = {"id": episode_id, "total_steps": len(rewards)}
