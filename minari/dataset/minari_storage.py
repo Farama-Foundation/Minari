@@ -68,6 +68,8 @@ class MinariStorage(ABC):
     def read(cls, data_path: PathLike) -> MinariStorage:
         """Create a MinariStorage to read data from a path.
 
+        Temporary environments used to infer missing spaces are closed before returning.
+
         Args:
             data_path (str or Path): directory where the data is stored.
 
@@ -100,10 +102,13 @@ class MinariStorage(ABC):
             )
             env_spec = EnvSpec.from_json(env_spec_str)
             env = gym.make(env_spec)
-            if observation_space is None:
-                observation_space = env.observation_space
-            if action_space is None:
-                action_space = env.action_space
+            try:
+                if observation_space is None:
+                    observation_space = env.observation_space
+                if action_space is None:
+                    action_space = env.action_space
+            finally:
+                env.close()
 
         from minari.dataset._storages import get_minari_storage  # avoid circular import
 
@@ -126,6 +131,8 @@ class MinariStorage(ABC):
         jpeg_encoding: bool = True,
     ) -> MinariStorage:
         """Class method to create a new data storage.
+
+        Temporary environments used to infer missing spaces are closed before returning.
 
         Args:
             data_path (str or Path): directory where the data will be stored.
@@ -167,10 +174,13 @@ class MinariStorage(ABC):
         if observation_space is None or action_space is None:
             assert env_spec is not None
             env = gym.make(env_spec)
-            if observation_space is None:
-                observation_space = env.observation_space
-            if action_space is None:
-                action_space = env.action_space
+            try:
+                if observation_space is None:
+                    observation_space = env.observation_space
+                if action_space is None:
+                    action_space = env.action_space
+            finally:
+                env.close()
 
         metadata: Dict[str, Any] = {
             "total_episodes": 0,
