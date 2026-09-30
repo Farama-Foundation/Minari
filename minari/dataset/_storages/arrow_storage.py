@@ -314,7 +314,7 @@ def _encode_info(info: dict):
 def _decode_info(values: pa.Array):
     nested_dict = {}
     for i, field in enumerate(values.type):
-        if isinstance(field, pa.StructArray):
+        if pa.types.is_struct(field.type):
             nested_dict[field.name] = _decode_info(values.field(i))
         else:
             value = np.stack(values.field(i).to_numpy(zero_copy_only=False))
