@@ -5,8 +5,16 @@ from collections import defaultdict
 from functools import singledispatch
 from typing import Dict, Union
 
+import gymnasium
 import numpy as np
 from gymnasium import spaces
+
+
+# `Discrete` only gained a `dtype` argument in Gymnasium 1.3.0, and this package
+# supports 0.28.1 upwards, so the argument is passed only from 1.3.0 onwards.
+_DISCRETE_ACCEPTS_DTYPE = tuple(
+    int(part) for part in gymnasium.__version__.split(".")[:2]
+) >= (1, 3)
 
 
 @singledispatch
@@ -33,7 +41,7 @@ def _serialize_box(space: spaces.Box, to_string=True) -> Union[Dict, str]:
 def _serialize_discrete(space: spaces.Discrete, to_string=True) -> Union[Dict, str]:
     result = {}
     result["type"] = "Discrete"
-    result["dtype"] = "int64"  # this seems to be hardcoded in Gymnasium
+    result["dtype"] = str(space.dtype)
     # we need to cast from np.int64 to python's int type in order to serialize
     result["start"] = int(space.start)
     result["n"] = int(space.n)
@@ -169,6 +177,16 @@ def _deserialize_discrete(space_dict: Dict) -> spaces.Discrete:
     assert space_dict["type"] == "Discrete"
     n = space_dict["n"]
     start = space_dict["start"]
+    dtype = space_dict.get("dtype", "int64")
+
+    if _DISCRETE_ACCEPTS_DTYPE:
+        return spaces.Discrete(n=n, start=start, dtype=dtype)
+
+    if np.dtype(dtype) != np.dtype("int64"):
+        raise ValueError(
+            f"The dataset declares a Discrete space of dtype {dtype}, which needs "
+            f"Gymnasium 1.3.0 or later; {gymnasium.__version__} is installed."
+        )
     return spaces.Discrete(n=n, start=start)
 
 
