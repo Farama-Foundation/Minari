@@ -35,6 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      id-token: write
     needs:
     - build-wheels
     if: github.event_name == 'release' && github.event.action == 'published'
@@ -46,5 +47,3 @@ jobs:
         path: dist
     - name: Publish
       uses: pypa/gh-action-pypi-publish@release/v1
-      with:
-        password: ${{ secrets.PYPI_API_TOKEN }}
