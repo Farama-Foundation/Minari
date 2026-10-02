@@ -135,6 +135,7 @@ class MinariStorage(ABC):
             data_format (str): Format of the data. Default value is "hdf5".
             jpeg_encoding (bool): If True (default), image-space observations and actions are
               JPEG-encoded on disk (lossy, smaller). Set to False to store raw arrays (lossless but larger).
+              JPEG encoding applies to 2D grayscale and 3-channel RGB arrays; other channel shapes are stored raw.
 
         Returns:
             A new MinariStorage object to write new data.
@@ -410,7 +411,7 @@ def _json_converter(obj: Any):
 def is_image_space(space: gym.Space) -> bool:
     return (
         isinstance(space, gym.spaces.Box)
-        and len(space.shape) in {2, 3}
+        and (len(space.shape) == 2 or (len(space.shape) == 3 and space.shape[2] == 3))
         and space.shape[0] >= 32  # we don't consider images if smaller, e.g. minigrid
         and space.shape[1] >= 32
         and space.dtype == np.uint8
