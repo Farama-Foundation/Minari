@@ -1,8 +1,11 @@
 import gymnasium as gym
+import numpy as np
+import pytest
 from gymnasium.utils.env_checker import data_equivalence
 
 import minari
 from minari import DataCollector, MinariDataset
+from minari.dataset._storages import get_storage_keys
 from minari.utils import combine_datasets
 from tests.common import create_dummy_dataset_with_collecter_env_helper
 
@@ -112,3 +115,54 @@ def test_combine_datasets():
         combined_dataset,
     )
     _check_load_and_delete_dataset("cartpole/combined-test-v0")
+
+
+@pytest.mark.parametrize("data_format", get_storage_keys())
+@pytest.mark.parametrize("selection", ["filtered", "split", "reordered", "empty"])
+def test_combine_dataset_views(data_format, selection):
+    """Combining views must preserve selected episodes and their order."""
+    env = DataCollector(
+        gym.make("CartPole-v1", max_episode_steps=5), data_format=data_format
+    )
+    env.action_space.seed(123)
+    source = create_dummy_dataset_with_collecter_env_helper(
+        "cartpole/source-v0", env, num_episodes=6
+    )
+    env.close()
+
+    if selection == "filtered":
+        datasets = [source.filter_episodes(lambda episode: episode.id % 2 == 0)]
+    elif selection == "split":
+        datasets = minari.split_dataset(source, sizes=[2, 3], seed=42)
+    elif selection == "reordered":
+        datasets = [MinariDataset(source.storage, np.array([4, 1, 3]))]
+    else:
+        datasets = [source.filter_episodes(lambda episode: False)]
+
+    expected_episodes = [
+        episode for dataset in datasets for episode in dataset.iterate_episodes()
+    ]
+    combined = combine_datasets(datasets, "cartpole/combined-view-v0")
+
+    # Reload to check that the selected data and totals were persisted.
+    for result in [combined, minari.load_dataset(combined.spec.dataset_id)]:
+        assert result.total_episodes == len(expected_episodes)
+        assert result.total_steps == sum(len(episode) for episode in expected_episodes)
+        episodes = list(result.iterate_episodes())
+        assert len(episodes) == len(expected_episodes)
+        for index, (actual, expected) in enumerate(zip(episodes, expected_episodes)):
+            assert actual.id == index
+            for field in (
+                "observations",
+                "actions",
+                "rewards",
+                "terminations",
+                "truncations",
+                "infos",
+            ):
+                assert data_equivalence(
+                    getattr(actual, field), getattr(expected, field)
+                )
+
+    assert source.total_episodes == 6
+    assert source.storage.total_episodes == 6
