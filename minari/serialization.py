@@ -111,7 +111,12 @@ def _serialize_text(space: spaces.Text, to_string=True) -> Union[Dict, str]:
 
 class type_value_dispatch:
     def __init__(self, func) -> None:
-        self.registry = defaultdict(func)
+        # `defaultdict` calls its factory with no arguments, so the factory has
+        # to return the fallback rather than be it. Passing `func` straight in
+        # called it without `space_dict`, and an unregistered type raised a
+        # TypeError about the missing argument instead of the NotImplementedError
+        # the fallback is written to raise.
+        self.registry = defaultdict(lambda: func)
 
     def register(self, type: str):
         def decorator(method):
