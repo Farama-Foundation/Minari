@@ -339,11 +339,14 @@ def generate_community_page(
         display_name = _html_escape(info["display_name"])
         group_name = info["group_name"]
         dataset_count = info["dataset_count"]
-        local_url = f"/datasets/community/{group_name}/"
+        # The cards are raw HTML, so Sphinx does not rewrite their links. Paths must be
+        # relative to this page (dirhtml: datasets/community/), otherwise versioned
+        # builds (e.g. /main/) link to the root (stable) release.
+        local_url = f"{group_name}/"
 
         content += "```{raw} html\n"
         content += f'<div class="sphx-glr-thumbcontainer" tooltip="{display_name} ({dataset_count} datasets)" style="min-height: 120px;">\n'
-        content += f'<a href="{local_url}"><img src="/_static/img/minari-text.png" alt="{display_name}" style="width: 250px; height: auto; display: block; margin: 0 auto;"></a>\n'
+        content += f'<a href="{local_url}"><img src="../../_static/img/minari-text.png" alt="{display_name}" style="width: 250px; height: auto; display: block; margin: 0 auto;"></a>\n'
         content += f'  <div class="sphx-glr-thumbnail-title">{display_name}</div>\n'
         content += "</div>\n"
         content += "```\n\n"
@@ -353,7 +356,7 @@ def generate_community_page(
 
     content += "```{raw} html\n"
     content += '<div class="sphx-glr-thumbcontainer" tooltip="Add your own dataset group to this page" style="min-height: 120px;">\n'
-    content += f'<a href="{readme_url}"><img src="/_static/img/minari-text.png" alt="Add your dataset here" style="width: 250px; height: auto; display: block; margin: 0 auto;"></a>\n'
+    content += f'<a href="{readme_url}"><img src="../../_static/img/minari-text.png" alt="Add your dataset here" style="width: 250px; height: auto; display: block; margin: 0 auto;"></a>\n'
     content += '  <div class="sphx-glr-thumbnail-title">Add your dataset here</div>\n'
     content += "</div>\n"
     content += "```\n\n"
