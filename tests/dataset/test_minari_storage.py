@@ -135,6 +135,62 @@ def test_add_episodes(tmp_dataset_dir, data_format, observation_space):
 
 
 @pytest.mark.parametrize("data_format", get_storage_keys())
+def test_get_episodes_from_iterator(tmp_dataset_dir, data_format):
+    observation_space = spaces.Box(-1, 1, shape=(3,))
+    action_space = spaces.Discrete(4)
+    episodes = [
+        _generate_episode_buffer(observation_space, action_space) for _ in range(3)
+    ]
+    storage = MinariStorage.new(
+        data_path=tmp_dataset_dir,
+        observation_space=observation_space,
+        action_space=action_space,
+        data_format=data_format,
+    )
+    storage.update_episodes(episodes)
+
+    storage_episodes = list(storage.get_episodes(iter([2, 0])))
+    assert [ep["id"] for ep in storage_episodes] == [2, 0]
+    for ep_id, storage_ep in zip([2, 0], storage_episodes):
+        assert np.all(episodes[ep_id].observations == storage_ep["observations"])
+        assert np.all(episodes[ep_id].rewards == storage_ep["rewards"])
+
+
+@pytest.mark.parametrize("data_format", get_storage_keys())
+def test_long_episode_round_trip(tmp_dataset_dir, data_format):
+    # Longer than one Arrow scanner batch, followed by a short episode.
+    lengths = [200_000, 10]
+    episodes = []
+    for length in lengths:
+        truncations = np.zeros(length, dtype=np.bool_)
+        truncations[-1] = True
+        episodes.append(
+            EpisodeBuffer(
+                observations=np.arange(length + 1) % 50,
+                actions=np.arange(length) % 4,
+                rewards=np.arange(length, dtype=np.float64),
+                terminations=np.zeros(length, dtype=np.bool_),
+                truncations=truncations,
+            )
+        )
+    storage = MinariStorage.new(
+        data_path=tmp_dataset_dir,
+        observation_space=spaces.Discrete(50),
+        action_space=spaces.Discrete(4),
+        data_format=data_format,
+    )
+    storage.update_episodes(episodes)
+
+    storage_episodes = list(storage.get_episodes(range(len(lengths))))
+    assert len(storage_episodes) == len(lengths)
+    for ep, storage_ep in zip(episodes, storage_episodes):
+        assert np.array_equal(ep.observations, storage_ep["observations"])
+        assert np.array_equal(ep.actions, storage_ep["actions"])
+        assert np.array_equal(ep.rewards, storage_ep["rewards"])
+        assert np.array_equal(ep.truncations, storage_ep["truncations"])
+
+
+@pytest.mark.parametrize("data_format", get_storage_keys())
 @pytest.mark.parametrize("jpeg_encoding", [True, False])
 def test_image_jpeg_encoding_round_trip(tmp_dataset_dir, data_format, jpeg_encoding):
     """Round-trip image-space data with and without JPEG encoding.
