@@ -100,10 +100,13 @@ class MinariStorage(ABC):
             )
             env_spec = EnvSpec.from_json(env_spec_str)
             env = gym.make(env_spec)
-            if observation_space is None:
-                observation_space = env.observation_space
-            if action_space is None:
-                action_space = env.action_space
+            try:
+                if observation_space is None:
+                    observation_space = env.observation_space
+                if action_space is None:
+                    action_space = env.action_space
+            finally:
+                env.close()
 
         from minari.dataset._storages import get_minari_storage  # avoid circular import
 
@@ -167,10 +170,13 @@ class MinariStorage(ABC):
         if observation_space is None or action_space is None:
             assert env_spec is not None
             env = gym.make(env_spec)
-            if observation_space is None:
-                observation_space = env.observation_space
-            if action_space is None:
-                action_space = env.action_space
+            try:
+                if observation_space is None:
+                    observation_space = env.observation_space
+                if action_space is None:
+                    action_space = env.action_space
+            finally:
+                env.close()
 
         metadata: Dict[str, Any] = {
             "total_episodes": 0,
