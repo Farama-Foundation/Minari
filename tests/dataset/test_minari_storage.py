@@ -176,6 +176,25 @@ def test_image_jpeg_encoding_round_trip(tmp_dataset_dir, data_format, jpeg_encod
 
 
 @pytest.mark.parametrize("data_format", get_storage_keys())
+@pytest.mark.parametrize("channels", [1, 2, 4])
+def test_non_rgb_images_stored_raw(tmp_dataset_dir, data_format, channels):
+    # JPEG cannot hold these channel counts, so they are stored as raw arrays.
+    observation_space = spaces.Box(0, 255, shape=(32, 32, channels), dtype=np.uint8)
+    action_space = spaces.Discrete(2)
+    episodes = [_generate_episode_buffer(observation_space, action_space, length=5)]
+    storage = MinariStorage.new(
+        data_path=tmp_dataset_dir,
+        observation_space=observation_space,
+        action_space=action_space,
+        data_format=data_format,
+    )
+    storage.update_episodes(episodes)
+
+    storage_ep = next(iter(storage.get_episodes([0])))
+    assert np.array_equal(storage_ep["observations"], episodes[0].observations)
+
+
+@pytest.mark.parametrize("data_format", get_storage_keys())
 def test_apply(tmp_dataset_dir, data_format):
     action_space = spaces.Box(-1, 1, shape=(10,))
     observation_space = spaces.Text(max_length=5)
