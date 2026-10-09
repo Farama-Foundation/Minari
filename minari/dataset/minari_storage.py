@@ -335,10 +335,14 @@ class MinariStorage(ABC):
         Args:
             storage (MinariStorage): the other MinariStorage from which the data will be taken
         """
-        for episode in storage.get_episodes(range(storage.total_episodes)):
+        episode_indices = range(storage.total_episodes)
+        episodes = storage.get_episodes(episode_indices)
+        metadatas = storage.get_episode_metadata(episode_indices)
+        for episode, metadata in zip(episodes, metadatas):
             episode_buffer = EpisodeBuffer(
                 id=None,
-                seed=episode.get("seed"),
+                seed=metadata.get("seed"),
+                options=metadata.get("options"),
                 observations=episode["observations"],
                 actions=episode["actions"],
                 rewards=episode["rewards"],
