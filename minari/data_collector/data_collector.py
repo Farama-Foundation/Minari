@@ -218,6 +218,9 @@ class DataCollector(gym.Wrapper):
     def add_to_dataset(self, dataset: MinariDataset):
         """Add extra data to Minari dataset from collector environment buffers (DataCollector).
 
+        The episode metadata callback is applied to each newly appended episode.
+        Existing episodes keep their metadata.
+
         Args:
             dataset (MinariDataset): Dataset to add the data
         """
@@ -225,6 +228,11 @@ class DataCollector(gym.Wrapper):
 
         first_id = dataset.storage.total_episodes
         dataset.storage.update_from_storage(self._storage)
+        new_episode_indices = range(first_id, dataset.storage.total_episodes)
+        episode_metadata = dataset.storage.apply(
+            self._episode_metadata_callback, episode_indices=new_episode_indices
+        )
+        dataset.storage.update_episode_metadata(episode_metadata, new_episode_indices)
         if dataset.episode_indices is not None:
             new_ids = first_id + np.arange(self._storage.total_episodes)
             dataset.episode_indices = np.append(dataset.episode_indices, new_ids)
