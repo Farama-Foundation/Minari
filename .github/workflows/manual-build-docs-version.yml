@@ -31,7 +31,7 @@ jobs:
         with:
             python-version: '3.15'
 
-      - run: sudo apt-get install xvfb
+      - run: sudo apt-get install -y xvfb libhdf5-dev
 
       - name: Install dependencies
         run: pip install -r docs/requirements.txt

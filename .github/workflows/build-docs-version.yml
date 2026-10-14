@@ -22,7 +22,7 @@ jobs:
         id: tag
         uses: dawidd6/action-get-tag@v1
 
-      - run: sudo apt-get install xvfb
+      - run: sudo apt-get install -y xvfb libhdf5-dev
 
       - name: Install dependencies
         run: pip install -r docs/requirements.txt
