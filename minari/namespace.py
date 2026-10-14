@@ -152,7 +152,7 @@ def list_local_namespaces() -> List[str]:
         parent_dir = base_path.joinpath(namespace)
         for dir_name in list_non_hidden_dirs(parent_dir):
             dir_path = os.path.join(parent_dir, dir_name)
-            namespaced_dir_name = os.path.join(namespace, dir_name)
+            namespaced_dir_name = Path(namespace, dir_name).as_posix()
             dir_contents = os.listdir(dir_path)
 
             if NAMESPACE_METADATA_FILENAME in dir_contents:
@@ -253,9 +253,9 @@ def namespace_hierarchy(namespace: Optional[str]) -> Iterable[str]:
     if namespace is None:
         return []
 
-    namespace_parts = namespace.split(os.sep)
+    namespace_parts = namespace.split("/")
     for i in range(len(namespace_parts)):
-        yield os.path.join(*namespace_parts[: i + 1])
+        yield "/".join(namespace_parts[: i + 1])
 
 
 def validate_namespace(namespace: Optional[str]) -> None:

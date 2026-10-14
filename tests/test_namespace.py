@@ -11,6 +11,7 @@ from minari.namespace import (
     get_namespace_metadata,
     list_local_namespaces,
     list_remote_namespaces,
+    namespace_hierarchy,
     update_namespace_metadata,
 )
 from tests.common import (
@@ -61,6 +62,13 @@ def test_create_nested_namespaces():
     create_namespace(namespace, description="my description")
     assert set(list_local_namespaces()) == {parent_namespace, namespace}
     assert get_namespace_metadata(namespace) == {"description": "my description"}
+
+
+def test_namespace_hierarchy():
+    # Namespaces always use "/" as separator, whatever the OS path separator is.
+    assert list(namespace_hierarchy("a/b/c")) == ["a", "a/b", "a/b/c"]
+    assert list(namespace_hierarchy("a")) == ["a"]
+    assert list(namespace_hierarchy(None)) == []
 
 
 def test_nonexistent_namespaces():
