@@ -1334,14 +1334,16 @@
 <h2>Key changes</h2>
 <h3>PyArrow support</h3>
 <p>Minari now supports PyArrow datasets. To create a new dataset using PyArrow, set the <code>data_format</code> flag to <code>arrow</code> during the creation of a <code>DataCollector</code> or while creating a dataset with a buffer. For example:</p>
-<div class="highlight highlight-source-python notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="env = DataCollector(env, data_format=&quot;arrow&quot;)"><pre><span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-en">DataCollector</span>(<span class="pl-s1">env</span>, <span class="pl-s1">data_format</span><span class="pl-c1">=</span><span class="pl-s">"arrow"</span>)</pre></div>
+<div class="snippet-clipboard-content notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="env = DataCollector(env, data_format=&quot;arrow&quot;)"><pre lang="python" class="notranslate"><code>env = DataCollector(env, data_format="arrow")
+</code></pre></div>
 <p>Loading a dataset doesn't require any change, Minari will detect automatically the data format.</p>
 <h3>Namespaces</h3>
 <p>Datasets can now be grouped to create a more organized dataset hub. For example, current remote datasets, which are reproductions of the <code>D4RL</code> datasets, are grouped under a namespace called <code>D4RL</code>. We encourage grouping datasets based on the environment used to produce them, if applicable. For instance, the previously named <code>door-human-v2</code> dataset is now referenced as <code>D4RL/door/human-v2</code>. Multiple datasets are available in the <code>D4RL</code> group as well as in the <code>D4RL/door</code> subgroup, such as <code>D4RL/door/cloned-v2</code>. These grouped datasets can share metadata, enhancing their organization and accessibility.</p>
 <p>For more information on creating and managing namespaces, please refer to the <a href="https://minari.farama.org/api/namespace/namespace/" rel="nofollow">documentation page</a>.</p>
 <h3>Support for other remotes</h3>
 <p>You can now set your own remote storage in Minari. Currently, only Google Cloud buckets are supported, but we plan to add support for other cloud services in the future. To configure your remote storage, set the <code>MINARI_REMOTE</code> environment variable, for example as follows:</p>
-<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="export MINARI_REMOTE=gcp://bucket-name"><pre><span class="pl-k">export</span> MINARI_REMOTE=gcp://bucket-name</pre></div>
+<div class="snippet-clipboard-content notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="export MINARI_REMOTE=gcp://bucket-name"><pre lang="bash" class="notranslate"><code>export MINARI_REMOTE=gcp://bucket-name
+</code></pre></div>
 <h2>Breaking changes</h2>
 <p>This release introduces a few breaking changes:</p>
 <ul>
@@ -1433,7 +1435,7 @@
 <h3>Unflattened <code>Dict</code> and <code>Tuple</code> space support</h3>
 <p>The following exerpt from our documentation shows how unflattened <code>gymnasium.spaces.Dict</code> and <code>gymnasium.spaces.Tuple</code> are now supported.</p>
 <p>In the case where, the observation space is a relatively complex <code>Dict</code> space with the following definition:</p>
-<div class="highlight highlight-source-python notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="spaces.Dict(
+<div class="snippet-clipboard-content notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="spaces.Dict(
     {
         &quot;component_1&quot;: spaces.Box(low=-1, high=1, dtype=np.float32),
         &quot;component_2&quot;: spaces.Dict(
@@ -1443,17 +1445,18 @@
             }
         ),
     }
-)"><pre><span class="pl-s1">spaces</span>.<span class="pl-c1">Dict</span>(
+)"><pre lang="python" class="notranslate"><code>spaces.Dict(
     {
-        <span class="pl-s">"component_1"</span>: <span class="pl-s1">spaces</span>.<span class="pl-c1">Box</span>(<span class="pl-s1">low</span><span class="pl-c1">=</span><span class="pl-c1">-</span><span class="pl-c1">1</span>, <span class="pl-s1">high</span><span class="pl-c1">=</span><span class="pl-c1">1</span>, <span class="pl-s1">dtype</span><span class="pl-c1">=</span><span class="pl-s1">np</span>.<span class="pl-c1">float32</span>),
-        <span class="pl-s">"component_2"</span>: <span class="pl-s1">spaces</span>.<span class="pl-c1">Dict</span>(
+        "component_1": spaces.Box(low=-1, high=1, dtype=np.float32),
+        "component_2": spaces.Dict(
             {
-                <span class="pl-s">"subcomponent_1"</span>: <span class="pl-s1">spaces</span>.<span class="pl-c1">Box</span>(<span class="pl-s1">low</span><span class="pl-c1">=</span><span class="pl-c1">2</span>, <span class="pl-s1">high</span><span class="pl-c1">=</span><span class="pl-c1">3</span>, <span class="pl-s1">dtype</span><span class="pl-c1">=</span><span class="pl-s1">np</span>.<span class="pl-c1">float32</span>),
-                <span class="pl-s">"subcomponent_2"</span>: <span class="pl-s1">spaces</span>.<span class="pl-c1">Box</span>(<span class="pl-s1">low</span><span class="pl-c1">=</span><span class="pl-c1">4</span>, <span class="pl-s1">high</span><span class="pl-c1">=</span><span class="pl-c1">5</span>, <span class="pl-s1">dtype</span><span class="pl-c1">=</span><span class="pl-s1">np</span>.<span class="pl-c1">float32</span>),
+                "subcomponent_1": spaces.Box(low=2, high=3, dtype=np.float32),
+                "subcomponent_2": spaces.Box(low=4, high=5, dtype=np.float32),
             }
         ),
     }
-)</pre></div>
+)
+</code></pre></div>
 <p>and the action space is <code>Box</code> space, the resulting <code>HDF5</code> file will end up looking as follows:</p>
 <p>📄 main_data.hdf5<br>
 ├ 📁 episode_0<br>
@@ -1477,7 +1480,7 @@
 │<br>
 └ 📁 last_episode_id</p>
 <p>Similarly, consider the case where we have a <code>Box</code> space as an observation space and a relatively complex <code>Tuple</code> space as an action space with the following definition:</p>
-<div class="highlight highlight-source-python notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="spaces.Tuple(
+<div class="snippet-clipboard-content notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="spaces.Tuple(
     (
         spaces.Box(low=2, high=3, dtype=np.float32),
         spaces.Tuple(
@@ -1487,17 +1490,18 @@
             )
         ),
     )
-)"><pre><span class="pl-s1">spaces</span>.<span class="pl-c1">Tuple</span>(
+)"><pre lang="python" class="notranslate"><code>spaces.Tuple(
     (
-        <span class="pl-s1">spaces</span>.<span class="pl-c1">Box</span>(<span class="pl-s1">low</span><span class="pl-c1">=</span><span class="pl-c1">2</span>, <span class="pl-s1">high</span><span class="pl-c1">=</span><span class="pl-c1">3</span>, <span class="pl-s1">dtype</span><span class="pl-c1">=</span><span class="pl-s1">np</span>.<span class="pl-c1">float32</span>),
-        <span class="pl-s1">spaces</span>.<span class="pl-c1">Tuple</span>(
+        spaces.Box(low=2, high=3, dtype=np.float32),
+        spaces.Tuple(
             (
-                <span class="pl-s1">spaces</span>.<span class="pl-c1">Box</span>(<span class="pl-s1">low</span><span class="pl-c1">=</span><span class="pl-c1">2</span>, <span class="pl-s1">high</span><span class="pl-c1">=</span><span class="pl-c1">3</span>, <span class="pl-s1">dtype</span><span class="pl-c1">=</span><span class="pl-s1">np</span>.<span class="pl-c1">float32</span>),
-                <span class="pl-s1">spaces</span>.<span class="pl-c1">Box</span>(<span class="pl-s1">low</span><span class="pl-c1">=</span><span class="pl-c1">4</span>, <span class="pl-s1">high</span><span class="pl-c1">=</span><span class="pl-c1">5</span>, <span class="pl-s1">dtype</span><span class="pl-c1">=</span><span class="pl-s1">np</span>.<span class="pl-c1">float32</span>),
+                spaces.Box(low=2, high=3, dtype=np.float32),
+                spaces.Box(low=4, high=5, dtype=np.float32),
             )
         ),
     )
-)</pre></div>
+)
+</code></pre></div>
 <p>In this case, the resulting Minari dataset <code>HDF5</code> file will end up looking as follows:</p>
 <p>📄 main_data.hdf5<br>
 ├ 📁 episode_0<br>
@@ -1668,39 +1672,43 @@
 <p>When <a href="https://minari.farama.org/main/content/basic_usage/#using-minari-datasets" rel="nofollow">loading</a> a dataset, the <a href="https://minari.farama.org/main/api/minari_dataset/minari_dataset/" rel="nofollow">MinariDataset</a> object now delegates the HDF5 file access to a <a href="https://github.com/Farama-Foundation/Minari/blob/901235974ca69b175ddb7de4faff40dba4b13ede/minari/dataset/minari_storage.py#L12">MinariStorage</a> object. The  <a href="https://minari.farama.org/main/api/minari_dataset/minari_dataset/" rel="nofollow">MinariDataset</a> provides new methods (<a href="https://minari.farama.org/main/api/minari_dataset/minari_dataset/#minari.MinariDataset.sample_episodes" rel="nofollow"><code>MinariDataset.sample_episodes()</code></a>(<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1605340486" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/34" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/34/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/34">#34</a>) and <a href="https://minari.farama.org/main/api/minari_dataset/minari_dataset/#minari.MinariDataset.iterate_episodes" rel="nofollow"><code>MinariDataset.iterate_episodes()</code></a>(<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1658034582" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/54" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/54/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/54">#54</a>)) to retrieve <a href="https://minari.farama.org/main/api/minari_dataset/episode_data/" rel="nofollow">EpisodeData</a> from the available episode indices in the dataset.</p>
 <p><strong>NOTE</strong>: for now the user is in charge of creating their own replay buffers with the provided episode <a href="https://minari.farama.org/main/content/basic_usage/#sampling-episodes" rel="nofollow">sampling methods</a>. We are currently working on creating standard replay buffers (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1659055513" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/55" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/55/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/55">#55</a>) and making Minari datasets compatible with other learning Offline RL libraries.</p>
 <p>The available episode indices can be filtered using metadata or other information from the episodes HDF5 datasets with <a href="https://minari.farama.org/main/api/minari_dataset/minari_dataset/#minari.MinariDataset.filter_episodes" rel="nofollow"> <code>MinariDataset.filter_episodes(condition: Callable[[h5py.Group], bool])</code></a>(<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1605340486" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/34" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/34/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/34">#34</a>).</p>
-<div class="highlight highlight-source-python notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="dataset = minari.load_dataset(&quot;door-human-v0&quot;)
+<div class="snippet-clipboard-content notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="dataset = minari.load_dataset(&quot;door-human-v0&quot;)
 
 print(f'TOTAL EPISODES ORIGINAL DATASET: {dataset.total_episodes}')
 
 # get episodes with mean reward greater than 2
 filter_dataset = dataset.filter_episodes(lambda episode: episode[&quot;rewards&quot;].attrs.get(&quot;mean&quot;) &gt; 2)
 
-print(f'TOTAL EPISODES FILTER DATASET: {filter_dataset.total_episodes}')"><pre><span class="pl-s1">dataset</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-c1">load_dataset</span>(<span class="pl-s">"door-human-v0"</span>)
+print(f'TOTAL EPISODES FILTER DATASET: {filter_dataset.total_episodes}')"><pre lang="python" class="notranslate"><code>dataset = minari.load_dataset("door-human-v0")
 
-<span class="pl-en">print</span>(<span class="pl-s">f'TOTAL EPISODES ORIGINAL DATASET: <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">dataset</span>.<span class="pl-c1">total_episodes</span><span class="pl-kos">}</span></span>'</span>)
+print(f'TOTAL EPISODES ORIGINAL DATASET: {dataset.total_episodes}')
 
-<span class="pl-c"># get episodes with mean reward greater than 2</span>
-<span class="pl-s1">filter_dataset</span> <span class="pl-c1">=</span> <span class="pl-s1">dataset</span>.<span class="pl-c1">filter_episodes</span>(<span class="pl-k">lambda</span> <span class="pl-s1">episode</span>: <span class="pl-s1">episode</span>[<span class="pl-s">"rewards"</span>].<span class="pl-c1">attrs</span>.<span class="pl-c1">get</span>(<span class="pl-s">"mean"</span>) <span class="pl-c1">&gt;</span> <span class="pl-c1">2</span>)
+# get episodes with mean reward greater than 2
+filter_dataset = dataset.filter_episodes(lambda episode: episode["rewards"].attrs.get("mean") &gt; 2)
 
-<span class="pl-en">print</span>(<span class="pl-s">f'TOTAL EPISODES FILTER DATASET: <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">filter_dataset</span>.<span class="pl-c1">total_episodes</span><span class="pl-kos">}</span></span>'</span>)</pre></div>
-<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="&gt;&gt;&gt; TOTAL EPISODES ORIGINAL DATASET: 25
-&gt;&gt;&gt; TOTAL EPISODES FILTER DATASET: 18"><pre>&gt;&gt;&gt; TOTAL EPISODES ORIGINAL DATASET: 25
-&gt;&gt;&gt; TOTAL EPISODES FILTER DATASET: 18</pre></div>
+print(f'TOTAL EPISODES FILTER DATASET: {filter_dataset.total_episodes}')
+</code></pre></div>
+<div class="snippet-clipboard-content notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="&gt;&gt;&gt; TOTAL EPISODES ORIGINAL DATASET: 25
+&gt;&gt;&gt; TOTAL EPISODES FILTER DATASET: 18"><pre lang="bash" class="notranslate"><code>&gt;&gt;&gt; TOTAL EPISODES ORIGINAL DATASET: 25
+&gt;&gt;&gt; TOTAL EPISODES FILTER DATASET: 18
+</code></pre></div>
 <p>The episodes in a <a href="https://minari.farama.org/main/api/minari_dataset/minari_dataset/" rel="nofollow">MinariDataset</a> can also be splitted into smaller sub-datasets with <a href="https://minari.farama.org/main/api/minari_functions/#split-minari-dataset" rel="nofollow"><code>minari.split_dataset(dataset: MinariDataset, sizes: List[int], seed: int | None = None)</code></a>(<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1605340486" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/34" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/34/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/34">#34</a>).</p>
-<div class="highlight highlight-source-python notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="dataset = minari.load_dataset(&quot;door-human-v0&quot;)
+<div class="snippet-clipboard-content notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="dataset = minari.load_dataset(&quot;door-human-v0&quot;)
 
 split_datasets = minari.split_dataset(dataset, sizes=[20, 5], seed=123)
 
 print(f'TOTAL EPISODES FIRST SPLIT: {split_datasets[0].total_episodes}')
-print(f'TOTAL EPISODES SECOND SPLIT: {split_datasets[1].total_episodes}')"><pre><span class="pl-s1">dataset</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-c1">load_dataset</span>(<span class="pl-s">"door-human-v0"</span>)
+print(f'TOTAL EPISODES SECOND SPLIT: {split_datasets[1].total_episodes}')"><pre lang="python" class="notranslate"><code>dataset = minari.load_dataset("door-human-v0")
 
-<span class="pl-s1">split_datasets</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-c1">split_dataset</span>(<span class="pl-s1">dataset</span>, <span class="pl-s1">sizes</span><span class="pl-c1">=</span>[<span class="pl-c1">20</span>, <span class="pl-c1">5</span>], <span class="pl-s1">seed</span><span class="pl-c1">=</span><span class="pl-c1">123</span>)
+split_datasets = minari.split_dataset(dataset, sizes=[20, 5], seed=123)
 
-<span class="pl-en">print</span>(<span class="pl-s">f'TOTAL EPISODES FIRST SPLIT: <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">split_datasets</span>[<span class="pl-c1">0</span>].<span class="pl-c1">total_episodes</span><span class="pl-kos">}</span></span>'</span>)
-<span class="pl-en">print</span>(<span class="pl-s">f'TOTAL EPISODES SECOND SPLIT: <span class="pl-s1"><span class="pl-kos">{</span><span class="pl-s1">split_datasets</span>[<span class="pl-c1">1</span>].<span class="pl-c1">total_episodes</span><span class="pl-kos">}</span></span>'</span>)</pre></div>
-<div class="highlight highlight-source-shell notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="&gt;&gt;&gt; TOTAL EPISODES FIRST SPLIT: 20
-&gt;&gt;&gt; TOTAL EPISODES SECOND SPLIT: 5"><pre>&gt;&gt;&gt; TOTAL EPISODES FIRST SPLIT: 20
-&gt;&gt;&gt; TOTAL EPISODES SECOND SPLIT: 5</pre></div>
+print(f'TOTAL EPISODES FIRST SPLIT: {split_datasets[0].total_episodes}')
+print(f'TOTAL EPISODES SECOND SPLIT: {split_datasets[1].total_episodes}')
+</code></pre></div>
+<div class="snippet-clipboard-content notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="&gt;&gt;&gt; TOTAL EPISODES FIRST SPLIT: 20
+&gt;&gt;&gt; TOTAL EPISODES SECOND SPLIT: 5"><pre lang="bash" class="notranslate"><code>&gt;&gt;&gt; TOTAL EPISODES FIRST SPLIT: 20
+&gt;&gt;&gt; TOTAL EPISODES SECOND SPLIT: 5
+</code></pre></div>
 <p>Finally,  Gymnasium release <a href="https://github.com/Farama-Foundation/Gymnasium/releases/tag/v0.28.0"><code>v0.28.0</code></a> made possible the conversion of the environment's <a href="https://gymnasium.farama.org/api/registry/#gymnasium.envs.registration.EnvSpec" rel="nofollow"><code>EnvSpec</code></a> to a <code>json</code> dictionary. This allowed Minari to "safe" the description of the environment used to generate the dataset into the HDF5 file for later recovery through: <a href="https://minari.farama.org/main/api/minari_dataset/minari_dataset/#minari.MinariDataset.recover_environment" rel="nofollow"><code>MinariDataset.recover_environment()</code></a> (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1586245546" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/31" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/31/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/31">#31</a>). <strong>NOTE</strong>: the <a href="https://gymnasium.farama.org/api/registry/#core-variables" rel="nofollow"><code>entry_point</code></a> of the environment must be available, i.e. to recover the environment from <code>door-human-v0</code> dataset, the <a href="https://robotics.farama.org/" rel="nofollow"><code>gymnasium-robotics</code></a> library must be installed.</p>
 <h3>Dataset Creation (<a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="1586245546" data-permission-text="Title is private" data-url="https://github.com/Farama-Foundation/Minari/issues/31" data-hovercard-type="pull_request" data-hovercard-url="/Farama-Foundation/Minari/pull/31/hovercard" href="https://github.com/Farama-Foundation/Minari/pull/31">#31</a>)</h3>
 <p>We are facilitating the logging of environment data by providing a Gymnasium environment wrapper,  <a href="https://minari.farama.org/main/api/data_collector/#minari-datacollectorv0" rel="nofollow"><code>DataCollectorV0</code></a>. This wrapper buffers the parameters from a Gymnasium <a href="https://gymnasium.farama.org/api/env/#gymnasium.Env.step" rel="nofollow">step</a> transition. The <a href="https://minari.farama.org/main/api/data_collector/#minari-datacollectorv0" rel="nofollow"><code>DataCollectorV0</code></a> is also memory efficient by providing a step/episode scheduler to cache the recorded data. In addition, this wrapper can be initialized with two custom callbacks:</p>
@@ -1715,7 +1723,7 @@ print(f'TOTAL EPISODES SECOND SPLIT: {split_datasets[1].total_episodes}')"><pre>
 <p>To save the Minari dataset in disk with a specific dataset <code>id</code> two functions are provided. If the data is collected by wrapping the environment with a <a href="https://minari.farama.org/main/api/data_collector/#minari-datacollectorv0" rel="nofollow"><code>DataCollectorV0</code></a>, use <a href="https://minari.farama.org/main/api/minari_functions/#minari.create_dataset_from_collector_env" rel="nofollow"><code>minari.create_dataset_from_collector_env</code></a>. Otherwise you can collect the episode trajectories with dictionary collection buffers and use <a href="https://minari.farama.org/main/api/minari_functions/#minari.create_dataset_from_buffers" rel="nofollow"><code>minari.create_dataset_from_buffers</code></a>.</p>
 <p>This functions return a <code>MinariDataset</code> object which can be used to checkpoint the data collection process to later append more data with<br>
 <a href="https://minari.farama.org/main/api/minari_dataset/minari_dataset/#minari.MinariDataset.update_dataset_from_collector_env" rel="nofollow"><code>MinariDataset.update_dataset_from_collector_env(collector_env: DataCollectorV0)</code></a>.</p>
-<div class="highlight highlight-source-python notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="import minari
+<div class="snippet-clipboard-content notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="import minari
 import gynasium as gym
 
 env = gym.make('CartPole-v1')   
@@ -1738,40 +1746,42 @@ for n_step in range(1000):
     	if dataset_id not in minari.list_local_datasets():
         	dataset = minari.create_dataset_from_collector_env(collector_env=collector_env, dataset_id=dataset_id)
     	else:
-        	dataset.update_dataset_from_collector_env(collector_env)"><pre><span class="pl-k">import</span> <span class="pl-s1">minari</span>
-<span class="pl-k">import</span> <span class="pl-s1">gynasium</span> <span class="pl-k">as</span> <span class="pl-s1">gym</span>
+        	dataset.update_dataset_from_collector_env(collector_env)"><pre lang="python" class="notranslate"><code>import minari
+import gynasium as gym
 
-<span class="pl-s1">env</span> <span class="pl-c1">=</span> <span class="pl-s1">gym</span>.<span class="pl-c1">make</span>(<span class="pl-s">'CartPole-v1'</span>)   
-<span class="pl-s1">collector_env</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-c1">DataCollectorV0</span>(<span class="pl-s1">env</span>)
+env = gym.make('CartPole-v1')   
+collector_env = minari.DataCollectorV0(env)
 
-<span class="pl-s1">dataset_id</span> <span class="pl-c1">=</span> <span class="pl-s">'cartpole-test-v0'</span>
+dataset_id = 'cartpole-test-v0'
 
-<span class="pl-c"># Collect 1000 episodes for the dataset</span>
-<span class="pl-k">for</span> <span class="pl-s1">n_step</span> <span class="pl-c1">in</span> <span class="pl-en">range</span>(<span class="pl-c1">1000</span>):
-	<span class="pl-s1">collector_env</span>.<span class="pl-c1">reset</span>(<span class="pl-s1">seed</span><span class="pl-c1">=</span><span class="pl-c1">123</span>)
-	<span class="pl-k">while</span> <span class="pl-c1">True</span>:
-    	<span class="pl-s1">action</span> <span class="pl-c1">=</span> <span class="pl-s1">collector_env</span>.<span class="pl-c1">action_space</span>.<span class="pl-c1">sample</span>()
-    	<span class="pl-s1">obs</span>, <span class="pl-s1">rew</span>, <span class="pl-s1">terminated</span>, <span class="pl-s1">truncated</span>, <span class="pl-s1">info</span> <span class="pl-c1">=</span> <span class="pl-s1">collector_env</span>.<span class="pl-c1">step</span>(<span class="pl-s1">action</span>)
-    	<span class="pl-k">if</span> <span class="pl-s1">terminated</span> <span class="pl-c1">or</span> <span class="pl-s1">truncated</span>:
-         	<span class="pl-k">break</span>
+# Collect 1000 episodes for the dataset
+for n_step in range(1000):
+	collector_env.reset(seed=123)
+	while True:
+    	action = collector_env.action_space.sample()
+    	obs, rew, terminated, truncated, info = collector_env.step(action)
+    	if terminated or truncated:
+         	break
 
-	<span class="pl-c"># Checkpoint data after each 100 episodes</span>
-	<span class="pl-k">if</span> (<span class="pl-s1">n_step</span> <span class="pl-c1">+</span> <span class="pl-c1">1</span>) <span class="pl-c1">%</span> <span class="pl-c1">100</span> <span class="pl-c1">==</span> <span class="pl-c1">0</span>:
-    	<span class="pl-c"># If the Minari dataset id does not exist create a new dataset, otherwise update the existing one</span>
-    	<span class="pl-k">if</span> <span class="pl-s1">dataset_id</span> <span class="pl-c1"><span class="pl-c1">not</span> <span class="pl-c1">in</span></span> <span class="pl-s1">minari</span>.<span class="pl-c1">list_local_datasets</span>():
-        	<span class="pl-s1">dataset</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-c1">create_dataset_from_collector_env</span>(<span class="pl-s1">collector_env</span><span class="pl-c1">=</span><span class="pl-s1">collector_env</span>, <span class="pl-s1">dataset_id</span><span class="pl-c1">=</span><span class="pl-s1">dataset_id</span>)
-    	<span class="pl-k">else</span>:
-        	<span class="pl-s1">dataset</span>.<span class="pl-c1">update_dataset_from_collector_env</span>(<span class="pl-s1">collector_env</span>)</pre></div>
+	# Checkpoint data after each 100 episodes
+	if (n_step + 1) % 100 == 0:
+    	# If the Minari dataset id does not exist create a new dataset, otherwise update the existing one
+    	if dataset_id not in minari.list_local_datasets():
+        	dataset = minari.create_dataset_from_collector_env(collector_env=collector_env, dataset_id=dataset_id)
+    	else:
+        	dataset.update_dataset_from_collector_env(collector_env)
+</code></pre></div>
 <p>We provide a curated tutorial in the documentation on how to use these dataset creation tools: <a href="https://minari.farama.org/main/tutorials/dataset_creation/point_maze_dataset/#sphx-glr-tutorials-dataset-creation-point-maze-dataset-py" rel="nofollow">https://minari.farama.org/main/tutorials/dataset_creation/point_maze_dataset/#sphx-glr-tutorials-dataset-creation-point-maze-dataset-py</a></p>
 <p>Finally, multiple existent datasets can be combined into a larger dataset. This requires that the datasets to be combined have the same observation/action space as well as the same <code>EnvSpec</code> (except for the <a href="https://gymnasium.farama.org/api/wrappers/misc_wrappers/#gymnasium.wrappers.TimeLimit" rel="nofollow"><code>max_episode_steps</code></a> argument for which the largest will be selected among all the datasets)</p>
 <p>Multiple already existent Minari datasets can be combined under a different name as follows:</p>
-<div class="highlight highlight-source-python notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="dataset_v1 = minari.load_dataset('dataset-v1')
+<div class="snippet-clipboard-content notranslate position-relative overflow-auto" data-snippet-clipboard-copy-content="dataset_v1 = minari.load_dataset('dataset-v1')
 dataset_v2 = minari.load_dataset('dataset-v2')
 
-dataset_v3 = minari.combine_datasets(datasets_to_combine = [dataset_v1, dataset_v2], new_dataset_id = 'dataset-v3')"><pre><span class="pl-s1">dataset_v1</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-c1">load_dataset</span>(<span class="pl-s">'dataset-v1'</span>)
-<span class="pl-s1">dataset_v2</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-c1">load_dataset</span>(<span class="pl-s">'dataset-v2'</span>)
+dataset_v3 = minari.combine_datasets(datasets_to_combine = [dataset_v1, dataset_v2], new_dataset_id = 'dataset-v3')"><pre lang="python" class="notranslate"><code>dataset_v1 = minari.load_dataset('dataset-v1')
+dataset_v2 = minari.load_dataset('dataset-v2')
 
-<span class="pl-s1">dataset_v3</span> <span class="pl-c1">=</span> <span class="pl-s1">minari</span>.<span class="pl-c1">combine_datasets</span>(<span class="pl-s1">datasets_to_combine</span> <span class="pl-c1">=</span> [<span class="pl-s1">dataset_v1</span>, <span class="pl-s1">dataset_v2</span>], <span class="pl-s1">new_dataset_id</span> <span class="pl-c1">=</span> <span class="pl-s">'dataset-v3'</span>)</pre></div>
+dataset_v3 = minari.combine_datasets(datasets_to_combine = [dataset_v1, dataset_v2], new_dataset_id = 'dataset-v3')
+</code></pre></div>
 <h3>CLI</h3>
 <p>To improve accessibility to the remote public datasets, we are also including a <a href="https://minari.farama.org/main/content/minari_cli/" rel="nofollow">CLI</a> tool with commands to list, download, and upload Minari datasets.</p>
 <h2>New Public Datasets</h2>
