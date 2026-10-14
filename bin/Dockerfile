@@ -10,6 +10,7 @@ RUN apt-get -y update \
     libglu1-mesa-dev \
     libgl1-mesa-dev \
     libosmesa6-dev \
+    libhdf5-dev \
     xvfb \
     patchelf \
     ffmpeg cmake \
