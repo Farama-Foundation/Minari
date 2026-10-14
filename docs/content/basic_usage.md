@@ -381,6 +381,8 @@ There is another optional way of creating a Minari dataset and that is by using 
 ```{eval-rst}
 When collecting data with the :class:`minari.DataCollector` wrapper, the recorded data is saved into temporary files and it won't be permanently saved on disk until the :func:`DataCollector.create_dataset` function is called. To prevent losing data for large datasets, it is recommended to create the dataset during data collection and append the data to it using :func:`DataCollector.add_to_dataset`.
 
+Appended episodes retain their reset seed and options in the episode metadata, so they can be replayed with the same reset arguments.
+
 Continuing the ``'CartPole-v1'`` example we can checkpoint the newly created Minari dataset every 10 episodes as follows:
 ```
 
