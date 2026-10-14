@@ -329,14 +329,23 @@ class MinariStorage(ABC):
         """
         ...
 
-    def update_from_storage(self, storage: MinariStorage):
+    def update_from_storage(
+        self, storage: MinariStorage, episode_indices: Optional[Iterable[int]] = None
+    ):
         """Update the dataset using another MinariStorage.
 
         Args:
             storage (MinariStorage): the other MinariStorage from which the data will be taken
+            episode_indices (Iterable[int], optional): episode indices to copy, in order.
+                If not specified, all episodes are copied.
         """
-        for episode in storage.get_episodes(range(storage.total_episodes)):
-            episode_buffer = EpisodeBuffer(
+        if episode_indices is None:
+            episode_indices = range(storage.total_episodes)
+        else:
+            # Storage backends may iterate over the indices more than once.
+            episode_indices = list(episode_indices)
+        episodes = (
+            EpisodeBuffer(
                 id=None,
                 seed=episode.get("seed"),
                 observations=episode["observations"],
@@ -346,7 +355,10 @@ class MinariStorage(ABC):
                 truncations=episode["truncations"],
                 infos=episode.get("infos"),
             )
-            self.update_episodes([episode_buffer])
+            for episode in storage.get_episodes(episode_indices)
+        )
+        # Initialize the destination storage even when no episodes are selected.
+        self.update_episodes(episodes)
 
         author1 = self.metadata.get("author", set())
         author2 = storage.metadata.get("author", set())

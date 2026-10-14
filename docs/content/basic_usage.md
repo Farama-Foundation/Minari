@@ -269,6 +269,11 @@ for _ in range(100):
 
 ### Combine Minari Datasets
 
+When using `minari.combine_datasets` with datasets returned by
+`filter_episodes` or `minari.split_dataset`, only the selected episodes are copied.
+Episodes retain their order within each input dataset and receive consecutive IDs
+in the combined dataset. An empty input dataset contributes no episodes.
+
 ```{eval-rst}
 In the case of having two or more Minari datasets created with the same environment we can combine these datasets into a single one by using the Minari function :func:`minari.combine_datasets`, i.e. the ``'AdroitHandDoor-v1'`` environment has two datasets available in the remote Farama servers, ``D4RL/door/human-v2`` and ``D4RL/door/expert-v2``, we can combine the episodes in these two datasets into a new Minari dataset ``D4RL/door/all-v0``:
 ```
