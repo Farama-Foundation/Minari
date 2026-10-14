@@ -410,7 +410,8 @@ def _json_converter(obj: Any):
 def is_image_space(space: gym.Space) -> bool:
     return (
         isinstance(space, gym.spaces.Box)
-        and len(space.shape) in {2, 3}
+        # JPEG holds grayscale (H, W) or RGB (H, W, 3) images only
+        and (len(space.shape) == 2 or (len(space.shape) == 3 and space.shape[2] == 3))
         and space.shape[0] >= 32  # we don't consider images if smaller, e.g. minigrid
         and space.shape[1] >= 32
         and space.dtype == np.uint8
