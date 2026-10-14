@@ -1,3 +1,4 @@
+import json
 import os
 from dataclasses import replace
 
@@ -51,6 +52,45 @@ def _generate_episode_buffer(
         buffer = buffer.add_step_data(step_data)
 
     return buffer
+
+
+class CloseCountingEnv(gym.Env):
+    closed = 0
+
+    def __init__(self):
+        self.observation_space = spaces.Box(-1, 1, shape=(2,))
+        self.action_space = spaces.Discrete(3)
+
+    def close(self):
+        CloseCountingEnv.closed += 1
+
+
+@pytest.mark.parametrize(
+    "given_spaces", [{}, {"observation_space": spaces.Box(-1, 1, shape=(2,))}]
+)
+def test_temporary_envs_are_closed(tmp_dataset_dir, given_spaces):
+    env_id = "MinariStorageCloseCounting-v0"
+    gym.register(env_id, entry_point=f"{__name__}:CloseCountingEnv")
+    try:
+        CloseCountingEnv.closed = 0
+        MinariStorage.new(
+            data_path=tmp_dataset_dir, env_spec=gym.spec(env_id), **given_spaces
+        )
+        assert CloseCountingEnv.closed == 1
+
+        # Datasets without stored spaces get them from the environment on read.
+        metadata_path = os.path.join(tmp_dataset_dir, "metadata.json")
+        with open(metadata_path) as file:
+            metadata = json.load(file)
+        del metadata["observation_space"]
+        with open(metadata_path, "w") as file:
+            json.dump(metadata, file)
+
+        storage = MinariStorage.read(tmp_dataset_dir)
+        assert CloseCountingEnv.closed == 2
+        assert storage.observation_space == spaces.Box(-1, 1, shape=(2,))
+    finally:
+        gym.registry.pop(env_id, None)
 
 
 def test_non_existing_data(tmp_dataset_dir):
