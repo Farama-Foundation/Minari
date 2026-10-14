@@ -38,7 +38,7 @@ def load_dataset(dataset_id: str, download: bool = False):
 
     Args:
         dataset_id (str): name id of Minari dataset
-        download (bool): if `True` download the dataset if it is not found locally. Default to `False`.
+        download (bool): if `True` download the dataset if it is not found locally, or download it again if the local copy cannot be loaded (e.g. after an interrupted download). Default to `False`.
 
     Returns:
         MinariDataset
@@ -53,7 +53,23 @@ def load_dataset(dataset_id: str, download: bool = False):
             )
 
         hosting.download_dataset(dataset_id)
+        return MinariDataset(data_path)
 
+    try:
+        return MinariDataset(data_path)
+    except ValueError as e:
+        # The local copy is incomplete or corrupted, e.g. after an interrupted download.
+        if not download:
+            raise ValueError(
+                f"Dataset {dataset_id} found locally at {file_path} could not be loaded, it may be incomplete or corrupted: {e}. "
+                f"Use download=True or minari.download_dataset('{dataset_id}', force_download=True) to download it again, "
+                f"or minari.delete_dataset('{dataset_id}') to remove it."
+            ) from e
+        warnings.warn(
+            f"Dataset {dataset_id} found locally at {file_path} could not be loaded ({e}). Downloading it again."
+        )
+
+    hosting.download_dataset(dataset_id, force_download=True)
     return MinariDataset(data_path)
 
 
