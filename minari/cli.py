@@ -189,7 +189,7 @@ def list_cmd(
     """List Minari datasets in local or remote storage."""
     if path == "local":
         datasets = local.list_local_datasets(
-            latest_version=True, compatible_minari_version=not all, prefix=prefix
+            latest_version=not all, compatible_minari_version=not all, prefix=prefix
         )
         dataset_dir = os.environ.get(
             "MINARI_DATASETS_PATH",
@@ -219,7 +219,7 @@ def list_cmd(
         datasets = hosting.list_remote_datasets(
             remote_path=remote_path,
             prefix=prefix,
-            latest_version=True,
+            latest_version=not all,
             compatible_minari_version=not all,
         )
         table_title = f"Minari datasets in {remote_path}"
