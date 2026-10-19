@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import json
-from collections import defaultdict
+from collections import OrderedDict, defaultdict
 from functools import singledispatch
 from typing import Dict, Union
 
@@ -11,6 +11,7 @@ from gymnasium import spaces
 
 @singledispatch
 def serialize_space(space: spaces.Space, to_string=True) -> Union[Dict, str]:
+    """Serialize a Gymnasium space, preserving Dict field order for flattening."""
     raise NotImplementedError(f"No serialization method available for {space}")
 
 
@@ -151,7 +152,8 @@ def _deserialize_dict(space_dict: Dict) -> spaces.Dict:
         key: deserialize_space(space_dict["subspaces"][key])
         for key in space_dict["subspaces"]
     }
-    return spaces.Dict(subspaces)
+    # Gymnasium sorts ordinary dicts; preserve the stored observation order.
+    return spaces.Dict(OrderedDict(subspaces))
 
 
 @deserialize_space.register("Box")

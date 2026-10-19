@@ -1,4 +1,5 @@
 import os
+from collections import OrderedDict
 from dataclasses import replace
 
 import gymnasium as gym
@@ -95,6 +96,29 @@ def test_metadata(tmp_dataset_dir, data_format):
 
     storage2 = MinariStorage.read(tmp_dataset_dir)
     assert storage_metadata == storage2.metadata
+
+
+@pytest.mark.parametrize("data_format", get_storage_keys())
+def test_dict_space_order_survives_storage_reload(tmp_dataset_dir, data_format):
+    space = spaces.Dict(
+        OrderedDict([("z", spaces.Discrete(2)), ("a", spaces.Discrete(3))])
+    )
+    observation = {"z": 1, "a": 2}
+    MinariStorage.new(
+        data_path=tmp_dataset_dir,
+        observation_space=space,
+        action_space=space,
+        data_format=data_format,
+    )
+
+    reloaded = MinariStorage.read(tmp_dataset_dir)
+
+    for restored_space in (reloaded.observation_space, reloaded.action_space):
+        assert list(restored_space.spaces) == ["z", "a"]
+        np.testing.assert_array_equal(
+            spaces.flatten(restored_space, observation),
+            spaces.flatten(space, observation),
+        )
 
 
 @pytest.mark.parametrize("data_format", get_storage_keys())
