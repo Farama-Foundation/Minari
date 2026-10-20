@@ -42,6 +42,19 @@ def validate_datasets_to_combine(
         combined_dataset_env_spec (EnvSpec): the resulting EnvSpec of combining the MinariDatasets
 
     """
+    if any(
+        dataset.action_space != datasets_to_combine[0].action_space
+        for dataset in datasets_to_combine
+    ):
+        raise ValueError("The datasets to combine must have the same action space.")
+    if any(
+        dataset.observation_space != datasets_to_combine[0].observation_space
+        for dataset in datasets_to_combine
+    ):
+        raise ValueError(
+            "The datasets to combine must have the same observation space."
+        )
+
     # get first among the dataset's env_spec which is not None
     first_not_none_env_spec = next(
         (
@@ -105,6 +118,8 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_id: s
 
     The new dataset will contain a metadata attribute `combined_datasets` containing a list
     with the dataset names that were combined to form this new Minari dataset.
+    All datasets must have equal observation and action spaces, including when
+    no environment spec is stored.
 
     Args:
         datasets_to_combine (list[MinariDataset]): list of datasets to be combined
