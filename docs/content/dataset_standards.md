@@ -106,6 +106,34 @@ The `sampled_episodes` variable will be a list of 10 `EpisodeData` elements, eac
 
 As mentioned in the `Supported Spaces` section, many different observation and action spaces are supported so the data type for these fields are dependent on the environment being used.
 
+### Transition indexing
+
+For an episode with `T` steps, observations contain `T + 1` entries: the initial observation from `reset()` and the observation returned by each `step()`. Actions, rewards, terminations and truncations each contain `T` entries.
+
+At index `t`, `actions[t]` is applied to `observations[t]`. The resulting `step()` returns `observations[t + 1]`, `rewards[t]`, `terminations[t]` and `truncations[t]`. There is no extra reward entry for the initial observation.
+
+For array observations and actions, the transition at `t = 0` is:
+
+```python
+import minari
+
+dataset = minari.load_dataset("D4RL/door/human-v2", download=True)
+episode = dataset.sample_episodes(1)[0]
+t = 0
+transition = (
+    episode.observations[t],
+    episode.actions[t],
+    episode.rewards[t],
+    episode.observations[t + 1],
+    episode.terminations[t],
+    episode.truncations[t],
+)
+```
+
+For example, a two-step episode has observations at indices `0`, `1` and `2`, but actions and rewards only at indices `0` and `1`. The final observation is the next observation for the last transition; it has no corresponding action.
+
+For `Dict` or `Tuple` spaces, apply the time index to each array within the nested observation or action structure. See the [EpisodeData reference](../api/minari_dataset/episode_data.md) for the complete field descriptions.
+
 Moreover, when creating a dataset with `DataCollector`, if the `DataCollector` is initialized with `record_infos=True`, an info dict must be provided from every call to the environment's `step` and `reset` function. The structure of the info dictionary must be the same across steps. Given that it is not guaranteed that all Gymnasium environments provide infos at every step, we provide the `StepDataCallback` which can modify the infos from a non-compliant environment so they have the same structure at every step.
 
 Other optional attributes of the episode, such as reset `seed` and `options`, can be found in the episode metadata using `MinariStorage.get_episode_metadata`.
