@@ -148,12 +148,17 @@ def split_dataset(
 
     Args:
         dataset (MinariDataset): the MinariDataset to split
-        sizes (List[int]): sizes of the resulting datasets
+        sizes (List[int]): non-negative sizes of the resulting datasets
         seed (Optional[int]): random seed
 
     Returns:
         datasets (List[MinariDataset]): resulting list of datasets
+
+    Raises:
+        ValueError: if any size is negative or the sum exceeds the dataset's episode count.
     """
+    if any(size < 0 for size in sizes):
+        raise ValueError("The split sizes must be non-negative.")
     if sum(sizes) > dataset.total_episodes:
         raise ValueError(
             "Incompatible arguments: the sum of sizes exceeds ",

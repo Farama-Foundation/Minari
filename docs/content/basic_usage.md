@@ -216,6 +216,10 @@ TOTAL EPISODES FILTER DATASET: 18
 Minari provides another utility function to divide a dataset into multiple datasets, :func:`minari.split_dataset`
 ```
 
+Split sizes must be non-negative. A zero size creates an empty split, and a total
+smaller than the dataset's episode count leaves the remaining episodes out.
+A negative size or a total exceeding the episode count raises `ValueError`.
+
 ```python
 import minari
 
