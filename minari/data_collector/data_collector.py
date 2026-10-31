@@ -58,6 +58,9 @@ class DataCollector(gym.Wrapper):
         * A new episode dictionary buffer is created if the env.step(action) call returns `truncated` or `terminated`, or if the environment calls
           env.reset(). If calling reset and the previous episode was not `truncated` or `terminated`, this will automatically be `truncated`.
 
+        * Recorded observations, actions, rewards, and infos are copied after the step callback. Reusing or modifying the original
+          buffers after collection does not change earlier transitions. The environment's return values are passed through unchanged.
+
     """
 
     def __init__(
@@ -157,6 +160,9 @@ class DataCollector(gym.Wrapper):
         assert self._buffer is not None
         if not self._record_infos:
             step_data["info"] = {}
+        # Environments, policies, and callbacks may reuse their output buffers.
+        # Keep the values from this transition until the episode is written.
+        step_data = copy.deepcopy(step_data)
         self._buffer = self._buffer.add_step_data(step_data)
 
         if step_data["terminated"] or step_data["truncated"]:
@@ -210,8 +216,8 @@ class DataCollector(gym.Wrapper):
             id=self._episode_id,
             seed=seed,
             options=options,
-            observations=step_data["observation"],
-            infos=step_data["info"] if self._record_infos else None,
+            observations=copy.deepcopy(step_data["observation"]),
+            infos=copy.deepcopy(step_data["info"]) if self._record_infos else None,
         )
         return obs, info
 
