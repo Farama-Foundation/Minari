@@ -162,7 +162,13 @@ class DataCollector(gym.Wrapper):
             step_data["info"] = {}
         # Environments, policies, and callbacks may reuse their output buffers.
         # Keep the values from this transition until the episode is written.
-        step_data = copy.deepcopy(step_data)
+        step_data = {
+            **step_data,
+            "observation": copy.deepcopy(step_data["observation"]),
+            "action": copy.deepcopy(step_data["action"]),
+            "reward": copy.deepcopy(step_data["reward"]),
+            "info": copy.deepcopy(step_data["info"]),
+        }
         self._buffer = self._buffer.add_step_data(step_data)
 
         if step_data["terminated"] or step_data["truncated"]:

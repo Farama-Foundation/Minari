@@ -175,3 +175,24 @@ def test_mutating_returned_values_does_not_change_collected_data(data_format):
     episode = _save_and_reload(collector)[0]
     np.testing.assert_array_equal(episode.observations[:, 0], [0, 1, 3, 6])
     np.testing.assert_array_equal(episode.infos["position"][:, 0], [0, 1, 3, 6])
+
+
+class ExtraDataCallback(StepDataCallback):
+    def __call__(self, env, **kwargs):
+        data = dict(super().__call__(env, **kwargs))
+        data["extra"] = UncopyableInfo()
+        return data
+
+
+@pytest.mark.parametrize("data_format", get_storage_keys())
+def test_unused_callback_fields_are_not_copied(data_format):
+    collector = DataCollector(
+        ReusedBufferEnv(reuse=False),
+        data_format=data_format,
+        step_data_callback=ExtraDataCallback,
+    )
+    collector.reset(seed=0)
+    for value in (1, 2, 3):
+        collector.step(np.asarray([value], dtype=np.float32))
+    episode = _save_and_reload(collector)[0]
+    np.testing.assert_array_equal(episode.observations[:, 0], [0, 1, 3, 6])
