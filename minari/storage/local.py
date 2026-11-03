@@ -38,7 +38,10 @@ def load_dataset(dataset_id: str, download: bool = False):
 
     Args:
         dataset_id (str): name id of Minari dataset
-        download (bool): if `True` download the dataset if it is not found locally, or download it again if the local copy cannot be loaded (e.g. after an interrupted download). Default to `False`.
+        download (bool): if `True` download the dataset if it is not found locally, or download it again
+            if the local copy cannot be loaded, e.g. when files are missing or the metadata is unreadable
+            after an interrupted download. Damaged data files are only detected when episodes are read.
+            Default to `False`.
 
     Returns:
         MinariDataset
