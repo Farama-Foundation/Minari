@@ -289,6 +289,25 @@ minari list local
 └─────────────────────┴────────────────┴─────────────┴──────────────┴────────────────────┘
 ```
 
+```{eval-rst}
+:func:`minari.combine_datasets` also accepts datasets returned by :func:`minari.MinariDataset.filter_episodes` or :func:`minari.split_dataset`. In this case, only the selected episodes are copied. Episodes keep their order within each input dataset and receive consecutive IDs in the combined dataset. An empty input dataset contributes no episodes.
+```
+
+```python
+import minari
+
+human_dataset = minari.load_dataset('D4RL/door/human-v2')
+expert_dataset = minari.load_dataset('D4RL/door/expert-v2')
+
+# Keep the high-return expert episodes and about half of the human episodes
+high_return_expert = expert_dataset.filter_episodes(lambda episode: episode.rewards.sum() > 2000)
+human_half, _ = minari.split_dataset(human_dataset, sizes=[12, 13], seed=42)
+
+combined_dataset = minari.combine_datasets(
+    [human_half, high_return_expert], new_dataset_id='D4RL/door/selected-v0'
+)
+```
+
 ## Create Minari Dataset
 
 ### Collecting Data

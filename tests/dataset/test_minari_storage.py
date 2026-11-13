@@ -5,6 +5,7 @@ import gymnasium as gym
 import numpy as np
 import pytest
 from gymnasium import spaces
+from gymnasium.utils.env_checker import data_equivalence
 
 import minari
 from minari import DataCollector
@@ -132,6 +133,53 @@ def test_add_episodes(tmp_dataset_dir, data_format, observation_space):
         assert np.all(ep.rewards == storage_ep["rewards"])
         assert np.all(ep.terminations == storage_ep["terminations"])
         assert np.all(ep.truncations == storage_ep["truncations"])
+
+
+@pytest.mark.parametrize("data_format", get_storage_keys())
+def test_add_episodes_with_nested_infos(tmp_dataset_dir, data_format):
+    action_space = spaces.Box(-1, 1, shape=(10,))
+    observation_space = spaces.Box(-1, 1, shape=(3,))
+    steps_per_episode = 5
+
+    def _info(step):
+        return {
+            "timestep": np.array([step]),
+            "component_1": {"matrix": np.full((2, 2), step, dtype=np.float32)},
+        }
+
+    buffer = EpisodeBuffer(observations=observation_space.sample(), infos=_info(0))
+    for i in range(1, steps_per_episode + 1):
+        step_data: StepData = {
+            "observation": observation_space.sample(),
+            "action": action_space.sample(),
+            "reward": 0.0,
+            "terminated": i == steps_per_episode,
+            "truncated": False,
+            "info": _info(i),
+        }
+        buffer = buffer.add_step_data(step_data)
+
+    storage = MinariStorage.new(
+        data_path=tmp_dataset_dir,
+        observation_space=observation_space,
+        action_space=action_space,
+        data_format=data_format,
+    )
+    storage.update_episodes([buffer])
+
+    storage_ep = next(iter(storage.get_episodes([0])))
+    expected_infos = {
+        "timestep": np.arange(steps_per_episode + 1).reshape(-1, 1),
+        "component_1": {
+            "matrix": np.stack(
+                [
+                    np.full((2, 2), i, dtype=np.float32)
+                    for i in range(steps_per_episode + 1)
+                ]
+            )
+        },
+    }
+    np.testing.assert_equal(storage_ep["infos"], expected_infos)
 
 
 @pytest.mark.parametrize("data_format", get_storage_keys())
@@ -429,3 +477,48 @@ def test_seed_change(tmp_dataset_dir, data_format):
     assert len(list(episodes_metadata)) == len(seeds)
     for seed, ep_metadata in zip(seeds, episodes_metadata):
         assert ep_metadata.get("seed") == seed
+
+
+@pytest.mark.parametrize("data_format", get_storage_keys())
+@pytest.mark.parametrize("selection", ["all", "selected", "empty", "iterator"])
+def test_update_from_storage_selection(tmp_path, data_format, selection):
+    """Copy selected episodes in order, while preserving existing target data."""
+    observation_space = spaces.Box(-1, 1)
+    action_space = spaces.Box(-1, 1)
+    source = MinariStorage.new(
+        tmp_path / "source", observation_space, action_space, data_format=data_format
+    )
+    target = MinariStorage.new(
+        tmp_path / "target", observation_space, action_space, data_format=data_format
+    )
+    source.update_episodes(
+        [
+            _generate_episode_buffer(observation_space, action_space, length=length)
+            for length in (2, 3, 4)
+        ]
+    )
+    target.update_episodes(
+        [_generate_episode_buffer(observation_space, action_space, length=1)]
+    )
+    indices = [] if selection == "empty" else [2, 0]
+    if selection == "all":
+        indices = list(range(source.total_episodes))
+
+    expected = list(target.get_episodes([0])) + list(source.get_episodes(indices))
+    if selection == "all":
+        target.update_from_storage(source)
+    else:
+        target.update_from_storage(
+            source,
+            episode_indices=iter(indices) if selection == "iterator" else indices,
+        )
+
+    assert target.total_episodes == len(expected)
+    assert target.total_steps == sum(len(episode["rewards"]) for episode in expected)
+    actual = list(target.get_episodes(range(target.total_episodes)))
+    assert len(actual) == len(expected)
+    for index, (result, original) in enumerate(zip(actual, expected)):
+        assert result["id"] == index
+        assert data_equivalence(result, {**original, "id": index})
+    assert source.total_episodes == 3
+    assert source.total_steps == 9
