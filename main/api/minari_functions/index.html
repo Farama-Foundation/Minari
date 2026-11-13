@@ -1373,7 +1373,9 @@ You can also define this in the environment variable <cite>MINARI_REMOTE</cite>.
 <dd><p>Combine a group of MinariDataset in to a single dataset with its own name id.</p>
 <p>The new dataset will contain a metadata attribute <cite>combined_datasets</cite> containing a list
 with the dataset names that were combined to form this new Minari dataset.
-Only the selected episodes of each dataset are copied, in their existing order.</p>
+Only the selected episodes of each dataset are copied, in their existing order.
+All datasets must have equal observation and action spaces, including when
+no environment spec is stored.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
