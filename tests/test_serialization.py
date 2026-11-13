@@ -1,6 +1,12 @@
+import gymnasium as gym
+import numpy as np
 import pytest
 
-from minari.serialization import deserialize_space, serialize_space
+from minari.serialization import (
+    _DISCRETE_ACCEPTS_DTYPE,
+    deserialize_space,
+    serialize_space,
+)
 from tests.common import test_spaces, unsupported_test_spaces
 
 
@@ -25,6 +31,20 @@ def test_space_serialize_deserialize_unsupported(space):
         NotImplementedError, match=r"No serialization method available for .+"
     ):
         serialize_space(space)
+
+
+@pytest.mark.skipif(
+    not _DISCRETE_ACCEPTS_DTYPE,
+    reason="`spaces.Discrete` takes a dtype from Gymnasium 1.2.2",
+)
+@pytest.mark.parametrize("dtype", [np.int32, np.int64])
+def test_discrete_keeps_its_dtype(dtype):
+    space = gym.spaces.Discrete(5, start=-2, dtype=dtype)
+
+    reconstructed = deserialize_space(serialize_space(space))
+
+    assert reconstructed.dtype == space.dtype
+    assert reconstructed == space
 
 
 @pytest.mark.parametrize("space_type", ["Graph", "Sequence", "OneOf"])

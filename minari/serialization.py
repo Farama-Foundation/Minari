@@ -1,11 +1,19 @@
 from __future__ import annotations
 
+import inspect
 import json
 from functools import singledispatch
 from typing import Dict, Union
 
+import gymnasium
 import numpy as np
 from gymnasium import spaces
+
+
+# `Discrete` takes a `dtype` argument from Gymnasium 1.2.2.
+_DISCRETE_ACCEPTS_DTYPE = (
+    "dtype" in inspect.signature(spaces.Discrete.__init__).parameters
+)
 
 
 @singledispatch
@@ -32,7 +40,7 @@ def _serialize_box(space: spaces.Box, to_string=True) -> Union[Dict, str]:
 def _serialize_discrete(space: spaces.Discrete, to_string=True) -> Union[Dict, str]:
     result = {}
     result["type"] = "Discrete"
-    result["dtype"] = "int64"  # this seems to be hardcoded in Gymnasium
+    result["dtype"] = str(space.dtype)
     # we need to cast from np.int64 to python's int type in order to serialize
     result["start"] = int(space.start)
     result["n"] = int(space.n)
@@ -169,6 +177,16 @@ def _deserialize_discrete(space_dict: Dict) -> spaces.Discrete:
     assert space_dict["type"] == "Discrete"
     n = space_dict["n"]
     start = space_dict["start"]
+    dtype = space_dict.get("dtype", "int64")
+
+    if _DISCRETE_ACCEPTS_DTYPE:
+        return spaces.Discrete(n=n, start=start, dtype=dtype)
+
+    if np.dtype(dtype) != np.dtype("int64"):
+        raise ValueError(
+            f"The dataset declares a Discrete space of dtype {dtype}, which needs "
+            f"Gymnasium 1.2.2 or later; {gymnasium.__version__} is installed."
+        )
     return spaces.Discrete(n=n, start=start)
 
 
