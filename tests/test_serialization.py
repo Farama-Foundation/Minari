@@ -45,3 +45,17 @@ def test_discrete_keeps_its_dtype(dtype):
 
     assert reconstructed.dtype == space.dtype
     assert reconstructed == space
+
+
+@pytest.mark.parametrize("space_type", ["Graph", "Sequence", "OneOf"])
+def test_space_deserialize_unsupported(space_type):
+    """Deserializing an unregistered type reports it the way serializing does.
+
+    The two directions used to disagree: `serialize_space` raised the
+    NotImplementedError below, while `deserialize_space` raised a TypeError
+    about a missing argument, from inside the dispatch table.
+    """
+    with pytest.raises(
+        NotImplementedError, match=r"No deserialization method available for .+"
+    ):
+        deserialize_space({"type": space_type})
