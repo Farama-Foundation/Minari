@@ -100,10 +100,13 @@ class MinariStorage(ABC):
             )
             env_spec = EnvSpec.from_json(env_spec_str)
             env = gym.make(env_spec)
-            if observation_space is None:
-                observation_space = env.observation_space
-            if action_space is None:
-                action_space = env.action_space
+            try:
+                if observation_space is None:
+                    observation_space = env.observation_space
+                if action_space is None:
+                    action_space = env.action_space
+            finally:
+                env.close()
 
         from minari.dataset._storages import get_minari_storage  # avoid circular import
 
@@ -167,10 +170,13 @@ class MinariStorage(ABC):
         if observation_space is None or action_space is None:
             assert env_spec is not None
             env = gym.make(env_spec)
-            if observation_space is None:
-                observation_space = env.observation_space
-            if action_space is None:
-                action_space = env.action_space
+            try:
+                if observation_space is None:
+                    observation_space = env.observation_space
+                if action_space is None:
+                    action_space = env.action_space
+            finally:
+                env.close()
 
         metadata: Dict[str, Any] = {
             "total_episodes": 0,
@@ -329,16 +335,28 @@ class MinariStorage(ABC):
         """
         ...
 
-    def update_from_storage(self, storage: MinariStorage):
+    def update_from_storage(
+        self, storage: MinariStorage, episode_indices: Optional[Iterable[int]] = None
+    ):
         """Update the dataset using another MinariStorage.
 
         Args:
             storage (MinariStorage): the other MinariStorage from which the data will be taken
+            episode_indices (Iterable[int], optional): episode indices to copy, in order.
+                If not specified, all episodes are copied.
         """
-        for episode in storage.get_episodes(range(storage.total_episodes)):
-            episode_buffer = EpisodeBuffer(
+        if episode_indices is None:
+            episode_indices = range(storage.total_episodes)
+        else:
+            # Storage backends may iterate over the indices more than once.
+            episode_indices = list(episode_indices)
+        # Only the reset seed and options are copied from the episode metadata.
+        # Other keys added with `update_episode_metadata` are not copied.
+        episodes = (
+            EpisodeBuffer(
                 id=None,
-                seed=episode.get("seed"),
+                seed=metadata.get("seed"),
+                options=metadata.get("options"),
                 observations=episode["observations"],
                 actions=episode["actions"],
                 rewards=episode["rewards"],
@@ -346,7 +364,14 @@ class MinariStorage(ABC):
                 truncations=episode["truncations"],
                 infos=episode.get("infos"),
             )
-            self.update_episodes([episode_buffer])
+            for episode, metadata in zip(
+                storage.get_episodes(episode_indices),
+                storage.get_episode_metadata(episode_indices),
+                strict=True,
+            )
+        )
+        # Initialize the destination storage even when no episodes are selected.
+        self.update_episodes(episodes)
 
         author1 = self.metadata.get("author", set())
         author2 = storage.metadata.get("author", set())
@@ -410,7 +435,8 @@ def _json_converter(obj: Any):
 def is_image_space(space: gym.Space) -> bool:
     return (
         isinstance(space, gym.spaces.Box)
-        and len(space.shape) in {2, 3}
+        # JPEG holds grayscale (H, W) or RGB (H, W, 3) images only
+        and (len(space.shape) == 2 or (len(space.shape) == 3 and space.shape[2] == 3))
         and space.shape[0] >= 32  # we don't consider images if smaller, e.g. minigrid
         and space.shape[1] >= 32
         and space.dtype == np.uint8
