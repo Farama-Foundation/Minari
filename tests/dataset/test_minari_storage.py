@@ -135,6 +135,53 @@ def test_add_episodes(tmp_dataset_dir, data_format, observation_space):
 
 
 @pytest.mark.parametrize("data_format", get_storage_keys())
+def test_add_episodes_with_nested_infos(tmp_dataset_dir, data_format):
+    action_space = spaces.Box(-1, 1, shape=(10,))
+    observation_space = spaces.Box(-1, 1, shape=(3,))
+    steps_per_episode = 5
+
+    def _info(step):
+        return {
+            "timestep": np.array([step]),
+            "component_1": {"matrix": np.full((2, 2), step, dtype=np.float32)},
+        }
+
+    buffer = EpisodeBuffer(observations=observation_space.sample(), infos=_info(0))
+    for i in range(1, steps_per_episode + 1):
+        step_data: StepData = {
+            "observation": observation_space.sample(),
+            "action": action_space.sample(),
+            "reward": 0.0,
+            "terminated": i == steps_per_episode,
+            "truncated": False,
+            "info": _info(i),
+        }
+        buffer = buffer.add_step_data(step_data)
+
+    storage = MinariStorage.new(
+        data_path=tmp_dataset_dir,
+        observation_space=observation_space,
+        action_space=action_space,
+        data_format=data_format,
+    )
+    storage.update_episodes([buffer])
+
+    storage_ep = next(iter(storage.get_episodes([0])))
+    expected_infos = {
+        "timestep": np.arange(steps_per_episode + 1).reshape(-1, 1),
+        "component_1": {
+            "matrix": np.stack(
+                [
+                    np.full((2, 2), i, dtype=np.float32)
+                    for i in range(steps_per_episode + 1)
+                ]
+            )
+        },
+    }
+    np.testing.assert_equal(storage_ep["infos"], expected_infos)
+
+
+@pytest.mark.parametrize("data_format", get_storage_keys())
 @pytest.mark.parametrize("jpeg_encoding", [True, False])
 def test_image_jpeg_encoding_round_trip(tmp_dataset_dir, data_format, jpeg_encoding):
     """Round-trip image-space data with and without JPEG encoding.
