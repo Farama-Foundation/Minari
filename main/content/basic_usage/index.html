@@ -1418,6 +1418,21 @@ minari<span class="w"> </span>list<span class="w"> </span><span class="nb">local
 └─────────────────────┴────────────────┴─────────────┴──────────────┴────────────────────┘
 </pre></div>
 </div>
+<p><a class="reference internal" href="../../api/minari_functions/#minari.combine_datasets" title="minari.combine_datasets"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.combine_datasets()</span></code></a> also accepts datasets returned by <a class="reference internal" href="../../api/minari_dataset/minari_dataset/#minari.MinariDataset.filter_episodes" title="minari.MinariDataset.filter_episodes"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.MinariDataset.filter_episodes()</span></code></a> or <a class="reference internal" href="../../api/minari_functions/#minari.split_dataset" title="minari.split_dataset"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.split_dataset()</span></code></a>. In this case, only the selected episodes are copied. Episodes keep their order within each input dataset and receive consecutive IDs in the combined dataset. An empty input dataset contributes no episodes.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">minari</span>
+
+<span class="n">human_dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">'D4RL/door/human-v2'</span><span class="p">)</span>
+<span class="n">expert_dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">'D4RL/door/expert-v2'</span><span class="p">)</span>
+
+<span class="c1"># Keep the high-return expert episodes and about half of the human episodes</span>
+<span class="n">high_return_expert</span> <span class="o">=</span> <span class="n">expert_dataset</span><span class="o">.</span><span class="n">filter_episodes</span><span class="p">(</span><span class="k">lambda</span> <span class="n">episode</span><span class="p">:</span> <span class="n">episode</span><span class="o">.</span><span class="n">rewards</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">2000</span><span class="p">)</span>
+<span class="n">human_half</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">split_dataset</span><span class="p">(</span><span class="n">human_dataset</span><span class="p">,</span> <span class="n">sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">],</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="n">combined_dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">combine_datasets</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">human_half</span><span class="p">,</span> <span class="n">high_return_expert</span><span class="p">],</span> <span class="n">new_dataset_id</span><span class="o">=</span><span class="s1">'D4RL/door/selected-v0'</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 </section>
 </section>
 <section id="create-minari-dataset">

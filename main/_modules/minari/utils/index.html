@@ -1300,6 +1300,7 @@
 
 <span class="sd">    The new dataset will contain a metadata attribute `combined_datasets` containing a list</span>
 <span class="sd">    with the dataset names that were combined to form this new Minari dataset.</span>
+<span class="sd">    Only the selected episodes of each dataset are copied, in their existing order.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        datasets_to_combine (list[MinariDataset]): list of datasets to be combined</span>
@@ -1331,7 +1332,9 @@
     <span class="p">)</span>
 
     <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">datasets_to_combine</span><span class="p">:</span>
-        <span class="n">new_storage</span><span class="o">.</span><span class="n">update_from_storage</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">storage</span><span class="p">)</span>
+        <span class="n">new_storage</span><span class="o">.</span><span class="n">update_from_storage</span><span class="p">(</span>
+            <span class="n">dataset</span><span class="o">.</span><span class="n">storage</span><span class="p">,</span> <span class="n">episode_indices</span><span class="o">=</span><span class="n">dataset</span><span class="o">.</span><span class="n">episode_indices</span>
+        <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">MinariDataset</span><span class="p">(</span><span class="n">new_storage</span><span class="p">)</span></div>
 

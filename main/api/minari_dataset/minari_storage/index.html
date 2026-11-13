@@ -1346,11 +1346,15 @@ JPEG-encoded on disk (lossy, smaller). Set to False to store raw arrays (lossles
 
 <dl class="py function">
 <dt class="sig sig-object py" id="minari.dataset.minari_storage.MinariStorage.update_from_storage">
-<span class="sig-prename descclassname"><span class="pre">minari.dataset.minari_storage.MinariStorage.</span></span><span class="sig-name descname"><span class="pre">update_from_storage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#minari.dataset.minari_storage.MinariStorage" title="minari.dataset.minari_storage.MinariStorage"><span class="pre">MinariStorage</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#minari.dataset.minari_storage.MinariStorage.update_from_storage" title="Link to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">minari.dataset.minari_storage.MinariStorage.</span></span><span class="sig-name descname"><span class="pre">update_from_storage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">storage</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#minari.dataset.minari_storage.MinariStorage" title="minari.dataset.minari_storage.MinariStorage"><span class="pre">MinariStorage</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">episode_indices</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Iterable</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#minari.dataset.minari_storage.MinariStorage.update_from_storage" title="Link to this definition">¶</a></dt>
 <dd><p>Update the dataset using another MinariStorage.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>storage</strong> (<a class="reference internal" href="#minari.dataset.minari_storage.MinariStorage" title="minari.dataset.minari_storage.MinariStorage"><em>MinariStorage</em></a>) – the other MinariStorage from which the data will be taken</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>storage</strong> (<a class="reference internal" href="#minari.dataset.minari_storage.MinariStorage" title="minari.dataset.minari_storage.MinariStorage"><em>MinariStorage</em></a>) – the other MinariStorage from which the data will be taken</p></li>
+<li><p><strong>episode_indices</strong> (<em>Iterable</em><em>[</em><em>int</em><em>]</em><em>, </em><em>optional</em>) – episode indices to copy, in order.
+If not specified, all episodes are copied.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
