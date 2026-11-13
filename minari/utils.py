@@ -314,15 +314,20 @@ def _generate_dataset_metadata(
         expert_policy is not None or ref_max_score is not None
     ):
         env_ref_score = gym.make(eval_env_spec)
-        if ref_min_score is None:
-            ref_min_score = get_average_reference_score(
-                env_ref_score, RandomPolicy(env_ref_score), num_episodes_average_score
-            )
+        try:
+            if ref_min_score is None:
+                ref_min_score = get_average_reference_score(
+                    env_ref_score,
+                    RandomPolicy(env_ref_score),
+                    num_episodes_average_score,
+                )
 
-        if expert_policy is not None:
-            ref_max_score = get_average_reference_score(
-                env_ref_score, expert_policy, num_episodes_average_score
-            )
+            if expert_policy is not None:
+                ref_max_score = get_average_reference_score(
+                    env_ref_score, expert_policy, num_episodes_average_score
+                )
+        finally:
+            env_ref_score.close()
         dataset_metadata["ref_max_score"] = ref_max_score
         dataset_metadata["ref_min_score"] = ref_min_score
         dataset_metadata["num_episodes_average_score"] = num_episodes_average_score
@@ -476,13 +481,17 @@ def get_normalized_score(dataset: MinariDataset, returns: np.ndarray) -> np.ndar
 
 def get_env_spec_dict(env_spec: EnvSpec) -> Dict[str, str]:
     """Create dict of the environment specs, including observation and action space."""
+    env: Optional[gym.Env] = None
     try:
-        env = gym.make(env_spec)
-        action_space_table = env.action_space.__repr__().replace("\n", "")
-        observation_space_table = env.observation_space.__repr__().replace("\n", "")
+        env = new_env = gym.make(env_spec)
+        action_space_table = new_env.action_space.__repr__().replace("\n", "")
+        observation_space_table = new_env.observation_space.__repr__().replace("\n", "")
     except Exception as e:
         warnings.warn(f"Failed to make env {env_spec.id}, {e}")
         action_space_table, observation_space_table = None, None
+    finally:
+        if env is not None:
+            env.close()
 
     md_dict = {"ID": env_spec.id}
     if observation_space_table is not None:
