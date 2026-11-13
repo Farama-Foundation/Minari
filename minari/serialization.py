@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-from collections import defaultdict
 from functools import singledispatch
 from typing import Dict, Union
 
@@ -111,12 +110,8 @@ def _serialize_text(space: spaces.Text, to_string=True) -> Union[Dict, str]:
 
 class type_value_dispatch:
     def __init__(self, func) -> None:
-        # `defaultdict` calls its factory with no arguments, so the factory has
-        # to return the fallback rather than be it. Passing `func` straight in
-        # called it without `space_dict`, and an unregistered type raised a
-        # TypeError about the missing argument instead of the NotImplementedError
-        # the fallback is written to raise.
-        self.registry = defaultdict(lambda: func)
+        self.registry = {}
+        self.default = func
 
     def register(self, type: str):
         def decorator(method):
@@ -130,7 +125,7 @@ class type_value_dispatch:
             space_dict = json.loads(space_dict)
 
         assert isinstance(space_dict, Dict)
-        return self.registry[space_dict["type"]](space_dict)
+        return self.registry.get(space_dict["type"], self.default)(space_dict)
 
 
 @type_value_dispatch
