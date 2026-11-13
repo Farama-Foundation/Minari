@@ -105,6 +105,7 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_id: s
 
     The new dataset will contain a metadata attribute `combined_datasets` containing a list
     with the dataset names that were combined to form this new Minari dataset.
+    Only the selected episodes of each dataset are copied, in their existing order.
     Image data is JPEG-encoded only if all input datasets enable JPEG encoding.
     If any input disables it, the combined dataset stores raw arrays to avoid
     introducing lossy compression.
@@ -142,7 +143,9 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_id: s
     )
 
     for dataset in datasets_to_combine:
-        new_storage.update_from_storage(dataset.storage)
+        new_storage.update_from_storage(
+            dataset.storage, episode_indices=dataset.episode_indices
+        )
 
     return MinariDataset(new_storage)
 
@@ -317,15 +320,20 @@ def _generate_dataset_metadata(
         expert_policy is not None or ref_max_score is not None
     ):
         env_ref_score = gym.make(eval_env_spec)
-        if ref_min_score is None:
-            ref_min_score = get_average_reference_score(
-                env_ref_score, RandomPolicy(env_ref_score), num_episodes_average_score
-            )
+        try:
+            if ref_min_score is None:
+                ref_min_score = get_average_reference_score(
+                    env_ref_score,
+                    RandomPolicy(env_ref_score),
+                    num_episodes_average_score,
+                )
 
-        if expert_policy is not None:
-            ref_max_score = get_average_reference_score(
-                env_ref_score, expert_policy, num_episodes_average_score
-            )
+            if expert_policy is not None:
+                ref_max_score = get_average_reference_score(
+                    env_ref_score, expert_policy, num_episodes_average_score
+                )
+        finally:
+            env_ref_score.close()
         dataset_metadata["ref_max_score"] = ref_max_score
         dataset_metadata["ref_min_score"] = ref_min_score
         dataset_metadata["num_episodes_average_score"] = num_episodes_average_score
@@ -479,13 +487,17 @@ def get_normalized_score(dataset: MinariDataset, returns: np.ndarray) -> np.ndar
 
 def get_env_spec_dict(env_spec: EnvSpec) -> Dict[str, str]:
     """Create dict of the environment specs, including observation and action space."""
+    env: Optional[gym.Env] = None
     try:
-        env = gym.make(env_spec)
-        action_space_table = env.action_space.__repr__().replace("\n", "")
-        observation_space_table = env.observation_space.__repr__().replace("\n", "")
+        env = new_env = gym.make(env_spec)
+        action_space_table = new_env.action_space.__repr__().replace("\n", "")
+        observation_space_table = new_env.observation_space.__repr__().replace("\n", "")
     except Exception as e:
         warnings.warn(f"Failed to make env {env_spec.id}, {e}")
         action_space_table, observation_space_table = None, None
+    finally:
+        if env is not None:
+            env.close()
 
     md_dict = {"ID": env_spec.id}
     if observation_space_table is not None:

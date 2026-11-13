@@ -1,13 +1,21 @@
-from typing import List
+import json
+import shutil
+import warnings
+from pathlib import Path
+from typing import Iterable, List, Optional
 
+import gymnasium as gym
 import pytest
 from huggingface_hub.errors import HfHubHTTPError
 
 import minari
-from minari import MinariDataset
+from minari import DataCollector, MinariDataset
+from minari.dataset.minari_storage import MinariStorage
+from minari.storage import hosting
 from minari.storage.datasets_root_dir import get_dataset_path
 from tests.common import (
     check_data_integrity,
+    create_dummy_dataset_with_collecter_env_helper,
     get_latest_compatible_dataset_id,
     skip_if_error,
 )
@@ -176,3 +184,144 @@ def test_download_error_messages(monkeypatch):
 
     minari.download_dataset(latest_door_human_id, force_download=True)
     minari.delete_dataset(latest_door_human_id)
+
+
+class _LocalDirCloudStorage:
+    """Fake remote serving datasets from a local directory, so no network is used."""
+
+    def __init__(self, remote_dir: Path):
+        self.remote_dir = remote_dir
+        self.downloads: List[str] = []
+
+    def list_datasets(self, prefix: Optional[str] = None) -> Iterable[str]:
+        for metadata_path in self.remote_dir.glob("**/data/metadata.json"):
+            dataset_id = metadata_path.parent.parent.relative_to(self.remote_dir)
+            dataset_id = dataset_id.as_posix()
+            if prefix is None or dataset_id.startswith(prefix):
+                yield dataset_id
+
+    def get_dataset_metadata(self, dataset_id: str) -> dict:
+        return MinariStorage.read_raw_metadata(self.remote_dir / dataset_id / "data")
+
+    def download_dataset(self, dataset_id: str, path: Path) -> None:
+        self.downloads.append(dataset_id)
+        shutil.copytree(
+            self.remote_dir / dataset_id, path / dataset_id, dirs_exist_ok=True
+        )
+
+
+@pytest.fixture
+def partially_downloaded_dataset(monkeypatch, tmp_path):
+    """Create a dataset, publish it on a fake remote and break the local copy."""
+    dataset_id = "cartpole-partial-v0"
+    num_episodes = 3
+    env = DataCollector(gym.make("CartPole-v1"), data_format="hdf5")
+    create_dummy_dataset_with_collecter_env_helper(
+        dataset_id, env, num_episodes=num_episodes
+    )
+    env.close()
+
+    remote_dir = tmp_path / "remote"
+    shutil.copytree(get_dataset_path(dataset_id), remote_dir / dataset_id)
+    remote = _LocalDirCloudStorage(remote_dir)
+    monkeypatch.setattr(hosting, "get_cloud_storage", lambda **_: remote)
+
+    return dataset_id, num_episodes, remote
+
+
+@pytest.mark.parametrize(
+    "missing_files",
+    [["main_data.hdf5"], ["metadata.json"], ["main_data.hdf5", "metadata.json"]],
+)
+def test_load_dataset_recovers_from_partial_download(
+    partially_downloaded_dataset, missing_files
+):
+    """`load_dataset(download=True)` downloads again an incomplete local dataset."""
+    dataset_id, num_episodes, remote = partially_downloaded_dataset
+    data_path = get_dataset_path(dataset_id) / "data"
+    for file_name in missing_files:
+        (data_path / file_name).unlink()
+
+    with pytest.warns(UserWarning, match="could not be loaded"):
+        dataset = minari.load_dataset(dataset_id, download=True)
+
+    assert remote.downloads == [dataset_id]
+    assert isinstance(dataset, MinariDataset)
+    assert dataset.total_episodes == num_episodes
+
+
+def test_load_dataset_incomplete_error_message(partially_downloaded_dataset):
+    """Without download, the error explains how to recover an incomplete dataset."""
+    dataset_id, _, remote = partially_downloaded_dataset
+    (get_dataset_path(dataset_id) / "data" / "main_data.hdf5").unlink()
+
+    with pytest.raises(ValueError, match="force_download=True") as exc_info:
+        minari.load_dataset(dataset_id)
+
+    assert "minari.delete_dataset" in str(exc_info.value)
+    assert remote.downloads == []
+
+
+def _set_minari_version(data_path: Path, version: str):
+    metadata_path = data_path / "metadata.json"
+    metadata = json.loads(metadata_path.read_text())
+    metadata["minari_version"] = version
+    metadata_path.write_text(json.dumps(metadata))
+
+
+def test_load_dataset_recovers_from_truncated_metadata(partially_downloaded_dataset):
+    """An unreadable `metadata.json` is treated as an incomplete download."""
+    dataset_id, num_episodes, remote = partially_downloaded_dataset
+    metadata_path = get_dataset_path(dataset_id) / "data" / "metadata.json"
+    metadata_path.write_text(metadata_path.read_text()[:10])
+
+    with pytest.warns(UserWarning, match="could not be loaded"):
+        dataset = minari.load_dataset(dataset_id, download=True)
+
+    assert remote.downloads == [dataset_id]
+    assert dataset.total_episodes == num_episodes
+
+
+@pytest.mark.parametrize("download", [True, False])
+def test_load_dataset_unsupported_version_is_not_downloaded_again(
+    partially_downloaded_dataset, download
+):
+    """A complete dataset with an unsupported Minari version raises the version error as is."""
+    dataset_id, _, remote = partially_downloaded_dataset
+    _set_minari_version(get_dataset_path(dataset_id) / "data", "0.1.0")
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("error")
+        with pytest.raises(
+            ValueError, match="does not support the dataset"
+        ) as exc_info:
+            minari.load_dataset(dataset_id, download=download)
+
+    assert "incomplete or corrupted" not in str(exc_info.value)
+    assert remote.downloads == []
+
+
+@pytest.mark.parametrize("remote_state", ["missing", "incompatible"])
+def test_load_dataset_keeps_broken_copy_when_download_fails(
+    partially_downloaded_dataset, remote_state
+):
+    """If the dataset cannot be downloaded again, the local copy is restored as it was."""
+    dataset_id, _, remote = partially_downloaded_dataset
+    remote_dataset_path = remote.remote_dir / dataset_id
+    if remote_state == "missing":
+        shutil.rmtree(remote_dataset_path)
+    else:
+        _set_minari_version(remote_dataset_path / "data", "0.1.0")
+
+    dataset_path = get_dataset_path(dataset_id)
+    (dataset_path / "data" / "main_data.hdf5").unlink()
+    files_before = sorted(p.relative_to(dataset_path) for p in dataset_path.rglob("*"))
+
+    with pytest.warns(UserWarning, match="could not be loaded"):
+        with pytest.raises(ValueError, match="Couldn't find any"):
+            minari.load_dataset(dataset_id, download=True)
+
+    assert remote.downloads == []
+    files_after = sorted(p.relative_to(dataset_path) for p in dataset_path.rglob("*"))
+    assert files_after == files_before
+    assert [p.name for p in dataset_path.parent.iterdir()] == [dataset_path.name]

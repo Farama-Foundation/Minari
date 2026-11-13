@@ -148,12 +148,11 @@ def list_local_namespaces() -> List[str]:
     datasets_path = get_dataset_path()
     namespaces = []
 
-    def recurse_directories(base_path: Path, namespace):
-        parent_dir = base_path.joinpath(namespace)
+    def recurse_directories(base_path: Path, namespace: str):
+        parent_dir = base_path / namespace
         for dir_name in list_non_hidden_dirs(parent_dir):
-            dir_path = os.path.join(parent_dir, dir_name)
-            namespaced_dir_name = os.path.join(namespace, dir_name)
-            dir_contents = os.listdir(dir_path)
+            namespaced_dir_name = Path(namespace, dir_name).as_posix()
+            dir_contents = os.listdir(parent_dir / dir_name)
 
             if NAMESPACE_METADATA_FILENAME in dir_contents:
                 namespaces.append(namespaced_dir_name)
@@ -253,9 +252,9 @@ def namespace_hierarchy(namespace: Optional[str]) -> Iterable[str]:
     if namespace is None:
         return []
 
-    namespace_parts = namespace.split(os.sep)
+    namespace_parts = namespace.split("/")
     for i in range(len(namespace_parts)):
-        yield os.path.join(*namespace_parts[: i + 1])
+        yield "/".join(namespace_parts[: i + 1])
 
 
 def validate_namespace(namespace: Optional[str]) -> None:
