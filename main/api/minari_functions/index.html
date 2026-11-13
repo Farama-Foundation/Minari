@@ -1280,12 +1280,15 @@ observation_space:</p></li>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dataset</strong> (<a class="reference internal" href="../minari_dataset/minari_dataset/#minari.MinariDataset" title="minari.MinariDataset"><em>MinariDataset</em></a>) – the MinariDataset to split</p></li>
-<li><p><strong>sizes</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – sizes of the resulting datasets</p></li>
+<li><p><strong>sizes</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – non-negative sizes of the resulting datasets</p></li>
 <li><p><strong>seed</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – random seed</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>datasets</strong> (<em>List[MinariDataset]</em>) – resulting list of datasets</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – if any size is negative or the sum exceeds the dataset’s episode count.</p>
 </dd>
 </dl>
 </dd></dl>

@@ -1364,12 +1364,17 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        dataset (MinariDataset): the MinariDataset to split</span>
-<span class="sd">        sizes (List[int]): sizes of the resulting datasets</span>
+<span class="sd">        sizes (List[int]): non-negative sizes of the resulting datasets</span>
 <span class="sd">        seed (Optional[int]): random seed</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        datasets (List[MinariDataset]): resulting list of datasets</span>
+
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: if any size is negative or the sum exceeds the dataset's episode count.</span>
 <span class="sd">    """</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">size</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">for</span> <span class="n">size</span> <span class="ow">in</span> <span class="n">sizes</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"The split sizes must be non-negative."</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">sizes</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">dataset</span><span class="o">.</span><span class="n">total_episodes</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s2">"Incompatible arguments: the sum of sizes exceeds "</span><span class="p">,</span>
