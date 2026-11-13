@@ -15,9 +15,9 @@
         <title>Basic Usage - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/celshast.css?v=9fbfb63d" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=61a4c737" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=ca3c1c84" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=e5fbc548" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/celshast-extensions.css?v=42bfddca" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/termynal.css?v=d6ad0c61" />
@@ -1357,6 +1357,9 @@ To create your own buffers and dataloaders, you may need the ability to iterate 
 <section id="split-dataset">
 <h4>Split Dataset<a class="headerlink" href="#split-dataset" title="Link to this heading">¶</a></h4>
 <p>Minari provides another utility function to divide a dataset into multiple datasets, <a class="reference internal" href="../../api/minari_functions/#minari.split_dataset" title="minari.split_dataset"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.split_dataset()</span></code></a></p>
+<p>Split sizes must be non-negative. A zero size creates an empty split, and a total
+smaller than the dataset’s episode count leaves the remaining episodes out.
+A negative size or a total exceeding the episode count raises <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">minari</span>
 
 <span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s2">"D4RL/door/human-v2"</span><span class="p">,</span> <span class="n">download</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -1402,6 +1405,12 @@ To create your own buffers and dataloaders, you may need the ability to iterate 
 </section>
 <section id="combine-minari-datasets">
 <h3>Combine Minari Datasets<a class="headerlink" href="#combine-minari-datasets" title="Link to this heading">¶</a></h3>
+<p>The combined dataset uses JPEG encoding only when all input datasets enable it.
+If any input was created with <code class="docutils literal notranslate"><span class="pre">jpeg_encoding=False</span></code>, images are stored as raw
+arrays to avoid introducing lossy compression during combination. This can
+produce larger combined files. The compression loss already present in
+JPEG-encoded inputs cannot be recovered. If all inputs use JPEG encoding, images
+are decoded and JPEG-encoded again, which adds further compression loss.</p>
 <p>In the case of having two or more Minari datasets created with the same environment we can combine these datasets into a single one by using the Minari function <a class="reference internal" href="../../api/minari_functions/#minari.combine_datasets" title="minari.combine_datasets"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.combine_datasets()</span></code></a>, i.e. the <code class="docutils literal notranslate"><span class="pre">'AdroitHandDoor-v1'</span></code> environment has two datasets available in the remote Farama servers, <code class="docutils literal notranslate"><span class="pre">D4RL/door/human-v2</span></code> and <code class="docutils literal notranslate"><span class="pre">D4RL/door/expert-v2</span></code>, we can combine the episodes in these two datasets into a new Minari dataset <code class="docutils literal notranslate"><span class="pre">D4RL/door/all-v0</span></code>:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>minari<span class="w"> </span>download<span class="w"> </span>D4RL/door/expert-v2
 minari<span class="w"> </span>combine<span class="w"> </span>D4RL/door/human-v2<span class="w"> </span>D4RL/door/expert-v2<span class="w"> </span>--dataset-id<span class="o">=</span>D4RL/door/all-v0
@@ -1416,6 +1425,21 @@ minari<span class="w"> </span>list<span class="w"> </span><span class="nb">local
 │ D4RL/door/expert-v2 │           5000 │     1000000 │ 1096.4 MB    │ Rodrigo de Lazcano │
 │ D4RL/door/human-v2  │             25 │        6729 │ 7.1 MB       │ Rodrigo de Lazcano │
 └─────────────────────┴────────────────┴─────────────┴──────────────┴────────────────────┘
+</pre></div>
+</div>
+<p><a class="reference internal" href="../../api/minari_functions/#minari.combine_datasets" title="minari.combine_datasets"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.combine_datasets()</span></code></a> also accepts datasets returned by <a class="reference internal" href="../../api/minari_dataset/minari_dataset/#minari.MinariDataset.filter_episodes" title="minari.MinariDataset.filter_episodes"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.MinariDataset.filter_episodes()</span></code></a> or <a class="reference internal" href="../../api/minari_functions/#minari.split_dataset" title="minari.split_dataset"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.split_dataset()</span></code></a>. In this case, only the selected episodes are copied. Episodes keep their order within each input dataset and receive consecutive IDs in the combined dataset. An empty input dataset contributes no episodes.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">minari</span>
+
+<span class="n">human_dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">'D4RL/door/human-v2'</span><span class="p">)</span>
+<span class="n">expert_dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="s1">'D4RL/door/expert-v2'</span><span class="p">)</span>
+
+<span class="c1"># Keep the high-return expert episodes and about half of the human episodes</span>
+<span class="n">high_return_expert</span> <span class="o">=</span> <span class="n">expert_dataset</span><span class="o">.</span><span class="n">filter_episodes</span><span class="p">(</span><span class="k">lambda</span> <span class="n">episode</span><span class="p">:</span> <span class="n">episode</span><span class="o">.</span><span class="n">rewards</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">2000</span><span class="p">)</span>
+<span class="n">human_half</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">split_dataset</span><span class="p">(</span><span class="n">human_dataset</span><span class="p">,</span> <span class="n">sizes</span><span class="o">=</span><span class="p">[</span><span class="mi">12</span><span class="p">,</span> <span class="mi">13</span><span class="p">],</span> <span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="n">combined_dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">combine_datasets</span><span class="p">(</span>
+    <span class="p">[</span><span class="n">human_half</span><span class="p">,</span> <span class="n">high_return_expert</span><span class="p">],</span> <span class="n">new_dataset_id</span><span class="o">=</span><span class="s1">'D4RL/door/selected-v0'</span>
+<span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -1488,6 +1512,7 @@ minari<span class="w"> </span>list<span class="w"> </span><span class="nb">local
 <section id="checkpoint-minari-dataset">
 <h3>Checkpoint Minari Dataset<a class="headerlink" href="#checkpoint-minari-dataset" title="Link to this heading">¶</a></h3>
 <p>When collecting data with the <a class="reference internal" href="../../api/data_collector/#minari.DataCollector" title="minari.DataCollector"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollector</span></code></a> wrapper, the recorded data is saved into temporary files and it won’t be permanently saved on disk until the <code class="xref py py-func docutils literal notranslate"><span class="pre">DataCollector.create_dataset()</span></code> function is called. To prevent losing data for large datasets, it is recommended to create the dataset during data collection and append the data to it using <code class="xref py py-func docutils literal notranslate"><span class="pre">DataCollector.add_to_dataset()</span></code>.</p>
+<p>Appended episodes retain their reset seed and options in the episode metadata, so they can be replayed with the same reset arguments.</p>
 <p>Continuing the <code class="docutils literal notranslate"><span class="pre">'CartPole-v1'</span></code> example we can checkpoint the newly created Minari dataset every 10 episodes as follows:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">minari</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
@@ -1712,10 +1737,11 @@ minari<span class="w"> </span>list<span class="w"> </span><span class="nb">local
         })()
       </script>
 
-    <script src="../../_static/documentation_options.js?v=5a9eddd6"></script>
+    <script src="../../_static/documentation_options.js?v=2973651e"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/celshast.js?v=a788a8c6"></script>
+    <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../../_static/js/termynal.js?v=ff4c6923"></script>
     <script src="../../_static/js/custom.js?v=a0ed09ce"></script>
     

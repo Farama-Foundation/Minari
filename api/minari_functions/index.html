@@ -15,9 +15,9 @@
         <title>Minari - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/celshast.css?v=9fbfb63d" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=61a4c737" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=ca3c1c84" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=e5fbc548" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/celshast-extensions.css?v=42bfddca" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/termynal.css?v=d6ad0c61" />
@@ -1214,7 +1214,10 @@
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dataset_id</strong> (<em>str</em>) – name id of Minari dataset</p></li>
-<li><p><strong>download</strong> (<em>bool</em>) – if <cite>True</cite> download the dataset if it is not found locally. Default to <cite>False</cite>.</p></li>
+<li><p><strong>download</strong> (<em>bool</em>) – if <cite>True</cite> download the dataset if it is not found locally, or download it again
+if the local copy cannot be loaded, e.g. when files are missing or the metadata is unreadable
+after an interrupted download. Damaged data files are only detected when episodes are read.
+Default to <cite>False</cite>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1277,12 +1280,15 @@ observation_space:</p></li>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dataset</strong> (<a class="reference internal" href="../minari_dataset/minari_dataset/#minari.MinariDataset" title="minari.MinariDataset"><em>MinariDataset</em></a>) – the MinariDataset to split</p></li>
-<li><p><strong>sizes</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – sizes of the resulting datasets</p></li>
+<li><p><strong>sizes</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – non-negative sizes of the resulting datasets</p></li>
 <li><p><strong>seed</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – random seed</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>datasets</strong> (<em>List[MinariDataset]</em>) – resulting list of datasets</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – if any size is negative or the sum exceeds the dataset’s episode count.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1369,7 +1375,14 @@ You can also define this in the environment variable <cite>MINARI_REMOTE</cite>.
 <span class="sig-prename descclassname"><span class="pre">minari.</span></span><span class="sig-name descname"><span class="pre">combine_datasets</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datasets_to_combine</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="../minari_dataset/minari_dataset/#minari.MinariDataset" title="minari.dataset.minari_dataset.MinariDataset"><span class="pre">MinariDataset</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_dataset_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/minari/utils/#combine_datasets"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#minari.combine_datasets" title="Link to this definition">¶</a></dt>
 <dd><p>Combine a group of MinariDataset in to a single dataset with its own name id.</p>
 <p>The new dataset will contain a metadata attribute <cite>combined_datasets</cite> containing a list
-with the dataset names that were combined to form this new Minari dataset.</p>
+with the dataset names that were combined to form this new Minari dataset.
+Only the selected episodes of each dataset are copied, in their existing order.
+Image data is JPEG-encoded only if all input datasets enable JPEG encoding.
+If any input disables it, the combined dataset stores raw arrays to avoid
+introducing lossy compression. If all inputs enable it, images are decoded
+and JPEG-encoded again, which adds further compression loss.
+All datasets must have equal observation and action spaces, including when
+no environment spec is stored.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -1608,10 +1621,11 @@ the average of episode returns from an hypothetical expert policy. These two val
         })()
       </script>
 
-    <script src="../../_static/documentation_options.js?v=5a9eddd6"></script>
+    <script src="../../_static/documentation_options.js?v=2973651e"></script>
     <script src="../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/scripts/celshast.js?v=a788a8c6"></script>
+    <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../../_static/js/termynal.js?v=ff4c6923"></script>

@@ -15,9 +15,9 @@
         <title>Implicit Q-Learning with TorchRL - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/celshast.css?v=9fbfb63d" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=ca3c1c84" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=e5fbc548" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/celshast-extensions.css?v=42bfddca" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/termynal.css?v=d6ad0c61" />
@@ -1222,22 +1222,21 @@
 </div>
 <p><strong>Note:</strong> If you run into conflicts with PyTorch when installing it, you may have to first install <a class="reference external" href="https://pytorch.org/get-started/locally/">PyTorch nightly</a>. Remember to add the “-U” flag to upgrade torch if it’s already installed.</p>
 <p>To confirm that everything is installed properly we import the required modules:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium_robotics</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">torchrl</span>
-
-<span class="n">gymnasium</span><span class="o">.</span><span class="n">register_envs</span><span class="p">(</span><span class="n">gymnasium_robotics</span><span class="p">)</span>
-
-<span class="n">seed</span> <span class="o">=</span> <span class="mi">42</span>
-<span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
-<span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
-<span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span><span class="w">
+</span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="nn">.</span><span class="nn">pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span><span class="w">
+</span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span><span class="w">
+</span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w">
+</span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium_robotics</span><span class="w">
+</span><span class="kn">import</span><span class="w"> </span><span class="nn">torch</span><span class="w">
+</span><span class="kn">import</span><span class="w"> </span><span class="nn">torchrl</span><span class="w">
+</span><span class="w">
+</span><span class="n">gymnasium</span><span class="o">.</span><span class="n">register_envs</span><span class="p">(</span><span class="n">gymnasium_robotics</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">seed</span> <span class="o">=</span> <span class="mi">42</span><span class="w">
+</span><span class="n">torch</span><span class="o">.</span><span class="n">manual_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span><span class="w">
+</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span><span class="w">
+</span><span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">ignore</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 </section>
 <section id="for-headless-environments">
 <h2>For headless environments<a class="headerlink" href="#for-headless-environments" title="Link to this heading">¶</a></h2>
@@ -1250,30 +1249,26 @@
 </pre></div>
 </div>
 <p>Then restart the notebook kernel. Once the pre-requisites are installed you can start a virtual display:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyvirtualdisplay</span><span class="w"> </span><span class="kn">import</span> <span class="n">Display</span>
-
-<span class="n">virtual_display</span> <span class="o">=</span> <span class="n">Display</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1400</span><span class="p">,</span> <span class="mi">900</span><span class="p">))</span>
-<span class="n">virtual_display</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">pyvirtualdisplay</span><span class="w"> </span><span class="kn">import</span> <span class="n">Display</span><span class="w">
+</span><span class="w">
+</span><span class="n">virtual_display</span> <span class="o">=</span> <span class="n">Display</span><span class="p">(</span><span class="n">visible</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">1400</span><span class="p">,</span> <span class="mi">900</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span><span class="n">virtual_display</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 </section>
 <section id="the-adroit-pen-environment">
 <h2>The Adroit Pen environment<a class="headerlink" href="#the-adroit-pen-environment" title="Link to this heading">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">torchrl.envs.libs.gym</span><span class="w"> </span><span class="kn">import</span> <span class="n">GymEnv</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">torchrl.envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">DoubleToFloat</span><span class="p">,</span> <span class="n">TransformedEnv</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">torchrl</span><span class="nn">.</span><span class="nn">envs</span><span class="nn">.</span><span class="nn">libs</span><span class="nn">.</span><span class="nn">gym</span><span class="w"> </span><span class="kn">import</span> <span class="n">GymEnv</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">torchrl</span><span class="nn">.</span><span class="nn">envs</span><span class="w"> </span><span class="kn">import</span> <span class="n">DoubleToFloat</span><span class="p">,</span> <span class="n">TransformedEnv</span><span class="w">
+</span></pre></div></div>
 <p>We will be using the <code class="docutils literal notranslate"><span class="pre">AdroitHandPen</span></code> environment from <a class="reference external" href="https://robotics.farama.org/envs/adroit_hand/adroit_pen/">Gymnasium-Robotics</a>. TorchRL is designed to be agnostic to different frameworks, so instead of working with a Gymnasium environment directly we load it using the <code class="docutils literal notranslate"><span class="pre">GymEnv</span></code> wrapper:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">env_id</span> <span class="o">=</span> <span class="s2">"AdroitHandPen-v1"</span>
-<span class="n">example_env</span> <span class="o">=</span> <span class="n">GymEnv</span><span class="p">(</span><span class="n">env_id</span><span class="p">,</span> <span class="n">from_pixels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pixels_only</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">example_env</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">env_id</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s2">AdroitHandPen-v1</span><span class="s2">&quot;</span><span class="w">
+</span><span class="n">example_env</span> <span class="o">=</span> <span class="n">GymEnv</span><span class="p">(</span><span class="n">env_id</span><span class="p">,</span> <span class="n">from_pixels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pixels_only</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="w">
+</span><span class="n">example_env</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <p><code class="docutils literal notranslate"><span class="pre">GymEnv</span></code> provides the usual methods such as <code class="docutils literal notranslate"><span class="pre">env.step()</span></code> and <code class="docutils literal notranslate"><span class="pre">env.reset()</span></code>. However, instead of returning a tuple of step/reset data, they return a <code class="docutils literal notranslate"><span class="pre">TensorDict</span></code>. A tensordict is essentially a dictionary of tensors whose first axis (the batch dimension) has the same size, and share some other properties like the device they are on. The tensordict returned has fields for each type of step data (e.g. <code class="docutils literal notranslate"><span class="pre">observations</span></code>, <code class="docutils literal notranslate"><span class="pre">actions</span></code>, <code class="docutils literal notranslate"><span class="pre">rewards</span></code>):</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">tensordict</span> <span class="o">=</span> <span class="n">example_env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">tensordict</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">tensordict</span> <span class="o">=</span> <span class="n">example_env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="n">tensordict</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>TensorDict(
     fields={
         done: Tensor(shape=torch.Size([1]), device=cpu, dtype=torch.bool, is_shared=False),
@@ -1287,51 +1282,46 @@
 </pre></div>
 </div>
 <p>TorchRL also provides <code class="docutils literal notranslate"><span class="pre">env.rollout()</span></code> to step through a full episode and save the step data in a tensordict:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">max_episode_steps</span> <span class="o">=</span> <span class="mi">1000</span>
-<span class="n">tensordict</span> <span class="o">=</span> <span class="n">example_env</span><span class="o">.</span><span class="n">rollout</span><span class="p">(</span><span class="n">max_steps</span><span class="o">=</span><span class="n">max_episode_steps</span><span class="p">,</span> <span class="n">auto_cast_to_device</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">max_episode_steps</span> <span class="o">=</span> <span class="mi">1000</span><span class="w">
+</span><span class="n">tensordict</span> <span class="o">=</span> <span class="n">example_env</span><span class="o">.</span><span class="n">rollout</span><span class="p">(</span><span class="n">max_steps</span><span class="o">=</span><span class="n">max_episode_steps</span><span class="p">,</span> <span class="n">auto_cast_to_device</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <p>We can compute the cumulative reward by summing <code class="docutils literal notranslate"><span class="pre">tensordict['next',</span> <span class="pre">'reward']</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cumulative reward: </span><span class="si">{</span><span class="n">tensordict</span><span class="p">[</span><span class="s1">'next'</span><span class="p">,</span><span class="w"> </span><span class="s1">'reward'</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">Cumulative reward: </span><span class="si">{</span><span class="n">tensordict</span><span class="p">[</span><span class="s1">'</span><span class="s1">next</span><span class="s1">'</span><span class="p">,</span><span class="w"> </span><span class="s1">'</span><span class="s1">reward</span><span class="s1">'</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Cumulative reward: 884.10
 </pre></div>
 </div>
 <p>Because we specified <code class="docutils literal notranslate"><span class="pre">from_pixels=True</span></code> when initialising the environment, the <code class="docutils literal notranslate"><span class="pre">pixels</span></code> field of the tensordict is populated with image data. Here’s the first frame of that episode:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">tensordict</span><span class="p">[</span><span class="s2">"pixels"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">());</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">tensordict</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">pixels</span><span class="s2">&quot;</span><span class="p">]</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">(</span><span class="p">)</span><span class="p">)</span><span class="p">;</span><span class="w">
+</span></pre></div></div>
 <a class="reference internal image-reference" href="../../../_images/IQL_torchrl_first_frame.png"><img alt="First frame of AdroitHandPen environment" src="../../../_images/IQL_torchrl_first_frame.png" style="width: 350px;" />
 </a>
 <p>The aim of the <a class="reference external" href="https://robotics.farama.org/envs/adroit_hand/adroit_pen/">Adroit Pen task</a> is to control the 24-dof hand to manipulate the blue pen from the initial configuration (shown above) to the goal configuration (green pen). There is a shaped dense reward which quantifies how close the pen is to the target configuration, which is randomised at the start of each episode.</p>
 <p>To use this environment for training, we need to perform some pre-processing transforms on the step data returned. We transform the base environment with <code class="docutils literal notranslate"><span class="pre">DoubleToFloat()</span></code>, which converts all doubles in the observations to floats:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">"cuda"</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">"cpu"</span><span class="p">)</span>
-
-<span class="n">base_env</span> <span class="o">=</span> <span class="n">GymEnv</span><span class="p">(</span><span class="n">env_id</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span>
-<span class="n">env</span> <span class="o">=</span> <span class="n">TransformedEnv</span><span class="p">(</span><span class="n">base_env</span><span class="p">,</span> <span class="n">DoubleToFloat</span><span class="p">())</span>
-<span class="n">env</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">cuda</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">(</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;</span><span class="s2">cpu</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">base_env</span> <span class="o">=</span> <span class="n">GymEnv</span><span class="p">(</span><span class="n">env_id</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span><span class="w">
+</span><span class="n">env</span> <span class="o">=</span> <span class="n">TransformedEnv</span><span class="p">(</span><span class="n">base_env</span><span class="p">,</span> <span class="n">DoubleToFloat</span><span class="p">(</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span><span class="n">env</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 </section>
 <section id="building-a-replay-buffer">
 <h2>Building a replay buffer<a class="headerlink" href="#building-a-replay-buffer" title="Link to this heading">¶</a></h2>
 <p>The Minari dataset we will be using is <a class="reference external" href="https://minari.farama.org/main/datasets/pen/human/">D4RL/pen/human-v2</a>, which consists of 25 human demonstrations. We can create a replay buffer using <code class="docutils literal notranslate"><span class="pre">MinariExperienceReplay()</span></code>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">torchrl.data.datasets.minari_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">MinariExperienceReplay</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">torchrl.data.replay_buffers</span><span class="w"> </span><span class="kn">import</span> <span class="n">SamplerWithoutReplacement</span>
-
-<span class="n">dataset_id</span> <span class="o">=</span> <span class="s2">"D4RL/pen/human-v2"</span>
-<span class="n">batch_size</span> <span class="o">=</span> <span class="mi">256</span>
-
-<span class="n">replay_buffer</span> <span class="o">=</span> <span class="n">MinariExperienceReplay</span><span class="p">(</span>
-    <span class="n">dataset_id</span><span class="p">,</span>
-    <span class="n">split_trajs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span>
-    <span class="n">sampler</span><span class="o">=</span><span class="n">SamplerWithoutReplacement</span><span class="p">(),</span>
-    <span class="n">transform</span><span class="o">=</span><span class="n">DoubleToFloat</span><span class="p">(),</span>
-<span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">torchrl</span><span class="nn">.</span><span class="nn">data</span><span class="nn">.</span><span class="nn">datasets</span><span class="nn">.</span><span class="nn">minari_data</span><span class="w"> </span><span class="kn">import</span> <span class="n">MinariExperienceReplay</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">torchrl</span><span class="nn">.</span><span class="nn">data</span><span class="nn">.</span><span class="nn">replay_buffers</span><span class="w"> </span><span class="kn">import</span> <span class="n">SamplerWithoutReplacement</span><span class="w">
+</span><span class="w">
+</span><span class="n">dataset_id</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s2">D4RL/pen/human-v2</span><span class="s2">&quot;</span><span class="w">
+</span><span class="n">batch_size</span> <span class="o">=</span> <span class="mi">256</span><span class="w">
+</span><span class="w">
+</span><span class="n">replay_buffer</span> <span class="o">=</span> <span class="n">MinariExperienceReplay</span><span class="p">(</span><span class="w">
+</span>    <span class="n">dataset_id</span><span class="p">,</span><span class="w">
+</span>    <span class="n">split_trajs</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span><span class="w">
+</span>    <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span><span class="w">
+</span>    <span class="n">sampler</span><span class="o">=</span><span class="n">SamplerWithoutReplacement</span><span class="p">(</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span>    <span class="n">transform</span><span class="o">=</span><span class="n">DoubleToFloat</span><span class="p">(</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <p><strong>Note:</strong> We add the transform <code class="docutils literal notranslate"><span class="pre">DoubleToFloat()</span></code> so that the step data is consistent with our environment.</p>
 <p>On the first run, the dataset will be downloaded from Farama servers and stored in the local cache directory (e.g. <code class="docutils literal notranslate"><span class="pre">~/.cache/torchrl/minari/</span></code>). Once the dataset is loaded we can iterate over the replay buffer or use <code class="docutils literal notranslate"><span class="pre">replay_buffer.sample()</span></code> to load batches of transitions.</p>
 </section>
@@ -1379,47 +1369,44 @@
 </section>
 <section id="defining-the-model">
 <span id="label-defining-the-model"></span><h2>Defining the model<a class="headerlink" href="#defining-the-model" title="Link to this heading">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tensordict.nn</span><span class="w"> </span><span class="kn">import</span> <span class="n">TensorDictModule</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">tensordict.nn.distributions</span><span class="w"> </span><span class="kn">import</span> <span class="n">NormalParamExtractor</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">torchrl.envs.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExplorationType</span><span class="p">,</span> <span class="n">set_exploration_type</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">torchrl.modules</span><span class="w"> </span><span class="kn">import</span> <span class="n">MLP</span><span class="p">,</span> <span class="n">ProbabilisticActor</span><span class="p">,</span> <span class="n">TanhNormal</span><span class="p">,</span> <span class="n">ValueOperator</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">torchrl.objectives</span><span class="w"> </span><span class="kn">import</span> <span class="n">IQLLoss</span><span class="p">,</span> <span class="n">SoftUpdate</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">torchrl.trainers.helpers.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ACTIVATIONS</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">tensordict</span><span class="nn">.</span><span class="nn">nn</span><span class="w"> </span><span class="kn">import</span> <span class="n">TensorDictModule</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">tensordict</span><span class="nn">.</span><span class="nn">nn</span><span class="nn">.</span><span class="nn">distributions</span><span class="w"> </span><span class="kn">import</span> <span class="n">NormalParamExtractor</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">torchrl</span><span class="nn">.</span><span class="nn">envs</span><span class="nn">.</span><span class="nn">utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">ExplorationType</span><span class="p">,</span> <span class="n">set_exploration_type</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">torchrl</span><span class="nn">.</span><span class="nn">modules</span><span class="w"> </span><span class="kn">import</span> <span class="n">MLP</span><span class="p">,</span> <span class="n">ProbabilisticActor</span><span class="p">,</span> <span class="n">TanhNormal</span><span class="p">,</span> <span class="n">ValueOperator</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">torchrl</span><span class="nn">.</span><span class="nn">objectives</span><span class="w"> </span><span class="kn">import</span> <span class="n">IQLLoss</span><span class="p">,</span> <span class="n">SoftUpdate</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">torchrl</span><span class="nn">.</span><span class="nn">trainers</span><span class="nn">.</span><span class="nn">helpers</span><span class="nn">.</span><span class="nn">models</span><span class="w"> </span><span class="kn">import</span> <span class="n">ACTIVATIONS</span><span class="w">
+</span></pre></div></div>
 <p>We first initialise the value network <span class="math notranslate nohighlight">\(V_\psi(s)\)</span> which estimates the expectile of the value of a state <span class="math notranslate nohighlight">\(s\)</span> with respect to the distribution of actions in the dataset. TorchRL provides a <code class="docutils literal notranslate"><span class="pre">MLP</span></code> convenience class which we use to build a two layer Multi-Layer Perceptron. To plug this MLP into the rest of the network, we specify that the inputs are read from the <code class="docutils literal notranslate"><span class="pre">&quot;observation&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;action&quot;</span></code> keys of the input tensordict (and concatenated, by default), and the output of the MLP is written to the <code class="docutils literal notranslate"><span class="pre">&quot;state_value&quot;</span></code> key:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">hidden_sizes</span> <span class="o">=</span> <span class="p">[</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">]</span>
-<span class="n">activation_fn</span> <span class="o">=</span> <span class="n">ACTIVATIONS</span><span class="p">[</span><span class="s2">"relu"</span><span class="p">]</span>
-
-<span class="c1"># MLP network</span>
-<span class="n">value_net</span> <span class="o">=</span> <span class="n">MLP</span><span class="p">(</span>
-    <span class="n">num_cells</span><span class="o">=</span><span class="n">hidden_sizes</span><span class="p">,</span>
-    <span class="n">out_features</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="n">activation_class</span><span class="o">=</span><span class="n">activation_fn</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="c1"># Specify the keys to read/write from the tensordict</span>
-<span class="n">value_net</span> <span class="o">=</span> <span class="n">ValueOperator</span><span class="p">(</span>
-    <span class="n">in_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">"observation"</span><span class="p">],</span>
-    <span class="n">out_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">"state_value"</span><span class="p">],</span>
-    <span class="n">module</span><span class="o">=</span><span class="n">value_net</span><span class="p">,</span>
-<span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">hidden_sizes</span> <span class="o">=</span> <span class="p">[</span><span class="mi">128</span><span class="p">,</span> <span class="mi">128</span><span class="p">]</span><span class="w">
+</span><span class="n">activation_fn</span> <span class="o">=</span> <span class="n">ACTIVATIONS</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">relu</span><span class="s2">&quot;</span><span class="p">]</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># MLP network</span><span class="w">
+</span><span class="n">value_net</span> <span class="o">=</span> <span class="n">MLP</span><span class="p">(</span><span class="w">
+</span>    <span class="n">num_cells</span><span class="o">=</span><span class="n">hidden_sizes</span><span class="p">,</span><span class="w">
+</span>    <span class="n">out_features</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="w">
+</span>    <span class="n">activation_class</span><span class="o">=</span><span class="n">activation_fn</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># Specify the keys to read/write from the tensordict</span><span class="w">
+</span><span class="n">value_net</span> <span class="o">=</span> <span class="n">ValueOperator</span><span class="p">(</span><span class="w">
+</span>    <span class="n">in_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">observation</span><span class="s2">&quot;</span><span class="p">]</span><span class="p">,</span><span class="w">
+</span>    <span class="n">out_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">state_value</span><span class="s2">&quot;</span><span class="p">]</span><span class="p">,</span><span class="w">
+</span>    <span class="n">module</span><span class="o">=</span><span class="n">value_net</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <p>We similarly initialise the action-value network <span class="math notranslate nohighlight">\(Q_{\theta}(s, a)\)</span>,</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">q_net</span> <span class="o">=</span> <span class="n">MLP</span><span class="p">(</span>
-    <span class="n">num_cells</span><span class="o">=</span><span class="n">hidden_sizes</span><span class="p">,</span>
-    <span class="n">out_features</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="n">activation_class</span><span class="o">=</span><span class="n">activation_fn</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="n">qvalue</span> <span class="o">=</span> <span class="n">ValueOperator</span><span class="p">(</span>
-    <span class="n">in_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">"observation"</span><span class="p">,</span> <span class="s2">"action"</span><span class="p">],</span>
-    <span class="n">out_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">"state_action_value"</span><span class="p">],</span>
-    <span class="n">module</span><span class="o">=</span><span class="n">q_net</span>
-<span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">q_net</span> <span class="o">=</span> <span class="n">MLP</span><span class="p">(</span><span class="w">
+</span>    <span class="n">num_cells</span><span class="o">=</span><span class="n">hidden_sizes</span><span class="p">,</span><span class="w">
+</span>    <span class="n">out_features</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="w">
+</span>    <span class="n">activation_class</span><span class="o">=</span><span class="n">activation_fn</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">qvalue</span> <span class="o">=</span> <span class="n">ValueOperator</span><span class="p">(</span><span class="w">
+</span>    <span class="n">in_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">observation</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">action</span><span class="s2">&quot;</span><span class="p">]</span><span class="p">,</span><span class="w">
+</span>    <span class="n">out_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">state_action_value</span><span class="s2">&quot;</span><span class="p">]</span><span class="p">,</span><span class="w">
+</span>    <span class="n">module</span><span class="o">=</span><span class="n">q_net</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <p>Finally, we initialise the policy/actor <span class="math notranslate nohighlight">\(\pi_\phi(a | s)\)</span>, representing the policy as a tanh-Normal distribution parameterised by location and scale. There are three steps in setting up the actor:</p>
 <ul class="simple">
 <li><p>Create an MLP network (as before).</p></li>
@@ -1427,185 +1414,173 @@
 <li><p>Wrap it with the <code class="docutils literal notranslate"><span class="pre">ProbabilisticActor</span></code> class, specifying the distribution type.</p></li>
 </ul>
 <p>The <code class="docutils literal notranslate"><span class="pre">ProbabilisticActor</span></code> class provides a convenient way to work with RL policies. By passing it the <code class="docutils literal notranslate"><span class="pre">action_spec</span></code> of the environment, it will also ensure that the outputs respect the bounds of the action space – that every policy output is a valid action.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">action_spec</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_spec</span>
-
-<span class="c1"># Actor/policy MLP</span>
-<span class="n">actor_mlp</span> <span class="o">=</span> <span class="n">MLP</span><span class="p">(</span>
-    <span class="n">num_cells</span><span class="o">=</span><span class="n">hidden_sizes</span><span class="p">,</span>
-    <span class="n">out_features</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">action_spec</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
-    <span class="n">activation_class</span><span class="o">=</span><span class="n">activation_fn</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="c1"># Map MLP output to location and scale parameters (the latter must be positive)</span>
-<span class="n">actor_extractor</span> <span class="o">=</span> <span class="n">NormalParamExtractor</span><span class="p">(</span><span class="n">scale_lb</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
-<span class="n">actor_net</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">actor_mlp</span><span class="p">,</span> <span class="n">actor_extractor</span><span class="p">)</span>
-
-<span class="c1"># Specify tensordict inputs and outputs</span>
-<span class="n">actor_module</span> <span class="o">=</span> <span class="n">TensorDictModule</span><span class="p">(</span>
-    <span class="n">actor_net</span><span class="p">,</span>
-    <span class="n">in_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">"observation"</span><span class="p">],</span>
-    <span class="n">out_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">"loc"</span><span class="p">,</span> <span class="s2">"scale"</span><span class="p">]</span>
-<span class="p">)</span>
-
-<span class="c1"># Use ProbabilisticActor to map it to the correct action space</span>
-<span class="n">actor</span> <span class="o">=</span> <span class="n">ProbabilisticActor</span><span class="p">(</span>
-    <span class="n">module</span><span class="o">=</span><span class="n">actor_module</span><span class="p">,</span>
-    <span class="n">in_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">"loc"</span><span class="p">,</span> <span class="s2">"scale"</span><span class="p">],</span>
-    <span class="n">spec</span><span class="o">=</span><span class="n">action_spec</span><span class="p">,</span>
-    <span class="n">distribution_class</span><span class="o">=</span><span class="n">TanhNormal</span><span class="p">,</span>
-    <span class="n">distribution_kwargs</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">"low"</span><span class="p">:</span> <span class="n">action_spec</span><span class="o">.</span><span class="n">space</span><span class="o">.</span><span class="n">low</span><span class="p">,</span>
-        <span class="s2">"high"</span><span class="p">:</span> <span class="n">action_spec</span><span class="o">.</span><span class="n">space</span><span class="o">.</span><span class="n">high</span><span class="p">,</span>
-        <span class="s2">"tanh_loc"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="p">},</span>
-    <span class="n">default_interaction_type</span><span class="o">=</span><span class="n">ExplorationType</span><span class="o">.</span><span class="n">DETERMINISTIC</span><span class="p">,</span>
-<span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">action_spec</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_spec</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># Actor/policy MLP</span><span class="w">
+</span><span class="n">actor_mlp</span> <span class="o">=</span> <span class="n">MLP</span><span class="p">(</span><span class="w">
+</span>    <span class="n">num_cells</span><span class="o">=</span><span class="n">hidden_sizes</span><span class="p">,</span><span class="w">
+</span>    <span class="n">out_features</span><span class="o">=</span><span class="mi">2</span> <span class="o">*</span> <span class="n">action_spec</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="p">,</span><span class="w">
+</span>    <span class="n">activation_class</span><span class="o">=</span><span class="n">activation_fn</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># Map MLP output to location and scale parameters (the latter must be positive)</span><span class="w">
+</span><span class="n">actor_extractor</span> <span class="o">=</span> <span class="n">NormalParamExtractor</span><span class="p">(</span><span class="n">scale_lb</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span><span class="w">
+</span><span class="n">actor_net</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">actor_mlp</span><span class="p">,</span> <span class="n">actor_extractor</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># Specify tensordict inputs and outputs</span><span class="w">
+</span><span class="n">actor_module</span> <span class="o">=</span> <span class="n">TensorDictModule</span><span class="p">(</span><span class="w">
+</span>    <span class="n">actor_net</span><span class="p">,</span><span class="w">
+</span>    <span class="n">in_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">observation</span><span class="s2">&quot;</span><span class="p">]</span><span class="p">,</span><span class="w">
+</span>    <span class="n">out_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">loc</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">scale</span><span class="s2">&quot;</span><span class="p">]</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># Use ProbabilisticActor to map it to the correct action space</span><span class="w">
+</span><span class="n">actor</span> <span class="o">=</span> <span class="n">ProbabilisticActor</span><span class="p">(</span><span class="w">
+</span>    <span class="n">module</span><span class="o">=</span><span class="n">actor_module</span><span class="p">,</span><span class="w">
+</span>    <span class="n">in_keys</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">loc</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">scale</span><span class="s2">&quot;</span><span class="p">]</span><span class="p">,</span><span class="w">
+</span>    <span class="n">spec</span><span class="o">=</span><span class="n">action_spec</span><span class="p">,</span><span class="w">
+</span>    <span class="n">distribution_class</span><span class="o">=</span><span class="n">TanhNormal</span><span class="p">,</span><span class="w">
+</span>    <span class="n">distribution_kwargs</span><span class="o">=</span><span class="p">{</span><span class="w">
+</span>        <span class="s2">&quot;</span><span class="s2">low</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">action_spec</span><span class="o">.</span><span class="n">space</span><span class="o">.</span><span class="n">low</span><span class="p">,</span><span class="w">
+</span>        <span class="s2">&quot;</span><span class="s2">high</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">action_spec</span><span class="o">.</span><span class="n">space</span><span class="o">.</span><span class="n">high</span><span class="p">,</span><span class="w">
+</span>        <span class="s2">&quot;</span><span class="s2">tanh_loc</span><span class="s2">&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span><span class="w">
+</span>    <span class="p">}</span><span class="p">,</span><span class="w">
+</span>    <span class="n">default_interaction_type</span><span class="o">=</span><span class="n">ExplorationType</span><span class="o">.</span><span class="n">DETERMINISTIC</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <p>For convenience, we gather the actor and value functions into a single “model”:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">([</span><span class="n">actor</span><span class="p">,</span> <span class="n">qvalue</span><span class="p">,</span> <span class="n">value_net</span><span class="p">])</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">model</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">ModuleList</span><span class="p">(</span><span class="p">[</span><span class="n">actor</span><span class="p">,</span> <span class="n">qvalue</span><span class="p">,</span> <span class="n">value_net</span><span class="p">]</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <p>Under the hood, <code class="docutils literal notranslate"><span class="pre">MLP()</span></code> uses <a class="reference external" href="https://pytorch.org/docs/stable/generated/torch.nn.LazyLinear.html">LazyLinear</a> layers, whose shape is inferred during the first pass. Later methods need a fixed shape, so we forward some random data through the network to initialise the Lazy modules:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">(),</span> <span class="n">set_exploration_type</span><span class="p">(</span><span class="n">ExplorationType</span><span class="o">.</span><span class="n">RANDOM</span><span class="p">):</span>
-    <span class="n">tensordict</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">net</span> <span class="ow">in</span> <span class="n">model</span><span class="p">:</span>
-        <span class="n">net</span><span class="p">(</span><span class="n">tensordict</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">(</span><span class="p">)</span><span class="p">,</span> <span class="n">set_exploration_type</span><span class="p">(</span><span class="n">ExplorationType</span><span class="o">.</span><span class="n">RANDOM</span><span class="p">)</span><span class="p">:</span><span class="w">
+</span>    <span class="n">tensordict</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span>    <span class="k">for</span> <span class="n">net</span> <span class="ow">in</span> <span class="n">model</span><span class="p">:</span><span class="w">
+</span>        <span class="n">net</span><span class="p">(</span><span class="n">tensordict</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 </section>
 <section id="loss-and-optimizer">
 <h2>Loss and optimizer<a class="headerlink" href="#loss-and-optimizer" title="Link to this heading">¶</a></h2>
 <p>The explicit details of the Implicit Q-Learning losses are captured by TorchRL’s <code class="docutils literal notranslate"><span class="pre">IQLLoss</span></code> module:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">loss_module</span> <span class="o">=</span> <span class="n">IQLLoss</span><span class="p">(</span>
-    <span class="n">model</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-    <span class="n">model</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-    <span class="n">value_network</span><span class="o">=</span><span class="n">model</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
-    <span class="n">loss_function</span><span class="o">=</span><span class="s2">"l2"</span><span class="p">,</span>
-    <span class="n">temperature</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
-    <span class="n">expectile</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">loss_module</span><span class="o">.</span><span class="n">make_value_estimator</span><span class="p">(</span><span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">loss_module</span> <span class="o">=</span> <span class="n">IQLLoss</span><span class="p">(</span><span class="w">
+</span>    <span class="n">model</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">,</span><span class="w">
+</span>    <span class="n">model</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="p">,</span><span class="w">
+</span>    <span class="n">value_network</span><span class="o">=</span><span class="n">model</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="p">,</span><span class="w">
+</span>    <span class="n">loss_function</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">l2</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">temperature</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span><span class="w">
+</span>    <span class="n">expectile</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="n">loss_module</span><span class="o">.</span><span class="n">make_value_estimator</span><span class="p">(</span><span class="n">gamma</span><span class="o">=</span><span class="mf">0.99</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <p>IQL uses “soft updates” for the target network <span class="math notranslate nohighlight">\(Q_{\hat{\theta}}(s, a)\)</span>. The target network parameters are slowly updated in the direction of <span class="math notranslate nohighlight">\(Q_{\theta}(s, a)\)</span> at each iteration via Polyak averaging <span class="math notranslate nohighlight">\(\hat{\theta} \leftarrow \tau \,\theta + (1 - \tau) \, \hat{\theta}\)</span>,</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">target_net_updater</span> <span class="o">=</span> <span class="n">SoftUpdate</span><span class="p">(</span><span class="n">loss_module</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mf">0.005</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">target_net_updater</span> <span class="o">=</span> <span class="n">SoftUpdate</span><span class="p">(</span><span class="n">loss_module</span><span class="p">,</span> <span class="n">tau</span><span class="o">=</span><span class="mf">0.005</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <p>We optimize all of the networks using Adam:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">loss_module</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.0003</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">loss_module</span><span class="o">.</span><span class="n">parameters</span><span class="p">(</span><span class="p">)</span><span class="p">,</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.0003</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 </section>
 <section id="training">
 <h2>Training<a class="headerlink" href="#training" title="Link to this heading">¶</a></h2>
 <p>To demonstrate training, we run IQL for 50,000 iterations. During training, we will evaluate the policy every 1000 iterations. But note that this is for evaluation purposes only. Unlike online RL, we do not collect new data during training.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">()</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">evaluate_policy</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">num_eval_episodes</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">"""Calculate the mean cumulative reward over multiple episodes."""</span>
-    <span class="n">episode_rewards</span> <span class="o">=</span> <span class="p">[]</span>
-
-    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_eval_episodes</span><span class="p">):</span>
-        <span class="n">eval_td</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">rollout</span><span class="p">(</span><span class="n">max_steps</span><span class="o">=</span><span class="n">max_episode_steps</span><span class="p">,</span> <span class="n">policy</span><span class="o">=</span><span class="n">policy</span><span class="p">,</span> <span class="n">auto_cast_to_device</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">episode_rewards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">eval_td</span><span class="p">[</span><span class="s2">"next"</span><span class="p">,</span> <span class="s2">"reward"</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
-
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">episode_rewards</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="nd">&#64;torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="k">def</span><span class="w"> </span><span class="nf">evaluate_policy</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">policy</span><span class="p">,</span> <span class="n">num_eval_episodes</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span><span class="p">:</span><span class="w">
+</span><span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the mean cumulative reward over multiple episodes.&quot;&quot;&quot;</span><span class="w">
+</span>    <span class="n">episode_rewards</span> <span class="o">=</span> <span class="p">[</span><span class="p">]</span><span class="w">
+</span><span class="w">
+</span>    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_eval_episodes</span><span class="p">)</span><span class="p">:</span><span class="w">
+</span>        <span class="n">eval_td</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">rollout</span><span class="p">(</span><span class="n">max_steps</span><span class="o">=</span><span class="n">max_episode_steps</span><span class="p">,</span> <span class="n">policy</span><span class="o">=</span><span class="n">policy</span><span class="p">,</span> <span class="n">auto_cast_to_device</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="w">
+</span>        <span class="n">episode_rewards</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">eval_td</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">next</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">reward</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span>    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">episode_rewards</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <p>The training loop is essentially the standard PyTorch gradient descent loop:</p>
 <ol class="arabic simple">
 <li><p>Sample a batch of transitions from the dataset <span class="math notranslate nohighlight">\(\mathcal{D}\)</span>.</p></li>
 <li><p>Compute the loss <span class="math notranslate nohighlight">\(\ell = L_V(\psi) + L_Q(\theta) + L_\pi(\phi)\)</span>.</p></li>
 <li><p>Backpropagate the gradients and update the networks, including the target Q-network.</p></li>
 </ol>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">tqdm.auto</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
-
-<span class="n">iterations</span> <span class="o">=</span> <span class="mi">10_000</span>  <span class="c1"># Set to 50_000 to reproduce the results below</span>
-<span class="n">eval_interval</span> <span class="o">=</span> <span class="mi">1_000</span>
-
-<span class="n">loss_logs</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">eval_reward_logs</span> <span class="o">=</span> <span class="p">[]</span>
-<span class="n">pbar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">iterations</span><span class="p">))</span>
-
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span>
-    <span class="c1"># 1) Sample data from the dataset</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">replay_buffer</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
-
-    <span class="c1"># 2) Compute loss l = L_V + L_Q + L_pi</span>
-    <span class="n">loss_dict</span> <span class="o">=</span> <span class="n">loss_module</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">))</span>
-    <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_dict</span><span class="p">[</span><span class="s2">"loss_value"</span><span class="p">]</span> <span class="o">+</span> <span class="n">loss_dict</span><span class="p">[</span><span class="s2">"loss_qvalue"</span><span class="p">]</span> <span class="o">+</span> <span class="n">loss_dict</span><span class="p">[</span><span class="s2">"loss_actor"</span><span class="p">]</span>
-    <span class="n">loss_logs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>
-
-    <span class="c1"># 3) Backpropagate the gradients</span>
-    <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">()</span>
-    <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
-    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>  <span class="c1"># Update V(s), Q(a, s), pi(a|s)</span>
-    <span class="n">target_net_updater</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>  <span class="c1"># Update the target Q-network</span>
-
-    <span class="c1"># Evaluate the policy</span>
-    <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="n">eval_interval</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">eval_reward_logs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">evaluate_policy</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">model</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
-        <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s2">"Loss: </span><span class="si">{</span><span class="n">loss_logs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">, Avg return: </span><span class="si">{</span><span class="n">eval_reward_logs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">"</span>
-        <span class="p">)</span>
-
-<span class="n">pbar</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="nn">.</span><span class="nn">auto</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span><span class="w">
+</span><span class="w">
+</span><span class="n">iterations</span> <span class="o">=</span> <span class="mi">10_000</span>  <span class="c1"># Set to 50_000 to reproduce the results below</span><span class="w">
+</span><span class="n">eval_interval</span> <span class="o">=</span> <span class="mi">1_000</span><span class="w">
+</span><span class="w">
+</span><span class="n">loss_logs</span> <span class="o">=</span> <span class="p">[</span><span class="p">]</span><span class="w">
+</span><span class="n">eval_reward_logs</span> <span class="o">=</span> <span class="p">[</span><span class="p">]</span><span class="w">
+</span><span class="n">pbar</span> <span class="o">=</span> <span class="n">tqdm</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">iterations</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span><span class="w">
+</span>    <span class="c1"># 1) Sample data from the dataset</span><span class="w">
+</span>    <span class="n">data</span> <span class="o">=</span> <span class="n">replay_buffer</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span>    <span class="c1"># 2) Compute loss l = L_V + L_Q + L_pi</span><span class="w">
+</span>    <span class="n">loss_dict</span> <span class="o">=</span> <span class="n">loss_module</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span>    <span class="n">loss</span> <span class="o">=</span> <span class="n">loss_dict</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">loss_value</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">loss_dict</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">loss_qvalue</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">loss_dict</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">loss_actor</span><span class="s2">&quot;</span><span class="p">]</span><span class="w">
+</span>    <span class="n">loss_logs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">loss</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span>    <span class="c1"># 3) Backpropagate the gradients</span><span class="w">
+</span>    <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span>    <span class="n">loss</span><span class="o">.</span><span class="n">backward</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span>    <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="p">)</span>  <span class="c1"># Update V(s), Q(a, s), pi(a|s)</span><span class="w">
+</span>    <span class="n">target_net_updater</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="p">)</span>  <span class="c1"># Update the target Q-network</span><span class="w">
+</span><span class="w">
+</span>    <span class="c1"># Evaluate the policy</span><span class="w">
+</span>    <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="n">eval_interval</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span><span class="w">
+</span>        <span class="n">eval_reward_logs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">evaluate_policy</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">model</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span>        <span class="n">pbar</span><span class="o">.</span><span class="n">set_description</span><span class="p">(</span><span class="w">
+</span>            <span class="sa">f</span><span class="s2">&quot;</span><span class="s2">Loss: </span><span class="si">{</span><span class="n">loss_logs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">, Avg return: </span><span class="si">{</span><span class="n">eval_reward_logs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">&quot;</span><span class="w">
+</span>        <span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">pbar</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <p>We can plot the loss and episodic return:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">loss_logs</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Loss"</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"iterations"</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">eval_interval</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">eval_reward_logs</span><span class="p">)),</span> <span class="n">eval_reward_logs</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Cumulative reward"</span><span class="p">)</span>
-<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"iterations"</span><span class="p">)</span>
-<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">loss_logs</span><span class="p">)</span><span class="w">
+</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">Loss</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">iterations</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">eval_interval</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">eval_reward_logs</span><span class="p">)</span><span class="p">)</span><span class="p">,</span> <span class="n">eval_reward_logs</span><span class="p">)</span><span class="w">
+</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">Cumulative reward</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">iterations</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <a class="reference internal image-reference" href="../../../_images/IQL_torchrl_training_graphs.png"><img alt="Loss and eval reward during training" class="align-center" src="../../../_images/IQL_torchrl_training_graphs.png" style="width: 100%;" />
 </a>
 </section>
 <section id="results">
 <h2>Results<a class="headerlink" href="#results" title="Link to this heading">¶</a></h2>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">IPython.display</span><span class="w"> </span><span class="kn">import</span> <span class="n">HTML</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium.utils.save_video</span><span class="w"> </span><span class="kn">import</span> <span class="n">save_video</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">base64</span><span class="w"> </span><span class="kn">import</span> <span class="n">b64encode</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">IPython</span><span class="nn">.</span><span class="nn">display</span><span class="w"> </span><span class="kn">import</span> <span class="n">HTML</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium</span><span class="nn">.</span><span class="nn">utils</span><span class="nn">.</span><span class="nn">save_video</span><span class="w"> </span><span class="kn">import</span> <span class="n">save_video</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">base64</span><span class="w"> </span><span class="kn">import</span> <span class="n">b64encode</span><span class="w">
+</span></pre></div></div>
 <p>Evaluated over 100 episodes, the final performance is:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">final_score</span> <span class="o">=</span> <span class="n">evaluate_policy</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">model</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">num_eval_episodes</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cumulative reward (averaged over 100 episodes): </span><span class="si">{</span><span class="n">final_score</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">final_score</span> <span class="o">=</span> <span class="n">evaluate_policy</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="n">model</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">,</span> <span class="n">num_eval_episodes</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">Cumulative reward (averaged over 100 episodes): </span><span class="si">{</span><span class="n">final_score</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Cumulative reward (averaged over 100 episodes): 1872.69
 </pre></div>
 </div>
 <p>To visualise its performance, we can roll out a single episode and render the result as a video:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">viewer_env</span> <span class="o">=</span> <span class="n">TransformedEnv</span><span class="p">(</span>
-    <span class="n">GymEnv</span><span class="p">(</span><span class="n">env_id</span><span class="p">,</span> <span class="n">from_pixels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pixels_only</span><span class="o">=</span><span class="kc">False</span><span class="p">),</span>
-    <span class="n">DoubleToFloat</span><span class="p">()</span>
-<span class="p">)</span>
-<span class="n">viewer_env</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
-
-<span class="n">tensordict</span> <span class="o">=</span> <span class="n">viewer_env</span><span class="o">.</span><span class="n">rollout</span><span class="p">(</span><span class="n">max_steps</span><span class="o">=</span><span class="n">max_episode_steps</span><span class="p">,</span> <span class="n">policy</span><span class="o">=</span><span class="n">model</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">auto_cast_to_device</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cumulative reward: </span><span class="si">{</span><span class="n">tensordict</span><span class="p">[</span><span class="s1">'next'</span><span class="p">,</span><span class="w"> </span><span class="s1">'reward'</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-
-<span class="n">frames</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tensordict</span><span class="p">[</span><span class="s2">"pixels"</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
-<span class="n">save_video</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">video_folder</span><span class="o">=</span><span class="s2">"results_video"</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
-
-<span class="c1"># Display the video. Embedding is necessary for Google Colab etc</span>
-<span class="n">mp4</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">"results_video/rl-video-episode-0.mp4"</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-<span class="n">data_url</span> <span class="o">=</span> <span class="s2">"data:video/mp4;base64,"</span> <span class="o">+</span> <span class="n">b64encode</span><span class="p">(</span><span class="n">mp4</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">()</span>
-<span class="n">HTML</span><span class="p">(</span><span class="s2">"""</span>
-<span class="s2">&lt;video controls style='margin: auto; display: block'&gt;</span>
-<span class="s2">    &lt;source src='</span><span class="si">%s</span><span class="s2">' type='video/mp4'&gt;</span>
-<span class="s2">&lt;/video&gt;</span>
-<span class="s2">"""</span> <span class="o">%</span> <span class="n">data_url</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">viewer_env</span> <span class="o">=</span> <span class="n">TransformedEnv</span><span class="p">(</span><span class="w">
+</span>    <span class="n">GymEnv</span><span class="p">(</span><span class="n">env_id</span><span class="p">,</span> <span class="n">from_pixels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">pixels_only</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span>    <span class="n">DoubleToFloat</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="n">viewer_env</span><span class="o">.</span><span class="n">set_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">tensordict</span> <span class="o">=</span> <span class="n">viewer_env</span><span class="o">.</span><span class="n">rollout</span><span class="p">(</span><span class="n">max_steps</span><span class="o">=</span><span class="n">max_episode_steps</span><span class="p">,</span> <span class="n">policy</span><span class="o">=</span><span class="n">model</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">,</span> <span class="n">auto_cast_to_device</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">Cumulative reward: </span><span class="si">{</span><span class="n">tensordict</span><span class="p">[</span><span class="s1">'</span><span class="s1">next</span><span class="s1">'</span><span class="p">,</span><span class="w"> </span><span class="s1">'</span><span class="s1">reward</span><span class="s1">'</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">frames</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">tensordict</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">pixels</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">numpy</span><span class="p">(</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span><span class="n">save_video</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">video_folder</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">results_video</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">fps</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># Display the video. Embedding is necessary for Google Colab etc</span><span class="w">
+</span><span class="n">mp4</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">results_video/rl-video-episode-0.mp4</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">rb</span><span class="s2">&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="n">data_url</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s2">data:video/mp4;base64,</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">b64encode</span><span class="p">(</span><span class="n">mp4</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="n">HTML</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span><span class="s2">
+</span><span class="s2">&lt;video controls style=</span><span class="s2">'</span><span class="s2">margin: auto; display: block</span><span class="s2">'</span><span class="s2">&gt;</span><span class="s2">
+</span><span class="s2">    &lt;source src=</span><span class="s2">'</span><span class="si">%s</span><span class="s2">'</span><span class="s2"> type=</span><span class="s2">'</span><span class="s2">video/mp4</span><span class="s2">'</span><span class="s2">&gt;</span><span class="s2">
+</span><span class="s2">&lt;/video&gt;</span><span class="s2">
+</span><span class="s2">&quot;&quot;&quot;</span> <span class="o">%</span> <span class="n">data_url</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <p>Here are some examples of our trained agent:</p>
 <a class="reference internal image-reference" href="../../../_images/IQL_torchrl_adroit_pen_example_1.gif"><img alt="Example episode 1 for Adroit Pen environment" src="../../../_images/IQL_torchrl_adroit_pen_example_1.gif" style="width: 32%;" />
 </a>
@@ -1615,11 +1590,14 @@
 </a>
 <p>The performance varies quite a bit from episode to episode, but overall it’s decent considering there are only 25 demonstrations in the original dataset! To improve performance, you could try tuning the hyperparameters, such as the inverse temperature <span class="math notranslate nohighlight">\(\beta\)</span> and the expectile <span class="math notranslate nohighlight">\(\tau\)</span>, or use a larger dataset such as <cite>D4RL/pen/expert-v1</cite> which has around 5000 episodes.</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-tutorials-using-datasets-iql-torchrl-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/33c142a2af8efe60072d187060d148e2/IQL_torchrl.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">IQL_torchrl.ipynb</span></code></a></p>
+</div>
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../../../_downloads/221b3a2007d099dba1e44346a4856376/IQL_torchrl.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">IQL_torchrl.py</span></code></a></p>
 </div>
-<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
-<p><a class="reference download internal" download="" href="../../../_downloads/33c142a2af8efe60072d187060d148e2/IQL_torchrl.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">IQL_torchrl.ipynb</span></code></a></p>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/0c1e8a096436ec2843dc7d518b6627ee/IQL_torchrl.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">IQL_torchrl.zip</span></code></a></p>
 </div>
 </div>
 </section>
@@ -1790,10 +1768,11 @@
         })()
       </script>
 
-    <script src="../../../_static/documentation_options.js?v=5a9eddd6"></script>
+    <script src="../../../_static/documentation_options.js?v=2973651e"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/celshast.js?v=a788a8c6"></script>
+    <script src="../../../_static/sg-tags.js?v=d80f6fa4"></script>
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../../../_static/js/termynal.js?v=ff4c6923"></script>
