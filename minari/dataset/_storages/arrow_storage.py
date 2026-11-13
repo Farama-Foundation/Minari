@@ -81,16 +81,24 @@ class ArrowStorage(MinariStorage):
                 yield json.load(file)
 
     def get_episodes(self, episode_indices: Iterable[int]) -> Iterable[dict]:
-        dataset = pa.dataset.dataset(
-            [
-                pa.dataset.dataset(
-                    f"{self.data_path}/{ep_id}",
-                    format=self.FORMAT,
-                    ignore_prefixes=["_", ".", "metadata.json"],
+        def _read_episode(ep_id):
+            # Read the whole episode as one batch: scanner batches have a
+            # fixed maximum size and would split long episodes. A single
+            # episode is small, so a thread pool costs more than it saves.
+            table = pa.dataset.dataset(
+                f"{self.data_path}/{ep_id}",
+                format=self.FORMAT,
+                ignore_prefixes=["_", ".", "metadata.json"],
+            ).to_table(use_threads=False)
+            batches = table.combine_chunks().to_batches()
+            # combine_chunks leaves a binary column split when it holds more
+            # than 2 GiB, so the episode would not fit in one batch.
+            if len(batches) != 1:
+                raise ValueError(
+                    f"Episode {ep_id} has a column too large to read as one "
+                    f"batch ({len(batches)} batches)."
                 )
-                for ep_id in episode_indices
-            ]
-        )
+            return batches[0]
 
         def _to_dict(id, episode):
             return {
@@ -115,7 +123,7 @@ class ArrowStorage(MinariStorage):
                 ),
             }
 
-        return map(_to_dict, episode_indices, dataset.to_batches())
+        return (_to_dict(ep_id, _read_episode(ep_id)) for ep_id in episode_indices)
 
     def update_episodes(self, episodes: Iterable[EpisodeBuffer]):
         total_steps = self.total_steps
@@ -160,6 +168,9 @@ class ArrowStorage(MinariStorage):
                 format=self.FORMAT,
                 partitioning=["episode_id"],
                 existing_data_behavior="overwrite_or_ignore",
+                # Without this, threaded writes can store the chunks of a long
+                # episode out of order.
+                preserve_order=True,
             )
 
             episode_metadata: dict = {"id": episode_id, "total_steps": len(rewards)}
@@ -314,7 +325,7 @@ def _encode_info(info: dict):
 def _decode_info(values: pa.Array):
     nested_dict = {}
     for i, field in enumerate(values.type):
-        if isinstance(field, pa.StructArray):
+        if pa.types.is_struct(field.type):
             nested_dict[field.name] = _decode_info(values.field(i))
         else:
             value = np.stack(values.field(i).to_numpy(zero_copy_only=False))

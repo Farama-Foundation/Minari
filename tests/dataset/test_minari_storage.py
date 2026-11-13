@@ -1,3 +1,4 @@
+import json
 import os
 from dataclasses import replace
 
@@ -5,6 +6,7 @@ import gymnasium as gym
 import numpy as np
 import pytest
 from gymnasium import spaces
+from gymnasium.utils.env_checker import data_equivalence
 
 import minari
 from minari import DataCollector
@@ -51,6 +53,45 @@ def _generate_episode_buffer(
         buffer = buffer.add_step_data(step_data)
 
     return buffer
+
+
+class CloseCountingEnv(gym.Env):
+    closed = 0
+
+    def __init__(self):
+        self.observation_space = spaces.Box(-1, 1, shape=(2,))
+        self.action_space = spaces.Discrete(3)
+
+    def close(self):
+        CloseCountingEnv.closed += 1
+
+
+@pytest.mark.parametrize(
+    "given_spaces", [{}, {"observation_space": spaces.Box(-1, 1, shape=(2,))}]
+)
+def test_temporary_envs_are_closed(tmp_dataset_dir, given_spaces):
+    env_id = "MinariStorageCloseCounting-v0"
+    gym.register(env_id, entry_point=f"{__name__}:CloseCountingEnv")
+    try:
+        CloseCountingEnv.closed = 0
+        MinariStorage.new(
+            data_path=tmp_dataset_dir, env_spec=gym.spec(env_id), **given_spaces
+        )
+        assert CloseCountingEnv.closed == 1
+
+        # Datasets without stored spaces get them from the environment on read.
+        metadata_path = os.path.join(tmp_dataset_dir, "metadata.json")
+        with open(metadata_path) as file:
+            metadata = json.load(file)
+        del metadata["observation_space"]
+        with open(metadata_path, "w") as file:
+            json.dump(metadata, file)
+
+        storage = MinariStorage.read(tmp_dataset_dir)
+        assert CloseCountingEnv.closed == 2
+        assert storage.observation_space == spaces.Box(-1, 1, shape=(2,))
+    finally:
+        gym.registry.pop(env_id, None)
 
 
 def test_non_existing_data(tmp_dataset_dir):
@@ -135,6 +176,109 @@ def test_add_episodes(tmp_dataset_dir, data_format, observation_space):
 
 
 @pytest.mark.parametrize("data_format", get_storage_keys())
+def test_add_episodes_with_nested_infos(tmp_dataset_dir, data_format):
+    action_space = spaces.Box(-1, 1, shape=(10,))
+    observation_space = spaces.Box(-1, 1, shape=(3,))
+    steps_per_episode = 5
+
+    def _info(step):
+        return {
+            "timestep": np.array([step]),
+            "component_1": {"matrix": np.full((2, 2), step, dtype=np.float32)},
+        }
+
+    buffer = EpisodeBuffer(observations=observation_space.sample(), infos=_info(0))
+    for i in range(1, steps_per_episode + 1):
+        step_data: StepData = {
+            "observation": observation_space.sample(),
+            "action": action_space.sample(),
+            "reward": 0.0,
+            "terminated": i == steps_per_episode,
+            "truncated": False,
+            "info": _info(i),
+        }
+        buffer = buffer.add_step_data(step_data)
+
+    storage = MinariStorage.new(
+        data_path=tmp_dataset_dir,
+        observation_space=observation_space,
+        action_space=action_space,
+        data_format=data_format,
+    )
+    storage.update_episodes([buffer])
+
+    storage_ep = next(iter(storage.get_episodes([0])))
+    expected_infos = {
+        "timestep": np.arange(steps_per_episode + 1).reshape(-1, 1),
+        "component_1": {
+            "matrix": np.stack(
+                [
+                    np.full((2, 2), i, dtype=np.float32)
+                    for i in range(steps_per_episode + 1)
+                ]
+            )
+        },
+    }
+    np.testing.assert_equal(storage_ep["infos"], expected_infos)
+
+
+@pytest.mark.parametrize("data_format", get_storage_keys())
+def test_get_episodes_from_iterator(tmp_dataset_dir, data_format):
+    observation_space = spaces.Box(-1, 1, shape=(3,))
+    action_space = spaces.Discrete(4)
+    episodes = [
+        _generate_episode_buffer(observation_space, action_space) for _ in range(3)
+    ]
+    storage = MinariStorage.new(
+        data_path=tmp_dataset_dir,
+        observation_space=observation_space,
+        action_space=action_space,
+        data_format=data_format,
+    )
+    storage.update_episodes(episodes)
+
+    storage_episodes = list(storage.get_episodes(iter([2, 0])))
+    assert [ep["id"] for ep in storage_episodes] == [2, 0]
+    for ep_id, storage_ep in zip([2, 0], storage_episodes):
+        assert np.all(episodes[ep_id].observations == storage_ep["observations"])
+        assert np.all(episodes[ep_id].rewards == storage_ep["rewards"])
+
+
+@pytest.mark.parametrize("data_format", get_storage_keys())
+def test_long_episode_round_trip(tmp_dataset_dir, data_format):
+    # Longer than one Arrow scanner batch, followed by a short episode.
+    lengths = [200_000, 10]
+    episodes = []
+    for length in lengths:
+        truncations = np.zeros(length, dtype=np.bool_)
+        truncations[-1] = True
+        episodes.append(
+            EpisodeBuffer(
+                observations=np.arange(length + 1) % 50,
+                actions=np.arange(length) % 4,
+                rewards=np.arange(length, dtype=np.float64),
+                terminations=np.zeros(length, dtype=np.bool_),
+                truncations=truncations,
+            )
+        )
+    storage = MinariStorage.new(
+        data_path=tmp_dataset_dir,
+        observation_space=spaces.Discrete(50),
+        action_space=spaces.Discrete(4),
+        data_format=data_format,
+    )
+    storage.update_episodes(episodes)
+
+    storage_episodes = list(storage.get_episodes(range(len(lengths))))
+    assert len(storage_episodes) == len(lengths)
+    for ep, storage_ep in zip(episodes, storage_episodes):
+        assert np.array_equal(ep.observations, storage_ep["observations"])
+        assert np.array_equal(ep.actions, storage_ep["actions"])
+        assert np.array_equal(ep.rewards, storage_ep["rewards"])
+        assert np.array_equal(ep.truncations, storage_ep["truncations"])
+
+
+@pytest.mark.parametrize("data_format", get_storage_keys())
 @pytest.mark.parametrize("jpeg_encoding", [True, False])
 def test_image_jpeg_encoding_round_trip(tmp_dataset_dir, data_format, jpeg_encoding):
     """Round-trip image-space data with and without JPEG encoding.
@@ -173,6 +317,25 @@ def test_image_jpeg_encoding_round_trip(tmp_dataset_dir, data_format, jpeg_encod
         assert obs.shape == np.asarray(ep.observations).shape
         if not jpeg_encoding:
             assert np.array_equal(obs, np.asarray(ep.observations))
+
+
+@pytest.mark.parametrize("data_format", get_storage_keys())
+@pytest.mark.parametrize("channels", [1, 2, 4])
+def test_non_rgb_images_stored_raw(tmp_dataset_dir, data_format, channels):
+    # JPEG cannot hold these channel counts, so they are stored as raw arrays.
+    observation_space = spaces.Box(0, 255, shape=(32, 32, channels), dtype=np.uint8)
+    action_space = spaces.Discrete(2)
+    episodes = [_generate_episode_buffer(observation_space, action_space, length=5)]
+    storage = MinariStorage.new(
+        data_path=tmp_dataset_dir,
+        observation_space=observation_space,
+        action_space=action_space,
+        data_format=data_format,
+    )
+    storage.update_episodes(episodes)
+
+    storage_ep = next(iter(storage.get_episodes([0])))
+    assert np.array_equal(storage_ep["observations"], episodes[0].observations)
 
 
 @pytest.mark.parametrize("data_format", get_storage_keys())
@@ -373,3 +536,48 @@ def test_seed_change(tmp_dataset_dir, data_format):
     assert len(list(episodes_metadata)) == len(seeds)
     for seed, ep_metadata in zip(seeds, episodes_metadata):
         assert ep_metadata.get("seed") == seed
+
+
+@pytest.mark.parametrize("data_format", get_storage_keys())
+@pytest.mark.parametrize("selection", ["all", "selected", "empty", "iterator"])
+def test_update_from_storage_selection(tmp_path, data_format, selection):
+    """Copy selected episodes in order, while preserving existing target data."""
+    observation_space = spaces.Box(-1, 1)
+    action_space = spaces.Box(-1, 1)
+    source = MinariStorage.new(
+        tmp_path / "source", observation_space, action_space, data_format=data_format
+    )
+    target = MinariStorage.new(
+        tmp_path / "target", observation_space, action_space, data_format=data_format
+    )
+    source.update_episodes(
+        [
+            _generate_episode_buffer(observation_space, action_space, length=length)
+            for length in (2, 3, 4)
+        ]
+    )
+    target.update_episodes(
+        [_generate_episode_buffer(observation_space, action_space, length=1)]
+    )
+    indices = [] if selection == "empty" else [2, 0]
+    if selection == "all":
+        indices = list(range(source.total_episodes))
+
+    expected = list(target.get_episodes([0])) + list(source.get_episodes(indices))
+    if selection == "all":
+        target.update_from_storage(source)
+    else:
+        target.update_from_storage(
+            source,
+            episode_indices=iter(indices) if selection == "iterator" else indices,
+        )
+
+    assert target.total_episodes == len(expected)
+    assert target.total_steps == sum(len(episode["rewards"]) for episode in expected)
+    actual = list(target.get_episodes(range(target.total_episodes)))
+    assert len(actual) == len(expected)
+    for index, (result, original) in enumerate(zip(actual, expected)):
+        assert result["id"] == index
+        assert data_equivalence(result, {**original, "id": index})
+    assert source.total_episodes == 3
+    assert source.total_steps == 9
