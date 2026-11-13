@@ -42,6 +42,19 @@ def validate_datasets_to_combine(
         combined_dataset_env_spec (EnvSpec): the resulting EnvSpec of combining the MinariDatasets
 
     """
+    if any(
+        dataset.action_space != datasets_to_combine[0].action_space
+        for dataset in datasets_to_combine
+    ):
+        raise ValueError("The datasets to combine must have the same action space.")
+    if any(
+        dataset.observation_space != datasets_to_combine[0].observation_space
+        for dataset in datasets_to_combine
+    ):
+        raise ValueError(
+            "The datasets to combine must have the same observation space."
+        )
+
     # get first among the dataset's env_spec which is not None
     first_not_none_env_spec = next(
         (
@@ -110,6 +123,8 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_id: s
     If any input disables it, the combined dataset stores raw arrays to avoid
     introducing lossy compression. If all inputs enable it, images are decoded
     and JPEG-encoded again, which adds further compression loss.
+    All datasets must have equal observation and action spaces, including when
+    no environment spec is stored.
 
     Args:
         datasets_to_combine (list[MinariDataset]): list of datasets to be combined
@@ -158,12 +173,17 @@ def split_dataset(
 
     Args:
         dataset (MinariDataset): the MinariDataset to split
-        sizes (List[int]): sizes of the resulting datasets
+        sizes (List[int]): non-negative sizes of the resulting datasets
         seed (Optional[int]): random seed
 
     Returns:
         datasets (List[MinariDataset]): resulting list of datasets
+
+    Raises:
+        ValueError: if any size is negative or the sum exceeds the dataset's episode count.
     """
+    if any(size < 0 for size in sizes):
+        raise ValueError("The split sizes must be non-negative.")
     if sum(sizes) > dataset.total_episodes:
         raise ValueError(
             "Incompatible arguments: the sum of sizes exceeds ",
