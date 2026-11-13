@@ -1377,6 +1377,10 @@ You can also define this in the environment variable <cite>MINARI_REMOTE</cite>.
 <p>The new dataset will contain a metadata attribute <cite>combined_datasets</cite> containing a list
 with the dataset names that were combined to form this new Minari dataset.
 Only the selected episodes of each dataset are copied, in their existing order.
+Image data is JPEG-encoded only if all input datasets enable JPEG encoding.
+If any input disables it, the combined dataset stores raw arrays to avoid
+introducing lossy compression. If all inputs enable it, images are decoded
+and JPEG-encoded again, which adds further compression loss.
 All datasets must have equal observation and action spaces, including when
 no environment spec is stored.</p>
 <dl class="field-list simple">

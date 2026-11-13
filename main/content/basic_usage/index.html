@@ -1405,6 +1405,12 @@ A negative size or a total exceeding the episode count raises <code class="docut
 </section>
 <section id="combine-minari-datasets">
 <h3>Combine Minari Datasets<a class="headerlink" href="#combine-minari-datasets" title="Link to this heading">¶</a></h3>
+<p>The combined dataset uses JPEG encoding only when all input datasets enable it.
+If any input was created with <code class="docutils literal notranslate"><span class="pre">jpeg_encoding=False</span></code>, images are stored as raw
+arrays to avoid introducing lossy compression during combination. This can
+produce larger combined files. The compression loss already present in
+JPEG-encoded inputs cannot be recovered. If all inputs use JPEG encoding, images
+are decoded and JPEG-encoded again, which adds further compression loss.</p>
 <p>In the case of having two or more Minari datasets created with the same environment we can combine these datasets into a single one by using the Minari function <a class="reference internal" href="../../api/minari_functions/#minari.combine_datasets" title="minari.combine_datasets"><code class="xref py py-func docutils literal notranslate"><span class="pre">minari.combine_datasets()</span></code></a>, i.e. the <code class="docutils literal notranslate"><span class="pre">'AdroitHandDoor-v1'</span></code> environment has two datasets available in the remote Farama servers, <code class="docutils literal notranslate"><span class="pre">D4RL/door/human-v2</span></code> and <code class="docutils literal notranslate"><span class="pre">D4RL/door/expert-v2</span></code>, we can combine the episodes in these two datasets into a new Minari dataset <code class="docutils literal notranslate"><span class="pre">D4RL/door/all-v0</span></code>:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>minari<span class="w"> </span>download<span class="w"> </span>D4RL/door/expert-v2
 minari<span class="w"> </span>combine<span class="w"> </span>D4RL/door/human-v2<span class="w"> </span>D4RL/door/expert-v2<span class="w"> </span>--dataset-id<span class="o">=</span>D4RL/door/all-v0

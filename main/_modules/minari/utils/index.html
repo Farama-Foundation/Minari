@@ -1314,6 +1314,10 @@
 <span class="sd">    The new dataset will contain a metadata attribute `combined_datasets` containing a list</span>
 <span class="sd">    with the dataset names that were combined to form this new Minari dataset.</span>
 <span class="sd">    Only the selected episodes of each dataset are copied, in their existing order.</span>
+<span class="sd">    Image data is JPEG-encoded only if all input datasets enable JPEG encoding.</span>
+<span class="sd">    If any input disables it, the combined dataset stores raw arrays to avoid</span>
+<span class="sd">    introducing lossy compression. If all inputs enable it, images are decoded</span>
+<span class="sd">    and JPEG-encoded again, which adds further compression loss.</span>
 <span class="sd">    All datasets must have equal observation and action spaces, including when</span>
 <span class="sd">    no environment spec is stored.</span>
 
@@ -1334,6 +1338,9 @@
         <span class="n">observation_space</span><span class="o">=</span><span class="n">datasets_to_combine</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">observation_space</span><span class="p">,</span>
         <span class="n">action_space</span><span class="o">=</span><span class="n">datasets_to_combine</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span>
         <span class="n">data_format</span><span class="o">=</span><span class="n">datasets_to_combine</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">FORMAT</span><span class="p">,</span>
+        <span class="n">jpeg_encoding</span><span class="o">=</span><span class="nb">all</span><span class="p">(</span>
+            <span class="n">dataset</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">jpeg_encoding</span> <span class="k">for</span> <span class="n">dataset</span> <span class="ow">in</span> <span class="n">datasets_to_combine</span>
+        <span class="p">),</span>
     <span class="p">)</span>
 
     <span class="n">new_storage</span><span class="o">.</span><span class="n">update_metadata</span><span class="p">(</span>
