@@ -119,6 +119,10 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_id: s
     The new dataset will contain a metadata attribute `combined_datasets` containing a list
     with the dataset names that were combined to form this new Minari dataset.
     Only the selected episodes of each dataset are copied, in their existing order.
+    Image data is JPEG-encoded only if all input datasets enable JPEG encoding.
+    If any input disables it, the combined dataset stores raw arrays to avoid
+    introducing lossy compression. If all inputs enable it, images are decoded
+    and JPEG-encoded again, which adds further compression loss.
     All datasets must have equal observation and action spaces, including when
     no environment spec is stored.
 
@@ -139,6 +143,9 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_id: s
         observation_space=datasets_to_combine[0].observation_space,
         action_space=datasets_to_combine[0].action_space,
         data_format=datasets_to_combine[0].storage.FORMAT,
+        jpeg_encoding=all(
+            dataset.storage.jpeg_encoding for dataset in datasets_to_combine
+        ),
     )
 
     new_storage.update_metadata(

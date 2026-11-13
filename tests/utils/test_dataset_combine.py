@@ -13,6 +13,57 @@ from minari.utils import combine_datasets
 from tests.common import create_dummy_dataset_with_collecter_env_helper
 
 
+@pytest.mark.parametrize("data_format", get_storage_keys())
+@pytest.mark.parametrize(
+    "encodings", [(False, False), (False, True), (True, False), (True, True)]
+)
+def test_combine_image_encoding(data_format, encodings):
+    """Combining raw image datasets must not introduce lossy compression."""
+    image_space = gym.spaces.Box(0, 255, shape=(32, 32, 3), dtype=np.uint8)
+    rng = np.random.default_rng(42)
+    # The second input uses a different storage backend, so every case also
+    # combines across backends.
+    formats = get_storage_keys()
+    other_format = formats[(formats.index(data_format) + 1) % len(formats)]
+    datasets = []
+    for index, (jpeg_encoding, source_format) in enumerate(
+        zip(encodings, (data_format, other_format))
+    ):
+        buffer = EpisodeBuffer(
+            observations=list(rng.integers(256, size=(2, 32, 32, 3), dtype=np.uint8)),
+            actions=[index],
+            rewards=[float(index)],
+            terminations=[True],
+            truncations=[False],
+        )
+        datasets.append(
+            minari.create_dataset_from_buffers(
+                f"images-{index}-v0",
+                [buffer],
+                observation_space=image_space,
+                action_space=gym.spaces.Discrete(2),
+                data_format=source_format,
+                jpeg_encoding=jpeg_encoding,
+                algorithm_name="synthetic",
+            )
+        )
+
+    combine_datasets(datasets, "combined-images-v0")
+    combined = minari.load_dataset("combined-images-v0")
+    assert combined.storage.FORMAT == data_format
+    assert combined.storage.jpeg_encoding is all(encodings)
+
+    for source_dataset, copied in zip(datasets, combined, strict=True):
+        source = source_dataset[0].observations
+        if all(encodings):
+            # The images are decoded and JPEG-encoded again, which adds loss.
+            # Only check that they stay close to the source images.
+            error = np.abs(copied.observations.astype(int) - source.astype(int))
+            assert error.mean() < 20
+        else:
+            np.testing.assert_array_equal(copied.observations, source)
+
+
 def _check_env_recovery(gymnasium_environment: gym.Env, dataset: MinariDataset):
     """Test that the recovered environment from MinariDataset is the same as the one used to generate the dataset.
 
