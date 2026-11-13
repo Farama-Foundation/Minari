@@ -1195,6 +1195,7 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pathlib</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tempfile</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Union</span>
 
@@ -1233,7 +1234,10 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        dataset_id (str): name id of Minari dataset</span>
-<span class="sd">        download (bool): if `True` download the dataset if it is not found locally. Default to `False`.</span>
+<span class="sd">        download (bool): if `True` download the dataset if it is not found locally, or download it again</span>
+<span class="sd">            if the local copy cannot be loaded, e.g. when files are missing or the metadata is unreadable</span>
+<span class="sd">            after an interrupted download. Damaged data files are only detected when episodes are read.</span>
+<span class="sd">            Default to `False`.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        MinariDataset</span>
@@ -1248,9 +1252,51 @@
             <span class="p">)</span>
 
         <span class="n">hosting</span><span class="o">.</span><span class="n">download_dataset</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">MinariDataset</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">MinariDataset</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span></div>
+    <span class="c1"># Only storage-level errors mean the local copy is incomplete or corrupted, e.g. after an</span>
+    <span class="c1"># interrupted download. Errors raised by MinariDataset (such as an unsupported dataset version)</span>
+    <span class="c1"># are not fixed by downloading again, so they propagate unchanged.</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">storage</span> <span class="o">=</span> <span class="n">MinariStorage</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">download</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"Dataset </span><span class="si">{</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2"> found locally at </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2"> could not be loaded, it may be incomplete or corrupted: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">. "</span>
+                <span class="sa">f</span><span class="s2">"Use download=True or minari.download_dataset('</span><span class="si">{</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2">', force_download=True) to download it again, "</span>
+                <span class="sa">f</span><span class="s2">"or minari.delete_dataset('</span><span class="si">{</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2">') to remove it."</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Dataset </span><span class="si">{</span><span class="n">dataset_id</span><span class="si">}</span><span class="s2"> found locally at </span><span class="si">{</span><span class="n">file_path</span><span class="si">}</span><span class="s2"> could not be loaded (</span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">). Downloading it again."</span>
+        <span class="p">)</span>
+        <span class="n">_redownload_dataset</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">,</span> <span class="n">file_path</span><span class="p">)</span>
+        <span class="n">storage</span> <span class="o">=</span> <span class="n">MinariStorage</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">data_path</span><span class="p">)</span>
 
+    <span class="k">return</span> <span class="n">MinariDataset</span><span class="p">(</span><span class="n">storage</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_redownload_dataset</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Replace a broken local dataset with a fresh download.</span>
+
+<span class="sd">    The broken copy is moved aside, not forced over, so that the normal compatibility checks of</span>
+<span class="sd">    `download_dataset` run. If the download fails, e.g. because the dataset only exists locally</span>
+<span class="sd">    or the remote is unreachable, the broken copy is put back.</span>
+<span class="sd">    """</span>
+    <span class="n">backup_dir</span> <span class="o">=</span> <span class="n">pathlib</span><span class="o">.</span><span class="n">Path</span><span class="p">(</span>
+        <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="sa">f</span><span class="s2">".</span><span class="si">{</span><span class="n">file_path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">-backup-"</span><span class="p">,</span> <span class="nb">dir</span><span class="o">=</span><span class="n">file_path</span><span class="o">.</span><span class="n">parent</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">backup_path</span> <span class="o">=</span> <span class="n">backup_dir</span> <span class="o">/</span> <span class="n">file_path</span><span class="o">.</span><span class="n">name</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="n">backup_path</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">hosting</span><span class="o">.</span><span class="n">download_dataset</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">BaseException</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">file_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">move</span><span class="p">(</span><span class="n">backup_path</span><span class="p">,</span> <span class="n">file_path</span><span class="p">)</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">backup_dir</span><span class="p">)</span>
+        <span class="k">raise</span>
+    <span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">backup_dir</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="list_local_datasets">

@@ -1214,7 +1214,10 @@
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dataset_id</strong> (<em>str</em>) – name id of Minari dataset</p></li>
-<li><p><strong>download</strong> (<em>bool</em>) – if <cite>True</cite> download the dataset if it is not found locally. Default to <cite>False</cite>.</p></li>
+<li><p><strong>download</strong> (<em>bool</em>) – if <cite>True</cite> download the dataset if it is not found locally, or download it again
+if the local copy cannot be loaded, e.g. when files are missing or the metadata is unreadable
+after an interrupted download. Damaged data files are only detected when episodes are read.
+Default to <cite>False</cite>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
