@@ -69,3 +69,30 @@ def test_combined_episodes_keep_reset_metadata(data_format):
     assert [m["id"] for m in metadata] == [0, 1]
     assert [m["seed"] for m in metadata] == [0, 42]
     assert all("options" not in m for m in metadata)
+
+
+@pytest.mark.parametrize("data_format", get_storage_keys())
+def test_combined_selected_episodes_keep_reset_metadata(data_format):
+    """Metadata stays matched to its episode when a subset is copied out of order."""
+    seeds = [10, 11, 12]
+    with DataCollector(
+        gym.make("Pendulum-v1", max_episode_steps=5), data_format=data_format
+    ) as collector:
+        for seed in seeds:
+            collect_episode(collector, seed, {"x_init": seed})
+        dataset = collector.create_dataset("pendulum-source-v0")
+
+    source_episodes = {ep.id: ep for ep in dataset.iterate_episodes()}
+    dataset.episode_indices = np.array([2, 0])
+
+    combined = minari.combine_datasets([dataset], "pendulum-combined-v0")
+    assert combined.total_episodes == 2
+    metadata = list(combined.storage.get_episode_metadata([0, 1]))
+    assert [m["id"] for m in metadata] == [0, 1]
+    assert [m["seed"] for m in metadata] == [12, 10]
+    assert [m["options"] for m in metadata] == [{"x_init": 12}, {"x_init": 10}]
+
+    for combined_episode, source_id in zip(combined.iterate_episodes(), [2, 0]):
+        np.testing.assert_array_equal(
+            combined_episode.observations, source_episodes[source_id].observations
+        )

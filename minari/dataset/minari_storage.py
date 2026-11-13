@@ -350,6 +350,8 @@ class MinariStorage(ABC):
         else:
             # Storage backends may iterate over the indices more than once.
             episode_indices = list(episode_indices)
+        # Only the reset seed and options are copied from the episode metadata.
+        # Other keys added with `update_episode_metadata` are not copied.
         episodes = (
             EpisodeBuffer(
                 id=None,
