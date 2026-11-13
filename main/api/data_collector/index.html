@@ -1324,6 +1324,8 @@ If None the `env</cite> used to collect the buffer data should be used for evalu
 <dt class="sig sig-object py" id="minari.DataCollector.add_to_dataset">
 <span class="sig-prename descclassname"><span class="pre">minari.DataCollector.</span></span><span class="sig-name descname"><span class="pre">add_to_dataset</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dataset</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../minari_dataset/minari_dataset/#minari.MinariDataset" title="minari.dataset.minari_dataset.MinariDataset"><span class="pre">MinariDataset</span></a></span></em><span class="sig-paren">)</span><a class="headerlink" href="#minari.DataCollector.add_to_dataset" title="Link to this definition">¶</a></dt>
 <dd><p>Add extra data to Minari dataset from collector environment buffers (DataCollector).</p>
+<p>The episode metadata callback is applied to each newly appended episode.
+Existing episodes keep their metadata.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>dataset</strong> (<a class="reference internal" href="../minari_dataset/minari_dataset/#minari.MinariDataset" title="minari.MinariDataset"><em>MinariDataset</em></a>) – Dataset to add the data</p>

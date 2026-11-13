@@ -1413,6 +1413,9 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">add_to_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">:</span> <span class="n">MinariDataset</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">"""Add extra data to Minari dataset from collector environment buffers (DataCollector).</span>
 
+<span class="sd">        The episode metadata callback is applied to each newly appended episode.</span>
+<span class="sd">        Existing episodes keep their metadata.</span>
+
 <span class="sd">        Args:</span>
 <span class="sd">            dataset (MinariDataset): Dataset to add the data</span>
 <span class="sd">        """</span>
@@ -1420,6 +1423,11 @@
 
         <span class="n">first_id</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">total_episodes</span>
         <span class="n">dataset</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">update_from_storage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_storage</span><span class="p">)</span>
+        <span class="n">new_episode_indices</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">first_id</span><span class="p">,</span> <span class="n">dataset</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">total_episodes</span><span class="p">)</span>
+        <span class="n">episode_metadata</span> <span class="o">=</span> <span class="n">dataset</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_episode_metadata_callback</span><span class="p">,</span> <span class="n">episode_indices</span><span class="o">=</span><span class="n">new_episode_indices</span>
+        <span class="p">)</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">storage</span><span class="o">.</span><span class="n">update_episode_metadata</span><span class="p">(</span><span class="n">episode_metadata</span><span class="p">,</span> <span class="n">new_episode_indices</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">dataset</span><span class="o">.</span><span class="n">episode_indices</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">new_ids</span> <span class="o">=</span> <span class="n">first_id</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_storage</span><span class="o">.</span><span class="n">total_episodes</span><span class="p">)</span>
             <span class="n">dataset</span><span class="o">.</span><span class="n">episode_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">episode_indices</span><span class="p">,</span> <span class="n">new_ids</span><span class="p">)</span>
