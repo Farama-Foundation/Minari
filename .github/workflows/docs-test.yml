@@ -16,9 +16,7 @@ jobs:
 
       - uses: actions/setup-python@v7
         with:
-            python-version: '3.15'
-
-      - run: sudo apt-get install -y libhdf5-dev
+            python-version: '3.12'
 
       - name: Install Minari
         run: pip install .[all,testing]
