@@ -269,11 +269,6 @@ for _ in range(100):
 
 ### Combine Minari Datasets
 
-When using `minari.combine_datasets` with datasets returned by
-`filter_episodes` or `minari.split_dataset`, only the selected episodes are copied.
-Episodes retain their order within each input dataset and receive consecutive IDs
-in the combined dataset. An empty input dataset contributes no episodes.
-
 ```{eval-rst}
 In the case of having two or more Minari datasets created with the same environment we can combine these datasets into a single one by using the Minari function :func:`minari.combine_datasets`, i.e. the ``'AdroitHandDoor-v1'`` environment has two datasets available in the remote Farama servers, ``D4RL/door/human-v2`` and ``D4RL/door/expert-v2``, we can combine the episodes in these two datasets into a new Minari dataset ``D4RL/door/all-v0``:
 ```
@@ -292,6 +287,25 @@ minari list local
 │ D4RL/door/expert-v2 │           5000 │     1000000 │ 1096.4 MB    │ Rodrigo de Lazcano │
 │ D4RL/door/human-v2  │             25 │        6729 │ 7.1 MB       │ Rodrigo de Lazcano │
 └─────────────────────┴────────────────┴─────────────┴──────────────┴────────────────────┘
+```
+
+```{eval-rst}
+:func:`minari.combine_datasets` also accepts datasets returned by :func:`minari.MinariDataset.filter_episodes` or :func:`minari.split_dataset`. In this case, only the selected episodes are copied. Episodes keep their order within each input dataset and receive consecutive IDs in the combined dataset. An empty input dataset contributes no episodes.
+```
+
+```python
+import minari
+
+human_dataset = minari.load_dataset('D4RL/door/human-v2')
+expert_dataset = minari.load_dataset('D4RL/door/expert-v2')
+
+# Keep the high-return expert episodes and about half of the human episodes
+high_return_expert = expert_dataset.filter_episodes(lambda episode: episode.rewards.sum() > 2000)
+human_half, _ = minari.split_dataset(human_dataset, sizes=[12, 13], seed=42)
+
+combined_dataset = minari.combine_datasets(
+    [human_half, high_return_expert], new_dataset_id='D4RL/door/selected-v0'
+)
 ```
 
 ## Create Minari Dataset
