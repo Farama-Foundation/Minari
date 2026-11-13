@@ -2,6 +2,7 @@ import importlib.metadata
 import os
 import pathlib
 import shutil
+import tempfile
 import warnings
 from typing import Dict, Iterable, Optional, Tuple, Union
 
@@ -38,7 +39,10 @@ def load_dataset(dataset_id: str, download: bool = False):
 
     Args:
         dataset_id (str): name id of Minari dataset
-        download (bool): if `True` download the dataset if it is not found locally. Default to `False`.
+        download (bool): if `True` download the dataset if it is not found locally, or download it again
+            if the local copy cannot be loaded, e.g. when files are missing or the metadata is unreadable
+            after an interrupted download. Damaged data files are only detected when episodes are read.
+            Default to `False`.
 
     Returns:
         MinariDataset
@@ -53,8 +57,50 @@ def load_dataset(dataset_id: str, download: bool = False):
             )
 
         hosting.download_dataset(dataset_id)
+        return MinariDataset(data_path)
 
-    return MinariDataset(data_path)
+    # Only storage-level errors mean the local copy is incomplete or corrupted, e.g. after an
+    # interrupted download. Errors raised by MinariDataset (such as an unsupported dataset version)
+    # are not fixed by downloading again, so they propagate unchanged.
+    try:
+        storage = MinariStorage.read(data_path)
+    except ValueError as e:
+        if not download:
+            raise ValueError(
+                f"Dataset {dataset_id} found locally at {file_path} could not be loaded, it may be incomplete or corrupted: {e}. "
+                f"Use download=True or minari.download_dataset('{dataset_id}', force_download=True) to download it again, "
+                f"or minari.delete_dataset('{dataset_id}') to remove it."
+            ) from e
+        warnings.warn(
+            f"Dataset {dataset_id} found locally at {file_path} could not be loaded ({e}). Downloading it again."
+        )
+        _redownload_dataset(dataset_id, file_path)
+        storage = MinariStorage.read(data_path)
+
+    return MinariDataset(storage)
+
+
+def _redownload_dataset(dataset_id: str, file_path: pathlib.Path):
+    """Replace a broken local dataset with a fresh download.
+
+    The broken copy is moved aside, not forced over, so that the normal compatibility checks of
+    `download_dataset` run. If the download fails, e.g. because the dataset only exists locally
+    or the remote is unreachable, the broken copy is put back.
+    """
+    backup_dir = pathlib.Path(
+        tempfile.mkdtemp(prefix=f".{file_path.name}-backup-", dir=file_path.parent)
+    )
+    backup_path = backup_dir / file_path.name
+    shutil.move(file_path, backup_path)
+    try:
+        hosting.download_dataset(dataset_id)
+    except BaseException:
+        if file_path.exists():
+            shutil.rmtree(file_path)
+        shutil.move(backup_path, file_path)
+        shutil.rmtree(backup_dir)
+        raise
+    shutil.rmtree(backup_dir)
 
 
 def list_local_datasets(
