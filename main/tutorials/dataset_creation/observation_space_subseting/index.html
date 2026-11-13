@@ -15,9 +15,9 @@
         <title>Collecting a subset of a dictionary space with StepDataCallback - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/celshast.css?v=9fbfb63d" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=ca3c1c84" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=e5fbc548" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/celshast-extensions.css?v=42bfddca" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/termynal.css?v=d6ad0c61" />
@@ -1214,103 +1214,100 @@ by the final dataset</a>.</p>
 this tutorial, the outlined procedure can be extended to both action/observation spaces
 of any other environment.</p>
 <p>Let’s get started by importing the required modules:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium_robotics</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="kn">import</span> <span class="n">spaces</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">minari</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">minari</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataCollector</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">minari.data_collector.callbacks</span><span class="w"> </span><span class="kn">import</span> <span class="n">StepDataCallback</span>
-
-
-<span class="n">gym</span><span class="o">.</span><span class="n">register_envs</span><span class="p">(</span><span class="n">gymnasium_robotics</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span><span class="w">
+</span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium_robotics</span><span class="w">
+</span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="kn">import</span> <span class="n">spaces</span><span class="w">
+</span><span class="w">
+</span><span class="kn">import</span><span class="w"> </span><span class="nn">minari</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">minari</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-minari sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../../api/data_collector/#minari.DataCollector" title="minari.DataCollector"><span class="n">DataCollector</span></a><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">minari</span><span class="nn">.</span><span class="nn">data_collector</span><span class="nn">.</span><span class="nn">callbacks</span><span class="w"> </span><span class="kn">import</span> <span class="n">StepDataCallback</span><span class="w">
+</span><span class="w">
+</span><span class="w">
+</span><span class="n">gym</span><span class="o">.</span><span class="n">register_envs</span><span class="p">(</span><span class="n">gymnasium_robotics</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <p>We’ll first need to initialize our PointMaze_UMaze environment and find
 the shape of the observation space</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"PointMaze_UMaze-v3"</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Observation space: </span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">PointMaze_UMaze-v3</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">Observation space: </span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <p>Which should output:</p>
-<div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="n">Observation</span> <span class="n">space</span><span class="p">:</span> <span class="n">Dict</span><span class="p">(</span><span class="s1">'achieved_goal'</span><span class="p">:</span> <span class="n">Box</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,),</span> <span class="n">float64</span><span class="p">),</span> <span class="s1">'desired_goal'</span><span class="p">:</span> <span class="n">Box</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,),</span> <span class="n">float64</span><span class="p">),</span> <span class="s1">'observation'</span><span class="p">:</span> <span class="n">Box</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">,</span> <span class="p">(</span><span class="mi">4</span><span class="p">,),</span> <span class="n">float64</span><span class="p">))</span>
-</pre></div>
-</div>
+<div class="highlight-py notranslate"><div class="highlight"><pre><span class="n">Observation</span> <span class="n">space</span><span class="p">:</span> <span class="n">Dict</span><span class="p">(</span><span class="s1">'</span><span class="s1">achieved_goal</span><span class="s1">'</span><span class="p">:</span> <span class="n">Box</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="p">)</span><span class="p">,</span> <span class="n">float64</span><span class="p">)</span><span class="p">,</span> <span class="s1">'</span><span class="s1">desired_goal</span><span class="s1">'</span><span class="p">:</span> <span class="n">Box</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">,</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="p">)</span><span class="p">,</span> <span class="n">float64</span><span class="p">)</span><span class="p">,</span> <span class="s1">'</span><span class="s1">observation</span><span class="s1">'</span><span class="p">:</span> <span class="n">Box</span><span class="p">(</span><span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">,</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="p">)</span><span class="p">,</span> <span class="n">float64</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <p>We now need to create a version of the observation space with <code class="docutils literal notranslate"><span class="pre">achieved_goal</span></code> omitted
 using Gymnasium spaces. This will be compared with <code class="docutils literal notranslate"><span class="pre">step_data</span></code> in each step to validate that it
 fits with the expected observation space. When saving the final HDF5 dataset file generated by Mirana to disk, this
 will be added as metadata.</p>
 <p>We’ll also need to define a <a class="reference internal" href="../../../api/data_collector/step_data_callback/#minari.StepDataCallback" title="minari.StepDataCallback"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.StepDataCallback</span></code></a> in order
 to modify <code class="docutils literal notranslate"><span class="pre">step_data</span></code> to delete <code class="docutils literal notranslate"><span class="pre">achieved_goal</span></code>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">observation_space_subset</span> <span class="o">=</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Dict</span><span class="p">(</span>
-    <span class="p">{</span>
-        <span class="c1"># "achieved_goal": spaces.Box(low=float('-inf'), high=float('inf'), shape=(2,), dtype=np.float64),</span>
-        <span class="s2">"desired_goal"</span><span class="p">:</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span>
-            <span class="n">low</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s2">"-inf"</span><span class="p">),</span> <span class="n">high</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s2">"inf"</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span>
-        <span class="p">),</span>
-        <span class="s2">"observation"</span><span class="p">:</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span>
-            <span class="n">low</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s2">"-inf"</span><span class="p">),</span> <span class="n">high</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s2">"inf"</span><span class="p">),</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span>
-        <span class="p">),</span>
-    <span class="p">}</span>
-<span class="p">)</span>
-
-
-<span class="k">class</span><span class="w"> </span><span class="nc">CustomSubsetStepDataCallback</span><span class="p">(</span><span class="n">StepDataCallback</span><span class="p">):</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="n">step_data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">del</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">"observation"</span><span class="p">][</span><span class="s2">"achieved_goal"</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">step_data</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">observation_space_subset</span> <span class="o">=</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Dict</span><span class="p">(</span><span class="w">
+</span>    <span class="p">{</span><span class="w">
+</span>        <span class="c1"># &quot;achieved_goal&quot;: spaces.Box(low=float('-inf'), high=float('inf'), shape=(2,), dtype=np.float64),</span><span class="w">
+</span>        <span class="s2">&quot;</span><span class="s2">desired_goal</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="w">
+</span>            <span class="n">low</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">-inf</span><span class="s2">&quot;</span><span class="p">)</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">inf</span><span class="s2">&quot;</span><span class="p">)</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="p">)</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="w">
+</span>        <span class="p">)</span><span class="p">,</span><span class="w">
+</span>        <span class="s2">&quot;</span><span class="s2">observation</span><span class="s2">&quot;</span><span class="p">:</span> <span class="n">spaces</span><span class="o">.</span><span class="n">Box</span><span class="p">(</span><span class="w">
+</span>            <span class="n">low</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">-inf</span><span class="s2">&quot;</span><span class="p">)</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">inf</span><span class="s2">&quot;</span><span class="p">)</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="p">)</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="w">
+</span>        <span class="p">)</span><span class="p">,</span><span class="w">
+</span>    <span class="p">}</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="w">
+</span><span class="k">class</span><span class="w"> </span><span class="nc">CustomSubsetStepDataCallback</span><span class="p">(</span><span class="n">StepDataCallback</span><span class="p">)</span><span class="p">:</span><span class="w">
+</span>    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">env</span><span class="p">,</span> <span class="o">*</span><span class="o">*</span><span class="n">kwargs</span><span class="p">)</span><span class="p">:</span><span class="w">
+</span>        <span class="n">step_data</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="p">)</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">env</span><span class="p">,</span> <span class="o">*</span><span class="o">*</span><span class="n">kwargs</span><span class="p">)</span><span class="w">
+</span>        <span class="k">del</span> <span class="n">step_data</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">observation</span><span class="s2">&quot;</span><span class="p">]</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">achieved_goal</span><span class="s2">&quot;</span><span class="p">]</span><span class="w">
+</span>        <span class="k">return</span> <span class="n">step_data</span><span class="w">
+</span></pre></div></div>
 <p>Finally we’ll record 10 episodes with our observation space subset and
 callback passed to <a class="reference internal" href="../../../api/data_collector/#minari.DataCollector" title="minari.DataCollector"><code class="xref py py-class docutils literal notranslate"><span class="pre">minari.DataCollector</span></code></a>.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dataset_id</span> <span class="o">=</span> <span class="s2">"pointmaze/subseted-v0"</span>
-
-<span class="c1"># delete the test dataset if it already exists</span>
-<span class="n">local_datasets</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">list_local_datasets</span><span class="p">()</span>
-<span class="k">if</span> <span class="n">dataset_id</span> <span class="ow">in</span> <span class="n">local_datasets</span><span class="p">:</span>
-    <span class="n">minari</span><span class="o">.</span><span class="n">delete_dataset</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
-
-<span class="n">env</span> <span class="o">=</span> <span class="n">DataCollector</span><span class="p">(</span>
-    <span class="n">env</span><span class="p">,</span>
-    <span class="n">observation_space</span><span class="o">=</span><span class="n">observation_space_subset</span><span class="p">,</span>
-    <span class="c1"># action_space=action_space_subset,</span>
-    <span class="n">step_data_callback</span><span class="o">=</span><span class="n">CustomSubsetStepDataCallback</span><span class="p">,</span>
-<span class="p">)</span>
-<span class="n">num_episodes</span> <span class="o">=</span> <span class="mi">10</span>
-
-<span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-
-<span class="k">for</span> <span class="n">episode</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_episodes</span><span class="p">):</span>
-    <span class="n">terminated</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">truncated</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="k">while</span> <span class="ow">not</span> <span class="n">terminated</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">truncated</span><span class="p">:</span>
-        <span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>  <span class="c1"># Choose random actions</span>
-        <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
-    <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-
-<span class="c1"># Create Minari dataset and store locally</span>
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span>
-    <span class="n">dataset_id</span><span class="o">=</span><span class="n">dataset_id</span><span class="p">,</span>
-    <span class="n">algorithm_name</span><span class="o">=</span><span class="s2">"random_policy"</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">observations</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">dataset_id</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s2">pointmaze/subseted-v0</span><span class="s2">&quot;</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># delete the test dataset if it already exists</span><span class="w">
+</span><span class="n">local_datasets</span> <span class="o">=</span> <a class="sphx-glr-backref-module-minari sphx-glr-backref-type-py-function reference internal" href="../../../api/minari_functions/#minari.list_local_datasets" title="minari.list_local_datasets"><span class="n">minari</span><span class="o">.</span><span class="n">list_local_datasets</span></a><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="k">if</span> <span class="n">dataset_id</span> <span class="ow">in</span> <span class="n">local_datasets</span><span class="p">:</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-minari sphx-glr-backref-type-py-function reference internal" href="../../../api/minari_functions/#minari.delete_dataset" title="minari.delete_dataset"><span class="n">minari</span><span class="o">.</span><span class="n">delete_dataset</span></a><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="n">env</span> <span class="o">=</span> <a class="sphx-glr-backref-module-minari sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../../api/data_collector/#minari.DataCollector" title="minari.DataCollector"><span class="n">DataCollector</span></a><span class="p">(</span><span class="w">
+</span>    <span class="n">env</span><span class="p">,</span><span class="w">
+</span>    <span class="n">observation_space</span><span class="o">=</span><span class="n">observation_space_subset</span><span class="p">,</span><span class="w">
+</span>    <span class="c1"># action_space=action_space_subset,</span><span class="w">
+</span>    <span class="n">step_data_callback</span><span class="o">=</span><span class="n">CustomSubsetStepDataCallback</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="n">num_episodes</span> <span class="o">=</span> <span class="mi">10</span><span class="w">
+</span><span class="w">
+</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="k">for</span> <span class="n">episode</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_episodes</span><span class="p">)</span><span class="p">:</span><span class="w">
+</span>    <span class="n">terminated</span> <span class="o">=</span> <span class="kc">False</span><span class="w">
+</span>    <span class="n">truncated</span> <span class="o">=</span> <span class="kc">False</span><span class="w">
+</span>    <span class="k">while</span> <span class="ow">not</span> <span class="n">terminated</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">truncated</span><span class="p">:</span><span class="w">
+</span>        <span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="p">)</span>  <span class="c1"># Choose random actions</span><span class="w">
+</span>        <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span><span class="w">
+</span>    <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># Create Minari dataset and store locally</span><span class="w">
+</span><span class="n">dataset</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="w">
+</span>    <span class="n">dataset_id</span><span class="o">=</span><span class="n">dataset_id</span><span class="p">,</span><span class="w">
+</span>    <span class="n">algorithm_name</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">random_policy</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">observations</span><span class="o">.</span><span class="n">keys</span><span class="p">(</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <p>The output from the final line above, should be</p>
-<div class="highlight-py notranslate"><div class="highlight"><pre><span></span><span class="n">dict_keys</span><span class="p">([</span><span class="s1">'desired_goal'</span><span class="p">,</span> <span class="s1">'observation'</span><span class="p">])</span>
-</pre></div>
-</div>
+<div class="highlight-py notranslate"><div class="highlight"><pre><span class="n">dict_keys</span><span class="p">(</span><span class="p">[</span><span class="s1">'</span><span class="s1">desired_goal</span><span class="s1">'</span><span class="p">,</span> <span class="s1">'</span><span class="s1">observation</span><span class="s1">'</span><span class="p">]</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <p>Showing that we have successfully omitted <code class="docutils literal notranslate"><span class="pre">achieved_goal</span></code> from the observations.</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-tutorials-dataset-creation-observation-space-subseting-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/4309a2a5710b4a8d568d698c8b7a60be/observation_space_subseting.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">observation_space_subseting.ipynb</span></code></a></p>
+</div>
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../../../_downloads/fedc25af3a1c2e1e2bafa18080b4aabb/observation_space_subseting.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">observation_space_subseting.py</span></code></a></p>
 </div>
-<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
-<p><a class="reference download internal" download="" href="../../../_downloads/4309a2a5710b4a8d568d698c8b7a60be/observation_space_subseting.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">observation_space_subseting.ipynb</span></code></a></p>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/b06a064b2e8f24b130b5e40f66e113ee/observation_space_subseting.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">observation_space_subseting.zip</span></code></a></p>
 </div>
 </div>
 </section>
@@ -1453,10 +1450,11 @@ callback passed to <a class="reference internal" href="../../../api/data_collect
         })()
       </script>
 
-    <script src="../../../_static/documentation_options.js?v=5a9eddd6"></script>
+    <script src="../../../_static/documentation_options.js?v=2973651e"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/celshast.js?v=a788a8c6"></script>
+    <script src="../../../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../../../_static/js/termynal.js?v=ff4c6923"></script>
     <script src="../../../_static/js/custom.js?v=a0ed09ce"></script>
     

@@ -15,9 +15,9 @@
         <title>Serializing a custom space - Minari Documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/celshast.css?v=9fbfb63d" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=61a4c737" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=ca3c1c84" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=e5fbc548" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../_static/styles/celshast-extensions.css?v=42bfddca" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/termynal.css?v=d6ad0c61" />
@@ -1211,24 +1211,22 @@ show how to serialize its unique observation space.</p>
 <p>Let’s start by installing the minigrid library:</p>
 <p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">minigrid</span></code></p>
 <p>Then we can import the required modules:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">minigrid.core.mission</span><span class="w"> </span><span class="kn">import</span> <span class="n">MissionSpace</span>
-
-<span class="kn">import</span><span class="w"> </span><span class="nn">minari</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">minari</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataCollector</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">minari.serialization</span><span class="w"> </span><span class="kn">import</span> <span class="n">deserialize_space</span><span class="p">,</span> <span class="n">serialize_space</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">import</span><span class="w"> </span><span class="nn">json</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Union</span><span class="w">
+</span><span class="w">
+</span><span class="kn">import</span><span class="w"> </span><span class="nn">gymnasium</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gym</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">minigrid</span><span class="nn">.</span><span class="nn">core</span><span class="nn">.</span><span class="nn">mission</span><span class="w"> </span><span class="kn">import</span> <span class="n">MissionSpace</span><span class="w">
+</span><span class="w">
+</span><span class="kn">import</span><span class="w"> </span><span class="nn">minari</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">minari</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-minari sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../../api/data_collector/#minari.DataCollector" title="minari.DataCollector"><span class="n">DataCollector</span></a><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">minari</span><span class="nn">.</span><span class="nn">serialization</span><span class="w"> </span><span class="kn">import</span> <span class="n">deserialize_space</span><span class="p">,</span> <span class="n">serialize_space</span><span class="w">
+</span></pre></div></div>
 <p>First we’ll initialize the MiniGrid Empty environment and take a look at its observation and action space.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">"MiniGrid-Empty-16x16-v0"</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Observation space: </span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Action space: </span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">env</span> <span class="o">=</span> <span class="n">gym</span><span class="o">.</span><span class="n">make</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">MiniGrid-Empty-16x16-v0</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">Observation space: </span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">Action space: </span><span class="si">{</span><span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <p>We can see the output from above looks like:</p>
 <blockquote>
 <div><p>Observation space: Dict(‘direction’: Discrete(4), ‘image’: Box(0, 255, (7, 7, 3), uint8), ‘mission’: MissionSpace(&lt;function EmptyEnv._gen_mission at 0x12253a940&gt;, None))</p>
@@ -1247,9 +1245,8 @@ supported and if try to serialize it with:</p>
 <p>But what is <code class="docutils literal notranslate"><span class="pre">MissonSpace</span></code>? If we look at the <a class="reference external" href="https://github.com/Farama-Foundation/Minigrid/blob/master/minigrid/core/mission.py#L14">source code</a>
 we can see that it is simply a wrapper around a <code class="docutils literal notranslate"><span class="pre">Callable</span></code> that returns a randomly generated
 string representing the environment’s mission. Let’s sample from the mission space to see an example:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">[</span><span class="s1">'mission'</span><span class="p">]</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">env</span><span class="o">.</span><span class="n">observation_space</span><span class="p">[</span><span class="s1">'</span><span class="s1">mission</span><span class="s1">'</span><span class="p">]</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <p>This will print out:</p>
 <blockquote>
 <div><p>‘get to the green goal square’</p>
@@ -1262,63 +1259,59 @@ to a JSON format before saving to disk. The <a class="reference external" href="
 function takes care of this conversion for various supported Gymnasium spaces. To enable serialization
 for a custom space we can register 2 new functions that will serialize the space into a JSON object
 and also deserialize it back into the custom space.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@serialize_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MissionSpace</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">serialize_custom_space</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">MissionSpace</span><span class="p">,</span> <span class="n">to_string</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
-    <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
-    <span class="n">result</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"MissionSpace"</span>
-    <span class="n">result</span><span class="p">[</span><span class="s2">"mission_func"</span><span class="p">]</span> <span class="o">=</span> <span class="n">space</span><span class="o">.</span><span class="n">mission_func</span><span class="p">()</span>
-
-    <span class="k">if</span> <span class="n">to_string</span><span class="p">:</span>
-        <span class="n">result</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">result</span>
-
-
-<span class="nd">@deserialize_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">"MissionSpace"</span><span class="p">)</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">deserialize_custom_space</span><span class="p">(</span><span class="n">space_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">MissionSpace</span><span class="p">:</span>
-    <span class="k">assert</span> <span class="n">space_dict</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"MissionSpace"</span>
-    <span class="n">mission_func</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">space_dict</span><span class="p">[</span><span class="s2">"mission_func"</span><span class="p">]</span>  <span class="c1"># noqa: E731</span>
-
-    <span class="k">return</span> <span class="n">MissionSpace</span><span class="p">(</span>
-        <span class="n">mission_func</span><span class="o">=</span><span class="n">mission_func</span>
-    <span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="nd">&#64;serialize_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MissionSpace</span><span class="p">)</span><span class="w">
+</span><span class="k">def</span><span class="w"> </span><span class="nf">serialize_custom_space</span><span class="p">(</span><span class="n">space</span><span class="p">:</span> <span class="n">MissionSpace</span><span class="p">,</span> <span class="n">to_string</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-</span><span class="o">&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">Dict</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span><span class="p">:</span><span class="w">
+</span>    <span class="n">result</span> <span class="o">=</span> <span class="p">{</span><span class="p">}</span><span class="w">
+</span>    <span class="n">result</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">type</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s2">MissionSpace</span><span class="s2">&quot;</span><span class="w">
+</span>    <span class="n">result</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">mission_func</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">space</span><span class="o">.</span><span class="n">mission_func</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span>    <span class="k">if</span> <span class="n">to_string</span><span class="p">:</span><span class="w">
+</span>        <span class="n">result</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="w">
+</span>    <span class="k">return</span> <span class="n">result</span><span class="w">
+</span><span class="w">
+</span><span class="w">
+</span><span class="nd">&#64;deserialize_space</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="s2">&quot;</span><span class="s2">MissionSpace</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="k">def</span><span class="w"> </span><span class="nf">deserialize_custom_space</span><span class="p">(</span><span class="n">space_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">)</span> <span class="o">-</span><span class="o">&gt;</span> <span class="n">MissionSpace</span><span class="p">:</span><span class="w">
+</span>    <span class="k">assert</span> <span class="n">space_dict</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">type</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;</span><span class="s2">MissionSpace</span><span class="s2">&quot;</span><span class="w">
+</span>    <span class="n">mission_func</span> <span class="o">=</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">space_dict</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">mission_func</span><span class="s2">&quot;</span><span class="p">]</span>  <span class="c1"># noqa: E731</span><span class="w">
+</span><span class="w">
+</span>    <span class="k">return</span> <span class="n">MissionSpace</span><span class="p">(</span><span class="w">
+</span>        <span class="n">mission_func</span><span class="o">=</span><span class="n">mission_func</span><span class="w">
+</span>    <span class="p">)</span><span class="w">
+</span></pre></div></div>
 <p>Now that we have serialization functions for <code class="docutils literal notranslate"><span class="pre">MissionSpace</span></code> we can collect some episode data.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dataset_id</span> <span class="o">=</span> <span class="s2">"minigrid/custom-space-v0"</span>
-
-<span class="n">env</span> <span class="o">=</span> <span class="n">DataCollector</span><span class="p">(</span><span class="n">env</span><span class="p">)</span>
-<span class="n">num_episodes</span> <span class="o">=</span> <span class="mi">10</span>
-
-<span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
-
-<span class="k">for</span> <span class="n">episode</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_episodes</span><span class="p">):</span>
-    <span class="n">terminated</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="n">truncated</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="k">while</span> <span class="ow">not</span> <span class="n">terminated</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">truncated</span><span class="p">:</span>
-        <span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">()</span>  <span class="c1"># Choose random actions</span>
-        <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
-    <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">dataset_id</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="s2">minigrid/custom-space-v0</span><span class="s2">&quot;</span><span class="w">
+</span><span class="w">
+</span><span class="n">env</span> <span class="o">=</span> <a class="sphx-glr-backref-module-minari sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../../api/data_collector/#minari.DataCollector" title="minari.DataCollector"><span class="n">DataCollector</span></a><span class="p">(</span><span class="n">env</span><span class="p">)</span><span class="w">
+</span><span class="n">num_episodes</span> <span class="o">=</span> <span class="mi">10</span><span class="w">
+</span><span class="w">
+</span><span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="k">for</span> <span class="n">episode</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_episodes</span><span class="p">)</span><span class="p">:</span><span class="w">
+</span>    <span class="n">terminated</span> <span class="o">=</span> <span class="kc">False</span><span class="w">
+</span>    <span class="n">truncated</span> <span class="o">=</span> <span class="kc">False</span><span class="w">
+</span>    <span class="k">while</span> <span class="ow">not</span> <span class="n">terminated</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">truncated</span><span class="p">:</span><span class="w">
+</span>        <span class="n">action</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">action_space</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="p">)</span>  <span class="c1"># Choose random actions</span><span class="w">
+</span>        <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">terminated</span><span class="p">,</span> <span class="n">truncated</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">action</span><span class="p">)</span><span class="w">
+</span>    <span class="n">env</span><span class="o">.</span><span class="n">reset</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <p>Finally we can create a Minari dataset.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dataset</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span>
-    <span class="n">dataset_id</span><span class="o">=</span><span class="n">dataset_id</span><span class="p">,</span>
-    <span class="n">algorithm_name</span><span class="o">=</span><span class="s2">"random_policy"</span><span class="p">,</span>
-    <span class="n">author</span><span class="o">=</span><span class="s2">"Farama"</span><span class="p">,</span>
-    <span class="n">author_email</span><span class="o">=</span><span class="s2">"contact@farama.org"</span><span class="p">,</span>
-    <span class="n">code_permalink</span><span class="o">=</span><span class="s2">"https://github.com/Farama-Foundation/Minari/blob/main/docs/tutorials/dataset_creation/custom_space_serialization.py"</span>
-<span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="n">dataset</span> <span class="o">=</span> <span class="n">env</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="w">
+</span>    <span class="n">dataset_id</span><span class="o">=</span><span class="n">dataset_id</span><span class="p">,</span><span class="w">
+</span>    <span class="n">algorithm_name</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">random_policy</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">author</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">Farama</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">author_email</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">contact&#64;farama.org</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">code_permalink</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">https://github.com/Farama-Foundation/Minari/blob/main/docs/tutorials/dataset_creation/custom_space_serialization.py</span><span class="s2">&quot;</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <p>To show that the custom space was properly serialized we
 can load the dataset we just created and take a look at
 the observation space.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">del</span> <span class="n">dataset</span>
-<span class="n">dataset</span> <span class="o">=</span> <span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
-
-<span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">observation_space</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="k">del</span> <span class="n">dataset</span><span class="w">
+</span><span class="n">dataset</span> <span class="o">=</span> <a class="sphx-glr-backref-module-minari sphx-glr-backref-type-py-function reference internal" href="../../../api/minari_functions/#minari.load_dataset" title="minari.load_dataset"><span class="n">minari</span><span class="o">.</span><span class="n">load_dataset</span></a><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="n">dataset</span><span class="o">.</span><span class="n">spec</span><span class="o">.</span><span class="n">observation_space</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <p>The output should show the original observation space from earlier
 except with a different <code class="docutils literal notranslate"><span class="pre">MissionSpace</span></code> function name since
 we created it inside <code class="docutils literal notranslate"><span class="pre">deserialize_custom_space</span></code>:</p>
@@ -1326,15 +1319,17 @@ we created it inside <code class="docutils literal notranslate"><span class="pre
 <div><p>Dict(‘direction’: Discrete(4), ‘image’: Box(0, 255, (7, 7, 3), uint8), ‘mission’: MissionSpace(&lt;function deserialize_custom_space.&lt;locals&gt;.&lt;lambda&gt; at 0x11f2608b0&gt;, None))</p>
 </div></blockquote>
 <p>Finally to clean things up, we’ll delete the dataset we created earlier:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">minari</span><span class="o">.</span><span class="n">delete_dataset</span><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-minari sphx-glr-backref-type-py-function reference internal" href="../../../api/minari_functions/#minari.delete_dataset" title="minari.delete_dataset"><span class="n">minari</span><span class="o">.</span><span class="n">delete_dataset</span></a><span class="p">(</span><span class="n">dataset_id</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-tutorials-dataset-creation-custom-space-serialization-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/e848fd7cb68dc8286565925cb7c015d1/custom_space_serialization.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">custom_space_serialization.ipynb</span></code></a></p>
+</div>
 <div class="sphx-glr-download sphx-glr-download-python docutils container">
 <p><a class="reference download internal" download="" href="../../../_downloads/8392853af10481c4703c346afc6e6605/custom_space_serialization.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">custom_space_serialization.py</span></code></a></p>
 </div>
-<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
-<p><a class="reference download internal" download="" href="../../../_downloads/e848fd7cb68dc8286565925cb7c015d1/custom_space_serialization.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">custom_space_serialization.ipynb</span></code></a></p>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../../_downloads/eaf9d06d2ca40d2184bae33f51b865b6/custom_space_serialization.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">custom_space_serialization.zip</span></code></a></p>
 </div>
 </div>
 </section>
@@ -1477,10 +1472,11 @@ we created it inside <code class="docutils literal notranslate"><span class="pre
         })()
       </script>
 
-    <script src="../../../_static/documentation_options.js?v=5a9eddd6"></script>
+    <script src="../../../_static/documentation_options.js?v=2973651e"></script>
     <script src="../../../_static/doctools.js?v=9a2dae69"></script>
     <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/scripts/celshast.js?v=a788a8c6"></script>
+    <script src="../../../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../../../_static/js/termynal.js?v=ff4c6923"></script>
     <script src="../../../_static/js/custom.js?v=a0ed09ce"></script>
     
