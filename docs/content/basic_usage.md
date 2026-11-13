@@ -272,8 +272,9 @@ for _ in range(100):
 The combined dataset uses JPEG encoding only when all input datasets enable it.
 If any input was created with `jpeg_encoding=False`, images are stored as raw
 arrays to avoid introducing lossy compression during combination. This can
-produce larger combined files. Images from JPEG-encoded inputs retain their
-existing compression loss.
+produce larger combined files. The compression loss already present in
+JPEG-encoded inputs cannot be recovered. If all inputs use JPEG encoding, images
+are decoded and JPEG-encoded again, which adds further compression loss.
 
 ```{eval-rst}
 In the case of having two or more Minari datasets created with the same environment we can combine these datasets into a single one by using the Minari function :func:`minari.combine_datasets`, i.e. the ``'AdroitHandDoor-v1'`` environment has two datasets available in the remote Farama servers, ``D4RL/door/human-v2`` and ``D4RL/door/expert-v2``, we can combine the episodes in these two datasets into a new Minari dataset ``D4RL/door/all-v0``:

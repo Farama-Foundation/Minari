@@ -108,7 +108,8 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_id: s
     Only the selected episodes of each dataset are copied, in their existing order.
     Image data is JPEG-encoded only if all input datasets enable JPEG encoding.
     If any input disables it, the combined dataset stores raw arrays to avoid
-    introducing lossy compression.
+    introducing lossy compression. If all inputs enable it, images are decoded
+    and JPEG-encoded again, which adds further compression loss.
 
     Args:
         datasets_to_combine (list[MinariDataset]): list of datasets to be combined

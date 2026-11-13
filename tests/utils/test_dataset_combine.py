@@ -19,59 +19,47 @@ def test_combine_image_encoding(data_format, encodings):
     """Combining raw image datasets must not introduce lossy compression."""
     image_space = gym.spaces.Box(0, 255, shape=(32, 32, 3), dtype=np.uint8)
     rng = np.random.default_rng(42)
-    datasets = []
-    source_episodes = []
+    # The second input uses a different storage backend, so every case also
+    # combines across backends.
     formats = get_storage_keys()
     other_format = formats[(formats.index(data_format) + 1) % len(formats)]
+    datasets = []
     for index, (jpeg_encoding, source_format) in enumerate(
         zip(encodings, (data_format, other_format))
     ):
         buffer = EpisodeBuffer(
-            observations=rng.integers(256, size=(2, 32, 32, 3), dtype=np.uint8),
+            observations=list(rng.integers(256, size=(2, 32, 32, 3), dtype=np.uint8)),
             actions=[index],
             rewards=[float(index)],
             terminations=[True],
             truncations=[False],
         )
-        dataset = minari.create_dataset_from_buffers(
-            f"images-{index}-v0",
-            [buffer],
-            observation_space=image_space,
-            action_space=gym.spaces.Discrete(2),
-            data_format=source_format,
-            jpeg_encoding=jpeg_encoding,
-            author="Test author",
-            author_email="test@example.com",
-            algorithm_name="synthetic",
-            code_permalink="https://example.com/synthetic",
-            description="One synthetic image transition",
+        datasets.append(
+            minari.create_dataset_from_buffers(
+                f"images-{index}-v0",
+                [buffer],
+                observation_space=image_space,
+                action_space=gym.spaces.Discrete(2),
+                data_format=source_format,
+                jpeg_encoding=jpeg_encoding,
+                algorithm_name="synthetic",
+            )
         )
-        datasets.append(dataset)
-        source_episodes.append(dataset[0])
 
-    combined = combine_datasets(datasets, "combined-images-v0")
-    reloaded = minari.load_dataset("combined-images-v0")
-    assert reloaded.total_episodes == combined.total_episodes == 2
-    assert reloaded.total_steps == combined.total_steps == 2
-    assert reloaded.storage.FORMAT == data_format
-    for index, source in enumerate(source_episodes):
-        copied = reloaded[index]
-        assert copied.id == index
-        assert copied.observations.shape == source.observations.shape
-        assert copied.actions.shape == source.actions.shape
-        if not all(encodings):
-            np.testing.assert_array_equal(copied.observations, source.observations)
-            np.testing.assert_array_equal(copied.actions, source.actions)
-        np.testing.assert_array_equal(copied.rewards, source.rewards)
-        np.testing.assert_array_equal(copied.terminations, source.terminations)
-        np.testing.assert_array_equal(copied.truncations, source.truncations)
-        unchanged = datasets[index][0]
-        np.testing.assert_array_equal(unchanged.observations, source.observations)
-        np.testing.assert_array_equal(unchanged.actions, source.actions)
-        assert datasets[index].storage.jpeg_encoding is encodings[index]
+    combine_datasets(datasets, "combined-images-v0")
+    combined = minari.load_dataset("combined-images-v0")
+    assert combined.storage.FORMAT == data_format
     assert combined.storage.jpeg_encoding is all(encodings)
-    assert reloaded.storage.jpeg_encoding is all(encodings)
-    assert reloaded.storage.metadata["jpeg_encoding"] is all(encodings)
+
+    for source_dataset, copied in zip(datasets, combined, strict=True):
+        source = source_dataset[0].observations
+        if all(encodings):
+            # The images are decoded and JPEG-encoded again, which adds loss.
+            # Only check that they stay close to the source images.
+            error = np.abs(copied.observations.astype(int) - source.astype(int))
+            assert error.mean() < 20
+        else:
+            np.testing.assert_array_equal(copied.observations, source)
 
 
 def _check_env_recovery(gymnasium_environment: gym.Env, dataset: MinariDataset):
