@@ -42,6 +42,19 @@ def validate_datasets_to_combine(
         combined_dataset_env_spec (EnvSpec): the resulting EnvSpec of combining the MinariDatasets
 
     """
+    if any(
+        dataset.action_space != datasets_to_combine[0].action_space
+        for dataset in datasets_to_combine
+    ):
+        raise ValueError("The datasets to combine must have the same action space.")
+    if any(
+        dataset.observation_space != datasets_to_combine[0].observation_space
+        for dataset in datasets_to_combine
+    ):
+        raise ValueError(
+            "The datasets to combine must have the same observation space."
+        )
+
     # get first among the dataset's env_spec which is not None
     first_not_none_env_spec = next(
         (
@@ -105,6 +118,9 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_id: s
 
     The new dataset will contain a metadata attribute `combined_datasets` containing a list
     with the dataset names that were combined to form this new Minari dataset.
+    Only the selected episodes of each dataset are copied, in their existing order.
+    All datasets must have equal observation and action spaces, including when
+    no environment spec is stored.
 
     Args:
         datasets_to_combine (list[MinariDataset]): list of datasets to be combined
@@ -136,7 +152,9 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_id: s
     )
 
     for dataset in datasets_to_combine:
-        new_storage.update_from_storage(dataset.storage)
+        new_storage.update_from_storage(
+            dataset.storage, episode_indices=dataset.episode_indices
+        )
 
     return MinariDataset(new_storage)
 
@@ -148,12 +166,17 @@ def split_dataset(
 
     Args:
         dataset (MinariDataset): the MinariDataset to split
-        sizes (List[int]): sizes of the resulting datasets
+        sizes (List[int]): non-negative sizes of the resulting datasets
         seed (Optional[int]): random seed
 
     Returns:
         datasets (List[MinariDataset]): resulting list of datasets
+
+    Raises:
+        ValueError: if any size is negative or the sum exceeds the dataset's episode count.
     """
+    if any(size < 0 for size in sizes):
+        raise ValueError("The split sizes must be non-negative.")
     if sum(sizes) > dataset.total_episodes:
         raise ValueError(
             "Incompatible arguments: the sum of sizes exceeds ",
@@ -311,15 +334,20 @@ def _generate_dataset_metadata(
         expert_policy is not None or ref_max_score is not None
     ):
         env_ref_score = gym.make(eval_env_spec)
-        if ref_min_score is None:
-            ref_min_score = get_average_reference_score(
-                env_ref_score, RandomPolicy(env_ref_score), num_episodes_average_score
-            )
+        try:
+            if ref_min_score is None:
+                ref_min_score = get_average_reference_score(
+                    env_ref_score,
+                    RandomPolicy(env_ref_score),
+                    num_episodes_average_score,
+                )
 
-        if expert_policy is not None:
-            ref_max_score = get_average_reference_score(
-                env_ref_score, expert_policy, num_episodes_average_score
-            )
+            if expert_policy is not None:
+                ref_max_score = get_average_reference_score(
+                    env_ref_score, expert_policy, num_episodes_average_score
+                )
+        finally:
+            env_ref_score.close()
         dataset_metadata["ref_max_score"] = ref_max_score
         dataset_metadata["ref_min_score"] = ref_min_score
         dataset_metadata["num_episodes_average_score"] = num_episodes_average_score
@@ -473,13 +501,17 @@ def get_normalized_score(dataset: MinariDataset, returns: np.ndarray) -> np.ndar
 
 def get_env_spec_dict(env_spec: EnvSpec) -> Dict[str, str]:
     """Create dict of the environment specs, including observation and action space."""
+    env: Optional[gym.Env] = None
     try:
-        env = gym.make(env_spec)
-        action_space_table = env.action_space.__repr__().replace("\n", "")
-        observation_space_table = env.observation_space.__repr__().replace("\n", "")
+        env = new_env = gym.make(env_spec)
+        action_space_table = new_env.action_space.__repr__().replace("\n", "")
+        observation_space_table = new_env.observation_space.__repr__().replace("\n", "")
     except Exception as e:
         warnings.warn(f"Failed to make env {env_spec.id}, {e}")
         action_space_table, observation_space_table = None, None
+    finally:
+        if env is not None:
+            env.close()
 
     md_dict = {"ID": env_spec.id}
     if observation_space_table is not None:

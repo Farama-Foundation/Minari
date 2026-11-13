@@ -1,8 +1,14 @@
+from pathlib import Path
+
 import gymnasium as gym
+import numpy as np
+import pytest
 from gymnasium.utils.env_checker import data_equivalence
 
 import minari
 from minari import DataCollector, MinariDataset
+from minari.data_collector import EpisodeBuffer
+from minari.dataset._storages import get_storage_keys
 from minari.utils import combine_datasets
 from tests.common import create_dummy_dataset_with_collecter_env_helper
 
@@ -112,3 +118,161 @@ def test_combine_datasets():
         combined_dataset,
     )
     _check_load_and_delete_dataset("cartpole/combined-test-v0")
+
+
+def _create_space_test_dataset(
+    dataset_id: str,
+    observation_space: gym.spaces.Box,
+    action_space: gym.spaces.Box,
+    env: str | None,
+    data_format: str,
+) -> MinariDataset:
+    observation = observation_space.low + np.float32(0.5)
+    action = action_space.low + np.float32(0.5)
+    return minari.create_dataset_from_buffers(
+        dataset_id,
+        buffer=[
+            EpisodeBuffer(
+                observations=[observation.copy(), observation.copy()],
+                actions=[action.copy()],
+                rewards=[1.0],
+                terminations=[True],
+                truncations=[False],
+                infos={},
+            )
+        ],
+        env=env,
+        observation_space=observation_space,
+        action_space=action_space,
+        ref_min_score=0.0,
+        ref_max_score=1.0,
+        data_format=data_format,
+    )
+
+
+@pytest.mark.parametrize("data_format", ["hdf5", "arrow"])
+@pytest.mark.parametrize("env", [None, "CartPole-v1"])
+@pytest.mark.parametrize("mismatched_space", ["observation", "action"])
+@pytest.mark.parametrize("num_datasets", [2, 3])
+def test_combine_rejects_incompatible_spaces(
+    data_format, env, mismatched_space, num_datasets, tmp_dataset_dir
+):
+    """Reject valid datasets whose data would exceed the combined space bounds."""
+    datasets = []
+    for index in range(num_datasets):
+        low = 10 if index == num_datasets - 1 else 0
+        observation_low = low if mismatched_space == "observation" else 0
+        action_low = low if mismatched_space == "action" else 0
+        dataset = _create_space_test_dataset(
+            f"input-{index}-v0",
+            gym.spaces.Box(observation_low, observation_low + 1, (1,)),
+            gym.spaces.Box(action_low, action_low + 1, (1,)),
+            env,
+            data_format,
+        )
+        assert dataset.observation_space.contains(dataset[0].observations[0])
+        assert dataset.action_space.contains(dataset[0].actions[0])
+        datasets.append(dataset)
+
+    with pytest.raises(ValueError, match=f"same {mismatched_space} space"):
+        combine_datasets(datasets, new_dataset_id="combined-v0")
+
+    assert not Path(tmp_dataset_dir, "combined-v0").exists()
+
+
+@pytest.mark.parametrize("data_format", ["hdf5", "arrow"])
+@pytest.mark.parametrize("env", [None, "CartPole-v1"])
+def test_combine_accepts_matching_spaces(data_format, env):
+    """Matching separately constructed spaces remain compatible with optional envs."""
+    datasets = [
+        _create_space_test_dataset(
+            f"input-{index}-v0",
+            gym.spaces.Box(0, 1, (1,)),
+            gym.spaces.Box(0, 1, (1,)),
+            env,
+            data_format,
+        )
+        for index in range(2)
+    ]
+
+    combined = combine_datasets(datasets, new_dataset_id="combined-v0")
+
+    assert combined.total_episodes == 2
+    assert combined.total_steps == 2
+    assert combined.env_spec == datasets[0].env_spec
+    for original, episode in zip(datasets, combined):
+        assert data_equivalence(original[0].observations, episode.observations)
+        assert data_equivalence(original[0].actions, episode.actions)
+        assert combined.observation_space.contains(episode.observations[0])
+        assert combined.action_space.contains(episode.actions[0])
+
+
+@pytest.mark.parametrize("data_format", ["hdf5", "arrow"])
+def test_combine_accepts_matching_nested_spaces(data_format, register_dummy_envs):
+    """Preserve nested Dict/Tuple payloads with independently created equal spaces."""
+    datasets = []
+    for index in range(2):
+        env = DataCollector(gym.make("DummyComboEnv-v0"), data_format=data_format)
+        datasets.append(
+            create_dummy_dataset_with_collecter_env_helper(
+                f"nested-{index}-v0", env, num_episodes=1
+            )
+        )
+
+    combined = combine_datasets(datasets, new_dataset_id="combined-v0")
+
+    assert combined.total_episodes == 2
+    for original, episode in zip(datasets, combined):
+        assert data_equivalence(original[0].observations, episode.observations)
+        assert data_equivalence(original[0].actions, episode.actions)
+
+
+@pytest.mark.parametrize("data_format", get_storage_keys())
+@pytest.mark.parametrize("selection", ["filtered", "split", "reordered", "empty"])
+def test_combine_dataset_views(data_format, selection):
+    """Combining views must preserve selected episodes and their order."""
+    env = DataCollector(
+        gym.make("CartPole-v1", max_episode_steps=5), data_format=data_format
+    )
+    env.action_space.seed(123)
+    source = create_dummy_dataset_with_collecter_env_helper(
+        "cartpole/source-v0", env, num_episodes=6
+    )
+    env.close()
+
+    if selection == "filtered":
+        datasets = [source.filter_episodes(lambda episode: episode.id % 2 == 0)]
+    elif selection == "split":
+        datasets = minari.split_dataset(source, sizes=[2, 3], seed=42)
+    elif selection == "reordered":
+        datasets = [MinariDataset(source.storage, np.array([4, 1, 3]))]
+    else:
+        datasets = [source.filter_episodes(lambda episode: False)]
+
+    expected_episodes = [
+        episode for dataset in datasets for episode in dataset.iterate_episodes()
+    ]
+    combined = combine_datasets(datasets, "cartpole/combined-view-v0")
+
+    # Reload to check that the selected data and totals were persisted.
+    for result in [combined, minari.load_dataset(combined.spec.dataset_id)]:
+        assert result.total_episodes == len(expected_episodes)
+        assert result.total_steps == sum(len(episode) for episode in expected_episodes)
+        episodes = list(result.iterate_episodes())
+        assert len(episodes) == len(expected_episodes)
+        for index, (actual, expected) in enumerate(zip(episodes, expected_episodes)):
+            assert actual.id == index
+            for field in (
+                "observations",
+                "actions",
+                "rewards",
+                "terminations",
+                "truncations",
+                "infos",
+            ):
+                assert data_equivalence(
+                    getattr(actual, field), getattr(expected, field)
+                )
+
+    assert source.total_episodes == 6
+    assert source.storage.total_episodes == 6
