@@ -1,3 +1,5 @@
+import os
+
 import gymnasium as gym
 import pytest
 
@@ -64,8 +66,10 @@ def test_create_nested_namespaces():
     assert get_namespace_metadata(namespace) == {"description": "my description"}
 
 
-def test_namespace_hierarchy():
+def test_namespace_hierarchy(monkeypatch):
     # Namespaces always use "/" as separator, whatever the OS path separator is.
+    # Simulate Windows so this also runs on Linux/macOS CI.
+    monkeypatch.setattr(os, "sep", "\\")
     assert list(namespace_hierarchy("a/b/c")) == ["a", "a/b", "a/b/c"]
     assert list(namespace_hierarchy("a")) == ["a"]
     assert list(namespace_hierarchy(None)) == []

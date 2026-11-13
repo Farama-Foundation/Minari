@@ -1,5 +1,5 @@
 import json
-import os
+import posixpath
 from pathlib import Path
 from typing import Iterable, Optional
 
@@ -47,11 +47,11 @@ class GCPStorage(CloudStorage):
 
     def list_datasets(self, prefix: Optional[str] = None) -> Iterable[str]:
         for blob in self.bucket.list_blobs(prefix=prefix):
-            if os.path.basename(blob.name) == METADATA_FILE_NAME:
-                yield os.path.dirname(os.path.dirname(blob.name))
+            if posixpath.basename(blob.name) == METADATA_FILE_NAME:
+                yield posixpath.dirname(posixpath.dirname(blob.name))
 
     def get_dataset_metadata(self, dataset_id: str) -> dict:
-        metadata_blob = os.path.join(dataset_id, "data", METADATA_FILE_NAME)
+        metadata_blob = posixpath.join(dataset_id, "data", METADATA_FILE_NAME)
         metadata_blob = self.bucket.blob(metadata_blob)
         metadata = json.loads(
             metadata_blob.download_as_bytes(client=self.storage_client)
@@ -72,12 +72,12 @@ class GCPStorage(CloudStorage):
 
     def list_namespaces(self) -> Iterable[str]:
         for blob in self.bucket.list_blobs():
-            if os.path.basename(blob.name) == _NAMESPACE_METADATA_FILENAME:
-                namespace = os.path.dirname(blob.name)
+            if posixpath.basename(blob.name) == _NAMESPACE_METADATA_FILENAME:
+                namespace = posixpath.dirname(blob.name)
                 yield namespace
 
     def download_namespace_metadata(self, namespace: str, path: Path) -> None:
-        metadata_blob = os.path.join(namespace, _NAMESPACE_METADATA_FILENAME)
+        metadata_blob = posixpath.join(namespace, _NAMESPACE_METADATA_FILENAME)
         metadata_blob = self.bucket.blob(metadata_blob)
         local_filename = path / namespace / _NAMESPACE_METADATA_FILENAME
         with open(local_filename, "wb") as f:
