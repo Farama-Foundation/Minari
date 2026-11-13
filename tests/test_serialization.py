@@ -35,17 +35,10 @@ def test_space_serialize_deserialize_unsupported(space):
 
 @pytest.mark.skipif(
     not _DISCRETE_ACCEPTS_DTYPE,
-    reason="`spaces.Discrete` only takes a dtype from Gymnasium 1.3.0",
+    reason="`spaces.Discrete` takes a dtype from Gymnasium 1.2.2",
 )
 @pytest.mark.parametrize("dtype", [np.int32, np.int64])
 def test_discrete_keeps_its_dtype(dtype):
-    """A `Discrete` space must come back with the dtype it was written with.
-
-    The serializer wrote `"int64"` regardless and the deserializer ignored the
-    field, so a space built with another dtype came back as a different space.
-    The round-trip test above compares the two serialized strings rather than
-    the spaces, which is why it did not notice.
-    """
     space = gym.spaces.Discrete(5, start=-2, dtype=dtype)
 
     reconstructed = deserialize_space(serialize_space(space))

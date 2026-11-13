@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import inspect
 import json
 from collections import defaultdict
 from functools import singledispatch
@@ -10,11 +11,10 @@ import numpy as np
 from gymnasium import spaces
 
 
-# `Discrete` only gained a `dtype` argument in Gymnasium 1.3.0, and this package
-# supports 0.28.1 upwards, so the argument is passed only from 1.3.0 onwards.
-_DISCRETE_ACCEPTS_DTYPE = tuple(
-    int(part) for part in gymnasium.__version__.split(".")[:2]
-) >= (1, 3)
+# `Discrete` takes a `dtype` argument from Gymnasium 1.2.2.
+_DISCRETE_ACCEPTS_DTYPE = (
+    "dtype" in inspect.signature(spaces.Discrete.__init__).parameters
+)
 
 
 @singledispatch
@@ -185,7 +185,7 @@ def _deserialize_discrete(space_dict: Dict) -> spaces.Discrete:
     if np.dtype(dtype) != np.dtype("int64"):
         raise ValueError(
             f"The dataset declares a Discrete space of dtype {dtype}, which needs "
-            f"Gymnasium 1.3.0 or later; {gymnasium.__version__} is installed."
+            f"Gymnasium 1.2.2 or later; {gymnasium.__version__} is installed."
         )
     return spaces.Discrete(n=n, start=start)
 
