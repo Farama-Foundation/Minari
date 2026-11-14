@@ -58,6 +58,11 @@ class DataCollector(gym.Wrapper):
         * A new episode dictionary buffer is created if the env.step(action) call returns `truncated` or `terminated`, or if the environment calls
           env.reset(). If calling reset and the previous episode was not `truncated` or `terminated`, this will automatically be `truncated`.
 
+        * By default, recorded arrays are retained without copying until the episode is written. Callers and callbacks must not
+          modify recorded data during that interval. Gymnasium environments must return fresh observation and info objects.
+          Set ``copy_data=True`` to snapshot recorded callback outputs instead. This also protects against caller mutations
+          and reusable policy or callback buffers, at the cost of copying each recorded transition. Return values are unchanged.
+
     """
 
     def __init__(
@@ -73,6 +78,7 @@ class DataCollector(gym.Wrapper):
         data_format: Optional[str] = None,
         *,
         jpeg_encoding: bool = True,
+        copy_data: bool = False,
     ):
         """Initialize the data collector attributes and create the temporary directory for caching.
 
@@ -84,9 +90,14 @@ class DataCollector(gym.Wrapper):
             observation_space (gym.Space): Observation space of the dataset. The default value is the environment observation space.
             action_space (gym.Space): Action space of the dataset. The default value is the environment action space.
             data_format (str, optional): Data format to store the data in the Minari dataset. If None (defaults), it will use the default format of MinariStorage.
+            copy_data (bool): If True, deep-copy recorded observations, actions, rewards and infos after the step callback,
+                including observations and recorded infos from reset. Defaults to False (no copies). Enable this when callers,
+                policies or callbacks may mutate recorded buffers before the episode is written. Unrecorded infos and unused
+                callback fields are not copied. This does not change Gymnasium's requirement that environments return fresh objects.
             jpeg_encoding (bool): If True (default), image-space observations and actions are JPEG-encoded on disk (lossy, smaller). Set to False to store raw arrays (lossless but larger).
         """
         super().__init__(env)
+        self._copy_data = copy_data
         self._step_data_callback = step_data_callback()
         self._episode_metadata_callback = episode_metadata_callback()
 
@@ -157,6 +168,23 @@ class DataCollector(gym.Wrapper):
         assert self._buffer is not None
         if not self._record_infos:
             step_data["info"] = {}
+        if self._copy_data:
+            # Snapshot only recorded fields, not arbitrary callback extras.
+            # One copy preserves aliases within this transition, not across steps.
+            step_data = step_data.copy()
+            (
+                step_data["observation"],
+                step_data["action"],
+                step_data["reward"],
+                step_data["info"],
+            ) = copy.deepcopy(
+                (
+                    step_data["observation"],
+                    step_data["action"],
+                    step_data["reward"],
+                    step_data["info"],
+                )
+            )
         self._buffer = self._buffer.add_step_data(step_data)
 
         if step_data["terminated"] or step_data["truncated"]:
@@ -206,12 +234,17 @@ class DataCollector(gym.Wrapper):
                 f"Observation: {step_data['observation']}\nSpace: {self._storage.observation_space}"
             )
 
+        observation = step_data["observation"]
+        recorded_info = step_data["info"] if self._record_infos else None
+        if self._copy_data:
+            observation, recorded_info = copy.deepcopy((observation, recorded_info))
+
         self._buffer = EpisodeBuffer(
             id=self._episode_id,
             seed=seed,
             options=options,
-            observations=step_data["observation"],
-            infos=step_data["info"] if self._record_infos else None,
+            observations=observation,
+            infos=recorded_info,
         )
         return obs, info
 
