@@ -216,6 +216,10 @@ TOTAL EPISODES FILTER DATASET: 18
 Minari provides another utility function to divide a dataset into multiple datasets, :func:`minari.split_dataset`
 ```
 
+Split sizes must be non-negative. A zero size creates an empty split, and a total
+smaller than the dataset's episode count leaves the remaining episodes out.
+A negative size or a total exceeding the episode count raises `ValueError`.
+
 ```python
 import minari
 
@@ -269,6 +273,13 @@ for _ in range(100):
 
 ### Combine Minari Datasets
 
+The combined dataset uses JPEG encoding only when all input datasets enable it.
+If any input was created with `jpeg_encoding=False`, images are stored as raw
+arrays to avoid introducing lossy compression during combination. This can
+produce larger combined files. The compression loss already present in
+JPEG-encoded inputs cannot be recovered. If all inputs use JPEG encoding, images
+are decoded and JPEG-encoded again, which adds further compression loss.
+
 ```{eval-rst}
 In the case of having two or more Minari datasets created with the same environment we can combine these datasets into a single one by using the Minari function :func:`minari.combine_datasets`, i.e. the ``'AdroitHandDoor-v1'`` environment has two datasets available in the remote Farama servers, ``D4RL/door/human-v2`` and ``D4RL/door/expert-v2``, we can combine the episodes in these two datasets into a new Minari dataset ``D4RL/door/all-v0``:
 ```
@@ -287,6 +298,25 @@ minari list local
 │ D4RL/door/expert-v2 │           5000 │     1000000 │ 1096.4 MB    │ Rodrigo de Lazcano │
 │ D4RL/door/human-v2  │             25 │        6729 │ 7.1 MB       │ Rodrigo de Lazcano │
 └─────────────────────┴────────────────┴─────────────┴──────────────┴────────────────────┘
+```
+
+```{eval-rst}
+:func:`minari.combine_datasets` also accepts datasets returned by :func:`minari.MinariDataset.filter_episodes` or :func:`minari.split_dataset`. In this case, only the selected episodes are copied. Episodes keep their order within each input dataset and receive consecutive IDs in the combined dataset. An empty input dataset contributes no episodes.
+```
+
+```python
+import minari
+
+human_dataset = minari.load_dataset('D4RL/door/human-v2')
+expert_dataset = minari.load_dataset('D4RL/door/expert-v2')
+
+# Keep the high-return expert episodes and about half of the human episodes
+high_return_expert = expert_dataset.filter_episodes(lambda episode: episode.rewards.sum() > 2000)
+human_half, _ = minari.split_dataset(human_dataset, sizes=[12, 13], seed=42)
+
+combined_dataset = minari.combine_datasets(
+    [human_half, high_return_expert], new_dataset_id='D4RL/door/selected-v0'
+)
 ```
 
 ## Create Minari Dataset
@@ -380,6 +410,8 @@ There is another optional way of creating a Minari dataset and that is by using 
 
 ```{eval-rst}
 When collecting data with the :class:`minari.DataCollector` wrapper, the recorded data is saved into temporary files and it won't be permanently saved on disk until the :func:`DataCollector.create_dataset` function is called. To prevent losing data for large datasets, it is recommended to create the dataset during data collection and append the data to it using :func:`DataCollector.add_to_dataset`.
+
+Appended episodes retain their reset seed and options in the episode metadata, so they can be replayed with the same reset arguments.
 
 Continuing the ``'CartPole-v1'`` example we can checkpoint the newly created Minari dataset every 10 episodes as follows:
 ```

@@ -70,7 +70,9 @@ def _save_and_reload(collector):
 @pytest.mark.parametrize("reuse", [False, True])
 def test_reused_transition_buffers(data_format, nested, ending, reuse):
     env = ReusedBufferEnv(nested=nested, ending=ending, reuse=reuse)
-    collector = DataCollector(env, data_format=data_format, record_infos=True)
+    collector = DataCollector(
+        env, data_format=data_format, record_infos=True, copy_data=True
+    )
     observation, info = collector.reset(seed=0)
     if reuse:
         assert observation is env.observation
@@ -125,6 +127,7 @@ def test_reused_callback_outputs(data_format):
     collector = DataCollector(
         ReusedBufferEnv(reuse=False),
         data_format=data_format,
+        copy_data=True,
         record_infos=True,
         step_data_callback=ReusedCallback,
     )
@@ -149,7 +152,9 @@ class UnrecordedInfoEnv(ReusedBufferEnv):
 
 @pytest.mark.parametrize("data_format", get_storage_keys())
 def test_unrecorded_info_is_not_copied(data_format):
-    collector = DataCollector(UnrecordedInfoEnv(reuse=False), data_format=data_format)
+    collector = DataCollector(
+        UnrecordedInfoEnv(reuse=False), data_format=data_format, copy_data=True
+    )
     collector.reset(seed=0)
     for value in (1, 2, 3):
         collector.step(np.asarray([value], dtype=np.float32))
@@ -161,7 +166,10 @@ def test_unrecorded_info_is_not_copied(data_format):
 @pytest.mark.parametrize("data_format", get_storage_keys())
 def test_mutating_returned_values_does_not_change_collected_data(data_format):
     collector = DataCollector(
-        ReusedBufferEnv(reuse=False), data_format=data_format, record_infos=True
+        ReusedBufferEnv(reuse=False),
+        data_format=data_format,
+        record_infos=True,
+        copy_data=True,
     )
     observation, info = collector.reset(seed=0)
     observation[:] = 99
@@ -189,6 +197,7 @@ def test_unused_callback_fields_are_not_copied(data_format):
     collector = DataCollector(
         ReusedBufferEnv(reuse=False),
         data_format=data_format,
+        copy_data=True,
         step_data_callback=ExtraDataCallback,
     )
     collector.reset(seed=0)
@@ -196,3 +205,74 @@ def test_unused_callback_fields_are_not_copied(data_format):
         collector.step(np.asarray([value], dtype=np.float32))
     episode = _save_and_reload(collector)[0]
     np.testing.assert_array_equal(episode.observations[:, 0], [0, 1, 3, 6])
+
+
+@pytest.mark.parametrize("data_format", get_storage_keys())
+@pytest.mark.parametrize("copy_data", [None, False])
+@pytest.mark.parametrize("record_infos", [False, True])
+def test_default_collection_does_not_copy(
+    data_format, copy_data, record_infos, monkeypatch
+):
+    from types import SimpleNamespace
+
+    def unexpected_copy(value):
+        raise AssertionError("The default collection path must not copy data")
+
+    kwargs = {} if copy_data is None else {"copy_data": copy_data}
+    env = ReusedBufferEnv(reuse=False)
+    collector = DataCollector(
+        env, data_format=data_format, record_infos=record_infos, **kwargs
+    )
+    # Patch only the collector's copy module binding, not Gymnasium's deepcopy.
+    with monkeypatch.context() as patch:
+        patch.setattr(
+            "minari.data_collector.data_collector.copy",
+            SimpleNamespace(deepcopy=unexpected_copy),
+        )
+        collector.reset(seed=0)
+        for value in (1, 2, 3):
+            collector.step(np.asarray([value], dtype=np.float32))
+    episode = _save_and_reload(collector)[0]
+    np.testing.assert_array_equal(episode.observations[:, 0], [0, 1, 3, 6])
+    np.testing.assert_array_equal(episode.actions[:, 0], [1, 2, 3])
+
+
+class CapturedOutputsEnv(ReusedBufferEnv):
+    def _outputs(self):
+        self.outputs = super()._outputs()
+        return self.outputs
+
+
+@pytest.mark.parametrize("data_format", get_storage_keys())
+@pytest.mark.parametrize("copy_data", [False, True])
+def test_snapshot_mode_preserves_return_identity(data_format, copy_data):
+    env = CapturedOutputsEnv(reuse=False)
+    collector = DataCollector(
+        env, data_format=data_format, record_infos=True, copy_data=copy_data
+    )
+    observation, info = collector.reset(seed=0)
+    assert observation is env.outputs[0]
+    assert info is env.outputs[1]
+    for value in (1, 2, 3):
+        observation, _, _, _, info = collector.step(np.asarray([value], np.float32))
+        assert observation is env.outputs[0]
+        assert info is env.outputs[1]
+    _save_and_reload(collector)
+
+
+@pytest.mark.parametrize("data_format", get_storage_keys())
+@pytest.mark.parametrize("copy_data", [False, True])
+def test_policy_action_reuse_with_fresh_environment_outputs(data_format, copy_data):
+    collector = DataCollector(
+        ReusedBufferEnv(reuse=False), data_format=data_format, copy_data=copy_data
+    )
+    collector.reset(seed=0)
+    action = np.zeros(1, dtype=np.float32)
+    for value in (1, 2, 3):
+        action[:] = value
+        collector.step(action)
+    episode = _save_and_reload(collector)[0]
+    np.testing.assert_array_equal(episode.observations[:, 0], [0, 1, 3, 6])
+    np.testing.assert_array_equal(
+        episode.actions[:, 0], [1, 2, 3] if copy_data else [3, 3, 3]
+    )
