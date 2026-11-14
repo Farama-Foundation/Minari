@@ -39,7 +39,12 @@ fresh observation and info objects from `reset()` and `step()`.
 For pipelines that mutate these arrays, enable snapshotting explicitly:
 
 ```python
-collector = minari.DataCollector(env, copy_data=True)
+import gymnasium as gym
+import minari
+
+collector = minari.DataCollector(gym.make("CartPole-v1"), copy_data=True)
+# Collect transitions as usual, then close the collector when finished.
+collector.close()
 ```
 
 This deep-copies the recorded observation, action, reward and (when enabled) info
