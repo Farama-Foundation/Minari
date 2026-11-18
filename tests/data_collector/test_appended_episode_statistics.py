@@ -63,3 +63,29 @@ def test_appended_episode_statistics(data_format, callback, filtered):
         if callback is CountingMetadataCallback:
             assert values["callback_call"] == episode.id + 1
             assert values["callback_episode_id"] == episode.id
+
+
+@pytest.mark.parametrize("data_format", get_storage_keys())
+def test_filter_by_metadata_skips_episode_payloads(data_format, monkeypatch):
+    with DataCollector(
+        gym.make("Pendulum-v1", max_episode_steps=5),
+        data_format=data_format,
+        episode_metadata_callback=CountingMetadataCallback,
+    ) as collector:
+        for seed in range(4):
+            collect_episode(collector, seed)
+        dataset = collector.create_dataset("pendulum-metadata-filter-v0")
+
+    view = MinariDataset(dataset.storage, episode_indices=np.array([3, 0, 2]))
+
+    def unexpected_read(*args, **kwargs):
+        pytest.fail("Filtering metadata loaded an episode payload")
+
+    monkeypatch.setattr(view.storage, "get_episodes", unexpected_read)
+    selected = view.filter_episodes_by_metadata(
+        lambda meta: meta["callback_episode_id"] >= 2
+    )
+    np.testing.assert_array_equal(selected.episode_indices, [3, 2])
+    assert selected.total_steps == 10
+    empty = selected.filter_episodes_by_metadata(lambda meta: meta["total_steps"] > 5)
+    assert len(empty) == empty.total_steps == 0

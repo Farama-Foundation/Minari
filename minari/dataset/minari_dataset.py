@@ -249,6 +249,21 @@ class MinariDataset:
         filtered_indices = self.episode_indices[list(mask)]
         return MinariDataset(self.storage, episode_indices=filtered_indices)
 
+    def filter_episodes_by_metadata(
+        self, condition: Callable[[dict], bool]
+    ) -> MinariDataset:
+        """Select episodes using stored statistics or custom episode metadata.
+
+        Only metadata for episodes in this view is read. For conditions that need
+        observations, actions, or individual rewards, use :meth:`filter_episodes`.
+
+        Args:
+            condition: Predicate on the metadata dictionary for one episode.
+        """
+        metadata = self.storage.get_episode_metadata(self.episode_indices)
+        mask = np.fromiter(map(condition, metadata), dtype=bool)
+        return MinariDataset(self.storage, episode_indices=self.episode_indices[mask])
+
     def sample_episodes(self, n_episodes: int) -> Iterable[EpisodeData]:
         """Sample n number of episodes from the dataset.
 
