@@ -63,3 +63,48 @@ def test_appended_episode_statistics(data_format, callback, filtered):
         if callback is CountingMetadataCallback:
             assert values["callback_call"] == episode.id + 1
             assert values["callback_episode_id"] == episode.id
+
+
+@pytest.mark.parametrize("data_format", get_storage_keys())
+def test_filter_by_metadata_skips_episode_payloads(data_format, monkeypatch):
+    with DataCollector(
+        gym.make("Pendulum-v1", max_episode_steps=5),
+        data_format=data_format,
+        episode_metadata_callback=CountingMetadataCallback,
+    ) as collector:
+        for seed in range(4):
+            collect_episode(collector, seed)
+        dataset = collector.create_dataset("pendulum-metadata-filter-v0")
+
+    view = MinariDataset(dataset.storage, episode_indices=np.array([3, 0, 2]))
+
+    def unexpected_read(*args, **kwargs):
+        pytest.fail("Filtering metadata loaded an episode payload")
+
+    monkeypatch.setattr(view.storage, "get_episodes", unexpected_read)
+    selected = view.filter_episodes_by_metadata(
+        lambda meta: meta["callback_episode_id"] >= 2
+    )
+    np.testing.assert_array_equal(selected.episode_indices, [3, 2])
+    assert selected.total_steps == 10
+    empty = selected.filter_episodes_by_metadata(lambda meta: meta["total_steps"] > 5)
+    assert len(empty) == empty.total_steps == 0
+
+
+def test_failed_metadata_predicate_releases_hdf5_handle():
+    with DataCollector(
+        gym.make("Pendulum-v1", max_episode_steps=5), data_format="hdf5"
+    ) as collector:
+        collect_episode(collector, 0)
+        dataset = collector.create_dataset("pendulum-metadata-filter-v0")
+
+    def reject(metadata):
+        raise ValueError("invalid selection criterion")
+
+    with pytest.raises(ValueError, match="invalid selection criterion") as caught:
+        dataset.filter_episodes_by_metadata(reject)
+
+    # A caller may retain the traceback while continuing to use the dataset.
+    dataset.storage.update_episode_metadata([{"reviewed": True}], [0])
+    assert list(dataset.storage.get_episode_metadata([0]))[0]["reviewed"]
+    assert caught.value.args == ("invalid selection criterion",)
