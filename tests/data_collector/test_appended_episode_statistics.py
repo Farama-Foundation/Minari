@@ -89,3 +89,22 @@ def test_filter_by_metadata_skips_episode_payloads(data_format, monkeypatch):
     assert selected.total_steps == 10
     empty = selected.filter_episodes_by_metadata(lambda meta: meta["total_steps"] > 5)
     assert len(empty) == empty.total_steps == 0
+
+
+def test_failed_metadata_predicate_releases_hdf5_handle():
+    with DataCollector(
+        gym.make("Pendulum-v1", max_episode_steps=5), data_format="hdf5"
+    ) as collector:
+        collect_episode(collector, 0)
+        dataset = collector.create_dataset("pendulum-metadata-filter-v0")
+
+    def reject(metadata):
+        raise ValueError("invalid selection criterion")
+
+    with pytest.raises(ValueError, match="invalid selection criterion") as caught:
+        dataset.filter_episodes_by_metadata(reject)
+
+    # A caller may retain the traceback while continuing to use the dataset.
+    dataset.storage.update_episode_metadata([{"reviewed": True}], [0])
+    assert list(dataset.storage.get_episode_metadata([0]))[0]["reviewed"]
+    assert caught.value.args == ("invalid selection criterion",)

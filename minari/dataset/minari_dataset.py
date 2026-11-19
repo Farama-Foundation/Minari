@@ -260,8 +260,13 @@ class MinariDataset:
         Args:
             condition: Predicate on the metadata dictionary for one episode.
         """
-        metadata = self.storage.get_episode_metadata(self.episode_indices)
-        mask = np.fromiter(map(condition, metadata), dtype=bool)
+        metadata = iter(self.storage.get_episode_metadata(self.episode_indices))
+        try:
+            mask = np.fromiter(map(condition, metadata), dtype=bool)
+        finally:
+            close = getattr(metadata, "close", None)
+            if close is not None:
+                close()
         return MinariDataset(self.storage, episode_indices=self.episode_indices[mask])
 
     def sample_episodes(self, n_episodes: int) -> Iterable[EpisodeData]:
