@@ -77,7 +77,7 @@ html_theme = "celshast"
 html_title = "Minari Documentation"
 html_baseurl = "https://minari.farama.org"
 html_copy_source = False
-html_favicon = "_static/img/favicon.png"
+html_favicon = "_static/img/favicon.svg"
 html_theme_options = {
     "light_logo": "img/Minari.svg",
     "dark_logo": "img/Minari_White.svg",
