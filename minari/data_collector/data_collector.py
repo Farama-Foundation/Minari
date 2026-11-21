@@ -80,7 +80,7 @@ class DataCollector(gym.Wrapper):
             env (gym.Env): Gymnasium environment
             step_data_callback (type[StepDataCallback], optional): Callback class to edit/update step databefore storing to buffer. Defaults to StepDataCallback.
             episode_metadata_callback (type[EpisodeMetadataCallback], optional): Callback class to add custom metadata to episode group in HDF5 file. Defaults to EpisodeMetadataCallback.
-            record_infos (bool, optional): If True record the info return key of each step. Defaults to False.
+            record_infos (bool, optional): If True record the info return key of each step. Infos that are not returned at every step of an episode are filled with NaN for the steps without them. Defaults to False.
             observation_space (gym.Space): Observation space of the dataset. The default value is the environment observation space.
             action_space (gym.Space): Action space of the dataset. The default value is the environment action space.
             data_format (str, optional): Data format to store the data in the Minari dataset. If None (defaults), it will use the default format of MinariStorage.

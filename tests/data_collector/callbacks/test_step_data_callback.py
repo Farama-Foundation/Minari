@@ -162,18 +162,27 @@ def test_data_collector_step_data_callback_info_correction(
     env = DataCollector(
         env,
         record_infos=True,
+        data_format=data_format,
     )
     # here we are checking to make sure that if we have an environment changing its info
-    # structure across steps, it is results in a error
-    with pytest.raises(ValueError):
-        num_episodes = 10
-        env.reset(seed=42)
-        for _ in range(num_episodes):
-            terminated = False
-            truncated = False
-            while not terminated and not truncated:
-                action = env.action_space.sample()
-                _, _, terminated, truncated, _ = env.step(action)
+    # structure across steps, the missing infos are filled with NaN
+    num_episodes = 10
+    env.reset(seed=42)
+    for _ in range(num_episodes):
+        terminated = False
+        truncated = False
+        while not terminated and not truncated:
+            action = env.action_space.sample()
+            _, _, terminated, truncated, _ = env.step(action)
 
-            env.reset()
+        env.reset()
+
+    dataset = env.create_dataset(dataset_id=dataset_id)
+    assert dataset.total_episodes == num_episodes
+    for episode in dataset.iterate_episodes():
+        timesteps = np.arange(len(episode) + 1, dtype=np.float64).reshape(-1, 1)
+        timesteps[1::2] = np.nan
+        np.testing.assert_array_equal(episode.infos["timestep"], timesteps)
+
     env.close()
+    check_load_and_delete_dataset(dataset_id)
