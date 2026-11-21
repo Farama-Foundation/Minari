@@ -102,7 +102,7 @@ The `sampled_episodes` variable will be a list of 10 `EpisodeData` elements, eac
 | `rewards`         | `np.ndarray`                         | Rewards for each step.                                        |
 | `terminations`    | `np.ndarray`                         | Terminations for each step.                                   |
 | `truncations`     | `np.ndarray`                         | Truncations for each step.                                    |
-| `infos`           | `dict`                               | A dictionary containing additional information returned by the environment             |
+| `infos`           | `dict`                               | A dictionary containing additional information returned by the environment, stacked for each step including the initial reset. |
 
 As mentioned in the `Supported Spaces` section, many different observation and action spaces are supported so the data type for these fields are dependent on the environment being used.
 
@@ -132,7 +132,9 @@ transition = (
 
 For example, a two-step episode has observations at indices `0`, `1` and `2`, but actions and rewards only at indices `0` and `1`. The final observation is the next observation for the last transition; it has no corresponding action.
 
-For `Dict` or `Tuple` spaces, apply the time index to each array within the nested observation or action structure. See the [EpisodeData reference](../api/minari_dataset/episode_data.md) for the complete field descriptions.
+Recorded `infos` are indexed like the observations: every array in the `infos` dictionary has `T + 1` entries. Index `0` holds the info returned by `reset()` together with `observations[0]`, and index `t + 1` holds the info returned by the same `step()` as `observations[t + 1]`, so the info produced by the transition at index `t` is stored at index `t + 1`.
+
+For `Dict` or `Tuple` spaces, apply the time index to each array within the nested observation or action structure; nested `infos` dictionaries work the same way. See the [EpisodeData reference](../api/minari_dataset/episode_data.md) for the complete field descriptions.
 
 Moreover, when creating a dataset with `DataCollector`, if the `DataCollector` is initialized with `record_infos=True`, an info dict must be provided from every call to the environment's `step` and `reset` function. The structure of the info dictionary must be the same across steps. Given that it is not guaranteed that all Gymnasium environments provide infos at every step, we provide the `StepDataCallback` which can modify the infos from a non-compliant environment so they have the same structure at every step.
 
