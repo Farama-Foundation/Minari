@@ -177,3 +177,12 @@ def test_pad_infos_rejects_non_numeric_values():
     )
     with pytest.raises(ValueError, match="'task'.*StepDataCallback"):
         buffer.add_step_data(_step_data({}))
+
+
+def test_pad_infos_rejects_list_values():
+    buffer = EpisodeBuffer(
+        observations=np.zeros(1, dtype=np.float32), infos={"pair": [1.0, 2.0]}
+    )
+    buffer = buffer.add_step_data(_step_data({"pair": [3.0, 4.0]}))
+    with pytest.raises(ValueError, match="'pair'.*StepDataCallback"):
+        buffer.add_step_data(_step_data({}))

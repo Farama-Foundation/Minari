@@ -151,7 +151,8 @@ def _have_same_keys(info: Any, buffer: Any) -> bool:
 
 def _missing_like(value: Any, key_path: str) -> Any:
     """Return the ``NaN`` filling for a step in which ``value`` is not provided."""
-    dtype = np.asarray(value).dtype
+    # A list is buffered element by element, so it can't be filled as one value.
+    dtype = np.dtype(object) if isinstance(value, list) else np.asarray(value).dtype
     if dtype.kind in "biu":
         # Integers and booleans can't hold NaN.
         dtype = np.dtype(np.float64)

@@ -319,8 +319,11 @@ def _encode_info(info: dict):
                 array = pa.array(list(values))
             except pa.ArrowInvalid:
                 # Booleans padded with NaN are not converted to a common type.
-                numeric_values = np.asarray(values)
-                if numeric_values.dtype.kind != "f":
+                try:
+                    numeric_values = np.asarray(values)
+                except ValueError:
+                    numeric_values = None
+                if numeric_values is None or numeric_values.dtype.kind != "f":
                     raise
                 array = pa.array(numeric_values)
             arrays.append(array)
