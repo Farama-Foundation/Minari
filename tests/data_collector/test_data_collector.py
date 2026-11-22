@@ -1,3 +1,5 @@
+import warnings
+
 import gymnasium as gym
 import numpy as np
 import pytest
@@ -210,4 +212,37 @@ def test_reproducibility(seed, data_format, options, register_dummy_envs):
             assert term == episode.terminations[k]
             assert trunc == episode.truncations[k]
 
+    check_load_and_delete_dataset(dataset_id)
+
+
+class _PlainWrapper(gym.Wrapper):
+    """A wrapper gym.make cannot rebuild, like stable_baselines3 Monitor."""
+
+
+def test_warns_on_wrapper_that_cannot_be_recreated():
+    env = _PlainWrapper(gym.make("CartPole-v1"))
+    with pytest.warns(UserWarning, match="_PlainWrapper"):
+        env = DataCollector(env)
+    env.close()
+
+
+def test_wrapper_outside_collector_can_be_recovered():
+    dataset_id = "cartpole/outside-wrapper-v0"
+    with warnings.catch_warnings(record=True) as caught:
+        warnings.simplefilter("always")
+        env = _PlainWrapper(DataCollector(gym.make("CartPole-v1")))
+    assert not any("RecordConstructorArgs" in str(w.message) for w in caught)
+
+    env.reset(seed=42)
+    for _ in range(5):
+        _, _, terminated, truncated, _ = env.step(env.action_space.sample())
+        if terminated or truncated:
+            env.reset()
+    collector = env.env
+    assert isinstance(collector, DataCollector)
+    dataset = collector.create_dataset(dataset_id=dataset_id)
+
+    recovered = dataset.recover_environment()
+    recovered.close()
+    env.close()
     check_load_and_delete_dataset(dataset_id)

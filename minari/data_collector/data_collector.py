@@ -25,6 +25,27 @@ from minari.utils import _generate_dataset_metadata, _generate_dataset_path
 AUTOSEED_BIT_SIZE = 64
 
 
+def _warn_on_unrecreatable_wrappers(env_spec: Optional[EnvSpec]) -> None:
+    """Warn if the spec contains wrappers that `gym.make` cannot rebuild.
+
+    Gymnasium records ``kwargs=None`` for wrappers that do not inherit from
+    ``gymnasium.utils.RecordConstructorArgs``. The spec is saved with the dataset,
+    so ``MinariDataset.recover_environment`` would later fail on it.
+    """
+    if env_spec is None:
+        return
+    names = [w.name for w in env_spec.additional_wrappers if w.kwargs is None]
+    if names:
+        warnings.warn(
+            f"The environment is wrapped with {', '.join(names)}, which does not "
+            "inherit from `gymnasium.utils.RecordConstructorArgs`. This wrapper will "
+            "be saved in the dataset env_spec and `recover_environment()` will fail. "
+            "Apply it outside the DataCollector, as in `Wrapper(DataCollector(env))`, "
+            "or make it inherit from `RecordConstructorArgs`.",
+            stacklevel=3,
+        )
+
+
 class DataCollector(gym.Wrapper):
     r"""Gymnasium environment wrapper that collects step data.
 
@@ -87,6 +108,7 @@ class DataCollector(gym.Wrapper):
             jpeg_encoding (bool): If True (default), image-space observations and actions are JPEG-encoded on disk (lossy, smaller). Set to False to store raw arrays (lossless but larger).
         """
         super().__init__(env)
+        _warn_on_unrecreatable_wrappers(env.spec)
         self._step_data_callback = step_data_callback()
         self._episode_metadata_callback = episode_metadata_callback()
 
