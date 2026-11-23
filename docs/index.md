@@ -49,6 +49,7 @@ Contribute to the Docs <https://github.com/Farama-Foundation/Minari/tree/main/do
 
 ```{project-logo} _static/img/minari-text.png
 :alt: Minari Logo
+:class: farama-black-logo-invert
 ```
 
 ```{project-heading}
