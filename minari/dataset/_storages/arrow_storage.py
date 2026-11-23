@@ -315,7 +315,17 @@ def _encode_info(info: dict):
             fields.append(pa.field(key, struct, metadata={"shape": data_enc}))
 
         else:
-            array = pa.array(list(values))
+            try:
+                array = pa.array(list(values))
+            except pa.ArrowInvalid:
+                # Booleans padded with NaN are not converted to a common type.
+                try:
+                    numeric_values = np.asarray(values)
+                except ValueError:
+                    numeric_values = None
+                if numeric_values is None or numeric_values.dtype.kind != "f":
+                    raise
+                array = pa.array(numeric_values)
             arrays.append(array)
             fields.append(pa.field(key, array.type))
 
