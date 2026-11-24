@@ -147,6 +147,15 @@ EPISODE ID'S SAMPLE 4: [19, 4, 12, 17, 21]
 Notice that in each sample non of the episodes are sampled more than once but the same episode can be retrieved in different :func:`minari.MinariDataset.sample_episodes` calls.
 
 Minari doesn't serve the purpose of creating replay buffers out of the Minari datasets, we leave this task for the user to make for their specific needs.
+When filtering large trajectories by episode return, use the stored episode metadata
+to select episodes without loading observations or actions:
+
+```python
+successful = dataset.filter_episodes_by_metadata(lambda metadata: metadata["rewards_sum"] > 0)
+```
+
+The predicate can also read statistics recorded by a custom episode metadata callback.
+
 To create your own buffers and dataloaders, you may need the ability to iterate through an episodes in a deterministic order. This can be achieved with :func:`minari.MinariDataset.iterate_episodes`. This method is a generator that iterates over :class:`minari.EpisodeData` episodes from :class:`minari.MinariDataset`. Specific indices can be also provided. For example:
 ```
 
