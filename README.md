@@ -6,7 +6,7 @@
 
 
 <p align="center">
-    <a href = "https://minari.farama.org/" target= "_blank" > <img src="minari-text.png" width="500px"/> </a>
+    <a href = "https://minari.farama.org/" target= "_blank" > <img src="https://raw.githubusercontent.com/Farama-Foundation/Minari/main/minari-text.png" width="500px"/> </a>
 </p>
 
 Minari is a Python library for conducting research in offline reinforcement learning, akin to an offline version of Gymnasium or an offline RL version of HuggingFace's datasets library.
