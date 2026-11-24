@@ -57,7 +57,7 @@ This command comes with other two required sub-commands:
 ```{eval-rst}
 
 .. note::
-   These commands will list the latest remote/local dataset versions that are compatible with your local installed Minari version. To list all the dataset versions (also incompatible) add the option :code:`--all` or :code:`-a` to the command.
+   These commands will list the latest remote/local dataset versions that are compatible with your local installed Minari version. To list all the dataset versions (also incompatible) add the option :code:`--all` or :code:`-a` to the command. For example, :code:`minari list local --all` includes older local versions as well as the latest version of each dataset.
 
 ```
 
