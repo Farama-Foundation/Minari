@@ -339,6 +339,9 @@ env = DataCollector(env, record_infos=True)
 
 ```{eval-rst}
 In this example, the :class:`minari.DataCollector` wraps the `'CartPole-v1'` environment from Gymnasium. We set ``record_infos=True`` so the wrapper will also collect the returned ``info`` dictionaries to create the dataset. For the full list of arguments, read the :class:`minari.DataCollector` documentation.
+
+.. note::
+   The environment spec is saved with the dataset so that :func:`minari.MinariDataset.recover_environment` can rebuild it later. Wrappers that do not inherit from ``gymnasium.utils.RecordConstructorArgs``, such as the ``Monitor`` wrapper from Stable Baselines3, cannot be rebuilt. Apply them outside the collector, as in ``Monitor(DataCollector(env))``. :class:`minari.DataCollector` warns you if one of them is inside.
 ```
 
 ### Save Dataset
