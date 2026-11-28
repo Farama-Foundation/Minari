@@ -9,6 +9,7 @@ import minari
 from minari import DataCollector, MinariDataset
 from minari.data_collector import EpisodeBuffer
 from minari.dataset._storages import get_storage_keys
+from minari.namespace import list_local_namespaces
 from minari.utils import combine_datasets
 from tests.common import create_dummy_dataset_with_collecter_env_helper
 
@@ -199,6 +200,24 @@ def _create_space_test_dataset(
         ref_max_score=1.0,
         data_format=data_format,
     )
+
+
+@pytest.mark.parametrize("data_format", get_storage_keys())
+def test_combine_creates_output_namespace(data_format):
+    space = gym.spaces.Box(0.0, 1.0, (1,))
+    sources = [
+        _create_space_test_dataset(f"input-{i}-v0", space, space, None, data_format)
+        for i in range(2)
+    ]
+    output_id = "benchmarks/cartpole/combined-v0"
+
+    combine_datasets(sources, output_id)
+
+    assert list_local_namespaces() == ["benchmarks", "benchmarks/cartpole"]
+    assert output_id in minari.list_local_datasets()
+    combined = minari.load_dataset(output_id)
+    assert combined.total_episodes == 2
+    assert combined.combined_datasets == [source.id for source in sources]
 
 
 @pytest.mark.parametrize("data_format", ["hdf5", "arrow"])

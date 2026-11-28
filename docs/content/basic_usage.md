@@ -301,6 +301,8 @@ minari list local
 ```
 
 ```{eval-rst}
+The output dataset can use a different namespace from the inputs. For example, combining into ``benchmarks/door/all-v0`` creates the local ``benchmarks`` and ``benchmarks/door`` namespaces if they are missing.
+
 :func:`minari.combine_datasets` also accepts datasets returned by :func:`minari.MinariDataset.filter_episodes` or :func:`minari.split_dataset`. In this case, only the selected episodes are copied. Episodes keep their order within each input dataset and receive consecutive IDs in the combined dataset. An empty input dataset contributes no episodes.
 ```
 

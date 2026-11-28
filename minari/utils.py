@@ -135,6 +135,10 @@ def combine_datasets(datasets_to_combine: List[MinariDataset], new_dataset_id: s
     """
     combined_dataset_env_spec = validate_datasets_to_combine(datasets_to_combine)
 
+    namespace = new_dataset_id.rpartition("/")[0]
+    if namespace and namespace not in list_local_namespaces():
+        create_namespace(namespace)
+
     new_dataset_path = get_dataset_path(new_dataset_id)
     new_dataset_path.mkdir()
     new_storage = MinariStorage.new(
